@@ -3,18 +3,22 @@ The service side of clearlydefined.io
 
 ## Endpoints
 ### Resolved
-GET /:packageFormat/:origin/:packageName/:packageVersion
+#### GET /components/:packageFormat/:origin/:packageName/:packageVersion
+
+
 
 ### Curation
-PATCH /:packageFormat/:origin/:packageName/:packageVersion
+#### PATCH /curations/:packageFormat/:origin/:packageName/:packageVersion
 
+##### Request Body
 {
   "copyright": "",
   "license_expression": "",
   "vcs_url": ""
 }
 
-As a PATCH you only need to provide the attributes you want to update, any attributes not included will be ignored. To explicitly remove an attribute set its value to `null`.
+##### Description
+As a PATCH you only need to provide the attributes you want to add or update, any attributes not included will be ignored. To explicitly remove an attribute set its value to `null`.
 
 TODO: Make sure the attribute names are consistent with AboutCode/ScanCode
 TODO: Include a section where the author's identity and reasoning is provided
