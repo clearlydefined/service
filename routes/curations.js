@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res, next) {
+router.patch('/:packageFormat/:repositoryName/:packageName/:packageVersion', function (req, res, next) {
   res.status(200).send({ status: 'OK' });
 });
 

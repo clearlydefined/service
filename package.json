@@ -11,6 +11,7 @@
     "express": "~4.15.5",
     "helmet": "^3.9.0",
     "morgan": "~1.9.0",
+    "painless-config": "^0.1.0",
     "serialize-error": "^2.1.0"
   }
 }
