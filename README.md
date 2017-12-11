@@ -11,11 +11,13 @@ The service side of clearlydefined.io
 #### PATCH /curations/:packageFormat/:origin/:packageName/:packageVersion
 
 ##### Request Body
+```
 {
   "copyright": "",
   "license_expression": "",
   "vcs_url": ""
 }
+```
 
 ##### Description
 As a PATCH you only need to provide the attributes you want to add or update, any attributes not included will be ignored. To explicitly remove an attribute set its value to `null`.
