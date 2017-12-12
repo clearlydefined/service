@@ -87,7 +87,7 @@ class CurationService {
       return github.pullRequests.create({
         owner: owner,
         repo: repo,
-        title: curationPath,
+        title: `${packageFormat.toLowerCase()}/${origin.toLowerCase()}/${packageName}/${packageVersion}`,
         head: `refs/heads/${requestId}`,
         base: branch
       })
