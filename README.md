@@ -76,7 +76,9 @@ packageFormat
 
 #### Raw Notes
 What term should we use instead of package?
-???
+* AboutCode says package
+* Concerns that "native" source consumers don't consider what they consume as a package
+* Defer decision :)
 
 What to name output files?
 1. If a single file, then output.ext (e.g. output.json)
@@ -136,6 +138,11 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 * ScanCode
 * Fossology
 
+## Terminology
+* provider - the provider of metadata (e.g. npmjs.org, github.com)
+* revision - used instead of version because it's a superset and valid for source
+
 ## TODO
 * Swagger to replace most of this doc
 * Complete registries
+* Complete terminology
