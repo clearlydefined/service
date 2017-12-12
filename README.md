@@ -4,7 +4,7 @@ The service side of clearlydefined.io
 ## Getting Started
 1. Set the following environment variables:
    * CLEARLY_DEFINED_CURATION_GITHUB_OWNER=clearlydefined
-   * CLEARLY_DEFINED_CURATION_GITHUB_REPO=curation-data
+   * CLEARLY_DEFINED_CURATION_GITHUB_REPO=curated-data
    * CLEARLY_DEFINED_CURATION_GITHUB_BRANCH=master
    * CLEARLY_DEFINED_CURATION_GITHUB_TOKEN=[personal access token with public_repo scope]
 1. `npm install && npm start`
