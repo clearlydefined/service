@@ -9,7 +9,9 @@ module.exports = (req, res, next) => {
     curation: {
       store: {
         github: {
-          url: config.get('CLEARLY_DEFINED_CURATION_GITHUB_URL'),
+          owner: config.get('CLEARLY_DEFINED_CURATION_GITHUB_OWNER'),
+          repo: config.get('CLEARLY_DEFINED_CURATION_GITHUB_REPO'),
+          branch: config.get('CLEARLY_DEFINED_CURATION_GITHUB_BRANCH'),
           token: config.get('CLEARLY_DEFINED_CURATION_GITHUB_TOKEN')
         }
       }

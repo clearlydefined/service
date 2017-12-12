@@ -6,12 +6,17 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "base-64": "^0.1.0",
     "body-parser": "~1.18.2",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "github": "^13.0.1",
     "helmet": "^3.9.0",
+    "js-yaml": "^3.10.0",
     "morgan": "~1.9.0",
     "painless-config": "^0.1.0",
-    "serialize-error": "^2.1.0"
+    "request-id": "^0.11.1",
+    "serialize-error": "^2.1.0",
+    "underscore": "^1.8.3"
   }
 }

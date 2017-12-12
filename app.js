@@ -1,16 +1,18 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var helmet = require('helmet');
-var serializeError = require('serialize-error');
-var configMiddleware = require('./middleware/config');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const serializeError = require('serialize-error');
+const configMiddleware = require('./middleware/config');
+const requestId = require('request-id/express');
 
-var index = require('./routes/index');
-var curations = require('./routes/curations');
+const index = require('./routes/index');
+const curations = require('./routes/curations');
 
-var app = express();
+const app = express();
 app.use(helmet());
+app.use(requestId());
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -21,7 +23,7 @@ app.use('/curations', curations);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  var err = new Error('Not Found');
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
