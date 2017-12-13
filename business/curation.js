@@ -7,7 +7,7 @@ class CurationService {
   constructor(options) {
     this.config = options.config;
   }
-  addOrUpdate(requestId, packageFormat, origin, packageName, packageVersion, curationPatch) {
+  addOrUpdate(requestId, type, provider, packageName, packageVersion, curationPatch) {
     const github = new GitHubApi({
       headers: {
         'user-agent': 'clearlydefined.io'
@@ -21,7 +21,7 @@ class CurationService {
     const owner = this.config.curation.store.github.owner;
     const repo = this.config.curation.store.github.repo;
     const branch = this.config.curation.store.github.branch;
-    const curationPath = `${packageFormat.toLowerCase()}/${origin.toLowerCase()}/${packageName}.yaml`;
+    const curationPath = `${type.toLowerCase()}/${provider.toLowerCase()}/${packageName}.yaml`;
     let curationPathSha = null;
     
     return github.repos.getContent({
@@ -87,7 +87,7 @@ class CurationService {
       return github.pullRequests.create({
         owner: owner,
         repo: repo,
-        title: `${packageFormat.toLowerCase()}/${origin.toLowerCase()}/${packageName}/${packageVersion}`,
+        title: `${type.toLowerCase()}/${provider.toLowerCase()}/${packageName}/${packageVersion}`,
         head: `refs/heads/${requestId}`,
         base: branch
       })
