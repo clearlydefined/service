@@ -104,6 +104,7 @@ Maven supports scanning sources JAR or scanning GitHub repository
 
 How to handle tags?
 * When we scan GitHub we need to track what tags/branches point at which commits
+* We will use the short commit reference
 
 Need to define "origin" and/or pick another term
 * Propose to use "provider"
