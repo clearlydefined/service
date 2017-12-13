@@ -39,7 +39,15 @@ class CurationService {
       return {};
     })
     .then(parsedContent => {
+      // make patch independent of directory structure
+      parsedContent = _.assign(parsedContent, {
+        type: type,
+        provider: provider,
+        name: packageName
+      });
+
       parsedContent[packageVersion] = _.assign(parsedContent[packageVersion] || {}, curationPatch);
+
       const updatedPatch = yaml.safeDump(parsedContent);
       return updatedPatch;
     })
