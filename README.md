@@ -14,14 +14,25 @@ The service side of clearlydefined.io
 TODO
 
 ### Curation
-#### PATCH /curations/:packageFormat/:origin/:packageName/:packageVersion
+#### PATCH /curations/:packageFormat/:provider/:packageName/:packageRevision
 
 ##### Request Body
 ```
 {
-  "copyright": "",
-  "license_expression": "",
-  "vcs_url": ""
+  "source_location": {
+    "provider": "",
+    "url": "",
+    "revision": "",
+    "path": ""
+  },
+  "copyright": {
+    "statements": [],
+    "holders": [],
+    "authors": []
+  },
+  "license": {
+    "expression": ""
+  }
 }
 ```
 
@@ -69,7 +80,7 @@ This location is temporary, as harvested data grows will likely need to move it 
 packageFormat
   provider
     packageName
-      packageVersion
+      packageRevision
         configurationName - configurationNames always include tool name "ScanCode-2.1"
           [tool output files]
 ```

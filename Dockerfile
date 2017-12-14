@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
 FROM node:8-alpine
 ENV APPDIR=/opt/service
 

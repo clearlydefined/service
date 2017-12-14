@@ -1,11 +1,14 @@
-const Curation = require('../business/curation');
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 const express = require('express');
 const router = express.Router();
 
-router.patch('/:type/:provider/:name/:version', function (req, res, next) {
+const Curation = require('../business/curation');
+
+router.patch('/:type/:provider/:name/:revision', function (req, res, next) {
   const branchName = req['requestId'];
-  const curation = new Curation.CurationService({config: req.app.locals.config});
-  curation.addOrUpdate(branchName, req.params.type, req.params.provider, req.params.name, req.params.version, req.body)
+  const curation = new Curation.CurationService({config: req.app.locals.config.curation});
+  curation.addOrUpdate(branchName, req.params.type, req.params.provider, req.params.name, req.params.revision, req.body)
     .then(result => {
       res.status(200).send(result);
     })

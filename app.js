@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
@@ -9,6 +11,7 @@ const requestId = require('request-id/express');
 
 const index = require('./routes/index');
 const curations = require('./routes/curations');
+const packages = require('./routes/packages');
 
 const app = express();
 app.use(helmet());
@@ -20,6 +23,7 @@ app.use(configMiddleware);
 
 app.use('/', index);
 app.use('/curations', curations);
+app.use('/packages', packages);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -46,7 +50,5 @@ app.use(function (err, req, res, next) {
       }
     });
 });
-
-module.exports = app;
 
 module.exports = app;
