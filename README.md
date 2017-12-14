@@ -158,3 +158,11 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 * Swagger to replace most of this doc
 * Complete registries
 * Complete terminology
+
+## Running ORT for scanning
+Build and run the container.
+
+```
+docker build -t ort .
+docker run --mount type=bind,source="<path to repo>",target=/app ort scanner -d /app/output/package-json-dependencies.yml -o /app/output-scanner
+```
