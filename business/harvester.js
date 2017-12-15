@@ -16,11 +16,11 @@ class HarvesterService {
     this.options = options;
   }
 
-  get(type, provider, name, revision) {
+  get(packageCoordinates) {
 
   }
 }
 
 module.exports = {
   HarvesterService: HarvesterService
-}
+};

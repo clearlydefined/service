@@ -23,13 +23,13 @@ class NormalizerService {
     this.options = options;
   }
 
-  normalize(type, provider, name, revision, toolConfiguration, data) {
+  normalize(packageCoordinates, toolConfiguration, data) {
 
   }
 }
 
 class ScanCodeNormalizer {
-  normalize(type, provider, name, revision, toolConfiguration, data) {
+  normalize(packageCoordinates, toolConfiguration, data) {
     if (!data || !data.scancode_version) {
       throw new Error('Not valid ScanCode data');
     }
@@ -45,6 +45,7 @@ class ScanCodeNormalizer {
     }
 
     return {
+      package: packageCoordinates,
       copyright: {
         statements: Array.from(copyrightStatements),
         holders: Array.from(copyrightHolders),
@@ -84,4 +85,4 @@ class ScanCodeNormalizer {
 
 module.exports = {
   NormalizerService: NormalizerService
-}
+};

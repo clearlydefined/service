@@ -32,11 +32,11 @@ class SummarizerService {
     this.options = options;
   }
 
-  summarize(type, provider, name, revision, harvest) {
+  summarize(packageCoordinates, harvest) {
 
   }
 }
 
 module.exports = {
   SummarizerService: SummarizerService
-}
+};

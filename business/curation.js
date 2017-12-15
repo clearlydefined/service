@@ -15,22 +15,22 @@ class CurationService {
     this.options = options;
   }
 
-  addOrUpdate(requestId, type, provider, name, revision, patch) {
+  addOrUpdate(requestId, packageCoordinates, patch) {
     const github = Github.getClient(this.options.config.store.github);
     const owner = this.options.config.store.github.owner;
     const repo = this.options.config.store.github.repo;
     const branch = this.options.config.store.github.branch;
-    const curationPath = this._getCurationPath(type, provider, name, revision);
+    const curationPath = this._getCurationPath(packageCoordinates);
     let curationPathSha = null;
 
-    return this.get(type, provider, name, revision)
+    return this.get(packageCoordinates)
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
           package: {
-            type: type,
-            provider: provider,
-            name: name
+            type: packageCoordinates.type,
+            provider: packageCoordinates.provider,
+            name: packageCoordinates.name
           }
         });
 
@@ -45,7 +45,7 @@ class CurationService {
         }
 
         // add/update the patch for this revision
-        parsedContent.revisions[revision] = _.assign(parsedContent.revisions[revision] || {}, patch);
+        parsedContent.revisions[packageCoordinates.revision] = _.assign(parsedContent.revisions[packageCoordinates.revision] || {}, patch);
 
         // return the serialized YAML
         const updatedPatch = yaml.safeDump(parsedContent);
@@ -95,15 +95,15 @@ class CurationService {
         return github.pullRequests.create({
           owner: owner,
           repo: repo,
-          title: `${type.toLowerCase()}/${provider.toLowerCase()}/${name}/${revision}`,
+          title: `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`,
           head: `refs/heads/${requestId}`,
           base: branch
         })
       });
   }
 
-  get(type, provider, packageName, packageRevision) {
-    const curationPath = this._getCurationPath(type, provider, packageName, packageRevision);
+  get(packageCoordinates) {
+    const curationPath = this._getCurationPath(packageCoordinates);
     const owner = this.options.config.store.github.owner;
     const repo = this.options.config.store.github.repo;
     const branch = this.options.config.store.github.branch;
@@ -132,8 +132,8 @@ class CurationService {
       })
   }
 
-  _getCurationPath(type, provider, packageName) {
-    return `curations/${type.toLowerCase()}/${provider.toLowerCase()}/${packageName}.yaml`;
+  _getCurationPath(packageCoordinates) {
+    return `curations/${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}.yaml`;
   }
 }
 

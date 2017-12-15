@@ -6,8 +6,9 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
-const configMiddleware = require('./middleware/config');
 const requestId = require('request-id/express');
+
+const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
 const curations = require('./routes/curations');
