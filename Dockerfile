@@ -14,11 +14,11 @@ COPY . "${APPDIR}"
 # Protecting this credential isn't necessary as the SSH endpoint is on a 
 # private network only available to the portal
 ENV SSH_PASSWD "root:Docker!"
-RUN apt-get update \
-        && apt-get install -y --no-install-recommends dialog \
-        && apt-get update \
-  && apt-get install -y --no-install-recommends openssh-server \
+RUN apk update \
+  && apk install openssh \
   && echo "$SSH_PASSWD" | chpasswd 
+COPY init.sh /usr/local/bin/
+RUN chmod u+x /usr/local/bin/init.sh
 
 ENV PORT 3000
 EXPOSE 3000 2222
