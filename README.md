@@ -25,12 +25,32 @@ The service side of clearlydefined.io
 1. A curator reviews the diff and if they're happy with the end result merges the PR
 1. As an optimization post merge we could normalize, summarize, and patch the affected package and store the result, if we did this then GET /packages/... would simply read that cache rather than doing the work on the fly
 
+## Normalized Schema
+```
+package:
+  type: string
+  name: string
+  provider: string
+  revision: string
+source_location:
+  provider: string
+  url: string
+  revision: string
+  path: string
+copyright:
+  statements: string[]
+  holders: string[]
+  authors: string[]
+license:
+  expression: string
+```
+
 ## Endpoints
 ### Resolved
 TODO
 
 ### Curation
-#### PATCH /curations/:packageFormat/:provider/:packageName/:packageRevision
+#### PATCH /curations/:type/:provider/:namespace?/:name/:revision
 
 ##### Request Body
 ```
