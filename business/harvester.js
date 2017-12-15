@@ -16,7 +16,7 @@ class HarvesterService {
     this.options = options;
   }
 
-  get(type, provider, packageName, packageRevision) {
+  get(type, provider, name, revision) {
 
   }
 }

@@ -23,13 +23,13 @@ class NormalizerService {
     this.options = options;
   }
 
-  normalize(type, provider, packageName, packageRevision, configurationName, data) {
+  normalize(type, provider, name, revision, toolConfiguration, data) {
 
   }
 }
 
 class ScanCodeNormalizer {
-  normalize(type, provider, packageName, packageRevision, configurationName, data) {
+  normalize(type, provider, name, revision, toolConfiguration, data) {
     if (!data || !data.scancode_version) {
       throw new Error('Not valid ScanCode data');
     }

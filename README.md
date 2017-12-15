@@ -68,18 +68,18 @@ https://github.com/clearlydefined/curated-data
 
 #### Structure
 ```
-packageFormat (npm)
+type (npm)
   provider (npmjs.org)
-    packageName.yaml (redie)
+    name.yaml (redie)
 ```
 
 Note that the package name may contain a namespace portion, if it does, then the namespace will become a directory under provider and the packageName.yaml will be stored in the namespace directory. For example, a scoped NPM package would have a directory for the scope under provider, and then the packageName.yaml would be in the scope directory. Similarly, for Maven, the groupId would be the namespace, and the artifactId would be the packageName.
 
 ```
-packageFormat (git)
+type (git)
   provider (github.com)
     namespace (Microsoft)
-      packageName.yaml (redie)
+      name.yaml (redie)
 ```
 
 #### Format
@@ -93,12 +93,12 @@ This location is temporary, as harvested data grows will likely need to move it 
 
 #### Structure
 ```
-packageFormat
+type
   provider
-    packageName
-      packageRevision
-        configurationName - configurationNames always include tool name "ScanCode-2.1"
-          [tool output files]
+    name
+      revision
+        toolConfiguration
+          [native output files]
 ```
 
 #### Raw Notes
@@ -149,14 +149,14 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 1. Lossless
 1. JSON
 
-## Package Format Registry
+## Type Registry
 * git
 * maven
 * npm
 * nuget
 * rubygem
 
-## Origin Registry
+## Provider Registry
 * central.maven.org
 * github.com
 * npmjs.org
@@ -167,8 +167,10 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 * Fossology
 
 ## Terminology
-* provider - the provider of metadata (e.g. npmjs.org, github.com)
+* provider - the provider of metadata about the package (e.g. npmjs.org, github.com, nuget.org, myget.org)
 * revision - used instead of version because it's a superset and valid for source
+* tool configuration - a tuple used to describe the combination of a tool and a named configuration, at a minimum the named configuration should include the version of the tool, but it could also describe the combination of settings used, for example, ScanCode-2.2.1_deepscan and ScanCode-2.2.1_fastscan
+* type - the format of the package (e.g. git, maven, npm)
 
 ## TODO
 * Swagger to replace most of this doc

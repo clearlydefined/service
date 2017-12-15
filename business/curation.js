@@ -7,27 +7,30 @@ const yaml = require('js-yaml');
 const Github = require('../lib/github');
 
 // Responsible for managing curation patches in a store
+//
+// TODO:
+// Validate the schema of the curation patch
 class CurationService {
   constructor(options) {
     this.options = options;
   }
 
-  addOrUpdate(requestId, type, provider, packageName, packageRevision, curationPatch) {
+  addOrUpdate(requestId, type, provider, name, revision, patch) {
     const github = Github.getClient(this.options.config.store.github);
     const owner = this.options.config.store.github.owner;
     const repo = this.options.config.store.github.repo;
     const branch = this.options.config.store.github.branch;
-    const curationPath = this._getCurationPath(type, provider, packageName, packageRevision);
+    const curationPath = this._getCurationPath(type, provider, name, revision);
     let curationPathSha = null;
 
-    return this.get(type, provider, packageName, packageRevision)
+    return this.get(type, provider, name, revision)
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
           package: {
             type: type,
             provider: provider,
-            name: packageName
+            name: name
           }
         });
 
@@ -42,7 +45,7 @@ class CurationService {
         }
 
         // add/update the patch for this revision
-        parsedContent.revisions[packageRevision] = _.assign(parsedContent.revisions[packageRevision] || {}, curationPatch);
+        parsedContent.revisions[revision] = _.assign(parsedContent.revisions[revision] || {}, patch);
 
         // return the serialized YAML
         const updatedPatch = yaml.safeDump(parsedContent);
@@ -92,7 +95,7 @@ class CurationService {
         return github.pullRequests.create({
           owner: owner,
           repo: repo,
-          title: `${type.toLowerCase()}/${provider.toLowerCase()}/${packageName}/${packageRevision}`,
+          title: `${type.toLowerCase()}/${provider.toLowerCase()}/${name}/${revision}`,
           head: `refs/heads/${requestId}`,
           base: branch
         })

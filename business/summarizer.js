@@ -19,7 +19,7 @@
 // does have the option of combining the results if it makes sense, for example, it could choose to
 // merge the lists of copyright authors.
 //
-// harvestedData should have the form:
+// harvest should have the form:
 // {
 // toolC-2.0: { /* normalized schema */ },
 // toolA: { /* normalized schema */ } 
@@ -32,7 +32,7 @@ class SummarizerService {
     this.options = options;
   }
 
-  summarize(type, provider, packageName, packageRevision, harvestedData) {
+  summarize(type, provider, name, revision, harvest) {
 
   }
 }
