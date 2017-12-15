@@ -11,13 +11,17 @@ router.patch('/:type/:provider/:namespace?/:name/:revision', function (req, res,
   const packageCoordinates = utils.getPackageCoordinates(req);
   const branchName = req['requestId'];
   const curation = new Curation.CurationService({config: req.app.locals.config.curation});
-  curation.addOrUpdate(branchName, packageCoordinates, req.body)
-    .then(result => {
-      res.status(200).send(result);
-    })
-    .catch(err => {
-      throw err;
-    });
+  try {
+    await curation.addOrUpdate(branchName, packageCoordinates, req.body)
+      .then(result => {
+        res.status(200).send(result);
+      })
+      .catch(err => {
+        throw err;
+      });
+  } catch(err) {
+    next(err);
+  }
 });
 
 module.exports = router;
