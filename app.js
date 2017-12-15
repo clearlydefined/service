@@ -11,6 +11,7 @@ const requestId = require('request-id/express');
 
 const index = require('./routes/index');
 const curations = require('./routes/curations');
+const harvest = require('./routes/harvest');
 const packages = require('./routes/packages');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(configMiddleware);
 
 app.use('/', index);
 app.use('/curations', curations);
+app.use('/harvest', harvest);
 app.use('/packages', packages);
 
 // catch 404 and forward to error handler

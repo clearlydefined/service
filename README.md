@@ -9,6 +9,22 @@ The service side of clearlydefined.io
    * CLEARLY_DEFINED_CURATION_GITHUB_TOKEN=[personal access token with public_repo scope]
 1. `npm install && npm start`
 
+## System Flow
+1. Scan plugin checks if it has already harvested data for a package by calling GET /harvest/...
+1. If it's already harvested then it stops processing
+1. If not it performs the scan and uploads the resulting files by calling PUT /harvest/...
+1. User visits the site and looks up information about a package which calls GET /package/...
+   1. This gets the harvested data for a package
+   1. It then normalized the harvested data to the normalized schema
+   1. It then runs the summarizer to condense the normalized schemas into a single normalized schema for the package
+   1. It then loads any curation patch that applies to the package and patches the normalized schema and returns the end result
+1. They notice an error and edit a patch, a preview of the result of applying the patch is displayed by calling POST /package/.../preview with the proposed patch
+1. They submit the patch which calls PATCH /curations/...
+1. A pull request is initiated and a build process runs against the patch
+1. The build gets the normalized schema for each of the patches in the pull request by calling GET /package/... and also a preview of the result by calling POST /package/.../preview and puts a diff in the PR for a curator to review
+1. A curator reviews the diff and if they're happy with the end result merges the PR
+1. As an optimization post merge we could normalize, summarize, and patch the affected package and store the result, if we did this then GET /package/... would simply read that cache rather than doing the work on the fly
+
 ## Endpoints
 ### Resolved
 TODO

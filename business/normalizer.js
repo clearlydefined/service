@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-// Responsible for converting from a tool-specific format to a common schema:
+// Responsible for converting from a tool-specific format to a normalized schema:
 //   package:
 //     type: string
 //     name: string
