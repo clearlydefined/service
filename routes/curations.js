@@ -7,7 +7,7 @@ const Curation = require('../business/curation');
 const utils = require('../lib/utils');
 
 // Creates or updates a patch for a specific revision of a package - typically used by a UI that enables interactive curation
-router.patch('/:type/:provider/:namespace?/:name/:revision', function (req, res, next) {
+router.patch('/:type/:provider/:namespace?/:name/:revision', async (req, res, next) => {
   const packageCoordinates = utils.getPackageCoordinates(req);
   const branchName = req['requestId'];
   const curation = new Curation.CurationService({config: req.app.locals.config.curation});
