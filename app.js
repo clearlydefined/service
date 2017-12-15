@@ -7,7 +7,9 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
+const basicAuth = require('express-basic-auth')
 
+const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
@@ -22,6 +24,12 @@ app.use(requestId());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(configMiddleware);
+
+app.use(basicAuth({
+  users: {
+    'token': config.auth.apiToken
+  }
+}));
 
 app.use('/', index);
 app.use('/curations', curations);
