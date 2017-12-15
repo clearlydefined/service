@@ -24,9 +24,11 @@ class CurationService {
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
-          type: type,
-          provider: provider,
-          name: packageName
+          package: {
+            type: type,
+            provider: provider,
+            name: packageName
+          }
         });
 
         // remove and re-add the revisions property so it appears after the metadata properties (and default it to empty)

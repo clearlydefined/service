@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 // Responsible for converting from a tool-specific format to a common schema:
+//   package:
+//     type: string
+//     name: string
+//     provider: string
+//     revision: string
 //   source_location:
 //     provider: string
 //     url: string

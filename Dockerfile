@@ -15,7 +15,7 @@ COPY . "${APPDIR}"
 # private network only available to the portal
 ENV SSH_PASSWD "root:Docker!"
 RUN apk update \
-  && apk install openssh \
+  && apk add openssh \
   && echo "$SSH_PASSWD" | chpasswd 
 COPY init.sh /usr/local/bin/
 RUN chmod u+x /usr/local/bin/init.sh
