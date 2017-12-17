@@ -13,10 +13,20 @@ const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
-const curations = require('./routes/curations');
-const Harvester = require('./business/harvester');
-const harvest = require('./routes/harvest')(new Harvester(config.harvest.store.azblob));
-const packages = require('./routes/packages');
+
+const harvestProvider = config.harvest.store.provider;
+const harvestService = require(`./providers/harvest/${harvestProvider}`)(config.harvest.store[harvestProvider]);
+const harvest = require('./routes/harvest')(harvestService);
+
+const summaryService = require('./business/summarizer')(config.summary);
+
+const aggregatorService = require('./business/aggregator')(config.aggregator);
+
+const curationProvider = config.curation.store.provider;
+const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
+const curations = require('./routes/curations')(curationService);
+
+const packages = require('./routes/packages')(harvestService, summaryService, aggregatorService, curationService);
 
 const app = express();
 app.use(helmet());
