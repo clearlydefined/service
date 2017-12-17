@@ -14,7 +14,8 @@ const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
 const curations = require('./routes/curations');
-const harvest = require('./routes/harvest');
+const Harvester = require('./business/harvester');
+const harvest = require('./routes/harvest')(new Harvester(config.harvest.store.azblob));
 const packages = require('./routes/packages');
 
 const app = express();
@@ -22,9 +23,7 @@ app.use(helmet());
 app.use(requestId());
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(configMiddleware);
-
 app.use(basicAuth({
   users: {
     'token': config.auth.apiToken
@@ -32,8 +31,9 @@ app.use(basicAuth({
 }));
 
 app.use('/', index);
-app.use('/curations', curations);
 app.use('/harvest', harvest);
+app.use(bodyParser.json());
+app.use('/curations', curations);
 app.use('/packages', packages);
 
 // catch 404 and forward to error handler

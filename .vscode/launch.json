@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "CD service",
             "program": "${workspaceFolder}/bin/www"
         }
     ]
