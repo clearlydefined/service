@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-// Responsible for converting from a tool-specific format to a normalized schema:
+// Responsible for summarizing tool-specific format to a normalized summary schema:
 //   package:
 //     type: string
 //     name: string
@@ -18,40 +18,39 @@
 //     authors: string[]
 //   license:
 //     expression: string
-class NormalizerService {
+
+class ScanCodeSummarizer {
+
   constructor(options) {
     this.options = options;
   }
 
-  normalize(packageCoordinates, toolConfiguration, data) {
-
-  }
-}
-
-class ScanCodeNormalizer {
-  normalize(packageCoordinates, toolConfiguration, data) {
-    if (!data || !data.scancode_version) {
+  summarize(packageCoordinates, filter, data) {
+    data = data ? data['output.json'] : null;
+    if (!data || !data.scancode_version)
       throw new Error('Not valid ScanCode data');
-    }
 
     const copyrightStatements = new Set();
     const copyrightHolders = new Set();
     const copyrightAuthors = new Set();
     const licenseExpressions = new Set();
 
-    for (let file of data.files) {
+    const filteredFiles = data.files.filter(file => filter(file.path));
+    for (let file of filteredFiles) {
       this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key });
       this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);
     }
 
     return {
       package: packageCoordinates,
-      copyright: {
-        statements: Array.from(copyrightStatements),
-        holders: Array.from(copyrightHolders),
-        authors: Array.from(copyrightAuthors)
-      },
-      license: this._licenseSetToExpression(licenses)
+      licensed: {
+        copyright: {
+          statements: Array.from(copyrightStatements).sort(),
+          holders: Array.from(copyrightHolders).sort(),
+          authors: Array.from(copyrightAuthors).sort()
+        },
+        license: this._licenseSetToExpression(licenseExpressions)
+      }
     }
   }
 
@@ -60,9 +59,8 @@ class ScanCodeNormalizer {
   }
 
   _normalizeCopyrights(copyrights, statements, holders, authors) {
-    if (!copyrights || !copyrights.length) {
+    if (!copyrights || !copyrights.length)
       return;
-    }
     for (let copyright of copyrights) {
       this._addArrayToSet(copyright.statements, statements);
       this._addArrayToSet(copyright.holders, holders);
@@ -71,18 +69,14 @@ class ScanCodeNormalizer {
   }
 
   _addArrayToSet(array, set, valueExtractor) {
-    if (!array || !array.length) {
+    if (!array || !array.length)
       return;
-    }
 
     valueExtractor = valueExtractor || ((value) => value);
-
     for (let entry of array) {
       set.add(valueExtractor(entry));
     }
   }
 }
 
-module.exports = {
-  NormalizerService: NormalizerService
-};
+module.exports = (options) => new ScanCodeSummarizer(options);

@@ -13,18 +13,27 @@ const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
-const curations = require('./routes/curations');
-const harvest = require('./routes/harvest');
-const packages = require('./routes/packages');
+
+const summaryService = require('./business/summarizer')(config.summary);
+
+const harvestProvider = config.harvest.store.provider;
+const harvestService = require(`./providers/harvest/${harvestProvider}`)(config.harvest.store[harvestProvider], summaryService);
+const harvest = require('./routes/harvest')(harvestService, summaryService);
+
+const aggregatorService = require('./business/aggregator')(config.aggregator);
+
+const curationProvider = config.curation.store.provider;
+const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
+const curations = require('./routes/curations')(curationService);
+
+const packages = require('./routes/packages')(harvestService, summaryService, aggregatorService, curationService);
 
 const app = express();
 app.use(helmet());
 app.use(requestId());
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(configMiddleware);
-
 app.use(basicAuth({
   users: {
     'token': config.auth.apiToken
@@ -32,8 +41,9 @@ app.use(basicAuth({
 }));
 
 app.use('/', index);
-app.use('/curations', curations);
 app.use('/harvest', harvest);
+app.use(bodyParser.json());
+app.use('/curations', curations);
 app.use('/packages', packages);
 
 // catch 404 and forward to error handler

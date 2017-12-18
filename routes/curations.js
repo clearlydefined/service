@@ -2,26 +2,24 @@
 // SPDX-License-Identifier: MIT
 const express = require('express');
 const router = express.Router();
-
-const Curation = require('../business/curation');
 const utils = require('../lib/utils');
 
-// Creates or updates a patch for a specific revision of a package - typically used by a UI that enables interactive curation
-router.patch('/:type/:provider/:namespace?/:name/:revision', async (req, res, next) => {
-  const packageCoordinates = utils.getPackageCoordinates(req);
-  const branchName = req['requestId'];
-  const curation = new Curation.CurationService({config: req.app.locals.config.curation});
-  try {
-    await curation.addOrUpdate(branchName, packageCoordinates, req.body)
-      .then(result => {
-        res.status(200).send(result);
-      })
-      .catch(err => {
-        throw err;
-      });
-  } catch(err) {
-    next(err);
-  }
+// Get an existing patch for a specific revision of a package
+router.get('/:type/:provider/:namespace?/:name/:revision', async (request, response, next) => {
+  const packageCoordinates = utils.getPackageCoordinates(request);
+  return curationService.get(packageCoordinates).then(result =>
+    response.status(200).send(result));
 });
 
-module.exports = router;
+router.patch('/:type/:provider/:namespace?/:name/:revision', async (request, response, next) => {
+  const packageCoordinates = utils.getPackageCoordinates(request);
+  return curationService.addOrUpdate(packageCoordinates, request.body).then(result =>
+    response.sendStatus(200));
+});
+
+function setup(service) {
+  curationService = service;
+  return router;
+}
+
+module.exports = setup;
