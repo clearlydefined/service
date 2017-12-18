@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 const express = require('express');
 const router = express.Router();
 const minimatch = require('minimatch');
@@ -32,7 +33,7 @@ function getFilter(packageCoordinates) {
   return harvestService.get(descriptionCoordinates)
     .then(rawDescription =>
       curationService.curate(descriptionCoordinates, rawDescription)
-        .then(description => buildFilter(description.dimensions)))
+        .then(description => buildFilter(description.described.dimensions)))
     .catch(error => null);
 }
 

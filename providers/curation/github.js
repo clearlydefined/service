@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 const _ = require('underscore');
 const base64 = require('base-64');
+const extend = require('extend');
+const moment = require('moment');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
-const moment = require('moment');
 
 // Responsible for managing curation patches in a store
 //
@@ -115,7 +117,8 @@ class GitHubCurationService {
 
   curate(packageCoordinates, summarized) {
     return this.get(packageCoordinates).then(curation => {
-      return { ...summarized, ...curation };
+      const revision = curation.revisions[packageCoordinates.revision];
+      return revision ? extend(true, {}, summarized, revision) : summarized;
     });
   }
 

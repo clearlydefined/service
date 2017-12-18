@@ -43,12 +43,14 @@ class ScanCodeSummarizer {
 
     return {
       package: packageCoordinates,
-      copyright: {
-        statements: Array.from(copyrightStatements).sort(),
-        holders: Array.from(copyrightHolders).sort(),
-        authors: Array.from(copyrightAuthors).sort()
-      },
-      license: this._licenseSetToExpression(licenseExpressions)
+      licensed: {
+        copyright: {
+          statements: Array.from(copyrightStatements).sort(),
+          holders: Array.from(copyrightHolders).sort(),
+          authors: Array.from(copyrightAuthors).sort()
+        },
+        license: this._licenseSetToExpression(licenseExpressions)
+      }
     }
   }
 
