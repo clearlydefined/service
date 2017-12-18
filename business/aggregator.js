@@ -28,28 +28,30 @@
 //
 // The function should return a summary schema.
 //
+
+const extend = require('extend');
+const utils = require('../lib/utils');
+
 class AggregationService {
   constructor(options) {
     this.options = options;
   }
 
   process(packageCoordinates, summarized) {
-    // TODO for now just return the results for the latest version of the first tool.
-    const tool = this.options.precedence[0][0];
-    return summarized[tool];
+    let result = {};
+    this.getPrecedenceOrder().forEach(tool =>
+      extend(true, result, utils.findData(tool, summarized)));
+    delete result.package.toolConfiguration;
+    delete result.package.file;
+    return result;
   }
 
-  // search the summarized data for an entry that best matches the given tool spec
-  findData(toolSpec, summarized) {
-    const ordered = Object.getOwnPropertyNames(summarized)
-      .filter(name => name.startsWith(toolSpec))
-      .sort((spec1, spec2) => this.getSpecVersion(spec1) - this.getSpecVersion(spec2));
-    return ordered.length ? summarize[ordered[0]] : null;
-  }
-
-  getSpecVersion(spec) {
-    const index = spec.lastIndexOf('--');
-    return index === -1 ? "0" : spec.substring(index);
+  getPrecedenceOrder() {
+    const result = []
+    this.options.precedence.reverse().forEach(group =>
+      group.reverse().forEach(tool => result.push(tool))
+    );
+    return result;
   }
 }
 

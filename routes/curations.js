@@ -4,8 +4,6 @@ const express = require('express');
 const router = express.Router();
 const utils = require('../lib/utils');
 
-let curationService = null
-
 // Get an existing patch for a specific revision of a package
 router.get('/:type/:provider/:namespace?/:name/:revision', async (request, response, next) => {
   const packageCoordinates = utils.getPackageCoordinates(request);

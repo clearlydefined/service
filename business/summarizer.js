@@ -27,12 +27,17 @@ class Summarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, data) {
-    return Object.getOwnPropertyNames(data).reduce((result, name) => {
-      const value = data[name];
-      const tool = name.substring(0, name.indexOf('--') - 1) || name;
-      const summarizer = summarizers[tool];
-      result[name] = summarizers.summarize(packageCoordinates, null, value)
+  summarize(packageCoordinates, toolConfiguration, filter, data) {
+    const toolName = (toolConfiguration.substring(0, toolConfiguration.indexOf('--')) || toolConfiguration).toLowerCase();
+    if (!summarizers[toolName])
+      return data;
+    const summarizer = summarizers[toolName](this.options[toolName] || {});
+    return summarizer.summarize(packageCoordinates, filter, data);
+  }
+
+  summarizeAll(packageCoordinates, filter, data) {
+    return Object.getOwnPropertyNames(data).reduce((result, toolConfiguration) => {
+      result[toolConfiguration] = this.summarize(packageCoordinates, toolConfiguration, filter, data[toolConfiguration]);
       return result;
     }, {});
   }

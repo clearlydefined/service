@@ -14,11 +14,11 @@ const configMiddleware = require('./middleware/config');
 
 const index = require('./routes/index');
 
-const harvestProvider = config.harvest.store.provider;
-const harvestService = require(`./providers/harvest/${harvestProvider}`)(config.harvest.store[harvestProvider]);
-const harvest = require('./routes/harvest')(harvestService);
-
 const summaryService = require('./business/summarizer')(config.summary);
+
+const harvestProvider = config.harvest.store.provider;
+const harvestService = require(`./providers/harvest/${harvestProvider}`)(config.harvest.store[harvestProvider], summaryService);
+const harvest = require('./routes/harvest')(harvestService, summaryService);
 
 const aggregatorService = require('./business/aggregator')(config.aggregator);
 

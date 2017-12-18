@@ -25,7 +25,8 @@ class ScanCodeSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, toolConfiguration, data) {
+  summarize(packageCoordinates, filter, data) {
+    data = data ? data['output.json'] : null;
     if (!data || !data.scancode_version)
       throw new Error('Not valid ScanCode data');
 
@@ -34,7 +35,8 @@ class ScanCodeSummarizer {
     const copyrightAuthors = new Set();
     const licenseExpressions = new Set();
 
-    for (let file of data.files) {
+    const filteredFiles = data.files.filter(file => filter(file.path));
+    for (let file of filteredFiles) {
       this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key });
       this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);
     }
@@ -42,11 +44,11 @@ class ScanCodeSummarizer {
     return {
       package: packageCoordinates,
       copyright: {
-        statements: Array.from(copyrightStatements),
-        holders: Array.from(copyrightHolders),
-        authors: Array.from(copyrightAuthors)
+        statements: Array.from(copyrightStatements).sort(),
+        holders: Array.from(copyrightHolders).sort(),
+        authors: Array.from(copyrightAuthors).sort()
       },
-      license: this._licenseSetToExpression(licenses)
+      license: this._licenseSetToExpression(licenseExpressions)
     }
   }
 

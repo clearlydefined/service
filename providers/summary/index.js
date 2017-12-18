@@ -2,5 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 module.exports = {
-  scancode: require('./scancode')
+    scancode: require('./scancode'),
+    clearlydescribed: require('./clearlydescribed')
 };

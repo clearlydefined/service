@@ -13,10 +13,15 @@ const moment = require('moment');
 // toolA: { /* tool-specific data format },
 // toolB--2.0: { /* tool-specific data format }
 // }
+
+const resultOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(result);
+const responseOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(response);
+
 class AzBlobHarvesterService {
-  constructor(options) {
+  constructor(options, summarizerService) {
     this.options = options;
     this.containerName = options.containerName;
+    this.summarizerService = summarizerService;
   }
 
   get blobService() {
@@ -27,47 +32,43 @@ class AzBlobHarvesterService {
   }
 
   list(packageCoordinates) {
+    const name = utils.getPathFromCoordinates(packageCoordinates);
     return new Promise((resolve, reject) => {
-      const name = utils.getPathFromCoordinates(packageCoordinates);
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, (error, result, response) => {
-        error ? reject(error) : resolve(this.buildList(result));
-      })
-    });
-  }
-
-  buildList(result) {
-    return result.entries.map(entry => {
-      return {
-        name: entry.name.substr(entry.name.lastIndexOf('/') + 1),
-        lastModified: moment(entry.lastModified).format(),
-        etag: entry.etag
-      }
-    });
+      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
+    }).then(result =>
+      result.entries.map(entry => {
+        return {
+          name: entry.name.substr(entry.name.lastIndexOf('/') + 1),
+          lastModified: moment(entry.lastModified).format(),
+          etag: entry.etag
+        }
+      }));
   }
 
   get(packageCoordinates, stream) {
-    return new Promise((resolve, reject) => {
-      const name = utils.getPathFromCoordinates(packageCoordinates);
-      this.blobService.getBlobToStream(this.containerName, name, stream, (error, result, response) => {
-        error ? reject(error) : resolve(response);
+    const name = utils.getPathFromCoordinates(packageCoordinates);
+    if (stream)
+      return new Promise((resolve, reject) => {
+        this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject));
       });
-    })
+    return new Promise((resolve, reject) => {
+      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
+    }).then(result =>
+      JSON.parse(result));
   }
 
   getAll(packageCoordinates) {
     const name = utils.getPathFromCoordinates(packageCoordinates);
     const list = new Promise((resolve, reject) => {
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, (error, result, response) => {
-        error ? reject(error) : resolve(result);
-      })
+      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
     });
     const contents = list.then(files => {
       return Promise.all(files.entries.map(file => {
         return new Promise((resolve, reject) => {
-          this.blobService.getBlobToText(this.containerName, file.name, (error, result, response) => {
-            error ? reject(error) : resolve({ name: file.name, content: JSON.parse(result) });
-          });
-        })
+          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
+        }).then(result => {
+          return { name: file.name, content: JSON.parse(result) }
+        });
       }));
     });
     return contents.then(entries => {
@@ -85,11 +86,9 @@ class AzBlobHarvesterService {
   store(packageCoordinates, stream) {
     return new Promise((resolve, reject) => {
       const name = utils.getPathFromCoordinates(packageCoordinates);
-      stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, (error, result, response) => {
-        error ? reject(error) : resolve(response);
-      }));
+      stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
     })
   }
 }
 
-module.exports = (config) => new AzBlobHarvesterService(config);
+module.exports = (config, summarizerService) => new AzBlobHarvesterService(config, summarizerService);

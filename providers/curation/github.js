@@ -113,6 +113,12 @@ class GitHubCurationService {
       })
   }
 
+  curate(packageCoordinates, summarized) {
+    return this.get(packageCoordinates).then(curation => {
+      return { ...summarized, ...curation };
+    });
+  }
+
   _getPrTitle(packageCoordinates) {
     return `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`;
   }
