@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
@@ -16,9 +17,11 @@ const index = require('./routes/index');
 
 const summaryService = require('./business/summarizer')(config.summary);
 
-const harvestProvider = config.harvest.store.provider;
-const harvestService = require(`./providers/harvest/${harvestProvider}`)(config.harvest.store[harvestProvider], summaryService);
-const harvest = require('./routes/harvest')(harvestService, summaryService);
+const harvestStoreProvider = config.harvest.store.provider;
+const harvestStore = require(`./providers/harvest/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider], summaryService);
+const harvesterProvider = config.harvest.harvester.provider;
+const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider]);
+const harvest = require('./routes/harvest')(harvester, harvestStore, summaryService);
 
 const aggregatorService = require('./business/aggregator')(config.aggregator);
 
@@ -26,9 +29,11 @@ const curationProvider = config.curation.store.provider;
 const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
 const curations = require('./routes/curations')(curationService);
 
-const packages = require('./routes/packages')(harvestService, summaryService, aggregatorService, curationService);
+const packages = require('./routes/packages')(harvestStore, summaryService, aggregatorService, curationService);
 
 const app = express();
+app.use(cors());
+app.options('*', cors());
 app.use(helmet());
 app.use(requestId());
 
@@ -36,7 +41,8 @@ app.use(logger('dev'));
 app.use(configMiddleware);
 app.use(basicAuth({
   users: {
-    'token': config.auth.apiToken
+    'token': config.auth.apiToken,
+    'clearly': config.auth.password
   }
 }));
 

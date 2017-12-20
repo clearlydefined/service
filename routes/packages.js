@@ -48,6 +48,11 @@ router.post('/:type/:provider/:namespace?/:name/:revision/preview', function (re
   const packageCoordinates = utils.getPackageCoordinates(request);
 });
 
+let harvestService;
+let summaryService;
+let aggregationService;
+let curationService;
+
 function setup(harvest, summary, aggregator, curation) {
   harvestService = harvest;
   summaryService = summary;
