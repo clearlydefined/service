@@ -7,7 +7,7 @@ const utils = require('../lib/utils');
 const bodyParser = require('body-parser');
 
 // Gets a given harvested file
-router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)/:file?', (request, response, next) => {
+router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]+--[^/]+)/:file?', (request, response, next) => {
   const packageCoordinates = utils.getPackageCoordinates(request);
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
@@ -60,7 +60,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision', (request, response, n
   if (!['streamed', 'raw'].includes(request.query.form.toLowerCase())) {
     result = result.then(raw => {
       return getFilter(packageCoordinates).then(filter =>
-        summarizeService.summarizeAll(packageCoordinates, packageCoordinate.toolConfiguration, filter, raw));
+        summarizeService.summarizeAll(packageCoordinates, packageCoordinates.toolConfiguration, filter, raw));
     });
   }
   return result.then(final =>
@@ -68,7 +68,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision', (request, response, n
 });
 
 // Puts harvested file
-router.put('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)/:file', (request, response, next) => {
+router.put('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]+--[^/]+)/:file', (request, response, next) => {
   const packageCoordinates = utils.getPackageCoordinates(request);
   return harvestStore.store(packageCoordinates, request).then(result =>
     response.sendStatus(201));

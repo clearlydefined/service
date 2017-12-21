@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 const express = require('express');
-const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
-const basicAuth = require('express-basic-auth')
+const basicAuth = require('express-basic-auth');
 
 const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');

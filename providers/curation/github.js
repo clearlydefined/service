@@ -21,7 +21,7 @@ class GitHubCurationService {
     if (!patch.patch)
       throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?');
     const github = Github.getClient(this.options);
-    const { owner, repo, branch } = this.options
+    const { owner, repo, branch } = this.options;
     const path = this._getCurationPath(packageCoordinates);
     const prBranch = this._getBranchName(packageCoordinates);
     let curationPathSha = null;
@@ -57,7 +57,7 @@ class GitHubCurationService {
         return github.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
           .then(masterBranch => {
             const sha = masterBranch.data.commit.sha;
-            return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
+            return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha });
           })
           .then(ref => {
             return updatedPatch;
@@ -92,8 +92,8 @@ class GitHubCurationService {
           body: patch.description,
           head: `refs/heads/${prBranch}`,
           base: branch
-        })
-      })
+        });
+      });
   }
 
   get(packageCoordinates) {
@@ -104,7 +104,7 @@ class GitHubCurationService {
     return github.repos.getContent({ owner, repo, ref: branch, path: curationPath })
       .then(contentResponse => {
         const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
-        // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch 
+        // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
         Object.defineProperty(content, 'origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
         return content;
       })

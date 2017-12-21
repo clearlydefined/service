@@ -11,7 +11,7 @@
 // ]
 //
 // ***** TODO don't understand this logic  *****
-// Multiple tools in a single array-index (e.g. toolB-*) are mutually exclusive and you should only 
+// Multiple tools in a single array-index (e.g. toolB-*) are mutually exclusive and you should only
 // use results from the first one that, for example, if there was toolB-2.1 and toolB-2.0 results
 // you would only consider the toolB-2.0 results.
 //
@@ -23,7 +23,7 @@
 // harvest should have the form:
 // {
 // toolC--2.0: { /* normalized summary schema */ },
-// toolA: { /* normalized summary schema */ } 
+// toolA: { /* normalized summary schema */ }
 // }
 //
 // The function should return a summary schema.
@@ -47,7 +47,7 @@ class AggregationService {
   }
 
   getPrecedenceOrder() {
-    const result = []
+    const result = [];
     this.options.precedence.reverse().forEach(group =>
       group.reverse().forEach(tool => result.push(tool))
     );

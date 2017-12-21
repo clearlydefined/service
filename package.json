@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "node node_modules/eslint/bin/eslint.js .",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -25,5 +26,8 @@
     "serialize-error": "^2.1.0",
     "underscore": "^1.8.3",
     "vso-node-api": "^6.2.8-preview"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1"
   }
 }
