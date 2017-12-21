@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const minimatch = require('minimatch');
 const utils = require('../lib/utils');
+const bodyParser = require('body-parser');
 
 // Gets a given harvested file
 router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)/:file?', function (request, response, next) {
@@ -11,13 +12,13 @@ router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw':
-      return harvestService.get(packageCoordinates, response).then(result => {
+      return harvestStore.get(packageCoordinates, response).then(result => {
         if (!response.headersSent)
           // some harvest services will stream on the response and trigger sending
           response.status(200).send(result)
       });
     case 'summary':
-      return harvestService.get(packageCoordinates).then(raw => {
+      return harvestStore.get(packageCoordinates).then(raw => {
         return getFilter(packageCoordinates).then(filter => {
           raw = request.params.file ? { [request.params.file]: raw } : raw;
           return summarizeService.summarize(packageCoordinates, packageCoordinates.toolConfiguration, filter, raw);
@@ -25,7 +26,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/
       }).then(result =>
         response.status(200).send(result));
     case 'list':
-      return harvestService.list(packageCoordinates).then(result =>
+      return harvestStore.list(packageCoordinates).then(result =>
         response.status(200).send(result));
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
@@ -34,20 +35,20 @@ router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/
 
 function getFilter(packageCoordinates) {
   const descriptionCoordinates = { ...packageCoordinates, toolConfiguration: 'ClearlyDescribed--0', file: 'output.json' };
-  return harvestService.get(descriptionCoordinates)
+  return harvestStore.get(descriptionCoordinates)
     .then(description => buildFilter(description.dimensions))
     .catch(error => null);
 }
 
 function buildFilter(dimensions) {
-  const list = [ ...dimensions.test, ...dimensions.dev, ...dimensions.data];
+  const list = [...dimensions.test, ...dimensions.dev, ...dimensions.data];
   return file => !list.some(filter => minimatch(file, filter));
 }
 
 // Gets a listing of harvested files in the system for a given tool configuration
 // router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)', function (request, response, next) {
 //   const packageCoordinates = utils.getPackageCoordinates(request);
-//   return harvestService.list(packageCoordinates).then(result =>
+//   return harvestStore.list(packageCoordinates).then(result =>
 //     response.status(200).send(result));
 // });
 
@@ -55,7 +56,7 @@ function buildFilter(dimensions) {
 router.get('/:type/:provider/:namespace?/:name/:revision', function (request, response, next) {
   const packageCoordinates = utils.getPackageCoordinates(request);
 
-  let result = harvestService.getAll(packageCoordinates);
+  let result = harvestStore.getAll(packageCoordinates);
   if (!['streamed', 'raw'].includes(request.query.form.toLowerCase())) {
     result = result.then(raw => {
       return getFilter(packageCoordinates).then(filter =>
@@ -69,12 +70,23 @@ router.get('/:type/:provider/:namespace?/:name/:revision', function (request, re
 // Puts harvested file
 router.put('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)/:file', function (request, response, next) {
   const packageCoordinates = utils.getPackageCoordinates(request);
-  return harvestService.store(packageCoordinates, request).then(result =>
-    response.sendStatus(201))
+  return harvestStore.store(packageCoordinates, request).then(result =>
+    response.sendStatus(201));
 });
 
-function setup(harvest, summarizer) {
-  harvestService = harvest;
+// Post a component to be harvested
+router.post('/', bodyParser.raw({ type: "*/*" }), function (request, response, next) {
+  return harvestService.harvest(request.body).then(result =>
+    response.sendStatus(201));
+});
+
+let harvestService;
+let harvestStore;
+let summarizeService;
+
+function setup(harvester, store, summarizer) {
+  harvestService = harvester;
+  harvestStore = store;
   summarizeService = summarizer;
   return router;
 }

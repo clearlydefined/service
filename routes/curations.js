@@ -17,6 +17,8 @@ router.patch('/:type/:provider/:namespace?/:name/:revision', async (request, res
     response.sendStatus(200));
 });
 
+let curationService;
+
 function setup(service) {
   curationService = service;
   return router;

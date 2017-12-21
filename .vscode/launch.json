@@ -8,7 +8,10 @@
             "type": "node",
             "request": "launch",
             "name": "CD service",
-            "program": "${workspaceFolder}/bin/www"
+            "program": "${workspaceFolder}/bin/www",
+            "env": {
+                "port": "5000"
+            }
         }
     ]
 }
