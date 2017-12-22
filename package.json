@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -25,5 +26,10 @@
     "serialize-error": "^2.1.0",
     "underscore": "^1.8.3",
     "vso-node-api": "^6.2.8-preview"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.13.1",
+    "mocha": "^4.0.1"
   }
 }

@@ -37,7 +37,7 @@ class ScanCodeSummarizer {
 
     const filteredFiles = data.files.filter(file => filter(file.path));
     for (let file of filteredFiles) {
-      this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key });
+      this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key; });
       this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);
     }
 
@@ -51,7 +51,7 @@ class ScanCodeSummarizer {
         },
         license: this._licenseSetToExpression(licenseExpressions)
       }
-    }
+    };
   }
 
   _licenseSetToExpression(licenses) {

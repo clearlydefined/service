@@ -25,23 +25,23 @@ class AzBlobHarvesterService {
   }
 
   get blobService() {
-    const blobService = azure.createBlobService(this.options.connectionString).withFilter(new azure.LinearRetryPolicyFilter())
-    Object.defineProperty(this, "blobService", { value: blobService, writable: false, configurable: true });
+    const blobService = azure.createBlobService(this.options.connectionString).withFilter(new azure.LinearRetryPolicyFilter());
+    Object.defineProperty(this, 'blobService', { value: blobService, writable: false, configurable: true });
     this.blobService.createContainerIfNotExists(this.containerName, () => { });
-    return this.blobService
+    return this.blobService;
   }
 
   list(packageCoordinates) {
     const name = utils.getPathFromCoordinates(packageCoordinates);
     return new Promise((resolve, reject) => {
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
+      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject));
     }).then(result =>
       result.entries.map(entry => {
         return {
           name: entry.name.substr(entry.name.lastIndexOf('/') + 1),
           lastModified: moment(entry.lastModified).format(),
           etag: entry.etag
-        }
+        };
       }));
   }
 
@@ -52,7 +52,7 @@ class AzBlobHarvesterService {
         this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject));
       });
     return new Promise((resolve, reject) => {
-      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
+      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject));
     }).then(result =>
       JSON.parse(result));
   }
@@ -60,14 +60,14 @@ class AzBlobHarvesterService {
   getAll(packageCoordinates) {
     const name = utils.getPathFromCoordinates(packageCoordinates);
     const list = new Promise((resolve, reject) => {
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
+      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject));
     });
     const contents = list.then(files => {
       return Promise.all(files.entries.map(file => {
         return new Promise((resolve, reject) => {
-          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
+          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject));
         }).then(result => {
-          return { name: file.name, content: JSON.parse(result) }
+          return { name: file.name, content: JSON.parse(result) };
         });
       }));
     });
@@ -79,15 +79,15 @@ class AzBlobHarvesterService {
         const current = result[tool] = result[tool] || {};
         current[name] = entry.content;
         return result;
-      }, {})
-    })
+      }, {});
+    });
   }
 
   store(packageCoordinates, stream) {
     return new Promise((resolve, reject) => {
       const name = utils.getPathFromCoordinates(packageCoordinates);
       stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
-    })
+    });
   }
 }
 
