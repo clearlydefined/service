@@ -8,8 +8,8 @@ const utils = require('../lib/utils');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace?/:name/:revision', function (request, result, next) {
-  const packageCoordinates = utils.getPackageCoordinates(request);
+router.get('/:type/:provider/:namespace/:name/:revision', function (request, result, next) {
+  const packageCoordinates = utils.toPackageCoordinates(request);
   let filter = null;
   return getFilter(packageCoordinates)
     .then(result => filter = result)
@@ -18,7 +18,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision', function (request, re
     .then(raw =>
       summaryService.summarizeAll(packageCoordinates, filter, raw))
     .then(summarized =>
-      aggregationService.process( packageCoordinates, summarized))
+      aggregationService.process(packageCoordinates, summarized))
     .then(aggregated =>
       curationService.curate(packageCoordinates, aggregated))
     .then(curated =>
@@ -28,13 +28,32 @@ router.get('/:type/:provider/:namespace?/:name/:revision', function (request, re
     });
 });
 
-function getFilter(packageCoordinates) {
-  const descriptionCoordinates = { ...packageCoordinates, toolConfiguration: 'ClearlyDescribed--0', file: 'output.json' };
-  return harvestService.get(descriptionCoordinates)
-    .then(rawDescription =>
-      curationService.curate(descriptionCoordinates, rawDescription)
-        .then(description => buildFilter(description.described.dimensions)))
-    .catch(error => null);
+/**
+ * Get a filter function that picks files from the dimensions of the described package to include in the
+ * result. Dimensions are things like source, test, data, dev, ... Each dimension has an array of 
+ * minimatch/glob style expressions that identify files to include in the summarization effort. 
+ * The dimensions are specified in the `described` neighborhood of the raw and/or curated data 
+ * for the given package.
+ * 
+ * @param {*} packageCoordinates 
+ */
+async function getFilter(packageCoordinates) {
+  try {
+    const descriptionCoordinates = { ...packageCoordinates, tool: 'clearlydescribed' };
+    const rawDescription = await getRaw(descriptionCoordinates);
+    const description = await curationService.curate(descriptionCoordinates, rawDescription);
+    return buildFilter(description.described.dimensions);
+  } catch (error) {
+    return null;
+  }
+}
+
+async function getRaw(descriptionCoordinates) {
+  try {
+    return await harvestService.get(descriptionCoordinates);
+  } catch (error) {
+    return null;
+  }
 }
 
 function buildFilter(dimensions) {
@@ -44,8 +63,8 @@ function buildFilter(dimensions) {
 
 // Previews the summarized data for a component aggregated and with the POST'd path applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/:type/:provider/:namespace?/:name/:revision/preview', function (request, result, next) {
-  const packageCoordinates = utils.getPackageCoordinates(request);
+router.post('/:type/:provider/:namespace/:name/:revision/preview', function (request, result, next) {
+  const packageCoordinates = utils.toPackageCoordinates(request);
 });
 
 let harvestService;

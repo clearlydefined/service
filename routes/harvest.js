@@ -7,8 +7,8 @@ const utils = require('../lib/utils');
 const bodyParser = require('body-parser');
 
 // Gets a given harvested file
-router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]+--[^/]+)/:file?', (request, response, next) => {
-  const packageCoordinates = utils.getPackageCoordinates(request);
+router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', (request, response, next) => {
+  const packageCoordinates = utils.toPackageCoordinates(request);
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw':
@@ -21,7 +21,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]
       return harvestStore.get(packageCoordinates).then(raw => {
         return getFilter(packageCoordinates).then(filter => {
           raw = request.params.file ? { [request.params.file]: raw } : raw;
-          return summarizeService.summarize(packageCoordinates, packageCoordinates.toolConfiguration, filter, raw);
+          return summarizeService.summarize(packageCoordinates, packageCoordinates.tool, filter, raw);
         });
       }).then(result =>
         response.status(200).send(result));
@@ -34,7 +34,7 @@ router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]
 });
 
 function getFilter(packageCoordinates) {
-  const descriptionCoordinates = { ...packageCoordinates, toolConfiguration: 'ClearlyDescribed--0', file: 'output.json' };
+  const descriptionCoordinates = { ...packageCoordinates, tool: 'clearlydescribed' };
   return harvestStore.get(descriptionCoordinates)
     .then(description => buildFilter(description.dimensions))
     .catch(error => null);
@@ -46,21 +46,21 @@ function buildFilter(dimensions) {
 }
 
 // Gets a listing of harvested files in the system for a given tool configuration
-// router.get('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^\/]+--[^\/]+)', (request, response, next) => {
-//   const packageCoordinates = utils.getPackageCoordinates(request);
+// router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', (request, response, next) => {
+//   const packageCoordinates = utils.toPackageCoordinates(request);
 //   return harvestStore.list(packageCoordinates).then(result =>
 //     response.status(200).send(result));
 // });
 
 // Gets ALL the harvested data for a given component revision
-router.get('/:type/:provider/:namespace?/:name/:revision', (request, response, next) => {
-  const packageCoordinates = utils.getPackageCoordinates(request);
+router.get('/:type/:provider/:namespace/:name/:revision', (request, response, next) => {
+  const packageCoordinates = utils.toPackageCoordinates(request);
 
   let result = harvestStore.getAll(packageCoordinates);
   if (!['streamed', 'raw'].includes(request.query.form.toLowerCase())) {
     result = result.then(raw => {
       return getFilter(packageCoordinates).then(filter =>
-        summarizeService.summarizeAll(packageCoordinates, packageCoordinates.toolConfiguration, filter, raw));
+        summarizeService.summarizeAll(packageCoordinates, packageCoordinates.tool, filter, raw));
     });
   }
   return result.then(final =>
@@ -68,8 +68,8 @@ router.get('/:type/:provider/:namespace?/:name/:revision', (request, response, n
 });
 
 // Puts harvested file
-router.put('/:type/:provider/:namespace?/:name/:revision/:toolConfiguration([^/]+--[^/]+)/:file', (request, response, next) => {
-  const packageCoordinates = utils.getPackageCoordinates(request);
+router.put('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', (request, response, next) => {
+  const packageCoordinates = utils.toPackageCoordinates(request);
   return harvestStore.store(packageCoordinates, request).then(result =>
     response.sendStatus(201));
 });
