@@ -8,7 +8,10 @@ const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
 const basicAuth = require('express-basic-auth');
-
+const swaggerUi = require('swagger-ui-express');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'));
 const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');
 
@@ -38,6 +41,7 @@ app.use(requestId());
 
 app.use(logger('dev'));
 app.use(configMiddleware);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 app.use(basicAuth({
   users: {
     'token': config.auth.apiToken,

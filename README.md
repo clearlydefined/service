@@ -1,13 +1,26 @@
 # service
 The service side of clearlydefined.io
 
-## Getting Started
-1. Set the following environment variables:
-   * CLEARLY_DEFINED_CURATION_GITHUB_OWNER=clearlydefined
-   * CLEARLY_DEFINED_CURATION_GITHUB_REPO=curated-data
-   * CLEARLY_DEFINED_CURATION_GITHUB_BRANCH=master
-   * CLEARLY_DEFINED_CURATION_GITHUB_TOKEN=[personal access token with public_repo scope]
+## Quick start
+
+Unless of course you are working on it, you should not need to run this service yourself. Rather, you can use
+https://dev-api.clearlydefined.io for experimental work or https://api.clearlydefined.io for working with 
+production data.
+
+If you do want to run the service locally, follow these steps.
+
+1. Clone the repo
+1. Set the following environment variables. For mor options, see [the config file](https://github.com/clearlydefined/service/blob/master/lib/config.js).
+   * CURATION_GITHUB_BRANCH= put a branch name here. DON'T use `master`>
+   * CURATION_GITHUB_TOKEN= personal access token with public_repo scope>
+   * HARVEST_AZBLOB_CONNECTION_STRING= Azure blob connection string
+   * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
+   * API_TOKEN= the token to use for authorizing clients calling this service
+   * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port. 
 1. `npm install && npm start`
+
+When you are done with that, the service will be up and running at http://localhost:3000 (or whatever port you picked). Note as well that there is a handy VS Code launch configuration that runs the service on port 5000 and makes debugging simple.
+
 
 ## System Flow
 1. Scan plugin checks if it has already harvested data for a package by calling GET /harvest/...
