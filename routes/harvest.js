@@ -45,13 +45,6 @@ function buildFilter(dimensions) {
   return file => !list.some(filter => minimatch(file, filter));
 }
 
-// Gets a listing of harvested files in the system for a given tool configuration
-// router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', (request, response, next) => {
-//   const packageCoordinates = utils.toPackageCoordinates(request);
-//   return harvestStore.list(packageCoordinates).then(result =>
-//     response.status(200).send(result));
-// });
-
 // Gets ALL the harvested data for a given component revision
 router.get('/:type/:provider/:namespace/:name/:revision', (request, response, next) => {
   const packageCoordinates = utils.toPackageCoordinates(request);

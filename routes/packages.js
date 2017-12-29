@@ -8,10 +8,13 @@ const utils = require('../lib/utils');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace/:name/:revision', function (request, result, next) {
+router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', getPackage);
+router.get('/:type/:provider/:namespace/:name/:revision', getPackage);
+async function getPackage(request, result, next) {
   const packageCoordinates = utils.toPackageCoordinates(request);
+  const pr = request.params.pr;
   let filter = null;
-  return getFilter(packageCoordinates)
+  return getFilter(packageCoordinates, pr)
     .then(result => filter = result)
     .then(() =>
       harvestService.getAll(packageCoordinates))
@@ -20,13 +23,13 @@ router.get('/:type/:provider/:namespace/:name/:revision', function (request, res
     .then(summarized =>
       aggregationService.process(packageCoordinates, summarized))
     .then(aggregated =>
-      curationService.curate(packageCoordinates, aggregated))
+      curationService.curate(packageCoordinates, pr, aggregated))
     .then(curated =>
       result.status(200).send(curated))
     .catch(err => {
       throw err;
     });
-});
+}
 
 /**
  * Get a filter function that picks files from the dimensions of the described package to include in the
@@ -37,11 +40,11 @@ router.get('/:type/:provider/:namespace/:name/:revision', function (request, res
  * 
  * @param {*} packageCoordinates 
  */
-async function getFilter(packageCoordinates) {
+async function getFilter(packageCoordinates, pr) {
   try {
     const descriptionCoordinates = { ...packageCoordinates, tool: 'clearlydescribed' };
     const rawDescription = await getRaw(descriptionCoordinates);
-    const description = await curationService.curate(descriptionCoordinates, rawDescription);
+    const description = await curationService.curate(descriptionCoordinates, pr, rawDescription);
     return buildFilter(description.described.dimensions);
   } catch (error) {
     return null;
