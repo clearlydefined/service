@@ -23,6 +23,7 @@
     "morgan": "~1.9.0",
     "painless-config": "^0.1.0",
     "request-id": "^0.11.1",
+    "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
     "swagger-ui-express": "^2.0.13",
     "underscore": "^1.8.3",
