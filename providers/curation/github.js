@@ -51,7 +51,7 @@ class GitHubCurationService {
         parsedContent.revisions[packageCoordinates.revision] = _.assign(parsedContent.revisions[packageCoordinates.revision] || {}, patch.patch);
 
         // return the serialized YAML
-        return yaml.safeDump(parsedContent);
+        return yaml.safeDump(parsedContent, { sortKeys: true });
       })
       .then(updatedPatch => {
         return github.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
@@ -96,30 +96,39 @@ class GitHubCurationService {
       });
   }
 
-  get(packageCoordinates) {
+  async get(packageCoordinates, pr = null) {
     const curationPath = this._getCurationPath(packageCoordinates);
-    const { owner, repo, branch } = this.options;
+    const { owner, repo } = this.options;
+    const branch = await this.getBranch(pr);
 
     const github = Github.getClient(this.options);
-    return github.repos.getContent({ owner, repo, ref: branch, path: curationPath })
-      .then(contentResponse => {
-        const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
-        // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-        Object.defineProperty(content, 'origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
-        return content;
-      })
-      .catch(err => {
-        // TODO: This isn't very safe how it is because any failure will return an empty object,
-        // ideally we only do this if the .yaml file doesn't exist.
-        return {};
-      })
+    try {
+      const contentResponse = await github.repos.getContent({ owner, repo, ref: branch, path: curationPath });
+      const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
+      // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
+      Object.defineProperty(content, 'origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
+      return content;
+    }
+    catch (error) {
+      // TODO: This isn't very safe how it is because any failure will return an empty object,
+      // ideally we only do this if the .yaml file doesn't exist.
+      return {};
+    }
   }
 
-  curate(packageCoordinates, summarized) {
-    return this.get(packageCoordinates).then(curation => {
-      const revision = curation.revisions[packageCoordinates.revision];
-      return revision ? extend(true, {}, summarized, revision) : summarized;
-    });
+  async getBranch(number) {
+    if (!number)
+      return this.options.branch;
+    const { owner, repo } = this.options;
+    const github = Github.getClient(this.options);
+    const result = await github.pullRequests.get({ owner, repo, number });
+    return result.data.head.ref;
+  }
+
+  async curate(packageCoordinates, pr, summarized) {
+    const curation = await this.get(packageCoordinates, pr)
+    const revision = curation.revisions[packageCoordinates.revision];
+    return revision ? extend(true, {}, summarized, revision) : summarized;
   }
 
   _getPrTitle(packageCoordinates) {

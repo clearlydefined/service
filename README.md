@@ -50,7 +50,7 @@ license:
 TODO
 
 ### Curation
-#### PATCH /curations/:type/:provider/:namespace?/:name/:revision
+#### PATCH /curations/:type/:provider/:namespace/:name/:revision
 
 ##### Request Body
 ```
@@ -115,10 +115,11 @@ This location is temporary, as harvested data grows will likely need to move it 
 ```
 type
   provider
-    name
-      revision
-        toolConfiguration
-          [native output files]
+    namespace -- if none then set to '-'
+      name
+        revision
+          tool
+            toolVersion -- this is the native output file. If more than one file then they should be archived together
 ```
 
 #### Raw Notes

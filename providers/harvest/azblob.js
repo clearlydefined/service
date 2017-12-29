@@ -11,7 +11,7 @@ const moment = require('moment');
 //
 // {
 // toolA: { /* tool-specific data format },
-// toolB--2.0: { /* tool-specific data format }
+// toolB/2.0: { /* tool-specific data format }
 // }
 
 const resultOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(result);
@@ -32,7 +32,7 @@ class AzBlobHarvesterService {
   }
 
   list(packageCoordinates) {
-    const name = utils.getPathFromCoordinates(packageCoordinates);
+    const name = utils.toPathFromCoordinates(packageCoordinates);
     return new Promise((resolve, reject) => {
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject));
     }).then(result =>
@@ -46,7 +46,7 @@ class AzBlobHarvesterService {
   }
 
   get(packageCoordinates, stream) {
-    const name = utils.getPathFromCoordinates(packageCoordinates);
+    const name = utils.toPathFromCoordinates(packageCoordinates);
     if (stream)
       return new Promise((resolve, reject) => {
         this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject));
@@ -58,7 +58,10 @@ class AzBlobHarvesterService {
   }
 
   getAll(packageCoordinates) {
-    const name = utils.getPathFromCoordinates(packageCoordinates);
+    const name = utils.toPathFromCoordinates(packageCoordinates);
+    // Note that here we are assuming the number of blobs will be small-ish (<10) and 
+    // a) all fit in memory reasonably, and
+    // b) fit in one list call (i.e., <5000)
     const list = new Promise((resolve, reject) => {
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject));
     });
@@ -75,9 +78,9 @@ class AzBlobHarvesterService {
       return entries.reduce((result, entry) => {
         const segments = entry.name.split('/');
         const tool = segments[segments.length - 2];
-        const name = segments[segments.length - 1];
+        const toolVersion = segments[segments.length - 1].replace('.json', '');
         const current = result[tool] = result[tool] || {};
-        current[name] = entry.content;
+        current[toolVersion] = entry.content;
         return result;
       }, {});
     });
@@ -85,7 +88,7 @@ class AzBlobHarvesterService {
 
   store(packageCoordinates, stream) {
     return new Promise((resolve, reject) => {
-      const name = utils.getPathFromCoordinates(packageCoordinates);
+      const name = utils.toPathFromCoordinates(packageCoordinates);
       stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
     });
   }

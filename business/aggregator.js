@@ -5,8 +5,8 @@
 //
 // The tools to consider for aggregation and their priorites can be described like this:
 // aggregators: [
-//   ["toolC--2.0"],
-//   ["toolB--3.0", "toolB--2.1", "toolB--2.0"],
+//   ["toolC/2.0"],
+//   ["toolB/3.0", "toolB/2.1", "toolB/2.0"],
 //   ["toolA"]
 // ]
 //
@@ -22,7 +22,7 @@
 //
 // harvest should have the form:
 // {
-// toolC--2.0: { /* normalized summary schema */ },
+// toolC/2.0: { /* normalized summary schema */ },
 // toolA: { /* normalized summary schema */ }
 // }
 //
@@ -40,9 +40,7 @@ class AggregationService {
   process(packageCoordinates, summarized) {
     let result = {};
     this.getPrecedenceOrder().forEach(tool =>
-      extend(true, result, utils.findData(tool, summarized)));
-    delete result.package.toolConfiguration;
-    delete result.package.file;
+      extend(true, result, this.findData(tool, summarized)));
     return result;
   }
 
@@ -53,6 +51,19 @@ class AggregationService {
     );
     return result;
   }
+
+  // search the summarized data for an entry that best matches the given tool spec
+  findData(toolSpec, summarized) {
+    const [tool, toolVersion] = toolSpec.split('/');
+    if (!summarized[tool])
+      return null;
+    if (toolVersion)
+      return summarized[tool][toolVersion];
+
+    const versions = Object.getOwnPropertyNames(summarized[tool]);
+    const ordered = versions.sort((v1, v2) => semver.gt(v1, v2));
+    return ordered.length ? summarized[tool][ordered[0]] : null;
+  }
 }
 
-module.exports = (options) => new AggregationService(options);
+module.exports = options => new AggregationService(options);

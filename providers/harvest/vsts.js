@@ -1,36 +1,30 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-const config = require('../../lib/config');
+
 const vsts = require('vso-node-api');
 
-class VstsOrt {
+class Vsts {
 
   constructor(options) {
     this.options = options;
-    this.build = new Build();
-  }
-
-  harvest(spec) {
-    return this.build.queueBuild(spec);
-  }
-}
-
-class Build {
-  constructor() {
-    const token = config.harvest.harvester.vstsOrt.authToken;
+    const token = options.authToken;
     if (!token) {
       throw new Error('Auth token unspecified!');
     }
-    const collectionUrl = config.harvest.harvester.vstsOrt.collectionUrl;
+    const collectionUrl = options.collectionUrl;
     const authHandler = vsts.getPersonalAccessTokenHandler(token);
     const connection = new vsts.WebApi(collectionUrl, authHandler);
-    this.project = config.harvest.harvester.vstsOrt.projectName;
+    this.project = options.projectName;
     this.vstsBuild = connection.getBuildApi();
-    this.buildDefinitionName = config.harvest.harvester.vstsOrt.buildDefinitionName;
-    this.buildVariableName = config.harvest.harvester.vstsOrt.buildVariableName;
+    this.buildDefinitionName = options.buildDefinitionName;
+    this.buildVariableName = options.buildVariableName;
   }
 
-  queueBuild(spec) {
+  harvest(spec) {
+    return this._queueBuild(spec);
+  }
+
+  _queueBuild(spec) {
     const self = this;
     return this.vstsBuild.getDefinitions(self.project, self.buildDefinitionName).then(definitions => {
       if (!definitions[0] || !definitions[0].id) {
@@ -47,4 +41,4 @@ class Build {
   }
 }
 
-module.exports = (options) => new VstsOrt(options);
+module.exports = (options) => new Vsts(options);
