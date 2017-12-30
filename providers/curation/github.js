@@ -112,7 +112,7 @@ class GitHubCurationService {
     catch (error) {
       // TODO: This isn't very safe how it is because any failure will return an empty object,
       // ideally we only do this if the .yaml file doesn't exist.
-      return {};
+      return { revisions: {} };
     }
   }
 
@@ -127,7 +127,7 @@ class GitHubCurationService {
 
   async curate(packageCoordinates, pr, summarized) {
     const curation = await this.get(packageCoordinates, pr)
-    const revision = curation.revisions[packageCoordinates.revision];
+    const revision = curation ? curation.revisions[packageCoordinates.revision] : null;
     return revision ? extend(true, {}, summarized, revision) : summarized;
   }
 

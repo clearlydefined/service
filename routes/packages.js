@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+const asyncMiddleware = require('../middleware/asyncMiddleware');
 const express = require('express');
 const router = express.Router();
 const minimatch = require('minimatch');
@@ -8,8 +9,8 @@ const utils = require('../lib/utils');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', getPackage);
-router.get('/:type/:provider/:namespace/:name/:revision', getPackage);
+router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getPackage));
+router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPackage));
 async function getPackage(request, result, next) {
   const packageCoordinates = utils.toPackageCoordinates(request);
   const pr = request.params.pr;
@@ -43,7 +44,7 @@ async function getPackage(request, result, next) {
 async function getFilter(packageCoordinates, pr) {
   try {
     const descriptionCoordinates = { ...packageCoordinates, tool: 'clearlydescribed' };
-    const rawDescription = await getRaw(descriptionCoordinates);
+    const rawDescription = await harvestService.get(descriptionCoordinates);
     const description = await curationService.curate(descriptionCoordinates, pr, rawDescription);
     return buildFilter(description.described.dimensions);
   } catch (error) {
@@ -51,24 +52,18 @@ async function getFilter(packageCoordinates, pr) {
   }
 }
 
-async function getRaw(descriptionCoordinates) {
-  try {
-    return await harvestService.get(descriptionCoordinates);
-  } catch (error) {
-    return null;
-  }
-}
-
 function buildFilter(dimensions) {
+  if (!dimensions)
+    return null;
   const list = [...dimensions.test, ...dimensions.dev, ...dimensions.data];
   return file => !list.some(filter => minimatch(file, filter));
 }
 
 // Previews the summarized data for a component aggregated and with the POST'd path applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/:type/:provider/:namespace/:name/:revision/preview', function (request, result, next) {
+router.post('/:type/:provider/:namespace/:name/:revision/preview', asyncMiddleware(async (request, result, next) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
-});
+}));
 
 let harvestService;
 let summaryService;
