@@ -25,6 +25,13 @@ That results in the ClearlyDefined service starting up and listening for RESTful
 
 TBD
 
+## Data overview
+The ClearlyDefined service manages both raw, harvested data and curated data, as well as the merge of these. These data can be expressed in relation to source code (e.g., a GitHub repo) or a package (e.g., an NPM, RPM, Maven project, ...). One of the key goals of ClearlyDefined is to correlate the _binary_ package with the original source.
+
+> A quick note on _binary_. Throughout the ClearlyDefined ecosystem we talk about _binary_ as being the packaged, executable form of a component. An NPM for example is a binary despite the fact it may contain human-readable text that looks a lot like JavaScript source code. In general, the original source for these packages may have been in a very different language (e.g., TypeScript) or the package content may have been minimized, compresses, concatenated, or otherwise swizzled. For the purposes of license detection and ultimately compliance, as well as security scanning etc, consumers need to know the location of the actual developer-authored source code.
+
+As a result of this separation, the same component may show up in the data in several forms -- the NPM and its source are both treated separately. These components may also have different _revision_ identifiers (e.g., NPM version and Git commit hash). There are links between the different types and as the ecosystem progresses, this web of components will get richer and enable transitive operations, for example, given a vulnerability in a GitHub repo you will be able to find all the packaged versions and forms that included the vulnerable code.
+
 ## Curation
 
 New curations, or changes to existing curations, are done via PATCHes. Ultimately these surface as PRs in the configured curation repo. They can be manipulated directy there but using this API keeps things regular. Below is an example curation.
@@ -65,9 +72,7 @@ You can also get the curation for a particular component revision using one of t
 ```
 GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
 GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0/pr/23
-```
-
-Both of these whill 
+``` 
 
 ## Data access
 
@@ -111,7 +116,6 @@ GET http://localhost:4000/packages/npm/npmjs/-/redie/0.3.0/pr/23
 ### Raw results
 
 See the `harvest` endpoint
-
 
 
 
