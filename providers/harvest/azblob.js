@@ -18,10 +18,9 @@ const resultOrError = (resolve, reject) => (error, result, response) => error ? 
 const responseOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(response);
 
 class AzBlobHarvesterService {
-  constructor(options, summarizerService) {
+  constructor(options) {
     this.options = options;
     this.containerName = options.containerName;
-    this.summarizerService = summarizerService;
   }
 
   get blobService() {
@@ -94,4 +93,4 @@ class AzBlobHarvesterService {
   }
 }
 
-module.exports = (config, summarizerService) => new AzBlobHarvesterService(config, summarizerService);
+module.exports = options => new AzBlobHarvesterService(options);

@@ -61,8 +61,8 @@ class AggregationService {
       return summarized[tool][toolVersion];
 
     const versions = Object.getOwnPropertyNames(summarized[tool]);
-    const ordered = versions.sort((v1, v2) => semver.gt(v1, v2));
-    return ordered.length ? summarized[tool][ordered[0]] : null;
+    const latest = utils.getLatestVersion(versions);
+    return latest ? summarized[tool][latest] : null;
   }
 }
 
