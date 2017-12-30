@@ -1,7 +1,11 @@
 # service
-The service side of clearlydefined.io
+The service side of clearlydefined.io. This service mainly manages curations, human inputs and corrections, of harvested data. The ClearlyDefined crawler does the bulk of the harvesting so here we manage the open source/crowd-sourced part of ClearlyDefined. Users come together to add data, review data, and propose upstream changes to clarify the state of a project.
 
-## Quick start
+Like other open source projects, ClearlyDefined works with contributions coming as pull requests on a GitHub repo. Those PRs are reviewed, discussed and ultimately merged into the curation repo. From there this service _builds_ a database that further merges automatically harvested data with the newly curated data. 
+
+In effect the curated data for a project is a _fork_ of the project. Like most forks, we don't want to maintain changes as they quickly rot and need constant care and attention. Besides, the stated goal of ClearlyDefined is to help projects become more successful through clear data about the projects. The best way to do that is work with the upstream projects to include the data directly in projects themselves.
+
+# Quick start
 
 Unless of course you are working on it, you should not need to run this service yourself. Rather, you can use
 https://dev-api.clearlydefined.io for experimental work or https://api.clearlydefined.io for working with 
@@ -10,17 +14,133 @@ production data.
 If you do want to run the service locally, follow these steps.
 
 1. Clone the repo
-1. Set the following environment variables. For mor options, see [the config file](https://github.com/clearlydefined/service/blob/master/lib/config.js).
-   * CURATION_GITHUB_BRANCH= put a branch name here. DON'T use `master`>
-   * CURATION_GITHUB_TOKEN= personal access token with public_repo scope>
+1. `cd` to the repo dir and run `npm install`
+1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json`. Ideally this repo is colocated with the other ClearlyDefined repos. You can share the `env.json` file. Just merge the two files. Some properties are meant to be shared.
+1. After copying/merging, update the file to have the property values for your system. See the [Configuration](#configuration) section for more details.
+1. Run `npm start`
+
+That results in the ClearlyDefined service starting up and listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. The APIs fall in two main buckets: curation management, and data access.
+
+## Authorization
+
+TBD
+
+## Curation
+
+New curations, or changes to existing curations, are done via PATCHes. Ultimately these surface as PRs in the configured curation repo. They can be manipulated directy there but using this API keeps things regular. Below is an example curation.
+
+```json
+{
+  "described": {
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "url": "https://github.com/microsoft/redie",
+      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca"
+    }
+  },
+  "licensed": {
+    "license": {
+      "expression": "MIT"
+    }
+  }
+}
+```
+
+Here the curation updates information in two data _neighborhoods_, `described` and `licensed`. (You will hear us talk about projects being ClearlyDescribed or ClearlyLicensed). These new values will be merged with the existing curation (as part of the PR merge) and laid over whatever data has been harvested when users access the data.
+
+To progammatically submit a curation, wrap the curation from above in an object with a `description` and then send it to the service as a PATCH to, for example, http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
+
+```json
+{
+  "description": "Supply the source location and correct the license to MIT",
+  "patch": {
+    body of the curation here
+  }
+}
+```
+
+You can also get the curation for a particular component revision using one of the following requests. Both return the full curation for the given component. The first (without the `pr` segment), gets the current curation that is in effect -- the content of the `master` branch. The second gets the curation proposed in the given pull request.
+
+```
+GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
+GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0/pr/23
+```
+
+Both of these whill 
+
+## Data access
+
+Once some data has been harvested and/or curated, you can acces the constituent parts or get the net result of merging the data together.
+
+### Package results
+Most of the time you will want to see the end result of the harvesting with the curations mixed in. A GET to the component URL returns the summarized and aggregated view of the data about the identified component. For example,
+
+```
+GET http://localhost:4000/packages/npm/npmjs/-/redie/0.3.0
+```
+
+In this case, we are accessing version 0.3.0 of the NPM called redie. Given the above curation, the result would look something like the snippet below. Notice that the `projectWebsite` and `issueTracker` information was not in the curation. That data was harvested through some automated tools.
+
+```json
+{
+  "described": {
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "url": "https://github.com/microsoft/redie",
+      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca"
+    },
+    "projectWebsite": "https://github.com/microsoft/redie",
+    "issueTracker": "https://github.com/microsoft/redie/issues",
+  },
+  "licensed": {
+    "license": {
+      "expression": "MIT"
+    }
+  }
+}
+```
+
+You can also get the result that would be given **if** a proposed curation PR were merged. Issue the same GET but add `/pr/<pr number>` on the end. For example, the following gets the result if PR #23 were merged.
+
+```
+GET http://localhost:4000/packages/npm/npmjs/-/redie/0.3.0/pr/23
+```
+
+### Raw results
+
+See the `harvest` endpoint
+
+
+
+
+
+# Configuration
+
+## Properties
+
+
+### CURATION_GITHUB_OWNER
+The GitHub user or org that owns the curation repo. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`. 
+
+### CURATION_GITHUB_REPO
+The GitHub curation repo to use for curations. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`. 
+
+### CURATION_GITHUB_BRANCH
+The GitHub curation repo branch to use for curations. For testing and development, feel free to use your own. DON'T use `master` and you aren't so DO NOT use `master`.
+
+
+   * CURATION_GITHUB_TOKEN= personal access token with public_repo scope
    * HARVEST_AZBLOB_CONNECTION_STRING= Azure blob connection string
    * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
    * API_TOKEN= the token to use for authorizing clients calling this service
    * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port. 
 1. `npm install && npm start`
 
-When you are done with that, the service will be up and running at http://localhost:3000 (or whatever port you picked). Note as well that there is a handy VS Code launch configuration that runs the service on port 5000 and makes debugging simple.
 
+
+# Details (some of which are not up to date)
 
 ## System Flow
 1. Scan plugin checks if it has already harvested data for a package by calling GET /harvest/...
