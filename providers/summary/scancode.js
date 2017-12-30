@@ -25,17 +25,17 @@ class ScanCodeSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, filter, data) {
-    data = data ? data['output.json'] : null;
-    if (!data || !data.scancode_version)
+  summarize(packageCoordinates, filter, harvested) {
+    if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data');
 
+    const data = harvested.content;
     const copyrightStatements = new Set();
     const copyrightHolders = new Set();
     const copyrightAuthors = new Set();
     const licenseExpressions = new Set();
 
-    const filteredFiles = data.files.filter(file => filter(file.path));
+    const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
     for (let file of filteredFiles) {
       this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key; });
       this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);

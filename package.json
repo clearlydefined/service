@@ -1,7 +1,6 @@
 {
   "name": "service",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "scripts": {
     "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
     "start": "node ./bin/www"

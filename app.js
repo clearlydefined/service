@@ -21,9 +21,9 @@ const summaryService = require('./business/summarizer')(config.summary);
 
 const harvestStoreProvider = config.harvest.store.provider;
 const harvestStore = require(`./providers/harvest/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider], summaryService);
-const harvesterProvider = config.harvest.harvester.provider;
-const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider]);
-const harvest = require('./routes/harvest')(harvester, harvestStore, summaryService);
+// const harvesterProvider = config.harvest.harvester.provider;
+// const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider]);
+const harvest = require('./routes/harvest')(null, harvestStore, summaryService);
 
 const aggregatorService = require('./business/aggregator')(config.aggregator);
 

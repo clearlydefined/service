@@ -28,12 +28,7 @@ class FileHarvestStore {
   }
 
   async get(packageCoordinates, stream) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
-    const toolPath = `${this.options.location}/${packageCoordinates.type}/${name}`;
-    const latest = await this._findLatest(toolPath);
-    if (!latest)
-      return null;
-    const filePath = `${toolPath}/${latest}.json`;
+    const filePath = await this._getFilePath(packageCoordinates);
     if (stream)
       return new Promise((resolve, reject) => {
         const read = fs.createReadStream(filePath);
@@ -45,6 +40,17 @@ class FileHarvestStore {
       fs.readFile(filePath, resultOrError(resolve, reject))
     ).then(result =>
       JSON.parse(result));
+  }
+
+  async _getFilePath(packageCoordinates) {
+    const name = utils.toPathFromCoordinates(packageCoordinates);
+    const toolPath = `${this.options.location}/${packageCoordinates.type}/${name}`;
+    if (packageCoordinates.toolVersion) 
+      return toolPath + '.json';
+    const latest = await this._findLatest(toolPath);
+    if (!latest)
+      return null;
+    return `${toolPath}/${latest}.json`;
   }
 
   async getAll(packageCoordinates) {
