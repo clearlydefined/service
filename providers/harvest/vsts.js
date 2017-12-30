@@ -8,9 +8,11 @@ class Vsts {
   constructor(options) {
     this.options = options;
     const token = options.authToken;
-    if (!token) {
-      throw new Error('Auth token unspecified!');
-    }
+    // TODO commenting out this check for now to simplify non-VSTS based development.
+    // ultimately we want to defer provider instantiation until the instance is actually needed.
+    // if (!token) {
+    //   throw new Error('Auth token unspecified!');
+    // }
     const collectionUrl = options.collectionUrl;
     const authHandler = vsts.getPersonalAccessTokenHandler(token);
     const connection = new vsts.WebApi(collectionUrl, authHandler);
@@ -41,4 +43,4 @@ class Vsts {
   }
 }
 
-module.exports = (options) => new Vsts(options);
+module.exports = options => new Vsts(options);
