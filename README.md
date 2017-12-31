@@ -1,7 +1,7 @@
-# service
-The service side of clearlydefined.io. This service mainly manages curations, human inputs and corrections, of harvested data. The ClearlyDefined crawler does the bulk of the harvesting so here we manage the open source/crowd-sourced part of ClearlyDefined. Users come together to add data, review data, and propose upstream changes to clarify the state of a project.
+# ClearlyDefined service
+This is the service side of clearlydefined.io. The service mainly manages curations, human inputs and corrections, of harvested data. The [ClearlyDefined crawler](https://github.com/clearlydefined/crawler) does the bulk of the harvesting so here we manage the open source/crowd-sourced part of ClearlyDefined. Users come together to add data, review data, and propose upstream changes to clarify the state of a project.
 
-Like other open source projects, ClearlyDefined works with contributions coming as pull requests on a GitHub repo. Those PRs are reviewed, discussed and ultimately merged into the curation repo. From there this service _builds_ a database that further merges automatically harvested data with the newly curated data. 
+Like other open source projects, ClearlyDefined works with contributions coming as pull requests on a GitHub repo. In our case, curations are contributed to the [ClearlyDefined curated-data](https://github.com/clearlydefined/curated-data) repo. Those PRs are reviewed, discussed and ultimately merged into the curation repo. From there this service _builds_ a database that further merges automatically harvested data with the newly curated data and makes it available via REST APIs.
 
 In effect the curated data for a project is a _fork_ of the project. Like most forks, we don't want to maintain changes as they quickly rot and need constant care and attention. Besides, the stated goal of ClearlyDefined is to help projects become more successful through clear data about the projects. The best way to do that is work with the upstream projects to include the data directly in projects themselves.
 
@@ -13,10 +13,11 @@ production data.
 
 If you do want to run the service locally, follow these steps.
 
-1. Clone the repo
+1. Clone this repo
 1. `cd` to the repo dir and run `npm install`
-1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json`. Ideally this repo is colocated with the other ClearlyDefined repos. You can share the `env.json` file. Just merge the two files. Some properties are meant to be shared.
-1. After copying/merging, update the file to have the property values for your system. See the [Configuration](#configuration) section for more details.
+1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json`. Ideally this repo is colocated with any other ClearlyDefined repos you might be using. You can share the `env.json` file but it always has to be in the parent folder of the repo. Just merge the files. Any colliding properties are meant to be shared.
+1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is not strictly necessary but unless you have another source of ClearlyDefined harvest data, this is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
+1. After cloning/copying/merging, update the `env.json` file to have the property values for your setup. See the [Configuration](#configuration) section for more details. 
 1. Run `npm start`
 
 That results in the ClearlyDefined service starting up and listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. The APIs fall in two main buckets: curation management, and data access.
@@ -140,9 +141,10 @@ The GitHub curation repo branch to use for curations. For testing and developmen
    * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
    * API_TOKEN= the token to use for authorizing clients calling this service
    * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port. 
-1. `npm install && npm start`
 
 
+***
+***
 
 # Details (some of which are not up to date)
 
