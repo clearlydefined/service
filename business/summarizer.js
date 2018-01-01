@@ -38,15 +38,15 @@ class SummaryService {
    * 
    * @param {} packageCoordinates the package being summarized
    * @param {string} tool the name of the tool whose output is being summarized
-   * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    * @param {*} data the data to summarize
+   * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeTool(packageCoordinates, tool, filter, data) {
+  summarizeTool(packageCoordinates, tool, data, filter = null) {
     if (!summarizers[tool])
       return data;
     const summarizer = summarizers[tool](this.options[tool] || {});
     return Object.getOwnPropertyNames(data).reduce((result, version) => {
-      result[version] = summarizer.summarize(packageCoordinates, filter, data[version]);
+      result[version] = summarizer.summarize(packageCoordinates, data[version], filter);
       return result;
     }, {});
   }
@@ -56,12 +56,12 @@ class SummaryService {
    * to determine if a particular file mentioned in the data should play a role in summarization.
    * 
    * @param {} packageCoordinates the package being summarized
-   * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    * @param {*} data the data to summarize
+   * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeAll(packageCoordinates, filter, data) {
+  summarizeAll(packageCoordinates, data, filter = null) {
     return Object.getOwnPropertyNames(data).reduce((result, tool) => {
-      result[tool] = this.summarizeTool(packageCoordinates, tool, filter, data[tool]);
+      result[tool] = this.summarizeTool(packageCoordinates, tool, data[tool], filter);
       return result;
     }, {});
   }

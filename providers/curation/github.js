@@ -26,7 +26,7 @@ class GitHubCurationService {
     const prBranch = this._getBranchName(packageCoordinates);
     let curationPathSha = null;
 
-    return this.get(packageCoordinates)
+    return this.getAll(packageCoordinates)
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
@@ -96,7 +96,36 @@ class GitHubCurationService {
       });
   }
 
-  async get(packageCoordinates, pr = null) {
+  /**
+   * Get the curation for the entity at the given coordinates. If no curation is supplied
+   * then look up the standard curation. If the curation is a PR number, get the curation
+   * held in that PR. The curation arg might be the actual curation to use. If so, just
+   * return it.
+   * 
+   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
+   * @param {(number | string | Summary)} [curation] - The curation identifier if any. Could be a PR number, 
+   * an actual curation object or null.
+   * @returns {Summary} The requested curation
+   */
+  async get(coordinates, curation = null) {
+    if (!coordinates.revision)
+      throw new Error('Coordinates must include a revision');
+    if (curation && typeof curation !== 'number' && typeof curation !== 'string')
+      return curation;
+    const all = await this.getAll(coordinates, curation);
+    return all && all.revisions ? all.revisions[coordinates.revision] : null;
+  }
+
+  /**
+   * Get the curations for the revisions of the entity at the given coordinates. Revision information
+   * in coordinates are ignored. If a PR number is provided, get the curations represented in that PR.
+   * 
+   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. 
+   * @param {(number | string} [curation] - The curation identifier if any. Could be a PR number/string.
+   * @returns {Object} The requested curations where the revisions property has a property for each 
+   * curated revision.
+   */
+  async getAll(packageCoordinates, pr = null) {
     const curationPath = this._getCurationPath(packageCoordinates);
     const { owner, repo } = this.options;
     const branch = await this.getBranch(pr);
@@ -125,10 +154,9 @@ class GitHubCurationService {
     return result.data.head.ref;
   }
 
-  async curate(packageCoordinates, pr, summarized) {
-    const curation = await this.get(packageCoordinates, pr)
-    const revision = curation ? curation.revisions[packageCoordinates.revision] : null;
-    return revision ? extend(true, {}, summarized, revision) : summarized;
+  async curate(packageCoordinates, curationSpec, summarized) {
+    const curation = await this.get(packageCoordinates, curationSpec)
+    return curation ? extend(true, {}, summarized, curation) : summarized;
   }
 
   _getPrTitle(packageCoordinates) {
