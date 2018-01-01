@@ -132,6 +132,7 @@ class GitHubCurationService {
 
     const github = Github.getClient(this.options);
     try {
+      // @todo use getContent() to get raw content
       const contentResponse = await github.repos.getContent({ owner, repo, ref: branch, path: curationPath });
       const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
@@ -159,6 +160,52 @@ class GitHubCurationService {
     return curation ? extend(true, {}, summarized, curation) : summarized;
   }
 
+  async getContent({ref, path}) {
+    const { owner, repo } = this.options;
+    const github = Github.getClient(this.options);
+    try {
+      const response = await github.repos.getContent({ owner, repo, ref, path });
+      return base64.decode(response.data.content);
+    } catch (error) {
+      // @todo add logger
+    }
+  }
+
+  async postCommitStatus({
+    sha,
+    state,
+    description = 'ClealyDefined curation validation',
+    target_url = 'https://clearlydefined.io/'
+  }) {
+    const { owner, repo } = this.options;
+    const github = Github.getClient(this.options);
+    try {
+      await github.repos.createStatus({
+        owner,
+        repo,
+        sha,
+        state,
+        description,
+        target_url,
+        context: 'ClearlyDefined'
+      });
+    } catch (error) {
+      // @todo add logger
+    }
+  }
+
+  async getPrFiles({number}) {
+    const { owner, repo } = this.options;
+    const github = Github.getClient(this.options);
+    try {
+      const response = await github.pullRequests.getFiles({ owner, repo, number });
+      return response.data;
+    } catch (error) {
+      // @todo add logger
+      throw error;
+    }
+  }
+
   _getPrTitle(packageCoordinates) {
     return `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`;
   }
@@ -169,6 +216,21 @@ class GitHubCurationService {
 
   _getCurationPath(packageCoordinates) {
     return `curations/${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}.yaml`;
+  }
+
+  // @todo improve validation via schema, etc
+  isValidCuration(curation) {
+    try {
+      let data = yaml.safeLoad(curation);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // @todo perhaps validate directory structure (package coordinates)
+  isCurationFile(path) {
+    return path.startsWith('curations/') && path.endsWith('.yaml');
   }
 }
 
