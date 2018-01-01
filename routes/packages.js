@@ -3,6 +3,7 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const express = require('express');
+const extend = require('extend');
 const router = express.Router();
 const minimatch = require('minimatch');
 const utils = require('../lib/utils');
@@ -11,25 +12,36 @@ const utils = require('../lib/utils');
 // API for serving consumers and API
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getPackage));
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPackage));
+
 async function getPackage(request, result, next) {
-  const packageCoordinates = utils.toPackageCoordinates(request);
+  const coordinates = utils.toPackageCoordinates(request);
   const pr = request.params.pr;
-  let filter = null;
-  return getFilter(packageCoordinates, pr)
-    .then(result => filter = result)
-    .then(() =>
-      harvestService.getAll(packageCoordinates))
-    .then(raw =>
-      summaryService.summarizeAll(packageCoordinates, filter, raw))
-    .then(summarized =>
-      aggregationService.process(packageCoordinates, summarized))
-    .then(aggregated =>
-      curationService.curate(packageCoordinates, pr, aggregated))
-    .then(curated =>
-      result.status(200).send(curated))
-    .catch(err => {
-      throw err;
-    });
+  const curation = pr ? await this.getPR(pr) : null;
+  const curated = await computePackage(coordinates, curation);
+  result.status(200).send(curated);
+}
+
+/**
+ * Get the final representation of the specified component and optionally apply the indicated 
+ * curation.
+ * 
+ * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
+ * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
+ * curation or an actual curation object.
+ * @returns {Summary} The fully rendered package definition
+ */
+async function computePackage(coordinates, curationSpec) {
+  const curation = await curationService.get(coordinates, curationSpec);
+  const raw = await harvestService.getAll(coordinates);
+  // Summarize without any filters. From there we can get any dimensions and filter if needed.
+  const summarized = await summaryService.summarizeAll(coordinates, raw);
+  const filter = await getFilter(coordinates, curation, raw);
+  // if there is a file filter, summarize again to focus just on the desired files
+  // TODO eventually see if there is a better way as summarizing could be expensive.
+  // That or cache the heck out of this...
+  const filtered = filter ? await summaryService.summarizeAll(coordinates, raw, filter) : summarized;
+  const aggregated = await aggregationService.process(coordinates, summarized);
+  return curationService.curate(coordinates, curation, aggregated);
 }
 
 /**
@@ -39,30 +51,41 @@ async function getPackage(request, result, next) {
  * The dimensions are specified in the `described` neighborhood of the raw and/or curated data 
  * for the given package.
  * 
- * @param {*} packageCoordinates 
+ * @param {Summary} [curation] - Curated information to use in building the filter.
+ * @param {Summary} [harvested] - Harvested data to use in building the filter.
+ * @returns {function} The requested filter function.
  */
-async function getFilter(packageCoordinates, pr) {
-  try {
-    const descriptionCoordinates = { ...packageCoordinates, tool: 'clearlydescribed' };
-    const rawDescription = await harvestService.get(descriptionCoordinates);
-    const description = await curationService.curate(descriptionCoordinates, pr, rawDescription);
-    return buildFilter(description.described.dimensions);
-  } catch (error) {
+async function getFilter(curation, harvested) {
+  if (!curation && !harvested)
     return null;
-  }
+  const joined = extend(true, {}, harvested, curation);
+  const dimensions = joined.dimensions || null;
+  return buildFilter(dimensions);
 }
 
+/**
+ * Create a filter that excludes all element that match the glob entries in the given 
+ * dimension's test, dev and data properties.
+ * @param {*} dimensions - An object whose propertes are arrays of glob style filters expressions.
+ * @returns {function} - A filter function 
+ */
 function buildFilter(dimensions) {
   if (!dimensions)
     return null;
   const list = [...dimensions.test, ...dimensions.dev, ...dimensions.data];
+  if (list.length === 0)
+    return null;
   return file => !list.some(filter => minimatch(file, filter));
 }
 
-// Previews the summarized data for a component aggregated and with the POST'd path applied.
+// Previews the summarized data for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/:type/:provider/:namespace/:name/:revision/preview', asyncMiddleware(async (request, result, next) => {
-  const packageCoordinates = utils.toPackageCoordinates(request);
+router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, result, next) => {
+  if (!request.query.preview)
+    return result.sendStatus(400);
+  const coordinates = utils.toPackageCoordinates(request);
+  const curated = await computePackage(coordinates, request.body);
+  result.status(200).send(curated);
 }));
 
 let harvestService;

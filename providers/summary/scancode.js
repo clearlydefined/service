@@ -25,7 +25,7 @@ class ScanCodeSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, filter, harvested) {
+  summarize(packageCoordinates, harvested, filter = null) {
     if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data');
 

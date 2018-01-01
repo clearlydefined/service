@@ -22,7 +22,7 @@ class ClearlyDescribedSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, filter, data) {
+  summarize(packageCoordinates, data, filter = null) {
     const sourceLocation = data.sourceInfo
       ? _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
       : null;
