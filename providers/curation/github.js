@@ -112,7 +112,7 @@ class GitHubCurationService {
       throw new Error('Coordinates must include a revision');
     if (curation && typeof curation !== 'number' && typeof curation !== 'string')
       return curation;
-    const all = this.getAll(coordinates, curation);
+    const all = await this.getAll(coordinates, curation);
     return all && all.revisions ? all.revisions[coordinates.revision] : null;
   }
 

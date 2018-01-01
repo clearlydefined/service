@@ -16,7 +16,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPac
 async function getPackage(request, result, next) {
   const coordinates = utils.toPackageCoordinates(request);
   const pr = request.params.pr;
-  const curation = pr ? await this.getPR(pr) : null;
+  const curation = pr ? await curationService.get(coordinates, pr) : null;
   const curated = await computePackage(coordinates, curation);
   result.status(200).send(curated);
 }
