@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 const express = require('express');
+const yaml = require('js-yaml');
 
 const router = express.Router();
-let webhookSecret = null;
 const validPrActions = ['opened', 'reopened', 'synchronize'];
+let webhookSecret = null;
+let curationService;
 
 router.post('/', async (request, response, next) => {
   const isGithubEvent = request.headers['x-github-event'];
@@ -15,18 +17,39 @@ router.post('/', async (request, response, next) => {
 
   // @todo secure webhook, see https://github.com/Microsoft/ghcrawler/blob/develop/routes/webhook.js#L28
 
-  const {body: payload} = request;
-  const isValidPullRequest = payload.pull_request && validPrActions.includes(payload.action);
+  const {pull_request: pr, action: prAction, number} = request.body;
+  const {sha, ref} = pr.head;
+  const isValidPullRequest = pr && validPrActions.includes(prAction);
   if (!isValidPullRequest) {
     return fatal(request, response, 'Not a valid Pull Request event');
   }
 
-  // @todo get changed files
+  const prFiles = await curationService.getPrFiles({number});
+  const curationFilenames = prFiles.map(
+    x => x.filename
+  ).filter(curationService.isCurationFile);
 
-  // @todo validate yaml files
+  const curationResults = await Promise.all(
+    curationFilenames.map(
+      path => curationService.getContent({ref, path})
+        .then(curationService.isValidCuration)
+    )
+  );
+  const invalidCurations = [];
+  curationResults.forEach((result, index) => {
+    if (!result) {
+      invalidCurations.push(curationFilenames[index]);
+    }
+  });
 
-  logger().info(payload);
+  let state = 'success';
+  let description = 'All curations are valid'
+  if (invalidCurations.length) {
+    state = 'error';
+    description = `Invalid curations: ${invalidCurations.join(', ')}`
+  }
 
+  await curationService.postCommitStatus({sha, state, description});
   response.status(200).end();
 });
 
@@ -43,7 +66,8 @@ function logger() {
 }
 
 // @todo add secret
-function setup(secret) {
+function setup(service, secret) {
+  curationService = service;
   webhookSecret = secret;
   return router;
 }
