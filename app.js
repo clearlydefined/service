@@ -33,7 +33,8 @@ const curations = require('./routes/curations')(curationService);
 
 const packages = require('./routes/packages')(harvestStore, summaryService, aggregatorService, curationService);
 
-const webhook = require('./routes/webhook')(curationService);
+const appLogger = console; // @todo add real logger
+const webhook = require('./routes/webhook')(curationService, appLogger);
 
 const app = express();
 app.use(cors());

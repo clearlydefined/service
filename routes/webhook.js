@@ -7,6 +7,7 @@ const yaml = require('js-yaml');
 const router = express.Router();
 const validPrActions = ['opened', 'reopened', 'synchronize'];
 let webhookSecret = null;
+let logger = null;
 let curationService;
 
 router.post('/', async (request, response, next) => {
@@ -17,29 +18,26 @@ router.post('/', async (request, response, next) => {
 
   // @todo secure webhook, see https://github.com/Microsoft/ghcrawler/blob/develop/routes/webhook.js#L28
 
-  const {pull_request: pr, action: prAction, number} = request.body;
-  const {sha, ref} = pr.head;
+  const { pull_request: pr, action: prAction, number } = request.body;
+  const { sha, ref } = pr.head;
   const isValidPullRequest = pr && validPrActions.includes(prAction);
   if (!isValidPullRequest) {
     return fatal(request, response, 'Not a valid Pull Request event');
   }
 
-  const prFiles = await curationService.getPrFiles({number});
-  const curationFilenames = prFiles.map(
-    x => x.filename
-  ).filter(curationService.isCurationFile);
+  const prFiles = await curationService.getPrFiles({ number });
+  const curationFilenames = prFiles
+    .map(x => x.filename)
+    .filter(curationService.isCurationFile);
 
   const curationResults = await Promise.all(
-    curationFilenames.map(
-      path => curationService.getContent({ref, path})
-        .then(curationService.isValidCuration)
-    )
+    curationFilenames.map(path => curationService
+      .getContent({ ref, path })
+      .then(curationService.isValidCuration))
   );
   const invalidCurations = [];
   curationResults.forEach((result, index) => {
-    if (!result) {
-      invalidCurations.push(curationFilenames[index]);
-    }
+    if (!result) invalidCurations.push(curationFilenames[index]);
   });
 
   let state = 'success';
@@ -49,26 +47,26 @@ router.post('/', async (request, response, next) => {
     description = `Invalid curations: ${invalidCurations.join(', ')}`
   }
 
-  await curationService.postCommitStatus({sha, state, description});
+  await curationService.postCommitStatus({ sha, state, description });
   response.status(200).end();
 });
 
 function fatal(request, response, error) {
-  logger().error(error);
+  getLogger().error(error);
   response.status(500);
   response.setHeader('content-type', 'text/plain');
   response.end(JSON.stringify(error));
 }
 
-// @todo add real logger
-function logger() {
-  return console;
+function getLogger() {
+  return logger;
 }
 
 // @todo add secret
-function setup(service, secret) {
+function setup(service, appLogger, secret) {
   curationService = service;
   webhookSecret = secret;
+  logger = appLogger
   return router;
 }
 

@@ -133,10 +133,10 @@ class GitHubCurationService {
   }
 
   async getContent({ref, path}) {
-    const {owner, repo} = this.options;
+    const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     try {
-      const response = await github.repos.getContent({owner, repo, ref, path});
+      const response = await github.repos.getContent({ owner, repo, ref, path });
       return base64.decode(response.data.content);
     } catch (error) {
       // @todo add logger
@@ -149,7 +149,7 @@ class GitHubCurationService {
     description = 'ClealyDefined curation validation',
     target_url = 'https://clearlydefined.io/'
   }) {
-    const {owner, repo} = this.options;
+    const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     try {
       await github.repos.createStatus({
@@ -167,16 +167,15 @@ class GitHubCurationService {
   }
 
   async getPrFiles({number}) {
-    const {owner, repo} = this.options;
+    const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
-    let files = [];
     try {
-      const response = await github.pullRequests.getFiles({owner, repo, number});
-      files = response.data;
+      const response = await github.pullRequests.getFiles({ owner, repo, number });
+      return response.data;
     } catch (error) {
       // @todo add logger
+      throw error;
     }
-    return files;
   }
 
   _getPrTitle(packageCoordinates) {
