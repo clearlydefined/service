@@ -201,8 +201,9 @@ class GitHubCurationService {
   }
 
   _getPrTitle(packageCoordinates) {
-    return utils.toPathFromCoordinates(packageCoordinates);
-    // return `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`;
+    const c = packageCoordinates;
+    // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
+    return `${c.type.toLowerCase()}/${c.provider.toLowerCase()}/${c.namespace || '-'}/${c.name}/${c.revision}`;
   }
 
   _getBranchName(packageCoordinates) {
