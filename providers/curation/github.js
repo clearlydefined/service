@@ -7,6 +7,7 @@ const extend = require('extend');
 const moment = require('moment');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
+const utils = require('../../lib/utils')
 
 // Responsible for managing curation patches in a store
 //
