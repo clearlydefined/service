@@ -12,32 +12,31 @@ let curationService;
 
 router.post('/', async (request, response, next) => {
   const isGithubEvent = request.headers['x-github-event'];
-  if (!isGithubEvent) {
+  if (!isGithubEvent)
     return fatal(request, response, 'Not a Github event');
-  }
 
   // @todo secure webhook, see https://github.com/Microsoft/ghcrawler/blob/develop/routes/webhook.js#L28
 
   const { pull_request: pr, action: prAction, number } = request.body;
   const { sha, ref } = pr.head;
   const isValidPullRequest = pr && validPrActions.includes(prAction);
-  if (!isValidPullRequest) {
+  if (!isValidPullRequest)
     return fatal(request, response, 'Not a valid Pull Request event');
-  }
 
-  const prFiles = await curationService.getPrFiles({ number });
+  const prFiles = await curationService.getPrFiles(number);
   const curationFilenames = prFiles
     .map(x => x.filename)
     .filter(curationService.isCurationFile);
 
   const curationResults = await Promise.all(
     curationFilenames.map(path => curationService
-      .getContent({ ref, path })
+      .getContent(ref, path)
       .then(curationService.isValidCuration))
   );
   const invalidCurations = [];
   curationResults.forEach((result, index) => {
-    if (!result) invalidCurations.push(curationFilenames[index]);
+    if (!result)
+      invalidCurations.push(curationFilenames[index]);
   });
 
   let state = 'success';
@@ -47,7 +46,7 @@ router.post('/', async (request, response, next) => {
     description = `Invalid curations: ${invalidCurations.join(', ')}`
   }
 
-  await curationService.postCommitStatus({ sha, state, description });
+  await curationService.postCommitStatus(sha, pr, state, description);
   response.status(200).end();
 });
 
