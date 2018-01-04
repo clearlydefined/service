@@ -160,7 +160,7 @@ class GitHubCurationService {
     return curation ? extend(true, {}, summarized, curation) : summarized;
   }
 
-  async getContent({ref, path}) {
+  async getContent(ref, path) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     try {
@@ -171,30 +171,23 @@ class GitHubCurationService {
     }
   }
 
-  async postCommitStatus({
-    sha,
-    state,
-    description = 'ClealyDefined curation validation',
-    target_url = 'https://clearlydefined.io/'
-  }) {
+  async postCommitStatus(sha, pr, state, description) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
+    // TODO hack alert! use the title of the PR to find the component in clearlydefined.io
+    // In the future we need a more concrete/robust way to capture this in the PR in the face of 
+    // people not using out tools etc. Ideally read it out of the PR files themselves. 
+    const target_url = `https://dev.clearlydefined.io/curation/${pr.title}/pr/${pr.number}`;
     try {
-      await github.repos.createStatus({
-        owner,
-        repo,
-        sha,
-        state,
-        description,
-        target_url,
-        context: 'ClearlyDefined'
+      return github.repos.createStatus({
+        owner, repo, sha, state, description, target_url, context: 'ClearlyDefined'
       });
     } catch (error) {
       // @todo add logger
     }
   }
 
-  async getPrFiles({number}) {
+  async getPrFiles(number) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     try {
@@ -207,7 +200,8 @@ class GitHubCurationService {
   }
 
   _getPrTitle(packageCoordinates) {
-    return `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`;
+    return utils.toPathFromCoordinates(packageCoordinates);
+    // return `${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}/${packageCoordinates.revision}`;
   }
 
   _getBranchName(packageCoordinates) {
@@ -219,12 +213,12 @@ class GitHubCurationService {
   }
 
   // @todo improve validation via schema, etc
+  // return the loaded curation if possible
   isValidCuration(curation) {
     try {
-      let data = yaml.safeLoad(curation);
-      return true;
+      return yaml.safeLoad(curation);
     } catch (error) {
-      return false;
+      return null;
     }
   }
 
