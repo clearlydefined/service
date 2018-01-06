@@ -28,6 +28,7 @@ router.post('/', async (request, response, next) => {
   if (!isValidPullRequest)
     return fatal(request, response, 'Not a valid Pull Request event');
 
+  await curationService.postCommitStatus(sha, pr, 'pending', 'Validation in progress');
   const prFiles = await curationService.getPrFiles(number);
   const curationFilenames = prFiles
     .map(x => x.filename)
