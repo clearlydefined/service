@@ -34,7 +34,7 @@ const curations = require('./routes/curations')(curationService);
 const packages = require('./routes/packages')(harvestStore, summaryService, aggregatorService, curationService);
 
 const appLogger = console; // @todo add real logger
-const webhook = require('./routes/webhook')(curationService, appLogger);
+const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);
 
 const app = express();
 app.use(cors());
@@ -45,8 +45,7 @@ app.use(requestId());
 app.use(logger('dev'));
 app.use(configMiddleware);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-app.use(bodyParser.json());
-app.use('/webhook', webhook);
+app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook);
 app.use(basicAuth({
   users: {
     'token': config.auth.apiToken,
@@ -56,6 +55,7 @@ app.use(basicAuth({
 
 app.use('/', index);
 app.use('/harvest', harvest);
+app.use(bodyParser.json());
 app.use('/curations', curations);
 app.use('/packages', packages);
 
