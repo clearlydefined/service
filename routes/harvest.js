@@ -8,7 +8,7 @@ const utils = require('../lib/utils');
 const bodyParser = require('body-parser');
 
 // Gets a given harvested file
-router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', asyncMiddleware(async (request, response, next) => {
+router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
@@ -22,10 +22,12 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', as
       const filter = await getFilter(packageCoordinates);
       const result = await summarizeService.summarize(packageCoordinates, filter, raw);
       response.status(200).send(result);
+      break;
     }
     case 'list': {
-      const result = await harvestStore.list(packageCoordinates)
+      const result = await harvestStore.list(packageCoordinates);
       response.status(200).send(result);
+      break;
     }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
@@ -50,10 +52,10 @@ function buildFilter(dimensions) {
 }
 
 // Gets ALL the harvested data for a given component revision
-router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response, next) => {
+router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
   const raw = await harvestStore.getAll(packageCoordinates);
-  const form = (request.query.form || 'summary').toLowerCase()
+  const form = (request.query.form || 'summary').toLowerCase();
   if (['streamed', 'raw'].includes(form))
     response.status(200).send(raw);
   const filter = await getFilter(packageCoordinates);
@@ -62,15 +64,15 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
 }));
 
 // Puts harvested file
-router.put('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', asyncMiddleware(async (request, response, next) => {
+router.put('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
-  const result = await harvestStore.store(packageCoordinates, request);
+  await harvestStore.store(packageCoordinates, request);
   response.sendStatus(201);
 }));
 
 // Post a component to be harvested
 // TODO not sure this is needed or needed in this form...
-router.post('/', bodyParser.json(), asyncMiddleware(async (request, response, next) => {
+router.post('/', bodyParser.json(), asyncMiddleware(async (request, response) => {
   const result = await harvestService.harvest(request.body);
   response.status(201).send(Object.assign(request.body, { build: { id: result.id } }));
 }));

@@ -13,7 +13,7 @@ const utils = require('../lib/utils');
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getPackage));
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPackage));
 
-async function getPackage(request, result, next) {
+async function getPackage(request, result) {
   const coordinates = utils.toPackageCoordinates(request);
   const pr = request.params.pr;
   const curation = pr ? await curationService.get(coordinates, pr) : null;
@@ -22,9 +22,9 @@ async function getPackage(request, result, next) {
 }
 
 /**
- * Get the final representation of the specified component and optionally apply the indicated 
+ * Get the final representation of the specified component and optionally apply the indicated
  * curation.
- * 
+ *
  * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
  * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
  * curation or an actual curation object.
@@ -35,27 +35,25 @@ async function computePackage(coordinates, curationSpec) {
   const raw = await harvestService.getAll(coordinates);
   // Summarize without any filters. From there we can get any dimensions and filter if needed.
   const summarized = await summaryService.summarizeAll(coordinates, raw);
-  const filter = await getFilter(coordinates, curation, raw);
   // if there is a file filter, summarize again to focus just on the desired files
   // TODO eventually see if there is a better way as summarizing could be expensive.
   // That or cache the heck out of this...
-  const filtered = filter ? await summaryService.summarizeAll(coordinates, raw, filter) : summarized;
   const aggregated = await aggregationService.process(coordinates, summarized);
   return curationService.curate(coordinates, curation, aggregated);
 }
 
 /**
  * Get a filter function that picks files from the dimensions of the described package to include in the
- * result. Dimensions are things like source, test, data, dev, ... Each dimension has an array of 
- * minimatch/glob style expressions that identify files to include in the summarization effort. 
- * The dimensions are specified in the `described` neighborhood of the raw and/or curated data 
+ * result. Dimensions are things like source, test, data, dev, ... Each dimension has an array of
+ * minimatch/glob style expressions that identify files to include in the summarization effort.
+ * The dimensions are specified in the `described` neighborhood of the raw and/or curated data
  * for the given package.
- * 
+ *
  * @param {Summary} [curation] - Curated information to use in building the filter.
  * @param {Summary} [harvested] - Harvested data to use in building the filter.
  * @returns {function} The requested filter function.
  */
-async function getFilter(curation, harvested) {
+async function getFilter(curation, harvested) { // eslint-disable-line no-unused-vars
   if (!curation && !harvested)
     return null;
   const joined = extend(true, {}, harvested, curation);
@@ -64,10 +62,10 @@ async function getFilter(curation, harvested) {
 }
 
 /**
- * Create a filter that excludes all element that match the glob entries in the given 
+ * Create a filter that excludes all element that match the glob entries in the given
  * dimension's test, dev and data properties.
  * @param {*} dimensions - An object whose propertes are arrays of glob style filters expressions.
- * @returns {function} - A filter function 
+ * @returns {function} - A filter function
  */
 function buildFilter(dimensions) {
   if (!dimensions)
@@ -80,7 +78,7 @@ function buildFilter(dimensions) {
 
 // Previews the summarized data for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, result, next) => {
+router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, result) => {
   if (!request.query.preview)
     return result.sendStatus(400);
   const coordinates = utils.toPackageCoordinates(request);
