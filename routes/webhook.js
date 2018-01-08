@@ -3,6 +3,7 @@
 
 const express = require('express');
 const yaml = require('js-yaml');
+const crypto = require('crypto');
 
 const router = express.Router();
 const validPrActions = ['opened', 'reopened', 'synchronize'];
@@ -12,17 +13,22 @@ let curationService;
 
 router.post('/', async (request, response, next) => {
   const isGithubEvent = request.headers['x-github-event'];
-  if (!isGithubEvent)
-    return fatal(request, response, 'Not a Github event');
+  const signature = request.headers['x-hub-signature'];
+  if (!isGithubEvent || !signature)
+    return fatal(request, response, 'Missing signature or event type on GitHub webhook');
 
-  // @todo secure webhook, see https://github.com/Microsoft/ghcrawler/blob/develop/routes/webhook.js#L28
+  const computedSignature = 'sha1=' + crypto.createHmac('sha1', webhookSecret).update(request.body).digest('hex');
+  if (!crypto.timingSafeEqual(new Buffer(signature), new Buffer(computedSignature))) {
+    return fatal(request, response, 'X-Hub-Signature does not match blob signature');
+  }
 
-  const { pull_request: pr, action: prAction, number } = request.body;
+  const { pull_request: pr, action: prAction, number } = JSON.parse(request.body);
   const { sha, ref } = pr.head;
   const isValidPullRequest = pr && validPrActions.includes(prAction);
   if (!isValidPullRequest)
     return fatal(request, response, 'Not a valid Pull Request event');
 
+  await curationService.postCommitStatus(sha, pr, 'pending', 'Validation in progress');
   const prFiles = await curationService.getPrFiles(number);
   const curationFilenames = prFiles
     .map(x => x.filename)
