@@ -9,7 +9,7 @@
 //    revision: string
 //  described:
 //    source_location:
-//      type: string    
+//      type: string
 //      provider: string
 //      url: string
 //      revision: string
@@ -23,9 +23,6 @@ class ClearlyDescribedSummarizer {
   }
 
   summarize(packageCoordinates, data, filter = null) {
-    const sourceLocation = data.sourceInfo
-      ? _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
-      : null;
     const result = this.getSourceLocation(data, filter);
     switch (packageCoordinates.type) {
       case 'npm':
@@ -35,7 +32,7 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  getSourceLocation(data, filter) {
+  getSourceLocation(data) {
     const sourceLocation = data.sourceInfo
       ? _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
       : null;
@@ -44,12 +41,12 @@ class ClearlyDescribedSummarizer {
     };
   }
 
-  addNpmData(result, data, filter) {
+  addNpmData(result, data) {
     result.described.projectWebsite = data.manifest.homepage;
     result.described.issueTracker = data.manifest.bugs;
     result.licensed = {
       license: data.manifest.license
-    }
+    };
     return result;
   }
 }

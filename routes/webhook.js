@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const express = require('express');
-const yaml = require('js-yaml');
 const crypto = require('crypto');
 
 const router = express.Router();
@@ -11,7 +10,7 @@ let webhookSecret = null;
 let logger = null;
 let curationService;
 
-router.post('/', async (request, response, next) => {
+router.post('/', async (request, response) => {
   const isGithubEvent = request.headers['x-github-event'];
   const signature = request.headers['x-hub-signature'];
   if (!isGithubEvent || !signature)
@@ -46,10 +45,10 @@ router.post('/', async (request, response, next) => {
   });
 
   let state = 'success';
-  let description = 'All curations are valid'
+  let description = 'All curations are valid';
   if (invalidCurations.length) {
     state = 'error';
-    description = `Invalid curations: ${invalidCurations.join(', ')}`
+    description = `Invalid curations: ${invalidCurations.join(', ')}`;
   }
 
   await curationService.postCommitStatus(sha, pr, state, description);
@@ -71,7 +70,7 @@ function getLogger() {
 function setup(service, appLogger, secret) {
   curationService = service;
   webhookSecret = secret;
-  logger = appLogger
+  logger = appLogger;
   return router;
 }
 

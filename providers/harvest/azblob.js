@@ -14,7 +14,7 @@ const moment = require('moment');
 // toolB/2.0: { /* tool-specific data format }
 // }
 
-const resultOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(result);
+const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
 const responseOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(response);
 
 class AzBlobHarvesterService {
@@ -58,7 +58,7 @@ class AzBlobHarvesterService {
 
   getAll(packageCoordinates) {
     const name = utils.toPathFromCoordinates(packageCoordinates);
-    // Note that here we are assuming the number of blobs will be small-ish (<10) and 
+    // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
     const list = new Promise((resolve, reject) => {

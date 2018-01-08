@@ -7,7 +7,6 @@ const extend = require('extend');
 const moment = require('moment');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
-const utils = require('../../lib/utils')
 
 // Responsible for managing curation patches in a store
 //
@@ -60,9 +59,7 @@ class GitHubCurationService {
             const sha = masterBranch.data.commit.sha;
             return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha });
           })
-          .then(ref => {
-            return updatedPatch;
-          });
+          .then(() => updatedPatch);
       })
       .then(updatedPatch => {
         const message = `Update ${path} ${packageCoordinates.revision}`;
@@ -85,7 +82,7 @@ class GitHubCurationService {
           branch: prBranch
         });
       })
-      .then(destination => {
+      .then(() => {
         return github.pullRequests.create({
           owner,
           repo,
@@ -102,9 +99,9 @@ class GitHubCurationService {
    * then look up the standard curation. If the curation is a PR number, get the curation
    * held in that PR. The curation arg might be the actual curation to use. If so, just
    * return it.
-   * 
+   *
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @param {(number | string | Summary)} [curation] - The curation identifier if any. Could be a PR number, 
+   * @param {(number | string | Summary)} [curation] - The curation identifier if any. Could be a PR number,
    * an actual curation object or null.
    * @returns {Summary} The requested curation
    */
@@ -120,10 +117,10 @@ class GitHubCurationService {
   /**
    * Get the curations for the revisions of the entity at the given coordinates. Revision information
    * in coordinates are ignored. If a PR number is provided, get the curations represented in that PR.
-   * 
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. 
+   *
+   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation.
    * @param {(number | string} [curation] - The curation identifier if any. Could be a PR number/string.
-   * @returns {Object} The requested curations where the revisions property has a property for each 
+   * @returns {Object} The requested curations where the revisions property has a property for each
    * curated revision.
    */
   async getAll(packageCoordinates, pr = null) {
@@ -157,7 +154,7 @@ class GitHubCurationService {
   }
 
   async curate(packageCoordinates, curationSpec, summarized) {
-    const curation = await this.get(packageCoordinates, curationSpec)
+    const curation = await this.get(packageCoordinates, curationSpec);
     return curation ? extend(true, {}, summarized, curation) : summarized;
   }
 
@@ -176,8 +173,8 @@ class GitHubCurationService {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     // TODO hack alert! use the title of the PR to find the component in clearlydefined.io
-    // In the future we need a more concrete/robust way to capture this in the PR in the face of 
-    // people not using out tools etc. Ideally read it out of the PR files themselves. 
+    // In the future we need a more concrete/robust way to capture this in the PR in the face of
+    // people not using out tools etc. Ideally read it out of the PR files themselves.
     const target_url = `https://dev.clearlydefined.io/curation/${pr.title}/pr/${pr.number}`;
     try {
       return github.repos.createStatus({

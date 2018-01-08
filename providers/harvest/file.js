@@ -4,7 +4,7 @@
 const utils = require('../../lib/utils');
 const fs = require('fs');
 const path = require('path');
-const recursive = require("recursive-readdir");
+const recursive = require('recursive-readdir');
 
 // Responsible for storing and retrieving harvested data
 //
@@ -22,7 +22,7 @@ class FileHarvestStore {
     this.options = options;
   }
 
-  list(packageCoordinates) {
+  list() {
     // TODO implement if we actually need this.
     return Promise.resolve([]);
   }
@@ -45,7 +45,7 @@ class FileHarvestStore {
   async _getFilePath(packageCoordinates) {
     const name = utils.toPathFromCoordinates(packageCoordinates);
     const toolPath = `${this.options.location}/${packageCoordinates.type}/${name}`;
-    if (packageCoordinates.toolVersion) 
+    if (packageCoordinates.toolVersion)
       return toolPath + '.json';
     const latest = await this._findLatest(toolPath);
     if (!latest)
@@ -56,7 +56,7 @@ class FileHarvestStore {
   async getAll(packageCoordinates) {
     const name = utils.toPathFromCoordinates(packageCoordinates);
     const path = `${this.options.location}/${packageCoordinates.type}/${name}`;
-    // Note that here we are assuming the number of blobs will be small-ish (<10) and 
+    // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
     const files = await recursive(path);
