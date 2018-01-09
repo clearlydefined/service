@@ -9,14 +9,26 @@ const utils = require('../lib/utils');
 // Get a proposed patch for a specific revision of a package
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
-  return curationService.get(packageCoordinates, request.params.pr).then(result =>
-    response.status(200).send(result));
+  return curationService.get(packageCoordinates, request.params.pr).then(result => {
+    if (result)
+      return response.status(200).send(result);
+    response.sendStatus(404);
+  })
 }));
 
 // Get an existing patch for a specific revision of a package
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
-  return curationService.get(packageCoordinates).then(result =>
+  return curationService.get(packageCoordinates).then(result => {
+    if (result)
+      return response.status(200).send(result);
+    response.sendStatus(404);
+  });
+}));
+
+// Search for any patches related to the given path, as much as is given
+router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (request, response) => {
+  return curationService.search(request.path).then(result =>
     response.status(200).send(result));
 }));
 
