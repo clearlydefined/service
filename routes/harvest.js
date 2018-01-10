@@ -8,7 +8,7 @@ const utils = require('../lib/utils');
 const bodyParser = require('body-parser');
 
 // Gets a given harvested file
-router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', asyncMiddleware(async (request, response) => {
+router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
@@ -24,14 +24,15 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion?', as
       response.status(200).send(result);
       break;
     }
-    case 'list': {
-      const result = await harvestStore.list(packageCoordinates);
-      response.status(200).send(result);
-      break;
-    }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
   }
+}));
+
+// Get a list of the harvested data that we have that matches the url as a prefix
+router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(async (request, response) => {
+  const result = await harvestStore.list(request.path);
+  response.status(200).send(result);
 }));
 
 async function getFilter(packageCoordinates) {

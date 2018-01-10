@@ -206,7 +206,7 @@ class GitHubCurationService {
    * @param {string} searchPattern - a partial path that describes the sort of curation to look for. 
    * @returns {[URL]} - Array of URLs describing he available curations
    */
-  async search(searchPattern) {
+  async list(searchPattern) {
     await this.ensureCurations();
     const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(searchPattern)}`;
     if (!fs.existsSync(root))

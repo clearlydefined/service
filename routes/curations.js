@@ -28,7 +28,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
 
 // Search for any patches related to the given path, as much as is given
 router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (request, response) => {
-  return curationService.search(request.path).then(result =>
+  return curationService.list(request.path).then(result =>
     response.status(200).send(result));
 }));
 

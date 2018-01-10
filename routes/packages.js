@@ -7,6 +7,7 @@ const extend = require('extend');
 const router = express.Router();
 const minimatch = require('minimatch');
 const utils = require('../lib/utils');
+const _ = require('lodash');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -19,6 +20,22 @@ async function getPackage(request, result) {
   const curation = pr ? await curationService.get(coordinates, pr) : null;
   const curated = await computePackage(coordinates, curation);
   result.status(200).send(curated);
+}
+
+// Get a list of the components for which we have any kind of data, harvested or curated.
+router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (request, response) => {
+  const curated = await curationService.list(request.path);
+  const harvest = await harvestService.list(request.path);
+  const trimmedHarvest = harvest.map(trimHarvestEntry);
+  const result = _.union(trimmedHarvest, curated);
+  response.status(200).send(result);
+}));
+
+function trimHarvestEntry(entry) {
+  const segments = entry.split('/');
+  const name = segments.slice(0, 4);
+  const revision = segments.slice(5, 6);
+  return name.concat(revision).join('/');
 }
 
 /**
