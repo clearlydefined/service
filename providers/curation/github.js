@@ -4,9 +4,15 @@
 const _ = require('underscore');
 const base64 = require('base-64');
 const extend = require('extend');
+const { exec } = require('child_process');
+const fs = require('fs');
 const moment = require('moment');
+const readdirp = require('readdirp');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
+const utils = require('../../lib/utils');
+const tmp = require('tmp');
+tmp.setGracefulCleanup();
 
 // Responsible for managing curation patches in a store
 //
@@ -15,25 +21,35 @@ const Github = require('../../lib/github');
 class GitHubCurationService {
   constructor(options) {
     this.options = options;
+    this.curationUpdateTime = null;
+    this.tempLocation = tmp.dirSync(this.tmpOptions);
   }
 
-  addOrUpdate(packageCoordinates, patch) {
+  get tmpOptions() {
+    return {
+      unsafeCleanup: true,
+      template: `${this.options.tempLocation}/cd-XXXXXX`
+    };
+  }
+
+  addOrUpdate(coordinates, patch) {
     if (!patch.patch)
       throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?');
     const github = Github.getClient(this.options);
     const { owner, repo, branch } = this.options;
-    const path = this._getCurationPath(packageCoordinates);
-    const prBranch = this._getBranchName(packageCoordinates);
+    const path = this._getCurationPath(coordinates);
+    const prBranch = this._getBranchName(coordinates);
     let curationPathSha = null;
 
-    return this.getAll(packageCoordinates)
+    return this.getAll(coordinates)
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
           package: {
-            type: packageCoordinates.type,
-            provider: packageCoordinates.provider,
-            name: packageCoordinates.name
+            type: coordinates.type,
+            provider: coordinates.provider,
+            namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
+            name: coordinates.name
           }
         });
 
@@ -48,7 +64,7 @@ class GitHubCurationService {
         }
 
         // add/update the patch for this revision
-        parsedContent.revisions[packageCoordinates.revision] = _.assign(parsedContent.revisions[packageCoordinates.revision] || {}, patch.patch);
+        parsedContent.revisions[coordinates.revision] = _.assign(parsedContent.revisions[coordinates.revision] || {}, patch.patch);
 
         // return the serialized YAML
         return yaml.safeDump(parsedContent, { sortKeys: true });
@@ -62,7 +78,7 @@ class GitHubCurationService {
           .then(() => updatedPatch);
       })
       .then(updatedPatch => {
-        const message = `Update ${path} ${packageCoordinates.revision}`;
+        const message = `Update ${path} ${coordinates.revision}`;
         if (curationPathSha)
           return github.repos.updateFile({
             owner,
@@ -86,7 +102,7 @@ class GitHubCurationService {
         return github.pullRequests.create({
           owner,
           repo,
-          title: this._getPrTitle(packageCoordinates),
+          title: this._getPrTitle(coordinates),
           body: patch.description,
           head: `refs/heads/${prBranch}`,
           base: branch
@@ -123,8 +139,8 @@ class GitHubCurationService {
    * @returns {Object} The requested curations where the revisions property has a property for each
    * curated revision.
    */
-  async getAll(packageCoordinates, pr = null) {
-    const curationPath = this._getCurationPath(packageCoordinates);
+  async getAll(coordinates, pr = null) {
+    const curationPath = this._getCurationPath(coordinates);
     const { owner, repo } = this.options;
     const branch = await this.getBranch(pr);
 
@@ -185,6 +201,50 @@ class GitHubCurationService {
     }
   }
 
+  /**
+   * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components 
+   * @param {string} searchPattern - a partial path that describes the sort of curation to look for. 
+   * @returns {[URL]} - Array of URLs describing he available curations
+   */
+  async list(searchPattern) {
+    await this.ensureCurations();
+    const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(searchPattern)}`;
+    if (!fs.existsSync(root))
+      return [];
+    return new Promise((resolve, reject) => {
+      const result = [];
+      readdirp({ root, fileFilter: '*.yaml' })
+        .on('data', entry => result.push(...this.handleEntry(entry)))
+        .on('end', () => resolve(result))
+        .on('error', reject)
+    });
+  }
+
+  handleEntry(entry) {
+    const curation = yaml.safeLoad(fs.readFileSync(entry.fullPath.replace(/\\/g, '/')));
+    const { package: p, revisions } = curation;
+    const root = `${p.type}/${p.provider}/${p.namespace || '-'}/${p.name}/`;
+    return Object.getOwnPropertyNames(revisions).map(version => root + version);
+  }
+
+  async ensureCurations() {
+    if (this.curationUpdateTime && (Date.now - this.curationUpdateTime < this.options.curationFreshness))
+      return;
+    const { owner, repo } = this.options;
+    const url = `https://github.com/${owner}/${repo}.git`
+    const command = this.curationUpdateTime
+      ? `cd ${this.tempLocation.name}/${repo} && git pull`
+      : `cd ${this.tempLocation.name} && git clone ${url}`;
+    return new Promise((resolve, reject) => {
+      exec(command, (error, stdout, stderr) => {
+        if (error)
+          return reject(error);
+        this.curationUpdateTime = Date.now;
+        resolve(stdout);
+      });
+    });
+  }
+
   async getPrFiles(number) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
@@ -197,18 +257,25 @@ class GitHubCurationService {
     }
   }
 
-  _getPrTitle(packageCoordinates) {
-    const c = packageCoordinates;
+  _getPrTitle(coordinates) {
+    const c = coordinates;
     // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
     return `${c.type.toLowerCase()}/${c.provider.toLowerCase()}/${c.namespace || '-'}/${c.name}/${c.revision}`;
   }
 
-  _getBranchName(packageCoordinates) {
-    return `${packageCoordinates.type.toLowerCase()}_${packageCoordinates.name}_${packageCoordinates.revision}_${moment().format('YYMMDD_HHmmss.SSS')}`;
+  _getBranchName(coordinates) {
+    const c = coordinates;
+    return `${c.type.toLowerCase()}_${c.name}_${c.revision}_${moment().format('YYMMDD_HHmmss.SSS')}`;
   }
 
-  _getCurationPath(packageCoordinates) {
-    return `curations/${packageCoordinates.type.toLowerCase()}/${packageCoordinates.provider.toLowerCase()}/${packageCoordinates.name}.yaml`;
+  _getCurationPath(coordinates) {
+    const c = coordinates;
+    return `curations/${c.type.toLowerCase()}/${c.provider.toLowerCase()}/${c.namespace || '-'}/${c.name}.yaml`;
+  }
+
+  _getSearchRoot(path) {
+    // TODO validate the path is not bogus
+    return `curations/${path.split('/').slice(0, 4).join('/')}`;
   }
 
   // @todo improve validation via schema, etc

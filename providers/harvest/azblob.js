@@ -30,18 +30,11 @@ class AzBlobHarvesterService {
     return this.blobService;
   }
 
-  list(packageCoordinates) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
+  list(pattern) {
     return new Promise((resolve, reject) => {
+      const name = pattern.startsWith('/') ? pattern.slice(1) : pattern;
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject));
-    }).then(result =>
-      result.entries.map(entry => {
-        return {
-          name: entry.name.substr(entry.name.lastIndexOf('/') + 1),
-          lastModified: moment(entry.lastModified).format(),
-          etag: entry.etag
-        };
-      }));
+    }).then(result => result.entries.map(entry => entry.name).filter(entry => !entry.startsWith('deadletter')));
   }
 
   get(packageCoordinates, stream) {
