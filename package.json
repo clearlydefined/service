@@ -29,6 +29,7 @@
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
     "swagger-ui-express": "^2.0.13",
+    "tmp": "0.0.33",
     "underscore": "^1.8.3",
     "vso-node-api": "^6.2.8-preview"
   },
