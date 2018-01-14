@@ -7,6 +7,15 @@ ENV APPDIR=/opt/service
 # RUN apk update && apk upgrade && \
 #    apk add --no-cache bash git openssh
 
+## get SSH server running
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssh-server \
+    && echo "root:Docker!" | chpasswd
+COPY sshd_config /etc/ssh/
+COPY init_container.sh /bin/
+RUN chmod 755 /bin/init_container.sh
+CMD ["/bin/init_container.sh"]
+
 COPY package.json /tmp/package.json
 RUN cd /tmp && npm install --production
 RUN mkdir -p "${APPDIR}" && cp -a /tmp/node_modules "${APPDIR}"
@@ -15,5 +24,5 @@ WORKDIR "${APPDIR}"
 COPY . "${APPDIR}"
 
 ENV PORT 4000
-EXPOSE 4000
+EXPOSE 4000 2222
 ENTRYPOINT ["npm", "start"]
