@@ -1,0 +1,202 @@
+swagger: "2.0"
+
+info:
+  version: "0.1.0"
+  title: ClearlyDefined API
+  description: The REST API for clearlydefined.io
+
+schemes:
+  - https
+host: clearlydefined.io
+basePath: /
+
+paths:
+  /curations/{type}/{provider}/{namespace}/{name}:
+    get:
+      summary: Gets a list of components that have curations.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+      responses:
+        200:
+          description: List of components.
+  /curations/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
+    get:
+      summary: Gets a proposed curation for a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+        - $ref: "#/parameters/pr"
+      responses:
+        200:
+          description: Component revision patch.
+  /curations/{type}/{provider}/{namespace}/{name}/{revision}:
+    get:
+      summary: Gets a curation for a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+      responses:
+        200:
+          description: Component revision curation.
+    patch:
+      summary: Patches the curation of a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+      responses:
+        200:
+          description: Nothing. TODO - this should be 204 or return something.
+  /harvest:
+    post:
+      summary: Obsolete?
+      responses:
+        201:
+          description: Harvested file has been accepted.
+  /harvest/{type}/{provider}/{namespace}/{name}/{revision}/{tool}:
+    get:
+      summary: Get a list of harvested data.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+        - $ref: "#/parameters/tool"
+      responses:
+        200:
+          description: Unknown. TODO.
+  /harvest/{type}/{provider}/{namespace}/{name}/{revision}/{tool}/{toolVersion}:
+    get:
+      summary: Gets the harvested file for a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+        - $ref: "#/parameters/tool"
+        - $ref: "#/parameters/toolVersion"
+      responses:
+        200:
+          description: Harvested file.
+    put:
+      summary: Puts the harvested file for a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+        - $ref: "#/parameters/tool"
+        - $ref: "#/parameters/toolVersion"
+      responses:
+        201:
+          description: Harvested file has been accepted.
+  /packages/{type}/{provider}/{namespace}/{name}:
+    get:
+      summary: Gets components that have been harvested or curated.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+      responses:
+        200:
+          description: List of components.
+  /packages/{type}/{provider}/{namespace}/{name}/{revision}:
+    get:
+      summary: Gets the summary of a component revision.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+      responses:
+        200:
+          description: Component summary.
+    post:
+      summary: Previews the summary of a component revision with the included curation.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+      responses:
+        200:
+          description: Component summary.
+  /packages/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
+    get:
+      summary: Previews the summary of a component revision with the proposed curation.
+      parameters:
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/provider"
+        - $ref: "#/parameters/namespace"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/revision"
+        - $ref: "#/parameters/pr"
+      responses:
+        200:
+          description: Component summary.
+parameters:
+  type:
+    name: type
+    in: path
+    required: true
+    description: the type of the component you are looking for. For exammple, npm, git, nuget, maven, ... This talks about the *shape* of the component.
+    type: string
+  provider:
+    name: provider
+    in: path
+    required: true
+    description: where the component can be found. Examples include npmjs, maven-central, github, nuget, ...
+    type: string
+  namespace:
+    name: namespace
+    in: path
+    required: true
+    description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
+    type: string
+  name:
+    name: name
+    in: path
+    required: true
+    description: the name of the component you want. Given the `namespace` segment mentioned above, this is just the simple name.
+    type: string
+  revision:
+    name: revision
+    in: path
+    required: true
+    description: components typically have some differentiator like a version or commit id. Use that here. If this segment is omitted, the latest revision is used (if that makes sense for the provider).
+    type: string
+  pr:
+    name: pr
+    in: path
+    required: true
+    description: the GitHub PR number to apply to the existing harvested and curated data. Note that that this parameter must be preceded by a 'pr' segment.
+    type: number
+  tool:
+    name: tool
+    in: path
+    required: true
+    description: the identifier of the tool
+    type: string
+  toolVersion:
+    name: toolVersion
+    in: path
+    required: true
+    description: the identifier of the tool version
+    type: string
