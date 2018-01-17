@@ -3,7 +3,6 @@
 
 const utils = require('../../lib/utils');
 const azure = require('azure-storage');
-const moment = require('moment');
 
 // Responsible for storing and retrieving harvested data
 //

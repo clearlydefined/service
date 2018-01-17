@@ -10,7 +10,6 @@ const moment = require('moment');
 const readdirp = require('readdirp');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
-const utils = require('../../lib/utils');
 const tmp = require('tmp');
 tmp.setGracefulCleanup();
 
@@ -202,8 +201,8 @@ class GitHubCurationService {
   }
 
   /**
-   * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components 
-   * @param {string} searchPattern - a partial path that describes the sort of curation to look for. 
+   * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components
+   * @param {string} searchPattern - a partial path that describes the sort of curation to look for.
    * @returns {[URL]} - Array of URLs describing he available curations
    */
   async list(searchPattern) {
@@ -216,7 +215,7 @@ class GitHubCurationService {
       readdirp({ root, fileFilter: '*.yaml' })
         .on('data', entry => result.push(...this.handleEntry(entry)))
         .on('end', () => resolve(result))
-        .on('error', reject)
+        .on('error', reject);
     });
   }
 
@@ -231,12 +230,12 @@ class GitHubCurationService {
     if (this.curationUpdateTime && (Date.now - this.curationUpdateTime < this.options.curationFreshness))
       return;
     const { owner, repo } = this.options;
-    const url = `https://github.com/${owner}/${repo}.git`
+    const url = `https://github.com/${owner}/${repo}.git`;
     const command = this.curationUpdateTime
       ? `cd ${this.tempLocation.name}/${repo} && git pull`
       : `cd ${this.tempLocation.name} && git clone ${url}`;
     return new Promise((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
+      exec(command, (error, stdout) => {
         if (error)
           return reject(error);
         this.curationUpdateTime = Date.now;
