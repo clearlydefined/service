@@ -156,14 +156,20 @@ parameters:
     name: type
     in: path
     required: true
-    description: the type of the component you are looking for. For exammple, npm, git, nuget, maven, ... This talks about the *shape* of the component.
+    description: the type of component
     type: string
+    enum:
+    - npm
+    - git
   provider:
     name: provider
     in: path
     required: true
-    description: where the component can be found. Examples include npmjs, maven-central, github, nuget, ...
+    description: where the component can be found
     type: string
+    enum:
+    - npmjs
+    - github
   namespace:
     name: namespace
     in: path
