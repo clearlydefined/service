@@ -23,9 +23,11 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asy
       const result = await summarizeService.summarize(packageCoordinates, filter, raw);
       return response.status(200).send(result);
     }
-    case 'list':
+    case 'list': {
       const result = await harvestStore.list(request.path);
       response.status(200).send(result);
+      break;
+    }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
   }
@@ -53,17 +55,22 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
   const packageCoordinates = utils.toPackageCoordinates(request);
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
-    case 'raw':
+    case 'raw': {
       const result = await harvestStore.getAll(packageCoordinates);
       return response.status(200).send(result);
-    case 'summary':
+    }
+    case 'summary': {
       const raw = await harvestStore.getAll(packageCoordinates);
       const filter = await getFilter(packageCoordinates);
       const summarized = await summarizeService.summarizeAll(packageCoordinates, filter, raw);
       response.status(200).send(summarized);
-    case 'list':
+      break;
+    }
+    case 'list': {
       const list = await harvestStore.list(request.path);
       response.status(200).send(list);
+      break;
+    }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
   }
@@ -73,7 +80,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
 router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(async (request, response) => {
   if (request.query.form.toLowerCase() === 'list') {
     const result = await harvestStore.list(request.path);
-    return esponse.status(200).send(result);
+    return response.status(200).send(result);
   }
   throw new Error(`Invalid request form: ${request.query.form}`);
 }));

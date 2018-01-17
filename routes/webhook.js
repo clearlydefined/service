@@ -39,8 +39,8 @@ router.post('/', async (request, response) => {
       .then(curationService.isValidCuration))
   );
   const invalidCurations = [];
-  curationResults.forEach((result, index) => {
-    if (!result)
+  curationResults.forEach((curationIsValid, index) => {
+    if (!curationIsValid)
       invalidCurations.push(curationFilenames[index]);
   });
 
