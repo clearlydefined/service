@@ -37,7 +37,10 @@ class AzBlobStore {
   }
 
   get(packageCoordinates, stream) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
+    let name = utils.toPathFromCoordinates(packageCoordinates);
+    if (!name.endsWith('.json')) {
+      name += '.json';
+    }
     if (stream)
       return new Promise((resolve, reject) => {
         this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject));
@@ -79,7 +82,10 @@ class AzBlobStore {
 
   store(packageCoordinates, stream) {
     return new Promise((resolve, reject) => {
-      const name = utils.toPathFromCoordinates(packageCoordinates);
+      let name = utils.toPathFromCoordinates(packageCoordinates);
+      if (!name.endsWith('.json')) {
+        name += '.json';
+      }
       stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
     });
   }
