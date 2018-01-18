@@ -31,9 +31,6 @@ class FileStore {
 
   async get(packageCoordinates, stream) {
     const filePath = await this._getFilePath(packageCoordinates);
-    if (!filePath) {
-      return null;
-    }
     if (stream)
       return new Promise((resolve, reject) => {
         const read = fs.createReadStream(filePath);
