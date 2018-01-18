@@ -15,6 +15,8 @@ paths:
   /curations/{type}/{provider}/{namespace}/{name}:
     get:
       summary: Gets a list of components that have curations.
+      tags:
+        - curations
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -26,6 +28,8 @@ paths:
   /curations/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
     get:
       summary: Gets a proposed curation for a component revision.
+      tags:
+        - curations
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -39,6 +43,8 @@ paths:
   /curations/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets a curation for a component revision.
+      tags:
+        - curations
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -50,6 +56,8 @@ paths:
           description: Component revision curation.
     patch:
       summary: Patches the curation of a component revision.
+      tags:
+        - curations
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -63,12 +71,16 @@ paths:
     post:
       deprecated: true
       summary: Obsolete?
+      tags:
+        - harvest
       responses:
         201:
           description: Harvested file has been accepted.
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Get all the harvested data for a component revision.
+      tags:
+        - harvest
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -95,6 +107,8 @@ paths:
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}/{tool}:
     get:
       summary: Get a list of harvested data.
+      tags:
+        - harvest
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -117,6 +131,8 @@ paths:
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}/{tool}/{toolVersion}:
     get:
       summary: Gets the harvested file for a component revision.
+      tags:
+        - harvest
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -144,6 +160,8 @@ paths:
           description: Harvested file.
     put:
       summary: Puts the harvested file for a component revision.
+      tags:
+        - harvest
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -158,6 +176,8 @@ paths:
   /packages/{type}/{provider}/{namespace}/{name}:
     get:
       summary: Gets components that have been harvested or curated.
+      tags:
+        - components
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -169,6 +189,8 @@ paths:
   /packages/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets the summary of a component revision.
+      tags:
+        - components
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -180,6 +202,8 @@ paths:
           description: Component summary.
     post:
       summary: Previews the summary of a component revision with the included curation.
+      tags:
+        - components
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -198,6 +222,8 @@ paths:
   /packages/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
     get:
       summary: Previews the summary of a component revision with the proposed curation.
+      tags:
+        - components
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -208,6 +234,15 @@ paths:
       responses:
         200:
           description: Component summary.
+
+tags:
+  - name: components
+    description: Component metadata - most API consumers will be interested in these
+  - name: curations
+    description: Curate component metadata - ClearlyDefined developers will be interested in these
+  - name: harvest
+    description: Harvest component metadata - ClearlyDefined developers will be intereted in these
+
 
 components:
   parameters:
