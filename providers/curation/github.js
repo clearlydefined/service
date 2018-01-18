@@ -9,11 +9,7 @@ const fs = require('fs');
 const moment = require('moment');
 const readdirp = require('readdirp');
 const yaml = require('js-yaml');
-const Ajv = require('ajv');
-const ajv = new Ajv();
-ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 const Github = require('../../lib/github');
-const curationSchema = require('../../schemas/curation');
 const tmp = require('tmp');
 tmp.setGracefulCleanup();
 
@@ -279,25 +275,6 @@ class GitHubCurationService {
   _getSearchRoot(path) {
     // TODO validate the path is not bogus
     return `curations/${path.split('/').slice(0, 4).join('/')}`;
-  }
-
-  // @todo update what is returned. E.g. if failure, return error messages;
-  // if valid, return the loaded curation, etc
-  isValidCuration(curation) {
-    let data = {};
-
-    try {
-      data = yaml.safeLoad(curation);
-    } catch (error) {
-      return null;
-    }
-
-    const isValid = ajv.validate(curationSchema, data);
-    if (!isValid) {
-      // @todo need to bubble these errors up as they point to the problems
-      console.error('Errors: ' + ajv.errors.map(x => x.message).join(', '));
-    }
-    return isValid;
   }
 
   // @todo perhaps validate directory structure (package coordinates)
