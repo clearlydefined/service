@@ -16,7 +16,7 @@ const azure = require('azure-storage');
 const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
 const responseOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(response);
 
-class AzBlobHarvesterService {
+class AzBlobStore {
   constructor(options) {
     this.options = options;
     this.containerName = options.containerName;
@@ -37,7 +37,10 @@ class AzBlobHarvesterService {
   }
 
   get(packageCoordinates, stream) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
+    let name = utils.toPathFromCoordinates(packageCoordinates);
+    if (!name.endsWith('.json')) {
+      name += '.json';
+    }
     if (stream)
       return new Promise((resolve, reject) => {
         this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject));
@@ -79,10 +82,13 @@ class AzBlobHarvesterService {
 
   store(packageCoordinates, stream) {
     return new Promise((resolve, reject) => {
-      const name = utils.toPathFromCoordinates(packageCoordinates);
+      let name = utils.toPathFromCoordinates(packageCoordinates);
+      if (!name.endsWith('.json')) {
+        name += '.json';
+      }
       stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
     });
   }
 }
 
-module.exports = options => new AzBlobHarvesterService(options);
+module.exports = options => new AzBlobStore(options);

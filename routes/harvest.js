@@ -25,8 +25,7 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asy
     }
     case 'list': {
       const result = await harvestStore.list(request.path);
-      response.status(200).send(result);
-      break;
+      return response.status(200).send(result);
     }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);
@@ -63,13 +62,11 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
       const raw = await harvestStore.getAll(packageCoordinates);
       const filter = await getFilter(packageCoordinates);
       const summarized = await summarizeService.summarizeAll(packageCoordinates, filter, raw);
-      response.status(200).send(summarized);
-      break;
+      return response.status(200).send(summarized);
     }
     case 'list': {
       const list = await harvestStore.list(request.path);
-      response.status(200).send(list);
-      break;
+      return response.status(200).send(list);
     }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`);

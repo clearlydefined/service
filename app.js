@@ -20,7 +20,7 @@ const index = require('./routes/index');
 const summaryService = require('./business/summarizer')(config.summary);
 
 const harvestStoreProvider = config.harvest.store.provider;
-const harvestStore = require(`./providers/harvest/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider], summaryService);
+const harvestStore = require(`./providers/stores/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider]);
 const harvesterProvider = config.harvest.harvester.provider;
 const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider]);
 const harvest = require('./routes/harvest')(harvester, harvestStore, summaryService);
@@ -31,7 +31,11 @@ const curationProvider = config.curation.store.provider;
 const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
 const curations = require('./routes/curations')(curationService);
 
-const packages = require('./routes/packages')(harvestStore, summaryService, aggregatorService, curationService);
+const componentStoreProvider = config.component.store.provider;
+const componentStore = require(`./providers/stores/${componentStoreProvider}`)(config.component.store[componentStoreProvider]);
+const componentService = require('./business/component')(harvestStore, summaryService, aggregatorService, curationService, componentStore);
+
+const packages = require('./routes/packages')(harvestStore, curationService, componentService);
 
 const appLogger = console; // @todo add real logger
 const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);

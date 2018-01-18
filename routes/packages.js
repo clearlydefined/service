@@ -17,8 +17,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPac
 async function getPackage(request, result) {
   const coordinates = utils.toPackageCoordinates(request);
   const pr = request.params.pr;
-  const curation = pr ? await curationService.get(coordinates, pr) : null;
-  const curated = await computePackage(coordinates, curation);
+  const curated = await componentService.get(coordinates, pr);
   result.status(200).send(curated);
 }
 
@@ -36,27 +35,6 @@ function trimHarvestEntry(entry) {
   const name = segments.slice(0, 4);
   const revision = segments.slice(5, 6);
   return name.concat(revision).join('/');
-}
-
-/**
- * Get the final representation of the specified component and optionally apply the indicated
- * curation.
- *
- * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
- * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
- * curation or an actual curation object.
- * @returns {Summary} The fully rendered package definition
- */
-async function computePackage(coordinates, curationSpec) {
-  const curation = await curationService.get(coordinates, curationSpec);
-  const raw = await harvestService.getAll(coordinates);
-  // Summarize without any filters. From there we can get any dimensions and filter if needed.
-  const summarized = await summaryService.summarizeAll(coordinates, raw);
-  // if there is a file filter, summarize again to focus just on the desired files
-  // TODO eventually see if there is a better way as summarizing could be expensive.
-  // That or cache the heck out of this...
-  const aggregated = await aggregationService.process(coordinates, summarized);
-  return curationService.curate(coordinates, curation, aggregated);
 }
 
 /**
@@ -99,20 +77,18 @@ router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async
   if (!request.query.preview)
     return result.sendStatus(400);
   const coordinates = utils.toPackageCoordinates(request);
-  const curated = await computePackage(coordinates, request.body);
+  const curated = await componentService.compute(coordinates, request.body);
   result.status(200).send(curated);
 }));
 
 let harvestService;
-let summaryService;
-let aggregationService;
 let curationService;
+let componentService;
 
-function setup(harvest, summary, aggregator, curation) {
+function setup(harvest, curation, component) {
   harvestService = harvest;
-  summaryService = summary;
-  aggregationService = aggregator;
   curationService = curation;
+  componentService = component;
   return router;
 }
 module.exports = setup;
