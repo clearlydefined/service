@@ -1,0 +1,38 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/curation.json#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "curation",
+  "required": ["package", "revisions"],
+  "type": "object",
+  "properties": {
+    "package": { "$ref": "#/definitions/package" },
+    "revisions": { "$ref": "#/definitions/revisions" }
+  },
+  "definitions": {
+    "package": {
+      "required": ["type", "provider", "namespace", "name"],
+      "properties": {
+        "type": {
+          "enum": ["npm", "git"]
+        },
+        "provider": {
+          "enum": ["npmjs", "github"]
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "revisions": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
