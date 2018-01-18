@@ -6,7 +6,17 @@ package:
 revisions:
   4.17.4:
     described:
-      this: is some new data
+      issueTracker: "https://foobar.com/baz/1"
+    licensed:
+      copyright:
+        statements:
+          - "foo"
+          - "bar"
+        holders:
+          - "foo"
+          - "bar"
+      license:
+        expression: "MIT"
   4.17.5:
     described:
-      this: is some new data
+      releaseDate: "2018-01-18T06:00:51.556Z"

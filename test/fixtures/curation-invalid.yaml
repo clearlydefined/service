@@ -1,4 +1,12 @@
-0.3.0:
-  copyright: bar
-0.2.0:
-  copyright: bar
+package:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    described:
+      issueTracker: "https://foobar.com/baz/1"
+  4.17.5:
+    described:
+      releaseDate: "NOT A DATE"
