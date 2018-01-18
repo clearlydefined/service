@@ -1,24 +1,25 @@
-swagger: "2.0"
+openapi: "3.0.0"
 
 info:
   version: "0.1.0"
   title: ClearlyDefined API
   description: The REST API for clearlydefined.io
 
-schemes:
-  - https
-host: clearlydefined.io
-basePath: /
+servers:
+- url: https://clearlydefined.io
+  description: Production environment
+- url: https://dev.clearlydefined.io
+  description: Development environment
 
 paths:
   /curations/{type}/{provider}/{namespace}/{name}:
     get:
       summary: Gets a list of components that have curations.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
       responses:
         200:
           description: List of components.
@@ -26,12 +27,12 @@ paths:
     get:
       summary: Gets a proposed curation for a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
-        - $ref: "#/parameters/pr"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
+        - $ref: "#/components/parameters/pr"
       responses:
         200:
           description: Component revision patch.
@@ -39,22 +40,22 @@ paths:
     get:
       summary: Gets a curation for a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
       responses:
         200:
           description: Component revision curation.
     patch:
       summary: Patches the curation of a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
       responses:
         200:
           description: Nothing. TODO - this should be 204 or return something.
@@ -68,19 +69,20 @@ paths:
     get:
       summary: Get all the harvested data for a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
         - name: form
           in: query
-          type: string
-          enum:
-            - summary
-            - streamed
-            - raw
-            - list
+          schema:
+            type: string
+            enum:
+              - summary
+              - streamed
+              - raw
+              - list
           description: >
             Form of the response:
              * `summary` - summarized harvested file
@@ -93,17 +95,18 @@ paths:
     get:
       summary: Get a list of harvested data.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
-        - $ref: "#/parameters/tool"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
+        - $ref: "#/components/parameters/tool"
         - name: form
           in: query
-          type: string
-          enum:
-            - list
+          schema:
+            type: string
+            enum:
+              - list
           description: >
             Form of the response:
              * `list` - list of matching harvested files
@@ -114,21 +117,22 @@ paths:
     get:
       summary: Gets the harvested file for a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
-        - $ref: "#/parameters/tool"
-        - $ref: "#/parameters/toolVersion"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
+        - $ref: "#/components/parameters/tool"
+        - $ref: "#/components/parameters/toolVersion"
         - name: form
           in: query
-          type: string
-          enum:
-            - summary
-            - streamed
-            - raw
-            - list
+          schema:
+            type: string
+            enum:
+              - summary
+              - streamed
+              - raw
+              - list
           description: >
             Form of the response:
              * `summary` - summarized harvested file
@@ -140,13 +144,13 @@ paths:
     put:
       summary: Puts the harvested file for a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
-        - $ref: "#/parameters/tool"
-        - $ref: "#/parameters/toolVersion"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
+        - $ref: "#/components/parameters/tool"
+        - $ref: "#/components/parameters/toolVersion"
       responses:
         201:
           description: Harvested file has been accepted.
@@ -154,10 +158,10 @@ paths:
     get:
       summary: Gets components that have been harvested or curated.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
       responses:
         200:
           description: List of components.
@@ -165,25 +169,26 @@ paths:
     get:
       summary: Gets the summary of a component revision.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
       responses:
         200:
           description: Component summary.
     post:
       summary: Previews the summary of a component revision with the included curation.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
         - name: preview
           in: query
-          type: boolean
+          schema:
+            type: boolean
           required: true
           description: Preview the summary.
       responses:
@@ -193,67 +198,77 @@ paths:
     get:
       summary: Previews the summary of a component revision with the proposed curation.
       parameters:
-        - $ref: "#/parameters/type"
-        - $ref: "#/parameters/provider"
-        - $ref: "#/parameters/namespace"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/revision"
-        - $ref: "#/parameters/pr"
+        - $ref: "#/components/parameters/type"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/namespace"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/revision"
+        - $ref: "#/components/parameters/pr"
       responses:
         200:
           description: Component summary.
-parameters:
-  type:
-    name: type
-    in: path
-    required: true
-    description: the type of component
-    type: string
-    enum:
-    - npm
-    - git
-  provider:
-    name: provider
-    in: path
-    required: true
-    description: where the component can be found
-    type: string
-    enum:
-    - npmjs
-    - github
-  namespace:
-    name: namespace
-    in: path
-    required: true
-    description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
-    type: string
-  name:
-    name: name
-    in: path
-    required: true
-    description: the name of the component you want. Given the `namespace` segment mentioned above, this is just the simple name.
-    type: string
-  revision:
-    name: revision
-    in: path
-    required: true
-    description: components typically have some differentiator like a version or commit id. Use that here. If this segment is omitted, the latest revision is used (if that makes sense for the provider).
-    type: string
-  pr:
-    name: pr
-    in: path
-    required: true
-    description: the GitHub PR number to apply to the existing harvested and curated data. Note that that this parameter must be preceded by a 'pr' segment.
-    type: number
-  tool:
-    name: tool
-    in: path
-    required: true
-    description: the identifier of the tool
-    type: string
-  toolVersion:
-    name: toolVersion
-    in: path
-    required: true
-    description: the identifier of the tool version
-    type: string
+
+components:
+  parameters:
+    type:
+      name: type
+      in: path
+      required: true
+      description: the type of component
+      schema:
+        type: string
+        enum:
+        - npm
+        - git
+    provider:
+      name: provider
+      in: path
+      required: true
+      description: where the component can be found
+      schema:
+        type: string
+        enum:
+        - npmjs
+        - github
+    namespace:
+      name: namespace
+      in: path
+      required: true
+      description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
+      schema:
+        type: string
+    name:
+      name: name
+      in: path
+      required: true
+      description: the name of the component you want. Given the `namespace` segment mentioned above, this is just the simple name.
+      schema:
+        type: string
+    revision:
+      name: revision
+      in: path
+      required: true
+      description: components typically have some differentiator like a version or commit id. Use that here. If this segment is omitted, the latest revision is used (if that makes sense for the provider).
+      schema:
+        type: string
+    pr:
+      name: pr
+      in: path
+      required: true
+      description: the GitHub PR number to apply to the existing harvested and curated data. Note that that this parameter must be preceded by a 'pr' segment.
+      schema:
+        type: number
+    tool:
+      name: tool
+      in: path
+      required: true
+      description: the identifier of the tool
+      schema:
+        type: string
+    toolVersion:
+      name: toolVersion
+      in: path
+      required: true
+      description: the identifier of the tool version
+      schema:
+        type: string
