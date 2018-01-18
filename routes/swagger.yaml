@@ -61,6 +61,7 @@ paths:
           description: Nothing. TODO - this should be 204 or return something.
   /harvest:
     post:
+      deprecated: true
       summary: Obsolete?
       responses:
         201:
