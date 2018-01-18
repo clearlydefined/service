@@ -3,7 +3,9 @@
 
 const utils = require('../../lib/utils');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const path = require('path');
+const { promisify } = require('util');
 const recursive = require('recursive-readdir');
 
 // Responsible for storing and retrieving harvested data
@@ -17,7 +19,7 @@ const recursive = require('recursive-readdir');
 
 const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
 
-class FileHarvestStore {
+class FileStore {
   constructor(options) {
     this.options = options;
   }
@@ -29,6 +31,9 @@ class FileHarvestStore {
 
   async get(packageCoordinates, stream) {
     const filePath = await this._getFilePath(packageCoordinates);
+    if (!filePath) {
+      return null;
+    }
     if (stream)
       return new Promise((resolve, reject) => {
         const read = fs.createReadStream(filePath);
@@ -78,8 +83,9 @@ class FileHarvestStore {
   _findLatest(filePath) {
     return new Promise((resolve, reject) => {
       fs.readdir(filePath, (error, list) => {
-        if (error)
-          reject(error);
+        if (error) {
+          return reject(error);
+        }
         const result = list.map(entry =>
           entry.endsWith('.json') ? path.basename(entry).slice(0, -5) : null);
         resolve(utils.getLatestVersion(result.filter(e => e)));
@@ -87,13 +93,15 @@ class FileHarvestStore {
     });
   }
 
-  store(packageCoordinates, stream) {
+  async store(packageCoordinates, stream) {
+    const name = utils.toPathFromCoordinates(packageCoordinates);
+    const filePath = `${this.options.location}/${packageCoordinates.type}/${name}.json`;
+    const dirName = path.dirname(filePath);
+    await promisify(mkdirp)(dirName);
     return new Promise((resolve, reject) => {
-      const name = utils.toPathFromCoordinates(packageCoordinates);
-      const path = `${this.options.location}/${packageCoordinates.type}/${name}.json`;
-      stream.pipe(fs.createWriteStream(path, resultOrError(resolve, reject)));
+      stream.pipe(fs.createWriteStream(filePath, resultOrError(resolve, reject)));
     });
   }
 }
 
-module.exports = options => new FileHarvestStore(options);
+module.exports = options => new FileStore(options);

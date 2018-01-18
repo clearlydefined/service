@@ -19,6 +19,7 @@
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
     "minimatch": "^3.0.4",
+    "mkdirp": "^0.5.1",
     "moment": "^2.19.4",
     "morgan": "~1.9.0",
     "painless-config": "^0.1.0",

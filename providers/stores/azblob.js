@@ -3,7 +3,6 @@
 
 const utils = require('../../lib/utils');
 const azure = require('azure-storage');
-const moment = require('moment');
 
 // Responsible for storing and retrieving harvested data
 //
@@ -17,7 +16,7 @@ const moment = require('moment');
 const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
 const responseOrError = (resolve, reject) => (error, result, response) => error ? reject(error) : resolve(response);
 
-class AzBlobHarvesterService {
+class AzBlobStore {
   constructor(options) {
     this.options = options;
     this.containerName = options.containerName;
@@ -86,4 +85,4 @@ class AzBlobHarvesterService {
   }
 }
 
-module.exports = options => new AzBlobHarvesterService(options);
+module.exports = options => new AzBlobStore(options);

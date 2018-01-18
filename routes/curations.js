@@ -13,7 +13,7 @@ router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware
     if (result)
       return response.status(200).send(result);
     response.sendStatus(404);
-  })
+  });
 }));
 
 // Get an existing patch for a specific revision of a package
