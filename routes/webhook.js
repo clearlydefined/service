@@ -3,7 +3,7 @@
 
 const express = require('express');
 const crypto = require('crypto');
-
+const Curation = require('../lib/curation');
 const router = express.Router();
 const validPrActions = ['opened', 'reopened', 'synchronize'];
 let webhookSecret = null;
@@ -33,22 +33,18 @@ router.post('/', async (request, response) => {
     .map(x => x.filename)
     .filter(curationService.isCurationFile);
 
-  const curationResults = await Promise.all(
+  const curations = await Promise.all(
     curationFilenames.map(path => curationService
       .getContent(ref, path)
-      .then(curationService.isValidCuration))
+      .then(content => Curation({content, path})))
   );
-  const invalidCurations = [];
-  curationResults.forEach((curationIsValid, index) => {
-    if (!curationIsValid)
-      invalidCurations.push(curationFilenames[index]);
-  });
+  const invalidCurations = curations.filter(x => !x.isValid);
 
   let state = 'success';
   let description = 'All curations are valid';
   if (invalidCurations.length) {
     state = 'error';
-    description = `Invalid curations: ${invalidCurations.join(', ')}`;
+    description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`;
   }
 
   await curationService.postCommitStatus(sha, pr, state, description);

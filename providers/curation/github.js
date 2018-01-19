@@ -277,16 +277,6 @@ class GitHubCurationService {
     return `curations/${path.split('/').slice(0, 4).join('/')}`;
   }
 
-  // @todo improve validation via schema, etc
-  // return the loaded curation if possible
-  isValidCuration(curation) {
-    try {
-      return yaml.safeLoad(curation);
-    } catch (error) {
-      return null;
-    }
-  }
-
   // @todo perhaps validate directory structure (package coordinates)
   isCurationFile(path) {
     return path.startsWith('curations/') && path.endsWith('.yaml');

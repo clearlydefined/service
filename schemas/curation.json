@@ -1,0 +1,179 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/curation.json#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "curation",
+  "required": [
+    "package",
+    "revisions"
+  ],
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "package": {
+      "$ref": "#/definitions/package"
+    },
+    "revisions": {
+      "$ref": "#/definitions/revisions"
+    }
+  },
+  "definitions": {
+    "type": {
+      "enum": [
+        "npm",
+        "git"
+      ]
+    },
+    "provider": {
+      "enum": [
+        "npmjs",
+        "github"
+      ]
+    },
+    "package": {
+      "required": [
+        "type",
+        "provider",
+        "namespace",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "provider": {
+          "$ref": "#/definitions/provider"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/definitions/revision"
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "described": {
+          "$ref": "#/definitions/described"
+        },
+        "licensed": {
+          "$ref": "#/definitions/licensed"
+        }
+      }
+    },
+    "described": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dimensions": {
+          "additionalProperties": false,
+          "properties": {
+            "test": {
+              "$ref": "#/definitions/dimension"
+            },
+            "data": {
+              "$ref": "#/definitions/dimension"
+            }
+          }
+        },
+        "sourceLocation": {
+          "$ref": "#/definitions/sourceLocation"
+        },
+        "projectWebsite": {
+          "type": "string"
+        },
+        "issueTracker": {
+          "type": "string"
+        },
+        "releaseDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "dimension": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sourceLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "provider": {
+          "$ref": "#/definitions/provider"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    },
+    "licensed": {
+      "additionalProperties": false,
+      "properties": {
+        "copyright": {
+          "$ref": "#/definitions/copyright"
+        },
+        "license": {
+          "$ref": "#/definitions/license"
+        }
+      }
+    },
+    "copyright": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "holders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
