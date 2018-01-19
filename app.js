@@ -7,15 +7,18 @@ const cors = require('cors');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
-const basicAuth = require('express-basic-auth');
+const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 const yaml = require('js-yaml');
 const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'));
 const config = require('./lib/config');
 const configMiddleware = require('./middleware/config');
+const githubMiddleware = require('./middleware/github');
 
 const index = require('./routes/index');
+
+const auth = require('./routes/auth');
 
 const summaryService = require('./business/summarizer')(config.summary);
 
@@ -40,27 +43,33 @@ const packages = require('./routes/packages')(harvestStore, curationService, com
 const appLogger = console; // @todo add real logger
 const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);
 
+const cachingProvider = config.caching.provider;
+const caching = require(`./providers/caching/${cachingProvider}`);
+const cachingMiddleware = require('./middleware/caching');
+
 const app = express();
 app.use(cors());
 app.options('*', cors());
 app.use(helmet());
 app.use(requestId());
+app.use(cachingMiddleware(caching()));
 
 app.use(logger('dev'));
 app.use(configMiddleware);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook);
-app.use('/origins/github', require('./routes/originGitHub')());
-app.use('/origins/npm', require('./routes/originNpm')());
 
-app.use(basicAuth({
-  users: {
-    'token': config.auth.apiToken,
-    'clearly': config.auth.password
-  }
-}));
+// OAuth app initialization; skip if not configured (middleware can cope)
+if (config.auth.github.clientId) {
+  passport.use(auth.getStrategy());
+  app.use(passport.initialize());
+}
+app.use('/auth', auth());
+app.use(githubMiddleware);
 
 app.use('/', index);
+app.use('/origins/github', require('./routes/originGitHub')());
+app.use('/origins/npm', require('./routes/originNpm')());
 app.use('/harvest', harvest);
 app.use(bodyParser.json());
 app.use('/curations', curations);
