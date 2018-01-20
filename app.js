@@ -50,6 +50,9 @@ app.use(logger('dev'));
 app.use(configMiddleware);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook);
+app.use('/origins/github', require('./routes/originGitHub')());
+app.use('/origins/npm', require('./routes/originNpm')());
+
 app.use(basicAuth({
   users: {
     'token': config.auth.apiToken,
