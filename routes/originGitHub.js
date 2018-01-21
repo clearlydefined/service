@@ -18,14 +18,14 @@ router.get('/:login/:repo/revisions', asyncMiddleware(async (request, response) 
     const { login, repo } = request.params;
     const github = getClient(request);
     const answer = await github.gitdata.getTags({ owner: login, repo, per_page: 100 });
-    const result = answer.data.map(item => {
-      return { tag: item.ref.slice(10), sha: item.object.sha }
-    });
+    const result = answer.data
+      .map(item => { return { tag: item.ref.slice(10), sha: item.object.sha } })
+      .sort((a, b) => a.tag < b.tag ? 1 : (a.tag > b.tag) ? -1 : 0);
     return response.status(200).send(result);
   } catch (error) {
     if (error.code === 404)
       return response.status(200).send([]);
-      // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
+    // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
     return response.status(200).send([]);
   }
 }));

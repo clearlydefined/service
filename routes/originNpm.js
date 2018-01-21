@@ -11,7 +11,7 @@ router.get('/:namespace?/:name/revisions', asyncMiddleware(async (request, respo
   const fullName = namespace ? `${namespace}/${name}` : name;
   const url = `${baseUrl}/${encodeURIComponent(fullName).replace('%40', '@')}` // npmjs doesn't handle the escaped version
   const answer = await requestPromise({ url, method: 'GET', json: true });
-  const result = Object.getOwnPropertyNames(answer.versions);
+  const result = Object.getOwnPropertyNames(answer.versions).sort((a, b) => a < b ? 1 : (a > b) ? -1 : 0);
   return response.status(200).send(result);
 }));
 
