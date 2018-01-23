@@ -35,7 +35,7 @@ router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (reque
 // Create a patch for a specific revision of a package
 router.patch('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response) => {
   const packageCoordinates = utils.toPackageCoordinates(request);
-  return curationService.addOrUpdate(request.user.github.client, packageCoordinates, request.body).then(() =>
+  return curationService.addOrUpdate(request.app.locals.user.github.client, packageCoordinates, request.body).then(() =>
     response.sendStatus(200));
 }));
 
