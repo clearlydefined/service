@@ -5,17 +5,33 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github').Strategy;
 
 const config = require('../lib/config');
-const utils = require('../lib/utils');
-const asyncMiddleware = require('../middleware/asyncMiddleware');
 
 const router = express.Router();
 
-router.get('/github',
-  passport.authenticate('github', { session: false })
-);
+/**
+ * If an OAuth token hasn't been configured, use a Personal Access Token
+ * instead.
+ */
+function passportOrPat() {
+  if (config.auth.github.clientId) {
+    return passport.authenticate('github', { session: false });
+  }
 
-router.get('/github/finalize',
-  passport.authenticate('github', { session: false }),
+  return (req, res, next) => {
+    req.user = { githubAccessToken: config.curation.store.github.token };
+    next();
+  };
+}
+
+router.get('/github', passportOrPat(), (req, res) => {
+  // this only runs if passport didn't kick in above, but double
+  // check for sanity in case upstream changes
+  if (!config.auth.github.clientId) {
+    res.redirect('github/finalize');
+  }
+});
+
+router.get('/github/finalize', passportOrPat(),
   (req, res) => {
     const safeToken = encodeURIComponent(req.user.githubAccessToken);
 

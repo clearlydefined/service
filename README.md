@@ -8,7 +8,7 @@ In effect the curated data for a project is a _fork_ of the project. Like most f
 # Quick start
 
 Unless of course you are working on it, you should not need to run this service yourself. Rather, you can use
-https://dev-api.clearlydefined.io for experimental work or https://api.clearlydefined.io for working with 
+https://dev-api.clearlydefined.io for experimental work or https://api.clearlydefined.io for working with
 production data.
 
 If you do want to run the service locally, follow these steps.
@@ -17,7 +17,7 @@ If you do want to run the service locally, follow these steps.
 1. `cd` to the repo dir and run `npm install`
 1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json`. Ideally this repo is colocated with any other ClearlyDefined repos you might be using. You can share the `env.json` file but it always has to be in the parent folder of the repo. Just merge the files. Any colliding properties are meant to be shared.
 1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is not strictly necessary but unless you have another source of ClearlyDefined harvest data, this is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
-1. After cloning/copying/merging, update the `env.json` file to have the property values for your setup. See the [Configuration](#configuration) section for more details. 
+1. After cloning/copying/merging, update the `env.json` file to have the property values for your setup. See the [Configuration](#configuration) section for more details.
 1. Run `npm start`
 
 That results in the ClearlyDefined service starting up and listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. The APIs fall in two main buckets: curation management, and data access.
@@ -73,7 +73,7 @@ You can also get the curation for a particular component revision using one of t
 ```
 GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
 GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0/pr/23
-``` 
+```
 
 ## Data access
 
@@ -125,22 +125,35 @@ See the `harvest` endpoint
 
 ## Properties
 
+### `SERVICE_ENDPOINT`
+The full origin of the service, e.g. `http://domain.com:port`.
 
-### CURATION_GITHUB_OWNER
-The GitHub user or org that owns the curation repo. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`. 
+### `WEBSITE_ENDPOINT`
+The full origin of the website/UI, e.g. `http://domain.com:port`.
 
-### CURATION_GITHUB_REPO
-The GitHub curation repo to use for curations. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`. 
+### `CURATION_GITHUB_OWNER`
+The GitHub user or org that owns the curation repo. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`.
 
-### CURATION_GITHUB_BRANCH
+### `CURATION_GITHUB_REPO`
+The GitHub curation repo to use for curations. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`.
+
+### `CURATION_GITHUB_BRANCH`
 The GitHub curation repo branch to use for curations. For testing and development, feel free to use your own. DON'T use `master` and you aren't so DO NOT use `master`.
 
+### `CURATION_GITHUB_TOKEN`
+A Personal Access Token with public_repo scope
 
-   * CURATION_GITHUB_TOKEN= personal access token with public_repo scope
+### `AUTH_GITHUB_CLIENT_ID` and `AUTH_GITHUB_CLIENT_SECRET`
+If using an OAuth application for GitHub sign-on, set these to the client ID and client secret, respectively.
+If not provided, auth will fall back to `CURATION_GITHUB_TOKEN`.
+
+### `AUTH_GITHUB_ORG`
+The name of the org the site will use for authenticating users. Checks team membership.
+
    * HARVEST_AZBLOB_CONNECTION_STRING= Azure blob connection string
    * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
    * API_TOKEN= the token to use for authorizing clients calling this service
-   * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port. 
+   * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port.
 
 
 ***
