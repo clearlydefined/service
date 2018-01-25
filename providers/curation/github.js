@@ -74,7 +74,7 @@ class GitHubCurationService {
             const sha = masterBranch.data.commit.sha;
             return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha });
           })
-          .then(() => updatedPatch)
+          .then(() => updatedPatch);
       })
       .then(updatedPatch => {
         const message = `Update ${path} ${coordinates.revision}`;
