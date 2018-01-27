@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-const semver = require('semver');
 const throat = require('throat');
 const _ = require('lodash');
 const EntityCoordinates = require('../../lib/entityCoordinates');
@@ -42,7 +41,7 @@ class AbstractStore {
     const result = list
       .map(path => {
         if (type === 'entity')
-          return this._toEntityCoordinatesFromStoragePath(path)
+          return this._toEntityCoordinatesFromStoragePath(path);
         if (type === 'result')
           return this._toResultCoordinatesFromStoragePath(path);
         throw new Error(`Invalid list type: ${type}`);
@@ -51,11 +50,11 @@ class AbstractStore {
     return _.uniqWith(filtered, _.isEqual);
   }
 
-  _list(path) {
+  _list() {
     throw new Error('subclasses must implement "_list"');
   }
 
-  _filter(list) {
+  _filter() {
     throw new Error('subclasses must implement "_filter"');
   }
 
@@ -86,7 +85,7 @@ class AbstractStore {
     const toolVersionPart = c.toolVersion ? c.toolVersion : null;
     const toolPart = c.tool ? `tool/${c.tool}` : null;
     // if there is a provider then consider the namespace otherwise there can't be one so ignore null
-    const namespace = c.provider ? c.namespace || '-' : null
+    const namespace = c.provider ? c.namespace || '-' : null;
     // TODO validate that there are no intermediate nulls
     return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart].filter(s => s).join('/');
   }

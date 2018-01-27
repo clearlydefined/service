@@ -257,7 +257,6 @@ class GitHubCurationService {
   }
 
   _getPrTitle(coordinates) {
-    const c = coordinates;
     // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
     return coordinates.toString();
   }

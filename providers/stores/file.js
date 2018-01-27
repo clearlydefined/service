@@ -7,7 +7,6 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const recursive = require('recursive-readdir');
-const _ = require('lodash');
 const AbstractStore = require('./abstractStore');
 
 const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
@@ -32,7 +31,12 @@ class FileStore extends AbstractStore {
     const result = super._toStoragePathFromCoordinates(coordinates);
     return path.join(this.options.location, result);
   }
-  
+
+  _toResultCoordinatesFromStoragePath(path) {
+    const trimmed = path.slice(this.options.location.length + 1);
+    return super._toResultCoordinatesFromStoragePath(trimmed);
+  }
+
   /**
    * Get the results of running the tool specified in the coordinates on the entty specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
@@ -57,13 +61,8 @@ class FileStore extends AbstractStore {
       JSON.parse(result));
   }
 
-  _getBasePath(coordinates) {
-    const name = this._toStoragePathFromCoordinates(coordinates);
-    return path.join(this.options.location, name);
-  }
-
   async _getFilePath(coordinates) {
-    const toolPath = this._getBasePath(coordinates);
+    const toolPath = this._toStoragePathFromCoordinates(coordinates);
     if (coordinates.toolVersion)
       return toolPath + '.json';
     const latest = await this._findLatest(toolPath);
@@ -80,12 +79,11 @@ class FileStore extends AbstractStore {
    */
   async getAll(coordinates) {
     // TODO validate/enforce that the coordiates are down to the component revision
-    const name = this._toStoragePathFromCoordinates(coordinates);
-    const path = path.join(this.options.location, name);
+    const root = this._toStoragePathFromCoordinates(coordinates);
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const files = await recursive(path);
+    const files = await recursive(root);
     const contents = await Promise.all(files.map(file => {
       return new Promise((resolve, reject) =>
         fs.readFile(file, (error, data) =>
@@ -113,8 +111,7 @@ class FileStore extends AbstractStore {
 
   // TODO consider not having this. All harvest content should be written by the harvest service (e.g., crawler)
   async store(coordinates, stream) {
-    const name = this._toStoragePathFromCoordinates(coordinates);
-    const filePath = path.join(this.options.location, name) + '.json';
+    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json';
     const dirName = path.dirname(filePath);
     await promisify(mkdirp)(dirName);
     return new Promise((resolve, reject) => {
