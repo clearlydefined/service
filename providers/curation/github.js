@@ -31,10 +31,10 @@ class GitHubCurationService {
     };
   }
 
-  addOrUpdate(coordinates, patch) {
+  addOrUpdate(githubUserClient, coordinates, patch) {
     if (!patch.patch)
       throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?');
-    const github = Github.getClient(this.options);
+    const github = githubUserClient;
     const { owner, repo, branch } = this.options;
     const path = this._getCurationPath(coordinates);
     const prBranch = this._getBranchName(coordinates);
