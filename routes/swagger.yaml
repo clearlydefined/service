@@ -69,13 +69,39 @@ paths:
           description: Nothing. TODO - this should be 204 or return something.
   /harvest:
     post:
-      deprecated: true
-      summary: Obsolete?
+      summary: Post the given components to be harvested
       tags:
         - harvest
+      requestBody:
+        description: A single or array of requests
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/bodies/request'
       responses:
         201:
           description: Harvested file has been accepted.
+  /harvest/status:
+    post:
+      summary: Request the creation of a resoruce that is the summary of all harvested data available for the components outlined in the POST body
+      tags:
+        - harvest
+      requestBody:
+        description: List of components to report on.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/bodies/componentList'
+      responses:
+        200:
+          description: Status request has been accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/bodies/resultSummaryList'
+
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Get all the harvested data for a component revision.
@@ -245,6 +271,40 @@ tags:
 
 
 components:
+  bodies:
+    componentList:
+      name: componentList
+      description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
+      type: array
+      items: string
+      example:
+        - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+        - npm/npmjs/-/redie/0.3.0
+    request:
+      name: request
+      description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
+      type: object
+      example:
+        - type: package
+          url: cd:/npm/npmjs/-/redie/0.3.0
+        - type: source
+          url: cd:/git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+
+    resultSummaryList:
+      type: object
+      description: A list of harvest results that are available (see harvest.json#definitions/componentResultSummaryList)
+      example: 
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
+          clearlydescribed: 
+            - 1
+          scancode: 
+            - 2.2.1
+        'npm/npmjs/-/redie/0.3.0':
+          clearlydescribed:
+            - 1
+          scancode:
+            - 2.2.1
+
   parameters:
     type:
       name: type
