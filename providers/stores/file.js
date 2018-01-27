@@ -3,34 +3,47 @@
 
 const utils = require('../../lib/utils');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const path = require('path');
+const mkdirp = require('mkdirp');
 const { promisify } = require('util');
 const recursive = require('recursive-readdir');
-
-// Responsible for storing and retrieving harvested data
-//
-// Return format should be:
-//
-// {
-// toolA: { /* tool-specific data format },
-// toolB/2.0: { /* tool-specific data format }
-// }
+const _ = require('lodash');
+const AbstractStore = require('./abstractStore');
 
 const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
 
-class FileStore {
+class FileStore extends AbstractStore {
   constructor(options) {
+    super();
     this.options = options;
   }
 
-  list() {
-    // TODO implement if we actually need this.
-    return Promise.resolve([]);
+  async _list(coordinates) {
+    const path = this._toStoragePathFromCoordinates(coordinates);
+    const result = await recursive(path);
+    return result.map(entry => entry.slice(this.options.location.length + 1));
   }
 
-  async get(packageCoordinates, stream) {
-    const filePath = await this._getFilePath(packageCoordinates);
+  _filter(list) {
+    return list.filter(entry => ['git', 'npm', 'maven'].includes(entry.type));
+  }
+
+  _toStoragePathFromCoordinates(coordinates) {
+    const result = super._toStoragePathFromCoordinates(coordinates);
+    return path.join(this.options.location, result);
+  }
+  
+  /**
+   * Get the results of running the tool specified in the coordinates on the entty specified
+   * in the coordinates. If a stream is given, write the content directly on the stream and close.
+   * Otherwise, return an object that represents the result.
+   *   
+   * @param {ResultCoordinates} coordinates - The coordinates of the result to get 
+   * @param {WriteStream} [stream] - The stream onto which the result is written, if specified
+   * @returns The result object if no stream is specified, otherwise the return value is unspecified. 
+   */
+  async get(coordinates, stream) {
+    const filePath = await this._getFilePath(coordinates);
     if (stream)
       return new Promise((resolve, reject) => {
         const read = fs.createReadStream(filePath);
@@ -44,20 +57,31 @@ class FileStore {
       JSON.parse(result));
   }
 
-  async _getFilePath(packageCoordinates) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
-    const toolPath = `${this.options.location}/${packageCoordinates.type}/${name}`;
-    if (packageCoordinates.toolVersion)
+  _getBasePath(coordinates) {
+    const name = this._toStoragePathFromCoordinates(coordinates);
+    return path.join(this.options.location, name);
+  }
+
+  async _getFilePath(coordinates) {
+    const toolPath = this._getBasePath(coordinates);
+    if (coordinates.toolVersion)
       return toolPath + '.json';
     const latest = await this._findLatest(toolPath);
     if (!latest)
       return null;
-    return `${toolPath}/${latest}.json`;
+    return path.join(toolPath, latest) + '.json';
   }
 
-  async getAll(packageCoordinates) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
-    const path = `${this.options.location}/${packageCoordinates.type}/${name}`;
+  /**
+   * Get all of the tool results for the given coordinates. The coordinates must be all the way down
+   * to a revision. 
+   * @param {EntityCoordinates} coordinates - The component revision to report on
+   * @returns An object with a property for each tool and tool version
+   */
+  async getAll(coordinates) {
+    // TODO validate/enforce that the coordiates are down to the component revision
+    const name = this._toStoragePathFromCoordinates(coordinates);
+    const path = path.join(this.options.location, name);
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
@@ -68,9 +92,7 @@ class FileStore {
           error ? reject(error) : resolve({ name: file, content: JSON.parse(data) })));
     }));
     return contents.reduce((result, entry) => {
-      const segments = entry.name.replace(/\\/g, '/').split('/');
-      const tool = segments[segments.length - 2];
-      const toolVersion = segments[segments.length - 1].replace('.json', '');
+      const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name);
       const current = result[tool] = result[tool] || {};
       current[toolVersion] = entry.content;
       return result;
@@ -80,19 +102,19 @@ class FileStore {
   _findLatest(filePath) {
     return new Promise((resolve, reject) => {
       fs.readdir(filePath, (error, list) => {
-        if (error) {
+        if (error)
           return reject(error);
-        }
         const result = list.map(entry =>
-          entry.endsWith('.json') ? path.basename(entry).slice(0, -5) : null);
+          path.extname(entry) === '.json' ? path.basename(entry).slice(0, -5) : null);
         resolve(utils.getLatestVersion(result.filter(e => e)));
       });
     });
   }
 
-  async store(packageCoordinates, stream) {
-    const name = utils.toPathFromCoordinates(packageCoordinates);
-    const filePath = `${this.options.location}/${packageCoordinates.type}/${name}.json`;
+  // TODO consider not having this. All harvest content should be written by the harvest service (e.g., crawler)
+  async store(coordinates, stream) {
+    const name = this._toStoragePathFromCoordinates(coordinates);
+    const filePath = path.join(this.options.location, name) + '.json';
     const dirName = path.dirname(filePath);
     await promisify(mkdirp)(dirName);
     return new Promise((resolve, reject) => {

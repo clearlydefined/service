@@ -202,12 +202,12 @@ class GitHubCurationService {
 
   /**
    * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components
-   * @param {string} searchPattern - a partial path that describes the sort of curation to look for.
-   * @returns {[URL]} - Array of URLs describing he available curations
+   * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
+   * @returns {[URL]} - Array of URLs describing the available curations
    */
-  async list(searchPattern) {
+  async list(coordinates) {
     await this.ensureCurations();
-    const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(searchPattern)}`;
+    const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}`;
     if (!fs.existsSync(root))
       return [];
     return new Promise((resolve, reject) => {
@@ -259,7 +259,7 @@ class GitHubCurationService {
   _getPrTitle(coordinates) {
     const c = coordinates;
     // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
-    return `${c.type.toLowerCase()}/${c.provider.toLowerCase()}/${c.namespace || '-'}/${c.name}/${c.revision}`;
+    return coordinates.toString();
   }
 
   _getBranchName(coordinates) {
@@ -268,13 +268,13 @@ class GitHubCurationService {
   }
 
   _getCurationPath(coordinates) {
-    const c = coordinates;
-    return `curations/${c.type.toLowerCase()}/${c.provider.toLowerCase()}/${c.namespace || '-'}/${c.name}.yaml`;
+    const path = coordinates.asRevisionless().toString();
+    return `curations/${path}.yaml`;
   }
 
-  _getSearchRoot(path) {
-    // TODO validate the path is not bogus
-    return `curations/${path.split('/').slice(0, 4).join('/')}`;
+  _getSearchRoot(coordinates) {
+    const path = coordinates.asRevisionless().toString();
+    return `curations/${path ? path + '/' : ''}`;
   }
 
   // @todo perhaps validate directory structure (package coordinates)
