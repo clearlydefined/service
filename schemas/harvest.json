@@ -1,0 +1,136 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/harvest.json#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "harvest",
+  "type": "object",
+  "definitions": {
+    "type": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "request": {
+      "required": [
+        "type",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "url": {
+          "$ref": "#/definitions/url"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/request"
+      }
+    },
+    "componentResultSummaryList": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        ".*": {
+          "patternProperties": {
+            ".*": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/resultList"
+        }
+      }
+    },
+    "resultList": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/result"
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_metadata": {
+          "$ref": "#/definitions/_metadata"
+        },
+        "content": {
+          "type": "object"
+        }
+      }
+    },
+    "_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dimensions": {
+          "additionalProperties": false,
+          "properties": {
+            "fetchedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "processedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "type": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "links": {
+              "$ref": "#definitions/links"
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/link"
+        }
+      }
+    },
+    "link": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

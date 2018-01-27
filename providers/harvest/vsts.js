@@ -23,12 +23,7 @@ class Vsts {
   }
 
   harvest(spec) {
-    return this._queueBuild(spec);
-  }
-
-  _queueBuild(spec) {
-    const self = this;
-    return this.vstsBuild.getDefinitions(self.project, self.buildDefinitionName).then(definitions => {
+    return this.vstsBuild.getDefinitions(this.project, this.buildDefinitionName).then(definitions => {
       if (!definitions[0] || !definitions[0].id) {
         return Promise.reject(new Error('Build definition does not exist.'));
       }
@@ -36,9 +31,9 @@ class Vsts {
         definition: {
           id: definitions[0].id
         },
-        parameters: JSON.stringify({ [self.buildVariableName]: JSON.stringify(spec) })
+        parameters: JSON.stringify({ [this.buildVariableName]: JSON.stringify(spec) })
       };
-      return this.vstsBuild.queueBuild(build, self.project);
+      return this.vstsBuild.queueBuild(build, this.project);
     });
   }
 }

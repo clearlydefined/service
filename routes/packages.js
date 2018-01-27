@@ -11,11 +11,11 @@ const _ = require('lodash');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getPackage));
-router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getPackage));
+router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getComponent));
+router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getComponent));
 
-async function getPackage(request, result) {
-  const coordinates = utils.toPackageCoordinates(request);
+async function getComponent(request, result) {
+  const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const pr = request.params.pr;
   const curated = await componentService.get(coordinates, pr);
   result.status(200).send(curated);
@@ -23,26 +23,20 @@ async function getPackage(request, result) {
 
 // Get a list of the components for which we have any kind of data, harvested or curated.
 router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (request, response) => {
-  const curated = await curationService.list(request.path);
-  const harvest = await harvestService.list(request.path);
-  const trimmedHarvest = harvest.map(trimHarvestEntry);
-  const result = _.union(trimmedHarvest, curated);
+  const coordinates = utils.toEntityCoordinatesFromRequest(request);
+  const curated = await curationService.list(coordinates);
+  const harvest = await harvestService.list(coordinates);
+  const stringHarvest = harvest.map(c => c.toString());
+  const result = _.union(stringHarvest, curated);
   response.status(200).send(result);
 }));
 
-function trimHarvestEntry(entry) {
-  const segments = entry.split('/');
-  const name = segments.slice(0, 4);
-  const revision = segments.slice(5, 6);
-  return name.concat(revision).join('/');
-}
-
 /**
- * Get a filter function that picks files from the dimensions of the described package to include in the
+ * Get a filter function that picks files from the dimensions of the described component to include in the
  * result. Dimensions are things like source, test, data, dev, ... Each dimension has an array of
  * minimatch/glob style expressions that identify files to include in the summarization effort.
  * The dimensions are specified in the `described` neighborhood of the raw and/or curated data
- * for the given package.
+ * for the given component.
  *
  * @param {Summary} [curation] - Curated information to use in building the filter.
  * @param {Summary} [harvested] - Harvested data to use in building the filter.
@@ -76,7 +70,7 @@ function buildFilter(dimensions) {
 router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, result) => {
   if (!request.query.preview)
     return result.sendStatus(400);
-  const coordinates = utils.toPackageCoordinates(request);
+  const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const curated = await componentService.compute(coordinates, request.body);
   result.status(200).send(curated);
 }));
