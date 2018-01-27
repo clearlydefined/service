@@ -152,7 +152,6 @@ The name of the org the site will use for authenticating users. Checks team memb
 
    * HARVEST_AZBLOB_CONNECTION_STRING= Azure blob connection string
    * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
-   * API_TOKEN= the token to use for authorizing clients calling this service
    * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port.
 
 
