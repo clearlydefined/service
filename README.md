@@ -14,13 +14,20 @@ production data.
 If you do want to run the service locally, follow these steps.
 
 1. Clone this repo
-1. `cd` to the repo dir and run `npm install`
-1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json`. Ideally this repo is colocated with any other ClearlyDefined repos you might be using. You can share the `env.json` file but it always has to be in the parent folder of the repo. Just merge the files. Any colliding properties are meant to be shared.
-1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is not strictly necessary but unless you have another source of ClearlyDefined harvest data, this is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
-1. After cloning/copying/merging, update the `env.json` file to have the property values for your setup. See the [Configuration](#configuration) section for more details.
+1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json` and set any property values you need. See below for simple, local setup and the [Configuration](#configuration) section for more details. If this repo is colocated with the other ClearlyDefined repos, you can share the `env.json` file. Just merge the templates. Any colliding properties names are meant to be shared.
+1. On a command line, `cd` to the repo dir and run `npm install`
 1. Run `npm start`
 
-That results in the ClearlyDefined service starting up and listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. The APIs fall in two main buckets: curation management, and data access.
+That starts the ClearlyDefined service and has it listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. 
+
+### Quick and easy local configuration
+The simplest way to configure the service is to use local storage and in-memory queuing as follows:
+
+1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
+1. Set up your `env.json` file to use the `harvested-data` repo as your local storage (`FILE_STORE_LOCATION`).
+1. Add a GitHub token to `CURATION_GITHUB_TOKEN`. This enables you to login to the local website or call the service APIs.
+
+For now you can leave the `HARVESTER` and `CRAWLER` settings alone unless you are also setting up the Crawler to run locally.
 
 ## Authorization
 
