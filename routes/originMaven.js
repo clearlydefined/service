@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+const asyncMiddleware = require('../middleware/asyncMiddleware');
+const router = require('express').Router();
+const requestPromise = require('request-promise-native');
+
+// Get versions 
+router.get('/:group/:artifact/revisions', asyncMiddleware(async (request, response) => {
+  try {
+    const { group, artifact } = request.params;
+    const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&core=gav&rows=100&wt=json`;
+    const answer = await requestPromise({ url, method: 'GET', json: true });
+    const result = answer.response.docs.map(item => item.v);
+    return response.status(200).send(result);
+  } catch (error) {
+    if (error.code === 404)
+      return response.status(200).send([]);
+    // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
+    return response.status(200).send([]);
+  }
+}));
+
+// Search 
+router.get('/:group/:artifact?', asyncMiddleware(async (request, response) => {
+  const { group } = request.params;
+  if (request.path.indexOf('/', 1) > 0) {
+    // const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&rows=100&wt=json`;
+    const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"&rows=100&wt=json`;
+    const answer = await requestPromise({ url, method: 'GET', json: true });
+    const result = answer.response.docs.map(item => { return { id: item.id }; });
+    return response.status(200).send(result);
+  }
+  const url = `https://search.maven.org/solrsearch/select?q=${group}&rows=100&wt=json`;
+  const answer = await requestPromise({ url, method: 'GET', json: true });
+  const result = answer.response.docs.map(item => { return { id: item.id }; });
+  return response.status(200).send(result);
+}));
+
+function setup() {
+  return router;
+}
+
+module.exports = setup;
