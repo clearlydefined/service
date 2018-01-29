@@ -26,7 +26,7 @@ class ComponentService {
     }
   }
 
-    /**
+  /**
    * Get all of the component entries available for the given coordinates. The coordinates must be
    * specified down to the revision. The result will have an entry per discovered component. 
    * 
