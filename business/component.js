@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const Readable = require('stream').Readable;
+const throat = require('throat');
 
 class ComponentService {
   constructor(harvest, summary, aggregator, curation, componentStore) {
@@ -15,7 +16,7 @@ class ComponentService {
   async get(coordinates, pr) {
     if (pr) {
       const curation = this.curationService.get(coordinates, pr);
-      return await this.compute(coordinates, curation);
+      return this.compute(coordinates, curation);
     }
     const storeCoordinates = Object.assign({}, coordinates, { tool: 'component', toolVersion: 1 });
     try {
@@ -23,6 +24,24 @@ class ComponentService {
     } catch (error) { // cache miss
       return this.computeAndStore(coordinates, storeCoordinates);
     }
+  }
+
+    /**
+   * Get all of the component entries available for the given coordinates. The coordinates must be
+   * specified down to the revision. The result will have an entry per discovered component. 
+   * 
+   * @param {*} coordinatesList - an array of coordinate paths to list
+   * @returns A list of summries for all components that have results and the results present
+   */
+  async getAll(coordinatesList) {
+    const result = {};
+    const promises = coordinatesList.map(throat(10, async coordinates => {
+      const summary = await this.get(coordinates);
+      const key = coordinates.asEntityCoordinates().toString();
+      result[key] = summary;
+    }));
+    await Promise.all(promises);
+    return result;
   }
 
   /**
