@@ -8,6 +8,7 @@ const router = express.Router();
 const minimatch = require('minimatch');
 const utils = require('../lib/utils');
 const _ = require('lodash');
+const EntityCoordinates = require('../lib/entityCoordinates');
 
 // Gets the summarized data for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -73,6 +74,14 @@ router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const curated = await componentService.compute(coordinates, request.body);
   result.status(200).send(curated);
+}));
+
+// post a request to create a resource that is the list of summaries available for 
+// the components outlined in the POST body
+router.post('/', asyncMiddleware(async (request, response) => {
+  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry));
+  const result = await componentService.getAll(coordinatesList);
+  response.status(200).send(result);
 }));
 
 let harvestService;

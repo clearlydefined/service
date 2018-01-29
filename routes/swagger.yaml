@@ -199,6 +199,26 @@ paths:
       responses:
         201:
           description: Harvested file has been accepted.
+  /packages:
+    post:
+      summary: Request the creation of a resoruce that is the summary of all component definitions data available for the components outlined in the POST body
+      tags:
+        - definition
+      requestBody:
+        description: List of components to report on.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/bodies/componentList'
+      responses:
+        200:
+          description: Status request has been accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/bodies/definitionList'
+
   /packages/{type}/{provider}/{namespace}/{name}:
     get:
       summary: Gets components that have been harvested or curated.
@@ -289,6 +309,31 @@ components:
           url: cd:/npm/npmjs/-/redie/0.3.0
         - type: source
           url: cd:/git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+
+    definitionList:
+      type: object
+      description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
+      example: 
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
+          described: 
+            sourceLocation:
+              type: git
+              provider: github
+              namespace: microsoft
+              name: redie
+              revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
+            releaseDate: 2018-01-29T01:29:32.869Z
+          package:
+            type: git
+            provider: github
+            namespace: microsoft
+            name: redie
+            revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
+          licensed:
+            copyright:
+                holders:
+                  - Microsoft Corporation
+            license: MIT
 
     resultSummaryList:
       type: object
