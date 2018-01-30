@@ -11,7 +11,8 @@ class CrawlingHarvester {
 
   async harvest(spec) {
     const headers = {
-      Authorization: 'basic' + this.options.authToken
+      'X-token': this.options.authToken,
+      // Authorization: 'basic' + this.options.authToken
     };
     return requestPromise({
       url: `${this.options.url}/requests`,
