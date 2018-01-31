@@ -1,0 +1,38 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+version: "2.0"
+services:
+  website:
+    build: ../../website
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_SERVER=http://service:4000
+    # links:
+    #   - service
+  service:
+    build: ../../service
+    ports:
+      - "4000:4000"
+    environment:
+      - HARVEST_STORE_PROVIDER=file
+      - CURATION_PROVIDER=github
+      - CURATION_GITHUB_TOKEN=${GITHUB}
+      - CURATION_GITHUB_REPO=curated-data-dev
+      - CURATION_GITHUB_BRANCH=master
+      - HARVESTER_PROVIDER=crawler
+      - CRAWLER_API_URL=http://crawler:5000,
+      - CRAWLER_SERVICE_AUTH_TOKEN=dummyValueThatNeedsToBeTheSameInServiceAndCrawler
+    links:
+      - crawler
+  crawler:
+    build: ../../crawler
+    ports:
+      - "5000:5000"
+    environment:
+      - CRAWLER_STORE_PROVIDER=file
+      - CRAWLER_SERVICE_AUTH_TOKEN=dummyValueThatNeedsToBeTheSameInServiceAndCrawler
+      - CRAWLER_GITHUB_TOKEN=${GITHUB}
+      - SCANCODE_HOME=/opt/scancode-toolkit-2.2.1
+      - CRAWLER_QUEUE_PROVIDER=memory
