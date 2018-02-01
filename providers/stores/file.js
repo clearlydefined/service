@@ -19,8 +19,7 @@ class FileStore extends AbstractStore {
 
   async _list(coordinates) {
     const path = this._toStoragePathFromCoordinates(coordinates);
-    const result = await recursive(path);
-    return result.map(entry => entry.slice(this.options.location.length + 1));
+    return await recursive(path);
   }
 
   _filter(list) {
