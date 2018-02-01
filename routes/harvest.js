@@ -62,7 +62,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
     case 'summary': {
       const raw = await harvestStore.getAll(coordinates);
       const filter = await getFilter(coordinates);
-      const summarized = await summarizeService.summarizeAll(coordinates, filter, raw);
+      const summarized = await summarizeService.summarizeAll(coordinates, raw, filter);
       return response.status(200).send(summarized);
     }
     case 'list': {
