@@ -34,6 +34,7 @@
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
+    "sinon": "^4.2.2",
     "swagger-ui-express": "^2.0.13",
     "throat": "^4.1.0",
     "tmp": "0.0.33",

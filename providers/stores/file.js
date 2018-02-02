@@ -36,6 +36,11 @@ class FileStore extends AbstractStore {
     return super._toResultCoordinatesFromStoragePath(trimmed);
   }
 
+  _toEntityCoordinatesFromStoragePath(path) {
+    const trimmed = path.slice(this.options.location.length + 1);
+    return super._toEntityCoordinatesFromStoragePath(trimmed);
+  }
+
   /**
    * Get the results of running the tool specified in the coordinates on the entty specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
