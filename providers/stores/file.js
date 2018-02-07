@@ -19,7 +19,14 @@ class FileStore extends AbstractStore {
 
   async _list(coordinates) {
     const path = this._toStoragePathFromCoordinates(coordinates);
-    return await recursive(path);
+    try {
+      return await recursive(path);
+    } catch (error) {
+      // If there is just no entry, that's fine, there is no content.
+      if (error.code === 'ENOENT')
+        return [];
+      throw error;
+    }
   }
 
   _filter(list) {
