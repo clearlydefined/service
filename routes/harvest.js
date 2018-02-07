@@ -76,12 +76,9 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async 
 
 // Get a list of the harvested data that we have that matches the url as a prefix
 router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(async (request, response) => {
-  if (request.query.form.toLowerCase() === 'list') {
-    const coordinates = utils.toResultCoordinatesFromRequest(request);
-    const result = await harvestStore.list(coordinates);
-    return response.status(200).send(result);
-  }
-  throw new Error(`Invalid request form: ${request.query.form}`);
+  const coordinates = utils.toResultCoordinatesFromRequest(request);
+  const result = await harvestStore.list(coordinates);
+  return response.status(200).send(result);
 }));
 
 // post a request to create a resoruce that is the summary of all harvested data available for 
