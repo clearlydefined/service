@@ -60,7 +60,7 @@ setup.getStrategy = () => {
     clientSecret: config.auth.github.clientSecret,
     // this needs to match the callback url on the oauth app on github
     callbackURL: `${config.endpoints.service}/auth/github/finalize`,
-    scope: ['repo', 'user']
+    scope: ['public_repo', 'read:user', 'read:org']
   },
   function (access, refresh, profile, done) {
     // this only lives for one request; see the 'finalize' endpoint

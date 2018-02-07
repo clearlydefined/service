@@ -54,12 +54,16 @@ module.exports = asyncMiddleware(async (req, res, next) => {
       return;
     }
 
-    // TEMPORARY: ideally we'd not use this, but PATs as-configured
-    // don't get access to teams. someday switch everyone to personal
-    // oauth apps?
     try {
       teams = await getTeams(client, config.auth.github.org);
     } catch (err) {
+      if (err.code === 404) {
+        console.error('GitHub returned a 404 when trying to read team data. ' +
+          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)');
+      } else {
+        // XXX: Better logging situation?
+        console.error(err);
+      }
       teams = [];
     }
 
