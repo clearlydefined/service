@@ -5,7 +5,6 @@ const asyncMiddleware = require('../middleware/asyncMiddleware');
 const express = require('express');
 const router = express.Router();
 const utils = require('../lib/utils');
-const { permissionCheck } = require('../middleware/permissions');
 
 // Get a proposed patch for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(async (request, response) => {

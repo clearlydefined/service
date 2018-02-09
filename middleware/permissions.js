@@ -18,7 +18,7 @@ function permissionCheck(permission) {
       err.status = 401;
       next(err);
     }
-  }
+  };
 }
 
 module.exports = {
