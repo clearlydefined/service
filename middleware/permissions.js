@@ -11,7 +11,7 @@ function permissionCheck(permission) {
     const userTeams = req.app.locals.user.github.teams;
     const requiredTeams = req.app.locals.config.auth.github.permissions[permission]; // whew!
     const intersection = requiredTeams.filter(t => userTeams.includes(t));
-    if (intersection.length > 0) {
+    if (requiredTeams.length === 0 || intersection.length > 0) {
       next();
     } else {
       const err = new Error(`No permission to '${permission}' (needs team membership)`);

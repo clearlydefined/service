@@ -35,7 +35,7 @@ router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (reque
 }));
 
 // Create a patch for a specific revision of a component
-router.patch('/:type/:provider/:namespace/:name/:revision', permissionCheck('curate'), asyncMiddleware(async (request, response) => {
+router.patch('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response) => {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   return curationService.addOrUpdate(request.app.locals.user.github.client, coordinates, request.body).then(() =>
     response.sendStatus(200));

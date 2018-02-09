@@ -161,6 +161,12 @@ The name of the org the site will use for authenticating users. Checks team memb
    * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
    * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port.
 
+### `AUTH_CURATION_TEAM`
+The GitHub team whose members have permission to programmatically write to the curation repo for this environment (e.g., merge pull requests). If left unset, **anyone** can do these operations.
+
+### `AUTH_HARVEST_TEAM`
+The GitHub team whose members have permission to programmatically queue requests to harvest data. That is, they can POST to the /harvest endpoint. If left unset, **anyone** can do these operations.
+
 
 ***
 ***
