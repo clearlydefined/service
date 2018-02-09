@@ -42,7 +42,7 @@ describe('list a tool result ', () => {
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore({ location: '/foo' });
     try {
-      const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'error', '0.0'));
+      await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'error', '0.0'));
       assert.fail('should have thrown error');
     } catch (error) {
       assert.equal(error.message, 'test error');
