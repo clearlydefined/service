@@ -9,8 +9,8 @@ const config = require('../lib/config');
 
 const options = {
   headers: {
-    'user-agent': 'clearlydefined.io',
-  },
+    'user-agent': 'clearlydefined.io'
+  }
 };
 
 /**
@@ -44,11 +44,13 @@ function setupClient(req, token = null) {
 // get the user's teams (from GitHub or the cache) and attach them to the request
 async function setupTeams(req, token, client = null) {
   // anonymous users are not members of any team
-  if (!token)
-    return req.app.locals.user.github.teams = [];
+  if (!token) return (req.app.locals.user.github.teams = []);
 
   // check cache for team data; hash the token so we're not storing them raw
-  const hashedToken = await crypto.createHash('sha256').update(token).digest('hex');
+  const hashedToken = await crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
   const teamCacheKey = `github.teams.${hashedToken}`;
   let teams = await req.app.locals.cache.get(teamCacheKey);
   if (!teams) {
@@ -67,15 +69,15 @@ async function setupTeams(req, token, client = null) {
 async function getTeams(client, org) {
   try {
     const resp = await client.users.getTeams();
-    return resp.data
-      .filter(entry => entry.organization.login === org)
-      .map(entry => entry.name);
+    return resp.data.filter(entry => entry.organization.login === org).map(entry => entry.name);
   } catch (err) {
     if (err.code === 404) {
-      console.error('GitHub returned a 404 when trying to read team data. ' +
-        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)');
+      console.error(
+        'GitHub returned a 404 when trying to read team data. ' +
+          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+      );
     } else if (err.code === 401 && err.message === 'Bad credentials') {
-      // the token was bad. trickle up the problem so the user can fix 
+      // the token was bad. trickle up the problem so the user can fix
       throw err;
     } else {
       // XXX: Better logging situation?

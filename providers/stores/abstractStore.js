@@ -7,45 +7,42 @@ const EntityCoordinates = require('../../lib/entityCoordinates');
 const ResultCoordinates = require('../../lib/resultCoordinates');
 
 class AbstractStore {
-  
   /**
-   * List all of the tool results available for the given coordinates. The coordinates can be 
-   * arbitrarily loose. The result will have an entry per discovered component. That entry will 
+   * List all of the tool results available for the given coordinates. The coordinates can be
+   * arbitrarily loose. The result will have an entry per discovered component. That entry will
    * itself have an entry per tool with the value being the array of versions of the tool for
    * which there are result.
-   * 
+   *
    * @param {*} coordinatesList - an array of coordinate paths to list
    * @returns A list of all components that have results and the results present
    */
   async listAll(coordinatesList, type = 'entity') {
     const result = {};
-    const promises = coordinatesList.map(throat(10, async coordinates => {
-      const list = await this.list(coordinates, type);
-      list.forEach(entry => {
-        if (entry.length === 0)
-          return;
-        const spec = entry.asEntityCoordinates().toString();
-        const component = result[spec] = result[spec] || {};
-        if (type === 'result') {
-          const current = component[entry.tool] = component[entry.toolVersion] || [];
-          current.push(entry.toolVersion);
-        }
-      });
-    }));
+    const promises = coordinatesList.map(
+      throat(10, async coordinates => {
+        const list = await this.list(coordinates, type);
+        list.forEach(entry => {
+          if (entry.length === 0) return;
+          const spec = entry.asEntityCoordinates().toString();
+          const component = (result[spec] = result[spec] || {});
+          if (type === 'result') {
+            const current = (component[entry.tool] = component[entry.toolVersion] || []);
+            current.push(entry.toolVersion);
+          }
+        });
+      })
+    );
     await Promise.all(promises);
     return result;
   }
 
   async list(coordinates, type = 'entity') {
     const list = await this._list(coordinates);
-    const result = list
-      .map(path => {
-        if (type === 'entity')
-          return this._toEntityCoordinatesFromStoragePath(path);
-        if (type === 'result')
-          return this._toResultCoordinatesFromStoragePath(path);
-        throw new Error(`Invalid list type: ${type}`);
-      });
+    const result = list.map(path => {
+      if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(path);
+      if (type === 'result') return this._toResultCoordinatesFromStoragePath(path);
+      throw new Error(`Invalid list type: ${type}`);
+    });
     const filtered = this._filter(result);
     return _.uniqWith(filtered, _.isEqual);
   }

@@ -4,14 +4,13 @@
 const requestPromise = require('request-promise-native');
 
 class CrawlingHarvester {
-
   constructor(options) {
     this.options = options;
   }
 
   async harvest(spec) {
     const headers = {
-      'X-token': this.options.authToken,
+      'X-token': this.options.authToken
       // Authorization: 'basic' + this.options.authToken
     };
     return requestPromise({

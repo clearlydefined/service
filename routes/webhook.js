@@ -16,7 +16,12 @@ router.post('/', async (request, response) => {
   if (!isGithubEvent || !signature)
     return fatal(request, response, 'Missing signature or event type on GitHub webhook');
 
-  const computedSignature = 'sha1=' + crypto.createHmac('sha1', webhookSecret).update(request.body).digest('hex');
+  const computedSignature =
+    'sha1=' +
+    crypto
+      .createHmac('sha1', webhookSecret)
+      .update(request.body)
+      .digest('hex');
   if (!crypto.timingSafeEqual(new Buffer(signature), new Buffer(computedSignature))) {
     return fatal(request, response, 'X-Hub-Signature does not match blob signature');
   }
@@ -24,19 +29,14 @@ router.post('/', async (request, response) => {
   const { pull_request: pr, action: prAction, number } = JSON.parse(request.body);
   const { sha, ref } = pr.head;
   const isValidPullRequest = pr && validPrActions.includes(prAction);
-  if (!isValidPullRequest)
-    return fatal(request, response, 'Not a valid Pull Request event');
+  if (!isValidPullRequest) return fatal(request, response, 'Not a valid Pull Request event');
 
   await curationService.postCommitStatus(sha, pr, 'pending', 'Validation in progress');
   const prFiles = await curationService.getPrFiles(number);
-  const curationFilenames = prFiles
-    .map(x => x.filename)
-    .filter(curationService.isCurationFile);
+  const curationFilenames = prFiles.map(x => x.filename).filter(curationService.isCurationFile);
 
   const curations = await Promise.all(
-    curationFilenames.map(path => curationService
-      .getContent(ref, path)
-      .then(content => Curation({content, path})))
+    curationFilenames.map(path => curationService.getContent(ref, path).then(content => Curation({ content, path })))
   );
   const invalidCurations = curations.filter(x => !x.isValid);
 

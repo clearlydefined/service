@@ -9,7 +9,7 @@ const { promisify } = require('util');
 const recursive = require('recursive-readdir');
 const AbstractStore = require('./abstractStore');
 
-const resultOrError = (resolve, reject) => (error, result) => error ? reject(error) : resolve(result);
+const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result));
 
 class FileStore extends AbstractStore {
   constructor(options) {
@@ -23,8 +23,7 @@ class FileStore extends AbstractStore {
       return await recursive(path);
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
-      if (error.code === 'ENOENT')
-        return [];
+      if (error.code === 'ENOENT') return [];
       throw error;
     }
   }
@@ -52,10 +51,10 @@ class FileStore extends AbstractStore {
    * Get the results of running the tool specified in the coordinates on the entty specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
    * Otherwise, return an object that represents the result.
-   *   
-   * @param {ResultCoordinates} coordinates - The coordinates of the result to get 
+   *
+   * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @param {WriteStream} [stream] - The stream onto which the result is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified. 
+   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
    */
   async get(coordinates, stream) {
     const filePath = await this._getFilePath(coordinates);
@@ -66,25 +65,22 @@ class FileStore extends AbstractStore {
         read.on('error', error => reject(error));
         read.pipe(stream);
       });
-    return new Promise((resolve, reject) =>
-      fs.readFile(filePath, resultOrError(resolve, reject))
-    ).then(result =>
-      JSON.parse(result));
+    return new Promise((resolve, reject) => fs.readFile(filePath, resultOrError(resolve, reject))).then(result =>
+      JSON.parse(result)
+    );
   }
 
   async _getFilePath(coordinates) {
     const toolPath = this._toStoragePathFromCoordinates(coordinates);
-    if (coordinates.toolVersion)
-      return toolPath + '.json';
+    if (coordinates.toolVersion) return toolPath + '.json';
     const latest = await this._findLatest(toolPath);
-    if (!latest)
-      return null;
+    if (!latest) return null;
     return path.join(toolPath, latest) + '.json';
   }
 
   /**
    * Get all of the tool results for the given coordinates. The coordinates must be all the way down
-   * to a revision. 
+   * to a revision.
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
    */
@@ -95,14 +91,19 @@ class FileStore extends AbstractStore {
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
     const files = await recursive(root);
-    const contents = await Promise.all(files.map(file => {
-      return new Promise((resolve, reject) =>
-        fs.readFile(file, (error, data) =>
-          error ? reject(error) : resolve({ name: file, content: JSON.parse(data) })));
-    }));
+    const contents = await Promise.all(
+      files.map(file => {
+        return new Promise((resolve, reject) =>
+          fs.readFile(
+            file,
+            (error, data) => (error ? reject(error) : resolve({ name: file, content: JSON.parse(data) }))
+          )
+        );
+      })
+    );
     return contents.reduce((result, entry) => {
       const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name);
-      const current = result[tool] = result[tool] || {};
+      const current = (result[tool] = result[tool] || {});
       current[toolVersion] = entry.content;
       return result;
     }, {});
@@ -111,10 +112,8 @@ class FileStore extends AbstractStore {
   _findLatest(filePath) {
     return new Promise((resolve, reject) => {
       fs.readdir(filePath, (error, list) => {
-        if (error)
-          return reject(error);
-        const result = list.map(entry =>
-          path.extname(entry) === '.json' ? path.basename(entry).slice(0, -5) : null);
+        if (error) return reject(error);
+        const result = list.map(entry => (path.extname(entry) === '.json' ? path.basename(entry).slice(0, -5) : null));
         resolve(utils.getLatestVersion(result.filter(e => e)));
       });
     });
