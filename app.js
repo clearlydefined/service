@@ -70,6 +70,7 @@ app.use(githubMiddleware);
 app.use('/', index);
 app.use('/origins/github', require('./routes/originGitHub')());
 app.use('/origins/npm', require('./routes/originNpm')());
+app.use('/origins/maven', require('./routes/originMaven')());
 app.use('/harvest', harvest);
 app.use(bodyParser.json());
 app.use('/curations', curations);
