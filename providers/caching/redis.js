@@ -5,7 +5,6 @@ const redis = require('redis');
 const util = require('util');
 
 class RedisCache {
-
   constructor(options) {
     this.redis = redis.createClient(options);
     this._redisGet = util.promisify(this.redis.get);
@@ -19,7 +18,6 @@ class RedisCache {
   async set(item, value, expirationSeconds) {
     await this._redisSet(item, value, 'EX', expirationSeconds);
   }
-
 }
 
-module.exports = (options) => new RedisCache(options);
+module.exports = options => new RedisCache(options);

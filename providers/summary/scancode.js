@@ -20,7 +20,6 @@
 //     expression: string
 
 class ScanCodeSummarizer {
-
   constructor(options) {
     this.options = options;
   }
@@ -37,7 +36,9 @@ class ScanCodeSummarizer {
 
     const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
     for (let file of filteredFiles) {
-      this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key; });
+      this._addArrayToSet(file.licenses, licenseExpressions, license => {
+        return license.spdx_license_key;
+      });
       this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);
     }
 
@@ -59,8 +60,7 @@ class ScanCodeSummarizer {
   }
 
   _normalizeCopyrights(copyrights, statements, holders, authors) {
-    if (!copyrights || !copyrights.length)
-      return;
+    if (!copyrights || !copyrights.length) return;
     for (let copyright of copyrights) {
       this._addArrayToSet(copyright.statements, statements);
       this._addArrayToSet(copyright.holders, holders);
@@ -69,14 +69,13 @@ class ScanCodeSummarizer {
   }
 
   _addArrayToSet(array, set, valueExtractor) {
-    if (!array || !array.length)
-      return;
+    if (!array || !array.length) return;
 
-    valueExtractor = valueExtractor || ((value) => value);
+    valueExtractor = valueExtractor || (value => value);
     for (let entry of array) {
       set.add(valueExtractor(entry));
     }
   }
 }
 
-module.exports = (options) => new ScanCodeSummarizer(options);
+module.exports = options => new ScanCodeSummarizer(options);

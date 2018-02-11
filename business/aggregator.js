@@ -39,26 +39,21 @@ class AggregationService {
 
   process(packageCoordinates, summarized) {
     let result = {};
-    this.getPrecedenceOrder().forEach(tool =>
-      extend(true, result, this.findData(tool, summarized)));
+    this.getPrecedenceOrder().forEach(tool => extend(true, result, this.findData(tool, summarized)));
     return result;
   }
 
   getPrecedenceOrder() {
     const result = [];
-    this.options.precedence.reverse().forEach(group =>
-      group.reverse().forEach(tool => result.push(tool))
-    );
+    this.options.precedence.reverse().forEach(group => group.reverse().forEach(tool => result.push(tool)));
     return result;
   }
 
   // search the summarized data for an entry that best matches the given tool spec
   findData(toolSpec, summarized) {
     const [tool, toolVersion] = toolSpec.split('/');
-    if (!summarized[tool])
-      return null;
-    if (toolVersion)
-      return summarized[tool][toolVersion];
+    if (!summarized[tool]) return null;
+    if (toolVersion) return summarized[tool][toolVersion];
 
     const versions = Object.getOwnPropertyNames(summarized[tool]);
     const latest = utils.getLatestVersion(versions);

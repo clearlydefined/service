@@ -17,7 +17,6 @@
 const _ = require('lodash');
 
 class ClearlyDescribedSummarizer {
-
   constructor(options) {
     this.options = options;
   }
@@ -52,4 +51,3 @@ class ClearlyDescribedSummarizer {
 }
 
 module.exports = options => new ClearlyDescribedSummarizer(options);
-

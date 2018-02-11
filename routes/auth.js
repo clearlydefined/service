@@ -32,40 +32,40 @@ router.get('/github', passportOrPat(), (req, res) => {
   }
 });
 
-router.get('/github/finalize', passportOrPat(),
-  (req, res) => {
-    const safeToken = encodeURIComponent(req.user.githubAccessToken);
+router.get('/github/finalize', passportOrPat(), (req, res) => {
+  const safeToken = encodeURIComponent(req.user.githubAccessToken);
 
-    // passing in the 'website' endpoint below is very important;
-    // using '*' instead means this page will gladly send out a
-    // user's token to any site that asks for it. see:
-    // https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
-    res.status(200).send(`<script>
+  // passing in the 'website' endpoint below is very important;
+  // using '*' instead means this page will gladly send out a
+  // user's token to any site that asks for it. see:
+  // https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+  res.status(200).send(`<script>
       window.opener.postMessage({
         type: 'github-token',
         token: '${safeToken}',
       }, '${config.endpoints.website}');
       window.close();
     </script>`);
-  }
-);
+});
 
 function setup() {
   return router;
 }
 
 setup.getStrategy = () => {
-  return new GitHubStrategy({
-    clientID: config.auth.github.clientId,
-    clientSecret: config.auth.github.clientSecret,
-    // this needs to match the callback url on the oauth app on github
-    callbackURL: `${config.endpoints.service}/auth/github/finalize`,
-    scope: ['public_repo', 'read:user', 'read:org']
-  },
-  function (access, refresh, profile, done) {
-    // this only lives for one request; see the 'finalize' endpoint
-    done(null, { githubAccessToken: access });
-  });
+  return new GitHubStrategy(
+    {
+      clientID: config.auth.github.clientId,
+      clientSecret: config.auth.github.clientSecret,
+      // this needs to match the callback url on the oauth app on github
+      callbackURL: `${config.endpoints.service}/auth/github/finalize`,
+      scope: ['public_repo', 'read:user', 'read:org']
+    },
+    function(access, refresh, profile, done) {
+      // this only lives for one request; see the 'finalize' endpoint
+      done(null, { githubAccessToken: access });
+    }
+  );
 };
 
 module.exports = setup;

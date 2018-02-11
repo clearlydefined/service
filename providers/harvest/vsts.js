@@ -4,7 +4,6 @@
 const vsts = require('vso-node-api');
 
 class Vsts {
-
   constructor(options) {
     this.options = options;
     const token = options.authToken;

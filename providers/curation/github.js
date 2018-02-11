@@ -63,13 +63,17 @@ class GitHubCurationService {
         }
 
         // add/update the patch for this revision
-        parsedContent.revisions[coordinates.revision] = _.assign(parsedContent.revisions[coordinates.revision] || {}, patch.patch);
+        parsedContent.revisions[coordinates.revision] = _.assign(
+          parsedContent.revisions[coordinates.revision] || {},
+          patch.patch
+        );
 
         // return the serialized YAML
         return yaml.safeDump(parsedContent, { sortKeys: true });
       })
       .then(updatedPatch => {
-        return github.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
+        return github.repos
+          .getBranch({ owner, repo, branch: `refs/heads/${branch}` })
           .then(masterBranch => {
             const sha = masterBranch.data.commit.sha;
             return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha });
@@ -121,10 +125,8 @@ class GitHubCurationService {
    * @returns {Summary} The requested curation
    */
   async get(coordinates, curation = null) {
-    if (!coordinates.revision)
-      throw new Error('Coordinates must include a revision');
-    if (curation && typeof curation !== 'number' && typeof curation !== 'string')
-      return curation;
+    if (!coordinates.revision) throw new Error('Coordinates must include a revision');
+    if (curation && typeof curation !== 'number' && typeof curation !== 'string') return curation;
     const all = await this.getAll(coordinates, curation);
     return all && all.revisions ? all.revisions[coordinates.revision] : null;
   }
@@ -151,8 +153,7 @@ class GitHubCurationService {
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
       Object.defineProperty(content, 'origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
       return content;
-    }
-    catch (error) {
+    } catch (error) {
       // TODO: This isn't very safe how it is because any failure will return an empty object,
       // ideally we only do this if the .yaml file doesn't exist.
       return { revisions: {} };
@@ -160,8 +161,7 @@ class GitHubCurationService {
   }
 
   async getBranch(number) {
-    if (!number)
-      return this.options.branch;
+    if (!number) return this.options.branch;
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
     const result = await github.pullRequests.get({ owner, repo, number });
@@ -193,7 +193,13 @@ class GitHubCurationService {
     const target_url = `https://dev.clearlydefined.io/curation/${pr.title}/pr/${pr.number}`;
     try {
       return github.repos.createStatus({
-        owner, repo, sha, state, description, target_url, context: 'ClearlyDefined'
+        owner,
+        repo,
+        sha,
+        state,
+        description,
+        target_url,
+        context: 'ClearlyDefined'
       });
     } catch (error) {
       // @todo add logger
@@ -208,8 +214,7 @@ class GitHubCurationService {
   async list(coordinates) {
     await this.ensureCurations();
     const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}`;
-    if (!fs.existsSync(root))
-      return [];
+    if (!fs.existsSync(root)) return [];
     return new Promise((resolve, reject) => {
       const result = [];
       readdirp({ root, fileFilter: '*.yaml' })
@@ -227,8 +232,7 @@ class GitHubCurationService {
   }
 
   async ensureCurations() {
-    if (this.curationUpdateTime && (Date.now - this.curationUpdateTime < this.options.curationFreshness))
-      return;
+    if (this.curationUpdateTime && Date.now - this.curationUpdateTime < this.options.curationFreshness) return;
     const { owner, repo } = this.options;
     const url = `https://github.com/${owner}/${repo}.git`;
     const command = this.curationUpdateTime
@@ -236,8 +240,7 @@ class GitHubCurationService {
       : `cd ${this.tempLocation.name} && git clone ${url}`;
     return new Promise((resolve, reject) => {
       exec(command, (error, stdout) => {
-        if (error)
-          return reject(error);
+        if (error) return reject(error);
         this.curationUpdateTime = Date.now;
         resolve(stdout);
       });
@@ -282,4 +285,4 @@ class GitHubCurationService {
   }
 }
 
-module.exports = (options) => new GitHubCurationService(options);
+module.exports = options => new GitHubCurationService(options);
