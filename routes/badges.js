@@ -1,10 +1,10 @@
 // Copyright (c) 2018, The Linux Foundation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require("../middleware/asyncMiddleware");
-const express = require("express");
-const utils = require("../lib/utils");
-const badgeCalculator = require("../business/badgeCalculator");
+const asyncMiddleware = require('../middleware/asyncMiddleware');
+const express = require('express');
+const utils = require('../lib/utils');
+const badgeCalculator = require('../business/badgeCalculator');
 
 async function getComponentBadgeRouterShell(componentService, request, result) {
   const link = await getComponentBadgeLink(componentService, request);
@@ -22,7 +22,7 @@ async function getComponentBadgeLink(componentService, request) {
 function getRouter(componentService) {
   const router = express.Router();
   router.get(
-    "/:type/:provider/:namespace/:name/:revision",
+    '/:type/:provider/:namespace/:name/:revision',
     asyncMiddleware((request, result) =>
       getComponentBadgeRouterShell(componentService, request, result)
     )
