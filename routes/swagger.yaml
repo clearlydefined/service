@@ -24,7 +24,7 @@ paths:
         - $ref: "#/components/parameters/name"
       responses:
         200:
-          description: List of components.
+          description: List of curations for the identified components.
   /curations/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
     get:
       summary: Gets a proposed curation for a component revision.
@@ -39,7 +39,7 @@ paths:
         - $ref: "#/components/parameters/pr"
       responses:
         200:
-          description: Component revision patch.
+          description: Proposed curation for the component revision.
   /curations/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets a curation for a component revision.
@@ -199,11 +199,11 @@ paths:
       responses:
         201:
           description: Harvested file has been accepted.
-  /packages:
+  /definitions:
     post:
-      summary: Request the creation of a resoruce that is the summary of all component definitions data available for the components outlined in the POST body
+      summary: Request the creation of a resource that is the summary of all definitions available for the components outlined in the POST body
       tags:
-        - definition
+        - definitions
       requestBody:
         description: List of components to report on.
         required: true
@@ -219,11 +219,11 @@ paths:
               schema:
                 $ref: '#components/bodies/definitionList'
 
-  /packages/{type}/{provider}/{namespace}/{name}:
+  /definitions/{type}/{provider}/{namespace}/{name}:
     get:
-      summary: Gets components that have been harvested or curated.
+      summary: Gets components that have definitions (i.e,. have been harveted and/or curated).
       tags:
-        - components
+        - definitions
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -231,12 +231,12 @@ paths:
         - $ref: "#/components/parameters/name"
       responses:
         200:
-          description: List of components.
-  /packages/{type}/{provider}/{namespace}/{name}/{revision}:
+          description: List of definitions that have definitions.
+  /definitions/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
-      summary: Gets the summary of a component revision.
+      summary: Gets the definition for a component revision.
       tags:
-        - components
+        - definitions
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -245,11 +245,11 @@ paths:
         - $ref: "#/components/parameters/revision"
       responses:
         200:
-          description: Component summary.
+          description: Component definition.
     post:
-      summary: Previews the summary of a component revision with the included curation.
+      summary: Previews the definition of a component revision with the included curation.
       tags:
-        - components
+        - definitions
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -261,15 +261,15 @@ paths:
           schema:
             type: boolean
           required: true
-          description: Preview the summary.
+          description: Preview the definition.
       responses:
         200:
-          description: Component summary.
-  /packages/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
+          description: Component definitions.
+  /definitions/{type}/{provider}/{namespace}/{name}/{revision}/pr/{pr}:
     get:
-      summary: Previews the summary of a component revision with the proposed curation.
+      summary: Previews the definition of a component revision with the proposed curation.
       tags:
-        - components
+        - definitions
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
@@ -279,7 +279,7 @@ paths:
         - $ref: "#/components/parameters/pr"
       responses:
         200:
-          description: Component summary.
+          description: Component definition.
   /badges/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets a link to the badge icon of a component revision.
@@ -296,8 +296,8 @@ paths:
           description: Badge icon link, either level 1, 2 or 3.
 
 tags:
-  - name: components
-    description: Component metadata - most API consumers will be interested in these
+  - name: definitions
+    description: Component definitions - most API consumers will be interested in these
   - name: curations
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest

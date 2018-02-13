@@ -34,12 +34,12 @@ const curationProvider = config.curation.store.provider;
 const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
 const curations = require('./routes/curations')(curationService);
 
-const componentStoreProvider = config.component.store.provider;
-const componentStore = require(`./providers/stores/${componentStoreProvider}`)(config.component.store[componentStoreProvider]);
-const componentService = require('./business/component')(harvestStore, summaryService, aggregatorService, curationService, componentStore);
+const definitionStoreProvider = config.definition.store.provider;
+const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(config.definition.store[definitionStoreProvider]);
+const definitionService = require('./business/definitionService')(harvestStore, summaryService, aggregatorService, curationService, definitionStore);
 
-const packages = require('./routes/packages')(harvestStore, curationService, componentService);
 const badges = require('./routes/badges');
+const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService);
 
 const appLogger = console; // @todo add real logger
 const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);
@@ -75,8 +75,8 @@ app.use('/origins/maven', require('./routes/originMaven')());
 app.use('/harvest', harvest);
 app.use(bodyParser.json());
 app.use('/curations', curations);
-app.use('/packages', packages);
 app.use('/badges', badges.getRouter(componentService));
+app.use('/definitions', definitions);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

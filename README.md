@@ -86,11 +86,11 @@ GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0/pr/23
 
 Once some data has been harvested and/or curated, you can acces the constituent parts or get the net result of merging the data together.
 
-### Package results
-Most of the time you will want to see the end result of the harvesting with the curations mixed in. A GET to the component URL returns the summarized and aggregated view of the data about the identified component. For example,
+### Definitions
+Most of the time you will want to see the end result of the harvesting with the curations mixed in. A GET to the `definitions` URL returns the summarized and curated view of the data about the identified component. For example,
 
 ```
-GET http://localhost:4000/packages/npm/npmjs/-/redie/0.3.0
+GET http://localhost:4000/definitions/npm/npmjs/-/redie/0.3.0
 ```
 
 In this case, we are accessing version 0.3.0 of the NPM called redie. Given the above curation, the result would look something like the snippet below. Notice that the `projectWebsite` and `issueTracker` information was not in the curation. That data was harvested through some automated tools.
@@ -118,7 +118,7 @@ In this case, we are accessing version 0.3.0 of the NPM called redie. Given the 
 You can also get the result that would be given **if** a proposed curation PR were merged. Issue the same GET but add `/pr/<pr number>` on the end. For example, the following gets the result if PR #23 were merged.
 
 ```
-GET http://localhost:4000/packages/npm/npmjs/-/redie/0.3.0/pr/23
+GET http://localhost:4000/definitions/npm/npmjs/-/redie/0.3.0/pr/23
 ```
 
 ### Raw results

@@ -10,19 +10,19 @@ const utils = require('../lib/utils');
 const _ = require('lodash');
 const EntityCoordinates = require('../lib/entityCoordinates');
 
-// Gets the summarized data for a component with any applicable patches. This is the main
+// Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getComponent));
-router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getComponent));
+router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition));
+router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition));
 
-async function getComponent(request, result) {
+async function getDefinition(request, result) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const pr = request.params.pr;
-  const curated = await componentService.get(coordinates, pr);
-  result.status(200).send(curated);
+  const result = await definitionService.get(coordinates, pr);
+  result.status(200).send(result);
 }
 
-// Get a list of the components for which we have any kind of data, harvested or curated.
+// Get a list of the components for which we have any kind of definition.
 router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (request, response) => {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const curated = await curationService.list(coordinates);
@@ -66,32 +66,32 @@ function buildFilter(dimensions) {
   return file => !list.some(filter => minimatch(file, filter));
 }
 
-// Previews the summarized data for a component aggregated and with the POST'd curation applied.
+// Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, result) => {
+router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async (request, response) => {
   if (!request.query.preview)
-    return result.sendStatus(400);
+    return response.sendStatus(400);
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
-  const curated = await componentService.compute(coordinates, request.body);
-  result.status(200).send(curated);
+  const result = await definitionService.compute(coordinates, request.body);
+  result.status(200).send(result);
 }));
 
-// post a request to create a resource that is the list of summaries available for 
+// POST a request to create a resource that is the list of definitions available for 
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(async (request, response) => {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry));
-  const result = await componentService.getAll(coordinatesList);
+  const result = await definitionService.getAll(coordinatesList);
   response.status(200).send(result);
 }));
 
 let harvestService;
 let curationService;
-let componentService;
+let definitionService;
 
-function setup(harvest, curation, component) {
+function setup(harvest, curation, definition) {
   harvestService = harvest;
   curationService = curation;
-  componentService = component;
+  definitionService = definition;
   return router;
 }
 module.exports = setup;
