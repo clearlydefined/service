@@ -278,7 +278,7 @@ You can embed this into your open source project by putting the following markdo
 (Note please replace variables with your poject information)
 
 ```
-![My ClearlyDefined Score](CLEARLYDEFINED_BASE_URL/badges/:type/:provider/:namespace/:name/:revision)
+![My ClearlyDefined Score](https://api.clearlydefined.io/badges/:type/:provider/:namespace/:name/:revision)
 ```
 
 #### Format
