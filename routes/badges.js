@@ -8,7 +8,7 @@ const badgeCalculator = require('../business/badgeCalculator');
 
 async function getComponentBadgeRouterShell(componentService, request, result) {
   const link = await getComponentBadgeLink(componentService, request);
-  result.status(200).send(link);
+  result.status(302).send(link);
 }
 
 async function getComponentBadgeLink(componentService, request) {
