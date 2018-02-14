@@ -4,13 +4,13 @@
 const Readable = require('stream').Readable;
 const throat = require('throat');
 
-class ComponentService {
-  constructor(harvest, summary, aggregator, curation, componentStore) {
+class DefinitionService {
+  constructor(harvest, summary, aggregator, curation, store) {
     this.harvestService = harvest;
     this.summaryService = summary;
     this.aggregationService = aggregator;
     this.curationService = curation;
-    this.componentStore = componentStore;
+    this.definitionStore = store;
   }
 
   async get(coordinates, pr) {
@@ -18,20 +18,20 @@ class ComponentService {
       const curation = this.curationService.get(coordinates, pr);
       return this.compute(coordinates, curation);
     }
-    const storeCoordinates = Object.assign({}, coordinates, { tool: 'component', toolVersion: 1 });
+    const storeCoordinates = Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 });
     try {
-      return await this.componentStore.get(storeCoordinates);
+      return await this.definitionStore.get(storeCoordinates);
     } catch (error) { // cache miss
       return this.computeAndStore(coordinates, storeCoordinates);
     }
   }
 
   /**
-   * Get all of the component entries available for the given coordinates. The coordinates must be
-   * specified down to the revision. The result will have an entry per discovered component. 
+   * Get all of the definition entries available for the given coordinates. The coordinates must be
+   * specified down to the revision. The result will have an entry per discovered definition. 
    * 
    * @param {*} coordinatesList - an array of coordinate paths to list
-   * @returns A list of summries for all components that have results and the results present
+   * @returns A list of all definitions that have results and the results available
    */
   async getAll(coordinatesList) {
     const result = {};
@@ -45,13 +45,13 @@ class ComponentService {
   }
 
   /**
-   * Get the final representation of the specified component and optionally apply the indicated
+   * Get the final representation of the specified definition and optionally apply the indicated
    * curation.
    *
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
    * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
    * curation or an actual curation object.
-   * @returns {Summary} The fully rendered component definition
+   * @returns {Summary} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec);
@@ -70,10 +70,10 @@ class ComponentService {
     const stream = new Readable();
     stream.push(JSON.stringify(curated));
     stream.push(null); // end of stream
-    this.componentStore.store(storeCoordinates, stream);
+    this.definitionStore.store(storeCoordinates, stream);
     return curated;
   }
 }
 
-module.exports = (harvest, summary, aggregator, curation, componentStore) =>
-  new ComponentService(harvest, summary, aggregator, curation, componentStore);
+module.exports = (harvest, summary, aggregator, curation, store) =>
+  new DefinitionService(harvest, summary, aggregator, curation, store);

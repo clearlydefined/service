@@ -15,7 +15,7 @@ class AbstractStore {
    * which there are result.
    * 
    * @param {*} coordinatesList - an array of coordinate paths to list
-   * @returns A list of all components that have results and the results present
+   * @returns A list of all components that have results and the results available
    */
   async listAll(coordinatesList, type = 'entity') {
     const result = {};
@@ -25,9 +25,9 @@ class AbstractStore {
         if (entry.length === 0)
           return;
         const spec = entry.asEntityCoordinates().toString();
-        const component = result[spec] = result[spec] || {};
+        const data = result[spec] = result[spec] || {};
         if (type === 'result') {
-          const current = component[entry.tool] = component[entry.toolVersion] || [];
+          const current = data[entry.tool] = data[entry.toolVersion] || [];
           current.push(entry.toolVersion);
         }
       });

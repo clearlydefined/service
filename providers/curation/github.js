@@ -187,7 +187,7 @@ class GitHubCurationService {
   async postCommitStatus(sha, pr, state, description) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
-    // TODO hack alert! use the title of the PR to find the component in clearlydefined.io
+    // TODO hack alert! use the title of the PR to find the definition in clearlydefined.io
     // In the future we need a more concrete/robust way to capture this in the PR in the face of
     // people not using out tools etc. Ideally read it out of the PR files themselves.
     const target_url = `https://dev.clearlydefined.io/curation/${pr.title}/pr/${pr.number}`;

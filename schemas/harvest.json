@@ -34,7 +34,7 @@
         "$ref": "#/definitions/request"
       }
     },
-    "componentResultSummaryList": {
+    "definitionResultSummaryList": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
