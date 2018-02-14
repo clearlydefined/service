@@ -15,11 +15,11 @@ const EntityCoordinates = require('../lib/entityCoordinates');
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition));
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition));
 
-async function getDefinition(request, result) {
+async function getDefinition(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const pr = request.params.pr;
   const result = await definitionService.get(coordinates, pr);
-  result.status(200).send(result);
+  response.status(200).send(result);
 }
 
 // Get a list of the components for which we have any kind of definition.
