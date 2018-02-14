@@ -266,6 +266,21 @@ type (git)
       name.yaml (redie)
 ```
 
+### Badges
+
+To retrieve a link to the image for your badge on your open source page, you can use the API endpoint
+/badges/:type/:provider/:namespace/:name/:revision
+
+So, for example:
+/badges/git/github/expressjs/express/351396f971280ab79faddcf9782ea50f4e88358d
+
+You can embed this into your open source project by putting the following markdown into your Readme.
+(Note please replace variables with your poject information)
+
+```
+![My ClearlyDefined Score](https://api.clearlydefined.io/badges/:type/:provider/:namespace/:name/:revision)
+```
+
 #### Format
 TODO
 

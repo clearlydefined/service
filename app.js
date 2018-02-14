@@ -39,6 +39,7 @@ const componentStore = require(`./providers/stores/${componentStoreProvider}`)(c
 const componentService = require('./business/component')(harvestStore, summaryService, aggregatorService, curationService, componentStore);
 
 const packages = require('./routes/packages')(harvestStore, curationService, componentService);
+const badges = require('./routes/badges');
 
 const appLogger = console; // @todo add real logger
 const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);
@@ -75,6 +76,7 @@ app.use('/harvest', harvest);
 app.use(bodyParser.json());
 app.use('/curations', curations);
 app.use('/packages', packages);
+app.use('/badges', badges.getRouter(componentService));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

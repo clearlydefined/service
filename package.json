@@ -19,6 +19,7 @@
     "github": "^13.1.0",
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
+    "lodash": "4.17.5",
     "memory-cache": "^0.2.0",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
