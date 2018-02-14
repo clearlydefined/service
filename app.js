@@ -38,7 +38,7 @@ const definitionStoreProvider = config.definition.store.provider;
 const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(config.definition.store[definitionStoreProvider]);
 const definitionService = require('./business/definitionService')(harvestStore, summaryService, aggregatorService, curationService, definitionStore);
 
-const badges = require('./routes/badges');
+const badges = require('./routes/badges').getRouter(definitionService);
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService);
 
 const appLogger = console; // @todo add real logger
@@ -75,7 +75,7 @@ app.use('/origins/maven', require('./routes/originMaven')());
 app.use('/harvest', harvest);
 app.use(bodyParser.json());
 app.use('/curations', curations);
-app.use('/badges', badges.getRouter(componentService));
+app.use('/badges', badges);
 app.use('/definitions', definitions);
 
 // catch 404 and forward to error handler

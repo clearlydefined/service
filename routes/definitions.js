@@ -73,7 +73,7 @@ router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async
     return response.sendStatus(400);
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const result = await definitionService.compute(coordinates, request.body);
-  result.status(200).send(result);
+  response.status(200).send(result);
 }));
 
 // POST a request to create a resource that is the list of definitions available for 
