@@ -1,0 +1,9 @@
+package:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    licensed:
+      files: 13  # this prop is not allowed

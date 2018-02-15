@@ -18,16 +18,10 @@
   },
   "definitions": {
     "type": {
-      "enum": [
-        "npm",
-        "git"
-      ]
+      "enum": ["npm", "git", "maven"]
     },
     "provider": {
-      "enum": [
-        "npmjs",
-        "github"
-      ]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
     "package": {
       "required": [
