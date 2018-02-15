@@ -7,41 +7,53 @@ class ScanCodeSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, harvested, filter = null) {
+  summarize(coordinates, harvested, filter = null) {
     if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data');
 
     const data = harvested.content;
     const copyrightHolders = new Set();
     const licenseExpressions = new Set();
+    let missingHolders = 0;
+    let missingLicenses = 0;
 
     const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
     for (let file of filteredFiles) {
-      this._addArrayToSet(file.licenses, licenseExpressions, (license) => { return license.spdx_license_key; });
-      this._normalizeCopyrights(file.copyrights, copyrightStatements, copyrightHolders, copyrightAuthors);
+      this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key);
+      (!file.licenses || file.licenses.length === 0) && missingLicenses++;
+      const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
+      !hasHolders && missingHolders++;
     }
 
     return {
-      package: packageCoordinates,
+      package: coordinates,
       licensed: {
         copyright: {
           holders: Array.from(copyrightHolders).sort(),
+          missing: missingHolders
         },
-        license: this._licenseSetToExpression(licenseExpressions)
+        license: {
+          expression: this._licenseSetToExpression(licenseExpressions),
+          missing: missingLicenses
+        }
       }
     };
   }
 
   _licenseSetToExpression(licenses) {
-    return Array.from(licenses).join(' and ');
+    const licenseArray =Array.from(licenses).filter(e => e);
+    return licenseArray.length ? licenseArray.join(' and ') : null;
   }
 
-  _normalizeCopyrights(copyrights, statements, holders, authors) {
+  _normalizeCopyrights(copyrights, holders) {
     if (!copyrights || !copyrights.length)
-      return;
+      return false;
+    let hasHolders = false;
     for (let copyright of copyrights) {
       this._addArrayToSet(copyright.holders, holders);
+      hasHolders = hasHolders || copyright.holders.length
     }
+    return hasHolders;
   }
 
   _addArrayToSet(array, set, valueExtractor) {
