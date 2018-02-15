@@ -52,7 +52,7 @@ class ScanCodeSummarizer {
     let hasHolders = false;
     for (let copyright of copyrights) {
       this._addArrayToSet(copyright.holders, holders);
-      hasHolders = hasHolders || copyright.holders.length
+      hasHolders = hasHolders || copyright.holders.length;
     }
     return hasHolders;
   }

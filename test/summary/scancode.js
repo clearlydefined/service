@@ -107,9 +107,7 @@ function buildFile(path, license, holders) {
     path,
     licenses: license ? [{ spdx_license_key: license }] : null,
     copyrights: holders
-      ? holders.map(entry => {
-          return { holders: entry };
-        })
+      ? holders.map(entry => { return { holders: entry }; })
       : null
   };
 }
