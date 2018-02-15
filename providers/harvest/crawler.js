@@ -18,7 +18,7 @@ class CrawlingHarvester {
         type: entry.tool,
         url: `cd:/${entry.path}`,
         policy: entry.policy
-      }
+      };
     });
     return requestPromise({
       url: `${this.options.url}/requests`,
