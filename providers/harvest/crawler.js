@@ -11,13 +11,19 @@ class CrawlingHarvester {
 
   async harvest(spec) {
     const headers = {
-      'X-token': this.options.authToken,
-      // Authorization: 'basic' + this.options.authToken
+      'X-token': this.options.authToken
     };
+    const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
+      return {
+        type: entry.tool,
+        url: `cd:/${entry.path}`,
+        policy: entry.policy
+      }
+    });
     return requestPromise({
       url: `${this.options.url}/requests`,
       method: 'POST',
-      body: spec,
+      body,
       headers,
       json: true
     });
