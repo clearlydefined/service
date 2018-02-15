@@ -16,7 +16,7 @@ class CrawlingHarvester {
     const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
       return {
         type: entry.tool,
-        url: `cd:/${entry.path}`,
+        url: `cd:/${entry.coordinates}`,
         policy: entry.policy
       };
     });
