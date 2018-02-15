@@ -9,9 +9,6 @@ revisions:
       issueTracker: "https://foobar.com/baz/1"
     licensed:
       copyright:
-        statements:
-          - "foo"
-          - "bar"
         holders:
           - "foo"
           - "bar"

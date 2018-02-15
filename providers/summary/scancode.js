@@ -32,6 +32,7 @@ class ScanCodeSummarizer {
           holders: Array.from(copyrightHolders).sort(),
           missing: missingHolders
         },
+        files: filteredFiles.length,
         license: {
           expression: this._licenseSetToExpression(licenseExpressions),
           missing: missingLicenses

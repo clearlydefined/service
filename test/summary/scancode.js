@@ -21,6 +21,7 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
+    expect(summary.licensed.files).to.eq(2);
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(3);
     expect(copyright.holders).to.include('Bob');
@@ -68,6 +69,7 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
+    expect(summary.licensed.files).to.eq(2);
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(0);
     expect(copyright.missing).to.eq(2);
@@ -81,6 +83,7 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
+    expect(summary.licensed.files).to.eq(0);
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(0);
     expect(copyright.missing).to.eq(0);
