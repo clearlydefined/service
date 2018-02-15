@@ -5,15 +5,9 @@ package:
   namespace: "-"
 revisions:
   4.17.4:
-    described:
-      issueTracker: "https://foobar.com/baz/1"
     licensed:
       copyright:
         holders:
           - "foo"
           - "bar"
-      license:
-        expression: "MIT"
-  4.17.5:
-    described:
-      releaseDate: "2018-01-18T06:00:51.556Z"
+        missing: 3  # this prop is not allowed

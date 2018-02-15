@@ -16,8 +16,29 @@ describe('Curations', () => {
     expect(curation.errors[0].message).to.equal('Invalid yaml');
   });
 
-  it('should identify invalid curations', () => {
+  it('should identify invalid date', () => {
     const content = getFixture('curation-invalid.yaml');
+    const curation = Curation({content});
+    expect(curation.isValid).to.be.false;
+    expect(curation.errors[0].message).to.equal('Invalid curation');
+  });
+
+  it('should identify invalid props: missing copyright', () => {
+    const content = getFixture('curation-invalid.1.yaml');
+    const curation = Curation({content});
+    expect(curation.isValid).to.be.false;
+    expect(curation.errors[0].message).to.equal('Invalid curation');
+  });
+
+  it('should identify invalid props: missing license', () => {
+    const content = getFixture('curation-invalid.2.yaml');
+    const curation = Curation({content});
+    expect(curation.isValid).to.be.false;
+    expect(curation.errors[0].message).to.equal('Invalid curation');
+  });
+
+  it('should identify invalid props: file count', () => {
+    const content = getFixture('curation-invalid.3.yaml');
     const curation = Curation({content});
     expect(curation.isValid).to.be.false;
     expect(curation.errors[0].message).to.equal('Invalid curation');
