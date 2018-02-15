@@ -319,10 +319,10 @@ components:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
       type: object
       example:
-        - type: package
-          url: cd:/npm/npmjs/-/redie/0.3.0
-        - type: source
-          url: cd:/git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+        - tool: package
+          path: npm/npmjs/-/redie/0.3.0
+        - tool: source
+          path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
 
     definitionList:
       type: object
