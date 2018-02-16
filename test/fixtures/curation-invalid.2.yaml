@@ -7,4 +7,4 @@ revisions:
   4.17.4:
     licensed:
       license:
-        missing: 3  # this prop is not allowed
+        unknown: 3  # this prop is not allowed

@@ -12,12 +12,12 @@
 //
 // ***** TODO don't understand this logic  *****
 // Multiple tools in a single array-index (e.g. toolB-*) are mutually exclusive and you should only
-// use results from the first one that, for example, if there was toolB-2.1 and toolB-2.0 results
-// you would only consider the toolB-2.0 results.
+// use output from the first one that, for example, if there was toolB-2.1 and toolB-2.0 output
+// you would only consider the toolB-2.0 output.
 //
 // Tools listed as peers are considered in the order listed, for example, if toolC-2.0 and toolA
 // both had data for a specific field then toolC-2.0 would take precedence. For peers, the aggregator
-// does have the option of combining the results if it makes sense, for example, it could choose to
+// does have the option of combining the output if it makes sense, for example, it could choose to
 // merge the lists of copyright authors.
 //
 // harvest should have the form:
@@ -39,8 +39,17 @@ class AggregationService {
 
   process(packageCoordinates, summarized) {
     let result = {};
-    this.getPrecedenceOrder().forEach(tool =>
-      extend(true, result, this.findData(tool, summarized)));
+    const order = this.getPrecedenceOrder();
+    const tools = [];
+    order.forEach(tool => {
+      const data = this.findData(tool, summarized);
+      if (data) {
+        tools.push(data.toolSpec);
+        extend(true, result, data.summary);
+      }
+    });
+    result.described = result.described || {};
+    result.described.tools = tools.reverse();
     return result;
   }
 
@@ -58,11 +67,11 @@ class AggregationService {
     if (!summarized[tool])
       return null;
     if (toolVersion)
-      return summarized[tool][toolVersion];
+      return { toolSpec, summary: summarized[tool][toolVersion] };
 
     const versions = Object.getOwnPropertyNames(summarized[tool]);
     const latest = utils.getLatestVersion(versions);
-    return latest ? summarized[tool][latest] : null;
+    return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null;
   }
 }
 

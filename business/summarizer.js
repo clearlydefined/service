@@ -36,34 +36,36 @@ class SummaryService {
    * identified tool. Use the given filter function to determine if a particular file
    * mentioned in the data should play a role in summarization.
    * 
-   * @param {} packageCoordinates the package being summarized
+   * @param {EntityCoordinates} coordinates the component being summarized
    * @param {string} tool the name of the tool whose output is being summarized
    * @param {*} data the data to summarize
    * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeTool(packageCoordinates, tool, data, filter = null) {
+  summarizeTool(coordinates, tool, data, filter = null) {
     if (!summarizers[tool])
       return data;
     const summarizer = summarizers[tool](this.options[tool] || {});
     return Object.getOwnPropertyNames(data).reduce((result, version) => {
-      result[version] = summarizer.summarize(packageCoordinates, data[version], filter);
+      result[version] = summarizer.summarize(coordinates, data[version], filter);
       return result;
     }, {});
   }
 
   /**
-   * Summarize all of the data for the identified package using the given filter function 
+   * Summarize all of the data for the identified component using the given filter function 
    * to determine if a particular file mentioned in the data should play a role in summarization.
    * 
-   * @param {} packageCoordinates the package being summarized
+   * @param {} coordinates the component being summarized
    * @param {*} data the data to summarize
    * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeAll(packageCoordinates, data, filter = null) {
-    return Object.getOwnPropertyNames(data).reduce((result, tool) => {
-      result[tool] = this.summarizeTool(packageCoordinates, tool, data[tool], filter);
+  summarizeAll(coordinates, data, filter = null) {
+    const summary = Object.getOwnPropertyNames(data).reduce((result, tool) => {
+      result[tool] = this.summarizeTool(coordinates, tool, data[tool], filter);
       return result;
     }, {});
+    summary.package = coordinates;
+    return summary;
   }
 }
 

@@ -23,14 +23,14 @@ describe('Curations', () => {
     expect(curation.errors[0].message).to.equal('Invalid curation');
   });
 
-  it('should identify invalid props: missing copyright', () => {
+  it('should identify invalid props: unknown copyright', () => {
     const content = getFixture('curation-invalid.1.yaml');
     const curation = Curation({content});
     expect(curation.isValid).to.be.false;
     expect(curation.errors[0].message).to.equal('Invalid curation');
   });
 
-  it('should identify invalid props: missing license', () => {
+  it('should identify invalid props: unknown license', () => {
     const content = getFixture('curation-invalid.2.yaml');
     const curation = Curation({content});
     expect(curation.isValid).to.be.false;

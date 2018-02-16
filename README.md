@@ -121,7 +121,7 @@ You can also get the result that would be given **if** a proposed curation PR we
 GET http://localhost:4000/definitions/npm/npmjs/-/redie/0.3.0/pr/23
 ```
 
-### Raw results
+### Raw outputs
 
 See the `harvest` endpoint
 

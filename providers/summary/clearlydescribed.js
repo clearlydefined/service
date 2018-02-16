@@ -1,19 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-// Responsible for summarizing tool-specific format to a normalized summary schema:
-//  package:
-//    type: string
-//    provider: string
-//    name: string
-//    revision: string
-//  described:
-//    source_location:
-//      type: string
-//      provider: string
-//      url: string
-//      revision: string
-//      path: string
 const _ = require('lodash');
 
 class ClearlyDescribedSummarizer {
@@ -22,23 +9,21 @@ class ClearlyDescribedSummarizer {
     this.options = options;
   }
 
-  summarize(packageCoordinates, data, filter = null) {
-    const result = this.getSourceLocation(data, filter);
-    switch (packageCoordinates.type) {
+  summarize(coordinates, data, filter = null) {
+    const result = {};
+    this.addSourceLocation(result, data, filter);
+    switch (coordinates.type) {
       case 'npm':
-        return this.addNpmData(result, data, filter);
+        this.addNpmData(result, data, filter);
+        break;
       default:
-        return result;
     }
+    return result;
   }
 
-  getSourceLocation(data) {
-    const sourceLocation = data.sourceInfo
-      ? _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
-      : null;
-    return {
-      described: { sourceLocation }
-    };
+  addSourceLocation(result, data) {
+    if (data.sourceInfo)
+      result.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
   }
 
   addNpmData(result, data) {

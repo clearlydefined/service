@@ -5,12 +5,12 @@ const { expect } = require('chai');
 const Summarizer = require('../../providers/summary/scancode');
 
 describe('ScanCode summarizer', () => {
-  it('has the right package info', () => {
+  it('has the no package info', () => {
     const harvested = buildOutput([]);
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.package).to.eq(coordinates);
+    expect(summary.package).to.be.undefined;
   });
 
   it('gets all the copyright holders', () => {
@@ -27,7 +27,7 @@ describe('ScanCode summarizer', () => {
     expect(copyright.holders).to.include('Bob');
     expect(copyright.holders).to.include('Jane');
     expect(copyright.holders).to.include('Fred');
-    expect(copyright.missing).to.eq(0);
+    expect(copyright.unknown).to.eq(0);
   });
 
   it('gets all the licenses', () => {
@@ -41,10 +41,10 @@ describe('ScanCode summarizer', () => {
     const license = summary.licensed.license;
     expect(license.expression).to.include('MIT');
     expect(license.expression).to.include('GPL');
-    expect(license.missing).to.eq(0);
+    expect(license.unknown).to.eq(0);
   });
 
-  it('records missing licenses and holders', () => {
+  it('records unknown licenses and holders', () => {
     const harvested = buildOutput([
       buildFile('/foo.txt', null, [['bob']]),
       buildFile('/bar.txt', 'GPL', [])
@@ -55,10 +55,10 @@ describe('ScanCode summarizer', () => {
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(1);
     expect(copyright.holders).to.include('bob');
-    expect(copyright.missing).to.eq(1);
+    expect(copyright.unknown).to.eq(1);
     const license = summary.licensed.license;
     expect(license.expression).to.eq('GPL');
-    expect(license.missing).to.eq(1);
+    expect(license.unknown).to.eq(1);
   });
 
   it('handles files with no data', () => {
@@ -72,10 +72,10 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.files).to.eq(2);
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(0);
-    expect(copyright.missing).to.eq(2);
+    expect(copyright.unknown).to.eq(2);
     const license = summary.licensed.license;
     expect(license.expression).to.eq(null);
-    expect(license.missing).to.eq(2);
+    expect(license.unknown).to.eq(2);
   });
 
   it('handles scan with no files', () => {
@@ -86,10 +86,10 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.files).to.eq(0);
     const copyright = summary.licensed.copyright;
     expect(copyright.holders.length).to.eq(0);
-    expect(copyright.missing).to.eq(0);
+    expect(copyright.unknown).to.eq(0);
     const license = summary.licensed.license;
     expect(license.expression).to.eq(null);
-    expect(license.missing).to.eq(0);
+    expect(license.unknown).to.eq(0);
   });
 });
 

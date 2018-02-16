@@ -100,7 +100,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#components/bodies/resultSummaryList'
+                $ref: '#components/bodies/outputSummaryList'
 
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
@@ -349,9 +349,9 @@ components:
                   - Microsoft Corporation
             license: MIT
 
-    resultSummaryList:
+    outputSummaryList:
       type: object
-      description: A list of harvest results that are available (see harvest.json#definitions/componentResultSummaryList)
+      description: A list of tool outputs that are available (see harvest.json#definitions/definitionSummaryList)
       example: 
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
           clearlydescribed: 

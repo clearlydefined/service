@@ -10,33 +10,36 @@ class ScanCodeSummarizer {
   summarize(coordinates, harvested, filter = null) {
     if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data');
+    
+    const result = {};
+    this.addLicenseInfo(result, coordinates, harvested, filter);
+    return result;
+  }
 
+  addLicenseInfo(result, coordinates, harvested, filter) {
     const data = harvested.content;
     const copyrightHolders = new Set();
     const licenseExpressions = new Set();
-    let missingHolders = 0;
-    let missingLicenses = 0;
+    let unknownHolders = 0;
+    let unknownLicenses = 0;
 
     const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
     for (let file of filteredFiles) {
       this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key);
-      (!file.licenses || file.licenses.length === 0) && missingLicenses++;
+      (!file.licenses || file.licenses.length === 0) && unknownLicenses++;
       const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
-      !hasHolders && missingHolders++;
+      !hasHolders && unknownHolders++;
     }
 
-    return {
-      package: coordinates,
-      licensed: {
-        copyright: {
-          holders: Array.from(copyrightHolders).sort(),
-          missing: missingHolders
-        },
-        files: filteredFiles.length,
-        license: {
-          expression: this._licenseSetToExpression(licenseExpressions),
-          missing: missingLicenses
-        }
+    result.licensed = {
+      copyright: {
+        holders: Array.from(copyrightHolders).sort(),
+        unknown: unknownHolders
+      },
+      files: filteredFiles.length,
+      license: {
+        expression: this._licenseSetToExpression(licenseExpressions),
+        unknown: unknownLicenses
       }
     };
   }

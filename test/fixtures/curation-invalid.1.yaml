@@ -10,4 +10,4 @@ revisions:
         holders:
           - "foo"
           - "bar"
-        missing: 3  # this prop is not allowed
+        unknown: 3  # this prop is not allowed
