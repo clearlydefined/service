@@ -31,7 +31,7 @@ class DefinitionService {
    * specified down to the revision. The result will have an entry per discovered definition. 
    * 
    * @param {*} coordinatesList - an array of coordinate paths to list
-   * @returns A list of all definitions that have results and the results available
+   * @returns A list of all components that have definitions and the defintions that are available
    */
   async getAll(coordinatesList) {
     const result = {};

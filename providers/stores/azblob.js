@@ -39,7 +39,7 @@ class AzBlobStore extends AbstractStore {
    * Otherwise, return an object that represents the result.
    *   
    * @param {ResultCoordinates} coordinates - The coordinates of the result to get 
-   * @param {WriteStream} [stream] - The stream onto which the result is written, if specified
+   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
    * @returns The result object if no stream is specified, otherwise the return value is unspecified. 
    */
   get(coordinates, stream) {
@@ -57,7 +57,7 @@ class AzBlobStore extends AbstractStore {
   }
 
   /**
-   * Get all of the tool results for the given coordinates. The coordinates must be all the way down
+   * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
    * to a revision. 
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version

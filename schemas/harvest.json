@@ -34,7 +34,7 @@
         "$ref": "#/definitions/request"
       }
     },
-    "definitionResultSummaryList": {
+    "definitionSummaryList": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
@@ -50,25 +50,25 @@
         }
       }
     },
-    "results": {
+    "outputs": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
         ".*": {
-          "$ref": "#/definitions/resultList"
+          "$ref": "#/definitions/outputList"
         }
       }
     },
-    "resultList": {
+    "outputList": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
         ".*": {
-          "$ref": "#/definitions/result"
+          "$ref": "#/definitions/output"
         }
       }
     },
-    "result": {
+    "output": {
       "type": "object",
       "additionalProperties": false,
       "properties": {

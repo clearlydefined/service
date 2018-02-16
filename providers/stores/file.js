@@ -49,7 +49,7 @@ class FileStore extends AbstractStore {
   }
 
   /**
-   * Get the results of running the tool specified in the coordinates on the entty specified
+   * Get the output of running the tool specified in the coordinates on the entity specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
    * Otherwise, return an object that represents the result.
    *   
@@ -83,7 +83,7 @@ class FileStore extends AbstractStore {
   }
 
   /**
-   * Get all of the tool results for the given coordinates. The coordinates must be all the way down
+   * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
    * to a revision. 
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version

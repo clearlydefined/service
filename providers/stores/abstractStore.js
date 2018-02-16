@@ -9,13 +9,13 @@ const ResultCoordinates = require('../../lib/resultCoordinates');
 class AbstractStore {
   
   /**
-   * List all of the tool results available for the given coordinates. The coordinates can be 
+   * List all of the tool output available for the given coordinates. The coordinates can be 
    * arbitrarily loose. The result will have an entry per discovered component. That entry will 
    * itself have an entry per tool with the value being the array of versions of the tool for
    * which there are result.
    * 
    * @param {*} coordinatesList - an array of coordinate paths to list
-   * @returns A list of all components that have results and the results available
+   * @returns A list of all components that have output and the output available
    */
   async listAll(coordinatesList, type = 'entity') {
     const result = {};
