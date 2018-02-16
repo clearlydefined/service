@@ -39,8 +39,17 @@ class AggregationService {
 
   process(packageCoordinates, summarized) {
     let result = {};
-    this.getPrecedenceOrder().forEach(tool =>
-      extend(true, result, this.findData(tool, summarized)));
+    const order = this.getPrecedenceOrder();
+    const tools = [];
+    order.forEach(tool => {
+      const data = this.findData(tool, summarized);
+      if (data) {
+        tools.push(data.toolSpec);
+        extend(true, result, data.summary);
+      }
+    });
+    result.described = result.described || {};
+    result.described.tools = tools.reverse();
     return result;
   }
 
@@ -58,11 +67,11 @@ class AggregationService {
     if (!summarized[tool])
       return null;
     if (toolVersion)
-      return summarized[tool][toolVersion];
+      return { toolSpec, summary: summarized[tool][toolVersion] };
 
     const versions = Object.getOwnPropertyNames(summarized[tool]);
     const latest = utils.getLatestVersion(versions);
-    return latest ? summarized[tool][latest] : null;
+    return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null;
   }
 }
 

@@ -49,7 +49,7 @@ describe('list a tool result ', () => {
     }
   });
 
-  it('works for missing path coordinates ', async () => {
+  it('works for unknown path coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' });
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'bogus', '0.0'));
     assert.equal(result.length, 0);
