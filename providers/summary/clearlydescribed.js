@@ -10,7 +10,7 @@ class ClearlyDescribedSummarizer {
   }
 
   summarize(coordinates, data, filter = null) {
-    const result = {};
+    const result = { described: {} };
     this.addSourceLocation(result, data, filter);
     switch (coordinates.type) {
       case 'npm':
@@ -23,14 +23,15 @@ class ClearlyDescribedSummarizer {
 
   addSourceLocation(result, data) {
     if (data.sourceInfo)
-      result.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
+      result.described.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
   }
 
   addNpmData(result, data) {
-    result.described.projectWebsite = data.manifest.homepage;
-    result.described.issueTracker = data.manifest.bugs;
+    result.described.projectWebsite = data.registryData.manifest.homepage;
+    result.described.issueTracker = data.registryData.manifest.bugs;
+    result.described.releaseDate = data.registryData.releaseDate
     result.licensed = {
-      license: data.manifest.license
+      license: data.registryData.manifest.license
     };
     return result;
   }
