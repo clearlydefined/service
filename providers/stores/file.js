@@ -30,7 +30,7 @@ class FileStore extends AbstractStore {
   }
 
   _filter(list) {
-    return list.filter(entry => ['git', 'npm', 'maven'].includes(entry.type));
+    return list.filter(entry => ['git', 'npm', 'maven', 'sourcearchive'].includes(entry.type));
   }
 
   _toStoragePathFromCoordinates(coordinates) {

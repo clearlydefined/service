@@ -16,6 +16,12 @@ class ClearlyDescribedSummarizer {
       case 'npm':
         this.addNpmData(result, data, filter);
         break;
+        case 'maven':
+        this.addMavenData(result, data, filter);
+        break;
+      case 'sourcearchive':
+        this.addSourceArchiveData(result, data, filter);
+        break;
       default:
     }
     return result;
@@ -26,10 +32,20 @@ class ClearlyDescribedSummarizer {
       result.described.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
   }
 
+  addMavenData(result, data) {
+    result.described.releaseDate = data.releaseDate;
+    return result;
+  }
+
+  addSourceArchiveData(result, data) {
+    result.described.releaseDate = data.releaseDate;
+    return result;
+  }
+
   addNpmData(result, data) {
     result.described.projectWebsite = data.registryData.manifest.homepage;
     result.described.issueTracker = data.registryData.manifest.bugs;
-    result.described.releaseDate = data.registryData.releaseDate
+    result.described.releaseDate = data.registryData.releaseDate;
     result.licensed = {
       license: { 
         expression: data.registryData.manifest.license
