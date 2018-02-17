@@ -16,7 +16,7 @@ class ClearlyDescribedSummarizer {
       case 'npm':
         this.addNpmData(result, data, filter);
         break;
-        case 'maven':
+      case 'maven':
         this.addMavenData(result, data, filter);
         break;
       case 'sourcearchive':
