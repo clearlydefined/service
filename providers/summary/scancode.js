@@ -12,8 +12,22 @@ class ScanCodeSummarizer {
       throw new Error('Not valid ScanCode data');
     
     const result = {};
+    this.addDescribedInfo(result, coordinates, harvested);
     this.addLicenseInfo(result, coordinates, harvested, filter);
     return result;
+  }
+
+  addDescribedInfo(result, coordinates, harvested) {
+    result.described = {
+      releaseDate: harvested._metadata.releaseDate,
+      sourceLocation: {
+        type: coordinates.type,
+        provider: coordinates.provider,
+        namespace: coordinates.namespace,
+        name: coordinates.name,
+        revision: coordinates.revision
+      }
+    };
   }
 
   addLicenseInfo(result, coordinates, harvested, filter) {
