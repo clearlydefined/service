@@ -20,6 +20,7 @@ function buildOutput(files) {
   return {
     scancode: {
       '2.2.1': {
+        _metadata: {},
         content: {
           scancode_version: '2.2.1',
           files

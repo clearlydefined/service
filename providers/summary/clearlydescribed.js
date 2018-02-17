@@ -10,11 +10,17 @@ class ClearlyDescribedSummarizer {
   }
 
   summarize(coordinates, data, filter = null) {
-    const result = {};
+    const result = { described: {} };
     this.addSourceLocation(result, data, filter);
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data, filter);
+        break;
+      case 'maven':
+        this.addMavenData(result, data, filter);
+        break;
+      case 'sourcearchive':
+        this.addSourceArchiveData(result, data, filter);
         break;
       default:
     }
@@ -23,14 +29,27 @@ class ClearlyDescribedSummarizer {
 
   addSourceLocation(result, data) {
     if (data.sourceInfo)
-      result.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
+      result.described.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
+  }
+
+  addMavenData(result, data) {
+    result.described.releaseDate = data.releaseDate;
+    return result;
+  }
+
+  addSourceArchiveData(result, data) {
+    result.described.releaseDate = data.releaseDate;
+    return result;
   }
 
   addNpmData(result, data) {
-    result.described.projectWebsite = data.manifest.homepage;
-    result.described.issueTracker = data.manifest.bugs;
+    result.described.projectWebsite = data.registryData.manifest.homepage;
+    result.described.issueTracker = data.registryData.manifest.bugs;
+    result.described.releaseDate = data.registryData.releaseDate;
     result.licensed = {
-      license: data.manifest.license
+      license: { 
+        expression: data.registryData.manifest.license
+      }
     };
     return result;
   }

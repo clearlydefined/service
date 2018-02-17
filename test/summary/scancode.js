@@ -95,6 +95,7 @@ describe('ScanCode summarizer', () => {
 
 function buildOutput(files) {
   return {
+    _metadata: { },
     content: {
       scancode_version: '2.2.1',
       files
