@@ -44,7 +44,7 @@ class GitHubCurationService {
       .then(parsedContent => {
         // make patch independent of directory structure
         parsedContent = _.assign(parsedContent, {
-          package: {
+          coordinates: {
             type: coordinates.type,
             provider: coordinates.provider,
             namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
@@ -129,6 +129,8 @@ class GitHubCurationService {
     if (!all || !all.revisions)
       return null;
     const result = all.revisions[coordinates.revision];
+    if (!result)
+      return null;
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(result, '_origin', { value: { sha: all._origin }, enumerable: false });
     return result;
@@ -161,7 +163,7 @@ class GitHubCurationService {
     catch (error) {
       // TODO: This isn't very safe how it is because any failure will return an empty object,
       // ideally we only do this if the .yaml file doesn't exist.
-      return { revisions: {} };
+      return null;
     }
   }
 
@@ -174,8 +176,8 @@ class GitHubCurationService {
     return result.data.head.ref;
   }
 
-  async apply(packageCoordinates, curationSpec, summarized) {
-    const curation = await this.get(packageCoordinates, curationSpec);
+  async apply(coordinates, curationSpec, summarized) {
+    const curation = await this.get(coordinates, curationSpec);
     return curation ? extend(true, {}, summarized, curation) : summarized;
   }
 
@@ -227,8 +229,8 @@ class GitHubCurationService {
 
   handleEntry(entry) {
     const curation = yaml.safeLoad(fs.readFileSync(entry.fullPath.replace(/\\/g, '/')));
-    const { package: p, revisions } = curation;
-    const root = `${p.type}/${p.provider}/${p.namespace || '-'}/${p.name}/`;
+    const { coordinates: c, revisions } = curation;
+    const root = `${c.type}/${c.provider}/${c.namespace || '-'}/${c.name}/`;
     return Object.getOwnPropertyNames(revisions).map(version => root + version);
   }
 
@@ -282,7 +284,7 @@ class GitHubCurationService {
     return `curations/${path ? path + '/' : ''}`;
   }
 
-  // @todo perhaps validate directory structure (package coordinates)
+  // @todo perhaps validate directory structure based on coordinates
   isCurationFile(path) {
     return path.startsWith('curations/') && path.endsWith('.yaml');
   }

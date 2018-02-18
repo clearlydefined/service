@@ -5,12 +5,12 @@ const { expect } = require('chai');
 const Summarizer = require('../../providers/summary/scancode');
 
 describe('ScanCode summarizer', () => {
-  it('has the no package info', () => {
+  it('has the no coordinates info', () => {
     const harvested = buildOutput([]);
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.package).to.be.undefined;
+    expect(summary.coordinates).to.be.undefined;
   });
 
   it('gets all the copyright holders', () => {

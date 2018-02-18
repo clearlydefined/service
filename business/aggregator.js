@@ -37,7 +37,7 @@ class AggregationService {
     this.options = options;
   }
 
-  process(packageCoordinates, summarized) {
+  process(coordinates, summarized) {
     let result = {};
     const order = this.getPrecedenceOrder();
     const tools = [];

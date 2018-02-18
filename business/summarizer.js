@@ -1,28 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-// Responsible for summarizing tool-specific format to a normalized summary schema:
-//  package:
-//    type: string
-//    provider: string
-//    namespace: string
-//    name: string
-//    revision: string
-//  described: 
-//    source_location:
-//      type: string
-//      provider: string
-//      url: string
-//      revision: string
-//      path: string
-//  licensed:  
-//    copyright:
-//      statements: string[]
-//      holders: string[]
-//      authors: string[]
-//    license:
-//      expression: string
-
 const summarizers = require('../providers/summary');
 
 class SummaryService {
@@ -64,7 +42,7 @@ class SummaryService {
       result[tool] = this.summarizeTool(coordinates, tool, data[tool], filter);
       return result;
     }, {});
-    summary.package = coordinates;
+    summary.coordinates = coordinates;
     return summary;
   }
 }
