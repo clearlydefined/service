@@ -90,21 +90,22 @@ class DefinitionService {
   }
 
   _ensureSourceLocation(coordinates, definition) {
-    if (definition.described && definitions.described.sourceLocation)
+    if (definition.described && definition.described.sourceLocation)
       return;
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {
-      case 'github':
+      case 'github': {
         const location = {
           type: 'git',
           provider: 'github',
           url: `https://github.com/${coordinates.namespace}/${coordinates.name}`,
           revision: coordinates.revision
-        }
+        };
         this._ensureDescribed(definition);
         definition.described.sourceLocation = location;
         break;
+      }
       default:
         return;
     }

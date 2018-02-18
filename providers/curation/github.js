@@ -129,8 +129,8 @@ class GitHubCurationService {
     if (!all || !all.revisions)
       return null;
     const result = all.revisions[coordinates.revision];
-      // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-      Object.defineProperty(result, '_origin', { value: { sha: all._origin }, enumerable: false });
+    // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
+    Object.defineProperty(result, '_origin', { value: { sha: all._origin }, enumerable: false });
     return result;
   }
 
