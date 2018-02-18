@@ -44,6 +44,15 @@ class DefinitionService {
     return result;
   }
 
+  async computeAndStore(coordinates, storeCoordinates) {
+    const definition = await this.compute(coordinates);
+    const stream = new Readable();
+    stream.push(JSON.stringify(definition, null, 2));
+    stream.push(null); // end of stream
+    this.definitionStore.store(storeCoordinates, stream);
+    return definition;
+  }
+
   /**
    * Get the final representation of the specified definition and optionally apply the indicated
    * curation.
@@ -51,7 +60,7 @@ class DefinitionService {
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
    * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
    * curation or an actual curation object.
-   * @returns {Summary} The fully rendered definition
+   * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec);
@@ -62,9 +71,22 @@ class DefinitionService {
     // TODO eventually see if there is a better way as summarizing could be expensive.
     // That or cache the heck out of this...
     const aggregated = await this.aggregationService.process(coordinates, summarized);
-    const definition = await this.curationService.curate(coordinates, curation, aggregated);
+    const definition = await this.curationService.apply(coordinates, curation, aggregated);
+    this._ensureCurationInfo(definition, curation);
     this._ensureSourceLocation(coordinates, definition);
     return definition;
+  }
+
+  _ensureDescribed(definition) {
+    definition.described = definition.described || {};
+  }
+
+  _ensureCurationInfo(definition, curation) {
+    if (!curation)
+      return;
+    this._ensureDescribed(definition);
+    const tools = definition.described.tools = definition.described.tools || [];
+    tools.push(`curation${curation._origin ? '/' + curation._origin : ''}`);
   }
 
   _ensureSourceLocation(coordinates, definition) {
@@ -80,20 +102,12 @@ class DefinitionService {
           url: `https://github.com/${coordinates.namespace}/${coordinates.name}`,
           revision: coordinates.revision
         }
+        this._ensureDescribed(definition);
         definition.described.sourceLocation = location;
         break;
       default:
         return;
     }
-  }
-
-  async computeAndStore(coordinates, storeCoordinates) {
-    const curated = await this.compute(coordinates);
-    const stream = new Readable();
-    stream.push(JSON.stringify(curated, null, 2));
-    stream.push(null); // end of stream
-    this.definitionStore.store(storeCoordinates, stream);
-    return curated;
   }
 }
 

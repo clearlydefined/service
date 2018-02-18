@@ -118,7 +118,7 @@ class GitHubCurationService {
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
    * @param {(number | string | Summary)} [curation] - The curation identifier if any. Could be a PR number,
    * an actual curation object or null.
-   * @returns {Summary} The requested curation
+   * @returns {Object} The requested curation and corresponding revision identifier (e.g., commit sha) if relevant
    */
   async get(coordinates, curation = null) {
     if (!coordinates.revision)
@@ -126,7 +126,12 @@ class GitHubCurationService {
     if (curation && typeof curation !== 'number' && typeof curation !== 'string')
       return curation;
     const all = await this.getAll(coordinates, curation);
-    return all && all.revisions ? all.revisions[coordinates.revision] : null;
+    if (!all || !all.revisions)
+      return null;
+    const result = all.revisions[coordinates.revision];
+      // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
+      Object.defineProperty(result, '_origin', { value: { sha: all._origin }, enumerable: false });
+    return result;
   }
 
   /**
@@ -134,9 +139,10 @@ class GitHubCurationService {
    * in coordinates are ignored. If a PR number is provided, get the curations represented in that PR.
    *
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation.
-   * @param {(number | string} [curation] - The curation identifier if any. Could be a PR number/string.
+   * @param {(number | string} [pr] - The curation identifier if any. Could be a PR number/string.
    * @returns {Object} The requested curations where the revisions property has a property for each
-   * curated revision.
+   * curated revision. The returned value will be decorated with a non-enumerable `_origin` property 
+   * indicating the sha of the commit for the curations if that info is available.
    */
   async getAll(coordinates, pr = null) {
     const curationPath = this._getCurationPath(coordinates);
@@ -149,7 +155,7 @@ class GitHubCurationService {
       const contentResponse = await github.repos.getContent({ owner, repo, ref: branch, path: curationPath });
       const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-      Object.defineProperty(content, 'origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
+      Object.defineProperty(content, '_origin', { value: { sha: contentResponse.data.sha }, enumerable: false });
       return content;
     }
     catch (error) {
@@ -168,7 +174,7 @@ class GitHubCurationService {
     return result.data.head.ref;
   }
 
-  async curate(packageCoordinates, curationSpec, summarized) {
+  async apply(packageCoordinates, curationSpec, summarized) {
     const curation = await this.get(packageCoordinates, curationSpec);
     return curation ? extend(true, {}, summarized, curation) : summarized;
   }
