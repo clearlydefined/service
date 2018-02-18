@@ -62,13 +62,35 @@ class DefinitionService {
     // TODO eventually see if there is a better way as summarizing could be expensive.
     // That or cache the heck out of this...
     const aggregated = await this.aggregationService.process(coordinates, summarized);
-    return this.curationService.curate(coordinates, curation, aggregated);
+    const definition = await this.curationService.curate(coordinates, curation, aggregated);
+    this._ensureSourceLocation(coordinates, definition);
+    return definition;
+  }
+
+  _ensureSourceLocation(coordinates, definition) {
+    if (definition.described && definitions.described.sourceLocation)
+      return;
+    // For source components there may not be an explicit harvested source location (it is self-evident)
+    // Make it explicit in the definition
+    switch (coordinates.provider) {
+      case 'github':
+        const location = {
+          type: 'git',
+          provider: 'github',
+          url: `https://github.com/${coordinates.namespace}/${coordinates.name}`,
+          revision: coordinates.revision
+        }
+        definition.described.sourceLocation = location;
+        break;
+      default:
+        return;
+    }
   }
 
   async computeAndStore(coordinates, storeCoordinates) {
     const curated = await this.compute(coordinates);
     const stream = new Readable();
-    stream.push(JSON.stringify(curated));
+    stream.push(JSON.stringify(curated, null, 2));
     stream.push(null); // end of stream
     this.definitionStore.store(storeCoordinates, stream);
     return curated;
