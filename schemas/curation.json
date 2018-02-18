@@ -3,14 +3,14 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "curation",
   "required": [
-    "package",
+    "coordinates",
     "revisions"
   ],
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "package": {
-      "$ref": "#/definitions/package"
+    "coordinates": {
+      "$ref": "#/definitions/coordinates"
     },
     "revisions": {
       "$ref": "#/definitions/revisions"
@@ -23,7 +23,7 @@
     "provider": {
       "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
-    "package": {
+    "coordinates": {
       "required": [
         "type",
         "provider",

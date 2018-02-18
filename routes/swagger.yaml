@@ -329,6 +329,12 @@ components:
       description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
       example: 
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
+          coordinates:
+            type: git
+            provider: github
+            namespace: microsoft
+            name: redie
+            revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
           described: 
             sourceLocation:
               type: git
@@ -337,12 +343,6 @@ components:
               name: redie
               revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
             releaseDate: 2018-01-29T01:29:32.869Z
-          package:
-            type: git
-            provider: github
-            namespace: microsoft
-            name: redie
-            revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
           licensed:
             copyright:
                 holders:

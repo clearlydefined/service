@@ -74,7 +74,18 @@ class DefinitionService {
     const definition = await this.curationService.apply(coordinates, curation, aggregated);
     this._ensureCurationInfo(definition, curation);
     this._ensureSourceLocation(coordinates, definition);
+    this._ensureCoordinates(coordinates, definition);
     return definition;
+  }
+
+  _ensureCoordinates(coordinates, definition) {
+    definition.coordinates = {
+      type: coordinates.type,
+      provider: coordinates.provider,
+      namespace: coordinates.namespace,
+      name: coordinates.name,
+      revision: coordinates.revision
+    };
   }
 
   _ensureDescribed(definition) {
@@ -86,7 +97,9 @@ class DefinitionService {
       return;
     this._ensureDescribed(definition);
     const tools = definition.described.tools = definition.described.tools || [];
-    tools.push(`curation${curation._origin ? '/' + curation._origin : ''}`);
+    if (Object.getOwnPropertyNames(curation).length === 0)
+      return;
+    tools.push(`curation${curation._origin ? '/' + curation._origin : 'supplied'}`);
   }
 
   _ensureSourceLocation(coordinates, definition) {
