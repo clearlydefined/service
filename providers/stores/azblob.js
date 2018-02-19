@@ -89,15 +89,17 @@ class AzBlobStore extends AbstractStore {
     });
   }
 
-  // TODO consider not having this. All harvest content should be written by the harvest service (e.g., crawler)
   store(coordinates, stream) {
+    const name = this._toStoragePathFromCoordinates(coordinates) + '.json';
     return new Promise((resolve, reject) => {
-      let name = this._toStoragePathFromCoordinates(coordinates);
-      if (!name.endsWith('.json')) {
-        name += '.json';
-      }
       stream.pipe(this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject)));
     });
+  }
+
+  delete(coordinates) {
+    const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json';
+    return new Promise((resolve, reject) =>
+      this.service.deleteBlob(this.name, blobName, responseOrError(resolve, reject)));
   }
 }
 

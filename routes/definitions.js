@@ -18,7 +18,9 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 async function getDefinition(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
   const pr = request.params.pr;
-  const result = await definitionService.get(coordinates, pr);
+  // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
+  const force = request.hostname.includes('localhost') ? request.query.force || false : false ;
+  const result = await definitionService.get(coordinates, pr, force);
   response.status(200).send(result);
 }
 
@@ -80,7 +82,9 @@ router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(async (request, response) => {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry));
-  const result = await definitionService.getAll(coordinatesList);
+  // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
+  const force = request.hostname.includes('localhost') ? request.query.force || false : false ;
+  const result = await definitionService.getAll(coordinatesList, force);
   response.status(200).send(result);
 }));
 
