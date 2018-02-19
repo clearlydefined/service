@@ -13,16 +13,28 @@ class DefinitionService {
     this.definitionStore = store;
   }
 
-  async get(coordinates, pr) {
+  /**
+  * Get the final representation of the specified definition and optionally apply the indicated
+  * curation.
+  *
+  * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation
+  * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
+  * curation or an actual curation object.
+  * @param {bool} force - whether or not to force re-computation of the requested definition
+  * @returns {Definition} The fully rendered definition
+  */
+  async get(coordinates, pr = null, force = false) {
     if (pr) {
       const curation = this.curationService.get(coordinates, pr);
       return this.compute(coordinates, curation);
     }
-    const storeCoordinates = Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 });
+    if (force)
+      await this.invalidate(coordinates);
     try {
-      return await this.definitionStore.get(storeCoordinates);
+      const definitionCoordinates = this._getDefinitionCoordinates(coordinates);
+      return await this.definitionStore.get(definitionCoordinates);
     } catch (error) { // cache miss
-      return this.computeAndStore(coordinates, storeCoordinates);
+      return this.computeAndStore(coordinates);
     }
   }
 
@@ -31,12 +43,13 @@ class DefinitionService {
    * specified down to the revision. The result will have an entry per discovered definition. 
    * 
    * @param {*} coordinatesList - an array of coordinate paths to list
+   * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the defintions that are available
    */
-  async getAll(coordinatesList) {
+  async getAll(coordinatesList, force = false) {
     const result = {};
     const promises = coordinatesList.map(throat(10, async coordinates => {
-      const summary = await this.get(coordinates);
+      const summary = await this.get(coordinates, null, force);
       const key = coordinates.asEntityCoordinates().toString();
       result[key] = summary;
     }));
@@ -44,17 +57,32 @@ class DefinitionService {
     return result;
   }
 
-  async computeAndStore(coordinates, storeCoordinates) {
+  /**
+   * Invalidate the definition for the identified component. This flushes any caches and pre-computed
+   * results. The definition will be recomputed on or before the next use.
+   *  
+   * @param {Coordinates} coordinates - individual or array of coordinates to invalidate
+   */
+  invalidate(coordinates) {
+    const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates];
+    return Promise.all(coordinateList.map(throat(10, coordinates => {
+      const definitionCoordinates = this._getDefinitionCoordinates(coordinates);
+      return this.definitionStore.delete(definitionCoordinates);
+    })));
+  }
+  
+  async computeAndStore(coordinates) {
     const definition = await this.compute(coordinates);
     const stream = new Readable();
     stream.push(JSON.stringify(definition, null, 2));
     stream.push(null); // end of stream
-    this.definitionStore.store(storeCoordinates, stream);
+    const definitionCoordinates = this._getDefinitionCoordinates(coordinates);
+    await this.definitionStore.store(definitionCoordinates, stream);
     return definition;
   }
 
   /**
-   * Get the final representation of the specified definition and optionally apply the indicated
+   * Compute the final representation of the specified definition and optionally apply the indicated
    * curation.
    *
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
@@ -122,6 +150,10 @@ class DefinitionService {
       default:
         return;
     }
+  }
+
+  _getDefinitionCoordinates(coordinates) {
+    return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 });
   }
 }
 

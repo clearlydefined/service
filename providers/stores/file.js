@@ -120,14 +120,21 @@ class FileStore extends AbstractStore {
     });
   }
 
-  // TODO consider not having this. All harvest content should be written by the harvest service (e.g., crawler)
   async store(coordinates, stream) {
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json';
     const dirName = path.dirname(filePath);
     await promisify(mkdirp)(dirName);
     return new Promise((resolve, reject) => {
-      stream.pipe(fs.createWriteStream(filePath, resultOrError(resolve, reject)));
+      const file = fs.createWriteStream(filePath)
+        .on('finish', () => resolve())
+        .on('error', error => reject(error));
+      stream.pipe(file);
     });
+  }
+
+  delete(coordinates) {
+    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json';
+    return promisify(fs.unlink)(filePath);
   }
 }
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-const _ = require('underscore');
+const _ = require('lodash');
 const base64 = require('base-64');
 const extend = require('extend');
 const { exec } = require('child_process');
@@ -10,6 +10,7 @@ const moment = require('moment');
 const readdirp = require('readdirp');
 const yaml = require('js-yaml');
 const Github = require('../../lib/github');
+const Curation = require('../../lib/curation');
 const tmp = require('tmp');
 tmp.setGracefulCleanup();
 
@@ -18,10 +19,11 @@ tmp.setGracefulCleanup();
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options) {
+  constructor(options, definitionService) {
     this.options = options;
     this.curationUpdateTime = null;
-    this.tempLocation = tmp.dirSync(this.tmpOptions);
+    this.tempLocation = null;
+    this.definitionService = definitionService;
   }
 
   get tmpOptions() {
@@ -153,7 +155,6 @@ class GitHubCurationService {
 
     const github = Github.getClient(this.options);
     try {
-      // @todo use getContent() to get raw content
       const contentResponse = await github.repos.getContent({ owner, repo, ref: branch, path: curationPath });
       const content = yaml.safeLoad(base64.decode(contentResponse.data.content));
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
@@ -176,6 +177,18 @@ class GitHubCurationService {
     return result.data.head.ref;
   }
 
+  async getCurations(number, ref) {
+    const prFiles = await this.getPrFiles(number);
+    const curationFilenames = prFiles
+      .map(x => x.filename)
+      .filter(this.isCurationFile);
+    return Promise.all(
+      curationFilenames.map(path => this
+        .getContent(ref, path)
+        .then(content => new Curation(content, null, path)))
+    );
+  }
+
   async apply(coordinates, curationSpec, summarized) {
     const curation = await this.get(coordinates, curationSpec);
     return curation ? extend(true, {}, summarized, curation) : summarized;
@@ -192,13 +205,30 @@ class GitHubCurationService {
     }
   }
 
-  async postCommitStatus(sha, pr, state, description) {
+  async handleMerge(number, ref) {
+    const curations = await this.getCurations(number, ref);
+    const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates());
+    const coordinateList = _.concat([], ...coordinateSet);
+    return this.definitionService.invalidate(coordinateList);
+  }
+  
+  async validateCurations(number, componentPath, sha, ref) {
+    await this.postCommitStatus(sha, number, componentPath, 'pending', 'Validation in progress');
+    const curations = await this.getCurations(number, ref);
+    const invalidCurations = curations.filter(x => !x.isValid);
+    let state = 'success';
+    let description = 'All curations are valid';
+    if (invalidCurations.length) {
+      state = 'error';
+      description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`;
+    }
+    return this.postCommitStatus(sha, number, componentPath, state, description);
+  }
+    
+  async postCommitStatus(sha, number, componentPath, state, description) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
-    // TODO hack alert! use the title of the PR to find the definition in clearlydefined.io
-    // In the future we need a more concrete/robust way to capture this in the PR in the face of
-    // people not using out tools etc. Ideally read it out of the PR files themselves.
-    const target_url = `https://dev.clearlydefined.io/curation/${pr.title}/pr/${pr.number}`;
+    const target_url = `https://dev.clearlydefined.io/curation/${componentPath}/pr/${number}`;
     try {
       return github.repos.createStatus({
         owner, repo, sha, state, description, target_url, context: 'ClearlyDefined'
@@ -239,6 +269,7 @@ class GitHubCurationService {
       return;
     const { owner, repo } = this.options;
     const url = `https://github.com/${owner}/${repo}.git`;
+    this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions);
     const command = this.curationUpdateTime
       ? `cd ${this.tempLocation.name}/${repo} && git pull`
       : `cd ${this.tempLocation.name} && git clone ${url}`;
@@ -290,4 +321,4 @@ class GitHubCurationService {
   }
 }
 
-module.exports = (options) => new GitHubCurationService(options);
+module.exports = (options, definitionService) => new GitHubCurationService(options, definitionService);

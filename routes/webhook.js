@@ -2,71 +2,66 @@
 // SPDX-License-Identifier: MIT
 
 const express = require('express');
-const crypto = require('crypto');
-const Curation = require('../lib/curation');
 const router = express.Router();
-const validPrActions = ['opened', 'reopened', 'synchronize'];
+const crypto = require('crypto');
+
+const validPrActions = ['opened', 'reopened', 'synchronize', 'closed'];
 let webhookSecret = null;
 let logger = null;
 let curationService;
+let test = false;
 
-router.post('/', async (request, response) => {
+router.post('/', handlePost);
+async function handlePost (request, response) {
+  const body = validateHookCall(request, response);
+  if (!body)
+    return;
+  const pr = body.pull_request;
+  if (body.action === 'closed')
+    pr.merged ? await curationService.handleMerge(pr.number, pr.head.ref) : null;
+  else {
+    // TODO hack alert! use the title of the PR to find the definition in clearlydefined.io
+    // In the future we need a more concrete/robust way to capture this in the PR in the face of
+    // people not using out tools etc. Ideally read it out of the PR files themselves.
+    await curationService.validateCurations(pr.number, pr.title, pr.head.sha, pr.head.ref);
+  }
+  response.status(200).end();
+}
+
+function validateHookCall(request, response) {
   const isGithubEvent = request.headers['x-github-event'];
   const signature = request.headers['x-hub-signature'];
   if (!isGithubEvent || !signature)
-    return fatal(request, response, 'Missing signature or event type on GitHub webhook');
+    return fatal(request, response, 400, 'Missing signature or event type on GitHub webhook');
 
   const computedSignature = 'sha1=' + crypto.createHmac('sha1', webhookSecret).update(request.body).digest('hex');
-  if (!crypto.timingSafeEqual(new Buffer(signature), new Buffer(computedSignature))) {
-    return fatal(request, response, 'X-Hub-Signature does not match blob signature');
-  }
+  if (!test && !crypto.timingSafeEqual(new Buffer(signature), new Buffer(computedSignature))) 
+    return fatal(request, response, 400, 'X-Hub-Signature does not match blob signature');
 
-  const { pull_request: pr, action: prAction, number } = JSON.parse(request.body);
-  const { sha, ref } = pr.head;
-  const isValidPullRequest = pr && validPrActions.includes(prAction);
+  const body = JSON.parse(request.body);
+  const isValidPullRequest = body.pull_request && validPrActions.includes(body.action);
   if (!isValidPullRequest)
-    return fatal(request, response, 'Not a valid Pull Request event');
+    return fatal(request, response, 200);  
+  return body;
+}
 
-  await curationService.postCommitStatus(sha, pr, 'pending', 'Validation in progress');
-  const prFiles = await curationService.getPrFiles(number);
-  const curationFilenames = prFiles
-    .map(x => x.filename)
-    .filter(curationService.isCurationFile);
-
-  const curations = await Promise.all(
-    curationFilenames.map(path => curationService
-      .getContent(ref, path)
-      .then(content => Curation({content, path})))
-  );
-  const invalidCurations = curations.filter(x => !x.isValid);
-
-  let state = 'success';
-  let description = 'All curations are valid';
-  if (invalidCurations.length) {
-    state = 'error';
-    description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`;
-  }
-
-  await curationService.postCommitStatus(sha, pr, state, description);
-  response.status(200).end();
-});
-
-function fatal(request, response, error) {
-  getLogger().error(error);
-  response.status(500);
+function fatal(request, response, code, error = null) {
+  logger.error(error);
+  response.status(code);
   response.setHeader('content-type', 'text/plain');
-  response.end(JSON.stringify(error));
+  response.end(error);
+  return false;
 }
 
-function getLogger() {
-  return logger;
-}
-
-// @todo add secret
-function setup(service, appLogger, secret) {
+function setup(service, appLogger, secret, testFlag = false) {
   curationService = service;
   webhookSecret = secret;
   logger = appLogger;
+  test = testFlag;
+  if (test) {
+    router._handlePost = handlePost;
+    router._validateHookCall = validateHookCall;
+  }
   return router;
 }
 

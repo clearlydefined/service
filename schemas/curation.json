@@ -39,7 +39,7 @@
           "$ref": "#/definitions/provider"
         },
         "namespace": {
-          "type": "string"
+          "type": ["string", "null"]
         },
         "name": {
           "type": "string"

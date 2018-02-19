@@ -37,6 +37,8 @@ const curations = require('./routes/curations')(curationService);
 const definitionStoreProvider = config.definition.store.provider;
 const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(config.definition.store[definitionStoreProvider]);
 const definitionService = require('./business/definitionService')(harvestStore, summaryService, aggregatorService, curationService, definitionStore);
+// Circular dependency. Reach in and set the curationService's definitionService. Sigh.
+curationService.definitionService = definitionService;
 
 const badges = require('./routes/badges').getRouter(definitionService);
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService);
