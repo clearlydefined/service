@@ -26,6 +26,7 @@ The simplest way to configure the service is to use local storage and in-memory 
 1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
 1. Set up your `env.json` file to use the `harvested-data` repo as your local storage (`FILE_STORE_LOCATION`).
 1. Add a GitHub token to `CURATION_GITHUB_TOKEN`. This enables you to login to the local website or call the service APIs.
+1. Ensure the curations repo that the service will levarage is up to date with the latest and the relevant settings are set. I.e. `CURATION_GITHUB_REPO` and `CURATION_GITHUB_OWNER` must be set to a valid "curated-data" repository (e.g. `curated-data-dev` and `clearlydefined` respectively).
 
 For now you can leave the `HARVESTER` and `CRAWLER` settings alone unless you are also setting up the Crawler to run locally.
 
