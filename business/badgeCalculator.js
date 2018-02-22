@@ -8,9 +8,9 @@
 const _ = require('lodash');
 
 const scoreToUrl = {
-  0: 'https://img.shields.io/badge/ClearlyDefined%20Score-0-red.svg',
-  1: 'https://img.shields.io/badge/ClearlyDefined%20Score-1-yellow.svg',
-  2: 'https://img.shields.io/badge/ClearlyDefined%20Score-2-brightgreen.svg'
+  0: 'https://img.shields.io/badge/ClearlyDefined-0-red.svg',
+  1: 'https://img.shields.io/badge/ClearlyDefined-1-yellow.svg',
+  2: 'https://img.shields.io/badge/ClearlyDefined-2-brightgreen.svg'
 };
 class BadgeCalculator {
   constructor(definition) {
@@ -40,4 +40,4 @@ class BadgeCalculator {
   }
 }
 
-module.exports = definition => new BadgeCalculator(definition);
+module.exports = BadgeCalculator;
