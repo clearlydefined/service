@@ -16,7 +16,7 @@ ENV APPDIR=/opt/service
 # RUN chmod 755 /bin/init_container.sh
 # CMD ["/bin/init_container.sh"]
 
-COPY package.json /tmp/package.json
+COPY package*.json /tmp/
 RUN cd /tmp && npm install --production
 RUN mkdir -p "${APPDIR}" && cp -a /tmp/node_modules "${APPDIR}"
 
