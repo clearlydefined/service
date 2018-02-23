@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const badgesRoutes = require('../../routes/badges');
 
 describe('Badge Route', () => {
-  it('Test 0 badge', () => {
+  it('Test 0 badge', async () => {
     const request = {
       params: {
         type: 'git',
@@ -16,17 +16,9 @@ describe('Badge Route', () => {
       }
     };
     const service = {
-      get: () => {
-        request;
-      }
+      get: () => request
     };
-    const promise = badgesRoutes.getComponentBadgeLink(service, request);
-    promise
-      .then(result => {
-        expect(result).to.eq(
-          'https://img.shields.io/badge/ClearlyDefined%20Score-0-red.svg'
-        );
-      })
-      .catch(console.log);
+    const result = await badgesRoutes.getComponentBadgeLink(service, request);
+    expect(result).to.eq('https://img.shields.io/badge/ClearlyDefined-0-red.svg');
   });
 });

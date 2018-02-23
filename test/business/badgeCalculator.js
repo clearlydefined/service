@@ -7,7 +7,7 @@ const BadgeCalculator = require('../../business/badgeCalculator');
 describe('BadgeCalculator', () => {
   it('gives level 1 for no data', () => {
     const definition = {};
-    const badge = BadgeCalculator(definition);
+    const badge = new BadgeCalculator(definition);
     expect(badge.calculate()).to.eq(0);
   });
 
@@ -17,7 +17,7 @@ describe('BadgeCalculator', () => {
         license: 'MIT'
       }
     };
-    const badge = BadgeCalculator(definition);
+    const badge = new BadgeCalculator(definition);
     expect(badge.calculate()).to.eq(1);
   });
 
@@ -29,7 +29,7 @@ describe('BadgeCalculator', () => {
         }
       }
     };
-    const badge = BadgeCalculator(definition);
+    const badge = new BadgeCalculator(definition);
     expect(badge.calculate()).to.eq(1);
   });
 
@@ -42,7 +42,7 @@ describe('BadgeCalculator', () => {
         license: 'MIT'
       }
     };
-    const badge = BadgeCalculator(definition);
+    const badge = new BadgeCalculator(definition);
     expect(badge.calculate()).to.eq(2);
   });
 });

@@ -4,27 +4,26 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const express = require('express');
 const utils = require('../lib/utils');
-const badgeCalculator = require('../business/badgeCalculator');
+const BadgeCalculator = require('../business/badgeCalculator');
 
-async function getComponentBadgeRouterShell(definitionService, request, result) {
+async function getComponentBadgeRouterShell(definitionService, request, response) {
   const link = await getComponentBadgeLink(definitionService, request);
-  result.status(302).send(link);
+  response.header('location', link);
+  response.sendStatus(302);
 }
 
 async function getComponentBadgeLink(definitionService, request) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request);
-  const pr = request.params.pr;
-  const curated = await definitionService.get(coordinates, pr);
-  const link = badgeCalculator(curated).getBadgeUrl();
-  return link;
+  const definition = await definitionService.get(coordinates, request.params.pr);
+  return new BadgeCalculator(definition).getBadgeUrl();
 }
 
 function getRouter(definitionService) {
   const router = express.Router();
   router.get(
     '/:type/:provider/:namespace/:name/:revision',
-    asyncMiddleware((request, result) =>
-      getComponentBadgeRouterShell(definitionService, request, result)
+    asyncMiddleware((request, response) =>
+      getComponentBadgeRouterShell(definitionService, request, response)
     )
   );
   return router;
