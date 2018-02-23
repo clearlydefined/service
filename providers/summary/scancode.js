@@ -19,7 +19,7 @@ class ScanCodeSummarizer {
 
   addDescribedInfo(result, coordinates, harvested) {
     result.described = {
-      releaseDate: harvested._metadata.releaseDate
+      releaseDate: harvested._metadata.releaseDate.trim()
     };
   }
 

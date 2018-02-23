@@ -31,15 +31,17 @@
 
 const extend = require('extend');
 const utils = require('../lib/utils');
+const _ = require('lodash');
 
 class AggregationService {
   constructor(options) {
     this.options = options;
+    this.workingPrecedence = _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse());
   }
 
   process(coordinates, summarized) {
     let result = {};
-    const order = this.getPrecedenceOrder();
+    const order = this.workingPrecedence;
     const tools = [];
     order.forEach(tool => {
       const data = this.findData(tool, summarized);
@@ -50,14 +52,6 @@ class AggregationService {
     });
     result.described = result.described || {};
     result.described.tools = tools.reverse();
-    return result;
-  }
-
-  getPrecedenceOrder() {
-    const result = [];
-    this.options.precedence.reverse().forEach(group =>
-      group.reverse().forEach(tool => result.push(tool))
-    );
     return result;
   }
 
