@@ -265,19 +265,26 @@ class GitHubCurationService {
   }
 
   async ensureCurations() {
-    if (this.curationUpdateTime && (Date.now - this.curationUpdateTime < this.options.curationFreshness))
+    if (this.curationUpdateTime && (Date.now() - this.curationUpdateTime < this.options.curationFreshness))
       return;
     const { owner, repo } = this.options;
     const url = `https://github.com/${owner}/${repo}.git`;
     this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions);
-    const command = this.curationUpdateTime
-      ? `cd ${this.tempLocation.name}/${repo} && git pull`
-      : `cd ${this.tempLocation.name} && git clone ${url}`;
+    // if the location does not exist (perhaps it got deleted?), create it. 
     return new Promise((resolve, reject) => {
+      if (!fs.existsSync(this.tempLocation.name)) {
+        this.tempLocation = tmp.dirSync(this.tmpOptions);
+        // if it's still not there bail. Perhaps permissions problem
+        if (!fs.existsSync(this.tempLocation.name))
+          reject(new Error('Curation cache location could not be created'));
+      } 
+      const command = this.curationUpdateTime
+        ? `cd ${this.tempLocation.name}/${repo} && git pull`
+        : `cd ${this.tempLocation.name} && git clone ${url}`;
       exec(command, (error, stdout) => {
         if (error)
           return reject(error);
-        this.curationUpdateTime = Date.now;
+        this.curationUpdateTime = Date.now();
         resolve(stdout);
       });
     });
