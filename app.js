@@ -44,7 +44,9 @@ const badges = require('./routes/badges').getRouter(definitionService);
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService);
 
 const appLogger = console; // @todo add real logger
-const webhook = require('./routes/webhook')(curationService, appLogger, config.curation.store.github.webhookSecret);
+const githubSecret = config.webhook.githubSecret;
+const crawlerSecret = config.webhook.crawlerSecret;
+const webhook = require('./routes/webhook')(curationService, definitionService, appLogger, githubSecret, crawlerSecret);
 
 const cachingProvider = config.caching.provider;
 const caching = require(`./providers/caching/${cachingProvider}`);

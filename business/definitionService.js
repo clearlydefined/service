@@ -65,9 +65,14 @@ class DefinitionService {
    */
   invalidate(coordinates) {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates];
-    return Promise.all(coordinateList.map(throat(10, coordinates => {
+    return Promise.all(coordinateList.map(throat(10, async coordinates => {
       const definitionCoordinates = this._getDefinitionCoordinates(coordinates);
-      return this.definitionStore.delete(definitionCoordinates);
+      try {
+        return await this.definitionStore.delete(definitionCoordinates);
+      } catch(error) {
+        if (!error.code === 'ENOENT')
+          throw error;
+      }
     })));
   }
   
