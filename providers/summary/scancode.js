@@ -18,9 +18,9 @@ class ScanCodeSummarizer {
   }
 
   addDescribedInfo(result, coordinates, harvested) {
-    result.described = {
-      releaseDate: harvested._metadata.releaseDate.trim()
-    };
+    const releaseDate = harvested._metadata.releaseDate;
+    if (releaseDate)
+      result.described = { releaseDate: releaseDate.trim() };
   }
 
   addLicenseInfo(result, coordinates, harvested, filter) {
