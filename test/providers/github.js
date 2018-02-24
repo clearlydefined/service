@@ -9,7 +9,6 @@ function createService(definitionService = null) {
     repo: 'foobar',
     branch: 'foobar',
     token: 'foobar',
-    webhookSecret: 'foobar',
     tempLocation: '.'
   }, definitionService);
 }

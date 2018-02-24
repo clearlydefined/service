@@ -6,13 +6,13 @@ const webhookRoutes = require('../../routes/webhook');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
-describe('Webhook Route', () => {
+describe('Webhook Route for GitHub calls', () => {
   it('handles invalid action', () => {
     const request = createRequest('yeah, right');
     const response = httpMocks.createResponse();
     const logger = { error: sinon.stub() };
     const service = createCurationService();
-    const router = webhookRoutes(service, logger, 'secret', true);
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(200);
     expect(service.handleMerge.calledOnce).to.be.false;
@@ -26,7 +26,7 @@ describe('Webhook Route', () => {
     const response = httpMocks.createResponse();
     const logger = { error: sinon.stub() };
     const service = createCurationService();
-    const router = webhookRoutes(service, logger, 'secret', true);
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(400);
     expect(service.handleMerge.calledOnce).to.be.false;
@@ -40,7 +40,7 @@ describe('Webhook Route', () => {
     const response = httpMocks.createResponse();
     const logger = { error: sinon.stub() };
     const service = createCurationService();
-    const router = webhookRoutes(service, logger, 'secret', true);
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(400);
     expect(service.handleMerge.calledOnce).to.be.false;
@@ -52,7 +52,7 @@ describe('Webhook Route', () => {
     const request = createRequest('closed', true);
     const response = httpMocks.createResponse();   
     const service = createCurationService();
-    const router = webhookRoutes(service, null, 'secret', true);
+    const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(200);
     expect(service.validateCurations.calledOnce).to.be.false;
@@ -65,7 +65,7 @@ describe('Webhook Route', () => {
     const request = createRequest('closed', false);
     const response = httpMocks.createResponse();   
     const service = createCurationService();
-    const router = webhookRoutes(service, null, 'secret', true);
+    const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(200);
     expect(service.handleMerge.calledOnce).to.be.false;
@@ -76,7 +76,7 @@ describe('Webhook Route', () => {
     const request = createRequest('opened');
     const response = httpMocks.createResponse();   
     const service = createCurationService();
-    const router = webhookRoutes(service, null, 'secret', true);
+    const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
     expect(response.statusCode).to.be.eq(200);
     expect(service.handleMerge.calledOnce).to.be.false;
