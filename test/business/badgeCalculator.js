@@ -14,7 +14,7 @@ describe('BadgeCalculator', () => {
   it('gives level 2 if you have just license', () => {
     const definition = {
       licensed: {
-        license: 'MIT'
+        declared: 'MIT'
       }
     };
     const badge = new BadgeCalculator(definition);
@@ -24,8 +24,8 @@ describe('BadgeCalculator', () => {
   it('gives level 2 if you have just copyright', () => {
     const definition = {
       licensed: {
-        copyright: {
-          holders: ['My copyright']
+        attribution: {
+          parties: ['My copyright']
         }
       }
     };
@@ -36,10 +36,10 @@ describe('BadgeCalculator', () => {
   it('gives level 3 if you have both license and copyright', () => {
     const definition = {
       licensed: {
-        copyright: {
-          holders: ['My copyright']
+        attribution: {
+          parties: ['My copyright']
         },
-        license: 'MIT'
+        declared: 'MIT'
       }
     };
     const badge = new BadgeCalculator(definition);

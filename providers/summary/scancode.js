@@ -40,7 +40,8 @@ class ScanCodeSummarizer {
       const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
       !hasHolders && unknownParties++;
       const asserted = get(file, 'packages[0].asserted_licenses');
-      asserted && asserted.forEach(license => declaredLicenses.add(license));
+      // asserted && asserted.forEach(license => declaredLicenses.add(license.spdx_license_key));
+      this._addArrayToSet(asserted, declaredLicenses, license => license.spdx_license_key);
       this._addLicenseFiles(file, declaredLicenses);
     }
 
