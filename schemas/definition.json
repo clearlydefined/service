@@ -1,10 +1,9 @@
 {
-  "$id": "https://api.clearlydefined.io/schemas/curation.json#",
+  "$id": "https://api.clearlydefined.io/schemas/definition.json#",
   "$schema": "http://json-schema.org/draft-06/schema#",
-  "title": "curation",
+  "title": "definition",
   "required": [
-    "coordinates",
-    "revisions"
+    "coordinates"
   ],
   "type": "object",
   "additionalProperties": false,
@@ -12,8 +11,11 @@
     "coordinates": {
       "$ref": "#/definitions/coordinates"
     },
-    "revisions": {
-      "$ref": "#/definitions/revisions"
+    "described": {
+      "$ref": "#/definitions/described"
+    },
+    "licenesed": {
+      "$ref": "#/definitions/licensed"
     }
   },
   "definitions": {
@@ -24,7 +26,7 @@
       "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
     "coordinates": {
-      "required": ["type", "provider", "namespace", "name"],
+      "required": ["type", "provider", "namespace", "name", "revision"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -38,27 +40,9 @@
         },
         "name": {
           "type": "string"
-        }
-      }
-    },
-    "revisions": {
-      "type": "object",
-      "additionalProperties": false,
-      "patternProperties": {
-        "^.+$": {
-          "$ref": "#/definitions/revision"
-        }
-      }
-    },
-    "revision": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "described": {
-          "$ref": "#/definitions/described"
         },
-        "licensed": {
-          "$ref": "#/definitions/licensed"
+        "revision": {
+          "type": "string"
         }
       }
     },
@@ -95,6 +79,12 @@
         "releaseDate": {
           "type": "string",
           "format": "date-time"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -107,6 +97,7 @@
     "sourceLocation": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["type", "provider", "url", "revision"],
       "properties": {
         "type": {
           "$ref": "#/definitions/type"
@@ -129,6 +120,9 @@
     "licensed": {
       "additionalProperties": false,
       "properties": {
+        "files": {
+          "type": "number"
+        },
         "attribution": {
           "$ref": "#/definitions/attribution"
         },
@@ -149,6 +143,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "unknown": {
+          "type": "number"
         }
       }
     },
@@ -161,6 +158,9 @@
       "properties": {
         "expression": {
           "type": "string"
+        },
+        "unknown": {
+          "type": "number"
         }
       }
     }

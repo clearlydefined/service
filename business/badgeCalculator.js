@@ -5,7 +5,7 @@
 // For now we are just going to go with the simple:
 // If license/copyright there it gets a 3. Only one of those it gets a 2. None, it gets a 1
 
-const _ = require('lodash');
+const { get } = require('lodash');
 
 const scoreToUrl = {
   0: 'https://img.shields.io/badge/ClearlyDefined-0-red.svg',
@@ -24,18 +24,12 @@ class BadgeCalculator {
   // @todo we need to flesh this out
   // For now it just checks that a license and copyright holders are present
   calculate() {
-    const hasLicense = _.get(this.definition, 'licensed.license', false);
-    const hasCopyright = _.get(
-      this.definition,
-      'licensed.copyright.holders[0]',
-      false
-    );
-    if (hasLicense && hasCopyright) {
+    const hasLicense = get(this.definition, 'licensed.declared');
+    const hasAttributionParties = get(this.definition,'licensed.attribution.parties[0]');
+    if (hasLicense && hasAttributionParties) 
       return 2;
-    }
-    if (hasLicense || hasCopyright) {
+    if (hasLicense || hasAttributionParties)
       return 1;
-    }
     return 0;
   }
 }

@@ -8,12 +8,11 @@ revisions:
     described:
       issueTracker: "https://foobar.com/baz/1"
     licensed:
-      copyright:
-        holders:
+      attribution:
+        parties:
           - "foo"
           - "bar"
-      license:
-        expression: "MIT"
+      declared: "MIT"
   4.17.5:
     described:
       releaseDate: "2018-01-18T06:00:51.556Z"
