@@ -77,7 +77,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expression).to.eq(null);
     expect(discovered.unknown).to.eq(2);
     const declared = summary.licensed.declared;
-    expect(discovered.declared).to.eq(undefined);
+    expect(declared).to.eq(null);
   });
 
   it('handles scan with no files', () => {
@@ -93,7 +93,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expression).to.eq(null);
     expect(discovered.unknown).to.eq(0);
     const declared = summary.licensed.declared;
-    expect(discovered.declared).to.eq(undefined);
+    expect(declared).to.eq(null);
   });
   
   it('handles scan LICENSE file', () => {

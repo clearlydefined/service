@@ -98,7 +98,7 @@ class DefinitionService {
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec);
     const raw = await this.harvestService.getAll(coordinates);
-    // Summarize without any filters. From there we can get any dimensions and filter if needed.
+    // Summarize without any filters. From there we can get any facets and filter if needed.
     const summarized = await this.summaryService.summarizeAll(coordinates, raw);
     // if there is a file filter, summarize again to focus just on the desired files
     // TODO eventually see if there is a better way as summarizing could be expensive.
