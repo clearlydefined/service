@@ -72,6 +72,9 @@
             "data": {
               "$ref": "#/definitions/facet"
             },
+            "dev": {
+              "$ref": "#/definitions/facet"
+            },
             "doc": {
               "$ref": "#/definitions/facet"
             },

@@ -38,16 +38,16 @@ async function getFilter(coordinates) {
   try {
     const descriptionCoordinates = { ...coordinates, tool: 'clearlydescribed' };
     const rawDescription = await harvestStore.get(descriptionCoordinates);
-    return buildFilter(rawDescription.dimensions);
+    return buildFilter(rawDescription.facets);
   } catch (error) {
     return null;
   }
 }
 
-function buildFilter(dimensions) {
-  if (!dimensions)
+function buildFilter(facets) {
+  if (!facets)
     return null;
-  const list = [...dimensions.test, ...dimensions.dev, ...dimensions.data];
+  const list = [...facets.test, ...facets.dev, ...facets.data];
   return file => !list.some(filter => minimatch(file, filter));
 }
 

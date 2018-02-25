@@ -84,27 +84,22 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "dimensions": {
-          "additionalProperties": false,
-          "properties": {
-            "fetchedAt": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "processedAt": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "type": {
-              "type": "string"
-            },
-            "version": {
-              "type": "string"
-            },
-            "links": {
-              "$ref": "#definitions/links"
-            }
-          }
+        "fetchedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "processedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "links": {
+          "$ref": "#definitions/links"
         }
       }
     },

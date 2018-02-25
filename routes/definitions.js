@@ -35,10 +35,10 @@ router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(async (reque
 }));
 
 /**
- * Get a filter function that picks files from the dimensions of the described component to include in the
- * result. Dimensions are things like source, test, data, dev, ... Each dimension has an array of
+ * Get a filter function that picks files from the facets of the described component to include in the
+ * result. Facets are things like core, test, data, dev, ... Each facet has an array of
  * minimatch/glob style expressions that identify files to include in the summarization effort.
- * The dimensions are specified in the `described` neighborhood of the raw and/or curated data
+ * The facets are specified in the `described` neighborhood of the raw and/or curated data
  * for the given component.
  *
  * @param {Summary} [curation] - Curated information to use in building the filter.
@@ -49,20 +49,20 @@ async function getFilter(curation, harvested) { // eslint-disable-line no-unused
   if (!curation && !harvested)
     return null;
   const joined = extend(true, {}, harvested, curation);
-  const dimensions = joined.dimensions || null;
-  return buildFilter(dimensions);
+  const facets = joined.facets || null;
+  return buildFilter(facets);
 }
 
 /**
  * Create a filter that excludes all element that match the glob entries in the given
- * dimension's test, dev and data properties.
- * @param {*} dimensions - An object whose propertes are arrays of glob style filters expressions.
+ * facet's test, dev and data properties.
+ * @param {*} facets - An object whose propertes are arrays of glob style filters expressions.
  * @returns {function} - A filter function
  */
-function buildFilter(dimensions) {
-  if (!dimensions)
+function buildFilter(facets) {
+  if (!facets)
     return null;
-  const list = [...dimensions.test, ...dimensions.dev, ...dimensions.data];
+  const list = [...facets.test, ...facets.dev, ...facets.data];
   if (list.length === 0)
     return null;
   return file => !list.some(filter => minimatch(file, filter));
