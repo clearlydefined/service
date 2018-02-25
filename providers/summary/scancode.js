@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+const { get } = require('lodash');
+
 class ScanCodeSummarizer {
 
   constructor(options) {
@@ -27,7 +29,8 @@ class ScanCodeSummarizer {
     const data = harvested.content;
     const copyrightHolders = new Set();
     const licenseExpressions = new Set();
-    let unknownHolders = 0;
+    const declaredLicenses = new Set();
+    let unknownParties = 0;
     let unknownLicenses = 0;
 
     const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
@@ -35,24 +38,38 @@ class ScanCodeSummarizer {
       this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key);
       (!file.licenses || file.licenses.length === 0) && unknownLicenses++;
       const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
-      !hasHolders && unknownHolders++;
+      !hasHolders && unknownParties++;
+      const asserted = get(file, 'packages[0].asserted_licenses');
+      asserted && asserted.forEach(license => declaredLicenses.add(license));
+      this._addLicenseFiles(file, declaredLicenses);
     }
 
     result.licensed = {
-      copyright: {
-        holders: Array.from(copyrightHolders).sort(),
-        unknown: unknownHolders
+      attribution: {
+        parties: Array.from(copyrightHolders).sort(),
+        unknown: unknownParties
       },
-      files: filteredFiles.length,
-      license: {
+      declared: this._licenseSetToExpression(declaredLicenses),
+      discovered: {
         expression: this._licenseSetToExpression(licenseExpressions),
         unknown: unknownLicenses
-      }
+      },
+      files: filteredFiles.length,
     };
   }
 
+  _addLicenseFiles(file, declaredLicenses) {
+    // Look for license files at the root of the scanned code
+    // TODO enhance in the future to cover more license management strategies.
+    if (!['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase()))
+      return;
+    if (!file.licenses)
+      return;
+    file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key));
+  }
+
   _licenseSetToExpression(licenses) {
-    const licenseArray =Array.from(licenses).filter(e => e);
+    const licenseArray = Array.from(licenses).filter(e => e);
     return licenseArray.length ? licenseArray.join(' and ') : null;
   }
 

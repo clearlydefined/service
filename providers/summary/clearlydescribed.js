@@ -47,7 +47,7 @@ class ClearlyDescribedSummarizer {
     result.described.issueTracker = data.registryData.manifest.bugs;
     result.described.releaseDate = data.registryData.releaseDate;
     result.licensed = {
-      license: { 
+      declared: { 
         expression: data.registryData.manifest.license
       }
     };
