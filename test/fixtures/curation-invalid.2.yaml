@@ -6,5 +6,7 @@ coordinates:
 revisions:
   4.17.4:
     licensed:
-      license:
-        unknown: 3  # this prop is not allowed
+      facets:
+        tests: 
+          license:
+            unknown: 3  # this prop is not allowed

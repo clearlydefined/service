@@ -19,7 +19,7 @@ class SummaryService {
    * @param {*} data the data to summarize
    * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeTool(coordinates, tool, data, filter = null) {
+  _summarizeTool(coordinates, tool, data, filter = null) {
     if (!summarizers[tool])
       return data;
     const summarizer = summarizers[tool](this.options[tool] || {});
@@ -29,6 +29,10 @@ class SummaryService {
     }, {});
   }
 
+  summarizeFacets(coordinates, data) {
+    return this.summarizeAll(coordinates, data, null);
+  }
+  
   /**
    * Summarize all of the data for the identified component using the given filter function 
    * to determine if a particular file mentioned in the data should play a role in summarization.
@@ -37,9 +41,9 @@ class SummaryService {
    * @param {*} data the data to summarize
    * @param {function} filter filter function identifying analyzed files to NOT include in the summary
    */
-  summarizeAll(coordinates, data, filter = null) {
+  summarizeAll(coordinates, data, filter = {}) {
     const summary = Object.getOwnPropertyNames(data).reduce((result, tool) => {
-      result[tool] = this.summarizeTool(coordinates, tool, data[tool], filter);
+      result[tool] = this._summarizeTool(coordinates, tool, data[tool], filter);
       return result;
     }, {});
     summary.coordinates = coordinates;

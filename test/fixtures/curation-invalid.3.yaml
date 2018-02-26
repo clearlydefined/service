@@ -6,4 +6,6 @@ coordinates:
 revisions:
   4.17.4:
     licensed:
-      files: 13  # this prop is not allowed
+      facets:
+        tests: 
+          files: 13  # this prop is not allowed

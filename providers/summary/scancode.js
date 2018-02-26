@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-const { get } = require('lodash');
+const { get, remove, set } = require('lodash');
+const minimatch = require('minimatch');
 
 class ScanCodeSummarizer {
 
@@ -9,13 +10,50 @@ class ScanCodeSummarizer {
     this.options = options;
   }
 
-  summarize(coordinates, harvested, filter = null) {
+  /**
+   * Summarize the raw information related to the given coordinates using the supplied facet info to 
+   * bucketize results. If `facets` is falsy, only return the extracted `facets` portion of the raw
+   * data, if any.
+   * @param {EntitySpec} coordinates - The entity for which we are summarizing
+   * @param {*} harvested - the set of raw tool ouptuts related to the idenified entity
+   * @param {Facets} foo - an object detailing the facets to group by.  
+   * @returns {Definition} - a summary of the given raw information
+   */
+  summarize(coordinates, harvested, facets = {}) {
     if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data');
-    
+
+    if (!facets)
+      // ScanCode output never has facet info in it
+      return {};
     const result = {};
     this.addDescribedInfo(result, coordinates, harvested);
-    this.addLicenseInfo(result, coordinates, harvested, filter);
+    const buckets = this.computeFileBuckets(harvested.content.files, facets);
+    set(result, 'licensed.facets', {});
+    const facetsObject = get(result, 'licensed.facets');
+    for (const key in buckets) {
+      facetsObject[key] = this.summarizeLicenseInfo(buckets[key]);
+    }    
+    return result;
+  }
+
+  computeFileBuckets(files, facets) {
+    const facetList = Object.getOwnPropertyNames(facets);
+    remove(facetList, 'core');
+    if (facetList.length === 0)
+      return { core: files };
+    
+    const result = {};
+    for(const facet in facetList) {
+      const facetKey = facetList[facet];
+      const filters = facets[facetKey];
+      if (!filters || filters.length === 0)
+        break;
+      result[facetKey] = remove(files, file => 
+        filters.some(filter => 
+          minimatch(file.path, filter)));
+    }
+    result.core = files;
     return result;
   }
 
@@ -25,37 +63,36 @@ class ScanCodeSummarizer {
       result.described = { releaseDate: releaseDate.trim() };
   }
 
-  addLicenseInfo(result, coordinates, harvested, filter) {
-    const data = harvested.content;
+  summarizeLicenseInfo(files) {
     const copyrightHolders = new Set();
     const licenseExpressions = new Set();
     const declaredLicenses = new Set();
     let unknownParties = 0;
     let unknownLicenses = 0;
 
-    const filteredFiles = filter ? data.files.filter(file => filter(file.path)) : data.files;
-    for (let file of filteredFiles) {
+    for (let file of files) {
       this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key);
-      (!file.licenses || file.licenses.length === 0) && unknownLicenses++;
-      const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
-      !hasHolders && unknownParties++;
       const asserted = get(file, 'packages[0].asserted_licenses');
-      // asserted && asserted.forEach(license => declaredLicenses.add(license.spdx_license_key));
-      this._addArrayToSet(asserted, declaredLicenses, license => license.spdx_license_key);
+      if (!asserted) {
+        (!file.licenses || file.licenses.length === 0) && unknownLicenses++;
+        const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders);
+        !hasHolders && unknownParties++;
+      }
+      this._addArrayToSet(asserted, declaredLicenses, license => license.license || license.spdx_license_key);
       this._addLicenseFiles(file, declaredLicenses);
     }
 
-    result.licensed = {
+    return {
       attribution: {
-        parties: Array.from(copyrightHolders).sort(),
+        parties: this._setToArray(copyrightHolders),
         unknown: unknownParties
       },
-      declared: this._licenseSetToExpression(declaredLicenses),
+      declared: this._setToArray(declaredLicenses),
       discovered: {
-        expression: this._licenseSetToExpression(licenseExpressions),
+        expressions: this._setToArray(licenseExpressions),
         unknown: unknownLicenses
       },
-      files: filteredFiles.length,
+      files: files.length,
     };
   }
 
@@ -69,9 +106,9 @@ class ScanCodeSummarizer {
     file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key));
   }
 
-  _licenseSetToExpression(licenses) {
-    const licenseArray = Array.from(licenses).filter(e => e);
-    return licenseArray.length ? licenseArray.join(' and ') : null;
+  _setToArray(licenses) {
+    const result = Array.from(licenses).filter(e => e).sort();
+    return result.length === 0 ? null : result;
   }
 
   _normalizeCopyrights(copyrights, holders) {

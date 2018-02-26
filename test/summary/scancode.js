@@ -21,8 +21,9 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(2);
-    const attribution = summary.licensed.attribution;
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(2);
+    const attribution = core.attribution;
     expect(attribution.parties.length).to.eq(3);
     expect(attribution.parties).to.include('Bob');
     expect(attribution.parties).to.include('Jane');
@@ -38,9 +39,10 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.include('MIT');
-    expect(discovered.expression).to.include('GPL');
+    const core = summary.licensed.facets.core;
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.include('MIT');
+    expect(discovered.expressions).to.include('GPL');
     expect(discovered.unknown).to.eq(0);
   });
 
@@ -52,12 +54,13 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    const attribution = summary.licensed.attribution;
+    const core = summary.licensed.facets.core;
+    const attribution = core.attribution;
     expect(attribution.parties.length).to.eq(1);
     expect(attribution.parties).to.include('bob');
     expect(attribution.unknown).to.eq(1);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq('GPL');
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.include('GPL');
     expect(discovered.unknown).to.eq(1);
   });
 
@@ -69,14 +72,15 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(2);
-    const attribution = summary.licensed.attribution;
-    expect(attribution.parties.length).to.eq(0);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(2);
+    const attribution = core.attribution;
+    expect(attribution.parties).to.be.null;
     expect(attribution.unknown).to.eq(2);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq(null);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.eq(null);
     expect(discovered.unknown).to.eq(2);
-    const declared = summary.licensed.declared;
+    const declared = core.declared;
     expect(declared).to.eq(null);
   });
 
@@ -85,14 +89,15 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(0);
-    const attribution = summary.licensed.attribution;
-    expect(attribution.parties.length).to.eq(0);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(0);
+    const attribution = core.attribution;
+    expect(attribution.parties).to.be.null;
     expect(attribution.unknown).to.eq(0);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq(null);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.be.null;
     expect(discovered.unknown).to.eq(0);
-    const declared = summary.licensed.declared;
+    const declared = core.declared;
     expect(declared).to.eq(null);
   });
   
@@ -104,12 +109,14 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(2);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq('MIT and GPL');
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(2);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.include('MIT');
+    expect(discovered.expressions).to.include('GPL');
     expect(discovered.unknown).to.eq(0);
-    const declared = summary.licensed.declared;
-    expect(declared).to.eq('MIT');
+    const declared = core.declared;
+    expect(declared).to.deep.eq(['MIT']);
   });
     
   it('handles scan with asserted license file', () => {
@@ -119,12 +126,13 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(1);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq(null);
-    expect(discovered.unknown).to.eq(1);
-    const declared = summary.licensed.declared;
-    expect(declared).to.eq('MIT');
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(1);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.be.null;
+    expect(discovered.unknown).to.eq(0);
+    const declared = core.declared;
+    expect(declared).to.deep.eq(['MIT']);
   });
     
   it('handles scan with both asserted discovered license file', () => {
@@ -135,12 +143,122 @@ describe('ScanCode summarizer', () => {
     const summarizer = Summarizer();
     const coordinates = 'npm/npmjs/-/test/1.0';
     const summary = summarizer.summarize(coordinates, harvested);
-    expect(summary.licensed.files).to.eq(2);
-    const discovered = summary.licensed.discovered;
-    expect(discovered.expression).to.eq('GPL');
-    expect(discovered.unknown).to.eq(1);
-    const declared = summary.licensed.declared;
-    expect(declared).to.eq('MIT');
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(2);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.deep.eq(['GPL']);
+    expect(discovered.unknown).to.eq(0);
+    const declared = core.declared;
+    expect(declared).to.deep.eq(['MIT']);
+  });
+    
+  it('summarizes with empty object facets', () => {
+    const harvested = buildOutput([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ]);
+    const summarizer = Summarizer();
+    const coordinates = 'npm/npmjs/-/test/1.0';
+    const summary = summarizer.summarize(coordinates, harvested, {});
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(2);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.deep.eq(['GPL']);
+    expect(discovered.unknown).to.eq(0);
+    const declared = core.declared;
+    expect(declared).to.deep.eq(['MIT']);
+  });
+    
+  it('summarizes with basic filters', () => {
+    const harvested = buildOutput([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ]);
+    const facets = { tests: ['*.json'] };
+    const summarizer = Summarizer();
+    const coordinates = 'npm/npmjs/-/test/1.0';
+    const summary = summarizer.summarize(coordinates, harvested, facets);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(1);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.deep.eq(['GPL']);
+    expect(discovered.unknown).to.eq(0);
+    const tests = summary.licensed.facets.tests;
+    expect(tests.files).to.eq(1);
+    const declared = tests.declared;
+    expect(declared).to.deep.eq(['MIT']);
+    expect(!!tests.discovered.expressions).to.be.false;
+    expect(tests.discovered.unknown).to.eq(0);
+  });
+
+  it('summarizes with no core filters', () => {
+    const harvested = buildOutput([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ]);
+    const facets = { tests: ['*.json'] };
+    const summarizer = Summarizer();
+    const coordinates = 'npm/npmjs/-/test/1.0';
+    const summary = summarizer.summarize(coordinates, harvested, facets);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(1);
+    const discovered = core.discovered;
+    expect(discovered.expressions).to.deep.eq(['GPL']);
+    expect(discovered.unknown).to.eq(0);
+    const tests = summary.licensed.facets.tests;
+    expect(tests.files).to.eq(1);
+    const declared = tests.declared;
+    expect(declared).to.deep.eq(['MIT']);
+    expect(!!tests.discovered.expressions).to.be.false;
+    expect(tests.discovered.unknown).to.eq(0);
+  });
+  
+  it('summarizes with everything grouped into non-core facet', () => {
+    const harvested = buildOutput([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ]);
+    const facets = { tests: ['*.json'], dev: ['*.foo'] };
+    const summarizer = Summarizer();
+    const coordinates = 'npm/npmjs/-/test/1.0';
+    const summary = summarizer.summarize(coordinates, harvested, facets);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(0);
+    const dev = summary.licensed.facets.dev;
+    expect(dev.files).to.eq(1);
+    const discovered = dev.discovered;
+    expect(discovered.expressions).to.deep.eq(['GPL']);
+    expect(discovered.unknown).to.eq(0);
+    const tests = summary.licensed.facets.tests;
+    expect(tests.files).to.eq(1);
+    const declared = tests.declared;
+    expect(declared).to.deep.eq(['MIT']);
+    expect(!!tests.discovered.expressions).to.be.false;
+    expect(tests.discovered.unknown).to.eq(0);
+  });
+  
+  it('summarizes in facet order ', () => {
+    const harvested = buildOutput([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.json', 'GPL', [])
+    ]);
+    const facets = { tests: ['*.json'], dev: ['*.json'] };
+    const summarizer = Summarizer();
+    const coordinates = 'npm/npmjs/-/test/1.0';
+    const summary = summarizer.summarize(coordinates, harvested, facets);
+    const core = summary.licensed.facets.core;
+    expect(core.files).to.eq(0);
+    const dev = summary.licensed.facets.dev;
+    expect(dev.files).to.eq(0);
+    const discovered = dev.discovered;
+    expect(!!discovered.expression).to.be.false;
+    expect(discovered.unknown).to.eq(0);
+    const tests = summary.licensed.facets.tests;
+    expect(tests.files).to.eq(2);
+    const declared = tests.declared;
+    expect(declared).to.deep.eq(['MIT']);
+    expect(tests.discovered.expressions).to.deep.eq(['GPL']);
+    expect(tests.discovered.unknown).to.eq(0);
   });
 });
 

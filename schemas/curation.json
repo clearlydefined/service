@@ -70,19 +70,19 @@
           "additionalProperties": false,
           "properties": {
             "data": {
-              "$ref": "#/definitions/facet"
+              "$ref": "#/definitions/globList"
             },
             "dev": {
-              "$ref": "#/definitions/facet"
+              "$ref": "#/definitions/globList"
             },
             "doc": {
-              "$ref": "#/definitions/facet"
+              "$ref": "#/definitions/globList"
             },
             "examples": {
-              "$ref": "#/definitions/facet"
+              "$ref": "#/definitions/globList"
             },
             "tests": {
-              "$ref": "#/definitions/facet"
+              "$ref": "#/definitions/globList"
             }
           }
         },
@@ -101,7 +101,7 @@
         }
       }
     },
-    "facet": {
+    "globList": {
       "type": "array",
       "items": {
         "type": "string"
@@ -130,6 +130,37 @@
       }
     },
     "licensed": {
+      "additionalProperties": false,
+      "properties": {
+        "facets": {
+          "$ref": "#/definitions/facets"
+        }
+      }
+    },
+    "facets": {
+      "additionalProperties": false,
+      "properties": {
+        "core": {
+          "$ref": "#/definitions/facet"
+        },
+        "data": {
+          "$ref": "#/definitions/facet"
+        },
+        "dev": {
+          "$ref": "#/definitions/facet"
+        },
+        "doc": {
+          "$ref": "#/definitions/facet"
+        },
+        "examples": {
+          "$ref": "#/definitions/facet"
+        },
+        "tests": {
+          "$ref": "#/definitions/facet"
+        }
+      }
+    },    
+    "facet": {
       "additionalProperties": false,
       "properties": {
         "attribution": {
@@ -162,8 +193,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "expression": {
-          "type": "string"
+        "expressions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

@@ -344,22 +344,24 @@ components:
               revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
             releaseDate: 2018-01-29T01:29:32.869Z
           licensed:
-            copyright:
-                holders:
-                  - Microsoft Corporation
-            license: MIT
+            facets:
+              core: 
+                attribution:
+                  parties:
+                    - Microsoft Corporation
+                declared: MIT
 
     outputSummaryList:
       type: object
       description: A list of tool outputs that are available (see harvest.json#definitions/definitionSummaryList)
       example: 
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
-          clearlydescribed: 
+          clearlydefined: 
             - 1
           scancode: 
             - 2.2.1
         'npm/npmjs/-/redie/0.3.0':
-          clearlydescribed:
+          clearlydefined:
             - 1
           scancode:
             - 2.2.1
