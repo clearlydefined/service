@@ -36,7 +36,7 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asy
 
 async function getFilter(coordinates) {
   try {
-    const descriptionCoordinates = { ...coordinates, tool: 'clearlydescribed' };
+    const descriptionCoordinates = { ...coordinates, tool: 'clearlydefined' };
     const rawDescription = await harvestStore.get(descriptionCoordinates);
     return buildFilter(rawDescription.facets);
   } catch (error) {

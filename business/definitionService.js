@@ -3,6 +3,7 @@
 
 const Readable = require('stream').Readable;
 const throat = require('throat');
+const { get } = require('lodash');
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store) {
@@ -98,17 +99,32 @@ class DefinitionService {
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec);
     const raw = await this.harvestService.getAll(coordinates);
-    // Summarize without any filters. From there we can get any facets and filter if needed.
-    const summarized = await this.summaryService.summarizeAll(coordinates, raw);
-    // if there is a file filter, summarize again to focus just on the desired files
-    // TODO eventually see if there is a better way as summarizing could be expensive.
-    // That or cache the heck out of this...
+    const facets = await this._computeFacets(coordinates, raw, curation);
+    const summarized = await this.summaryService.summarizeAll(coordinates, raw, facets || {});
     const aggregated = await this.aggregationService.process(coordinates, summarized);
     const definition = await this.curationService.apply(coordinates, curation, aggregated);
     this._ensureCurationInfo(definition, curation);
     this._ensureSourceLocation(coordinates, definition);
     this._ensureCoordinates(coordinates, definition);
     return definition;
+  }
+
+  /**
+   * Compute facets related to an entity and a curation of that entity. This is essentially a light
+   * weight pre-compute so we know what groupings to use in the real summarization.
+   *
+   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
+   * @param {*} raw - the set of raw tool ouptuts related to the idenified entity
+   * @param {Definition)} [curation] - an actual curation object to apply.
+   * @returns {Facets} The `facets` portion of the component's described definition
+   */
+  async _computeFacets(coordinates, raw, curation) {
+    // TODO we might be able to a more effecient computation here since all we need are the facets
+    // for example, some tool outputs just will never have facets to there is no point in summarizing them.
+    const summarized = await this.summaryService.summarizeFacets(coordinates, raw);
+    const aggregated = await this.aggregationService.process(coordinates, summarized);
+    const definition = await this.curationService.apply(coordinates, curation, aggregated);
+    return get(definition, 'described.facets');
   }
 
   _ensureCoordinates(coordinates, definition) {

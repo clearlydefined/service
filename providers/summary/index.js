@@ -3,5 +3,6 @@
 
 module.exports = {
   scancode: require('./scancode'),
-  clearlydescribed: require('./clearlydescribed')
+  clearlydefined: require('./clearlydefined'),
+  cdsource: require('./cdsource')
 };

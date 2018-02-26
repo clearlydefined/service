@@ -6,8 +6,10 @@ coordinates:
 revisions:
   4.17.4:
     licensed:
-      copyright:
-        holders:
-          - "foo"
-          - "bar"
-        unknown: 3  # this prop is not allowed
+      facets:
+        tests: 
+          attribution:
+            parties:
+              - "foo"
+              - "bar"
+            unknown: 3  # this prop is not allowed

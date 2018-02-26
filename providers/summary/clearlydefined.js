@@ -11,6 +11,10 @@ class ClearlyDescribedSummarizer {
 
   summarize(coordinates, data, filter = null) {
     const result = { described: {} };
+    this.addFacetInfo(result, data);
+    if (!filter)
+      // if just getting facets, we're done
+      return result;
     this.addSourceLocation(result, data, filter);
     switch (coordinates.type) {
       case 'npm':
@@ -27,6 +31,10 @@ class ClearlyDescribedSummarizer {
     return result;
   }
 
+  addFacetInfo(result, data) {
+    result.described.facets = data.facets;
+  }
+
   addSourceLocation(result, data) {
     if (data.sourceInfo)
       result.described.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path']);
@@ -34,12 +42,10 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     result.described.releaseDate = data.releaseDate;
-    return result;
   }
 
   addSourceArchiveData(result, data) {
     result.described.releaseDate = data.releaseDate;
-    return result;
   }
 
   addNpmData(result, data) {
@@ -51,7 +57,6 @@ class ClearlyDescribedSummarizer {
         expression: data.registryData.manifest.license
       }
     };
-    return result;
   }
 }
 
