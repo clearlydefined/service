@@ -4,6 +4,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const RateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const serializeError = require('serialize-error');
 const requestId = require('request-id/express');
@@ -71,6 +72,14 @@ if (config.auth.github.clientId) {
 }
 app.use('/auth', auth());
 app.use(githubMiddleware);
+
+// rate-limit the remaining routes
+app.set('trust-proxy', true);
+app.use(new RateLimit({
+  windowMs: config.limits.windowSeconds * 1000,
+  max: config.limits.max,
+  delayAfter: 0
+}));
 
 app.use('/', index);
 app.use('/origins/github', require('./routes/originGitHub')());

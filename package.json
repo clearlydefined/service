@@ -21,6 +21,7 @@
     "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "express-rate-limit": "^2.11.0",
     "extend": "^3.0.1",
     "github": "^13.1.0",
     "helmet": "^3.9.0",
