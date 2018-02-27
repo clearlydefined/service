@@ -20,15 +20,24 @@ If you do want to run the service locally, follow these steps.
 
 That starts the ClearlyDefined service and has it listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. 
 
-### Quick and easy local configuration
-The simplest way to configure the service is to use local storage and in-memory queuing as follows:
+You may want to get the sample data. Clone the [Havested-data](https://github.com/clearlydefined/harvested-data) repo and adjust the `FILE_STORE_LOCATION` setting your `env.json` to point to the data repo's location.
 
-1. Clone the [harvested-data](https://github.com/clearlydefined/harvested-data.git) repo to get a mess of sample data. This is a great sample set. It changes over time and typically has data for the top 20 or so packages from supported different communities.
-1. Set up your `env.json` file to use the `harvested-data` repo as your local storage (`FILE_STORE_LOCATION`).
-1. Add a GitHub token to `CURATION_GITHUB_TOKEN`. This enables you to login to the local website or call the service APIs.
-1. Ensure the curations repo that the service will levarage is up to date with the latest and the relevant settings are set. I.e. `CURATION_GITHUB_REPO` and `CURATION_GITHUB_OWNER` must be set to a valid "curated-data" repository (e.g. `curated-data-dev` and `clearlydefined` respectively).
+### Quick and easy complete local configuration
+To get the entire system setup locally, follow these steps. You will end up with the crawler and service running locally, serving up the sample harvested data via the local website.
 
-For now you can leave the `HARVESTER` and `CRAWLER` settings alone unless you are also setting up the Crawler to run locally.
+1. Clone these four repos side by side:
+    * [website](https://github.com/clearlydefined/website.git)
+    * [service](https://github.com/clearlydefined/service.git)
+    * [crawler](https://github.com/clearlydefined/crawler.git)
+    * [harvested-data](https://github.com/clearlydefined/harvested-data.git) -- Sample set of data that changes over time and typically has data for the top 20 or so packages from supported different communities.
+1. Install ScanCode by following the instructions provided [on their site](https://github.com/nexB/scancode-toolkit#quick-start).
+1. Copy the `full.env.json` from this (service) repo up one directory level and name it `env.json`
+1. Edit this `env.json` file as follows:
+    * Add a GitHub token to `CURATION_GITHUB_TOKEN` and `CRAWLER_GITHUB_TOKEN`. This enables you to login to the local website or call the service APIs. You can use the same token for both settings. The tokens need only minimal permissions and are used to call GitHub APIs to manage pull requests and get repo tags etc.
+    * Set `SCANCODE_HOME` to be the location of your ScanCode install from above.
+1. In each of the code repos (i.e., `website`, `service`, and `crawler`), run `npm install` and `npm start`. You probably want to run in three separate shells so you can see the logging coming from each. Note that if you are a VS Code user, you can use the handy launch configs that come with the `crawler` and `service` repos -- just hit F5.
+1. Point your browser at `http://localhost:3000`. You should see the ClearlyDefined website and be able to browse the data etc. If you login (top right corner), more functionality will light up.
+
 
 ## Authorization
 
