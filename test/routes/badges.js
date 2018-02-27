@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+// Copyright (c) 2018, The Linux Foundation.
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai');
