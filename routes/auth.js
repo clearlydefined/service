@@ -95,7 +95,7 @@ async function getPermissions(token, org) {
       .filter(entry => entry.organization.login === org)
       .map(entry => entry.name)
       .map(findPermissions)
-      .filter(e => e)
+      .filter(e => e);
   } catch (error) {
     if (error.code === 404) {
       console.error('GitHub returned a 404 when trying to read team data. ' +
