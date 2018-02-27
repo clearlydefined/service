@@ -3,6 +3,7 @@
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const RateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -56,6 +57,7 @@ const cachingMiddleware = require('./middleware/caching');
 const app = express();
 app.use(cors());
 app.options('*', cors());
+app.use(cookieParser());
 app.use(helmet());
 app.use(requestId());
 app.use(cachingMiddleware(caching()));
