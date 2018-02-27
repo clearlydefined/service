@@ -1,4 +1,4 @@
-// Copyright (c) 2017, The Linux Foundation. All rights reserved.
+// Copyright (c) 2017, The Linux Foundation.
 // SPDX-License-Identifier: MIT
 
 const express = require('express');
