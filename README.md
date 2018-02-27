@@ -394,3 +394,17 @@ Build and run the container.
 docker build -t ort .
 docker run --mount type=bind,source="<path to repo>",target=/app ort scanner -d /app/output/package-json-dependencies.yml -o /app/output-scanner
 ```
+
+# ClearlyDefined, defined.
+
+## Mission
+Help FOSS projects be more successful through clearly defined project data.
+
+For more details on the project, check out the [wiki](../../../clearlydefined/wiki).
+
+# Contributing
+
+This project welcomes contributions and suggestions, and we've documented the details of contribution policy [here](CONTRIBUTING.md).
+
+The [Code of Conduct](CODE_OF_CONDUCT.md) for this project is details how the community interacts in
+an inclusive and respectful manner. Please keep it in mind as you engage here.
