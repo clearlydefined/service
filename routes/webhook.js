@@ -58,13 +58,13 @@ function validateGitHubCall(request, response) {
     return fatal(request, response, 400, 'Missing signature or event type on GitHub webhook');
 
   const computedSignature = 'sha1=' + crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex');
-  if (!test && !crypto.timingSafeEqual(new Buffer(signature), new Buffer(computedSignature))) 
+  if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature)))
     return fatal(request, response, 400, 'X-Hub-Signature does not match blob signature');
 
   const body = JSON.parse(request.body);
   const isValidPullRequest = body.pull_request && validPrActions.includes(body.action);
   if (!isValidPullRequest)
-    return fatal(request, response, 200);  
+    return fatal(request, response, 200);
   return body;
 }
 
