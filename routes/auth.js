@@ -5,7 +5,7 @@ const express = require('express');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github').Strategy;
 const { URL } = require('url');
-
+const GitHubApi = require('@octokit/rest');
 const config = require('../lib/config');
 
 const router = express.Router();
@@ -56,12 +56,14 @@ router.get('/github/start', passportOrPat(), (req, res) => {
 });
 
 router.get('/github/finalize', passportOrPat(),
-  (req, res) => {
-    const safeToken = encodeURIComponent(req.user.githubAccessToken);
-    let origin = config.endpoints.website;
+  async (req, res) => {
+    const token = req.user.githubAccessToken;
+    const permissions = await getPermissions(token, config.auth.github.org);
+    const result = JSON.stringify({ type: 'github-token', token, permissions });
 
     // allow for sending auth responses to localhost on dev site; see /github
     // route above. real origin is stored in cookie.
+    let origin = config.endpoints.website;
     if (config.endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
       origin = req.cookies.localhostOrigin;
     }
@@ -71,14 +73,53 @@ router.get('/github/finalize', passportOrPat(),
     // user's token to any site that asks for it. see:
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
     res.status(200).send(`<script>
-      window.opener.postMessage({
-        type: 'github-token',
-        token: '${safeToken}',
-      }, '${origin}');
+      window.opener.postMessage(${result}, '${origin}');
       window.close();
     </script>`);
   }
 );
+
+/**
+ * Fetch a list of ClearlyDefined permissions related to the given token in the identified org.
+ * @param {string} token - GitHubApi token
+ * @param {string} org - org name to filter teams
+ * @returns {Promise<Array<string>>} - list of permission names
+ */
+async function getPermissions(token, org) {
+  const options = { headers: { 'user-agent': 'clearlydefined.io' } };
+  const client = new GitHubApi(options);
+  token && client.authenticate({ type: 'token', token });
+  try {
+    const response = await client.users.getTeams();
+    return response.data
+      .filter(entry => entry.organization.login === org)
+      .map(entry => entry.name)
+      .map(findPermissions)
+      .filter(e => e);
+  } catch (error) {
+    if (error.code === 404) {
+      console.error('GitHub returned a 404 when trying to read team data. ' +
+        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)');
+    } else if (error.code === 401 && error.message === 'Bad credentials') {
+      // the token was bad. trickle up the problem so the user can fix 
+      throw error;
+    } else {
+      // XXX: Better logging situation?
+      console.error(error);
+    }
+    // in all other error cases assume the user has no teams. If they do then they can try again after the timeout
+    return [];
+  }
+}
+
+function findPermissions(team) {
+  const permissions = config.auth.github.permissions;
+  for (const permission in permissions) {
+    if (permissions[permission].includes(team))
+      return permission;
+  }
+  return null;
+}
 
 function setup() {
   return router;
