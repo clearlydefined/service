@@ -37,10 +37,10 @@ class AzBlobStore extends AbstractStore {
    * Get the results of running the tool specified in the coordinates on the entty specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
    * Otherwise, return an object that represents the result.
-   *   
-   * @param {ResultCoordinates} coordinates - The coordinates of the result to get 
+   *
+   * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified. 
+   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
    */
   get(coordinates, stream) {
     let name = this._toStoragePathFromCoordinates(coordinates);
@@ -58,7 +58,7 @@ class AzBlobStore extends AbstractStore {
 
   /**
    * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
-   * to a revision. 
+   * to a revision.
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
    */
@@ -99,7 +99,7 @@ class AzBlobStore extends AbstractStore {
   delete(coordinates) {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json';
     return new Promise((resolve, reject) =>
-      this.service.deleteBlob(this.name, blobName, responseOrError(resolve, reject)));
+      this.blobService.deleteBlob(this.containerName, blobName, responseOrError(resolve, reject)));
   }
 }
 
