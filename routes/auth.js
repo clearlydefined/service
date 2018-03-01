@@ -63,7 +63,7 @@ router.get('/github/finalize', passportOrPat(),
 
     // allow for sending auth responses to localhost on dev site; see /github
     // route above. real origin is stored in cookie.
-    const origin = config.endpoints.website;
+    let origin = config.endpoints.website;
     if (config.endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
       origin = req.cookies.localhostOrigin;
     }
