@@ -2,6 +2,16 @@
 // Copyright (c) Microsoft Corporation.
 // SPDX-License-Identifier: MIT
 
+/** 
+ * Enable telemetry.
+*/
+const appInsights = require('applicationinsights');
+if (process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== 'mock') {
+  appInsights.setup().start();
+} else {
+  appInsights.defaultClient = require('../lib/mockInsights');
+}
+
 /**
  * Module dependencies.
  */
