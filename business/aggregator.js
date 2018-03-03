@@ -29,44 +29,42 @@
 // The function should return a summary schema.
 //
 
-const extend = require('extend');
-const utils = require('../lib/utils');
-const _ = require('lodash');
+const extend = require('extend')
+const utils = require('../lib/utils')
+const _ = require('lodash')
 
 class AggregationService {
   constructor(options) {
-    this.options = options;
-    this.workingPrecedence = _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse());
+    this.options = options
+    this.workingPrecedence = _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
   }
 
   process(coordinates, summarized) {
-    let result = {};
-    const order = this.workingPrecedence;
-    const tools = [];
+    let result = {}
+    const order = this.workingPrecedence
+    const tools = []
     order.forEach(tool => {
-      const data = this.findData(tool, summarized);
+      const data = this.findData(tool, summarized)
       if (data) {
-        tools.push(data.toolSpec);
-        extend(true, result, data.summary);
+        tools.push(data.toolSpec)
+        extend(true, result, data.summary)
       }
-    });
-    result.described = result.described || {};
-    result.described.tools = tools.reverse();
-    return result;
+    })
+    result.described = result.described || {}
+    result.described.tools = tools.reverse()
+    return result
   }
 
   // search the summarized data for an entry that best matches the given tool spec
   findData(toolSpec, summarized) {
-    const [tool, toolVersion] = toolSpec.split('/');
-    if (!summarized[tool])
-      return null;
-    if (toolVersion)
-      return { toolSpec, summary: summarized[tool][toolVersion] };
+    const [tool, toolVersion] = toolSpec.split('/')
+    if (!summarized[tool]) return null
+    if (toolVersion) return { toolSpec, summary: summarized[tool][toolVersion] }
 
-    const versions = Object.getOwnPropertyNames(summarized[tool]);
-    const latest = utils.getLatestVersion(versions);
-    return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null;
+    const versions = Object.getOwnPropertyNames(summarized[tool])
+    const latest = utils.getLatestVersion(versions)
+    return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null
   }
 }
 
-module.exports = options => new AggregationService(options);
+module.exports = options => new AggregationService(options)

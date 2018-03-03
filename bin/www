@@ -2,44 +2,44 @@
 // Copyright (c) Microsoft Corporation.
 // SPDX-License-Identifier: MIT
 
-/** 
+/**
  * Enable telemetry.
-*/
-const appInsights = require('applicationinsights');
+ */
+const appInsights = require('applicationinsights')
 if (process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== 'mock') {
-  appInsights.setup().start();
+  appInsights.setup().start()
 } else {
-  appInsights.defaultClient = require('../lib/mockInsights');
+  appInsights.defaultClient = require('../lib/mockInsights')
 }
 
 /**
  * Module dependencies.
  */
 
-const app = require('../app');
-const debug = require('debug')('service:server');
-const http = require('http');
+const app = require('../app')
+const debug = require('debug')('service:server')
+const http = require('http')
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '4000');
-app.set('port', port);
+const port = normalizePort(process.env.PORT || '4000')
+app.set('port', port)
 
 /**
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const server = http.createServer(app)
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
 console.log(`Service listening on port: ${port}`)
 
 /**
@@ -47,19 +47,19 @@ console.log(`Service listening on port: ${port}`)
  */
 
 function normalizePort(val) {
-  const port = parseInt(val, 10);
+  const port = parseInt(val, 10)
 
   if (isNaN(port)) {
     // named pipe
-    return val;
+    return val
   }
 
   if (port >= 0) {
     // port number
-    return port;
+    return port
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -68,25 +68,23 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
-    throw error;
+    throw error
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
+      console.error(bind + ' requires elevated privileges')
+      process.exit(1)
+      break
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
+      console.error(bind + ' is already in use')
+      process.exit(1)
+      break
     default:
-      throw error;
+      throw error
   }
 }
 
@@ -95,9 +93,7 @@ function onError(error) {
  */
 
 function onListening() {
-  const addr = server.address();
-  const bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  const addr = server.address()
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+  debug('Listening on ' + bind)
 }
