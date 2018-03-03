@@ -134,7 +134,7 @@ class GitHubCurationService {
     if (!result)
       return null;
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-    Object.defineProperty(result, '_origin', { value: { sha: all._origin }, enumerable: false });
+    Object.defineProperty(result, '_origin', { value: all._origin, enumerable: false });
     return result;
   }
 

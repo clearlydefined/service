@@ -148,7 +148,8 @@ class DefinitionService {
     const tools = definition.described.tools = definition.described.tools || [];
     if (Object.getOwnPropertyNames(curation).length === 0)
       return;
-    tools.push(`curation${curation._origin ? '/' + curation._origin : 'supplied'}`);
+    const origin = get(curation, '_origin.sha');
+    tools.push(`curation${origin ? '/' + origin : 'supplied'}`);
   }
 
   _ensureSourceLocation(coordinates, definition) {
