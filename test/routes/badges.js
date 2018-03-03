@@ -1,8 +1,8 @@
 // Copyright (c) 2018, The Linux Foundation.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai');
-const badgesRoutes = require('../../routes/badges');
+const { expect } = require('chai')
+const badgesRoutes = require('../../routes/badges')
 
 describe('Badge Route', () => {
   it('Test 0 badge', async () => {
@@ -14,11 +14,11 @@ describe('Badge Route', () => {
         name: 'express',
         revision: '351396f971280ab79faddcf9782ea50f4e88358d'
       }
-    };
+    }
     const service = {
       get: () => request
-    };
-    const result = await badgesRoutes.getComponentBadgeLink(service, request);
-    expect(result).to.eq('https://img.shields.io/badge/ClearlyDefined-0-red.svg');
-  });
-});
+    }
+    const result = await badgesRoutes.getComponentBadgeLink(service, request)
+    expect(result).to.eq('https://img.shields.io/badge/ClearlyDefined-0-red.svg')
+  })
+})

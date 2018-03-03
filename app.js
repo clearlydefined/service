@@ -1,114 +1,125 @@
 // Copyright (c) Microsoft Corporation.
 // SPDX-License-Identifier: MIT
-const express = require('express');
-const logger = require('morgan');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const RateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const serializeError = require('serialize-error');
-const requestId = require('request-id/express');
-const passport = require('passport');
-const swaggerUi = require('swagger-ui-express');
-const fs = require('fs');
-const yaml = require('js-yaml');
-const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'));
-const config = require('./lib/config');
-const configMiddleware = require('./middleware/config');
-const githubMiddleware = require('./middleware/github');
+const express = require('express')
+const logger = require('morgan')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
+const RateLimit = require('express-rate-limit')
+const helmet = require('helmet')
+const serializeError = require('serialize-error')
+const requestId = require('request-id/express')
+const passport = require('passport')
+const swaggerUi = require('swagger-ui-express')
+const fs = require('fs')
+const yaml = require('js-yaml')
+const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'))
+const config = require('./lib/config')
+const configMiddleware = require('./middleware/config')
+const githubMiddleware = require('./middleware/github')
 
-const index = require('./routes/index');
+const index = require('./routes/index')
 
-const auth = require('./routes/auth');
+const auth = require('./routes/auth')
 
-const summaryService = require('./business/summarizer')(config.summary);
+const summaryService = require('./business/summarizer')(config.summary)
 
-const harvestStoreProvider = config.harvest.store.provider;
-const harvestStore = require(`./providers/stores/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider]);
-const harvesterProvider = config.harvest.harvester.provider;
-const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider]);
-const harvest = require('./routes/harvest')(harvester, harvestStore, summaryService);
+const harvestStoreProvider = config.harvest.store.provider
+const harvestStore = require(`./providers/stores/${harvestStoreProvider}`)(config.harvest.store[harvestStoreProvider])
+const harvesterProvider = config.harvest.harvester.provider
+const harvester = require(`./providers/harvest/${harvesterProvider}`)(config.harvest.harvester[harvesterProvider])
+const harvest = require('./routes/harvest')(harvester, harvestStore, summaryService)
 
-const aggregatorService = require('./business/aggregator')(config.aggregator);
+const aggregatorService = require('./business/aggregator')(config.aggregator)
 
-const curationProvider = config.curation.store.provider;
-const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider]);
-const curations = require('./routes/curations')(curationService);
+const curationProvider = config.curation.store.provider
+const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider])
+const curations = require('./routes/curations')(curationService)
 
-const definitionStoreProvider = config.definition.store.provider;
-const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(config.definition.store[definitionStoreProvider]);
-const definitionService = require('./business/definitionService')(harvestStore, summaryService, aggregatorService, curationService, definitionStore);
+const definitionStoreProvider = config.definition.store.provider
+const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(
+  config.definition.store[definitionStoreProvider]
+)
+const definitionService = require('./business/definitionService')(
+  harvestStore,
+  summaryService,
+  aggregatorService,
+  curationService,
+  definitionStore
+)
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
-curationService.definitionService = definitionService;
+curationService.definitionService = definitionService
 
-const badges = require('./routes/badges').getRouter(definitionService);
-const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService);
+const badges = require('./routes/badges').getRouter(definitionService)
+const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 
-const appLogger = console; // @todo add real logger
-const githubSecret = config.webhook.githubSecret;
-const crawlerSecret = config.webhook.crawlerSecret;
-const webhook = require('./routes/webhook')(curationService, definitionService, appLogger, githubSecret, crawlerSecret);
+const appLogger = console // @todo add real logger
+const githubSecret = config.webhook.githubSecret
+const crawlerSecret = config.webhook.crawlerSecret
+const webhook = require('./routes/webhook')(curationService, definitionService, appLogger, githubSecret, crawlerSecret)
 
-const cachingProvider = config.caching.provider;
-const caching = require(`./providers/caching/${cachingProvider}`);
-const cachingMiddleware = require('./middleware/caching');
+const cachingProvider = config.caching.provider
+const caching = require(`./providers/caching/${cachingProvider}`)
+const cachingMiddleware = require('./middleware/caching')
 
-const app = express();
-app.use(cors());
-app.options('*', cors());
-app.use(cookieParser());
-app.use(helmet());
-app.use(requestId());
-app.use(cachingMiddleware(caching()));
+const app = express()
+app.use(cors())
+app.options('*', cors())
+app.use(cookieParser())
+app.use(helmet())
+app.use(requestId())
+app.use(cachingMiddleware(caching()))
 
-app.use(logger('dev'));
-app.use(configMiddleware);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook);
+app.use(logger('dev'))
+app.use(configMiddleware)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook)
 
 // OAuth app initialization; skip if not configured (middleware can cope)
 if (config.auth.github.clientId) {
-  passport.use(auth.getStrategy());
-  app.use(passport.initialize());
+  passport.use(auth.getStrategy())
+  app.use(passport.initialize())
 }
-app.use('/auth', auth());
-app.use(githubMiddleware);
+app.use('/auth', auth())
+app.use(githubMiddleware)
 
 // rate-limit the remaining routes
-app.set('trust-proxy', true);
-app.use(new RateLimit({
-  windowMs: config.limits.windowSeconds * 1000,
-  max: config.limits.max,
-  delayAfter: 0
-}));
+app.set('trust-proxy', true)
+app.use(
+  new RateLimit({
+    windowMs: config.limits.windowSeconds * 1000,
+    max: config.limits.max,
+    delayAfter: 0
+  })
+)
 
-app.use('/', index);
-app.use('/origins/github', require('./routes/originGitHub')());
-app.use('/origins/npm', require('./routes/originNpm')());
-app.use('/origins/maven', require('./routes/originMaven')());
-app.use('/harvest', harvest);
-app.use(bodyParser.json());
-app.use('/curations', curations);
-app.use('/badges', badges);
-app.use('/definitions', definitions);
+app.use('/', index)
+app.use('/origins/github', require('./routes/originGitHub')())
+app.use('/origins/npm', require('./routes/originNpm')())
+app.use('/origins/maven', require('./routes/originMaven')())
+app.use('/harvest', harvest)
+app.use(bodyParser.json())
+app.use('/curations', curations)
+app.use('/badges', badges)
+app.use('/definitions', definitions)
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+app.use(function(req, res, next) {
+  const err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
 
 // error handler
 // eslint-disable-next-line no-unused-vars
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
 
   // return the error
-  res.status(err.status || 500)
+  res
+    .status(err.status || 500)
     .type('application/json')
     .send({
       error: {
@@ -116,7 +127,7 @@ app.use(function (err, req, res, next) {
         message: err.message,
         innererror: serializeError(res.locals.error)
       }
-    });
-});
+    })
+})
 
-module.exports = app;
+module.exports = app

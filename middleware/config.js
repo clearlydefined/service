@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // SPDX-License-Identifier: MIT
-const config = require('../lib/config');
+const config = require('../lib/config')
 
 module.exports = (req, res, next) => {
   if (req.app.locals.config) {
-    return next();
+    return next()
   }
 
-  req.app.locals.config = config;
-  return next();
-};
+  req.app.locals.config = config
+  return next()
+}
