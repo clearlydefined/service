@@ -1,4 +1,7 @@
-const {expect} = require('chai');
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
+// SPDX-License-Identifier: MIT
+
+const { expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');

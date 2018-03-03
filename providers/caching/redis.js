@@ -1,4 +1,4 @@
-// Copyright 2018 Amazon.com, Inc. or its affiliates.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const redis = require('redis');

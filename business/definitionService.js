@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const Readable = require('stream').Readable;
@@ -41,8 +41,8 @@ class DefinitionService {
 
   /**
    * Get all of the definition entries available for the given coordinates. The coordinates must be
-   * specified down to the revision. The result will have an entry per discovered definition. 
-   * 
+   * specified down to the revision. The result will have an entry per discovered definition.
+   *
    * @param {*} coordinatesList - an array of coordinate paths to list
    * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the defintions that are available
@@ -61,7 +61,7 @@ class DefinitionService {
   /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
-   *  
+   *
    * @param {Coordinates} coordinates - individual or array of coordinates to invalidate
    */
   invalidate(coordinates) {
@@ -76,7 +76,7 @@ class DefinitionService {
       }
     })));
   }
-  
+
   async computeAndStore(coordinates) {
     const definition = await this.compute(coordinates);
     const stream = new Readable();

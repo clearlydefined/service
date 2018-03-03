@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const _ = require('lodash');
@@ -145,7 +145,7 @@ class GitHubCurationService {
    * @param {EntitySpec} coordinates - The entity for which we are looking for a curation.
    * @param {(number | string} [pr] - The curation identifier if any. Could be a PR number/string.
    * @returns {Object} The requested curations where the revisions property has a property for each
-   * curated revision. The returned value will be decorated with a non-enumerable `_origin` property 
+   * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
    * indicating the sha of the commit for the curations if that info is available.
    */
   async getAll(coordinates, pr = null) {
@@ -211,7 +211,7 @@ class GitHubCurationService {
     const coordinateList = _.concat([], ...coordinateSet);
     return this.definitionService.invalidate(coordinateList);
   }
-  
+
   async validateCurations(number, componentPath, sha, ref) {
     await this.postCommitStatus(sha, number, componentPath, 'pending', 'Validation in progress');
     const curations = await this.getCurations(number, ref);
@@ -224,7 +224,7 @@ class GitHubCurationService {
     }
     return this.postCommitStatus(sha, number, componentPath, state, description);
   }
-    
+
   async postCommitStatus(sha, number, componentPath, state, description) {
     const { owner, repo } = this.options;
     const github = Github.getClient(this.options);
@@ -270,14 +270,14 @@ class GitHubCurationService {
     const { owner, repo } = this.options;
     const url = `https://github.com/${owner}/${repo}.git`;
     this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions);
-    // if the location does not exist (perhaps it got deleted?), create it. 
+    // if the location does not exist (perhaps it got deleted?), create it.
     return new Promise((resolve, reject) => {
       if (!fs.existsSync(this.tempLocation.name)) {
         this.tempLocation = tmp.dirSync(this.tmpOptions);
         // if it's still not there bail. Perhaps permissions problem
         if (!fs.existsSync(this.tempLocation.name))
           reject(new Error('Curation cache location could not be created'));
-      } 
+      }
       const command = this.curationUpdateTime
         ? `cd ${this.tempLocation.name}/${repo} && git pull`
         : `cd ${this.tempLocation.name} && git clone ${url}`;

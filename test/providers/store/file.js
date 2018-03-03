@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const sinon = require('sinon');
@@ -68,7 +68,7 @@ describe('coordinates to path mapping', () => {
       const separator = input.location.includes('/') ? '/' : '\\';
       // account for platform differences in path separator.
       const normalizedResult = result.replace(/\\/g, '/');
-      // TODO We expect much of the path to be lowercased however the approach below requires ALL 
+      // TODO We expect much of the path to be lowercased however the approach below requires ALL
       // of the path to be lowercased. unclear if case variation on namespace, name and revision is ok.
       const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/').toLowerCase();
       assert.deepEqual(normalizedResult, normalizedInput);

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const _ = require('lodash');
@@ -53,7 +53,7 @@ class ClearlyDescribedSummarizer {
     result.described.issueTracker = data.registryData.manifest.bugs;
     result.described.releaseDate = data.registryData.releaseDate;
     result.licensed = {
-      declared: { 
+      declared: {
         expression: data.registryData.manifest.license
       }
     };

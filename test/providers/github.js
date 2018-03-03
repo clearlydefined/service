@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
+// SPDX-License-Identifier: MIT
+
 const { expect } = require('chai');
 const GitHubCurationService = require('../../providers/curation/github');
 const Curation = require('../../lib/curation');
@@ -17,7 +20,7 @@ describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
     const definitionService = { invalidate: sinon.stub().returns(Promise.resolve(null)) };
     const service = createService(definitionService);
-    sinon.stub(service, 'getCurations').callsFake(() => { 
+    sinon.stub(service, 'getCurations').callsFake(() => {
       return [createCuration()];
     });
     await service.handleMerge(1, 42);
@@ -28,7 +31,7 @@ describe('Github Curation Service', () => {
   it('validates valid PR change', async () => {
     const service = createService();
     sinon.stub(service, 'postCommitStatus').returns(Promise.resolve());
-    sinon.stub(service, 'getCurations').callsFake(() => { 
+    sinon.stub(service, 'getCurations').callsFake(() => {
       return [createCuration()];
     });
     await service.validateCurations(1, 'npm/npmjs/-/test', '42', 'testBranch');
@@ -40,7 +43,7 @@ describe('Github Curation Service', () => {
   it('validates invalid PR change', async () => {
     const service = createService();
     sinon.stub(service, 'postCommitStatus').returns(Promise.resolve());
-    sinon.stub(service, 'getCurations').callsFake(() => { 
+    sinon.stub(service, 'getCurations').callsFake(() => {
       return [createInvalidCuration()];
     });
     await service.validateCurations(1, 'npm/npmjs/-/test', '42', 'testBranch');

@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The Linux Foundation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai');
@@ -50,7 +50,7 @@ describe('Webhook Route for GitHub calls', () => {
 
   it('handles closed event that is merged', () => {
     const request = createRequest('closed', true);
-    const response = httpMocks.createResponse();   
+    const response = httpMocks.createResponse();
     const service = createCurationService();
     const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
@@ -63,7 +63,7 @@ describe('Webhook Route for GitHub calls', () => {
 
   it('skips closed event that is not merged', () => {
     const request = createRequest('closed', false);
-    const response = httpMocks.createResponse();   
+    const response = httpMocks.createResponse();
     const service = createCurationService();
     const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
@@ -74,7 +74,7 @@ describe('Webhook Route for GitHub calls', () => {
 
   it('calls valid for PR changes', () => {
     const request = createRequest('opened');
-    const response = httpMocks.createResponse();   
+    const response = httpMocks.createResponse();
     const service = createCurationService();
     const router = webhookRoutes(service, null, null, 'secret', 'secret', true);
     router._handlePost(request, response);
