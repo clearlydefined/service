@@ -3,9 +3,7 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
-const extend = require('extend')
 const router = express.Router()
-const minimatch = require('minimatch')
 const utils = require('../lib/utils')
 const _ = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
@@ -36,38 +34,6 @@ router.get(
     response.status(200).send(result)
   })
 )
-
-/**
- * Get a filter function that picks files from the facets of the described component to include in the
- * result. Facets are things like core, test, data, dev, ... Each facet has an array of
- * minimatch/glob style expressions that identify files to include in the summarization effort.
- * The facets are specified in the `described` neighborhood of the raw and/or curated data
- * for the given component.
- *
- * @param {Summary} [curation] - Curated information to use in building the filter.
- * @param {Summary} [harvested] - Harvested data to use in building the filter.
- * @returns {function} The requested filter function.
- */
-async function getFilter(curation, harvested) {
-  // eslint-disable-line no-unused-vars
-  if (!curation && !harvested) return null
-  const joined = extend(true, {}, harvested, curation)
-  const facets = joined.facets || null
-  return buildFilter(facets)
-}
-
-/**
- * Create a filter that excludes all element that match the glob entries in the given
- * facet's test, dev and data properties.
- * @param {*} facets - An object whose propertes are arrays of glob style filters expressions.
- * @returns {function} - A filter function
- */
-function buildFilter(facets) {
-  if (!facets) return null
-  const list = [...facets.test, ...facets.dev, ...facets.data]
-  if (list.length === 0) return null
-  return file => !list.some(filter => minimatch(file, filter))
-}
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
