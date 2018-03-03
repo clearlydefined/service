@@ -1,11 +1,11 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const router = require('express').Router();
 const requestPromise = require('request-promise-native');
 
-// Get versions 
+// Get versions
 router.get('/:group/:artifact/revisions', asyncMiddleware(async (request, response) => {
   try {
     const { group, artifact } = request.params;
@@ -21,7 +21,7 @@ router.get('/:group/:artifact/revisions', asyncMiddleware(async (request, respon
   }
 }));
 
-// Search 
+// Search
 router.get('/:group/:artifact?', asyncMiddleware(async (request, response) => {
   const { group, artifact } = request.params;
   if (request.path.indexOf('/', 1) > 0) {

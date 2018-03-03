@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai');
@@ -100,7 +100,7 @@ describe('ScanCode summarizer', () => {
     const declared = core.declared;
     expect(declared).to.eq(null);
   });
-  
+
   it('handles scan LICENSE file', () => {
     const harvested = buildOutput([
       buildFile('LICENSE', 'MIT', []),
@@ -118,7 +118,7 @@ describe('ScanCode summarizer', () => {
     const declared = core.declared;
     expect(declared).to.deep.eq(['MIT']);
   });
-    
+
   it('handles scan with asserted license file', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', [])
@@ -134,7 +134,7 @@ describe('ScanCode summarizer', () => {
     const declared = core.declared;
     expect(declared).to.deep.eq(['MIT']);
   });
-    
+
   it('handles scan with both asserted discovered license file', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', []),
@@ -151,7 +151,7 @@ describe('ScanCode summarizer', () => {
     const declared = core.declared;
     expect(declared).to.deep.eq(['MIT']);
   });
-    
+
   it('summarizes with empty object facets', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', []),
@@ -168,7 +168,7 @@ describe('ScanCode summarizer', () => {
     const declared = core.declared;
     expect(declared).to.deep.eq(['MIT']);
   });
-    
+
   it('summarizes with basic filters', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', []),
@@ -212,7 +212,7 @@ describe('ScanCode summarizer', () => {
     expect(!!tests.discovered.expressions).to.be.false;
     expect(tests.discovered.unknown).to.eq(0);
   });
-  
+
   it('summarizes with everything grouped into non-core facet', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', []),
@@ -236,7 +236,7 @@ describe('ScanCode summarizer', () => {
     expect(!!tests.discovered.expressions).to.be.false;
     expect(tests.discovered.unknown).to.eq(0);
   });
-  
+
   it('summarizes in facet order ', () => {
     const harvested = buildOutput([
       buildPackageFile('package.json', 'MIT', []),
@@ -281,7 +281,7 @@ function buildFile(path, license, holders) {
       : null
   };
 }
-  
+
 function buildPackageFile(path, license) {
   return {
     path,

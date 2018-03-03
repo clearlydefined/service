@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat');
@@ -7,13 +7,13 @@ const EntityCoordinates = require('../../lib/entityCoordinates');
 const ResultCoordinates = require('../../lib/resultCoordinates');
 
 class AbstractStore {
-  
+
   /**
-   * List all of the tool output available for the given coordinates. The coordinates can be 
-   * arbitrarily loose. The result will have an entry per discovered component. That entry will 
+   * List all of the tool output available for the given coordinates. The coordinates can be
+   * arbitrarily loose. The result will have an entry per discovered component. That entry will
    * itself have an entry per tool with the value being the array of versions of the tool for
    * which there are result.
-   * 
+   *
    * @param {*} coordinatesList - an array of coordinate paths to list
    * @returns A list of all components that have output and the output available
    */

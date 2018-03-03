@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
@@ -78,7 +78,7 @@ router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(async
   response.status(200).send(result);
 }));
 
-// POST a request to create a resource that is the list of definitions available for 
+// POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(async (request, response) => {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry));

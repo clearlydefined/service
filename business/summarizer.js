@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const summarizers = require('../providers/summary');
@@ -13,7 +13,7 @@ class SummaryService {
    * Summarize the data for each of the supplied data points for different versions of an
    * identified tool. Use the given filter function to determine if a particular file
    * mentioned in the data should play a role in summarization.
-   * 
+   *
    * @param {EntityCoordinates} coordinates the component being summarized
    * @param {string} tool the name of the tool whose output is being summarized
    * @param {*} data the data to summarize
@@ -32,11 +32,11 @@ class SummaryService {
   summarizeFacets(coordinates, data) {
     return this.summarizeAll(coordinates, data, null);
   }
-  
+
   /**
-   * Summarize all of the data for the identified component using the given filter function 
+   * Summarize all of the data for the identified component using the given filter function
    * to determine if a particular file mentioned in the data should play a role in summarization.
-   * 
+   *
    * @param {} coordinates the component being summarized
    * @param {*} data the data to summarize
    * @param {function} filter filter function identifying analyzed files to NOT include in the summary

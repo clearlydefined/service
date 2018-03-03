@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The Linux Foundation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 // Responsible for calculating what badge a component/definition has.
@@ -26,7 +26,7 @@ class BadgeCalculator {
   calculate() {
     const hasLicense = get(this.definition, 'licensed.declared');
     const hasAttributionParties = get(this.definition,'licensed.attribution.parties[0]');
-    if (hasLicense && hasAttributionParties) 
+    if (hasLicense && hasAttributionParties)
       return 2;
     if (hasLicense || hasAttributionParties)
       return 1;

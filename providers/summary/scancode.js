@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and others. Made available under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const { get, remove, set } = require('lodash');
@@ -11,12 +11,12 @@ class ScanCodeSummarizer {
   }
 
   /**
-   * Summarize the raw information related to the given coordinates using the supplied facet info to 
+   * Summarize the raw information related to the given coordinates using the supplied facet info to
    * bucketize results. If `facets` is falsy, only return the extracted `facets` portion of the raw
    * data, if any.
    * @param {EntitySpec} coordinates - The entity for which we are summarizing
    * @param {*} harvested - the set of raw tool ouptuts related to the idenified entity
-   * @param {Facets} foo - an object detailing the facets to group by.  
+   * @param {Facets} foo - an object detailing the facets to group by.
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested, facets = {}) {
@@ -33,7 +33,7 @@ class ScanCodeSummarizer {
     const facetsObject = get(result, 'licensed.facets');
     for (const key in buckets) {
       facetsObject[key] = this.summarizeLicenseInfo(buckets[key]);
-    }    
+    }
     return result;
   }
 
@@ -42,15 +42,15 @@ class ScanCodeSummarizer {
     remove(facetList, 'core');
     if (facetList.length === 0)
       return { core: files };
-    
+
     const result = {};
     for(const facet in facetList) {
       const facetKey = facetList[facet];
       const filters = facets[facetKey];
       if (!filters || filters.length === 0)
         break;
-      result[facetKey] = remove(files, file => 
-        filters.some(filter => 
+      result[facetKey] = remove(files, file =>
+        filters.some(filter =>
           minimatch(file.path, filter)));
     }
     result.core = files;
