@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The Linux Foundation.
+// Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')

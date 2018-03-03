@@ -2,10 +2,7 @@
   "$id": "https://api.clearlydefined.io/schemas/curation.json#",
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "curation",
-  "required": [
-    "coordinates",
-    "revisions"
-  ],
+  "required": ["coordinates", "revisions"],
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -159,7 +156,7 @@
           "$ref": "#/definitions/facet"
         }
       }
-    },    
+    },
     "facet": {
       "additionalProperties": false,
       "properties": {
