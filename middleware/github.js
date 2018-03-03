@@ -1,4 +1,4 @@
-// Copyright 2018 Amazon.com, Inc. or its affiliates.
+// Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const crypto = require('crypto')
