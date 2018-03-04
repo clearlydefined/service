@@ -1,7 +1,8 @@
 # ClearlyDefined service
+
 This is the service side of clearlydefined.io. The service mainly manages curations, human inputs and corrections, of harvested data. The [ClearlyDefined crawler](https://github.com/clearlydefined/crawler) does the bulk of the harvesting so here we manage the open source/crowd-sourced part of ClearlyDefined. Users come together to add data, review data, and propose upstream changes to clarify the state of a project.
 
-Like other open source projects, ClearlyDefined works with contributions coming as pull requests on a GitHub repo. In our case, curations are contributed to the [ClearlyDefined curated-data](https://github.com/clearlydefined/curated-data) repo. Those PRs are reviewed, discussed and ultimately merged into the curation repo. From there this service _builds_ a database that further merges automatically harvested data with the newly curated data and makes it available via REST APIs.
+Like other open source projects, ClearlyDefined works with contributions coming as pull requests on a GitHub repo. In our case, curations data changes and are contributed to the [ClearlyDefined curated-data](https://github.com/clearlydefined/curated-data) repo. Those PRs are reviewed, discussed and ultimately merged into the curation repo. From there this service _builds_ a database that further merges automatically harvested data with the newly curated data and makes it available via REST APIs.
 
 In effect the curated data for a project is a _fork_ of the project. Like most forks, we don't want to maintain changes as they quickly rot and need constant care and attention. Besides, the stated goal of ClearlyDefined is to help projects become more successful through clear data about the projects. The best way to do that is work with the upstream projects to include the data directly in projects themselves.
 
@@ -18,172 +19,29 @@ If you do want to run the service locally, follow these steps.
 1. On a command line, `cd` to the repo dir and run `npm install`
 1. Run `npm start`
 
-That starts the ClearlyDefined service and has it listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs. 
+That starts the ClearlyDefined service and has it listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs.
 
 You may want to get the sample data. Clone the [Havested-data](https://github.com/clearlydefined/harvested-data) repo and adjust the `FILE_STORE_LOCATION` setting your `env.json` to point to the data repo's location.
-
-### Quick and easy complete local configuration
-To get the entire system setup locally, follow these steps. You will end up with the crawler and service running locally, serving up the sample harvested data via the local website.
-
-1. Clone these four repos side by side:
-    * [website](https://github.com/clearlydefined/website.git)
-    * [service](https://github.com/clearlydefined/service.git)
-    * [crawler](https://github.com/clearlydefined/crawler.git)
-    * [harvested-data](https://github.com/clearlydefined/harvested-data.git) -- Sample set of data that changes over time and typically has data for the top 20 or so packages from supported different communities.
-1. Install ScanCode by following the instructions provided [on their site](https://github.com/nexB/scancode-toolkit#quick-start).
-1. Copy the `full.env.json` from this (service) repo up one directory level and name it `env.json`
-1. Edit this `env.json` file as follows:
-    * Add a GitHub token to `CURATION_GITHUB_TOKEN` and `CRAWLER_GITHUB_TOKEN`. This enables you to login to the local website or call the service APIs. You can use the same token for both settings. The tokens need only minimal permissions and are used to call GitHub APIs to manage pull requests and get repo tags etc.
-    * Set `SCANCODE_HOME` to be the location of your ScanCode install from above.
-1. In each of the code repos (i.e., `website`, `service`, and `crawler`), run `npm install` and `npm start`. You probably want to run in three separate shells so you can see the logging coming from each. Note that if you are a VS Code user, you can use the handy launch configs that come with the `crawler` and `service` repos -- just hit F5.
-1. Point your browser at `http://localhost:3000`. You should see the ClearlyDefined website and be able to browse the data etc. If you login (top right corner), more functionality will light up.
-
 
 ## Authorization
 
 TBD
 
-## Data overview
-The ClearlyDefined service manages both raw, harvested data and curated data, as well as the merge of these. These data can be expressed in relation to source code (e.g., a GitHub repo) or a package (e.g., an NPM, RPM, Maven project, ...). One of the key goals of ClearlyDefined is to correlate the _binary_ package with the original source.
+# Contributing
 
-> A quick note on _binary_. Throughout the ClearlyDefined ecosystem we talk about _binary_ as being the packaged, executable form of a component. An NPM for example is a binary despite the fact it may contain human-readable text that looks a lot like JavaScript source code. In general, the original source for these packages may have been in a very different language (e.g., TypeScript) or the package content may have been minimized, compresses, concatenated, or otherwise swizzled. For the purposes of license detection and ultimately compliance, as well as security scanning etc, consumers need to know the location of the actual developer-authored source code.
+This project welcomes contributions and suggestions, and we've documented the details in the [contribution policy](CONTRIBUTING.md).
 
-As a result of this separation, the same component may show up in the data in several forms -- the NPM and its source are both treated separately. These components may also have different _revision_ identifiers (e.g., NPM version and Git commit hash). There are links between the different types and as the ecosystem progresses, this web of components will get richer and enable transitive operations, for example, given a vulnerability in a GitHub repo you will be able to find all the packaged versions and forms that included the vulnerable code.
+The [Code of Conduct](CODE_OF_CONDUCT.md) for this project is details how the community interacts in
+an inclusive and respectful manner. Please keep it in mind as you engage here.
 
-## Curation
-
-New curations, or changes to existing curations, are done via PATCHes. Ultimately these surface as PRs in the configured curation repo. They can be manipulated directy there but using this API keeps things regular. Below is an example curation.
-
-```json
-{
-  "described": {
-    "sourceLocation": {
-      "type": "git",
-      "provider": "github",
-      "url": "https://github.com/microsoft/redie",
-      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca"
-    }
-  },
-  "licensed": {
-    "license": {
-      "expression": "MIT"
-    }
-  }
-}
-```
-
-Here the curation updates information in two data _neighborhoods_, `described` and `licensed`. (You will hear us talk about projects being ClearlyDescribed or ClearlyLicensed). These new values will be merged with the existing curation (as part of the PR merge) and laid over whatever data has been harvested when users access the data.
-
-To progammatically submit a curation, wrap the curation from above in an object with a `description` and then send it to the service as a PATCH to, for example, http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
-
-```json
-{
-  "description": "Supply the source location and correct the license to MIT",
-  "patch": {
-    body of the curation here
-  }
-}
-```
-
-You can also get the curation for a particular component revision using one of the following requests. Both return the full curation for the given component. The first (without the `pr` segment), gets the current curation that is in effect -- the content of the `master` branch. The second gets the curation proposed in the given pull request.
-
-```
-GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0
-GET http://localhost:4000/curations/npm/npmjs/-/redie/0.3.0/pr/23
-```
-
-## Data access
-
-Once some data has been harvested and/or curated, you can acces the constituent parts or get the net result of merging the data together.
-
-### Definitions
-Most of the time you will want to see the end result of the harvesting with the curations mixed in. A GET to the `definitions` URL returns the summarized and curated view of the data about the identified component. For example,
-
-```
-GET http://localhost:4000/definitions/npm/npmjs/-/redie/0.3.0
-```
-
-In this case, we are accessing version 0.3.0 of the NPM called redie. Given the above curation, the result would look something like the snippet below. Notice that the `projectWebsite` and `issueTracker` information was not in the curation. That data was harvested through some automated tools.
-
-```json
-{
-  "described": {
-    "sourceLocation": {
-      "type": "git",
-      "provider": "github",
-      "url": "https://github.com/microsoft/redie",
-      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca"
-    },
-    "projectWebsite": "https://github.com/microsoft/redie",
-    "issueTracker": "https://github.com/microsoft/redie/issues",
-  },
-  "licensed": {
-    "license": {
-      "expression": "MIT"
-    }
-  }
-}
-```
-
-You can also get the result that would be given **if** a proposed curation PR were merged. Issue the same GET but add `/pr/<pr number>` on the end. For example, the following gets the result if PR #23 were merged.
-
-```
-GET http://localhost:4000/definitions/npm/npmjs/-/redie/0.3.0/pr/23
-```
-
-### Raw outputs
-
-See the `harvest` endpoint
-
-
-
-
-# Configuration
-
-## Properties
-
-### `SERVICE_ENDPOINT`
-The full origin of the service, e.g. `http://domain.com:port`.
-
-### `WEBSITE_ENDPOINT`
-The full origin of the website/UI, e.g. `http://domain.com:port`.
-
-### `CURATION_GITHUB_OWNER`
-The GitHub user or org that owns the curation repo. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`.
-
-### `CURATION_GITHUB_REPO`
-The GitHub curation repo to use for curations. This repo is assumed to be owned by `CURATION_GITHUB_OWNER`.
-
-### `CURATION_GITHUB_BRANCH`
-The GitHub curation repo branch to use for curations. For testing and development, feel free to use your own. DON'T use `master` and you aren't so DO NOT use `master`.
-
-### `CURATION_GITHUB_TOKEN`
-A Personal Access Token with public_repo scope
-
-### `AUTH_GITHUB_CLIENT_ID` and `AUTH_GITHUB_CLIENT_SECRET`
-If using an OAuth application for GitHub sign-on, set these to the client ID and client secret, respectively.
-If not provided, auth will fall back to `CURATION_GITHUB_TOKEN`.
-
-### `AUTH_GITHUB_ORG`
-The name of the org the site will use for authenticating users. Checks team membership.
-
-   * HARVEST_AZBLOB_CONNECTION_STRING= Azure blob connection string
-   * HARVEST_AZBLOB_CONTAINER_NAME= name of container holding harvested data
-   * PORT= Defaults to 3000, like a lot of other dev setups. Set this if you are running more than one service that uses that port.
-
-### `AUTH_CURATION_TEAM`
-The GitHub team whose members have permission to programmatically write to the curation repo for this environment (e.g., merge pull requests). If left unset, **anyone** can do these operations.
-
-### `AUTH_HARVEST_TEAM`
-The GitHub team whose members have permission to programmatically queue requests to harvest data. That is, they can POST to the /harvest endpoint. If left unset, **anyone** can do these operations.
-
-
-***
-***
+---
 
 # Details (some of which are not up to date)
 
+---
+
 ## System Flow
+
 1. Scan plugin checks if it has already harvested data for a package by calling GET /harvest/...
 1. If it's already harvested then it stops processing
 1. If not it performs the scan and uploads the resulting files by calling PUT /harvest/...
@@ -200,6 +58,7 @@ The GitHub team whose members have permission to programmatically queue requests
 1. As an optimization post merge we could normalize, summarize, and patch the affected package and store the result, if we did this then GET /packages/... would simply read that cache rather than doing the work on the fly
 
 ## Normalized Schema
+
 ```
 package:
   type: string
@@ -220,13 +79,17 @@ license:
 ```
 
 ## Endpoints
+
 ### Resolved
+
 TODO
 
 ### Curation
+
 #### PATCH /curations/:type/:provider/:namespace/:name/:revision
 
 ##### Request Body
+
 ```
 {
   "source_location": {
@@ -247,20 +110,25 @@ TODO
 ```
 
 ##### Description
+
 As a PATCH you only need to provide the attributes you want to add or update, any attributes not included will be ignored. To explicitly remove an attribute set its value to `null`.
 
 TODO: Make sure the attribute names are consistent with AboutCode/ScanCode
 TODO: Include a section where the author's identity and reasoning is provided
 
 ### Harvested
+
 TODO
 
 ## Storage
+
 ### Curation
+
 Curation patches will be stored in:
 https://github.com/clearlydefined/curated-data
 
 #### Structure
+
 ```
 type (npm)
   provider (npmjs.org)
@@ -276,31 +144,19 @@ type (git)
       name.yaml (redie)
 ```
 
-### Badges
-
-To retrieve a link to the image for your badge on your open source page, you can use the API endpoint
-/badges/:type/:provider/:namespace/:name/:revision
-
-So, for example:
-/badges/git/github/expressjs/express/351396f971280ab79faddcf9782ea50f4e88358d
-
-You can embed this into your open source project by putting the following markdown into your Readme.
-(Note please replace variables with your poject information)
-
-```
-![My ClearlyDefined Score](https://api.clearlydefined.io/badges/:type/:provider/:namespace/:name/:revision)
-```
-
 #### Format
+
 TODO
 
 ### Harvested
+
 Harvested data will be stored in:
 https://github.com/clearlydefined/harvested-data
 
 This location is temporary, as harvested data grows will likely need to move it out of GitHub to scale.
 
 #### Structure
+
 ```
 type
   provider
@@ -312,54 +168,56 @@ type
 ```
 
 #### Raw Notes
-What term should we use instead of package?
-* AboutCode says package
-* Concerns that "native" source consumers don't consider what they consume as a package
-* Defer decision :)
-
-What to name output files?
-1. If a single file, then output.ext (e.g. output.json)
-2. If multiple files, then keep their native names.
 
 How to handle different versions of scanners?
+
 * Results are immutable
 * Curations are tied to particular "tool configurations"
 * Tool configurations are immutable
 * Tool configuration and revision should be captured in the output directory
 
 Do we merge results from different versions of ScanCode? How does this impact curation?
+
 * New scan results flag previous curations as needing review (optimization: only if they change the result)
 * The summarization process will be configured as to what tool configurations to consider for summarization (this would need to be a priority list)
 * The summarization process should take into account the link from the package back to the source
 
 Scanning a package where it's actually the source you need to scan, what to store where
 Maven supports scanning sources JAR or scanning GitHub repository
+
 * If we can determine the source location from the package, then we'll queue up the source to be scanned
 * If we can't determine the source location, and the package contains "source" then we'll scan the package
 * Some scanners will run on packages (such as things that inspect package manifest)
 * We should track the link from the package to the source
 
 How to handle tags?
+
 * When we scan GitHub we need to track what tags/branches point at which commits
 * We will use the long commit (40 character) reference
 
 Need to define "origin" and/or pick another term
+
 * Propose to use "provider"
 
 How do we handle case sensitivity?
+
 * If no package managers allow different packages with same name different case, then we can be case preserving, case insensitive
 * We need to be case preserving because some registry endpoints are case sensitive (e.g. NPM)
 
 Define how to do the linking
+
 * We will store one end (package to source), we will cache/materialize the reverse link as part of a build job (or the like)
 
 #### Format
+
 The format of harvested data is tool-specific. Tool output is stored in the tool's native output format. If there is a choice between multiple output formats then the priorities are:
+
 1. Machine-readable
 1. Lossless
 1. JSON
 
 ## Type Registry
+
 * git
 * maven
 * npm
@@ -367,44 +225,35 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 * rubygem
 
 ## Provider Registry
+
 * central.maven.org
 * github.com
 * npmjs.org
 * nuget.org
 
 ## Tool Name Registry
+
 * ScanCode
 * Fossology
 
 ## Terminology
+
 * provider - the provider of metadata about the package (e.g. npmjs.org, github.com, nuget.org, myget.org)
 * revision - used instead of version because it's a superset and valid for source
 * tool configuration - a tuple used to describe the combination of a tool and a named configuration, at a minimum the named configuration should include the version of the tool, but it could also describe the combination of settings used, for example, ScanCode-2.2.1_deepscan and ScanCode-2.2.1_fastscan
 * type - the format of the package (e.g. git, maven, npm)
 
 ## TODO
+
 * Swagger to replace most of this doc
 * Complete registries
 * Complete terminology
 
 ## Running ORT for scanning
+
 Build and run the container.
 
 ```
 docker build -t ort .
 docker run --mount type=bind,source="<path to repo>",target=/app ort scanner -d /app/output/package-json-dependencies.yml -o /app/output-scanner
 ```
-
-# ClearlyDefined, defined.
-
-## Mission
-Help FOSS projects be more successful through clearly defined project data.
-
-For more details on the project, check out the [wiki](../../../clearlydefined/wiki).
-
-# Contributing
-
-This project welcomes contributions and suggestions, and we've documented the details of contribution policy [here](CONTRIBUTING.md).
-
-The [Code of Conduct](CODE_OF_CONDUCT.md) for this project is details how the community interacts in
-an inclusive and respectful manner. Please keep it in mind as you engage here.

@@ -284,7 +284,7 @@ paths:
     get:
       summary: Gets a link to the badge icon of a component revision.
       tags:
-        - components
+        - definitions
       parameters:
         - $ref: "#/components/parameters/type"
         - $ref: "#/components/parameters/provider"
