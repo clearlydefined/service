@@ -7,6 +7,7 @@ const router = express.Router()
 const utils = require('../lib/utils')
 const _ = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
+const MemoryCache = require('../providers/caching/memory')()
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -27,10 +28,13 @@ router.get(
   '/:type?/:provider?/:namespace?/:name?',
   asyncMiddleware(async (request, response) => {
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
+    const cachedDefinitions = await MemoryCache.get(coordinates)
+    if (cachedDefinitions) return response.send(cachedDefinitions)
     const curated = await curationService.list(coordinates)
     const harvest = await harvestService.list(coordinates)
     const stringHarvest = harvest.map(c => c.toString())
     const result = _.union(stringHarvest, curated)
+    MemoryCache.set(coordinates, result, 60 * 5)
     response.status(200).send(result)
   })
 )
