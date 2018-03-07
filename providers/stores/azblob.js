@@ -95,7 +95,12 @@ class AzBlobStore extends AbstractStore {
     const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) => {
       stream.pipe(
-        this.blobService.createWriteStreamToBlockBlob(this.containerName, name, responseOrError(resolve, reject))
+        this.blobService.createWriteStreamToBlockBlob(
+          this.containerName,
+          name,
+          { blockIdPrefix: 'block', contentSettings: { contentType: 'application/json' } },
+          responseOrError(resolve, reject)
+        )
       )
     })
   }
