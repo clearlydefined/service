@@ -33,7 +33,10 @@ const harvest = require('./routes/harvest')(harvester, harvestStore, summaryServ
 const aggregatorService = require('./business/aggregator')(config.aggregator)
 
 const curationProvider = config.curation.store.provider
-const curationService = require(`./providers/curation/${curationProvider}`)(config.curation.store[curationProvider])
+const curationService = require(`./providers/curation/${curationProvider}`)(
+  config.curation.store[curationProvider],
+  config.endpoints
+)
 const curations = require('./routes/curations')(curationService)
 
 const definitionStoreProvider = config.definition.store.provider
