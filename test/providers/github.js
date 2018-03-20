@@ -3,7 +3,7 @@ const GitHubCurationService = require('../../providers/curation/github')
 const Curation = require('../../lib/curation')
 const sinon = require('sinon')
 
-function createService(definitionService = null) {
+function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
   return GitHubCurationService(
     {
       owner: 'foobar',
@@ -12,6 +12,7 @@ function createService(definitionService = null) {
       token: 'foobar',
       tempLocation: '.'
     },
+    endpoints,
     definitionService
   )
 }

@@ -19,8 +19,9 @@ tmp.setGracefulCleanup()
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options, definitionService) {
+  constructor(options, endpoints, definitionService) {
     this.options = options
+    this.endpoints = endpoints
     this.curationUpdateTime = null
     this.tempLocation = null
     this.definitionService = definitionService
@@ -222,7 +223,7 @@ class GitHubCurationService {
   async postCommitStatus(sha, number, componentPath, state, description) {
     const { owner, repo } = this.options
     const github = Github.getClient(this.options)
-    const target_url = `https://dev.clearlydefined.io/curation/${componentPath}/pr/${number}`
+    const target_url = `${this.endpoints.website}/curate/${componentPath}/pr/${number}`
     try {
       return github.repos.createStatus({
         owner,
@@ -324,4 +325,5 @@ class GitHubCurationService {
   }
 }
 
-module.exports = (options, definitionService) => new GitHubCurationService(options, definitionService)
+module.exports = (options, endpoints, definitionService) =>
+  new GitHubCurationService(options, endpoints, definitionService)
