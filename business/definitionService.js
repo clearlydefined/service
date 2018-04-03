@@ -6,12 +6,13 @@ const throat = require('throat')
 const { get } = require('lodash')
 
 class DefinitionService {
-  constructor(harvest, summary, aggregator, curation, store) {
+  constructor(harvest, summary, aggregator, curation, store, search) {
     this.harvestService = harvest
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
     this.definitionStore = store
+    this.search = search
   }
 
   /**
@@ -89,6 +90,7 @@ class DefinitionService {
     stream.push(null) // end of stream
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     await this.definitionStore.store(definitionCoordinates, stream)
+    await this.search.store(definitionCoordinates, definition)
     return definition
   }
 
@@ -181,5 +183,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvest, summary, aggregator, curation, store) =>
-  new DefinitionService(harvest, summary, aggregator, curation, store)
+module.exports = (harvest, summary, aggregator, curation, store, search) =>
+  new DefinitionService(harvest, summary, aggregator, curation, store, search)
