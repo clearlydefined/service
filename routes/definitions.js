@@ -23,6 +23,21 @@ async function getDefinition(request, response) {
   response.status(200).send(result)
 }
 
+// Get a list of autocomplete suggestions of components for which we have any kind of definition.
+router.get('/suggestions', asyncMiddleware(getDefinitionSuggestions))
+async function getDefinitionSuggestions(request, response) {
+  const type = request.query.type || 'coordinates'
+  const pattern = request.query.pattern
+  switch (type) {
+    case 'coordinates':
+      return response.send(await definitionService.suggestCoordinates(pattern))
+    case 'copyright':
+      return response.send(definitionService.suggestCopyright(pattern))
+    default:
+      throw new Error(`Invalid search type: ${type}`)
+  }
+}
+
 // Get a list of the components for which we have any kind of definition.
 router.get(
   '/:type?/:provider?/:namespace?/:name?',

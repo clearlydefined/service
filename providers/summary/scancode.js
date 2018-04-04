@@ -81,7 +81,7 @@ class ScanCodeSummarizer {
         parties: this._setToArray(copyrightHolders),
         unknown: unknownParties
       },
-      declared: this._setToArray(declaredLicenses),
+      declared: this._toExpression(declaredLicenses),
       discovered: {
         expressions: this._setToArray(licenseExpressions),
         unknown: unknownLicenses
@@ -96,6 +96,11 @@ class ScanCodeSummarizer {
     if (!['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase())) return
     if (!file.licenses) return
     file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
+  }
+
+  _toExpression(licenses) {
+    const list = this._setToArray(licenses)
+    return list.join(' and ')
   }
 
   _setToArray(licenses) {

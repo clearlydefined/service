@@ -74,7 +74,8 @@ class DefinitionService {
         throat(10, async coordinates => {
           const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            return await this.definitionStore.delete(definitionCoordinates)
+            await this.definitionStore.delete(definitionCoordinates)
+            return this.search.delete(definitionCoordinates)
           } catch (error) {
             if (!error.code === 'ENOENT') throw error
           }
@@ -90,7 +91,7 @@ class DefinitionService {
     stream.push(null) // end of stream
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     await this.definitionStore.store(definitionCoordinates, stream)
-    await this.search.store(definitionCoordinates, definition)
+    await this.search.store(coordinates, definition)
     return definition
   }
 
@@ -114,6 +115,15 @@ class DefinitionService {
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
     return definition
+  }
+
+  /**
+   * Suggest a set of defintion coordinates that match the given pattern. Only existing definitions are searched.
+   * @param {String} pattern - A pattern to look for in the coordinates of a definition
+   * @returns {String[]} The list of suggested coordinates found
+   */
+  suggestCoordinates(pattern) {
+    return this.search.suggestCoordinates(pattern)
   }
 
   /**

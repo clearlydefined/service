@@ -129,6 +129,9 @@
     "licensed": {
       "additionalProperties": false,
       "properties": {
+        "declared": {
+          "$ref": "#/definitions/declared"
+        },
         "facets": {
           "$ref": "#/definitions/facets"
         }
@@ -162,9 +165,6 @@
       "properties": {
         "attribution": {
           "$ref": "#/definitions/attribution"
-        },
-        "declared": {
-          "$ref": "#/definitions/declared"
         },
         "discovered": {
           "$ref": "#/definitions/discovered"

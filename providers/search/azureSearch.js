@@ -2,26 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
+const { get, uniq, values } = require('lodash')
+const base64 = require('base-64')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2016-09-01'
-const indexName = 'definitions'
+const coordinatesIndexName = 'coordinates'
 
 class AzureSearch {
   constructor(options) {
     this.options = options
   }
 
-  async _list(coordinates) {
-    const result = await new Promise((resolve, reject) => {
-      const name = this._toStoragePathFromCoordinates(coordinates)
-      this.searchService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
-    })
-    return result.entries.map(entry => entry.name)
-  }
-
-  _filter(list) {
-    return list.filter(entry => entry.type !== 'deadletter')
+  async initialize() {
+    if (!await this._hasIndex(coordinatesIndexName)) this._createIndex(this._buildCoordinatesIndex())
   }
 
   /**
@@ -32,16 +26,83 @@ class AzureSearch {
    * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @returns The object found at the given coordinates
    */
-  get(coordinates) {
-    let name = this._toStoragePathFromCoordinates(coordinates)
-    if (!name.endsWith('.json')) name += '.json'
-    return requestPromise({
+  async get(pattern) {
+    const searchResult = await requestPromise({
       method: 'GET',
-      url: this._buildUrl(`indexes/${indexName}`),
+      url: this._buildUrl(`indexes/${coordinatesIndexName}`),
       headers: this._getHeaders(),
       json: true,
       withCredentials: false
     })
+  }
+
+  /**
+   * Get a list of suggested coordinates that match the given pattern
+   * @param {String} pattern - A pattern to look for in the coordinates of a definition
+   * @returns {String[]} The list of suggested coordinates found
+   */
+  async suggestCoordinates(pattern) {
+    const baseUrl = this._buildUrl(`indexes/${coordinatesIndexName}/docs/suggest`)
+    const url = `${baseUrl}&search=${pattern}&suggesterName=suggester&$select=coordinates&$top=50`
+    const searchResult = await requestPromise({
+      method: 'GET',
+      url,
+      headers: this._getHeaders(),
+      json: true,
+      withCredentials: false
+    })
+    return searchResult.value.map(result => result.coordinates)
+  }
+
+  _getLicenses(definition) {
+    const facets = get(definition, 'licensed.facets')
+    if (!facets) return []
+    // TODO probably need to use a better comparison here that compares actual expressions rather than just the strings
+    return uniq(
+      values(facets).reduce((result, facet) => result.concat(get(facet, 'discovered.expressions')), [])
+    ).filter(e => e)
+  }
+
+  _getAttributions(definition) {
+    const facets = get(definition, 'licensed.facets')
+    if (!facets) return []
+    return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties')), [])).filter(
+      e => e
+    )
+  }
+
+  store(coordinates, object) {
+    const coordinatesString = coordinates.toString()
+    const entry = {
+      '@search.action': 'upload',
+      key: base64.encode(coordinatesString),
+      coordinates: coordinatesString,
+      releaseDate: get(object, 'described.releaseDate'),
+      declaredLicense: get(object, 'licensed.declared'),
+      discoveredLicenses: this._getLicenses(object),
+      attributionParties: this._getAttributions(object)
+    }
+    return requestPromise({
+      method: 'POST',
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
+      headers: this._getHeaders(),
+      body: { value: [entry] },
+      withCredentials: false,
+      json: true
+    })
+    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
+  }
+
+  delete(coordinates) {
+    return requestPromise({
+      method: 'POST',
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
+      headers: this._getHeaders(),
+      body: { value: [{ '@search.action': 'delete', key: base64.encode(coordinates.toString()) }] },
+      withCredentials: false,
+      json: true
+    })
+    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
   _buildUrl(endpoint) {
@@ -56,97 +117,43 @@ class AzureSearch {
     }
   }
 
-  /**
-   * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
-   * to a revision.
-   * @param {EntityCoordinates} coordinates - The component revision to report on
-   * @returns An object with a property for each tool and tool version
-   */
-  // getAll(coordinates) {
-  //   const name = this._toStoragePathFromCoordinates(coordinates)
-  //   // Note that here we are assuming the number of blobs will be small-ish (<10) and
-  //   // a) all fit in memory reasonably, and
-  //   // b) fit in one list call (i.e., <5000)
-  //   const list = new Promise((resolve, reject) => {
-  //     this.searchService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
-  //   })
-  //   const contents = list.then(files => {
-  //     return Promise.all(
-  //       files.entries.map(file => {
-  //         return new Promise((resolve, reject) => {
-  //           this.searchService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
-  //         }).then(result => {
-  //           return { name: file.name, content: JSON.parse(result) }
-  //         })
-  //       })
-  //     )
-  //   })
-  //   return contents.then(entries => {
-  //     return entries.reduce((result, entry) => {
-  //       const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
-  //       const current = (result[tool] = result[tool] || {})
-  //       current[toolVersion] = entry.content
-  //       return result
-  //     }, {})
-  //   })
-  // }
-
-  store(coordinates, object) {
-    const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    return requestPromise({
-      method: 'POST',
-      url: this._buildUrl(`indexes/${indexName}`),
-      headers: this._getHeaders(),
-      body: { value: [{ '@search.action': 'upload', coordinates, ...object }] },
-      withCredentials: false,
-      json: true
-    })
-    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
-  }
-
-  delete(coordinates) {
-    const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    return requestPromise({
-      method: 'POST',
-      url: this._buildUrl(`indexes/${indexName}`),
-      headers: this._getHeaders(),
-      body: { value: [{ '@search.action': 'delete', coordinates }] },
-      withCredentials: false,
-      json: true
-    })
-    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
-  }
-
-  async initialize() {
-    const index = await this._getIndex()
-    if (index) return
-    return this._createIndex()
-  }
-
-  _createIndex() {
-    const index = {
-      name: indexName,
+  _buildCoordinatesIndex() {
+    return {
+      name: coordinatesIndexName,
       fields: [
-        { name: 'coordinates', type: 'Edm.String', key: true, facetable: false },
-        { name: 'copyrightHolders', type: 'Collection(Edm.String)' },
+        { name: 'key', type: 'Edm.String', key: true },
+        { name: 'coordinates', type: 'Edm.String' },
+        { name: 'declaredLicense', type: 'Edm.String' },
+        { name: 'discoveredLicenses', type: 'Collection(Edm.String)' },
+        { name: 'attributionParties', type: 'Collection(Edm.String)' },
         { name: 'releaseDate', type: 'Edm.DateTimeOffset' }
+      ],
+      suggesters: [
+        {
+          name: 'suggester',
+          searchMode: 'analyzingInfixMatching',
+          sourceFields: ['coordinates']
+        }
       ]
     }
+  }
+
+  _createIndex(body) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes`),
       headers: this._getHeaders(),
-      body: index,
+      body,
       withCredentials: false,
       json: true
     })
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
-  async _getIndex() {
+  async _hasIndex(name) {
     const index = await requestPromise({
       method: 'GET',
-      url: this._buildUrl(`indexes/${indexName}`),
+      url: this._buildUrl(`indexes/${name}`),
       headers: this._getHeaders(),
       withCredentials: false,
       simple: false,

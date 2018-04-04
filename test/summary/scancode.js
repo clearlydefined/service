@@ -219,7 +219,7 @@ describe('ScanCode summarizer', () => {
     const dev = summary.licensed.facets.dev
     expect(dev.files).to.eq(0)
     const discovered = dev.discovered
-    expect(!!discovered.expression).to.be.false
+    expect(!!discovered.expressions).to.be.false
     expect(discovered.unknown).to.eq(0)
     const tests = summary.licensed.facets.tests
     expect(tests.files).to.eq(2)
