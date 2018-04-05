@@ -4,17 +4,15 @@
 const requestPromise = require('request-promise-native')
 const { get, uniq, values } = require('lodash')
 const base64 = require('base-64')
+const AbstractSearch = require('./abstractSearch')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2016-09-01'
 const coordinatesIndexName = 'coordinates'
 
-class AzureSearch {
-  constructor(options) {
-    this.options = options
-  }
-
+class AzureSearch extends AbstractSearch {
   async initialize() {
+    super.initialize()
     if (!await this._hasIndex(coordinatesIndexName)) this._createIndex(this._buildCoordinatesIndex())
   }
 
@@ -54,34 +52,8 @@ class AzureSearch {
     return searchResult.value.map(result => result.coordinates)
   }
 
-  _getLicenses(definition) {
-    const facets = get(definition, 'licensed.facets')
-    if (!facets) return []
-    // TODO probably need to use a better comparison here that compares actual expressions rather than just the strings
-    return uniq(
-      values(facets).reduce((result, facet) => result.concat(get(facet, 'discovered.expressions')), [])
-    ).filter(e => e)
-  }
-
-  _getAttributions(definition) {
-    const facets = get(definition, 'licensed.facets')
-    if (!facets) return []
-    return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties')), [])).filter(
-      e => e
-    )
-  }
-
-  store(coordinates, object) {
-    const coordinatesString = coordinates.toString()
-    const entry = {
-      '@search.action': 'upload',
-      key: base64.encode(coordinatesString),
-      coordinates: coordinatesString,
-      releaseDate: get(object, 'described.releaseDate'),
-      declaredLicense: get(object, 'licensed.declared'),
-      discoveredLicenses: this._getLicenses(object),
-      attributionParties: this._getAttributions(object)
-    }
+  store(coordinates, definition) {
+    const entry = this._getEntry(coordinates, definition)
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
