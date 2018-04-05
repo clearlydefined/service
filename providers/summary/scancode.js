@@ -100,7 +100,7 @@ class ScanCodeSummarizer {
 
   _toExpression(licenses) {
     const list = this._setToArray(licenses)
-    return list.join(' and ')
+    return list ? list.join(' and ') : null
   }
 
   _setToArray(licenses) {

@@ -8,13 +8,13 @@ revisions:
     described:
       issueTracker: "https://foobar.com/baz/1"
     licensed:
+      declared: "MIT"
       facets:
         tests: 
           attribution:
             parties:
               - "foo"
               - "bar"
-          declared: "MIT"
   4.17.5:
     described:
       releaseDate: "2018-01-18T06:00:51.556Z"
