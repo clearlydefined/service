@@ -3,6 +3,7 @@
 
 const { get, uniq, values } = require('lodash')
 const base64 = require('base-64')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 class AbstractSearch {
   constructor(options) {
@@ -47,8 +48,8 @@ class AbstractSearch {
     )
   }
 
-  _getEntry(coordinates, definition) {
-    const coordinatesString = coordinates.toString()
+  _getEntry(definition) {
+    const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
     return {
       '@search.action': 'upload',
       key: base64.encode(coordinatesString),
@@ -60,7 +61,7 @@ class AbstractSearch {
     }
   }
 
-  store(coordinates, definition) {}
+  store(definition) {}
 
   delete(coordinates) {}
 }

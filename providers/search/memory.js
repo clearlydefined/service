@@ -16,12 +16,14 @@ class MemorySearch extends AbstractSearch {
    * @returns {String[]} The list of suggested coordinates found
    */
   async suggestCoordinates(pattern) {
-    return values(this.index).filter(definition => definition.coordinates.includes(pattern))
+    return values(this.index)
+      .filter(definition => definition.coordinates.includes(pattern))
+      .map(entry => entry.coordinates)
   }
 
-  store(coordinates, definition) {
-    const entry = this._getEntry(coordinates, definition)
-    this.index[coordinates.toString()] = entry
+  store(definition) {
+    const entry = this._getEntry(definition)
+    this.index[entry.coordinates] = entry
   }
 
   delete(coordinates) {

@@ -17,17 +17,15 @@ class AzureSearch extends AbstractSearch {
   }
 
   /**
-   * Get the results of running the tool specified in the coordinates on the entty specified
-   * in the coordinates. If a stream is given, write the content directly on the stream and close.
-   * Otherwise, return an object that represents the result.
+   * Get the search document associated with the given coordinates
    *
-   * @param {ResultCoordinates} coordinates - The coordinates of the result to get
+   * @param {EntityCoordinates} coordinates - The coordinates of the result to get
    * @returns The object found at the given coordinates
    */
-  async get(pattern) {
+  async get(coordinates) {
     const searchResult = await requestPromise({
       method: 'GET',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}`),
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/${this._getKey(coordinates)}`),
       headers: this._getHeaders(),
       json: true,
       withCredentials: false
@@ -35,7 +33,7 @@ class AzureSearch extends AbstractSearch {
   }
 
   /**
-   * Get a list of suggested coordinates that match the given pattern
+   * Get a list of coordinates suggested for the given pattern
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
    */
@@ -52,8 +50,12 @@ class AzureSearch extends AbstractSearch {
     return searchResult.value.map(result => result.coordinates)
   }
 
-  store(coordinates, definition) {
-    const entry = this._getEntry(coordinates, definition)
+  /**
+   * Index the given definition in the search system
+   * @param {Definition} definition - the definition to index
+   */
+  store(definition) {
+    const entry = this._getEntry(definition)
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
@@ -65,16 +67,24 @@ class AzureSearch extends AbstractSearch {
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
+  /**
+   * Deletely the identified definition from the search system
+   * @param {EntityCoordinates} coordinates - the coordinates of the definition to delete
+   */
   delete(coordinates) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
       headers: this._getHeaders(),
-      body: { value: [{ '@search.action': 'delete', key: base64.encode(coordinates.toString()) }] },
+      body: { value: [{ '@search.action': 'delete', key: this._getKey(coordinates) }] },
       withCredentials: false,
       json: true
     })
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
+  }
+
+  _getKey(coordinats) {
+    return base64.encode(coordinates.toString())
   }
 
   _buildUrl(endpoint) {

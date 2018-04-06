@@ -24,10 +24,15 @@ async function getDefinition(request, response) {
 }
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
-router.get('/suggestions', asyncMiddleware(getDefinitionSuggestions))
+// and match the given query
+router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(getDefinitionSuggestions))
 async function getDefinitionSuggestions(request, response) {
   const type = request.query.type || 'coordinates'
   const pattern = request.query.pattern
+  // TODO temporary endpoint to trigger reloading the index
+  if (request.query.reload) return reload(request, response)
+  // TODO remove this when we stop using the explicit definition list approach
+  if (!pattern) return getDefinitionList(request, response)
   switch (type) {
     case 'coordinates':
       return response.send(await definitionService.suggestCoordinates(pattern))
@@ -38,21 +43,23 @@ async function getDefinitionSuggestions(request, response) {
   }
 }
 
-// Get a list of the components for which we have any kind of definition.
-router.get(
-  '/:type?/:provider?/:namespace?/:name?',
-  asyncMiddleware(async (request, response) => {
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
-    const cachedDefinitions = await DefinitionsCache.get(coordinates)
-    if (cachedDefinitions) return response.send(cachedDefinitions)
-    const curated = await curationService.list(coordinates)
-    const harvest = await harvestService.list(coordinates)
-    const stringHarvest = harvest.map(c => c.toString())
-    const result = _.union(stringHarvest, curated)
-    DefinitionsCache.set(coordinates, result)
-    response.send(result)
-  })
-)
+// TODO remove when everything is switched over to use suggestions
+async function getDefinitionList(request, response) {
+  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const cachedDefinitions = await DefinitionsCache.get(coordinates)
+  if (cachedDefinitions) return response.send(cachedDefinitions)
+  const result = await definitionService.list(coordinates)
+  DefinitionsCache.set(coordinates, result)
+  response.send(result)
+}
+
+// TODO temporary method used to trigger the reloading of the search index
+async function reload(request, response) {
+  const list = await definitionService.list(new EntityCoordinates())
+  const coordinatesList = list.map(entry => EntityCoordinates.fromString(entry))
+  await definitionService.reloadSearchIndex(coordinatesList)
+  response.send('')
+}
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
