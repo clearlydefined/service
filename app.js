@@ -59,8 +59,6 @@ const definitionService = require('./business/definitionService')(
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
 
-require('./business/cacheRefresher')(harvestStore, curationService)
-
 const badges = require('./routes/badges').getRouter(definitionService)
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 

@@ -7,7 +7,6 @@ const router = express.Router()
 const utils = require('../lib/utils')
 const _ = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const DefinitionsCache = require('../business/definitionsCache')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -31,8 +30,6 @@ async function getDefinitionSuggestions(request, response) {
   const pattern = request.query.pattern
   // TODO temporary endpoint to trigger reloading the index
   if (request.query.reload) return reload(request, response)
-  // TODO remove this when we stop using the explicit definition list approach
-  if (!pattern) return getDefinitionList(request, response)
   switch (type) {
     case 'coordinates':
       return response.send(await definitionService.suggestCoordinates(pattern))
@@ -41,16 +38,6 @@ async function getDefinitionSuggestions(request, response) {
     default:
       throw new Error(`Invalid search type: ${type}`)
   }
-}
-
-// TODO remove when everything is switched over to use suggestions
-async function getDefinitionList(request, response) {
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
-  const cachedDefinitions = await DefinitionsCache.get(coordinates)
-  if (cachedDefinitions) return response.send(cachedDefinitions)
-  const result = await definitionService.list(coordinates)
-  DefinitionsCache.set(coordinates, result)
-  response.send(result)
 }
 
 // TODO temporary method used to trigger the reloading of the search index

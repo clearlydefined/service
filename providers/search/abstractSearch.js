@@ -50,11 +50,14 @@ class AbstractSearch {
 
   _getEntry(definition) {
     const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
+    const date = get(definition, 'described.releaseDate')
+    // TODO temporary hack to deal with bad data in dev blobs
+    const releaseDate = date === '%cI' ? null : date
     return {
       '@search.action': 'upload',
       key: base64.encode(coordinatesString),
       coordinates: coordinatesString,
-      releaseDate: get(definition, 'described.releaseDate'),
+      releaseDate,
       declaredLicense: get(definition, 'licensed.declared'),
       discoveredLicenses: this._getLicenses(definition),
       attributionParties: this._getAttributions(definition)

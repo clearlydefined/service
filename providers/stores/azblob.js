@@ -53,7 +53,13 @@ class AzBlobStore extends AbstractStore {
       })
     return new Promise((resolve, reject) => {
       this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
-    }).then(result => JSON.parse(result))
+    }).then(
+      result => JSON.parse(result),
+      error => {
+        if (error.statusCode === 404) return null
+        throw error
+      }
+    )
   }
 
   /**
