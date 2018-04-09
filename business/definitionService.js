@@ -72,7 +72,6 @@ class DefinitionService {
   async list(coordinates) {
     const curated = await this.curationService.list(coordinates)
     const harvest = await this.harvestService.list(coordinates)
-    const stringHarvest = harvest.map(c => c.toString())
     return union(stringHarvest, curated)
   }
 

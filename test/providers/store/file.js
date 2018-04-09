@@ -192,7 +192,7 @@ describe('FileStore listing content ', () => {
       fileStore._list = () => input.paths.map(path => input.location + '/' + path)
       const list = await fileStore.list('dummy')
       list.forEach((item, index) => {
-        const expectedCoordinates = new EntityCoordinates(...input.coordinates[index])
+        const expectedCoordinates = EntityCoordinates.fromString(input.coordinates[index])
         assert.deepEqual(item, expectedCoordinates)
       })
     })
@@ -202,7 +202,7 @@ describe('FileStore listing content ', () => {
       fileStore._list = () => input.paths.map(path => input.location + '/' + path)
       const list = await fileStore.list('dummy', 'result')
       list.forEach((item, index) => {
-        const expectedCoordinates = new ResultCoordinates(...input.coordinates[index])
+        const expectedCoordinates = ResultCoordinates.fromString(input.coordinates[index])
         assert.deepEqual(item, expectedCoordinates)
       })
     })
