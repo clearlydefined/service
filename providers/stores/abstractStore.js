@@ -36,23 +36,11 @@ class AbstractStore {
     return result
   }
 
-  async list(coordinates, type = 'entity') {
-    const list = await this._list(coordinates)
-    const result = list.map(path => {
-      if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(path)
-      if (type === 'result') return this._toResultCoordinatesFromStoragePath(path)
-      throw new Error(`Invalid list type: ${type}`)
-    })
-    const filtered = this._filter(result)
-    return _.uniqWith(filtered, _.isEqual)
-  }
-
-  _list() {
-    throw new Error('subclasses must implement "_list"')
-  }
-
-  _filter() {
-    throw new Error('subclasses must implement "_filter"')
+  _getEntry(entry, type) {
+    if (entry.startsWith('deadletter/')) return null
+    if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(entry)
+    if (type === 'result') return this._toResultCoordinatesFromStoragePath(entry)
+    throw new Error(`Invalid list type: ${type}`)
   }
 
   _toResultCoordinatesFromStoragePath(path) {

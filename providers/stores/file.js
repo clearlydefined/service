@@ -17,10 +17,16 @@ class FileStore extends AbstractStore {
     this.options = options
   }
 
-  async _list(coordinates) {
-    const path = this._toStoragePathFromCoordinates(coordinates)
+  async list(coordinates, type = 'entity') {
     try {
-      return await recursive(path)
+      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates))
+      const list = new Set()
+      paths.forEach(entry => {
+        const value = this._getEntry(entry, type)
+        if (!value) return
+        list.add(value.toString())
+      })
+      return Array.from(list).sort()
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []
@@ -28,8 +34,9 @@ class FileStore extends AbstractStore {
     }
   }
 
-  _filter(list) {
-    return list.filter(entry => ['git', 'npm', 'maven', 'sourcearchive'].includes(entry.type))
+  _getEntry(entry, type) {
+    const result = super._getEntry(entry, type)
+    return ['git', 'npm', 'maven', 'sourcearchive'].includes(result.type) ? result : null
   }
 
   _toStoragePathFromCoordinates(coordinates) {
