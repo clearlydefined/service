@@ -344,12 +344,15 @@ components:
               revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
             releaseDate: 2018-01-29T01:29:32.869Z
           licensed:
+            declared: MIT
             facets:
               core: 
                 attribution:
                   parties:
                     - Microsoft Corporation
-                declared: MIT
+                discovered:
+                    - MIT
+                    - GPL
 
     outputSummaryList:
       type: object

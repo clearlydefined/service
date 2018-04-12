@@ -23,16 +23,27 @@ class AzBlobStore extends AbstractStore {
     return this.blobService
   }
 
-  async _list(coordinates) {
-    const result = await new Promise((resolve, reject) => {
-      const name = this._toStoragePathFromCoordinates(coordinates)
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
-    })
-    return result.entries.map(entry => entry.name)
-  }
-
-  _filter(list) {
-    return list.filter(entry => entry.type !== 'deadletter')
+  async list(coordinates, type = 'entity') {
+    const list = new Set()
+    let continuation = null
+    while (true) {
+      const result = await new Promise((resolve, reject) => {
+        const name = this._toStoragePathFromCoordinates(coordinates)
+        this.blobService.listBlobsSegmentedWithPrefix(
+          this.containerName,
+          name,
+          continuation,
+          resultOrError(resolve, reject)
+        )
+      })
+      result.entries.forEach(entry => {
+        const value = this._getEntry(entry.name, type)
+        if (!value) return
+        list.add(value.toString())
+      })
+      if (!result.continuationToken) return Array.from(list).sort()
+      continuation = result.continuationToken
+    }
   }
 
   /**
@@ -53,7 +64,13 @@ class AzBlobStore extends AbstractStore {
       })
     return new Promise((resolve, reject) => {
       this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
-    }).then(result => JSON.parse(result))
+    }).then(
+      result => JSON.parse(result),
+      error => {
+        if (error.statusCode === 404) return null
+        throw error
+      }
+    )
   }
 
   /**

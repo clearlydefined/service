@@ -7,7 +7,6 @@ const router = express.Router()
 const utils = require('../lib/utils')
 const _ = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const DefinitionsCache = require('../business/definitionsCache')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -23,21 +22,29 @@ async function getDefinition(request, response) {
   response.status(200).send(result)
 }
 
-// Get a list of the components for which we have any kind of definition.
-router.get(
-  '/:type?/:provider?/:namespace?/:name?',
-  asyncMiddleware(async (request, response) => {
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
-    const cachedDefinitions = await DefinitionsCache.get(coordinates)
-    if (cachedDefinitions) return response.send(cachedDefinitions)
-    const curated = await curationService.list(coordinates)
-    const harvest = await harvestService.list(coordinates)
-    const stringHarvest = harvest.map(c => c.toString())
-    const result = _.union(stringHarvest, curated)
-    DefinitionsCache.set(coordinates, result)
-    response.send(result)
-  })
-)
+// Get a list of autocomplete suggestions of components for which we have any kind of definition.
+// and match the given query
+router.get('', asyncMiddleware(getDefinitionSuggestions))
+async function getDefinitionSuggestions(request, response) {
+  // TODO temporary endpoint to trigger reloading the index or definitions
+  if (request.query.reload) return reload(request, response)
+  const type = request.query.type || 'coordinates'
+  const pattern = request.query.pattern
+  switch (type) {
+    case 'coordinates':
+      return response.send(await definitionService.suggestCoordinates(pattern))
+    case 'copyright':
+      return response.send(definitionService.suggestCopyright(pattern))
+    default:
+      throw new Error(`Invalid search type: ${type}`)
+  }
+}
+
+// TODO temporary method used to trigger the reloading of the search index
+async function reload(request, response) {
+  await definitionService.reload(request.query.reload)
+  response.status(200).end()
+}
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch

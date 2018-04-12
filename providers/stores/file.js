@@ -17,10 +17,16 @@ class FileStore extends AbstractStore {
     this.options = options
   }
 
-  async _list(coordinates) {
-    const path = this._toStoragePathFromCoordinates(coordinates)
+  async list(coordinates, type = 'entity') {
     try {
-      return await recursive(path)
+      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates))
+      const list = new Set()
+      paths.forEach(entry => {
+        const value = this._getEntry(entry, type)
+        if (!value) return
+        list.add(value.toString())
+      })
+      return Array.from(list).sort()
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []
@@ -28,8 +34,9 @@ class FileStore extends AbstractStore {
     }
   }
 
-  _filter(list) {
-    return list.filter(entry => ['git', 'npm', 'maven', 'sourcearchive'].includes(entry.type))
+  _getEntry(entry, type) {
+    const result = super._getEntry(entry, type)
+    return ['git', 'npm', 'maven', 'sourcearchive'].includes(result.type) ? result : null
   }
 
   _toStoragePathFromCoordinates(coordinates) {
@@ -54,7 +61,7 @@ class FileStore extends AbstractStore {
    *
    * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @param {WriteStream} [stream] - The stream onto which the result is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
+   * @returns {Definition} The result object if no stream is specified, otherwise the return value is unspecified.
    */
   async get(coordinates, stream) {
     const filePath = await this._getFilePath(coordinates)
@@ -65,8 +72,12 @@ class FileStore extends AbstractStore {
         read.on('error', error => reject(error))
         read.pipe(stream)
       })
-    return new Promise((resolve, reject) => fs.readFile(filePath, resultOrError(resolve, reject))).then(result =>
-      JSON.parse(result)
+    return new Promise((resolve, reject) => fs.readFile(filePath, resultOrError(resolve, reject))).then(
+      result => JSON.parse(result),
+      error => {
+        if (error.code === 'ENOENT') return null
+        throw error
+      }
     )
   }
 
@@ -90,7 +101,13 @@ class FileStore extends AbstractStore {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const files = await recursive(root)
+    let files = null
+    try {
+      files = await recursive(root)
+    } catch (error) {
+      if (error.code === 'ENOENT') return []
+      throw error
+    }
     const contents = await Promise.all(
       files.map(file => {
         return new Promise((resolve, reject) =>

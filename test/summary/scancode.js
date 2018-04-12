@@ -104,7 +104,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expressions).to.include('GPL')
     expect(discovered.unknown).to.eq(0)
     const declared = core.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
   })
 
   it('handles scan with asserted license file', () => {
@@ -118,7 +118,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expressions).to.be.null
     expect(discovered.unknown).to.eq(0)
     const declared = core.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
   })
 
   it('handles scan with both asserted discovered license file', () => {
@@ -132,7 +132,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expressions).to.deep.eq(['GPL'])
     expect(discovered.unknown).to.eq(0)
     const declared = core.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
   })
 
   it('summarizes with empty object facets', () => {
@@ -146,7 +146,7 @@ describe('ScanCode summarizer', () => {
     expect(discovered.expressions).to.deep.eq(['GPL'])
     expect(discovered.unknown).to.eq(0)
     const declared = core.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
   })
 
   it('summarizes with basic filters', () => {
@@ -163,7 +163,7 @@ describe('ScanCode summarizer', () => {
     const tests = summary.licensed.facets.tests
     expect(tests.files).to.eq(1)
     const declared = tests.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
     expect(!!tests.discovered.expressions).to.be.false
     expect(tests.discovered.unknown).to.eq(0)
   })
@@ -182,7 +182,7 @@ describe('ScanCode summarizer', () => {
     const tests = summary.licensed.facets.tests
     expect(tests.files).to.eq(1)
     const declared = tests.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
     expect(!!tests.discovered.expressions).to.be.false
     expect(tests.discovered.unknown).to.eq(0)
   })
@@ -203,7 +203,7 @@ describe('ScanCode summarizer', () => {
     const tests = summary.licensed.facets.tests
     expect(tests.files).to.eq(1)
     const declared = tests.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
     expect(!!tests.discovered.expressions).to.be.false
     expect(tests.discovered.unknown).to.eq(0)
   })
@@ -219,12 +219,12 @@ describe('ScanCode summarizer', () => {
     const dev = summary.licensed.facets.dev
     expect(dev.files).to.eq(0)
     const discovered = dev.discovered
-    expect(!!discovered.expression).to.be.false
+    expect(!!discovered.expressions).to.be.false
     expect(discovered.unknown).to.eq(0)
     const tests = summary.licensed.facets.tests
     expect(tests.files).to.eq(2)
     const declared = tests.declared
-    expect(declared).to.deep.eq(['MIT'])
+    expect(declared).to.eq('MIT')
     expect(tests.discovered.expressions).to.deep.eq(['GPL'])
     expect(tests.discovered.unknown).to.eq(0)
   })

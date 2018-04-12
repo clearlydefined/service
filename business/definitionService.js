@@ -3,15 +3,17 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get } = require('lodash')
+const { get, union, values } = require('lodash')
+const EntityCoordinates = require('../lib/entityCoordinates')
 
 class DefinitionService {
-  constructor(harvest, summary, aggregator, curation, store) {
+  constructor(harvest, summary, aggregator, curation, store, search) {
     this.harvestService = harvest
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
     this.definitionStore = store
+    this.search = search
   }
 
   /**
@@ -29,14 +31,15 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    if (force) await this.invalidate(coordinates)
-    try {
-      const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-      return await this.definitionStore.get(definitionCoordinates)
-    } catch (error) {
-      // cache miss
-      return this.computeAndStore(coordinates)
-    }
+    const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
+    const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
+    return this._cast(existing || this.computeAndStore(coordinates))
+  }
+
+  // ensure the defintion is a properly classed object
+  _cast(definition) {
+    definition.coordinates = EntityCoordinates.fromObject(definition.coordinates)
+    return definition
   }
 
   /**
@@ -51,13 +54,27 @@ class DefinitionService {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const summary = await this.get(coordinates, null, force)
-        const key = coordinates.asEntityCoordinates().toString()
-        result[key] = summary
+        const definition = await this.get(coordinates, null, force)
+        if (!definition) return
+        const key = definition.coordinates.toString()
+        result[key] = definition
       })
     )
     await Promise.all(promises)
     return result
+  }
+
+  /** Get a list of coordinates for all known definitions that match the given coordinates
+   * @param {EntityCoordinates} coordinates - the coordinates to query
+   * @returns {String[]} the list of all coordinates for all discovered definitions
+   */
+  async list(coordinates, recompute = false) {
+    if (recompute) {
+      const curated = await this.curationService.list(coordinates)
+      const harvest = await this.harvestService.list(coordinates)
+      return union(harvest, curated)
+    }
+    return this.definitionStore.list(coordinates)
   }
 
   /**
@@ -73,7 +90,8 @@ class DefinitionService {
         throat(10, async coordinates => {
           const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            return await this.definitionStore.delete(definitionCoordinates)
+            await this.definitionStore.delete(definitionCoordinates)
+            return this.search.delete(definitionCoordinates)
           } catch (error) {
             if (!error.code === 'ENOENT') throw error
           }
@@ -89,6 +107,7 @@ class DefinitionService {
     stream.push(null) // end of stream
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     await this.definitionStore.store(definitionCoordinates, stream)
+    await this.search.store(definition)
     return definition
   }
 
@@ -112,6 +131,36 @@ class DefinitionService {
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
     return definition
+  }
+
+  /**
+   * Suggest a set of defintion coordinates that match the given pattern. Only existing definitions are searched.
+   * @param {String} pattern - A pattern to look for in the coordinates of a definition
+   * @returns {String[]} The list of suggested coordinates found
+   */
+  suggestCoordinates(pattern) {
+    return this.search.suggestCoordinates(pattern)
+  }
+
+  // helper method to prime the search store while get the system up and running. Should not be
+  // needed in general.
+  // mode can be definitions or index [default]
+  async reload(mode, coordinatesList = null) {
+    const recompute = mode === 'definitions'
+    const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
+    const list = baseList.map(entry => EntityCoordinates.fromString(entry))
+    await Promise.all(
+      list.map(
+        throat(10, async coordinates => {
+          const definition = await this.get(coordinates, null, recompute)
+          // if we are recomputing then the index will automatically be updated so no need to store again
+          if (recompute) return Promise.resolve(null)
+          return this.search.store(entries)
+        })
+      )
+    )
+    // don't forget to store anything left over
+    return this.search.store(indexes)
   }
 
   /**
@@ -181,5 +230,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvest, summary, aggregator, curation, store) =>
-  new DefinitionService(harvest, summary, aggregator, curation, store)
+module.exports = (harvest, summary, aggregator, curation, store, search) =>
+  new DefinitionService(harvest, summary, aggregator, curation, store, search)

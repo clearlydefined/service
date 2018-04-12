@@ -22,6 +22,7 @@ const index = require('./routes/index')
 
 const auth = require('./routes/auth')
 
+const initializers = []
 const summaryService = require('./business/summarizer')(config.summary)
 
 const harvestStoreProvider = config.harvest.store.provider
@@ -43,17 +44,20 @@ const definitionStoreProvider = config.definition.store.provider
 const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(
   config.definition.store[definitionStoreProvider]
 )
+const searchProvider = config.search.provider
+const search = require(`./providers/search/${searchProvider}`)(config.search[searchProvider])
+initializers.push(() => search.initialize())
+
 const definitionService = require('./business/definitionService')(
   harvestStore,
   summaryService,
   aggregatorService,
   curationService,
-  definitionStore
+  definitionStore,
+  search
 )
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
-
-require('./business/cacheRefresher')(harvestStore, curationService)
 
 const badges = require('./routes/badges').getRouter(definitionService)
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
@@ -109,15 +113,32 @@ app.use('/badges', badges)
 app.use('/definitions', definitions)
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+const requestHandler = (req, res, next) => {
   const err = new Error('Not Found')
   err.status = 404
   next(err)
-})
+}
+app.use(requestHandler)
+
+// Attach the init code to any request handler
+requestHandler.init = async (app, callback) => {
+  Promise.all(initializers.map(init => init())).then(
+    () => {
+      console.log('Service initialized')
+      // call the callback but with no args.  An arg indicates an error.
+      callback()
+    },
+    error => {
+      console.log(`Service initialization error: ${error.message}`)
+      console.dir(error)
+      callback(error)
+    }
+  )
+}
 
 // error handler
 // eslint-disable-next-line no-unused-vars
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}

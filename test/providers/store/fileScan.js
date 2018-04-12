@@ -69,7 +69,7 @@ describe('list a tool result ', () => {
   it('works for single entity coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'))
-    const expected = new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0')
+    const expected = new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0').toString()
     assert.equal(result.length, 1)
     assert.deepEqual(result[0], expected)
   })
@@ -77,7 +77,7 @@ describe('list a tool result ', () => {
   it('works for single result coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), 'result')
-    const expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '1.0', 'testtool', '2.0')
+    const expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '1.0', 'testtool', '2.0').toString()
     assert.equal(result.length, 1)
     assert.deepEqual(result[0], expected)
   })
@@ -87,7 +87,7 @@ describe('list a tool result ', () => {
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'))
     // Note there is only one since the entity is the same for all three available paths.
     assert.equal(result.length, 1)
-    const expected = new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0')
+    const expected = new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0').toString()
     assert.deepEqual(result[0], expected)
   })
 
@@ -95,11 +95,11 @@ describe('list a tool result ', () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'), 'result')
     assert.equal(result.length, 3)
-    let expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool0', '1.0')
+    let expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool0', '1.0').toString()
     assert.deepEqual(result[0], expected)
-    expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool1', '2.0')
+    expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool1', '2.0').toString()
     assert.deepEqual(result[1], expected)
-    expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool2', '3.0')
+    expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool2', '3.0').toString()
     assert.deepEqual(result[2], expected)
   })
 })
