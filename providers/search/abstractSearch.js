@@ -3,7 +3,6 @@
 
 const { get, uniq, values } = require('lodash')
 const base64 = require('base-64')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 
 class AbstractSearch {
   constructor(options) {
@@ -46,22 +45,6 @@ class AbstractSearch {
     return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties')), [])).filter(
       e => e
     )
-  }
-
-  _getEntry(definition) {
-    const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
-    const date = get(definition, 'described.releaseDate')
-    // TODO temporary hack to deal with bad data in dev blobs
-    const releaseDate = date === '%cI' ? null : date
-    return {
-      '@search.action': 'upload',
-      key: base64.encode(coordinatesString),
-      coordinates: coordinatesString,
-      releaseDate,
-      declaredLicense: get(definition, 'licensed.declared'),
-      discoveredLicenses: this._getLicenses(definition),
-      attributionParties: this._getAttributions(definition)
-    }
   }
 
   store(definition) {}

@@ -3,6 +3,7 @@
 
 const { values } = require('lodash')
 const AbstractSearch = require('./abstractSearch')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 class MemorySearch extends AbstractSearch {
   constructor(options) {
@@ -21,9 +22,21 @@ class MemorySearch extends AbstractSearch {
       .map(entry => entry.coordinates)
   }
 
-  store(definition) {
-    const entry = this._getEntry(definition)
-    this.index[entry.coordinates] = entry
+  store(definitions) {
+    const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
+    entries.forEach(entry => (this.index[entry.coordinates] = entry))
+  }
+
+  _getEntries(definitions) {
+    return definitions.map(definition => {
+      return {
+        coordinates: EntityCoordinates.fromObject(definition.coordinates).toString(),
+        releaseDate: get(definition, 'described.releaseDate'),
+        declaredLicense: get(definition, 'licensed.declared'),
+        discoveredLicenses: this._getLicenses(definition),
+        attributionParties: this._getAttributions(definition)
+      }
+    })
   }
 
   delete(coordinates) {

@@ -31,9 +31,8 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    if (force) await this.invalidate(coordinates)
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-    const existing = await this.definitionStore.get(definitionCoordinates)
+    const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
     return this._cast(existing || this.computeAndStore(coordinates))
   }
 
@@ -69,10 +68,13 @@ class DefinitionService {
    * @param {EntityCoordinates} coordinates - the coordinates to query
    * @returns {String[]} the list of all coordinates for all discovered definitions
    */
-  async list(coordinates) {
-    const curated = await this.curationService.list(coordinates)
-    const harvest = await this.harvestService.list(coordinates)
-    return union(stringHarvest, curated)
+  async list(coordinates, recompute = false) {
+    if (recompute) {
+      const curated = await this.curationService.list(coordinates)
+      const harvest = await this.harvestService.list(coordinates)
+      return union(harvest, curated)
+    }
+    return this.definitionStore.list(coordinates)
   }
 
   /**
@@ -142,15 +144,23 @@ class DefinitionService {
 
   // helper method to prime the search store while get the system up and running. Should not be
   // needed in general.
-  async reloadSearchIndex(coordinatesList) {
-    return Promise.all(
-      coordinatesList.map(
+  // mode can be definitions or index [default]
+  async reload(mode, coordinatesList = null) {
+    const recompute = mode === 'definitions'
+    const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
+    const list = baseList.map(entry => EntityCoordinates.fromString(entry))
+    await Promise.all(
+      list.map(
         throat(10, async coordinates => {
-          const definition = await this.get(coordinates)
-          return this.search.store(definition)
+          const definition = await this.get(coordinates, null, recompute)
+          // if we are recomputing then the index will automatically be updated so no need to store again
+          if (recompute) return Promise.resolve(null)
+          return this.search.store(entries)
         })
       )
     )
+    // don't forget to store anything left over
+    return this.search.store(indexes)
   }
 
   /**

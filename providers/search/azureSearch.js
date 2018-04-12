@@ -5,6 +5,7 @@ const requestPromise = require('request-promise-native')
 const { get, uniq, values } = require('lodash')
 const base64 = require('base-64')
 const AbstractSearch = require('./abstractSearch')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2016-09-01'
@@ -52,19 +53,37 @@ class AzureSearch extends AbstractSearch {
 
   /**
    * Index the given definition in the search system
-   * @param {Definition} definition - the definition to index
+   * @param {Definition or Definition[]} definitions - the definition(s) to index
    */
-  store(definition) {
-    const entry = this._getEntry(definition)
+  store(definitions) {
+    const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
       headers: this._getHeaders(),
-      body: { value: [entry] },
+      body: { value: entries },
       withCredentials: false,
       json: true
     })
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
+  }
+
+  _getEntries(definitions) {
+    return definitions.map(definition => {
+      const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
+      const date = get(definition, 'described.releaseDate')
+      // TODO temporary hack to deal with bad data in dev blobs
+      const releaseDate = date === '%cI' ? null : date
+      return {
+        '@search.action': 'upload',
+        key: base64.encode(coordinatesString),
+        coordinates: coordinatesString,
+        releaseDate,
+        declaredLicense: get(definition, 'licensed.declared'),
+        discoveredLicenses: this._getLicenses(definition),
+        attributionParties: this._getAttributions(definition)
+      }
+    })
   }
 
   /**

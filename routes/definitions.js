@@ -24,12 +24,12 @@ async function getDefinition(request, response) {
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
-router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(getDefinitionSuggestions))
+router.get('', asyncMiddleware(getDefinitionSuggestions))
 async function getDefinitionSuggestions(request, response) {
+  // TODO temporary endpoint to trigger reloading the index or definitions
+  if (request.query.reload) return reload(request, response)
   const type = request.query.type || 'coordinates'
   const pattern = request.query.pattern
-  // TODO temporary endpoint to trigger reloading the index
-  if (request.query.reload) return reload(request, response)
   switch (type) {
     case 'coordinates':
       return response.send(await definitionService.suggestCoordinates(pattern))
@@ -42,10 +42,8 @@ async function getDefinitionSuggestions(request, response) {
 
 // TODO temporary method used to trigger the reloading of the search index
 async function reload(request, response) {
-  const list = await definitionService.list(new EntityCoordinates())
-  const coordinatesList = list.map(entry => EntityCoordinates.fromString(entry))
-  await definitionService.reloadSearchIndex(coordinatesList)
-  response.send('')
+  await definitionService.reload(request.query.reload)
+  response.status(200).end()
 }
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
