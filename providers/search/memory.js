@@ -3,6 +3,7 @@
 
 const { values } = require('lodash')
 const AbstractSearch = require('./abstractSearch')
+const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
 class MemorySearch extends AbstractSearch {
