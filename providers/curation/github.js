@@ -34,6 +34,69 @@ class GitHubCurationService {
     }
   }
 
+  _updateContent(coordinates, currentContent, newContent) {
+    // ensure the coordinates are set
+    currentContent.coordinates = {
+      type: coordinates.type,
+      provider: coordinates.provider,
+      namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
+      name: coordinates.name
+    }
+
+    // remove and re-add the revisions property so it appears after the metadata properties (and default it to empty)
+    // and merge in the new values overwriting current revisions as needed. The patch content coming in should be
+    // relative to the current merged content, not that which may happen to be in this PR
+    const revisions = currentContent.revisions
+    delete currentContent.revisions
+    currentContent.revisions = _.assign(revisions || {}, newContent)
+
+    // return the serialized YAML
+    return yaml.safeDump(currentContent, { sortKeys: true })
+  }
+
+  // merge and write the new content for the given coordinates on the identified branch. This may write multiple
+  // revisions for the same component. Data for existing revisions is completely overwritten if present in the new content.
+  async _writePatch(coordinates, newContent, branch) {
+    const { owner, repo } = this.options
+    const currentContent = await this.getAll(coordinates)
+    const updatedContent = this._updateContent(coordinates, currentContent, newContent)
+    const content = base64.encode(updatedContent)
+    const path = this._getCurationPath(coordinates)
+    const message = `Update ${path} ${coordinates.revision}`
+
+    // if the current content came from Git, get the SHA and use that to update the content. Otherwise, add a new file
+    if (currentContent._origin)
+      return github.repos.updateFile({ owner, repo, path, message, content, branch, sha: currentContent._origin.sha })
+    return github.repos.createFile({ owner, repo, path, message, content, branch })
+  }
+
+  async addOrUpdate(github, coordinates, patch) {
+    if (!patch.patch)
+      throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?')
+    const { owner, repo, branch } = this.options
+
+    // Get the sha for the current master and create a branch for the PR
+    const master = await github.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
+    const sha = master.data.commit.sha
+    const prBranch = this._getBranchName(coordinates)
+    await github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
+
+    // write all the patch files
+    await Promise.all(
+      Object.getOwnPropertyNames(patch.patch).map(path => this._writePatch(path, patch.patch[path], prBranch))
+    )
+
+    // Create the PR
+    return github.pullRequests.create({
+      owner,
+      repo,
+      title: this._getPrTitle(coordinates),
+      body: patch.description,
+      head: `refs/heads/${prBranch}`,
+      base: branch
+    })
+  }
+
   addOrUpdate(githubUserClient, coordinates, patch) {
     if (!patch.patch)
       throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?')
@@ -62,7 +125,7 @@ class GitHubCurationService {
 
         // extract the file's SHA1 to enable updating the file
         if (parsedContent.origin) {
-          curationPathSha = parsedContent.origin.sha
+          curationPathSha = parsedContent._origin.sha
         }
 
         // add/update the patch for this revision
@@ -149,7 +212,32 @@ class GitHubCurationService {
    * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
    * indicating the sha of the commit for the curations if that info is available.
    */
-  async getAll(coordinates, pr = null) {
+  getAll(coordinates, pr = null) {
+    return pr ? this._getAllGitHub(coordinates, pr) : this._getAllLocal(coordinates)
+  }
+
+  async _getAllLocal(coordinates) {
+    const curationPath = this._getCurationPath(coordinates)
+    const { owner, repo } = this.options
+    await this.ensureCurations()
+    const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
+    const result = yaml.safeLoad(fs.readFileSync(filePath))
+    const sha = await this._getLocalSha(filePath)
+    Object.defineProperty(result, '_origin', { value: sha, enumerable: false })
+    return result
+  }
+
+  async _getLocalSha(path) {
+    const command = `git ls-files -s ${path}`
+    return new Promise((resolve, reject) => {
+      exec(command, (error, stdout) => {
+        if (error) return reject(error)
+        resolve(stdout)
+      })
+    })
+  }
+
+  async _getAllGitHub(coordinates, pr = null) {
     const curationPath = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
     const branch = await this.getBranch(pr)

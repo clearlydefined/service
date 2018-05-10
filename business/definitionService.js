@@ -149,7 +149,7 @@ class DefinitionService {
     const recompute = mode === 'definitions'
     const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
     const list = baseList.map(entry => EntityCoordinates.fromString(entry))
-    await Promise.all(
+    return await Promise.all(
       list.map(
         throat(10, async coordinates => {
           const definition = await this.get(coordinates, null, recompute)
@@ -159,8 +159,6 @@ class DefinitionService {
         })
       )
     )
-    // don't forget to store anything left over
-    return this.search.store(indexes)
   }
 
   /**
