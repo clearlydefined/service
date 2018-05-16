@@ -12,6 +12,7 @@ const yaml = require('js-yaml')
 const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const tmp = require('tmp')
+const path = require('path')
 tmp.setGracefulCleanup()
 
 // Responsible for managing curation patches in a store
@@ -221,14 +222,21 @@ class GitHubCurationService {
     const { owner, repo } = this.options
     await this.ensureCurations()
     const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
-    const result = yaml.safeLoad(fs.readFileSync(filePath))
+    var result
+    try {
+      result = yaml.safeLoad(fs.readFileSync(filePath))
+    } catch (error) {
+      if (error.code === 'ENOENT') return
+      throw error
+    }
     const sha = await this._getLocalSha(filePath)
     Object.defineProperty(result, '_origin', { value: sha, enumerable: false })
     return result
   }
 
-  async _getLocalSha(path) {
-    const command = `git ls-files -s ${path}`
+  async _getLocalSha(filepath) {
+    const parent = path.dirname(filepath)
+    const command = `cd ${parent} && git ls-files -s ${path.basename(filepath)}`
     return new Promise((resolve, reject) => {
       exec(command, (error, stdout) => {
         if (error) return reject(error)
@@ -353,7 +361,7 @@ class GitHubCurationService {
   }
 
   async ensureCurations() {
-    if (this.curationUpdateTime && Date.now() - this.curationUpdateTime < this.options.curationFreshness) return
+    if (this.curationUpdateTime && (Date.now() - this.curationUpdateTime < this.options.curationFreshness)) return
     const { owner, repo } = this.options
     const url = `https://github.com/${owner}/${repo}.git`
     this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions)
@@ -367,9 +375,12 @@ class GitHubCurationService {
       const command = this.curationUpdateTime
         ? `cd ${this.tempLocation.name}/${repo} && git pull`
         : `cd ${this.tempLocation.name} && git clone ${url}`
+      this.curationUpdateTime = Date.now()
       exec(command, (error, stdout) => {
-        if (error) return reject(error)
-        this.curationUpdateTime = Date.now()
+        if (error) {
+          this.curationUpdateTime = null
+          return reject(error)
+        }
         resolve(stdout)
       })
     })
@@ -404,7 +415,7 @@ class GitHubCurationService {
 
   _getSearchRoot(coordinates) {
     const path = coordinates.asRevisionless().toString()
-    return `curations/${path ? path + '/' : ''}`
+    return `curations/${path}`
   }
 
   // @todo perhaps validate directory structure based on coordinates

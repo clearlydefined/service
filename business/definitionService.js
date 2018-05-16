@@ -93,7 +93,7 @@ class DefinitionService {
             await this.definitionStore.delete(definitionCoordinates)
             return this.search.delete(definitionCoordinates)
           } catch (error) {
-            if (!error.code === 'ENOENT') throw error
+            if (error.code !== 'ENOENT') throw error
           }
         })
       )
@@ -155,7 +155,7 @@ class DefinitionService {
           const definition = await this.get(coordinates, null, recompute)
           // if we are recomputing then the index will automatically be updated so no need to store again
           if (recompute) return Promise.resolve(null)
-          return this.search.store(entries)
+          return this.search.store(definition)
         })
       )
     )
