@@ -153,7 +153,6 @@ class DefinitionService {
       list.map(
         throat(10, async coordinates => {
           const definition = await this.get(coordinates, null, recompute)
-          // if we are recomputing then the index will automatically be updated so no need to store again
           if (recompute) return Promise.resolve(null)
           return this.search.store(definition)
         })

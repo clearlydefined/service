@@ -5,6 +5,7 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
+const Github = require('../lib/github')
 
 // Get a proposed patch for a specific revision of a component
 router.get(
@@ -44,8 +45,23 @@ router.patch(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (request, response) => {
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
+    const token = request.app.locals.config.curation.store.github.token
+    const serviceGithub = Github.getClient({ token })
+    const userGithub = request.app.locals.user.github.client
     return curationService
-      .addOrUpdate(request.app.locals.user.github.client, coordinates, request.body)
+      .addOrUpdate(userGithub, serviceGithub, coordinates, request.body)
+      .then(() => response.sendStatus(200))
+  })
+)
+
+router.patch(
+  '',
+  asyncMiddleware(async (request, response) => {
+    const token = request.app.locals.config.curation.store.github.token
+    const serviceGithub = Github.getClient({ token })
+    const userGithub = request.app.locals.user.github.client
+    return curationService
+      .addOrUpdate(userGithub, serviceGithub, request.body)
       .then(() => response.sendStatus(200))
   })
 )
