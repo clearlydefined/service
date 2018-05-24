@@ -93,7 +93,7 @@ class DefinitionService {
             await this.definitionStore.delete(definitionCoordinates)
             return this.search.delete(definitionCoordinates)
           } catch (error) {
-            if (!error.code === 'ENOENT') throw error
+            if (error.code !== 'ENOENT') throw error
           }
         })
       )
@@ -149,18 +149,15 @@ class DefinitionService {
     const recompute = mode === 'definitions'
     const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
     const list = baseList.map(entry => EntityCoordinates.fromString(entry))
-    await Promise.all(
+    return await Promise.all(
       list.map(
         throat(10, async coordinates => {
           const definition = await this.get(coordinates, null, recompute)
-          // if we are recomputing then the index will automatically be updated so no need to store again
           if (recompute) return Promise.resolve(null)
-          return this.search.store(entries)
+          return this.search.store(definition)
         })
       )
     )
-    // don't forget to store anything left over
-    return this.search.store(indexes)
   }
 
   /**
