@@ -33,18 +33,23 @@ module.exports = asyncMiddleware(async (req, res, next) => {
 })
 
 // Create and configure a GitHub client and attach it to the request
-function setupClient(req, token = null) {
+function setupClient(req, token) {
+  if (!token) {
+    const client = null
+    req.app.locals.user = { github: { client } }
+    return client
+  }
   // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi(options)
+  const client = new GitHubApi()
   token && client.authenticate({ type: 'token', token })
   req.app.locals.user = { github: { client } }
   return client
 }
 
 // get the user's teams (from GitHub or the cache) and attach them to the request
-async function setupTeams(req, token, client = null) {
+async function setupTeams(req, token, client) {
   // anonymous users are not members of any team
-  if (!token) return (req.app.locals.user.github.teams = [])
+  if (!token || !client) return null
 
   // check cache for team data; hash the token so we're not storing them raw
   const hashedToken = await crypto
@@ -74,7 +79,7 @@ async function getTeams(client, org) {
     if (err.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
-          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
     } else if (err.code === 401 && err.message === 'Bad credentials') {
       // the token was bad. trickle up the problem so the user can fix
