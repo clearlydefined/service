@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { assign, concat, get, forIn, merge, set } = require('lodash')
+const { assign, concat, get, forIn, merge, set, pickBy } = require('lodash')
 const base64 = require('base-64')
 const extend = require('extend')
 const { exec } = require('child_process')
@@ -54,7 +54,7 @@ class GitHubCurationService {
   }
 
 
-  async _writePatch(userGithub, serviceGithub, description, patch, branch) {
+  async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
     const { owner, repo } = this.options
     const coordinates = new EntityCoordinates(patch.coordinates.type, patch.coordinates.provider, patch.coordinates.namespace, patch.coordinates.name)
     const currentContent = await this.getAll(coordinates)
@@ -63,9 +63,8 @@ class GitHubCurationService {
     const content = base64.encode(updatedContent)
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
-    const committer = userGithub ? await userGithub.users.get({}) : await serviceGithub.users.get({})
     if (currentContent && currentContent._origin)
-      return serviceGithub.repos.updateFile({
+      return serviceGithub.repos.updateFile(pickBy({
         owner,
         repo,
         path,
@@ -73,28 +72,28 @@ class GitHubCurationService {
         content,
         branch,
         sha: currentContent._origin.sha,
-        committer: `{ "name": "${committer.data.name}", "email": "${committer.data.email}" }`,
-      })
-    return serviceGithub.repos.createFile({
+        committer: userGithub ? `{ "name": "${info.name || info.login}", "email": "${info.email}" }` : null,
+      }))
+    return serviceGithub.repos.createFile(pickBy({
       owner,
       repo,
       path,
       message,
       content,
       branch,
-      committer: `{ "name": "${committer.data.name}", "email": "${committer.data.email}" }`,
-    })
+      committer: userGithub ? `{ "name": "${info.name || info.login}", "email": "${info.email}" }` : null,
+    }))
   }
 
-  async addOrUpdate(userGithub, serviceGithub, patch) {
+  async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
-    const master = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
-    const sha = master.data.commit.sha
-    const prBranch = await this._getBranchName(userGithub, serviceGithub)
+    const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
+    const sha = masterBranch.data.commit.sha
+    const prBranch = await this._getBranchName(userGithub, serviceGithub, info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-    await Promise.all(patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, patch.description, component, prBranch))))
-    // Create the PR using service github object
-    return serviceGithub.pullRequests.create({
+    await Promise.all(patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch))))
+    const master = userGithub ? userGithub : serviceGithub
+    return master.pullRequests.create({
       owner,
       repo,
       title: prBranch,
@@ -327,9 +326,9 @@ class GitHubCurationService {
     return coordinates.toString()
   }
 
-  async _getBranchName(userGithub, serviceGithub) {
-    const committer = userGithub ? await userGithub.users.get({}) : await serviceGithub.users.get({})
-    return `${committer.data.name.toLowerCase().replace(/ /g, "_")}_${moment().format('YYMMDD_HHmmss.SSS')}`
+  async _getBranchName(userGithub, serviceGithub, info) {
+    const committer = userGithub ? info : await serviceGithub.users.get({})
+    return `${committer.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
   }
 
 

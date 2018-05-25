@@ -27,13 +27,13 @@ module.exports = asyncMiddleware(async (req, res, next) => {
   }
 
   const token = authHeader ? authHeader.split(' ')[1] : null
-  const client = setupClient(req, token)
+  const client = await setupClient(req, token)
   await setupTeams(req, token, client)
   next()
 })
 
 // Create and configure a GitHub client and attach it to the request
-function setupClient(req, token) {
+async function setupClient(req, token) {
   if (!token) {
     const client = null
     req.app.locals.user = { github: { client } }
@@ -43,6 +43,14 @@ function setupClient(req, token) {
   const client = new GitHubApi()
   token && client.authenticate({ type: 'token', token })
   req.app.locals.user = { github: { client } }
+  const userCacheKey = await getCacheKey('github.user', token)
+  let info = await req.app.locals.cache.get(userCacheKey)
+  if (!info) {
+    info = await client.users.get({})
+    info = { name: info.data.name, login: info.data.login, email: info.data.email }
+    await req.app.locals.cache.set(userCacheKey, info, config.auth.github.timeouts.team)
+  }
+  req.app.locals.user.github.info = info
   return client
 }
 
@@ -50,13 +58,8 @@ function setupClient(req, token) {
 async function setupTeams(req, token, client) {
   // anonymous users are not members of any team
   if (!token || !client) return null
-
   // check cache for team data; hash the token so we're not storing them raw
-  const hashedToken = await crypto
-    .createHash('sha256')
-    .update(token)
-    .digest('hex')
-  const teamCacheKey = `github.teams.${hashedToken}`
+  const teamCacheKey = getCacheKey('github.teams', token)
   let teams = await req.app.locals.cache.get(teamCacheKey)
   if (!teams) {
     teams = await getTeams(client, config.auth.github.org)
@@ -91,4 +94,12 @@ async function getTeams(client, org) {
     // in all other error cases assume the user has no teams. If they do then they can try again after the timeout
     return []
   }
+}
+
+async function getCacheKey(prefix, token) {
+  const hashedToken = await crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex')
+  return `${prefix}.${hashedToken}`
 }

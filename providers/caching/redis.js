@@ -4,6 +4,8 @@
 const redis = require('redis')
 const util = require('util')
 
+const objectPrefix = '*!~%'
+
 class RedisCache {
   constructor(options) {
     this.redis = redis.createClient(options)
@@ -12,10 +14,19 @@ class RedisCache {
   }
 
   async get(item) {
-    return await this._redisGet(item)
+    const cacheItem = await this._redisGet(item)
+    if (cacheItem && cacheItem.startsWith(objectPrefix)) {
+      try {
+        return JSON.parse(cacheItem.substring(4))
+      } catch (error) {
+        return null
+      }
+    }
+    return cacheItem
   }
 
   async set(item, value, expirationSeconds) {
+    if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
     await this._redisSet(item, value, 'EX', expirationSeconds)
   }
 }

@@ -60,8 +60,9 @@ router.patch(
     const token = request.app.locals.config.curation.store.github.token
     const serviceGithub = Github.getClient({ token })
     const userGithub = request.app.locals.user.github.client
+    const info = userGithub ? request.app.locals.user.github.info : null
     return curationService
-      .addOrUpdate(userGithub, serviceGithub, request.body)
+      .addOrUpdate(userGithub, serviceGithub, info, request.body)
       .then(() => response.sendStatus(200))
   })
 )
