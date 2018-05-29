@@ -6,6 +6,7 @@ const GitHubApi = require('@octokit/rest')
 
 const asyncMiddleware = require('./asyncMiddleware')
 const config = require('../lib/config')
+const Github = require('../lib/github')
 
 const options = {
   headers: {
@@ -26,44 +27,58 @@ module.exports = asyncMiddleware(async (req, res, next) => {
     return
   }
 
-  const token = authHeader ? authHeader.split(' ')[1] : null
-  const client = await setupClient(req, token)
-  await setupTeams(req, token, client)
+  const serviceToken = req.app.locals.config.curation.store.github.token
+  const serviceClient = await setupServiceClient(req, serviceToken)
+  const userToken = authHeader ? authHeader.split(' ')[1] : null
+  const userClient = await setupUserClient(req, userToken)
+  const infoCacheKey = userClient ? await getCacheKey('github.user', userToken) : await getCacheKey('github.user', serviceToken)
+  await setupInfo(req, infoCacheKey, userClient || serviceClient)
+  const teamCacheKey = userClient ? await getCacheKey('github.team', userToken) : null
+  await setupTeams(req, teamCacheKey, userClient)
   next()
 })
 
-// Create and configure a GitHub client and attach it to the request
-async function setupClient(req, token) {
-  if (!token) {
-    const client = null
-    req.app.locals.user = { github: { client } }
-    return client
-  }
-  // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi()
-  token && client.authenticate({ type: 'token', token })
-  req.app.locals.user = { github: { client } }
-  const userCacheKey = await getCacheKey('github.user', token)
-  let info = await req.app.locals.cache.get(userCacheKey)
-  if (!info) {
-    info = await client.users.get({})
-    info = { name: info.data.name, login: info.data.login, email: info.data.email }
-    await req.app.locals.cache.set(userCacheKey, info, config.auth.github.timeouts.team)
-  }
-  req.app.locals.user.github.info = info
+// Create and configure a GitHub user client and attach it to the request
+async function setupServiceClient(req, token) {
+  const client = Github.getClient({ token })
+  req.app.locals.service = { github: { client } }
   return client
 }
 
+// Create and configure a GitHub user client and attach it to the request
+async function setupUserClient(req, token) {
+  if (!token) {
+    req.app.locals.user = { github: { client: null } }
+    return null
+  }
+  // constructor and authenticate are inexpensive (just sets local state)
+  const client = new GitHubApi()
+  client.authenticate({ type: 'token', token })
+  req.app.locals.user = { github: { client } }
+  return client
+}
+
+// Get GitHub user info and attach it to the request
+async function setupInfo(req, cacheKey, client) {
+  let info = await req.app.locals.cache.get(cacheKey)
+  if (!info) {
+    info = await client.users.get({})
+    info = { name: info.data.name, login: info.data.login, email: info.data.email }
+    await req.app.locals.cache.set(cacheKey, info, config.auth.github.timeouts.info)
+  }
+  req.app.locals.user.github.info = info
+
+}
+
 // get the user's teams (from GitHub or the cache) and attach them to the request
-async function setupTeams(req, token, client) {
+async function setupTeams(req, cacheKey, client) {
   // anonymous users are not members of any team
-  if (!token || !client) return null
+  if (!cacheKey || !client) return null
   // check cache for team data; hash the token so we're not storing them raw
-  const teamCacheKey = getCacheKey('github.teams', token)
-  let teams = await req.app.locals.cache.get(teamCacheKey)
+  let teams = await req.app.locals.cache.get(cacheKey)
   if (!teams) {
     teams = await getTeams(client, config.auth.github.org)
-    await req.app.locals.cache.set(teamCacheKey, teams, config.auth.github.timeouts.team)
+    await req.app.locals.cache.set(cacheKey, teams, config.auth.github.timeouts.info)
   }
   req.app.locals.user.github.teams = teams
 }

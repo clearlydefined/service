@@ -46,17 +46,16 @@ class GitHubCurationService {
         name: coordinates.name
       }
     }
-    result.revisions = assign(get(currentContent, 'revisions') || {})
-    forIn(newContent, function (value, key) {
-      result.revisions[key] = merge(result.revisions[key] || {}, value)
-    })
+    result.revisions = get(currentContent, 'revisions') || {}
+
+    forIn(newContent, (value, key) => result.revisions[key] = merge(result.revisions[key] || {}, value))
     return yaml.safeDump(result, { sortKeys: true })
   }
 
 
   async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
     const { owner, repo } = this.options
-    const coordinates = new EntityCoordinates(patch.coordinates.type, patch.coordinates.provider, patch.coordinates.namespace, patch.coordinates.name)
+    const coordinates = this.toEntityCoordinate(patch.coordinates)
     const currentContent = await this.getAll(coordinates)
     const newContent = patch.revisions
     const updatedContent = this._updateContent(coordinates, currentContent, newContent)
@@ -64,7 +63,7 @@ class GitHubCurationService {
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
     if (currentContent && currentContent._origin)
-      return serviceGithub.repos.updateFile(pickBy({
+      return serviceGithub.repos.updateFile({
         owner,
         repo,
         path,
@@ -72,28 +71,27 @@ class GitHubCurationService {
         content,
         branch,
         sha: currentContent._origin.sha,
-        committer: userGithub ? `{ "name": "${info.name || info.login}", "email": "${info.email}" }` : null,
-      }))
-    return serviceGithub.repos.createFile(pickBy({
+        committer: `{ "name": "${info.name || info.login}", "email": "${info.email}" }`,
+      })
+    return serviceGithub.repos.createFile({
       owner,
       repo,
       path,
       message,
       content,
       branch,
-      committer: userGithub ? `{ "name": "${info.name || info.login}", "email": "${info.email}" }` : null,
-    }))
+      committer: `{ "name": "${info.name || info.login}", "email": "${info.email}" }`,
+    })
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
-    const prBranch = await this._getBranchName(userGithub, serviceGithub, info)
+    const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch))))
-    const master = userGithub ? userGithub : serviceGithub
-    return master.pullRequests.create({
+    return (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
       title: prBranch,
@@ -101,7 +99,6 @@ class GitHubCurationService {
       head: `refs/heads/${prBranch}`,
       base: branch
     })
-
   }
 
   /**
@@ -326,12 +323,9 @@ class GitHubCurationService {
     return coordinates.toString()
   }
 
-  async _getBranchName(userGithub, serviceGithub, info) {
-    const committer = userGithub ? info : await serviceGithub.users.get({})
-    return `${committer.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
+  async _getBranchName(info) {
+    return `${info.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
   }
-
-
 
   _getCurationPath(coordinates) {
     const path = coordinates.asRevisionless().toString()
@@ -346,6 +340,10 @@ class GitHubCurationService {
   // @todo perhaps validate directory structure based on coordinates
   isCurationFile(path) {
     return path.startsWith('curations/') && path.endsWith('.yaml')
+  }
+
+  toEntityCoordinate(coordinates) {
+    return new EntityCoordinates(coordinates.type, coordinates.provider, coordinates.namespace, coordinates.name, coordinates.revision)
   }
 }
 
