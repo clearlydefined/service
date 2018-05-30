@@ -62,26 +62,10 @@ class GitHubCurationService {
     const content = base64.encode(updatedContent)
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
+    const fileBody = { owner, repo, path, message, content, branch, committer: { name: info.name || info.login, email: info.email }, }
     if (currentContent && currentContent._origin)
-      return serviceGithub.repos.updateFile({
-        owner,
-        repo,
-        path,
-        message,
-        content,
-        branch,
-        sha: currentContent._origin.sha,
-        committer: `{ "name": "${info.name || info.login}", "email": "${info.email}" }`,
-      })
-    return serviceGithub.repos.createFile({
-      owner,
-      repo,
-      path,
-      message,
-      content,
-      branch,
-      committer: `{ "name": "${info.name || info.login}", "email": "${info.email}" }`,
-    })
+      return serviceGithub.repos.updateFile(set(fileBody, sha, currentContent._origin.sha))
+    return serviceGithub.repos.createFile(fileBody)
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
