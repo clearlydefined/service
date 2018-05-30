@@ -55,7 +55,7 @@ class GitHubCurationService {
 
   async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
     const { owner, repo } = this.options
-    const coordinates = this.toEntityCoordinate(patch.coordinates)
+    const coordinates = EntityCoordinates.fromObject(patch.coordinates)
     const currentContent = await this.getAll(coordinates)
     const newContent = patch.revisions
     const updatedContent = this._updateContent(coordinates, currentContent, newContent)
@@ -63,8 +63,10 @@ class GitHubCurationService {
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
     const fileBody = { owner, repo, path, message, content, branch, committer: { name: info.name || info.login, email: info.email }, }
-    if (currentContent && currentContent._origin)
-      return serviceGithub.repos.updateFile(set(fileBody, sha, currentContent._origin.sha))
+    if (get(currentContent, '_origin.sha')) {
+      fileBody.sha = currentContent._origin.sha
+      return serviceGithub.repos.updateFile(fileBody)
+    }
     return serviceGithub.repos.createFile(fileBody)
   }
 
