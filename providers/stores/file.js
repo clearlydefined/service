@@ -19,7 +19,7 @@ class FileStore extends AbstractStore {
 
   async list(coordinates, type = 'entity') {
     try {
-      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates))
+      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
       const list = new Set()
       paths.forEach(entry => {
         const value = this._getEntry(entry, type)
@@ -103,7 +103,7 @@ class FileStore extends AbstractStore {
     // b) fit in one list call (i.e., <5000)
     let files = null
     try {
-      files = await recursive(root)
+      files = await recursive(root, ['.DS_Store'])
     } catch (error) {
       if (error.code === 'ENOENT') return []
       throw error
