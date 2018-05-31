@@ -21,6 +21,7 @@
       "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
     "coordinates": {
+      "type": "object",
       "required": ["type", "provider", "namespace", "name"],
       "additionalProperties": false,
       "properties": {
@@ -56,6 +57,31 @@
         },
         "licensed": {
           "$ref": "#/definitions/licensed"
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The absolute path of the file as found in the component."
+          },
+          "license": {
+            "type": "string",
+            "description": "The SPDX license expression, if any, as found in the file."
+          },
+          "attributions": {
+            "type": "array",
+            "description": "The list of attributions (e.g., copyright statements) discovered in the file.",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -127,76 +153,16 @@
       }
     },
     "licensed": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "declared": {
           "$ref": "#/definitions/declared"
-        },
-        "facets": {
-          "$ref": "#/definitions/facets"
-        }
-      }
-    },
-    "facets": {
-      "additionalProperties": false,
-      "properties": {
-        "core": {
-          "$ref": "#/definitions/facet"
-        },
-        "data": {
-          "$ref": "#/definitions/facet"
-        },
-        "dev": {
-          "$ref": "#/definitions/facet"
-        },
-        "doc": {
-          "$ref": "#/definitions/facet"
-        },
-        "examples": {
-          "$ref": "#/definitions/facet"
-        },
-        "tests": {
-          "$ref": "#/definitions/facet"
-        }
-      }
-    },
-    "facet": {
-      "additionalProperties": false,
-      "properties": {
-        "attribution": {
-          "$ref": "#/definitions/attribution"
-        },
-        "discovered": {
-          "$ref": "#/definitions/discovered"
-        }
-      }
-    },
-    "attribution": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "parties": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
     "declared": {
       "type": "string"
-    },
-    "discovered": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "expressions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
     }
   }
 }
