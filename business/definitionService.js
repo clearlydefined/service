@@ -179,13 +179,7 @@ class DefinitionService {
   }
 
   _ensureCoordinates(coordinates, definition) {
-    definition.coordinates = {
-      type: coordinates.type,
-      provider: coordinates.provider,
-      namespace: coordinates.namespace,
-      name: coordinates.name,
-      revision: coordinates.revision
-    }
+    definition.coordinates = EntityCoordinates.fromObject(coordinates)
   }
 
   _ensureDescribed(definition) {
