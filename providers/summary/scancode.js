@@ -30,9 +30,12 @@ class ScanCodeSummarizer {
     const buckets = this.computeFileBuckets(harvested.content.files, facets)
     set(result, 'licensed.facets', {})
     const facetsObject = get(result, 'licensed.facets')
+    const declaredLicenses = new Set()
     for (const key in buckets) {
       facetsObject[key] = this.summarizeLicenseInfo(buckets[key])
+      this.summarizeDeclaredLisense(buckets[key], declaredLicenses)
     }
+    set(result, 'licensed.declared', this._toExpression(declaredLicenses))
     return result
   }
 
@@ -72,8 +75,6 @@ class ScanCodeSummarizer {
         const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders)
         !hasHolders && unknownParties++
       }
-      this._addArrayToSet(asserted, declaredLicenses, license => license.license || license.spdx_license_key)
-      this._addLicenseFiles(file, declaredLicenses)
     }
 
     return {
@@ -81,7 +82,6 @@ class ScanCodeSummarizer {
         parties: this._setToArray(copyrightHolders),
         unknown: unknownParties
       },
-      declared: this._toExpression(declaredLicenses),
       discovered: {
         expressions: this._setToArray(licenseExpressions),
         unknown: unknownLicenses
@@ -90,10 +90,22 @@ class ScanCodeSummarizer {
     }
   }
 
+  summarizeDeclaredLisense(files, declaredLicenses) {
+    files.forEach(file => {
+      const asserted = get(file, 'packages[0].asserted_licenses')
+      if (asserted) this._addArrayToSet(asserted, declaredLicenses, license => license.license || license.spdx_license_key)
+      this._addLicenseFiles(file, declaredLicenses)
+    })
+  }
+
   _addLicenseFiles(file, declaredLicenses) {
     // Look for license files at the root of the scanned code
     // TODO enhance in the future to cover more license management strategies.
-    if (!['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase())) return
+    const license = ['license', 'license.txt', 'license.md', 'license.html'].reduce((current, prefix) => {
+      if (!current) return file.path.toLowerCase().includes(prefix)
+      return current
+    }, false)
+    if (!license) return
     if (!file.licenses) return
     file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
   }
