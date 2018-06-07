@@ -47,7 +47,7 @@ router.patch(
     const info = request.app.locals.user.github.info
     return curationService
       .addOrUpdate(userGithub, serviceGithub, info, request.body)
-      .then(result => { response.status(200).send({ prNumber: result.data.number }) })
+      .then(result => response.status(200).send({ prNumber: result.data.number }))
   })
 )
 

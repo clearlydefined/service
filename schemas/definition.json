@@ -2,29 +2,50 @@
   "$id": "https://api.clearlydefined.io/schemas/definition.json#",
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "definition",
-  "required": ["coordinates"],
+  "required": [
+    "coordinates"
+  ],
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "coordinates": {
       "$ref": "#/definitions/coordinates"
     },
+    "files": {
+      "$ref": "#/definitions/files"
+    },
     "described": {
       "$ref": "#/definitions/described"
     },
-    "licenesed": {
+    "licensed": {
       "$ref": "#/definitions/licensed"
     }
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven"]
+      "enum": [
+        "npm",
+        "git",
+        "maven"
+      ]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
+      "enum": [
+        "npmjs",
+        "github",
+        "mavencentral",
+        "mavencentralsource"
+      ]
     },
     "coordinates": {
-      "required": ["type", "provider", "namespace", "name", "revision"],
+      "type": "object",
+      "required": [
+        "type",
+        "provider",
+        "namespace",
+        "name",
+        "revision"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -34,7 +55,10 @@
           "$ref": "#/definitions/provider"
         },
         "namespace": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "name": {
           "type": "string"
@@ -44,11 +68,54 @@
         }
       }
     },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The absolute path of the file as found in the component."
+          },
+          "facet": {
+            "type": "string",
+            "description": "The subset of the files related to the component (core, data, dev, docs, examples, tests)."
+          },
+          "license": {
+            "type": "string",
+            "description": "The SPDX license expression, if any, as found in the file."
+          },
+          "attributions": {
+            "type": "array",
+            "description": "The list of attributions (e.g., copyright statements) discovered in the file.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "facets": {
+            "type": "array",
+            "description": "The facets in which this file exists.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string",
+            "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+          }
+        }
+      }
+    },
     "described": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "facets": {
+          "type": "object",
           "additionalProperties": false,
           "properties": {
             "data": {
@@ -98,7 +165,12 @@
     "sourceLocation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "provider", "url", "revision"],
+      "required": [
+        "type",
+        "provider",
+        "url",
+        "revision"
+      ],
       "properties": {
         "type": {
           "$ref": "#/definitions/type"
@@ -119,6 +191,7 @@
       }
     },
     "licensed": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "declared": {
@@ -130,6 +203,7 @@
       }
     },
     "facets": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "core": {
@@ -153,6 +227,7 @@
       }
     },
     "facet": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "files": {

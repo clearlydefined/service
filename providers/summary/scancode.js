@@ -28,14 +28,23 @@ class ScanCodeSummarizer {
     const result = {}
     this.addDescribedInfo(result, coordinates, harvested)
     const buckets = this.computeFileBuckets(harvested.content.files, facets)
-    set(result, 'licensed.facets', {})
-    const facetsObject = get(result, 'licensed.facets')
-    const declaredLicenses = new Set()
-    for (const key in buckets) {
-      facetsObject[key] = this.summarizeLicenseInfo(buckets[key])
-      this.summarizeDeclaredLisense(buckets[key], declaredLicenses)
+    let declaredLicenses = new Set()
+    let packageLicenses = new Set()
+    for (const fileIdx in harvested.content.files) {
+      const file = harvested.content.files[fileIdx]
+      if (!file.path.toLowerCase().includes('/')) {
+        const asserted = get(file, 'packages[0].asserted_licenses')
+        if (asserted && packageLicenses.size === 0) this._addArrayToSet(asserted, packageLicenses, license => license.license || license.spdx_license_key)
+        declaredLicenses = this._summarizeLicenseFile(file)
+        if (declaredLicenses.size > 0) break
+      }
     }
-    set(result, 'licensed.declared', this._toExpression(declaredLicenses))
+    set(result, 'licensed.declared', this._toExpression(declaredLicenses || packageLicenses))
+    result.files = []
+    for (const key in buckets) {
+      set(result, `licensed.facets.${key}`, this.summarizeLicenseInfo(buckets[key]))
+      this.summarizeFileInfo(buckets[key], result.files, key)
+    }
     return result
   }
 
@@ -43,7 +52,6 @@ class ScanCodeSummarizer {
     const facetList = Object.getOwnPropertyNames(facets)
     remove(facetList, 'core')
     if (facetList.length === 0) return { core: files }
-
     const result = {}
     for (const facet in facetList) {
       const facetKey = facetList[facet]
@@ -63,10 +71,8 @@ class ScanCodeSummarizer {
   summarizeLicenseInfo(files) {
     const copyrightHolders = new Set()
     const licenseExpressions = new Set()
-    const declaredLicenses = new Set()
     let unknownParties = 0
     let unknownLicenses = 0
-
     for (let file of files) {
       this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key)
       const asserted = get(file, 'packages[0].asserted_licenses')
@@ -76,7 +82,6 @@ class ScanCodeSummarizer {
         !hasHolders && unknownParties++
       }
     }
-
     return {
       attribution: {
         parties: this._setToArray(copyrightHolders),
@@ -90,24 +95,24 @@ class ScanCodeSummarizer {
     }
   }
 
-  summarizeDeclaredLisense(files, declaredLicenses) {
+  summarizeFileInfo(files, currentFiles, facet) {
     files.forEach(file => {
-      const asserted = get(file, 'packages[0].asserted_licenses')
-      if (asserted) this._addArrayToSet(asserted, declaredLicenses, license => license.license || license.spdx_license_key)
-      this._addLicenseFiles(file, declaredLicenses)
+      const licenses = new Set()
+      this._addArrayToSet(file.licenses, licenses, license => license.license || license.spdx_license_key)
+      const licenseExpression = this._toExpression(licenses)
+      const fileObject = { path: file.path, license: licenseExpression, attributions: file.copyrights, facet: facet }
+      currentFiles.push(fileObject)
     })
   }
 
-  _addLicenseFiles(file, declaredLicenses) {
+  _summarizeLicenseFile(file) {
     // Look for license files at the root of the scanned code
     // TODO enhance in the future to cover more license management strategies.
-    const license = ['license', 'license.txt', 'license.md', 'license.html'].reduce((current, prefix) => {
-      if (!current) return file.path.toLowerCase().includes(prefix)
-      return current
-    }, false)
-    if (!license) return
-    if (!file.licenses) return
+    const declaredLicenses = new Set()
+    const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase())
+    if (!isLicense || !file.licenses) return declaredLicenses
     file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
+    return declaredLicenses
   }
 
   _toExpression(licenses) {

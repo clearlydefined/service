@@ -33,7 +33,7 @@ class DefinitionService {
     }
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || this.computeAndStore(coordinates))
+    return this._cast(existing || await this.computeAndStore(coordinates))
   }
 
   // ensure the defintion is a properly classed object
