@@ -2,10 +2,7 @@
   "$id": "https://api.clearlydefined.io/schemas/curation.json#",
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "curation",
-  "required": [
-    "coordinates",
-    "revisions"
-  ],
+  "required": ["coordinates", "revisions"],
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -18,27 +15,13 @@
   },
   "definitions": {
     "type": {
-      "enum": [
-        "npm",
-        "git",
-        "maven"
-      ]
+      "enum": ["npm", "git", "maven"]
     },
     "provider": {
-      "enum": [
-        "npmjs",
-        "github",
-        "mavencentral",
-        "mavencentralsource"
-      ]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
     "coordinates": {
-      "required": [
-        "type",
-        "provider",
-        "namespace",
-        "name"
-      ],
+      "required": ["type", "provider", "namespace", "name"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -48,10 +31,7 @@
           "$ref": "#/definitions/provider"
         },
         "namespace": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "name": {
           "type": "string"
