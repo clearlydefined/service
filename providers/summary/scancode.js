@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, remove, set } = require('lodash')
+const { get, remove, set, last } = require('lodash')
 const minimatch = require('minimatch')
 
 class ScanCodeSummarizer {
@@ -27,23 +27,13 @@ class ScanCodeSummarizer {
       return {}
     const result = {}
     this.addDescribedInfo(result, coordinates, harvested)
-    const buckets = this.computeFileBuckets(harvested.content.files, facets)
-    let declaredLicenses = new Set()
-    let packageLicenses = new Set()
-    for (const fileIdx in harvested.content.files) {
-      const file = harvested.content.files[fileIdx]
-      if (!file.path.toLowerCase().includes('/')) {
-        const asserted = get(file, 'packages[0].asserted_licenses')
-        if (asserted && packageLicenses.size === 0) this._addArrayToSet(asserted, packageLicenses, license => license.license || license.spdx_license_key)
-        declaredLicenses = this._summarizeLicenseFile(file)
-        if (declaredLicenses.size > 0) break
-      }
-    }
+    const declaredLicenses = this._summarizeDeclaredLicenseInfo(harvested.content.files)
+    const packageLicenses = this._summarizePackageInfo(harvested.content.files)
     set(result, 'licensed.declared', this._toExpression(declaredLicenses || packageLicenses))
-    result.files = []
+    result.files = this._summarizeFileInfo(harvested.content.files)
+    const buckets = this.computeFileBuckets(harvested.content.files, facets)
     for (const key in buckets) {
-      set(result, `licensed.facets.${key}`, this.summarizeLicenseInfo(buckets[key]))
-      this.summarizeFileInfo(buckets[key], result.files, key)
+      set(result, `licensed.facets.${key}`, this._summarizeDiscoveredLicenseInfo(buckets[key]))
     }
     return result
   }
@@ -68,7 +58,7 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: releaseDate.trim() }
   }
 
-  summarizeLicenseInfo(files) {
+  _summarizeDiscoveredLicenseInfo(files) {
     const copyrightHolders = new Set()
     const licenseExpressions = new Set()
     let unknownParties = 0
@@ -95,24 +85,49 @@ class ScanCodeSummarizer {
     }
   }
 
-  summarizeFileInfo(files, currentFiles, facet) {
-    files.forEach(file => {
+  _summarizeDeclaredLicenseInfo(files) {
+    const declaredLicenses = new Set()
+    for (const fileIdx in files) {
+      const file = files[fileIdx]
+      const pathArray = file.path.split('/')
+      const baseName = last(pathArray)
+      const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(baseName.toLowerCase())
+      if (isLicense && file.licenses) {
+        // Find first license file and return
+        file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
+        return declaredLicenses
+      }
+    }
+    // Did not find license file so returning empty set (no declared license)
+    return declaredLicenses
+  }
+
+  _summarizePackageInfo(files) {
+    const packageLicenses = new Set()
+    for (const fileIdx in files) {
+      const file = files[fileIdx]
+      const asserted = get(file, 'packages[0].asserted_licenses')
+      if (asserted) {
+        // File first package file and return
+        this._addArrayToSet(asserted, packageLicenses, license => license.license || license.spdx_license_key)
+        return packageLicenses
+      }
+    }
+    // Did not find package file
+    return packageLicenses
+  }
+
+  _summarizeFileInfo(files) {
+    const fileArray = []
+    for (const fileIdx in files) {
+      const file = files[fileIdx]
       const licenses = new Set()
       this._addArrayToSet(file.licenses, licenses, license => license.license || license.spdx_license_key)
       const licenseExpression = this._toExpression(licenses)
-      const fileObject = { path: file.path, license: licenseExpression, attributions: file.copyrights, facet: facet }
-      currentFiles.push(fileObject)
-    })
-  }
-
-  _summarizeLicenseFile(file) {
-    // Look for license files at the root of the scanned code
-    // TODO enhance in the future to cover more license management strategies.
-    const declaredLicenses = new Set()
-    const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase())
-    if (!isLicense || !file.licenses) return declaredLicenses
-    file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
-    return declaredLicenses
+      const fileObject = { path: file.path, license: licenseExpression, attributions: file.copyrights }
+      fileArray.push(fileObject)
+    }
+    return fileArray
   }
 
   _toExpression(licenses) {
