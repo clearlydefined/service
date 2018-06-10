@@ -9,10 +9,13 @@
     "coordinates": {
       "$ref": "#/definitions/coordinates"
     },
+    "files": {
+      "$ref": "#/definitions/files"
+    },
     "described": {
       "$ref": "#/definitions/described"
     },
-    "licenesed": {
+    "licensed": {
       "$ref": "#/definitions/licensed"
     }
   },
@@ -24,6 +27,7 @@
       "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
     },
     "coordinates": {
+      "type": "object",
       "required": ["type", "provider", "namespace", "name", "revision"],
       "additionalProperties": false,
       "properties": {
@@ -44,11 +48,49 @@
         }
       }
     },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The absolute path of the file as found in the component."
+          },
+          "license": {
+            "type": "string",
+            "description": "The SPDX license expression, if any, as found in the file."
+          },
+          "attributions": {
+            "type": "array",
+            "description": "The list of attributions (e.g., copyright statements) discovered in the file.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "facets": {
+            "type": "array",
+            "description": "The facets in which this file exists.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string",
+            "description":
+              "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+          }
+        }
+      }
+    },
     "described": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "facets": {
+          "type": "object",
           "additionalProperties": false,
           "properties": {
             "data": {
@@ -119,6 +161,7 @@
       }
     },
     "licensed": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "declared": {
@@ -130,6 +173,7 @@
       }
     },
     "facets": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "core": {
@@ -153,6 +197,7 @@
       }
     },
     "facet": {
+      "type": "object",
       "additionalProperties": false,
       "properties": {
         "files": {

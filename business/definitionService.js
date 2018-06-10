@@ -33,7 +33,7 @@ class DefinitionService {
     }
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || this.computeAndStore(coordinates))
+    return this._cast(existing || await this.computeAndStore(coordinates))
   }
 
   // ensure the defintion is a properly classed object
@@ -179,13 +179,7 @@ class DefinitionService {
   }
 
   _ensureCoordinates(coordinates, definition) {
-    definition.coordinates = {
-      type: coordinates.type,
-      provider: coordinates.provider,
-      namespace: coordinates.namespace,
-      name: coordinates.name,
-      revision: coordinates.revision
-    }
+    definition.coordinates = EntityCoordinates.fromObject(coordinates)
   }
 
   _ensureDescribed(definition) {
