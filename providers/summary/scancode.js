@@ -66,9 +66,11 @@ class ScanCodeSummarizer {
     for (let file of facetFiles) {
       file.license ? licenseExpressions.add(file.license) : unknownLicenses++
       file.attributions ? this._addArrayToSet(file.attributions, attributions) : unknownParties++
-      // tag the file with the current facet
-      file.facets = file.facets || []
-      file.facets.push(facet)
+      if (facet !== 'core') {
+        // tag the file with the current facet if not core
+        file.facets = file.facets || []
+        file.facets.push(facet)
+      }
     }
     const result = {
       attribution: {

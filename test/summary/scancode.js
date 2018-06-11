@@ -107,6 +107,8 @@ describe('ScanCode summarizer', () => {
     const summary = summarizer.summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
+    expect(summary.files[0].facets).to.be.undefined
+    expect(summary.files[1].facets).to.be.undefined
     expect(summary.licensed.declared).to.eq('MIT')
     const core = summary.licensed.facets.core
     expect(core.files).to.eq(2)
