@@ -1,6 +1,6 @@
 {
   "$id": "https://api.clearlydefined.io/schemas/definition.json#",
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "definition",
   "required": ["coordinates"],
   "type": "object",
@@ -28,7 +28,7 @@
     },
     "coordinates": {
       "type": "object",
-      "required": ["type", "provider", "namespace", "name", "revision"],
+      "required": ["type", "provider", "name", "revision"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -72,7 +72,8 @@
           },
           "facets": {
             "type": "array",
-            "description": "The facets in which this file exists.",
+            "description":
+              "The facets in which this file exists, if any. Note that the absence of facets implies the 'core' facet.",
             "items": {
               "type": "string"
             }
