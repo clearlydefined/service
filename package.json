@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^14.0.0",
-    "ajv": "^6.0.1",
+    "ajv": "^6.5.1",
     "applicationinsights": "^1.0.2",
     "azure-storage": "^2.7.0",
     "base-64": "^0.1.0",
@@ -47,7 +47,6 @@
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
-    "sinon": "^4.2.2",
     "swagger-ui-express": "^2.0.13",
     "throat": "^4.1.0",
     "tmp": "0.0.33",
@@ -55,8 +54,10 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "deep-equal-in-any-order": "^1.0.10",
     "eslint": "^4.13.1",
     "mocha": "^4.0.1",
-    "node-mocks-http": "^1.6.7"
+    "node-mocks-http": "^1.6.7",
+    "sinon": "^4.2.2"
   }
 }

@@ -1,6 +1,6 @@
 {
   "$id": "https://api.clearlydefined.io/schemas/curation.json#",
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "curation",
   "required": ["coordinates", "revisions"],
   "type": "object",
