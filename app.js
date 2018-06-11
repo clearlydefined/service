@@ -46,7 +46,10 @@ const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)
 )
 const searchProvider = config.search.provider
 const search = require(`./providers/search/${searchProvider}`)(config.search[searchProvider])
-initializers.push(() => search.initialize())
+initializers.push(() => {
+  search.initialize()
+  if (searchProvider === 'memory') definitionService.reload('definitions')
+})
 
 const definitionService = require('./business/definitionService')(
   harvestStore,
