@@ -22,8 +22,8 @@ describe('ScanCode summarizer', () => {
 
   it('gets all the attribution parties', () => {
     const harvested = buildOutput([
-      buildFile('/foo.txt', 'MIT', [['Bob', 'Fred']]),
-      buildFile('/bar.txt', 'MIT', [['Jane', 'Fred']])
+      buildFile('foo.txt', 'MIT', [['Bob', 'Fred']]),
+      buildFile('bar.txt', 'MIT', [['Jane', 'Fred']])
     ])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
@@ -37,7 +37,7 @@ describe('ScanCode summarizer', () => {
   })
 
   it('gets all the discovered licenses', () => {
-    const harvested = buildOutput([buildFile('/foo.txt', 'MIT', []), buildFile('/bar.txt', 'GPL', [])])
+    const harvested = buildOutput([buildFile('foo.txt', 'MIT', []), buildFile('bar.txt', 'GPL', [])])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)
@@ -48,7 +48,7 @@ describe('ScanCode summarizer', () => {
   })
 
   it('records unknown licenses and parties', () => {
-    const harvested = buildOutput([buildFile('/foo.txt', null, [['bob']]), buildFile('/bar.txt', 'GPL', [])])
+    const harvested = buildOutput([buildFile('foo.txt', null, [['bob']]), buildFile('bar.txt', 'GPL', [])])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)
@@ -61,7 +61,7 @@ describe('ScanCode summarizer', () => {
   })
 
   it('handles files with no data', () => {
-    const harvested = buildOutput([buildFile('/foo.txt', null, null), buildFile('/bar.txt', null, null)])
+    const harvested = buildOutput([buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)
@@ -114,8 +114,22 @@ describe('ScanCode summarizer', () => {
     expect(core.discovered.unknown).to.eq(0)
   })
 
-  it('handles scan with asserted license file', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', [])])
+  it('skips license files in subdirectories', () => {
+    const harvested = buildOutput([buildFile('/foo/LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const summarizer = Summarizer()
+    const coordinates = 'npm/npmjs/-/test/1.0'
+    const summary = summarizer.summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.licensed.declared).to.be.undefined
+    const core = summary.licensed.facets.core
+    expect(core.files).to.eq(2)
+    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
+    expect(core.discovered.unknown).to.eq(0)
+  })
+
+  it('handles scan with asserted license file even in a subdirectory', () => {
+    const harvested = buildOutput([buildPackageFile('package/package.json', 'MIT', [])])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, remove, set, last, pullAllWith, isEqual } = require('lodash')
+const { get, remove, set, first, pullAllWith, isEqual } = require('lodash')
 const minimatch = require('minimatch')
 
 class ScanCodeSummarizer {
@@ -92,7 +92,7 @@ class ScanCodeSummarizer {
   _summarizeDeclaredLicenseInfo(files) {
     for (let file of files) {
       const pathArray = file.path.split('/')
-      const baseName = last(pathArray)
+      const baseName = first(pathArray)
       const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(baseName.toLowerCase())
       if (isLicense && file.licenses) {
         // Find the first license file and treat it as the authority
