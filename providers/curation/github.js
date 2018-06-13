@@ -67,9 +67,12 @@ class GitHubCurationService {
       path,
       message,
       content,
-      branch,
-      committer: { name: info.name || info.login, email: info.email }
+      branch
     }
+
+    // Github requires name/email to set committer
+    if ((info.name || info.login) && info.email)
+      fileBody.committer = { name: info.name || info.login, email: info.email }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
       return serviceGithub.repos.updateFile(fileBody)
