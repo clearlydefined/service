@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, remove, set } = require('lodash')
+const { get, remove, set, first, pullAllWith, isEqual } = require('lodash')
 const minimatch = require('minimatch')
 
 class ScanCodeSummarizer {
@@ -15,7 +15,7 @@ class ScanCodeSummarizer {
    * data, if any.
    * @param {EntitySpec} coordinates - The entity for which we are summarizing
    * @param {*} harvested - the set of raw tool ouptuts related to the idenified entity
-   * @param {Facets} foo - an object detailing the facets to group by.
+   * @param {Facets} facets - an object detailing the facets to group by.
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested, facets = {}) {
@@ -27,12 +27,13 @@ class ScanCodeSummarizer {
       return {}
     const result = {}
     this.addDescribedInfo(result, coordinates, harvested)
-    const buckets = this.computeFileBuckets(harvested.content.files, facets)
-    set(result, 'licensed.facets', {})
-    const facetsObject = get(result, 'licensed.facets')
-    for (const key in buckets) {
-      facetsObject[key] = this.summarizeLicenseInfo(buckets[key])
-    }
+    const declaredLicense =
+      this._summarizeDeclaredLicenseInfo(harvested.content.files) || this._summarizePackageInfo(harvested.content.files)
+    this._setIfValue(result, 'licensed.declared', declaredLicense)
+    result.files = this._summarizeFileInfo(harvested.content.files)
+    const buckets = this.computeFileBuckets([...result.files], facets)
+    for (const facet in buckets)
+      this._setIfValue(result, `licensed.facets.${facet}`, this._summarizeFacetInfo(facet, buckets[facet]))
     return result
   }
 
@@ -40,15 +41,14 @@ class ScanCodeSummarizer {
     const facetList = Object.getOwnPropertyNames(facets)
     remove(facetList, 'core')
     if (facetList.length === 0) return { core: files }
-
-    const result = {}
+    const result = { core: [...files] }
     for (const facet in facetList) {
       const facetKey = facetList[facet]
       const filters = facets[facetKey]
       if (!filters || filters.length === 0) break
-      result[facetKey] = remove(files, file => filters.some(filter => minimatch(file.path, filter)))
+      result[facetKey] = files.filter(file => filters.some(filter => minimatch(file.path, filter)))
+      pullAllWith(result.core, result[facetKey], isEqual)
     }
-    result.core = files
     return result
   }
 
@@ -57,48 +57,90 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: releaseDate.trim() }
   }
 
-  summarizeLicenseInfo(files) {
-    const copyrightHolders = new Set()
+  _summarizeFacetInfo(facet, facetFiles) {
+    if (!facetFiles || facetFiles.length === 0) return null
+    const attributions = new Set()
     const licenseExpressions = new Set()
-    const declaredLicenses = new Set()
     let unknownParties = 0
     let unknownLicenses = 0
-
-    for (let file of files) {
-      this._addArrayToSet(file.licenses, licenseExpressions, license => license.spdx_license_key)
-      const asserted = get(file, 'packages[0].asserted_licenses')
-      if (!asserted) {
-        if (!file.licenses || file.licenses.length === 0) unknownLicenses++
-        const hasHolders = this._normalizeCopyrights(file.copyrights, copyrightHolders)
-        !hasHolders && unknownParties++
+    for (let file of facetFiles) {
+      file.license ? licenseExpressions.add(file.license) : unknownLicenses++
+      file.attributions ? this._addArrayToSet(file.attributions, attributions) : unknownParties++
+      if (facet !== 'core') {
+        // tag the file with the current facet if not core
+        file.facets = file.facets || []
+        file.facets.push(facet)
       }
-      this._addArrayToSet(asserted, declaredLicenses, license => license.license || license.spdx_license_key)
-      this._addLicenseFiles(file, declaredLicenses)
     }
-
-    return {
+    const result = {
       attribution: {
-        parties: this._setToArray(copyrightHolders),
         unknown: unknownParties
       },
-      declared: this._toExpression(declaredLicenses),
       discovered: {
-        expressions: this._setToArray(licenseExpressions),
         unknown: unknownLicenses
       },
-      files: files.length
+      files: facetFiles.length
     }
+    this._setIfValue(result, 'attribution.parties', this._setToArray(attributions))
+    this._setIfValue(result, 'discovered.expressions', this._setToArray(licenseExpressions))
+    return result
   }
 
-  _addLicenseFiles(file, declaredLicenses) {
-    // Look for license files at the root of the scanned code
-    // TODO enhance in the future to cover more license management strategies.
-    if (!['license', 'license.txt', 'license.md', 'license.html'].includes(file.path.toLowerCase())) return
-    if (!file.licenses) return
-    file.licenses.forEach(license => declaredLicenses.add(license.spdx_license_key))
+  _setIfValue(target, path, value) {
+    if (!value) return
+    set(target, path, value)
+  }
+
+  _summarizeDeclaredLicenseInfo(files) {
+    for (let file of files) {
+      const pathArray = file.path.split('/')
+      const baseName = first(pathArray)
+      const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(baseName.toLowerCase())
+      if (isLicense && file.licenses) {
+        // Find the first license file and treat it as the authority
+        const declaredLicenses = this._addArrayToSet(file.licenses, new Set(), license => license.spdx_license_key)
+        return this._toExpression(declaredLicenses)
+      }
+    }
+    return null
+  }
+
+  _summarizePackageInfo(files) {
+    for (let file of files) {
+      const asserted = get(file, 'packages[0].asserted_licenses')
+      // Find the first package file and treat it as the authority
+      if (asserted) {
+        const packageLicenses = this._addArrayToSet(
+          asserted,
+          new Set(),
+          license => license.license || license.spdx_license_key
+        )
+        return this._toExpression(packageLicenses)
+      }
+    }
+    return null
+  }
+
+  _summarizeFileInfo(files) {
+    return files.map(file => {
+      const asserted = get(file, 'packages[0].asserted_licenses')
+      const fileLicense = asserted || file.licenses
+      const licenses = this._addArrayToSet(
+        fileLicense,
+        new Set(),
+        license => license.license || license.spdx_license_key
+      )
+      const licenseExpression = this._toExpression(licenses)
+      const attributions = this._collectAttributions(file.copyrights)
+      const result = { path: file.path }
+      this._setIfValue(result, 'license', licenseExpression)
+      this._setIfValue(result, 'attributions', attributions)
+      return result
+    })
   }
 
   _toExpression(licenses) {
+    if (!licenses) return null
     const list = this._setToArray(licenses)
     return list ? list.join(' and ') : null
   }
@@ -110,23 +152,17 @@ class ScanCodeSummarizer {
     return result.length === 0 ? null : result
   }
 
-  _normalizeCopyrights(copyrights, holders) {
-    if (!copyrights || !copyrights.length) return false
-    let hasHolders = false
-    for (let copyright of copyrights) {
-      this._addArrayToSet(copyright.holders, holders)
-      hasHolders = hasHolders || copyright.holders.length
-    }
-    return hasHolders
+  _collectAttributions(copyrights, holders) {
+    if (!copyrights || !copyrights.length) return null
+    return this._setToArray(copyrights.reduce((result, entry) => this._addArrayToSet(entry.holders, result), new Set()))
   }
 
   _addArrayToSet(array, set, valueExtractor) {
-    if (!array || !array.length) return
+    if (!array || !array.length) return set
 
     valueExtractor = valueExtractor || (value => value)
-    for (let entry of array) {
-      set.add(valueExtractor(entry))
-    }
+    for (let entry of array) set.add(valueExtractor(entry))
+    return set
   }
 }
 

@@ -39,14 +39,15 @@ router.get(
   })
 )
 
-// Create a patch for a specific revision of a component
 router.patch(
-  '/:type/:provider/:namespace/:name/:revision',
+  '',
   asyncMiddleware(async (request, response) => {
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
+    const serviceGithub = request.app.locals.service.github.client
+    const userGithub = request.app.locals.user.github.client
+    const info = request.app.locals.user.github.info
     return curationService
-      .addOrUpdate(request.app.locals.user.github.client, coordinates, request.body)
-      .then(() => response.sendStatus(200))
+      .addOrUpdate(userGithub, serviceGithub, info, request.body)
+      .then(result => response.status(200).send({ prNumber: result.data.number }))
   })
 )
 

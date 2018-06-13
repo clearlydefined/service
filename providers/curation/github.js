@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const _ = require('lodash')
+const { assign, concat, get, forIn, merge, set, pickBy } = require('lodash')
 const base64 = require('base-64')
 const extend = require('extend')
 const { exec } = require('child_process')
@@ -9,9 +9,12 @@ const fs = require('fs')
 const moment = require('moment')
 const readdirp = require('readdirp')
 const yaml = require('js-yaml')
+const throat = require('throat')
 const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
+const path = require('path')
 tmp.setGracefulCleanup()
 
 // Responsible for managing curation patches in a store
@@ -34,86 +37,70 @@ class GitHubCurationService {
     }
   }
 
-  addOrUpdate(githubUserClient, coordinates, patch) {
-    if (!patch.patch)
-      throw new Error('Cannot add or update an empty patch. Did you forget to put it in a "patch" property?')
-    const github = githubUserClient
-    const { owner, repo, branch } = this.options
+  _updateContent(coordinates, currentContent, newContent) {
+    const result = {
+      coordinates: {
+        type: coordinates.type,
+        provider: coordinates.provider,
+        namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
+        name: coordinates.name
+      }
+    }
+    result.revisions = get(currentContent, 'revisions') || {}
+
+    forIn(newContent, (value, key) => (result.revisions[key] = merge(result.revisions[key] || {}, value)))
+    return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
+  }
+
+  async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
+    const { owner, repo } = this.options
+    const coordinates = EntityCoordinates.fromObject(patch.coordinates)
+    const currentContent = await this.getAll(coordinates)
+    const newContent = patch.revisions
+    const updatedContent = this._updateContent(coordinates, currentContent, newContent)
+    const content = base64.encode(updatedContent)
     const path = this._getCurationPath(coordinates)
-    const prBranch = this._getBranchName(coordinates)
-    let curationPathSha = null
+    const message = `Update ${path}`
+    const fileBody = {
+      owner,
+      repo,
+      path,
+      message,
+      content,
+      branch
+    }
 
-    return this.getAll(coordinates)
-      .then(parsedContent => {
-        // make patch independent of directory structure
-        parsedContent = _.assign(parsedContent, {
-          coordinates: {
-            type: coordinates.type,
-            provider: coordinates.provider,
-            namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
-            name: coordinates.name
-          }
-        })
+    // Github requires name/email to set committer
+    if ((info.name || info.login) && info.email)
+      fileBody.committer = { name: info.name || info.login, email: info.email }
+    if (get(currentContent, '_origin.sha')) {
+      fileBody.sha = currentContent._origin.sha
+      return serviceGithub.repos.updateFile(fileBody)
+    }
+    return serviceGithub.repos.createFile(fileBody)
+  }
 
-        // remove and re-add the revisions property so it appears after the metadata properties (and default it to empty)
-        const revisions = parsedContent.revisions
-        delete parsedContent.revisions
-        parsedContent.revisions = revisions || {}
-
-        // extract the file's SHA1 to enable updating the file
-        if (parsedContent.origin) {
-          curationPathSha = parsedContent.origin.sha
-        }
-
-        // add/update the patch for this revision
-        parsedContent.revisions[coordinates.revision] = _.assign(
-          parsedContent.revisions[coordinates.revision] || {},
-          patch.patch
+  async addOrUpdate(userGithub, serviceGithub, info, patch) {
+    const { owner, repo, branch } = this.options
+    const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
+    const sha = masterBranch.data.commit.sha
+    const prBranch = await this._getBranchName(info)
+    await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
+    await Promise.all(
+      patch.patches.map(
+        throat(1, component =>
+          this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch)
         )
-
-        // return the serialized YAML
-        return yaml.safeDump(parsedContent, { sortKeys: true })
-      })
-      .then(updatedPatch => {
-        return github.repos
-          .getBranch({ owner, repo, branch: `refs/heads/${branch}` })
-          .then(masterBranch => {
-            const sha = masterBranch.data.commit.sha
-            return github.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-          })
-          .then(() => updatedPatch)
-      })
-      .then(updatedPatch => {
-        const message = `Update ${path} ${coordinates.revision}`
-        if (curationPathSha)
-          return github.repos.updateFile({
-            owner,
-            repo,
-            path,
-            message,
-            content: base64.encode(updatedPatch),
-            branch: prBranch,
-            sha: curationPathSha
-          })
-        return github.repos.createFile({
-          owner,
-          repo,
-          path,
-          message,
-          content: base64.encode(updatedPatch),
-          branch: prBranch
-        })
-      })
-      .then(() => {
-        return github.pullRequests.create({
-          owner,
-          repo,
-          title: this._getPrTitle(coordinates),
-          body: patch.description,
-          head: `refs/heads/${prBranch}`,
-          base: branch
-        })
-      })
+      )
+    )
+    return (userGithub || serviceGithub).pullRequests.create({
+      owner,
+      repo,
+      title: prBranch,
+      body: patch.description,
+      head: `refs/heads/${prBranch}`,
+      base: branch
+    })
   }
 
   /**
@@ -149,7 +136,38 @@ class GitHubCurationService {
    * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
    * indicating the sha of the commit for the curations if that info is available.
    */
-  async getAll(coordinates, pr = null) {
+  getAll(coordinates, pr = null) {
+    return pr ? this._getAllGitHub(coordinates, pr) : this._getAllLocal(coordinates)
+  }
+
+  async _getAllLocal(coordinates) {
+    const { owner, repo } = this.options
+    await this.ensureCurations()
+    const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
+    var result
+    try {
+      result = yaml.safeLoad(fs.readFileSync(filePath))
+    } catch (error) {
+      if (error.code === 'ENOENT') return
+      throw error
+    }
+    const res = await this._getLocalSha(filePath)
+    set(result, '_origin', { sha: res.split(' ')[1], enumerable: false })
+    return result
+  }
+
+  async _getLocalSha(filepath) {
+    const parent = path.dirname(filepath)
+    const command = `cd ${parent} && git ls-files -s ${path.basename(filepath)}`
+    return new Promise((resolve, reject) => {
+      exec(command, (error, stdout) => {
+        if (error) return reject(error)
+        resolve(stdout)
+      })
+    })
+  }
+
+  async _getAllGitHub(coordinates, pr = null) {
     const curationPath = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
     const branch = await this.getBranch(pr)
@@ -203,7 +221,7 @@ class GitHubCurationService {
   async handleMerge(number, ref) {
     const curations = await this.getCurations(number, ref)
     const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    const coordinateList = _.concat([], ...coordinateSet)
+    const coordinateList = concat([], ...coordinateSet)
     return this.definitionService.invalidate(coordinateList)
   }
 
@@ -279,9 +297,12 @@ class GitHubCurationService {
       const command = this.curationUpdateTime
         ? `cd ${this.tempLocation.name}/${repo} && git pull`
         : `cd ${this.tempLocation.name} && git clone ${url}`
+      this.curationUpdateTime = Date.now()
       exec(command, (error, stdout) => {
-        if (error) return reject(error)
-        this.curationUpdateTime = Date.now()
+        if (error) {
+          this.curationUpdateTime = null
+          return reject(error)
+        }
         resolve(stdout)
       })
     })
@@ -304,9 +325,8 @@ class GitHubCurationService {
     return coordinates.toString()
   }
 
-  _getBranchName(coordinates) {
-    const c = coordinates
-    return `${c.type.toLowerCase()}_${c.name}_${c.revision}_${moment().format('YYMMDD_HHmmss.SSS')}`
+  async _getBranchName(info) {
+    return `${info.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
   }
 
   _getCurationPath(coordinates) {
@@ -316,12 +336,22 @@ class GitHubCurationService {
 
   _getSearchRoot(coordinates) {
     const path = coordinates.asRevisionless().toString()
-    return `curations/${path ? path + '/' : ''}`
+    return `curations/${path}`
   }
 
   // @todo perhaps validate directory structure based on coordinates
   isCurationFile(path) {
     return path.startsWith('curations/') && path.endsWith('.yaml')
+  }
+
+  toEntityCoordinate(coordinates) {
+    return new EntityCoordinates(
+      coordinates.type,
+      coordinates.provider,
+      coordinates.namespace,
+      coordinates.name,
+      coordinates.revision
+    )
   }
 }
 

@@ -46,7 +46,10 @@ const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)
 )
 const searchProvider = config.search.provider
 const search = require(`./providers/search/${searchProvider}`)(config.search[searchProvider])
-initializers.push(() => search.initialize())
+initializers.push(() => {
+  search.initialize()
+  if (searchProvider === 'memory') definitionService.reload('definitions')
+})
 
 const definitionService = require('./business/definitionService')(
   harvestStore,
@@ -142,15 +145,17 @@ app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
+  const status = typeof err.status === 'number' ? err.status : 500
+  const message = typeof err.status === 'number' ? err.message : (err.status || 'Unknown') + '\n' + err.message
 
   // return the error
   res
-    .status(err.status || 500)
+    .status(status)
     .type('application/json')
     .send({
       error: {
-        code: err.status ? err.status.toString() : 'Unknown',
-        message: err.message,
+        code: status.toString(),
+        message,
         innererror: serializeError(res.locals.error)
       }
     })

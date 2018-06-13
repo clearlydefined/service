@@ -218,20 +218,25 @@ paths:
             application/json:
               schema:
                 $ref: '#components/bodies/definitionList'
-
-  /definitions/{type}/{provider}/{namespace}/{name}:
     get:
-      summary: Gets components that have definitions (i.e,. have been harveted and/or curated).
+      summary: Gets the coordinates for all definitions that match the given pattern in the specified part of the definition.
       tags:
         - definitions
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
+        - in: query
+          name: pattern
+          schema:
+            type: string
+          required: true
+          description: The string to search for in definition coordinates
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: The part of the definition to search for the given pattern. Valid values are 'coordinates' (default) and 'copyrights'.
       responses:
         200:
-          description: List of definitions that have definitions.
+      description: List of definitions that have definitions.
   /definitions/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets the definition for a component revision.

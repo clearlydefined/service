@@ -1,6 +1,6 @@
 {
   "$id": "https://api.clearlydefined.io/schemas/harvest.json#",
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "harvest",
   "type": "object",
   "definitions": {
@@ -11,10 +11,7 @@
       "type": "string"
     },
     "request": {
-      "required": [
-        "type",
-        "url"
-      ],
+      "required": ["type", "url"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -114,9 +111,7 @@
     },
     "link": {
       "type": "object",
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "additionalProperties": false,
       "properties": {
         "type": {
