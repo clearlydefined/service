@@ -48,10 +48,9 @@ class GitHubCurationService {
     }
     result.revisions = get(currentContent, 'revisions') || {}
 
-    forIn(newContent, (value, key) => result.revisions[key] = merge(result.revisions[key] || {}, value))
+    forIn(newContent, (value, key) => (result.revisions[key] = merge(result.revisions[key] || {}, value)))
     return yaml.safeDump(result, { sortKeys: true })
   }
-
 
   async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
     const { owner, repo } = this.options
@@ -62,7 +61,15 @@ class GitHubCurationService {
     const content = base64.encode(updatedContent)
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
-    const fileBody = { owner, repo, path, message, content, branch, committer: { name: info.name || info.login, email: info.email }, }
+    const fileBody = {
+      owner,
+      repo,
+      path,
+      message,
+      content,
+      branch,
+      committer: { name: info.name || info.login, email: info.email }
+    }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
       return serviceGithub.repos.updateFile(fileBody)
@@ -76,7 +83,13 @@ class GitHubCurationService {
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-    await Promise.all(patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch))))
+    await Promise.all(
+      patch.patches.map(
+        throat(1, component =>
+          this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch)
+        )
+      )
+    )
     return (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
@@ -136,7 +149,7 @@ class GitHubCurationService {
       throw error
     }
     const res = await this._getLocalSha(filePath)
-    set(result, '_origin', { sha: res.split(" ")[1], enumerable: false })
+    set(result, '_origin', { sha: res.split(' ')[1], enumerable: false })
     return result
   }
 
@@ -267,7 +280,7 @@ class GitHubCurationService {
   }
 
   async ensureCurations() {
-    if (this.curationUpdateTime && (Date.now() - this.curationUpdateTime < this.options.curationFreshness)) return
+    if (this.curationUpdateTime && Date.now() - this.curationUpdateTime < this.options.curationFreshness) return
     const { owner, repo } = this.options
     const url = `https://github.com/${owner}/${repo}.git`
     this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions)
@@ -329,7 +342,13 @@ class GitHubCurationService {
   }
 
   toEntityCoordinate(coordinates) {
-    return new EntityCoordinates(coordinates.type, coordinates.provider, coordinates.namespace, coordinates.name, coordinates.revision)
+    return new EntityCoordinates(
+      coordinates.type,
+      coordinates.provider,
+      coordinates.namespace,
+      coordinates.name,
+      coordinates.revision
+    )
   }
 }
 
