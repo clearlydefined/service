@@ -49,7 +49,7 @@ class GitHubCurationService {
     result.revisions = get(currentContent, 'revisions') || {}
 
     forIn(newContent, (value, key) => (result.revisions[key] = merge(result.revisions[key] || {}, value)))
-    return yaml.safeDump(result, { sortKeys: true })
+    return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
   }
 
   async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
