@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const { extractDate } = require('../../lib/utils')
+
 class CdSourceSummarizer {
   constructor(options) {
     this.options = options
@@ -8,7 +10,7 @@ class CdSourceSummarizer {
 
   summarize(coordinates, data) {
     const result = { described: {} }
-    result.described.releaseDate = data.releaseDate
+    result.described.releaseDate = extractDate(data.releaseDate)
     result.described.facets = data.facets
     return result
   }

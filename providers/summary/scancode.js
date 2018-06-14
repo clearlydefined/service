@@ -3,6 +3,7 @@
 
 const { get, remove, set, first, pullAllWith, isEqual } = require('lodash')
 const minimatch = require('minimatch')
+const { extractDate } = require('../../lib/utils')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -54,7 +55,7 @@ class ScanCodeSummarizer {
 
   addDescribedInfo(result, coordinates, harvested) {
     const releaseDate = harvested._metadata.releaseDate
-    if (releaseDate) result.described = { releaseDate: releaseDate.trim() }
+    if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
   _summarizeFacetInfo(facet, facetFiles) {
