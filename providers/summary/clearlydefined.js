@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const _ = require('lodash')
+const { pick } = require('lodash')
+const { extractDate } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
   constructor(options) {
@@ -25,6 +26,9 @@ class ClearlyDescribedSummarizer {
       case 'sourcearchive':
         this.addSourceArchiveData(result, data, filter)
         break
+      case 'nuget':
+        this.addNuGetData(result, data, filter)
+        break
       default:
     }
     return result
@@ -36,21 +40,25 @@ class ClearlyDescribedSummarizer {
 
   addSourceLocation(result, data) {
     if (data.sourceInfo)
-      result.described.sourceLocation = _.pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
+      result.described.sourceLocation = pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
   }
 
   addMavenData(result, data) {
-    result.described.releaseDate = data.releaseDate
+    result.described.releaseDate = extractDate(data.releaseDate)
   }
 
   addSourceArchiveData(result, data) {
-    result.described.releaseDate = data.releaseDate
+    result.described.releaseDate = extractDate(data.releaseDate)
+  }
+
+  addNuGetData(result, data) {
+    // TOOD see if we can get the release date out of a nuget
   }
 
   addNpmData(result, data) {
     result.described.projectWebsite = data.registryData.manifest.homepage
     result.described.issueTracker = data.registryData.manifest.bugs
-    result.described.releaseDate = data.registryData.releaseDate
+    result.described.releaseDate = extractDate(data.registryData.releaseDate)
     result.licensed = {
       declared: data.registryData.manifest.license
     }

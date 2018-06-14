@@ -15,10 +15,10 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven"]
+      "enum": ["npm", "git", "maven", "nuget"]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource"]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget"]
     },
     "coordinates": {
       "required": ["type", "provider", "namespace", "name"],
@@ -94,7 +94,7 @@
         },
         "releaseDate": {
           "type": "string",
-          "format": "date-time"
+          "format": "date"
         }
       }
     },
