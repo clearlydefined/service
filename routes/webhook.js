@@ -29,7 +29,7 @@ async function handleGitHubCall(request, response) {
   else {
     // TODO hack alert! use the title of the PR to find the definition in clearlydefined.io
     // In the future we need a more concrete/robust way to capture this in the PR in the face of
-    // people not using out tools etc. Ideally read it out of the PR files themselves.
+    // people not using our tools etc. Ideally read it out of the PR files themselves.
     await curationService.validateCurations(pr.number, pr.title, pr.head.sha, pr.head.ref)
   }
   response.status(200).end()

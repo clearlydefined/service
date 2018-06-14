@@ -347,7 +347,7 @@ components:
               namespace: microsoft
               name: redie
               revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
-            releaseDate: 2018-01-29T01:29:32.869Z
+            releaseDate: '2018-01-29'
           licensed:
             declared: MIT
             facets:
