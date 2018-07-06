@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { pick } = require('lodash')
+const { pick, set } = require('lodash')
 const { extractDate } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -28,6 +28,9 @@ class ClearlyDescribedSummarizer {
         break
       case 'nuget':
         this.addNuGetData(result, data, filter)
+        break
+      case 'gem':
+        this.addGemData(result, data, filter)
         break
       default:
     }
@@ -62,6 +65,12 @@ class ClearlyDescribedSummarizer {
     result.licensed = {
       declared: data.registryData.manifest.license
     }
+  }
+
+  addGemData(result, data) {
+    set(result, 'described.releaseDate', data.releaseDate)
+    set(result, 'licensed.attribution.parties', data.authors.split(','))
+    set(result, 'licensed.declared', data.licenses)
   }
 }
 
