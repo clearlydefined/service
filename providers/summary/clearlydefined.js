@@ -69,7 +69,6 @@ class ClearlyDescribedSummarizer {
 
   addGemData(result, data) {
     set(result, 'described.releaseDate', data.releaseDate)
-    set(result, 'licensed.attribution.parties', data.authors.split(','))
     set(result, 'licensed.declared', data.licenses)
   }
 }
