@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { pick } = require('lodash')
+const { pick, set } = require('lodash')
 const { extractDate } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -52,7 +52,7 @@ class ClearlyDescribedSummarizer {
   }
 
   addNuGetData(result, data) {
-    // TOOD see if we can get the release date out of a nuget
+    set(result, 'described.releaseDate', data.releaseDate)
   }
 
   addNpmData(result, data) {
