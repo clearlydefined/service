@@ -5,8 +5,7 @@ coordinates:
   namespace: "-"
 revisions:
   4.17.4:
-    licensed:
+    described:
       facets:
-        tests: 
-          license:
-            unknown: 3  # this prop is not allowed
+        unknown:
+          - "test"

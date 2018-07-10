@@ -57,6 +57,9 @@
         },
         "licensed": {
           "$ref": "#/definitions/licensed"
+        },
+        "files": {
+          "$ref": "#/definitions/files"
         }
       }
     },
@@ -64,6 +67,26 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "facets": {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/globList"
+            },
+            "dev": {
+              "$ref": "#/definitions/globList"
+            },
+            "doc": {
+              "$ref": "#/definitions/globList"
+            },
+            "examples": {
+              "$ref": "#/definitions/globList"
+            },
+            "tests": {
+              "$ref": "#/definitions/globList"
+            }
+          }
+        },
         "sourceLocation": {
           "$ref": "#/definitions/sourceLocation"
         },
@@ -76,10 +99,13 @@
         "releaseDate": {
           "type": "string",
           "format": "date"
-        },
-        "files": {
-          "$ref": "#/definitions/files"
         }
+      }
+    },
+    "globList": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "sourceLocation": {
@@ -95,7 +121,8 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "description": "URL for the repo"
         },
         "revision": {
           "type": "string"
@@ -126,19 +153,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "facets": {
-            "type": "array",
-            "description":
-              "The facets in which this file exists, if any. Note that the absence of facets implies the 'core' facet.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "content": {
-            "type": "string",
-            "description":
-              "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
           }
         }
       }
@@ -148,72 +162,11 @@
       "properties": {
         "declared": {
           "$ref": "#/definitions/declared"
-        },
-        "facets": {
-          "$ref": "#/definitions/facets"
-        }
-      }
-    },
-    "facets": {
-      "additionalProperties": false,
-      "properties": {
-        "core": {
-          "$ref": "#/definitions/facet"
-        },
-        "data": {
-          "$ref": "#/definitions/facet"
-        },
-        "dev": {
-          "$ref": "#/definitions/facet"
-        },
-        "doc": {
-          "$ref": "#/definitions/facet"
-        },
-        "examples": {
-          "$ref": "#/definitions/facet"
-        },
-        "tests": {
-          "$ref": "#/definitions/facet"
-        }
-      }
-    },
-    "facet": {
-      "additionalProperties": false,
-      "properties": {
-        "attribution": {
-          "$ref": "#/definitions/attribution"
-        },
-        "discovered": {
-          "$ref": "#/definitions/discovered"
-        }
-      }
-    },
-    "attribution": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "parties": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
     "declared": {
       "type": "string"
-    },
-    "discovered": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "expressions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
     }
   }
 }

@@ -5,6 +5,21 @@ coordinates:
   namespace: "-"
 revisions:
   4.17.4:
+    files:
+      - path: "/foo"
+        license: "MIT"
+        attributions:
+          - "attribution1"
+          - "attribution2"
+      - path: "/bar"
+        license: "GPL"
+        attributions:
+          - "attribution3"
+          - "attribution4"
+      - path: "/foo/bar"
+        license: "Apache-2.0"
+        attributions:
+          - "attribution3"
     described:
       sourceLocation:
         provider: "github"
@@ -14,46 +29,11 @@ revisions:
       projectWebsite: "www.foo.bar.com"
       issueTracker: "www.issueTracker.org"
       releaseDate: "2018-01-18"
-      files:
-        - path: "/foo"
-          license: "MIT"
-          attributions:
-            - "attribution1"
-            - "attribution2"
-          facets:
-            - "test"
-            - "core"
-        - path: "/bar"
-          license: "GPL"
-          attributions:
-            - "attribution3"
-            - "attribution4"
-          facets:
-            - "core"
-        - path: "/foo/bar"
-          license: "Apache-2.0"
-          attributions:
-            - "attribution3"
-          facets:
-            - "dev"
-    licensed:
-      declared: "MIT"
       facets:
         tests:
-          attribution:
-            parties:
-              - "foo"
-              - "bar"
-          discovered:
-            expressions: 
-              - "MIT"
-              - "GPL"
+          - "foo"
+          - "bar"
         doc:
-          attribution:
-            parties:
-              - "foo"
-          discovered:
-            expressions: 
-              - "MIT"
-              - "BSD"
-            
+          - "foo"
+    licensed:
+      declared: "MIT"

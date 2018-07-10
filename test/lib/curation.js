@@ -23,15 +23,22 @@ describe('Curations', () => {
     expect(curation.errors[0].message).to.equal('Invalid curation')
   })
 
-  it('should identify invalid props: unknown copyright', () => {
+  it('should identify invalid facet array', () => {
     const content = getFixture('curation-invalid.1.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
     expect(curation.errors[0].message).to.equal('Invalid curation')
   })
 
-  it('should identify invalid props: unknown license', () => {
+  it('should identify invalid props: unknown', () => {
     const content = getFixture('curation-invalid.2.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].message).to.equal('Invalid curation')
+  })
+
+  it('should identify invalid props: facets not in licensed', () => {
+    const content = getFixture('curation-invalid.3.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
     expect(curation.errors[0].message).to.equal('Invalid curation')
@@ -74,13 +81,6 @@ describe('Curations', () => {
 
   it('should identify invalid declared license (incorrect key)', () => {
     const content = getFixture('curation-invalid.9.yaml')
-    const curation = new Curation(content)
-    expect(curation.isValid).to.be.false
-    expect(curation.errors[0].message).to.equal('Invalid curation')
-  })
-
-  it('should identify invalid props: file count', () => {
-    const content = getFixture('curation-invalid.3.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
     expect(curation.errors[0].message).to.equal('Invalid curation')

@@ -6,15 +6,15 @@ coordinates:
 revisions:
   4.17.4:
     described:
+      facets:
+        tests: 
+          - "foo"
+          - "bar"
+        doc:
+          - "js"
       issueTracker: "https://foobar.com/baz/1"
     licensed:
       declared: "MIT"
-      facets:
-        tests: 
-          attribution:
-            parties:
-              - "foo"
-              - "bar"
   4.17.5:
     described:
       releaseDate: "2018-01-18"

@@ -5,25 +5,19 @@ coordinates:
   namespace: "-"
 revisions:
   4.17.4:
-    described:
-      issueTracker: "https://foobar.com/baz/1"
-      files:
+    files:
         - path: "/foo"
         - path: "/bar"
         - path: "/foo/bar"
+    described:
+      issueTracker: "https://foobar.com/baz/1"
     licensed:
       declared: "MIT"
-      facets:
-        tests: 
-          attribution:
-            parties:
-              - "foo"
-              - "bar"
   4.17.5:
-    described:
-      releaseDate: "2018-01-18"
-      files:
+    files:
         - path: "/foo"
         - path: "/bar"
         - path: "/foo/bar"
         - license: "GPL"
+    described:
+      releaseDate: "2018-01-18"

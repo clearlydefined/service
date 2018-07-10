@@ -53,7 +53,7 @@ router.patch(
         curationErrors = [...curationErrors, curation.errors]
       }
     })
-    if (curationErrors.length > 0) response.status(404).send({ error: curationErrors })
+    if (curationErrors.length > 0) response.status(400).send({ error: curationErrors })
     else
       return curationService
         .addOrUpdate(userGithub, serviceGithub, info, request.body)
