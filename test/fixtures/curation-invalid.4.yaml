@@ -1,6 +1,6 @@
 coordinates:
   name: lodash
-  provider: npmjs
+  provider: INVALID
   type: npm
   namespace: "-"
 revisions:

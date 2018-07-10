@@ -5,7 +5,8 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
-
+const Curation = require('../lib/curation')
+const { some } = require('lodash')
 // Get a proposed patch for a specific revision of a component
 router.get(
   '/:type/:provider/:namespace/:name/:revision/pr/:pr',
@@ -45,9 +46,18 @@ router.patch(
     const serviceGithub = request.app.locals.service.github.client
     const userGithub = request.app.locals.user.github.client
     const info = request.app.locals.user.github.info
-    return curationService
-      .addOrUpdate(userGithub, serviceGithub, info, request.body)
-      .then(result => response.status(200).send({ prNumber: result.data.number }))
+    let curationErrors = []
+    request.body.patches.forEach(entry => {
+      const curation = new Curation(entry)
+      if (curation.errors.length > 0) {
+        curationErrors = [...curationErrors, curation.errors]
+      }
+    })
+    if (curationErrors.length > 0) response.status(404).send({ error: curationErrors })
+    else
+      return curationService
+        .addOrUpdate(userGithub, serviceGithub, info, request.body)
+        .then(result => response.status(200).send({ prNumber: result.data.number }))
   })
 )
 

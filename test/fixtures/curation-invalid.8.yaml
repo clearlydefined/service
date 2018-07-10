@@ -1,0 +1,29 @@
+coordinates:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    described:
+      issueTracker: "https://foobar.com/baz/1"
+      files:
+        - path: "/foo"
+        - path: "/bar"
+        - path: "/foo/bar"
+    licensed:
+      declared: "MIT"
+      facets:
+        tests: 
+          attribution:
+            parties:
+              - "foo"
+              - "bar"
+  4.17.5:
+    described:
+      releaseDate: "2018-01-18"
+      files:
+        - path: "/foo"
+        - path: "/bar"
+        - path: "/foo/bar"
+        - license: "GPL"

@@ -15,14 +15,15 @@
   },
   "definitions": {
     "type": {
+      "type": "string",
       "enum": ["npm", "git", "maven", "nuget", "gem"]
     },
     "provider": {
+      "type": "string",
       "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "rubygems"]
     },
     "coordinates": {
       "required": ["type", "provider", "namespace", "name"],
-      "additionalProperties": false,
       "properties": {
         "type": {
           "$ref": "#/definitions/type"
@@ -83,6 +84,7 @@
     },
     "sourceLocation": {
       "type": "object",
+      "required": ["type", "provider", "revision", "url"],
       "additionalProperties": false,
       "properties": {
         "type": {
