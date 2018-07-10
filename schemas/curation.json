@@ -15,10 +15,10 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven", "nuget"]
+      "enum": ["npm", "git", "maven", "nuget", "gem"]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget"]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "rubygems"]
     },
     "coordinates": {
       "required": ["type", "provider", "namespace", "name"],
@@ -63,26 +63,6 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "facets": {
-          "additionalProperties": false,
-          "properties": {
-            "data": {
-              "$ref": "#/definitions/globList"
-            },
-            "dev": {
-              "$ref": "#/definitions/globList"
-            },
-            "doc": {
-              "$ref": "#/definitions/globList"
-            },
-            "examples": {
-              "$ref": "#/definitions/globList"
-            },
-            "tests": {
-              "$ref": "#/definitions/globList"
-            }
-          }
-        },
         "sourceLocation": {
           "$ref": "#/definitions/sourceLocation"
         },
@@ -95,13 +75,10 @@
         "releaseDate": {
           "type": "string",
           "format": "date"
+        },
+        "files": {
+          "$ref": "#/definitions/files"
         }
-      }
-    },
-    "globList": {
-      "type": "array",
-      "items": {
-        "type": "string"
       }
     },
     "sourceLocation": {
@@ -123,6 +100,44 @@
         },
         "path": {
           "type": "string"
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The absolute path of the file as found in the component."
+          },
+          "license": {
+            "type": "string",
+            "description": "The SPDX license expression, if any, as found in the file."
+          },
+          "attributions": {
+            "type": "array",
+            "description": "The list of attributions (e.g., copyright statements) discovered in the file.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "facets": {
+            "type": "array",
+            "description":
+              "The facets in which this file exists, if any. Note that the absence of facets implies the 'core' facet.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string",
+            "description":
+              "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+          }
         }
       }
     },

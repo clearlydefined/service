@@ -53,7 +53,7 @@ describe('Curations', () => {
 
   it('should also accept yaml data objects', () => {
     const data = yaml.safeLoad('foo: bar')
-    const curation = new Curation(null, data)
+    const curation = new Curation(data)
     expect(curation.isValid).to.be.false
     expect(curation.errors[0].message).to.equal('Invalid curation')
   })

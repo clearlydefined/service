@@ -26,6 +26,7 @@ describe('Github Curation Service', () => {
     })
     await service.handleMerge(1, 42)
     expect(definitionService.invalidate.calledOnce).to.be.true
+    const temp = definitionService.invalidate.getCall(0)
     expect(definitionService.invalidate.getCall(0).args[0][0].name).to.be.eq('test')
   })
 
@@ -55,7 +56,7 @@ describe('Github Curation Service', () => {
 })
 
 function createCuration() {
-  return new Curation(null, {
+  return new Curation({
     coordinates: {
       type: 'npm',
       provider: 'npmjs',
@@ -73,7 +74,7 @@ function createCuration() {
 }
 
 function createInvalidCuration() {
-  return new Curation(null, {
+  return new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
