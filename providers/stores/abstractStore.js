@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const _ = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 
@@ -72,7 +71,10 @@ class AbstractStore {
     // if there is a provider then consider the namespace otherwise there can't be one so ignore null
     const namespace = c.provider ? c.namespace || '-' : null
     // TODO validate that there are no intermediate nulls
-    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart].filter(s => s).join('/')
+    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart]
+      .filter(s => s)
+      .join('/')
+      .toLowerCase()
   }
 }
 

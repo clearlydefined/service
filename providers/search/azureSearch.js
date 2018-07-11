@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
-const { get, uniq, values } = require('lodash')
+const { get } = require('lodash')
 const base64 = require('base-64')
 const AbstractSearch = require('./abstractSearch')
 const EntityCoordinates = require('../../lib/entityCoordinates')
