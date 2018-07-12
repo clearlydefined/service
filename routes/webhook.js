@@ -42,7 +42,7 @@ async function handleCrawlerCall(request, response) {
   if (!urn) return fatal(request, response, 400, 'Missing or invalid "self" link')
   const coordinates = EntityCoordinates.fromUrn(urn)
   // TODO validate the coordinates are complete
-  await definitionService.invalidate(coordinates)
+  await definitionService.computeAndStore(coordinates)
   response.status(200).end()
 }
 
