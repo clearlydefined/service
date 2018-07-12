@@ -15,8 +15,8 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.invalidate.calledOnce).to.be.true
-    expect(service.invalidate.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.computeAndStore.calledOnce).to.be.true
+    expect(service.computeAndStore.getCall(0).args[0].name).to.be.eq('test')
   })
 
   it('handles missing self', () => {
@@ -27,7 +27,7 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.invalidate.calledOnce).to.be.false
+    expect(service.computeAndStore.calledOnce).to.be.false
     expect(logger.error.calledOnce).to.be.true
   })
 
@@ -39,14 +39,14 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'different', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.invalidate.calledOnce).to.be.false
+    expect(service.computeAndStore.calledOnce).to.be.false
     expect(logger.error.calledOnce).to.be.true
   })
 })
 
 function createDefinitionService() {
   return {
-    invalidate: sinon.stub()
+    computeAndStore: sinon.stub()
   }
 }
 

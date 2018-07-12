@@ -45,9 +45,15 @@ router.patch(
     const serviceGithub = request.app.locals.service.github.client
     const userGithub = request.app.locals.user.github.client
     const info = request.app.locals.user.github.info
+    const repo = request.app.locals.config.curation.store.github.repo
+    const owner = request.app.locals.config.curation.store.github.owner
     return curationService
       .addOrUpdate(userGithub, serviceGithub, info, request.body)
-      .then(result => response.status(200).send({ prNumber: result.data.number }))
+      .then(result =>
+        response
+          .status(200)
+          .send({ prNumber: result.data.number, url: `https://github.com/${owner}/${repo}/pull/${result.data.number}` })
+      )
   })
 )
 
