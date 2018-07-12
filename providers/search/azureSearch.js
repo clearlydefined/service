@@ -18,22 +18,6 @@ class AzureSearch extends AbstractSearch {
   }
 
   /**
-   * Get the search document associated with the given coordinates
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the result to get
-   * @returns The object found at the given coordinates
-   */
-  async get(coordinates) {
-    const searchResult = await requestPromise({
-      method: 'GET',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/${this._getKey(coordinates)}`),
-      headers: this._getHeaders(),
-      json: true,
-      withCredentials: false
-    })
-  }
-
-  /**
    * Get a list of coordinates suggested for the given pattern
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
