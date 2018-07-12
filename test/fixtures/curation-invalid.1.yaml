@@ -1,6 +1,5 @@
 coordinates:
   name: lodash
-  provider: npmjs
   type: npm
   namespace: "-"
 revisions:
