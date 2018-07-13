@@ -6,7 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 
 router.get(
-  '/:namespace?/:name/revisions',
+  '/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
     const url = `https://pypi.python.org/pypi/${name}/json`
@@ -18,10 +18,10 @@ router.get(
 )
 
 router.get(
-  '/:namespace/:name?',
+  '/:name',
   asyncMiddleware(async (request, response) => {
-    const { namespace } = request.params
-    const url = `https://pypi.python.org/pypi/${namespace}/json`
+    const { name } = request.params
+    const url = `https://pypi.python.org/pypi/${name}/json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer && answer.info ? [{ id: answer.info.name }] : []
     return response.status(200).send(result)
