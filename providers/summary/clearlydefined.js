@@ -29,6 +29,9 @@ class ClearlyDescribedSummarizer {
       case 'nuget':
         this.addNuGetData(result, data, filter)
         break
+      case 'gem':
+        this.addGemData(result, data, filter)
+        break
       default:
     }
     return result
@@ -62,6 +65,11 @@ class ClearlyDescribedSummarizer {
     result.licensed = {
       declared: data.registryData.manifest.license
     }
+  }
+
+  addGemData(result, data) {
+    set(result, 'described.releaseDate', data.releaseDate)
+    set(result, 'licensed.declared', data.licenses)
   }
 }
 

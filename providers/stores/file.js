@@ -36,7 +36,7 @@ class FileStore extends AbstractStore {
 
   _getEntry(entry, type) {
     const result = super._getEntry(entry, type)
-    return ['git', 'npm', 'maven', 'sourcearchive', 'nuget'].includes(result.type) ? result : null
+    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(result.type) ? result : null
   }
 
   _toStoragePathFromCoordinates(coordinates) {

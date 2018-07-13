@@ -3,7 +3,7 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get, union, values } = require('lodash')
+const { get, union } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 
 class DefinitionService {
@@ -33,7 +33,7 @@ class DefinitionService {
     }
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || await this.computeAndStore(coordinates))
+    return this._cast(existing || (await this.computeAndStore(coordinates)))
   }
 
   // ensure the defintion is a properly classed object
@@ -93,7 +93,7 @@ class DefinitionService {
             await this.definitionStore.delete(definitionCoordinates)
             return this.search.delete(definitionCoordinates)
           } catch (error) {
-            if (error.code !== 'ENOENT') throw error
+            if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
           }
         })
       )
