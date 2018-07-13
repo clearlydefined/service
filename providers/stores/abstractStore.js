@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const _ = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 
@@ -55,7 +54,7 @@ class AbstractStore {
   }
 
   _trimStoragePath(path) {
-    const normalized = path.replace(/\\/g, '/').replace('.json', '')
+    const normalized = path.replace(/\\/g, '/').replace(/.json$/, '')
     const rawSegments = normalized.split('/')
     const segments = rawSegments[0] === '' ? rawSegments.slice(1) : rawSegments
     const name = segments.slice(0, 4)
