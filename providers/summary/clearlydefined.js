@@ -55,7 +55,7 @@ class ClearlyDescribedSummarizer {
   }
 
   addNuGetData(result, data) {
-    // TOOD see if we can get the release date out of a nuget
+    set(result, 'described.releaseDate', data.releaseDate)
   }
 
   addNpmData(result, data) {
