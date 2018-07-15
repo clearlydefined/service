@@ -55,7 +55,7 @@ describe('Github Curation Service', () => {
 })
 
 function createCuration() {
-  return new Curation(null, {
+  return new Curation({
     coordinates: {
       type: 'npm',
       provider: 'npmjs',
@@ -73,7 +73,7 @@ function createCuration() {
 }
 
 function createInvalidCuration() {
-  return new Curation(null, {
+  return new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
