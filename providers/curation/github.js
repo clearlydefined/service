@@ -198,7 +198,7 @@ class GitHubCurationService {
     const prFiles = await this.getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     return Promise.all(
-      curationFilenames.map(path => this.getContent(ref, path).then(content => new Curation(content, null, path)))
+      curationFilenames.map(path => this.getContent(ref, path).then(content => new Curation(content, path)))
     )
   }
 
