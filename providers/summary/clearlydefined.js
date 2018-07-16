@@ -77,7 +77,6 @@ class ClearlyDescribedSummarizer {
   
   addLaunchpadData(result, data) {
     set(result, 'described.releaseDate', data.releaseDate)
-    //set(result, 'licensed.declared', data.licenses)
   }
 }
 
