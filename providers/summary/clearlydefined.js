@@ -32,6 +32,9 @@ class ClearlyDescribedSummarizer {
       case 'gem':
         this.addGemData(result, data, filter)
         break
+      case 'pypi':
+        this.addPyPiData(result, data, filter)
+        break
       default:
     }
     return result
@@ -70,6 +73,11 @@ class ClearlyDescribedSummarizer {
   addGemData(result, data) {
     set(result, 'described.releaseDate', data.releaseDate)
     set(result, 'licensed.declared', data.licenses)
+  }
+
+  addPyPiData(result, data) {
+    set(result, 'described.releaseDate', data.releaseDate)
+    set(result, 'licensed.declared', data.declaredLicense)
   }
 }
 
