@@ -15,10 +15,10 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven", "nuget", "pypi"]
+      "enum": ["npm", "git", "maven", "nuget", "pypi", "launchpad"]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "pypi"]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "pypi", "launchpad"]
     },
     "coordinates": {
       "required": ["type", "provider", "namespace", "name"],

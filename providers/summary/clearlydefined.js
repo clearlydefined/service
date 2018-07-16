@@ -32,6 +32,9 @@ class ClearlyDescribedSummarizer {
       case 'gem':
         this.addGemData(result, data, filter)
         break
+      case 'launchpad':
+        this.addLaunchpadData(result, data, filter)
+        break
       default:
     }
     return result
@@ -70,6 +73,11 @@ class ClearlyDescribedSummarizer {
   addGemData(result, data) {
     set(result, 'described.releaseDate', data.releaseDate)
     set(result, 'licensed.declared', data.licenses)
+  }
+  
+  addLaunchpadData(result, data) {
+    set(result, 'described.releaseDate', data.releaseDate)
+    //set(result, 'licensed.declared', data.licenses)
   }
 }
 
