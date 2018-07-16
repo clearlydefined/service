@@ -16,11 +16,11 @@
   "definitions": {
     "type": {
       "type": "string",
-      "enum": ["npm", "git", "maven", "nuget", "gem"]
+      "enum": ["npm", "git", "maven", "nuget", "gem", "pypi"]
     },
     "provider": {
       "type": "string",
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "rubygems"]
+      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget", "rubygems", "pypi"]
     },
     "coordinates": {
       "required": ["type", "provider", "namespace", "name"],

@@ -2,35 +2,19 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
-const { get, uniq, values } = require('lodash')
+const { get } = require('lodash')
 const base64 = require('base-64')
 const AbstractSearch = require('./abstractSearch')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
-const apiVersion = '2016-09-01'
+const apiVersion = '2017-11-11'
 const coordinatesIndexName = 'coordinates'
 
 class AzureSearch extends AbstractSearch {
   async initialize() {
     super.initialize()
-    if (!await this._hasIndex(coordinatesIndexName)) this._createIndex(this._buildCoordinatesIndex())
-  }
-
-  /**
-   * Get the search document associated with the given coordinates
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the result to get
-   * @returns The object found at the given coordinates
-   */
-  async get(coordinates) {
-    const searchResult = await requestPromise({
-      method: 'GET',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/${this._getKey(coordinates)}`),
-      headers: this._getHeaders(),
-      json: true,
-      withCredentials: false
-    })
+    if (!(await this._hasIndex(coordinatesIndexName))) this._createIndex(this._buildCoordinatesIndex())
   }
 
   /**
@@ -102,7 +86,7 @@ class AzureSearch extends AbstractSearch {
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
-  _getKey(coordinats) {
+  _getKey(coordinates) {
     return base64.encode(coordinates.toString())
   }
 
@@ -142,7 +126,7 @@ class AzureSearch extends AbstractSearch {
   _createIndex(body) {
     return requestPromise({
       method: 'POST',
-      url: this._buildUrl(`indexes`),
+      url: this._buildUrl('indexes'),
       headers: this._getHeaders(),
       body,
       withCredentials: false,
