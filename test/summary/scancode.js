@@ -40,6 +40,33 @@ describe('ScanCode summarizer', () => {
     expect(core.attribution.unknown).to.eq(0)
   })
 
+  it('handle special characters', () => {
+    const harvested = buildOutput([
+      buildFile('foo.txt', 'MIT', [[
+        '&#60;Bob&gt;',
+        'Bob\\n',
+        'Bob\\r',
+        'Bob\r',
+        'Bob\n',
+        'Bob\n',
+        'Bob ',
+        'Bob  Bobberson'
+      ]])
+    ])
+    const summarizer = Summarizer()
+    const coordinates = 'npm/npmjs/-/test/1.0'
+    const summary = summarizer.summarize(coordinates, harvested)
+    validate(summary)
+    const core = summary.licensed.facets.core
+    expect(core.files).to.eq(1)
+    expect(core.attribution.parties.length).to.eq(3)
+    expect(core.attribution.parties).to.deep.equalInAnyOrder([
+      'Copyright <Bob>',
+      'Copyright Bob',
+      'Copyright Bob Bobberson'
+    ])
+  })
+
   it('gets all the discovered licenses', () => {
     const harvested = buildOutput([buildFile('foo.txt', 'MIT', []), buildFile('bar.txt', 'GPL', [])])
     const summarizer = Summarizer()
