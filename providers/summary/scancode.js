@@ -153,9 +153,9 @@ class ScanCodeSummarizer {
     return result.length === 0 ? null : result
   }
 
-  _collectAttributions(copyrights, holders) {
+  _collectAttributions(copyrights) {
     if (!copyrights || !copyrights.length) return null
-    return this._setToArray(copyrights.reduce((result, entry) => this._addArrayToSet(entry.holders, result), new Set()))
+    return this._setToArray(copyrights.reduce((result, entry) => this._addArrayToSet(entry.statements, result), new Set()))
   }
 
   _addArrayToSet(array, set, valueExtractor) {
