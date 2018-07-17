@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, set } = require('lodash')
+const { concat, get, forIn, merge, set, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
 const extend = require('extend')
 const { exec } = require('child_process')
@@ -317,6 +317,25 @@ class GitHubCurationService {
       // @todo add logger
       throw error
     }
+  }
+
+  async getPrComponents(number) {
+    const result = await this.getPrFiles(number)
+    const prComponents = []
+    for (let i = 0; i < result.length; ++i) {
+      const fileObj = result[i]
+      const fileName = fileObj.filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
+      const coordinates = EntityCoordinates.fromString(fileName)
+      const prVersion = (await this.getAll(coordinates, number)) || { revisions: [] }
+      const masterVersion = (await this.getAll(coordinates)) || { revisions: [] }
+      const allUnfilteredRevisions = concat(Object.keys(prVersion.revisions), Object.keys(masterVersion.revisions))
+      const allRevisions = uniq(allUnfilteredRevisions)
+      const relevantRevisions = allRevisions.filter(
+        revision => !isEqual(prVersion.revisions[revision], masterVersion.revisions[revision])
+      )
+      relevantRevisions.forEach(revision => prComponents.push(`${fileName}/${revision}`))
+    }
+    return prComponents
   }
 
   _getPrTitle(coordinates) {

@@ -18,6 +18,19 @@ router.get(
   })
 )
 
+// Get list of components included in a pr
+router.get(
+  '/pr/:pr',
+  asyncMiddleware(async (request, response) => {
+    return curationService.getPrComponents(request.params.pr).then(result => {
+      if (result && result.length > 0) {
+        return response.status(200).send(result)
+      }
+      return response.sendStatus(404)
+    })
+  })
+)
+
 // Get an existing patch for a specific revision of a component
 router.get(
   '/:type/:provider/:namespace/:name/:revision',
