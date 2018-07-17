@@ -4,6 +4,7 @@
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
+    "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "license": "MIT",
@@ -57,6 +58,7 @@
     "eslint": "^4.13.1",
     "mocha": "^4.0.1",
     "node-mocks-http": "^1.6.7",
+    "nodemon": "^1.18.2",
     "sinon": "^4.2.2"
   }
 }
