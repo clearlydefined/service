@@ -93,7 +93,7 @@ class GitHubCurationService {
         )
       )
     )
-    return (userGithub || serviceGithub).pullRequests.create({
+    const retVal = await (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
       title: prBranch,
@@ -101,6 +101,15 @@ class GitHubCurationService {
       head: `refs/heads/${prBranch}`,
       base: branch
     })
+    const number = retVal.data.number
+    const commentObj = {
+      owner,
+      repo,
+      number,
+      body: `You can review the change introduced to the full definiton at [ClearlyDefined](https://clearlydefined.io/view_pr/${number}).`
+    }
+    await serviceGithub.issues.createComment(commentObj)
+    return retVal
   }
 
   /**
