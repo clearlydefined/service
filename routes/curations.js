@@ -28,7 +28,7 @@ router.get(
 router.get(
   '/pr/:pr',
   asyncMiddleware(async (request, response) => {
-    return curationService.getPrComponents(request.params.pr).then(result => {
+    return curationService.getChangedDefinitions(request.params.pr).then(result => {
       if (result && result.length > 0) {
         return response.status(200).send(result)
       }

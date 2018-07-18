@@ -93,7 +93,7 @@ class GitHubCurationService {
         )
       )
     )
-    const retVal = await (userGithub || serviceGithub).pullRequests.create({
+    const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
       title: prBranch,
@@ -101,15 +101,15 @@ class GitHubCurationService {
       head: `refs/heads/${prBranch}`,
       base: branch
     })
-    const number = retVal.data.number
-    const commentObj = {
+    const number = result.data.number
+    const comment = {
       owner,
       repo,
       number,
       body: `You can review the change introduced to the full definiton at [ClearlyDefined](https://clearlydefined.io/view_pr/${number}).`
     }
-    await serviceGithub.issues.createComment(commentObj)
-    return retVal
+    await serviceGithub.issues.createComment(comment)
+    return result
   }
 
   /**
@@ -328,23 +328,25 @@ class GitHubCurationService {
     }
   }
 
-  async getPrComponents(number) {
-    const result = await this.getPrFiles(number)
-    const prComponents = []
-    for (let i = 0; i < result.length; ++i) {
-      const fileObj = result[i]
-      const fileName = fileObj.filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
+  async getChangedDefinitions(number) {
+    const files = await this.getPrFiles(number)
+    const changedCoordinates = []
+    for (let i = 0; i < files.length; ++i) {
+      const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
       const coordinates = EntityCoordinates.fromString(fileName)
-      const prVersion = (await this.getAll(coordinates, number)) || { revisions: [] }
-      const masterVersion = (await this.getAll(coordinates)) || { revisions: [] }
-      const allUnfilteredRevisions = concat(Object.keys(prVersion.revisions), Object.keys(masterVersion.revisions))
-      const allRevisions = uniq(allUnfilteredRevisions)
-      const relevantRevisions = allRevisions.filter(
-        revision => !isEqual(prVersion.revisions[revision], masterVersion.revisions[revision])
+      const prDefinitions = (await this.getAll(coordinates, number)) || { revisions: [] }
+      const masterDefinitions = (await this.getAll(coordinates)) || { revisions: [] }
+      const allUnfilteredRevisions = concat(
+        Object.keys(prDefinitions.revisions),
+        Object.keys(masterDefinitions.revisions)
       )
-      relevantRevisions.forEach(revision => prComponents.push(`${fileName}/${revision}`))
+      const allRevisions = uniq(allUnfilteredRevisions)
+      const changedRevisions = allRevisions.filter(
+        revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
+      )
+      changedRevisions.forEach(revision => changedCoordinates.push(`${fileName}/${revision}`))
     }
-    return prComponents
+    return changedCoordinates
   }
 
   _getPrTitle(coordinates) {
