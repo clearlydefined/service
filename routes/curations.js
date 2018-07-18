@@ -55,11 +55,14 @@ router.patch(
         curationErrors = [...curationErrors, curation.errors]
       }
     })
-    if (curationErrors.length > 0) response.status(400).send({ error: curationErrors })
+    if (curationErrors.length > 0) response.status(400).send({ errors: curationErrors })
     else
-      return curationService
-        .addOrUpdate(userGithub, serviceGithub, info, request.body)
-        .then(result => response.status(200).send({ prNumber: result.data.number, url: `https://github.com/${owner}/${repo}/pull/${result.data.number}` }))
+      return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
+        response.status(200).send({
+          prNumber: result.data.number,
+          url: `https://github.com/${owner}/${repo}/pull/${result.data.number}`
+        })
+      )
   })
 )
 
