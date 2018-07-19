@@ -62,7 +62,6 @@ const definitionService = require('./business/definitionService')(
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
 
-const badges = require('./routes/badges').getRouter(definitionService)
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 
 const appLogger = console // @todo add real logger
@@ -115,7 +114,6 @@ app.use('/origins/rubygems', require('./routes/originRubyGems')())
 app.use('/harvest', harvest)
 app.use(bodyParser.json())
 app.use('/curations', curations)
-app.use('/badges', badges)
 app.use('/definitions', definitions)
 
 // catch 404 and forward to error handler

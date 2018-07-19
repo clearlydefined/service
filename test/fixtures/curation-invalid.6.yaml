@@ -1,0 +1,13 @@
+coordinates:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    described:
+      sourceLocation:
+        provider: "github"
+        revision: null
+        type: "git"
+        url: "https://github.com/caolan/async"

@@ -130,7 +130,23 @@ class DefinitionService {
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
+    definition.score = this.computeScore(definition)
     return definition
+  }
+
+  /**
+   * Given a defintion, calculate a score for the definition
+   * @param {Defition} defintion
+   * @returns {number} The score for the definition
+   */
+  computeScore(definition) {
+    // @todo we need to flesh this out
+    // For now it just checks that a license and copyright holders are present
+    const hasLicense = get(definition, 'licensed.declared')
+    const hasAttributionParties = get(definition, 'licensed.attribution.parties[0]')
+    if (hasLicense && hasAttributionParties) return 2
+    if (hasLicense || hasAttributionParties) return 1
+    return 0
   }
 
   /**

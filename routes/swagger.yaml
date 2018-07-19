@@ -285,21 +285,6 @@ paths:
       responses:
         200:
           description: Component definition.
-  /badges/{type}/{provider}/{namespace}/{name}/{revision}:
-    get:
-      summary: Gets a link to the badge icon of a component revision.
-      tags:
-        - definitions
-      parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-      responses:
-        200:
-          description: Badge icon link, either level 1, 2 or 3.
-
 tags:
   - name: definitions
     description: Component definitions - most API consumers will be interested in these

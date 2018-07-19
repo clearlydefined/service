@@ -20,28 +20,73 @@ describe('Curations', () => {
     const content = getFixture('curation-invalid.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
-    expect(curation.errors[0].message).to.equal('Invalid curation')
+    expect(curation.errors[0].error.message).to.equal('Release date must be formatted as a YYYY-MM-DD')
   })
 
-  it('should identify invalid props: unknown copyright', () => {
+  it('should identify invalid facet array', () => {
     const content = getFixture('curation-invalid.1.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
-    expect(curation.errors[0].message).to.equal('Invalid curation')
+    expect(curation.errors[0].error.message).to.equal('Coordinates object require type, provider, namespace, and name')
+    expect(curation.errors[1].error.message).to.equal('Glob list must be an array')
   })
 
-  it('should identify invalid props: unknown license', () => {
+  it('should identify invalid facet field: unknown', () => {
     const content = getFixture('curation-invalid.2.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
-    expect(curation.errors[0].message).to.equal('Invalid curation')
+    expect(curation.errors[0].error.message).to.equal(
+      'Facets object can only contain data, dev, doc, examples, and tests'
+    )
   })
 
-  it('should identify invalid props: file count', () => {
+  it('should identify invalid field: facets not in licensed', () => {
     const content = getFixture('curation-invalid.3.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
-    expect(curation.errors[0].message).to.equal('Invalid curation')
+    expect(curation.errors[0].error.message).to.equal('Licensed object can only contain declared')
+  })
+
+  it('should identify invalid coordinate provider (test enum)', () => {
+    const content = getFixture('curation-invalid.4.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('Provider type must be supported by ClearlyDefined')
+  })
+
+  it('should identify invalid revision (no revision)', () => {
+    const content = getFixture('curation-invalid.5.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('Revisions must be an object')
+  })
+
+  it('should identify invalid source location (no revision)', () => {
+    const content = getFixture('curation-invalid.6.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('Revision must be a string')
+  })
+
+  it('should identify invalid source location (url not URI format)', () => {
+    const content = getFixture('curation-invalid.7.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('URL must be formatted as a URI')
+  })
+
+  it('should identify invalid file (missing required path)', () => {
+    const content = getFixture('curation-invalid.8.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('Files elements object requires path')
+  })
+
+  it('should identify invalid declared license (incorrect key)', () => {
+    const content = getFixture('curation-invalid.9.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error.message).to.equal('Licensed object can only contain declared')
   })
 
   it('should identify valid curations', () => {
@@ -51,9 +96,16 @@ describe('Curations', () => {
     expect(curation.errors.length).to.not.be.ok
   })
 
-  it('should also accept yaml data objects', () => {
-    const content = yaml.safeLoad('foo: bar')
+  it('should identify valid curations (all fields)', () => {
+    const content = getFixture('curation-valid.1.yaml')
     const curation = new Curation(content)
+    expect(curation.isValid).to.be.true
+    expect(curation.errors.length).to.not.be.ok
+  })
+
+  it('should also accept yaml data objects', () => {
+    const data = yaml.safeLoad('foo: bar')
+    const curation = new Curation(data)
     expect(curation.isValid).to.be.false
     expect(curation.errors[0].message).to.equal('Invalid curation')
   })

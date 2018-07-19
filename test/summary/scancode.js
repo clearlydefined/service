@@ -6,7 +6,7 @@ const chai = require('chai')
 const definitionSchema = require('../../schemas/definition')
 const Ajv = require('ajv')
 
-const ajv = new Ajv()
+const ajv = new Ajv({ allErrors: true })
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 const Summarizer = require('../../providers/summary/scancode')
@@ -38,6 +38,33 @@ describe('ScanCode summarizer', () => {
       'Copyright Fred'
     ])
     expect(core.attribution.unknown).to.eq(0)
+  })
+
+  it('handle special characters', () => {
+    const harvested = buildOutput([
+      buildFile('foo.txt', 'MIT', [[
+        '&#60;Bob&gt;',
+        'Bob\\n',
+        'Bob\\r',
+        'Bob\r',
+        'Bob\n',
+        'Bob\n',
+        'Bob ',
+        'Bob  Bobberson'
+      ]])
+    ])
+    const summarizer = Summarizer()
+    const coordinates = 'npm/npmjs/-/test/1.0'
+    const summary = summarizer.summarize(coordinates, harvested)
+    validate(summary)
+    const core = summary.licensed.facets.core
+    expect(core.files).to.eq(1)
+    expect(core.attribution.parties.length).to.eq(3)
+    expect(core.attribution.parties).to.deep.equalInAnyOrder([
+      'Copyright <Bob>',
+      'Copyright Bob',
+      'Copyright Bob Bobberson'
+    ])
   })
 
   it('gets all the discovered licenses', () => {

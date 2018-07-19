@@ -4,8 +4,3 @@ coordinates:
   type: npm
   namespace: "-"
 revisions:
-  4.17.4:
-    described:
-      facets:
-        unknown:
-          - "test"

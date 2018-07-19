@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const he = require('he')
 const { get, remove, set, first, pullAllWith, isEqual } = require('lodash')
 const minimatch = require('minimatch')
 const { extractDate } = require('../../lib/utils')
@@ -155,7 +156,16 @@ class ScanCodeSummarizer {
 
   _collectAttributions(copyrights) {
     if (!copyrights || !copyrights.length) return null
-    return this._setToArray(copyrights.reduce((result, entry) => this._addArrayToSet(entry.statements, result), new Set()))
+    const set = new Set()
+    for (let copyright of copyrights) {
+      if (!copyright.statements) continue
+      const statements = copyright.statements.map(statement => he.decode(statement)
+        .replace(/(\\[nr]|[\n\r])/g, ' ')
+        .replace(/ +/g, ' ')
+        .trim())
+      this._addArrayToSet(statements, set)
+    }
+    return this._setToArray(set)
   }
 
   _addArrayToSet(array, set, valueExtractor) {

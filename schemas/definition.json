@@ -6,6 +6,9 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "score": {
+      "type": "number"
+    },
     "coordinates": {
       "$ref": "#/definitions/coordinates"
     },
