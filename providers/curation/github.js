@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { assign, concat, get, forIn, merge, set, pickBy } = require('lodash')
+const { concat, get, forIn, merge, set } = require('lodash')
 const base64 = require('base-64')
 const extend = require('extend')
 const { exec } = require('child_process')
@@ -141,7 +141,6 @@ class GitHubCurationService {
   }
 
   async _getAllLocal(coordinates) {
-    const { owner, repo } = this.options
     await this.ensureCurations()
     const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
     var result
