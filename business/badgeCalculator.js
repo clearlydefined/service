@@ -12,23 +12,14 @@ const scoreToUrl = {
   1: 'https://img.shields.io/badge/ClearlyDefined-1-yellow.svg',
   2: 'https://img.shields.io/badge/ClearlyDefined-2-brightgreen.svg'
 }
+
 class BadgeCalculator {
   constructor(definition) {
     this.definition = definition
   }
 
   getBadgeUrl() {
-    return scoreToUrl[this.calculate()]
-  }
-
-  // @todo we need to flesh this out
-  // For now it just checks that a license and copyright holders are present
-  calculate() {
-    const hasLicense = get(this.definition, 'licensed.declared')
-    const hasAttributionParties = get(this.definition, 'licensed.attribution.parties[0]')
-    if (hasLicense && hasAttributionParties) return 2
-    if (hasLicense || hasAttributionParties) return 1
-    return 0
+    return scoreToUrl[this.definition.score]
   }
 }
 

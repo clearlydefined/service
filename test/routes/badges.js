@@ -15,8 +15,11 @@ describe('Badge Route', () => {
         revision: '351396f971280ab79faddcf9782ea50f4e88358d'
       }
     }
+    const definition = {
+      score: 0
+    }
     const service = {
-      get: () => request
+      get: () => definition
     }
     const result = await badgesRoutes.getComponentBadgeLink(service, request)
     expect(result).to.eq('https://img.shields.io/badge/ClearlyDefined-0-red.svg')
