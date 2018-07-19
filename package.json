@@ -29,6 +29,7 @@
     "express-rate-limit": "^2.11.0",
     "extend": "^3.0.1",
     "github": "^13.1.0",
+    "he": "^1.1.1",
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
     "lodash": "4.17.5",
