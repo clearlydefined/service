@@ -1,15 +1,9 @@
 coordinates:
   name: lodash
-  provider: npmjs
   type: npm
   namespace: "-"
 revisions:
   4.17.4:
-    licensed:
+    described:
       facets:
-        tests: 
-          attribution:
-            parties:
-              - "foo"
-              - "bar"
-            unknown: 3  # this prop is not allowed
+        tests:

@@ -6,7 +6,7 @@ const chai = require('chai')
 const definitionSchema = require('../../schemas/definition')
 const Ajv = require('ajv')
 
-const ajv = new Ajv()
+const ajv = new Ajv({ allErrors: true })
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 const Summarizer = require('../../providers/summary/scancode')

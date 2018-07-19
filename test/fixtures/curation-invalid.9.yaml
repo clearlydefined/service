@@ -6,6 +6,6 @@ coordinates:
 revisions:
   4.17.4:
     described:
-      facets:
-        unknown:
-          - "test"
+      issueTracker: "https://foobar.com/baz/1"
+    licensed:
+      declaredlicense: "MIT"
