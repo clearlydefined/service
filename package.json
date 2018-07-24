@@ -4,6 +4,7 @@
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
+    "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "license": "MIT",
@@ -13,7 +14,8 @@
   },
   "dependencies": {
     "@octokit/rest": "^14.0.0",
-    "ajv": "^6.5.1",
+    "ajv": "^6.5.2",
+    "ajv-errors": "^1.0.0",
     "applicationinsights": "^1.0.2",
     "azure-storage": "^2.7.0",
     "base-64": "^0.1.0",
@@ -27,7 +29,7 @@
     "express-init": "^1.1.0",
     "express-rate-limit": "^2.11.0",
     "extend": "^3.0.1",
-    "github": "^13.1.0",
+    "he": "^1.1.1",
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
     "lodash": "4.17.5",
@@ -58,6 +60,7 @@
     "eslint": "^4.13.1",
     "mocha": "^4.0.1",
     "node-mocks-http": "^1.6.7",
+    "nodemon": "^1.18.2",
     "sinon": "^4.2.2"
   }
 }

@@ -5,7 +5,6 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
-const _ = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 
 // Gets the definition for a component with any applicable patches. This is the main
