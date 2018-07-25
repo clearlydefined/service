@@ -6,12 +6,6 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 
-router.get('/base_url', (request, response) => {
-  const repo = request.app.locals.config.curation.store.github.repo
-  const owner = request.app.locals.config.curation.store.github.owner
-  response.status(200).send({ url: `https://github.com/${owner}/${repo}` })
-})
-
 // Get a proposed patch for a specific revision of a component
 router.get(
   '/:type/:provider/:namespace/:name/:revision/pr/:pr',
@@ -24,13 +18,15 @@ router.get(
   })
 )
 
-// Get list of components included in a pr
+// Get data needed by review UI
 router.get(
   '/pr/:pr',
   asyncMiddleware(async (request, response) => {
+    const repo = request.app.locals.config.curation.store.github.repo
+    const owner = request.app.locals.config.curation.store.github.owner
     return curationService.getChangedDefinitions(request.params.pr).then(result => {
       if (result && result.length > 0) {
-        return response.status(200).send(result)
+        return response.status(200).send({ url: `https://github.com/${owner}/${repo}`, changes: result })
       }
       return response.sendStatus(404)
     })
