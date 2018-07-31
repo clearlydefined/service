@@ -106,7 +106,7 @@ class GitHubCurationService {
       owner,
       repo,
       number,
-      body: `You can review the change introduced to the full definiton at [ClearlyDefined](https://clearlydefined.io/view_pr/${number}).`
+      body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
     return result
