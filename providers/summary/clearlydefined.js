@@ -65,9 +65,15 @@ class ClearlyDescribedSummarizer {
     result.described.projectWebsite = data.registryData.manifest.homepage
     result.described.issueTracker = data.registryData.manifest.bugs
     result.described.releaseDate = extractDate(data.registryData.releaseDate)
-    result.licensed = {
-      declared: data.registryData.manifest.license
-    }
+    const license = data.registryData.manifest.license
+    if (license && typeof license != 'string')
+      result.licensed = {
+        declared: license.type
+      }
+    else
+      result.licensed = {
+        declared: license
+      }
   }
 
   addGemData(result, data) {
