@@ -22,9 +22,7 @@ class FOSSologySummarizer {
     if (!harvested || !harvested.nomos || !harvested.nomos.version)
       throw new Error('Not valid FOSSology data')
 
-    const result = {}
-    result.nomos = this._summarizeNomosLicenseInfo(harvested.nomos.output.content)
-    return result
+    return {nomos: this._summarizeNomosLicenseInfo(harvested.nomos.output.content)}
   }
 
   _setIfValue(target, path, value) {
@@ -36,8 +34,8 @@ class FOSSologySummarizer {
     const nomosOutput = base64.decode(content)
     const files = nomosOutput.split("\n")
     return files.map(file => {
-      const path = file.replace(/File/g, ' ').replace(/contains.+/g, ' ').trim()
-      const license = file.replace(/.+license\(s\)/g, ' ').trim()
+      const path = file.match(/(?<=File ).*(?= contains)/g)
+      const license = file.match(/(?<=license\(s\) ).*/g)
       const result = {path: path }
       this._setIfValue(result, 'license', license)
       return result 
