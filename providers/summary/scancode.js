@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const he = require('he')
 const { get, first } = require('lodash')
-const minimatch = require('minimatch')
 const { extractDate, setIfValue, addArrayToSet, setToArray } = require('../../lib/utils')
 
 class ScanCodeSummarizer {
@@ -70,10 +68,9 @@ class ScanCodeSummarizer {
       const fileLicense = asserted || file.licenses
       const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
       const licenseExpression = this._toExpression(licenses)
-      const attributions = this._collectAttributions(file.copyrights)
       const result = { path: file.path }
       setIfValue(result, 'license', licenseExpression)
-      setIfValue(result, 'attributions', attributions)
+      setIfValue(result, 'attributions', get(file, 'copyrights.statements'))
       return result
     })
   }
@@ -82,23 +79,6 @@ class ScanCodeSummarizer {
     if (!licenses) return null
     const list = setToArray(licenses)
     return list ? list.join(' and ') : null
-  }
-
-  _collectAttributions(copyrights) {
-    if (!copyrights || !copyrights.length) return null
-    const set = new Set()
-    for (let copyright of copyrights) {
-      if (!copyright.statements) continue
-      const statements = copyright.statements.map(statement =>
-        he
-          .decode(statement)
-          .replace(/(\\[nr]|[\n\r])/g, ' ')
-          .replace(/ +/g, ' ')
-          .trim()
-      )
-      addArrayToSet(statements, set)
-    }
-    return setToArray(set)
   }
 }
 

@@ -22,99 +22,22 @@ describe('ScanCode summarizer', () => {
 
   it('gets all the attribution parties', () => {
     const harvested = buildOutput([
-      buildFile('foo.txt', 'MIT', [['Bob', 'Fred']]),
-      buildFile('bar.txt', 'MIT', [['Jane', 'Fred']])
+      buildFile('foo.txt', 'MIT', ['Bob', 'Fred']),
+      buildFile('bar.txt', 'MIT', ['Jane', 'Fred', 'John'])
     ])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
-    validate(summary)
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder([
-      'Copyright Bob',
-      'Copyright Jane',
-      'Copyright Fred'
-    ])
-    expect(core.attribution.unknown).to.eq(0)
-  })
-
-  it('handle special characters', () => {
-    const harvested = buildOutput([
-      buildFile('foo.txt', 'MIT', [[
-        '&#60;Bob&gt;',
-        'Bob\\n',
-        'Bob\\r',
-        'Bob\r',
-        'Bob\n',
-        'Bob\n',
-        'Bob ',
-        'Bob  Bobberson'
-      ]])
-    ])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
-    validate(summary)
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
-  })
-
-  it('gets all the discovered licenses', () => {
-    const harvested = buildOutput([buildFile('foo.txt', 'MIT', []), buildFile('bar.txt', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
-    validate(summary)
-    const core = summary.licensed.facets.core
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
-    expect(core.discovered.unknown).to.eq(0)
-  })
-
-  it('records unknown licenses and parties', () => {
-    const harvested = buildOutput([buildFile('foo.txt', null, [['bob']]), buildFile('bar.txt', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
-    validate(summary)
-    const core = summary.licensed.facets.core
-    expect(core.attribution.parties).to.deep.eq(['Copyright bob'])
-    expect(core.attribution.unknown).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL'])
-    expect(core.discovered.unknown).to.eq(1)
-  })
-
-  it('handles files with no data', () => {
-    const harvested = buildOutput([buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.be.undefined
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.attribution.parties).to.be.undefined
-    expect(core.attribution.unknown).to.eq(2)
-    expect(core.discovered.expressions).to.be.undefined
-    expect(core.discovered.unknown).to.eq(2)
-  })
-
-  it('handles scan with no files', () => {
-    const harvested = buildOutput([])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.files.length).to.eq(0)
-    expect(summary.licensed).to.be.undefined
+    expect(summary.files[0].attributions.length).to.eq(2)
+    expect(summary.files[0].attributions).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Fred'])
+    expect(summary.files[1].attributions.length).to.eq(3)
+    expect(summary.files[1].attributions).to.deep.equalInAnyOrder([
+      'Copyright John',
+      'Copyright Jane',
+      'Copyright Fred'
+    ])
   })
 
   it('handles scan LICENSE file', () => {
@@ -125,10 +48,6 @@ describe('ScanCode summarizer', () => {
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
-    expect(core.discovered.unknown).to.eq(0)
   })
 
   it('handles scan LICENSE.md file', () => {
@@ -138,13 +57,7 @@ describe('ScanCode summarizer', () => {
     const summary = summarizer.summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].facets).to.be.undefined
-    expect(summary.files[1].facets).to.be.undefined
     expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
-    expect(core.discovered.unknown).to.eq(0)
   })
 
   it('skips license files in subdirectories', () => {
@@ -154,11 +67,7 @@ describe('ScanCode summarizer', () => {
     const summary = summarizer.summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.be.undefined
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
-    expect(core.discovered.unknown).to.eq(0)
+    expect(summary.licensed).to.be.undefined
   })
 
   it('handles scan with asserted license file even in a subdirectory', () => {
@@ -169,10 +78,6 @@ describe('ScanCode summarizer', () => {
     validate(summary)
     expect(summary.files.length).to.eq(1)
     expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['MIT'])
-    expect(core.discovered.unknown).to.eq(0)
   })
 
   it('handles scan with both asserted discovered license file', () => {
@@ -183,104 +88,6 @@ describe('ScanCode summarizer', () => {
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['GPL', 'MIT'])
-    expect(core.discovered.unknown).to.eq(0)
-  })
-
-  it('summarizes with empty object facets', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested, {})
-    validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.discovered.expressions).to.deep.equalInAnyOrder(['GPL', 'MIT'])
-    expect(core.discovered.unknown).to.eq(0)
-  })
-
-  it('summarizes with basic filters', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const facets = { tests: ['*.json'] }
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested, facets)
-    validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL'])
-    expect(core.discovered.unknown).to.eq(0)
-    const tests = summary.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
-  })
-
-  it('summarizes with no core filters', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const facets = { tests: ['*.json'] }
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested, facets)
-    validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
-    const core = summary.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL'])
-    expect(core.discovered.unknown).to.eq(0)
-    const tests = summary.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
-  })
-
-  it('summarizes with everything grouped into non-core facet', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const facets = { tests: ['*.json'], dev: ['*.foo'] }
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested, facets)
-    validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.licensed.facets.core).to.be.undefined
-    const dev = summary.licensed.facets.dev
-    expect(dev.files).to.eq(1)
-    expect(dev.discovered.expressions).to.deep.eq(['GPL'])
-    expect(dev.discovered.unknown).to.eq(0)
-    const tests = summary.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
-  })
-
-  it('summarizes files in multiple facets', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.json', 'GPL', [])])
-    const facets = { tests: ['*.json'], dev: ['*.json'] }
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested, facets)
-    validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
-    expect(summary.files[1].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.licensed.facets.core).to.be.undefined
-    const dev = summary.licensed.facets.dev
-    expect(dev.files).to.eq(2)
-    expect(dev.discovered.expressions).to.deep.equalInAnyOrder(['GPL', 'MIT'])
-    expect(dev.discovered.unknown).to.eq(0)
-    const tests = summary.licensed.facets.tests
-    expect(tests.files).to.eq(2)
-    expect(tests.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
-    expect(tests.discovered.unknown).to.eq(0)
   })
 })
 
@@ -301,11 +108,11 @@ function buildOutput(files) {
 }
 
 function buildFile(path, license, holders) {
-  const wrapHolders = holders =>
-    holders.map(entry => ({
-      holders: entry,
-      statements: entry.map(holder => `Copyright ${holder}`)
-    }))
+  const wrapHolders = holders => {
+    return {
+      statements: holders.map(holderList => `Copyright ${holderList}`)
+    }
+  }
   return {
     path,
     licenses: license ? [{ spdx_license_key: license }] : null,
