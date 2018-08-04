@@ -20,10 +20,10 @@ describe('ScanCode summarizer', () => {
     expect(summary.coordinates).to.be.undefined
   })
 
-  it('gets all the attribution parties', () => {
+  it('gets all the per file license info and attribution parties', () => {
     const harvested = buildOutput([
       buildFile('foo.txt', 'MIT', ['Bob', 'Fred']),
-      buildFile('bar.txt', 'MIT', ['Jane', 'Fred', 'John'])
+      buildFile('bar.txt', 'GPL', ['Jane', 'Fred', 'John'])
     ])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
@@ -31,13 +31,17 @@ describe('ScanCode summarizer', () => {
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.files[0].attributions.length).to.eq(2)
+    expect(summary.files[0].path).to.equal('foo.txt')
     expect(summary.files[0].attributions).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Fred'])
+    expect(summary.files[0].license).to.equal('MIT')
+    expect(summary.files[1].path).to.equal('bar.txt')
     expect(summary.files[1].attributions.length).to.eq(3)
     expect(summary.files[1].attributions).to.deep.equalInAnyOrder([
       'Copyright John',
       'Copyright Jane',
       'Copyright Fred'
     ])
+    expect(summary.files[1].license).to.equal('GPL')
   })
 
   it('handles scan LICENSE file', () => {
@@ -61,13 +65,16 @@ describe('ScanCode summarizer', () => {
   })
 
   it('skips license files in subdirectories', () => {
-    const harvested = buildOutput([buildFile('/foo/LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const harvested = buildOutput([buildFile('foo/LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
     const summarizer = Summarizer()
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed).to.be.undefined
+    expect(summary.files[0].attributions).to.be.undefined
+    expect(summary.files[0].path).to.equal('foo/LICENSE.md')
+    expect(summary.files[0].license).to.equal('MIT')
   })
 
   it('handles scan with asserted license file even in a subdirectory', () => {
