@@ -129,10 +129,10 @@ class DefinitionService {
     const summarized = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregated = await this.aggregationService.process(coordinates, summarized)
     const definition = await this.curationService.apply(coordinates, curation, aggregated)
-    this._ensureFacets(coordinates, definition)
+    this._ensureFacets(definition)
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
-    this._ensureCoordinates(definition)
+    this._ensureCoordinates(coordinates, definition)
     definition.score = this.computeScore(definition)
     return definition
   }

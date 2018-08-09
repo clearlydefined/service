@@ -44,7 +44,7 @@ describe('Definition Service', () => {
 })
 
 describe('Definition Service Facet management', () => {
-  it('handle special characters', () => {
+  it('handle special characters', async () => {
     const files = [
       buildFile('foo.txt', 'MIT', [
         '&#60;Bob&gt;',
@@ -57,9 +57,8 @@ describe('Definition Service Facet management', () => {
         'Bob  Bobberson'
       ])
     ]
-    const definition = createDefinition(undefined, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(undefined, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
@@ -71,11 +70,10 @@ describe('Definition Service Facet management', () => {
     ])
   })
 
-  it('handles files with no data', () => {
+  it('handles files with no data', async () => {
     const files = [buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)]
-    const definition = createDefinition(undefined, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(undefined, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.licensed.declared).to.be.undefined
@@ -87,21 +85,19 @@ describe('Definition Service Facet management', () => {
     expect(core.discovered.unknown).to.eq(2)
   })
 
-  it('handles no files', () => {
+  it('handles no files', async () => {
     const files = []
-    const definition = createDefinition(undefined, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(undefined, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(0)
     expect(definition.licensed).to.be.undefined
   })
 
-  it('gets all the attribution parties', () => {
+  it('gets all the attribution parties', async () => {
     const files = [buildFile('foo.txt', 'MIT', ['Bob', 'Fred']), buildFile('bar.txt', 'MIT', ['Jane', 'Fred'])]
-    const definition = createDefinition(undefined, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(undefined, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(2)
@@ -110,7 +106,7 @@ describe('Definition Service Facet management', () => {
     expect(core.attribution.unknown).to.eq(0)
   })
 
-  it('handle special characters', () => {
+  it('handle special characters', async () => {
     const files = [
       buildFile('foo.txt', 'MIT', [
         '&#60;Bob&gt;',
@@ -123,9 +119,8 @@ describe('Definition Service Facet management', () => {
         'Bob  Bobberson'
       ])
     ]
-    const definition = createDefinition(undefined, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(undefined, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
@@ -137,12 +132,11 @@ describe('Definition Service Facet management', () => {
     ])
   })
 
-  it('summarizes with basic facets', () => {
+  it('summarizes with basic facets', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'] }
-    const definition = createDefinition(facets, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(facets, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
@@ -155,12 +149,11 @@ describe('Definition Service Facet management', () => {
     expect(tests.discovered.unknown).to.eq(0)
   })
 
-  it('summarizes with no core filters', () => {
+  it('summarizes with no core filters', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'] }
-    const definition = createDefinition(facets, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(facets, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
@@ -173,12 +166,11 @@ describe('Definition Service Facet management', () => {
     expect(tests.discovered.unknown).to.eq(0)
   })
 
-  it('summarizes with everything grouped into non-core facet', () => {
+  it('summarizes with everything grouped into non-core facet', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'], dev: ['*.foo'] }
-    const definition = createDefinition(facets, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(facets, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.licensed.facets.core).to.be.undefined
@@ -192,12 +184,11 @@ describe('Definition Service Facet management', () => {
     expect(tests.discovered.unknown).to.eq(0)
   })
 
-  it('summarizes files in multiple facets', () => {
+  it('summarizes files in multiple facets', async () => {
     const files = [buildFile('LICENSE.json', 'GPL', []), buildFile('Test.json', 'MIT', [])]
     const facets = { tests: ['*.json'], dev: ['*.json'] }
-    const definition = createDefinition(facets, files)
-    const service = DefinitionService()
-    service._ensureFacets(definition)
+    const service = createService(createDefinition(facets, files))
+    const definition = await service.compute('npm/npmjs/-/test/1.0')
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.files[0].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
@@ -240,4 +231,17 @@ function buildFile(path, license, holders) {
   setIfValue(result, 'license', license)
   setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
   return result
+}
+
+function createService(definition, curation) {
+  const store = { delete: sinon.stub() }
+  const search = { delete: sinon.stub() }
+  const curator = {
+    get: () => Promise.resolve(curation),
+    apply: () => Promise.resolve(definition)
+  }
+  const harvest = { getAll: () => Promise.resolve(null) }
+  const summary = { summarizeAll: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(null) }
+  return DefinitionService(harvest, summary, aggregator, curator, store, search)
 }
