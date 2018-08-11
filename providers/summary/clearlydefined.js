@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { pick, set } = require('lodash')
-const { extractDate } = require('../../lib/utils')
+const { extractDate, setIfValue } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
   constructor(options) {
@@ -41,42 +41,47 @@ class ClearlyDescribedSummarizer {
   }
 
   addFacetInfo(result, data) {
-    result.described.facets = data.facets
+    setIfValue(result, 'described.facets', data.facets)
   }
 
   addSourceLocation(result, data) {
-    if (data.sourceInfo)
-      result.described.sourceLocation = pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
+    if (!data.sourceInfo) return
+    setIfValue(
+      result,
+      'described.sourceLocation',
+      pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
+    )
   }
 
   addMavenData(result, data) {
-    result.described.releaseDate = extractDate(data.releaseDate)
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
   }
 
   addSourceArchiveData(result, data) {
-    result.described.releaseDate = extractDate(data.releaseDate)
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
   }
 
   addNuGetData(result, data) {
-    set(result, 'described.releaseDate', data.releaseDate)
+    setIfValue(result, 'described.releaseDate', data.releaseDate)
   }
 
   addNpmData(result, data) {
-    result.described.projectWebsite = data.registryData.manifest.homepage
-    result.described.issueTracker = data.registryData.manifest.bugs
-    result.described.releaseDate = extractDate(data.registryData.releaseDate)
+    setIfValue(result, 'described.projectWebsite', data.registryData.manifest.homepage)
+    const bugs = data.registryData.manifest.bugs
+    bugs && setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
+    setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
     const license = data.registryData.manifest.license
-    if (license) result.licensed = { declared: typeof license === 'string' ? license : license.type }
+    license && setIfValue(result, 'licensed', { declared: typeof license === 'string' ? license : license.type })
   }
 
   addGemData(result, data) {
-    set(result, 'described.releaseDate', data.releaseDate)
-    set(result, 'licensed.declared', data.licenses)
+    setIfValue(result, 'described.releaseDate', data.releaseDate)
+    setIfValue(result, 'licensed.declared', data.licenses)
   }
 
   addPyPiData(result, data) {
-    set(result, 'described.releaseDate', data.releaseDate)
-    set(result, 'licensed.declared', data.declaredLicense)
+    setIfValue(result, 'described.releaseDate', data.releaseDate)
+    setIfValue(result, 'licensed.declared', data.declaredLicense)
   }
 }
 
