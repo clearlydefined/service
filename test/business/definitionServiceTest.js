@@ -12,34 +12,36 @@ const { setIfValue } = require('../../lib/utils')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
-    const store = { delete: sinon.stub() }
-    const search = { delete: sinon.stub() }
-    const service = DefinitionService(null, null, null, null, store, search)
-    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/2.3')
+    const { service, coordinates } = setup()
     await service.invalidate(coordinates)
-    expect(store.delete.calledOnce).to.be.true
-    expect(store.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(store.delete.getCall(0).args[0].tool).to.be.eq('definition')
-    expect(search.delete.calledOnce).to.be.true
-    expect(search.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(search.delete.getCall(0).args[0].tool).to.be.eq('definition')
+    expect(service.definitionStore.delete.calledOnce).to.be.true
+    expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.definitionStore.delete.getCall(0).args[0].tool).to.be.eq('definition')
+    expect(service.search.delete.calledOnce).to.be.true
+    expect(service.search.delete.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.search.delete.getCall(0).args[0].tool).to.be.eq('definition')
   })
 
   it('invalidates array of coordinates', async () => {
-    const store = { delete: sinon.stub() }
-    const search = { delete: sinon.stub() }
-    const service = DefinitionService(null, null, null, null, store, search)
+    const { service } = setup()
     const coordinates = [
       EntityCoordinates.fromString('npm/npmjs/-/test0/2.3'),
       EntityCoordinates.fromString('npm/npmjs/-/test1/2.3')
     ]
     await service.invalidate(coordinates)
-    expect(store.delete.calledTwice).to.be.true
-    expect(store.delete.getCall(0).args[0].name).to.be.eq('test0')
-    expect(store.delete.getCall(1).args[0].name).to.be.eq('test1')
-    expect(search.delete.calledTwice).to.be.true
-    expect(search.delete.getCall(0).args[0].name).to.be.eq('test0')
-    expect(search.delete.getCall(1).args[0].name).to.be.eq('test1')
+    expect(service.definitionStore.delete.calledTwice).to.be.true
+    expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test0')
+    expect(service.definitionStore.delete.getCall(1).args[0].name).to.be.eq('test1')
+    expect(service.search.delete.calledTwice).to.be.true
+    expect(service.search.delete.getCall(0).args[0].name).to.be.eq('test0')
+    expect(service.search.delete.getCall(1).args[0].name).to.be.eq('test1')
+  })
+
+  it('does not store empty definitions', async () => {
+    const { service, coordinates } = setup(createDefinition())
+    await service.get(coordinates)
+    expect(service.definitionStore.store.notCalled).to.be.true
+    expect(service.search.store.notCalled).to.be.true
   })
 })
 
@@ -57,8 +59,8 @@ describe('Definition Service Facet management', () => {
         'Bob  Bobberson'
       ])
     ]
-    const service = createService(createDefinition(undefined, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
@@ -72,8 +74,8 @@ describe('Definition Service Facet management', () => {
 
   it('handles files with no data', async () => {
     const files = [buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)]
-    const service = createService(createDefinition(undefined, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.licensed.declared).to.be.undefined
@@ -87,8 +89,8 @@ describe('Definition Service Facet management', () => {
 
   it('handles no files', async () => {
     const files = []
-    const service = createService(createDefinition(undefined, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(0)
     expect(definition.licensed).to.be.undefined
@@ -96,8 +98,8 @@ describe('Definition Service Facet management', () => {
 
   it('gets all the attribution parties', async () => {
     const files = [buildFile('foo.txt', 'MIT', ['Bob', 'Fred']), buildFile('bar.txt', 'MIT', ['Jane', 'Fred'])]
-    const service = createService(createDefinition(undefined, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(2)
@@ -119,8 +121,8 @@ describe('Definition Service Facet management', () => {
         'Bob  Bobberson'
       ])
     ]
-    const service = createService(createDefinition(undefined, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
@@ -135,8 +137,8 @@ describe('Definition Service Facet management', () => {
   it('summarizes with basic facets', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'] }
-    const service = createService(createDefinition(facets, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(facets, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
@@ -152,8 +154,8 @@ describe('Definition Service Facet management', () => {
   it('summarizes with no core filters', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'] }
-    const service = createService(createDefinition(facets, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(facets, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
@@ -169,8 +171,8 @@ describe('Definition Service Facet management', () => {
   it('summarizes with everything grouped into non-core facet', async () => {
     const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
     const facets = { tests: ['*.json'], dev: ['*.foo'] }
-    const service = createService(createDefinition(facets, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(facets, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.licensed.facets.core).to.be.undefined
@@ -187,8 +189,8 @@ describe('Definition Service Facet management', () => {
   it('summarizes files in multiple facets', async () => {
     const files = [buildFile('LICENSE.json', 'GPL', []), buildFile('Test.json', 'MIT', [])]
     const facets = { tests: ['*.json'], dev: ['*.json'] }
-    const service = createService(createDefinition(facets, files))
-    const definition = await service.compute('npm/npmjs/-/test/1.0')
+    const { service, coordinates } = setup(createDefinition(facets, files))
+    const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(2)
     expect(definition.files[0].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
@@ -202,13 +204,6 @@ describe('Definition Service Facet management', () => {
     expect(tests.files).to.eq(2)
     expect(tests.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
     expect(tests.discovered.unknown).to.eq(0)
-  })
-
-  it('handles no facet defs', async () => {
-    const files = [createFile('/foo.txt', ['bob', 'jane'], ['MIT']), createFile('/bar.js', ['jane'], ['GPL-v3'])]
-    const definition = createDefinition([], files)
-    const service = DefinitionService(null, null, null, null, null, null)
-    service._ensureFacets(definition)
   })
 })
 
@@ -233,9 +228,9 @@ function buildFile(path, license, holders) {
   return result
 }
 
-function createService(definition, curation) {
-  const store = { delete: sinon.stub() }
-  const search = { delete: sinon.stub() }
+function setup(definition, coordinateSpec, curation) {
+  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
+  const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: () => Promise.resolve(definition)
@@ -243,5 +238,7 @@ function createService(definition, curation) {
   const harvest = { getAll: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(null) }
-  return DefinitionService(harvest, summary, aggregator, curator, store, search)
+  const service = DefinitionService(harvest, summary, aggregator, curator, store, search)
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  return { coordinates, service }
 }
