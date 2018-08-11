@@ -105,13 +105,21 @@ class DefinitionService {
 
   async computeAndStore(coordinates) {
     const definition = await this.compute(coordinates)
+    // If no tools participated in the creation of the definition then don't bother storing.
+    // Note that curation is a tool so no tools really means there the definition is effectively empty.
+    const tools = get(definition, 'described.tools')
+    if (!tools || tools.length === 0) return definition
+    await this._store(coordinates, definition)
+    return definition
+  }
+
+  async _store(coordinates, definition) {
     const stream = new Readable()
     stream.push(JSON.stringify(definition, null, 2))
     stream.push(null) // end of stream
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     await this.definitionStore.store(definitionCoordinates, stream)
-    await this.search.store(definition)
-    return definition
+    return this.search.store(definition)
   }
 
   /**
