@@ -43,6 +43,13 @@ describe('Definition Service', () => {
     expect(service.definitionStore.store.notCalled).to.be.true
     expect(service.search.store.notCalled).to.be.true
   })
+
+  it('stores new definitions', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, ['foo']))
+    await service.get(coordinates)
+    expect(service.definitionStore.store.calledOnce).to.be.true
+    expect(service.search.store.calledOnce).to.be.true
+  })
 })
 
 describe('Definition Service Facet management', () => {
@@ -213,8 +220,10 @@ function validate(definition) {
   if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
 }
 
-function createDefinition(facets, files) {
-  return { described: { facets }, files }
+function createDefinition(facets, files, tools) {
+  const result = { described: { facets }, files }
+  if (tools) result.described.tools = tools
+  return result
 }
 
 function createFile(path, attributions = [], licenses = []) {
