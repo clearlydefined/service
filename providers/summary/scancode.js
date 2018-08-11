@@ -19,7 +19,7 @@ class ScanCodeSummarizer {
     if (!harvested || !harvested.content || !harvested.content.scancode_version)
       throw new Error('Not valid ScanCode data')
     const result = {}
-    this.addDescribedInfo(result, coordinates, harvested)
+    this.addDescribedInfo(result, harvested)
     const declaredLicense =
       this._summarizeDeclaredLicenseInfo(harvested.content.files) || this._summarizePackageInfo(harvested.content.files)
     setIfValue(result, 'licensed.declared', declaredLicense)
@@ -27,7 +27,7 @@ class ScanCodeSummarizer {
     return result
   }
 
-  addDescribedInfo(result, coordinates, harvested) {
+  addDescribedInfo(result, harvested) {
     const releaseDate = harvested._metadata.releaseDate
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }

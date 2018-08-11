@@ -10,24 +10,21 @@ const ajv = new Ajv({ allErrors: true })
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 const Summarizer = require('../../providers/summary/scancode')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {
-    const harvested = buildOutput([])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([])
+    const summary = Summarizer().summarize(coordinates, harvested)
     expect(summary.coordinates).to.be.undefined
   })
 
   it('gets all the per file license info and attribution parties', () => {
-    const harvested = buildOutput([
+    const { coordinates, harvested } = setup([
       buildFile('foo.txt', 'MIT', ['Bob', 'Fred']),
       buildFile('bar.txt', 'GPL', ['Jane', 'Fred', 'John'])
     ])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.files[0].attributions.length).to.eq(2)
@@ -45,30 +42,27 @@ describe('ScanCode summarizer', () => {
   })
 
   it('handles scan LICENSE file', () => {
-    const harvested = buildOutput([buildFile('LICENSE', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
   it('handles scan LICENSE.md file', () => {
-    const harvested = buildOutput([buildFile('LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([buildFile('LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
   it('skips license files in subdirectories', () => {
-    const harvested = buildOutput([buildFile('foo/LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([
+      buildFile('foo/LICENSE.md', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed).to.be.undefined
@@ -78,20 +72,19 @@ describe('ScanCode summarizer', () => {
   })
 
   it('handles scan with asserted license file even in a subdirectory', () => {
-    const harvested = buildOutput([buildPackageFile('package/package.json', 'MIT', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([buildPackageFile('package/package.json', 'MIT', [])])
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(1)
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
   it('handles scan with both asserted discovered license file', () => {
-    const harvested = buildOutput([buildPackageFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
-    const summarizer = Summarizer()
-    const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarize(coordinates, harvested)
+    const { coordinates, harvested } = setup([
+      buildPackageFile('package.json', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
@@ -100,18 +93,21 @@ describe('ScanCode summarizer', () => {
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
-  definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
+  if (!definition.coordinates)
+    definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
   if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
 }
 
-function buildOutput(files) {
-  return {
+function setup(files, coordinateSpec) {
+  const harvested = {
     _metadata: {},
     content: {
       scancode_version: '2.2.1',
       files
     }
   }
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  return { coordinates, harvested }
 }
 
 function buildFile(path, license, holders) {
