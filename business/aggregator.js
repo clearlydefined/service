@@ -44,7 +44,7 @@ class AggregationService {
     const order = this.workingPrecedence
     const tools = []
     order.forEach(tool => {
-      const data = this.findData(tool, summarized)
+      const data = this._findData(tool, summarized)
       if (data) {
         tools.push(data.toolSpec)
         extend(true, result, data.summary)
@@ -56,7 +56,7 @@ class AggregationService {
   }
 
   // search the summarized data for an entry that best matches the given tool spec
-  findData(toolSpec, summarized) {
+  _findData(toolSpec, summarized) {
     const [tool, toolVersion] = toolSpec.split('/')
     if (!summarized[tool]) return null
     if (toolVersion) return { toolSpec, summary: summarized[tool][toolVersion] }

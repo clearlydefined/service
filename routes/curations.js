@@ -19,6 +19,23 @@ router.get(
   })
 )
 
+// Get data needed by review UI
+router.get(
+  '/pr/:pr',
+  asyncMiddleware(async (request, response) => {
+    const repo = request.app.locals.config.curation.store.github.repo
+    const owner = request.app.locals.config.curation.store.github.owner
+    return curationService.getChangedDefinitions(request.params.pr).then(result => {
+      if (result && result.length > 0) {
+        return response
+          .status(200)
+          .send({ url: `https://github.com/${owner}/${repo}/pull/${request.params.pr}`, changes: result })
+      }
+      return response.sendStatus(404)
+    })
+  })
+)
+
 // Get an existing patch for a specific revision of a component
 router.get(
   '/:type/:provider/:namespace/:name/:revision',
