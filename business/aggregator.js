@@ -36,12 +36,13 @@ const _ = require('lodash')
 class AggregationService {
   constructor(options) {
     this.options = options
-    this.workingPrecedence = _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
+    this.workingPrecedence =
+      options.precedence && _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
   }
 
   process(coordinates, summarized) {
     let result = {}
-    const order = this.workingPrecedence
+    const order = this.workingPrecedence || []
     const tools = []
     order.forEach(tool => {
       const data = this._findData(tool, summarized)
