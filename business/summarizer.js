@@ -32,7 +32,7 @@ class SummaryService {
    * @param {*} data the data to summarize
    */
   summarizeAll(coordinates, data) {
-    const summary = Object.getOwnPropertyNames(data).reduce((result, tool) => {
+    const summary = Object.getOwnPropertyNames(data || {}).reduce((result, tool) => {
       result[tool] = this._summarizeTool(coordinates, tool, data[tool])
       return result
     }, {})
