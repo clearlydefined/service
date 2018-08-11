@@ -101,6 +101,10 @@ class AzBlobStore extends AbstractStore {
     return contents.then(entries => {
       return entries.reduce((result, entry) => {
         const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
+        if (!tool || !toolVersion) {
+          // TODO: LOG HERE THERE ARE SOME BOGUS FILES HANGING AROUND
+          return result
+        }
         const current = (result[tool] = result[tool] || {})
         current[toolVersion] = entry.content
         return result
