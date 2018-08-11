@@ -3,8 +3,11 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get, union } = require('lodash')
+const { get, union, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
+const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
+const minimatch = require('minimatch')
+const he = require('he')
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
@@ -123,10 +126,10 @@ class DefinitionService {
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
-    const facets = await this._computeFacets(coordinates, raw, curation)
-    const summarized = await this.summaryService.summarizeAll(coordinates, raw, facets || {})
+    const summarized = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregated = await this.aggregationService.process(coordinates, summarized)
     const definition = await this.curationService.apply(coordinates, curation, aggregated)
+    this._ensureFacets(definition)
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
@@ -176,22 +179,76 @@ class DefinitionService {
     )
   }
 
-  /**
-   * Compute facets related to an entity and a curation of that entity. This is essentially a light
-   * weight pre-compute so we know what groupings to use in the real summarization.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation
-   * @param {*} raw - the set of raw tool ouptuts related to the idenified entity
-   * @param {Definition)} [curation] - an actual curation object to apply.
-   * @returns {Facets} The `facets` portion of the component's described definition
-   */
-  async _computeFacets(coordinates, raw, curation) {
-    // TODO we might be able to a more effecient computation here since all we need are the facets
-    // for example, some tool outputs just will never have facets to there is no point in summarizing them.
-    const summarized = await this.summaryService.summarizeFacets(coordinates, raw)
-    const aggregated = await this.aggregationService.process(coordinates, summarized)
-    const definition = await this.curationService.apply(coordinates, curation, aggregated)
-    return get(definition, 'described.facets')
+  // ensure all the right facet information has been computed and added to the given definition
+  _ensureFacets(definition) {
+    if (!definition.files) return
+    const facetFiles = this._computeFacetFiles([...definition.files], definition.described.facets)
+    for (const facet in facetFiles)
+      setIfValue(definition, `licensed.facets.${facet}`, this._summarizeFacetInfo(facet, facetFiles[facet]))
+  }
+
+  // figure out which files are in which facets
+  _computeFacetFiles(files, facets = {}) {
+    const facetList = Object.getOwnPropertyNames(facets)
+    remove(facetList, 'core')
+    if (facetList.length === 0) return { core: files }
+    const result = { core: [...files] }
+    for (const facet in facetList) {
+      const facetKey = facetList[facet]
+      const filters = facets[facetKey]
+      if (!filters || filters.length === 0) break
+      result[facetKey] = files.filter(file => filters.some(filter => minimatch(file.path, filter)))
+      pullAllWith(result.core, result[facetKey], isEqual)
+    }
+    return result
+  }
+
+  // create the data object for the identified facet containing the given files. Also destructively brand
+  // the individual file objects with the facet
+  _summarizeFacetInfo(facet, facetFiles) {
+    if (!facetFiles || facetFiles.length === 0) return null
+    const attributions = new Set()
+    const licenseExpressions = new Set()
+    let unknownParties = 0
+    let unknownLicenses = 0
+    // accummulate all the licenses and attributions, and count anything that's missing
+    for (let file of facetFiles) {
+      file.license ? licenseExpressions.add(file.license) : unknownLicenses++
+      const statements = this._simplifyAttributions(file.attributions)
+      statements ? addArrayToSet(statements, attributions) : unknownParties++
+      if (facet !== 'core') {
+        // tag the file with the current facet if not core
+        file.facets = file.facets || []
+        file.facets.push(facet)
+      }
+    }
+    const result = {
+      attribution: {
+        unknown: unknownParties
+      },
+      discovered: {
+        unknown: unknownLicenses
+      },
+      files: facetFiles.length
+    }
+    setIfValue(result, 'attribution.parties', setToArray(attributions))
+    setIfValue(result, 'discovered.expressions', setToArray(licenseExpressions))
+    return result
+  }
+
+  _simplifyAttributions(attributions) {
+    if (!attributions || !attributions.length) return null
+    const set = attributions.reduce((result, attribution) => {
+      result.add(
+        he
+          .decode(attribution)
+          .replace(/(\\[nr]|[\n\r])/g, ' ')
+          .replace(/ +/g, ' ')
+          .trim()
+      )
+      return result
+    }, new Set())
+    return setToArray(set)
   }
 
   _ensureCoordinates(coordinates, definition) {
