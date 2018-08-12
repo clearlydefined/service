@@ -1,15 +1,15 @@
-openapi: "3.0.0"
+openapi: '3.0.0'
 
 info:
-  version: "0.1.0"
+  version: '0.1.0'
   title: ClearlyDefined API
   description: The REST API for clearlydefined.io
 
 servers:
-- url: https://api.clearlydefined.io
-  description: Production environment
-- url: https://dev.clearlydefined.io
-  description: Development environment
+  - url: https://api.clearlydefined.io
+    description: Production environment
+  - url: https://dev.clearlydefined.io
+    description: Development environment
 
 paths:
   /curations/{type}/{provider}/{namespace}/{name}:
@@ -18,10 +18,10 @@ paths:
       tags:
         - curations
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
       responses:
         200:
           description: List of curations for the identified components.
@@ -31,12 +31,12 @@ paths:
       tags:
         - curations
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-        - $ref: "#/components/parameters/pr"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
+        - $ref: '#/components/parameters/pr'
       responses:
         200:
           description: Proposed curation for the component revision.
@@ -46,11 +46,11 @@ paths:
       tags:
         - curations
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
       responses:
         200:
           description: Component revision curation.
@@ -59,11 +59,11 @@ paths:
       tags:
         - curations
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
       responses:
         200:
           description: Nothing. TODO - this should be 204 or return something.
@@ -108,11 +108,11 @@ paths:
       tags:
         - harvest
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
         - name: form
           in: query
           schema:
@@ -136,12 +136,12 @@ paths:
       tags:
         - harvest
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-        - $ref: "#/components/parameters/tool"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
+        - $ref: '#/components/parameters/tool'
         - name: form
           in: query
           schema:
@@ -160,13 +160,13 @@ paths:
       tags:
         - harvest
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-        - $ref: "#/components/parameters/tool"
-        - $ref: "#/components/parameters/toolVersion"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
+        - $ref: '#/components/parameters/tool'
+        - $ref: '#/components/parameters/toolVersion'
         - name: form
           in: query
           schema:
@@ -189,13 +189,13 @@ paths:
       tags:
         - harvest
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-        - $ref: "#/components/parameters/tool"
-        - $ref: "#/components/parameters/toolVersion"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
+        - $ref: '#/components/parameters/tool'
+        - $ref: '#/components/parameters/toolVersion'
       responses:
         201:
           description: Harvested file has been accepted.
@@ -236,18 +236,18 @@ paths:
           description: The part of the definition to search for the given pattern. Valid values are 'coordinates' (default) and 'copyrights'.
       responses:
         200:
-      description: List of definitions that have definitions.
+          description: List of definitions that have definitions.
   /definitions/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
       summary: Gets the definition for a component revision.
       tags:
         - definitions
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
       responses:
         200:
           description: Component definition.
@@ -256,11 +256,11 @@ paths:
       tags:
         - definitions
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
         - name: preview
           in: query
           schema:
@@ -276,15 +276,31 @@ paths:
       tags:
         - definitions
       parameters:
-        - $ref: "#/components/parameters/type"
-        - $ref: "#/components/parameters/provider"
-        - $ref: "#/components/parameters/namespace"
-        - $ref: "#/components/parameters/name"
-        - $ref: "#/components/parameters/revision"
-        - $ref: "#/components/parameters/pr"
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/namespace'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/revision'
+        - $ref: '#/components/parameters/pr'
       responses:
         200:
           description: Component definition.
+  /content/{token}:
+    get:
+      summary: Gets the content for the file with the given content token.
+      tags:
+        - content
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+          description: The token identifying the content to access
+      responses:
+        200:
+          description: The raw content corresponding to the given token.
+
 tags:
   - name: definitions
     description: Component definitions - most API consumers will be interested in these
@@ -292,7 +308,8 @@ tags:
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest
     description: Harvest component metadata - ClearlyDefined developers will be intereted in these
-
+  - name: content
+    description: Definition content - Raw content of interesting files found in components while harvesting
 
 components:
   bodies:
@@ -317,7 +334,7 @@ components:
     definitionList:
       type: object
       description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
-      example: 
+      example:
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
           coordinates:
             type: git
@@ -325,7 +342,7 @@ components:
             namespace: microsoft
             name: redie
             revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
-          described: 
+          described:
             sourceLocation:
               type: git
               provider: github
@@ -336,22 +353,22 @@ components:
           licensed:
             declared: MIT
             facets:
-              core: 
+              core:
                 attribution:
                   parties:
                     - Microsoft Corporation
                 discovered:
-                    - MIT
-                    - GPL
+                  - MIT
+                  - GPL
 
     outputSummaryList:
       type: object
       description: A list of tool outputs that are available (see harvest.json#definitions/definitionSummaryList)
-      example: 
+      example:
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
-          clearlydefined: 
+          clearlydefined:
             - 1
-          scancode: 
+          scancode:
             - 2.2.1
         'npm/npmjs/-/redie/0.3.0':
           clearlydefined:
@@ -368,8 +385,8 @@ components:
       schema:
         type: string
         enum:
-        - npm
-        - git
+          - npm
+          - git
     provider:
       name: provider
       in: path
@@ -378,8 +395,8 @@ components:
       schema:
         type: string
         enum:
-        - npmjs
-        - github
+          - npmjs
+          - github
     namespace:
       name: namespace
       in: path

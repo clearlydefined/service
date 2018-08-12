@@ -1,5 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+
+// TODO consider putting this in for real
+// process.on('unhandledRejection', (reason, p) => {
+//   throw reason
+// })
+
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
@@ -40,6 +46,9 @@ const curationService = require(`./providers/curation/${curationProvider}`)(
 )
 const curations = require('./routes/curations')(curationService)
 
+const contentStoreProvider = config.content.store.provider
+const contentStore = require(`./providers/stores/${contentStoreProvider}`)(config.content.store[contentStoreProvider])
+
 const definitionStoreProvider = config.definition.store.provider
 const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(
   config.definition.store[definitionStoreProvider]
@@ -62,6 +71,7 @@ const definitionService = require('./business/definitionService')(
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
 
+const content = require('./routes/content')(contentStore)
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 
 const appLogger = console // @todo add real logger
@@ -115,6 +125,7 @@ app.use('/harvest', harvest)
 app.use(bodyParser.json())
 app.use('/curations', curations)
 app.use('/definitions', definitions)
+app.use('/content', content)
 
 // catch 404 and forward to error handler
 const requestHandler = (req, res, next) => {

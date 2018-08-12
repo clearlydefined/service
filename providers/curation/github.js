@@ -13,6 +13,7 @@ const throat = require('throat')
 const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const utils = require('../../lib/utils')
 const tmp = require('tmp')
 const path = require('path')
 tmp.setGracefulCleanup()
@@ -152,7 +153,7 @@ class GitHubCurationService {
   async _getAllLocal(coordinates) {
     await this.ensureCurations()
     const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
-    var result
+    let result
     try {
       result = yaml.safeLoad(fs.readFileSync(filePath))
     } catch (error) {
@@ -212,7 +213,8 @@ class GitHubCurationService {
 
   async apply(coordinates, curationSpec, summarized) {
     const curation = await this.get(coordinates, curationSpec)
-    return curation ? extend(true, {}, summarized, curation) : summarized
+    utils.merge(summarized, curation)
+    return summarized
   }
 
   async getContent(ref, path) {
