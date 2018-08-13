@@ -7,21 +7,10 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "score": {
-      "type": "number"
-    },
-    "coordinates": {
-      "$ref": "#/definitions/coordinates"
-    },
-    "files": {
-      "$ref": "#/definitions/files"
-    },
-    "described": {
-      "$ref": "#/definitions/described"
-    },
-    "licensed": {
-      "$ref": "#/definitions/licensed"
-    }
+    "coordinates": { "$ref": "#/definitions/coordinates" },
+    "files": { "$ref": "#/definitions/files" },
+    "described": { "$ref": "#/definitions/described" },
+    "licensed": { "$ref": "#/definitions/licensed" }
   },
   "definitions": {
     "type": {
@@ -35,12 +24,8 @@
       "required": ["type", "provider", "name", "revision"],
       "additionalProperties": false,
       "properties": {
-        "type": {
-          "$ref": "#/definitions/type"
-        },
-        "provider": {
-          "$ref": "#/definitions/provider"
-        },
+        "type": { "$ref": "#/definitions/type" },
+        "provider": { "$ref": "#/definitions/provider" },
         "namespace": {
           "type": ["string", "null"]
         },
@@ -92,36 +77,22 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "score": { "$ref": "#/definitions/score" },
+        "toolScore": { "$ref": "#/definitions/toolScore" },
         "facets": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "data": {
-              "$ref": "#/definitions/globList"
-            },
-            "dev": {
-              "$ref": "#/definitions/globList"
-            },
-            "doc": {
-              "$ref": "#/definitions/globList"
-            },
-            "examples": {
-              "$ref": "#/definitions/globList"
-            },
-            "tests": {
-              "$ref": "#/definitions/globList"
-            }
+            "data": { "$ref": "#/definitions/globList" },
+            "dev": { "$ref": "#/definitions/globList" },
+            "doc": { "$ref": "#/definitions/globList" },
+            "examples": { "$ref": "#/definitions/globList" },
+            "tests": { "$ref": "#/definitions/globList" }
           }
         },
-        "sourceLocation": {
-          "$ref": "#/definitions/sourceLocation"
-        },
-        "projectWebsite": {
-          "type": "string"
-        },
-        "issueTracker": {
-          "type": "string"
-        },
+        "sourceLocation": { "$ref": "#/definitions/sourceLocation" },
+        "projectWebsite": { "type": "string" },
+        "issueTracker": { "type": "string" },
         "releaseDate": {
           "type": "string",
           "format": "date"
@@ -134,6 +105,14 @@
         }
       }
     },
+    "score": {
+      "type": "number",
+      "description": "The effective score (combining tool and curated data) for the parent aspect of the definintion"
+    },
+    "toolScore": {
+      "type": "number",
+      "description": "The tool-based score for the parent aspect of the definintion"
+    },
     "globList": {
       "type": "array",
       "items": {
@@ -145,12 +124,8 @@
       "additionalProperties": false,
       "required": ["type", "provider", "url", "revision"],
       "properties": {
-        "type": {
-          "$ref": "#/definitions/type"
-        },
-        "provider": {
-          "$ref": "#/definitions/provider"
-        },
+        "type": { "$ref": "#/definitions/type" },
+        "provider": { "$ref": "#/definitions/provider" },
         "url": {
           "type": "string",
           "format": "uri"
@@ -167,36 +142,22 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "declared": {
-          "$ref": "#/definitions/declared"
-        },
-        "facets": {
-          "$ref": "#/definitions/facets"
-        }
+        "score": { "$ref": "#/definitions/score" },
+        "toolScore": { "$ref": "#/definitions/toolScore" },
+        "declared": { "$ref": "#/definitions/declared" },
+        "facets": { "$ref": "#/definitions/facets" }
       }
     },
     "facets": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "core": {
-          "$ref": "#/definitions/facet"
-        },
-        "data": {
-          "$ref": "#/definitions/facet"
-        },
-        "dev": {
-          "$ref": "#/definitions/facet"
-        },
-        "doc": {
-          "$ref": "#/definitions/facet"
-        },
-        "examples": {
-          "$ref": "#/definitions/facet"
-        },
-        "tests": {
-          "$ref": "#/definitions/facet"
-        }
+        "core": { "$ref": "#/definitions/facet" },
+        "data": { "$ref": "#/definitions/facet" },
+        "dev": { "$ref": "#/definitions/facet" },
+        "doc": { "$ref": "#/definitions/facet" },
+        "examples": { "$ref": "#/definitions/facet" },
+        "tests": { "$ref": "#/definitions/facet" }
       }
     },
     "facet": {
@@ -206,12 +167,8 @@
         "files": {
           "type": "number"
         },
-        "attribution": {
-          "$ref": "#/definitions/attribution"
-        },
-        "discovered": {
-          "$ref": "#/definitions/discovered"
-        }
+        "attribution": { "$ref": "#/definitions/attribution" },
+        "discovered": { "$ref": "#/definitions/discovered" }
       }
     },
     "attribution": {

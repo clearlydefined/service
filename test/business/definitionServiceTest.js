@@ -9,6 +9,8 @@ const ajv = new Ajv({ allErrors: true })
 const DefinitionService = require('../../business/definitionService')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
+const Curation = require('../../lib/curation')
+const { set } = require('lodash')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -100,7 +102,9 @@ describe('Definition Service Facet management', () => {
     const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(0)
-    expect(definition.licensed).to.be.undefined
+    expect(definition.licensed.score).to.eq(0)
+    expect(definition.licensed.toolScore).to.eq(0)
+    expect(Object.keys(definition.licensed).length).to.eq(2)
   })
 
   it('gets all the attribution parties', async () => {
@@ -221,8 +225,10 @@ function validate(definition) {
 }
 
 function createDefinition(facets, files, tools) {
-  const result = { described: { facets }, files }
-  if (tools) result.described.tools = tools
+  const result = {}
+  if (facets) set(result, 'described.facets', facets)
+  if (files) result.files = files
+  if (tools) set(result, 'described.tools', tools)
   return result
 }
 
@@ -242,11 +248,11 @@ function setup(definition, coordinateSpec, curation) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
-    apply: () => Promise.resolve(definition)
+    apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvest = { getAll: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
-  const aggregator = { process: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvest, summary, aggregator, curator, store, search)
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
