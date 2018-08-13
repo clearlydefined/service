@@ -111,15 +111,15 @@ function setup(files, coordinateSpec) {
 }
 
 function buildFile(path, license, holders) {
-  const wrapHolders = holders => {
-    return {
-      statements: holders.map(holderList => `Copyright ${holderList}`)
-    }
-  }
+  const wrapHolders = holders
+    ? {
+        statements: holders.map(holder => `Copyright ${holder}`)
+      }
+    : null
   return {
     path,
     licenses: license ? [{ spdx_license_key: license }] : null,
-    copyrights: holders ? wrapHolders(holders) : null
+    copyrights: [wrapHolders]
   }
 }
 

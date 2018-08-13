@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, first } = require('lodash')
+const { get, first, flatten } = require('lodash')
 const { extractDate, setIfValue, addArrayToSet, setToArray } = require('../../lib/utils')
 
 class ScanCodeSummarizer {
@@ -70,7 +70,7 @@ class ScanCodeSummarizer {
       const licenseExpression = this._toExpression(licenses)
       const result = { path: file.path }
       setIfValue(result, 'license', licenseExpression)
-      setIfValue(result, 'attributions', get(file, 'copyrights.statements'))
+      setIfValue(result, 'attributions', file.copyrights ? flatten(file.copyrights.map(c => c.statements)) : null)
       return result
     })
   }
