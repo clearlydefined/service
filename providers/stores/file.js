@@ -5,9 +5,12 @@ const utils = require('../../lib/utils')
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
+const JSONStream = require('JSONStream')
 const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
+const EntityCoordinates = require('../../lib/entityCoordinates')
+const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -21,8 +24,18 @@ class FileStore extends AbstractStore {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
       const list = new Set()
-      paths.forEach(entry => {
-        const value = this._getEntry(entry, type)
+      const files = await Promise.all(
+        paths.map(path => {
+          return new Promise((resolve, reject) =>
+            fs.readFile(path, (error, data) => (error ? reject(error) : resolve({ path, contents: JSON.parse(data) })))
+          )
+        })
+      )
+      files.forEach(file => {
+        const value =
+          type === 'entity'
+            ? this._getEntry(file.contents._metadata.coordinates, type)
+            : this._getEntry(file.path, type)
         if (!value) return
         list.add(value.toString())
       })
@@ -138,14 +151,19 @@ class FileStore extends AbstractStore {
 
   async store(coordinates, stream) {
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const preservedName = EntityCoordinates.fromObject(coordinates).toString()
     const dirName = path.dirname(filePath)
     await promisify(mkdirp)(dirName)
     return new Promise((resolve, reject) => {
-      const file = fs
-        .createWriteStream(filePath)
-        .on('finish', () => resolve())
+      const fileStream = fs.createWriteStream(filePath).on('error', error => reject(error))
+      const jsonStream = JSONStream.parse()
+        .on('data', data => {
+          data._metadata.coordinates = preservedName
+          fileStream.write(JSON.stringify(data))
+        })
+        .on('end', () => resolve())
         .on('error', error => reject(error))
-      stream.pipe(file)
+      stream.pipe(jsonStream)
     })
   }
 

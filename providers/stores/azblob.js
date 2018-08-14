@@ -3,6 +3,7 @@
 
 const azure = require('azure-storage')
 const AbstractStore = require('./abstractStore')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -33,11 +34,13 @@ class AzBlobStore extends AbstractStore {
           this.containerName,
           name,
           continuation,
+          { include: azure.BlobUtilities.BlobListingDetails.METADATA },
           resultOrError(resolve, reject)
         )
       })
       result.entries.forEach(entry => {
-        const value = this._getEntry(entry.name, type)
+        const value =
+          type === 'entity' ? this._getEntry(entry.metadata.coordinates, type) : this._getEntry(entry.name, type)
         if (!value) return
         list.add(value.toString())
       })
@@ -113,13 +116,20 @@ class AzBlobStore extends AbstractStore {
   }
 
   store(coordinates, stream) {
-    const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const preservedName = EntityCoordinates.fromObject(coordinates).toString()
     return new Promise((resolve, reject) => {
       stream.pipe(
         this.blobService.createWriteStreamToBlockBlob(
           this.containerName,
-          name,
-          { blockIdPrefix: 'block', contentSettings: { contentType: 'application/json' } },
+          blobName,
+          {
+            blockIdPrefix: 'block',
+            contentSettings: { contentType: 'application/json' },
+            metadata: {
+              coordinates: preservedName
+            }
+          },
           responseOrError(resolve, reject)
         )
       )

@@ -37,7 +37,7 @@ class AbstractStore {
 
   _getEntry(entry, type) {
     if (entry.startsWith('deadletter/')) return null
-    if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(entry)
+    if (type === 'entity') return EntityCoordinates.fromString(entry)
     if (type === 'result') return this._toResultCoordinatesFromStoragePath(entry)
     throw new Error(`Invalid list type: ${type}`)
   }
@@ -46,13 +46,6 @@ class AbstractStore {
     const trimmed = this._trimStoragePath(path)
     return ResultCoordinates.fromString(trimmed)
   }
-
-  // Extract the entity coordinates from the storage path
-  _toEntityCoordinatesFromStoragePath(path) {
-    const trimmed = this._trimStoragePath(path)
-    return EntityCoordinates.fromString(trimmed)
-  }
-
   _trimStoragePath(path) {
     const normalized = path.replace(/\\/g, '/').replace(/.json$/, '')
     const rawSegments = normalized.split('/')
@@ -71,7 +64,10 @@ class AbstractStore {
     // if there is a provider then consider the namespace otherwise there can't be one so ignore null
     const namespace = c.provider ? c.namespace || '-' : null
     // TODO validate that there are no intermediate nulls
-    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart].filter(s => s).join('/')
+    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart]
+      .filter(s => s)
+      .join('/')
+      .toLowerCase()
   }
 }
 
