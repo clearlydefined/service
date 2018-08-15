@@ -17,7 +17,7 @@ async function getDefinition(request, response) {
   const pr = request.params.pr
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
-  const expand = request.query.interestingFiles ? ['files'] : null
+  const expand = (request.query.expand || '').split(',')
   const result = await definitionService.get(coordinates, pr, expand, force)
   response.status(200).send(result)
 }

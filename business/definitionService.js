@@ -63,8 +63,8 @@ class DefinitionService {
     if (!toolSpec || definition.interestingFiles) return []
     const [tool, toolVersion] = toolSpec.split('/')
     const toolCoordinates = ResultCoordinates.fromEntityCoordinates(definition.coordinates, tool, toolVersion)
-    const result = await this.harvestStore.get(toolCoordinates)
-    return result._fileContent
+    const harvestedContent = await this.harvestStore.get(toolCoordinates)
+    return harvestedContent.interestingFiles
   }
 
   // ensure the defintion is a properly classed object

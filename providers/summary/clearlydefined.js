@@ -51,8 +51,13 @@ class ClearlyDescribedSummarizer {
     )
   }
 
+  // Add the interesting file data from the tool but trim out the actual content.
   addInterestingFiles(result, data) {
-    setIfValue(result, 'files', data.interestingFiles)
+    if (!data.interestingFiles) return
+    const files = data.interestingFiles.map(file => {
+      return { path: file.path, token: file.token }
+    })
+    setIfValue(result, 'files', files)
   }
 
   addMavenData(result, data) {

@@ -254,7 +254,7 @@ function buildHarvestFile(path, token, content) {
 
 // build an entry for the harvest store clearly defined tool results
 function buildHarvestData(files) {
-  return { _fileContent: files }
+  return { interestingFiles: files }
 }
 
 function setup(definition, coordinateSpec, curation, harvestData) {
