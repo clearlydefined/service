@@ -78,14 +78,15 @@ class DefinitionService {
    * specified down to the revision. The result will have an entry per discovered definition.
    *
    * @param {*} coordinatesList - an array of coordinate paths to list
+   * @param {array[string]} expand - the set of content to expand in each definition
    * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the defintions that are available
    */
-  async getAll(coordinatesList, force = false) {
+  async getAll(coordinatesList, expand, force = false) {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force)
+        const definition = await this.get(coordinates, null, expand, force)
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
