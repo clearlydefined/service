@@ -18,7 +18,7 @@ router.get(
       case 'streamed':
       case 'raw': {
         const result = await harvestStore.get(coordinates, response)
-        // some harvest services will stream on the response and trigger sending
+        // some harvest stores will stream on the response and trigger sending
         return response.headersSent ? null : response.status(200).send(result)
       }
       case 'summary': {

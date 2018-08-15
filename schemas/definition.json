@@ -83,7 +83,11 @@
           },
           "token": {
             "type": "string",
-            "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+            "description": "An opaque token representing the content of this file if the system has a copy."
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of this file. This may be undefined even if the system has the content. You may need to explicitly ask for the content to be included."
           }
         }
       }
