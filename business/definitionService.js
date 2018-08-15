@@ -3,15 +3,16 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get, union, remove, pullAllWith, isEqual } = require('lodash')
+const { find, get, union, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
+const ResultCoordinates = require('../lib/resultCoordinates')
 const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
-    this.harvestService = harvest
+    this.harvestStore = harvest
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
@@ -26,17 +27,44 @@ class DefinitionService {
    * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation
    * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
    * curation or an actual curation object.
+   * @param {array[string]} expand - the set of content to expand in each definition
    * @param {bool} force - whether or not to force re-computation of the requested definition
    * @returns {Definition} The fully rendered definition
    */
-  async get(coordinates, pr = null, force = false) {
+  async get(coordinates, pr = null, expand, force = false) {
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
+    // get/compute the basic definition
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || (await this.computeAndStore(coordinates)))
+    const definition = this._cast(existing || (await this.computeAndStore(coordinates)))
+
+    // if there is nothing to expand, return the definition.
+    if (!expand) return definition
+
+    // Otherwise, expand whatever is requested. For example, expanding "files" gets the content for
+    // any files we have inserts it into the definition
+    if (!expand.includes('files')) return definition
+    const files = await this._getInterestingFiles(definition)
+    if (!files || files.length === 0) return definition
+    files.forEach(file => {
+      const existingFile = find(definition.files, entry => entry.path === file.path)
+      if (existingFile) existingFile.content = file.content
+    })
+    return definition
+  }
+
+  // Get and return all interesting files related to the indicated definition. The content is stored in the
+  // results of running the "clearlydefined" tool.
+  async _getInterestingFiles(definition) {
+    const toolSpec = find(get(definition, 'described.tools'), entry => entry.startsWith('clearlydefined'))
+    if (!toolSpec || definition.interestingFiles) return []
+    const [tool, toolVersion] = toolSpec.split('/')
+    const toolCoordinates = ResultCoordinates.fromEntityCoordinates(definition.coordinates, tool, toolVersion)
+    const harvestedContent = await this.harvestStore.get(toolCoordinates)
+    return harvestedContent.interestingFiles
   }
 
   // ensure the defintion is a properly classed object
@@ -50,14 +78,15 @@ class DefinitionService {
    * specified down to the revision. The result will have an entry per discovered definition.
    *
    * @param {*} coordinatesList - an array of coordinate paths to list
+   * @param {array[string]} expand - the set of content to expand in each definition
    * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the defintions that are available
    */
-  async getAll(coordinatesList, force = false) {
+  async getAll(coordinatesList, expand, force = false) {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force)
+        const definition = await this.get(coordinates, null, expand, force)
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
@@ -74,7 +103,7 @@ class DefinitionService {
   async list(coordinates, recompute = false) {
     if (recompute) {
       const curated = await this.curationService.list(coordinates)
-      const harvest = await this.harvestService.list(coordinates)
+      const harvest = await this.harvestStore.list(coordinates)
       return union(harvest, curated)
     }
     return this.definitionStore.list(coordinates)
@@ -133,7 +162,7 @@ class DefinitionService {
    */
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec)
-    const raw = await this.harvestService.getAll(coordinates)
+    const raw = await this.harvestStore.getAll(coordinates)
     const summarized = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregated = await this.aggregationService.process(coordinates, summarized)
     const definition = await this.curationService.apply(coordinates, curation, aggregated)

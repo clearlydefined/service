@@ -13,6 +13,7 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
+    this.addInterestingFiles(result, data)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
@@ -48,6 +49,15 @@ class ClearlyDescribedSummarizer {
       'described.sourceLocation',
       pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
     )
+  }
+
+  // Add the interesting file data from the tool but trim out the actual content.
+  addInterestingFiles(result, data) {
+    if (!data.interestingFiles) return
+    const files = data.interestingFiles.map(file => {
+      return { path: file.path, token: file.token }
+    })
+    setIfValue(result, 'files', files)
   }
 
   addMavenData(result, data) {

@@ -214,6 +214,18 @@ describe('Definition Service Facet management', () => {
   })
 })
 
+describe('Definition Service file expansion', () => {
+  it('expands files', async () => {
+    const files = [buildFile('LICENSE.txt', 'MIT', [], '1')]
+    const harvestData = buildHarvestData([buildHarvestFile('LICENSE.txt', '1', 'license 1 text')])
+    const definition = createDefinition({}, files, ['clearlydefined/1'])
+    const { service, coordinates } = setup(definition, null, null, harvestData)
+    const result = await service.get(coordinates, null, ['files'])
+    validate(result)
+    expect(result.files.length).to.eq(1)
+  })
+})
+
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
@@ -222,29 +234,37 @@ function validate(definition) {
 
 function createDefinition(facets, files, tools) {
   const result = { described: { facets }, files }
-  if (tools) result.described.tools = tools
+  setIfValue(result, 'described.tools', tools)
   return result
 }
 
-function createFile(path, attributions = [], licenses = []) {
-  return { path, attributions, licenses }
-}
-
-function buildFile(path, license, holders) {
+// build an entry for the definition file list
+function buildFile(path, license, holders, token) {
   const result = { path }
   setIfValue(result, 'license', license)
   setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
+  setIfValue(result, 'token', token)
   return result
 }
 
-function setup(definition, coordinateSpec, curation) {
+// build an entry for the harvest store clearly defined tool results
+function buildHarvestFile(path, token, content) {
+  return { path, token, content }
+}
+
+// build an entry for the harvest store clearly defined tool results
+function buildHarvestData(files) {
+  return { interestingFiles: files }
+}
+
+function setup(definition, coordinateSpec, curation, harvestData) {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: () => Promise.resolve(definition)
   }
-  const harvest = { getAll: () => Promise.resolve(null) }
+  const harvest = { get: () => Promise.resolve(harvestData), getAll: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(null) }
   const service = DefinitionService(harvest, summary, aggregator, curator, store, search)

@@ -29,6 +29,7 @@
     "express-init": "^1.1.0",
     "express-rate-limit": "^2.11.0",
     "extend": "^3.0.1",
+    "glob": "^7.1.2",
     "he": "^1.1.1",
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
@@ -41,7 +42,6 @@
     "painless-config": "^0.1.0",
     "passport": "^0.4.0",
     "passport-github": "^1.1.0",
-    "proxyquire": "^1.8.0",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
     "redis": "^2.8.0",
@@ -61,6 +61,7 @@
     "mocha": "^4.0.1",
     "node-mocks-http": "^1.6.7",
     "nodemon": "^1.18.2",
+    "proxyquire": "^2.0.1",
     "sinon": "^4.2.2"
   }
 }
