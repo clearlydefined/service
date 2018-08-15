@@ -248,6 +248,11 @@ paths:
         - $ref: '#/components/parameters/namespace'
         - $ref: '#/components/parameters/name'
         - $ref: '#/components/parameters/revision'
+        - name: expande
+          in: query
+          schema:
+            type: string
+          description: Comma separated list of definition parts to include in the response. Currently only 'expand' is supported.
       responses:
         200:
           description: Component definition.
@@ -285,21 +290,6 @@ paths:
       responses:
         200:
           description: Component definition.
-  /content/{token}:
-    get:
-      summary: Gets the content for the file with the given content token.
-      tags:
-        - content
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type: string
-          required: true
-          description: The token identifying the content to access
-      responses:
-        200:
-          description: The raw content corresponding to the given token.
 
 tags:
   - name: definitions
@@ -308,8 +298,6 @@ tags:
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest
     description: Harvest component metadata - ClearlyDefined developers will be intereted in these
-  - name: content
-    description: Definition content - Raw content of interesting files found in components while harvesting
 
 components:
   bodies:

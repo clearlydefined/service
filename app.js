@@ -120,7 +120,6 @@ app.use('/harvest', harvest)
 app.use(bodyParser.json())
 app.use('/curations', curations)
 app.use('/definitions', definitions)
-app.use('/content', content)
 
 // catch 404 and forward to error handler
 const requestHandler = (req, res, next) => {
