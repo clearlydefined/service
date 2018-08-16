@@ -285,21 +285,21 @@ paths:
       responses:
         200:
           description: Component definition.
-  /content/{token}:
+  /attachments/{token}:
     get:
-      summary: Gets the content for the file with the given content token.
+      summary: Gets the attachment with the given content token.
       tags:
-        - content
+        - attachments
       parameters:
         - in: path
           name: token
           schema:
             type: string
           required: true
-          description: The token identifying the content to access
+          description: The token identifying the attachment to access
       responses:
         200:
-          description: The raw content corresponding to the given token.
+          description: The raw contne of the attachment corresponding to the given token.
 
 tags:
   - name: definitions
@@ -308,8 +308,8 @@ tags:
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest
     description: Harvest component metadata - ClearlyDefined developers will be intereted in these
-  - name: content
-    description: Definition content - Raw content of interesting files found in components while harvesting
+  - name: attachments
+    description: Definition attachments - Raw content of attachments for harvested component data
 
 components:
   bodies:

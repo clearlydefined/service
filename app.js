@@ -46,9 +46,6 @@ const curationService = require(`./providers/curation/${curationProvider}`)(
 )
 const curations = require('./routes/curations')(curationService)
 
-const contentStoreProvider = config.content.store.provider
-const contentStore = require(`./providers/stores/${contentStoreProvider}`)(config.content.store[contentStoreProvider])
-
 const definitionStoreProvider = config.definition.store.provider
 const definitionStore = require(`./providers/stores/${definitionStoreProvider}`)(
   config.definition.store[definitionStoreProvider]
@@ -71,7 +68,7 @@ const definitionService = require('./business/definitionService')(
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
 
-const content = require('./routes/content')(contentStore)
+const attachments = require('./routes/attachments')(harvestStore)
 const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 
 const appLogger = console // @todo add real logger
@@ -125,7 +122,7 @@ app.use('/harvest', harvest)
 app.use(bodyParser.json())
 app.use('/curations', curations)
 app.use('/definitions', definitions)
-app.use('/content', content)
+app.use('/attachments', attachments)
 
 // catch 404 and forward to error handler
 const requestHandler = (req, res, next) => {

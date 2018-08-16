@@ -7,22 +7,22 @@ const router = express.Router()
 const ResultCoordinates = require('../lib/resultCoordinates')
 
 // Get a proposed patch for a specific revision of a component
-router.get('/:contentToken', asyncMiddleware(getContent))
+router.get('/:token', asyncMiddleware(getAttachment))
 
-async function getContent(request, response) {
+async function getAttachment(request, response) {
   // TODO this is a hack. The coordinates are not intended to be sparse. Here make sure the
   // token is the "namespace" to avoid the '-' showing up. Fix is likely to have an explicit
-  // ContentCoordinates class that has the right shape and generalize the stores to just take
+  // AttachmentCoordinates class that has the right shape and generalize the stores to just take
   // "coordinates" and not worry about how they are structured.
-  const coordinates = new ResultCoordinates('content', null, request.params.contentToken)
-  const result = await contentStore.get(coordinates)
-  if (result) return response.status(200).send(result.content)
+  const coordinates = new ResultCoordinates('attachment', null, request.params.token)
+  const result = await harvestStore.get(coordinates)
+  if (result) return response.status(200).send(result.attachment)
   response.sendStatus(404)
 }
 
-let contentStore
-function setup(content) {
-  contentStore = content
+let harvestStore
+function setup(harvest) {
+  harvestStore = harvest
   return router
 }
 module.exports = setup
