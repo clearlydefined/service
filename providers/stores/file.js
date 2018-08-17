@@ -5,7 +5,6 @@ const utils = require('../../lib/utils')
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const JSONStream = require('JSONStream')
 const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
@@ -20,7 +19,44 @@ class FileStore extends AbstractStore {
     this.options = options
   }
 
-  async list(coordinates, type = 'entity') {
+  /**
+   * List all of the matching components for the given coordinates.
+   * Accepts partial coordinates.
+   *
+   * @param {EntityCoordinates} coordinates
+   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
+   */
+  async list(coordinates) {
+    try {
+      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
+      const list = new Set()
+      const files = await Promise.all(
+        paths.map(path => {
+          return new Promise((resolve, reject) =>
+            fs.readFile(path, (error, data) => (error ? reject(error) : resolve({ contents: JSON.parse(data) })))
+          )
+        })
+      )
+      files.forEach(file => {
+        const value = file.contents._metadata.coordinates
+        if (value) list.add(value)
+      })
+      return Array.from(list).sort()
+    } catch (error) {
+      // If there is just no entry, that's fine, there is no content.
+      if (error.code === 'ENOENT') return []
+      throw error
+    }
+  }
+
+  /**
+   * List all of the matching tool output coordinates
+   * Accepts partial coordinates.
+   *
+   * @param {EntityCoordinates} coordinates
+   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3/clearlydefined/1', 'npm/npmjs/-/JSONStream/1.3.3/scancode/2.9.2' ]
+   */
+  async listResults(coordinates) {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
       const list = new Set()
@@ -32,12 +68,11 @@ class FileStore extends AbstractStore {
         })
       )
       files.forEach(file => {
-        const value =
-          type === 'entity'
-            ? this._getEntry(file.contents._metadata.coordinates, type)
-            : this._getEntry(file.path, type)
-        if (!value) return
-        list.add(value.toString())
+        const value = this._toPreservedCoordinatesFromResultsStoragePath(
+          file.path.slice(this.options.location.length + 1),
+          file.contents._metadata.coordinates
+        )
+        if (value) list.add(value)
       })
       return Array.from(list).sort()
     } catch (error) {
@@ -45,11 +80,6 @@ class FileStore extends AbstractStore {
       if (error.code === 'ENOENT') return []
       throw error
     }
-  }
-
-  _getEntry(entry, type) {
-    const result = super._getEntry(entry, type)
-    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(result.type) ? result : null
   }
 
   _toStoragePathFromCoordinates(coordinates) {
@@ -60,11 +90,6 @@ class FileStore extends AbstractStore {
   _toResultCoordinatesFromStoragePath(path) {
     const trimmed = path.slice(this.options.location.length + 1)
     return super._toResultCoordinatesFromStoragePath(trimmed)
-  }
-
-  _toEntityCoordinatesFromStoragePath(path) {
-    const trimmed = path.slice(this.options.location.length + 1)
-    return super._toEntityCoordinatesFromStoragePath(trimmed)
   }
 
   /**
@@ -155,15 +180,19 @@ class FileStore extends AbstractStore {
     const dirName = path.dirname(filePath)
     await promisify(mkdirp)(dirName)
     return new Promise((resolve, reject) => {
-      const fileStream = fs.createWriteStream(filePath).on('error', error => reject(error))
-      const jsonStream = JSONStream.parse()
-        .on('data', data => {
-          data._metadata.coordinates = preservedName
-          fileStream.write(JSON.stringify(data))
+      const chunks = []
+      stream
+        .on('data', chunk => {
+          chunks.push(chunk)
         })
-        .on('end', () => resolve())
-        .on('error', error => reject(error))
-      stream.pipe(jsonStream)
+        .on('end', () => {
+          const data = JSON.parse(chunks.join(''))
+          data._metadata.coordinates = preservedName
+          fs.writeFile(filePath, JSON.stringify(data), err => {
+            if (err) reject(err)
+            resolve(true)
+          })
+        })
     })
   }
 

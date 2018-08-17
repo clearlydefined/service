@@ -4,6 +4,7 @@
 const azure = require('azure-storage')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -24,7 +25,14 @@ class AzBlobStore extends AbstractStore {
     return this.blobService
   }
 
-  async list(coordinates, type = 'entity') {
+  /**
+   * List all of the matching components for the given coordinates.
+   * Accepts partial coordinates.
+   *
+   * @param {EntityCoordinates} coordinates
+   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
+   */
+  async list(coordinates) {
     const list = new Set()
     let continuation = null
     while (true) {
@@ -39,10 +47,38 @@ class AzBlobStore extends AbstractStore {
         )
       })
       result.entries.forEach(entry => {
-        const value =
-          type === 'entity' ? this._getEntry(entry.metadata.coordinates, type) : this._getEntry(entry.name, type)
-        if (!value) return
-        list.add(value.toString())
+        const value = entry.metadata.coordinates
+        if (value) list.add(value)
+      })
+      if (!result.continuationToken) return Array.from(list).sort()
+      continuation = result.continuationToken
+    }
+  }
+
+  /**
+   * List all of the matching tool output coordinates
+   * Accepts partial coordinates.
+   *
+   * @param {EntityCoordinates} coordinates
+   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3/clearlydefined/1', 'npm/npmjs/-/JSONStream/1.3.3/scancode/2.9.2' ]
+   */
+  async listResults(coordinates) {
+    const list = new Set()
+    let continuation = null
+    while (true) {
+      const result = await new Promise((resolve, reject) => {
+        const name = this._toStoragePathFromCoordinates(coordinates)
+        this.blobService.listBlobsSegmentedWithPrefix(
+          this.containerName,
+          name,
+          continuation,
+          { include: azure.BlobUtilities.BlobListingDetails.METADATA },
+          resultOrError(resolve, reject)
+        )
+      })
+      result.entries.forEach(entry => {
+        const value = this._toPreservedCoordinatesFromResultsStoragePath(entry.name, entry.metadata.coordinates)
+        if (value) list.add(value)
       })
       if (!result.continuationToken) return Array.from(list).sort()
       continuation = result.continuationToken
@@ -115,7 +151,7 @@ class AzBlobStore extends AbstractStore {
     })
   }
 
-  store(coordinates, stream) {
+  async store(coordinates, stream) {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
     const preservedName = EntityCoordinates.fromObject(coordinates).toString()
     return new Promise((resolve, reject) => {
@@ -126,9 +162,7 @@ class AzBlobStore extends AbstractStore {
           {
             blockIdPrefix: 'block',
             contentSettings: { contentType: 'application/json' },
-            metadata: {
-              coordinates: preservedName
-            }
+            metadata: { coordinates: preservedName }
           },
           responseOrError(resolve, reject)
         )
