@@ -4,7 +4,6 @@
 const azure = require('azure-storage')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -35,7 +34,7 @@ class AzBlobStore extends AbstractStore {
   async list(coordinates) {
     const list = new Set()
     let continuation = null
-    while (true) {
+    do {
       const result = await new Promise((resolve, reject) => {
         const name = this._toStoragePathFromCoordinates(coordinates)
         this.blobService.listBlobsSegmentedWithPrefix(
@@ -50,9 +49,9 @@ class AzBlobStore extends AbstractStore {
         const value = entry.metadata.coordinates
         if (value) list.add(value)
       })
-      if (!result.continuationToken) return Array.from(list).sort()
       continuation = result.continuationToken
-    }
+    } while (continuation)
+    return Array.from(list).sort()
   }
 
   /**
@@ -65,7 +64,7 @@ class AzBlobStore extends AbstractStore {
   async listResults(coordinates) {
     const list = new Set()
     let continuation = null
-    while (true) {
+    do {
       const result = await new Promise((resolve, reject) => {
         const name = this._toStoragePathFromCoordinates(coordinates)
         this.blobService.listBlobsSegmentedWithPrefix(
@@ -80,9 +79,9 @@ class AzBlobStore extends AbstractStore {
         const value = this._toPreservedCoordinatesFromResultsStoragePath(entry.name, entry.metadata.coordinates)
         if (value) list.add(value)
       })
-      if (!result.continuationToken) return Array.from(list).sort()
       continuation = result.continuationToken
-    }
+    } while (continuation)
+    return Array.from(list).sort()
   }
 
   /**

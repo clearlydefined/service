@@ -9,7 +9,6 @@ const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
