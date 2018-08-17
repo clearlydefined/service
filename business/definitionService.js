@@ -192,7 +192,7 @@ class DefinitionService {
     // For now it just checks that a license and copyright holders are present
     let result = 0
     result += !!get(definition, 'licensed.declared')
-    result += !!get(definition, 'licensed.attribution.parties[0]')
+    result += !!get(definition, 'licensed.facets.core.attribution.parties[0]')
     return result
   }
 

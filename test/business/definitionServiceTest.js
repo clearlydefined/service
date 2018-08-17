@@ -54,6 +54,49 @@ describe('Definition Service', () => {
   })
 })
 
+describe('Definition Service score computation', () => {
+  it('computes full score', async () => {
+    const files = [buildFile('bar.txt', 'MIT', ['Jane', 'Fred'])]
+    const raw = createDefinition(undefined, files)
+    set(raw, 'licensed.declared', 'MIT')
+    set(raw, 'described.releaseDate', '2018-08-09')
+    set(raw, 'described.sourceLocation', {})
+    const { service, coordinates } = setup(raw)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(2)
+    expect(definition.described.toolScore).to.eq(2)
+    expect(definition.licensed.score).to.eq(2)
+    expect(definition.licensed.toolScore).to.eq(2)
+  })
+
+  it('computes zero score', async () => {
+    const files = [buildFile('bar.txt', 'MIT')]
+    const raw = createDefinition(undefined, files)
+    const { service, coordinates } = setup(raw)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(0)
+    expect(definition.described.toolScore).to.eq(0)
+    expect(definition.licensed.score).to.eq(0)
+    expect(definition.licensed.toolScore).to.eq(0)
+  })
+
+  it('higher score than tool score with a curation', async () => {
+    const files = [buildFile('bar.txt', 'MIT')]
+    const raw = createDefinition(undefined, files)
+    const curation = {
+      licensed: { declared: 'MIT' },
+      files: [{ path: 'bar.txt', attributions: ['Copyright Bob'] }],
+      described: { releaseDate: '2018-08-09' }
+    }
+    const { service, coordinates } = setup(raw, null, curation)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(1)
+    expect(definition.described.toolScore).to.eq(0)
+    expect(definition.licensed.score).to.eq(2)
+    expect(definition.licensed.toolScore).to.eq(0)
+  })
+})
+
 describe('Definition Service Facet management', () => {
   it('handle special characters', async () => {
     const files = [
@@ -230,10 +273,6 @@ function createDefinition(facets, files, tools) {
   if (files) result.files = files
   if (tools) set(result, 'described.tools', tools)
   return result
-}
-
-function createFile(path, attributions = [], licenses = []) {
-  return { path, attributions, licenses }
 }
 
 function buildFile(path, license, holders) {
