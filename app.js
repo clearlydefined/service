@@ -67,9 +67,9 @@ const definitionService = require('./business/definitionService')(
 )
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
+const definitions = require('./routes/definitions')(definitionService)
 
 const attachments = require('./routes/attachments')(harvestStore)
-const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
 
 const appLogger = console // @todo add real logger
 const githubSecret = config.webhook.githubSecret
