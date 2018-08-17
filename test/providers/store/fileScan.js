@@ -19,10 +19,10 @@ describe('list a tool result ', () => {
       if (path.includes('error')) throw new Error('test error')
       const result = [
         '/foo/npm/npmjs/-/test/revision/0.0',
-        '/foo/npm/npmjs/-/test/revision/1.0/tool/testTool/2.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool0/1.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool1/2.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool2/3.0.json'
+        '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool1/2.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json'
       ].filter(p => p.startsWith(path))
       if (result.length === 0) {
         const error = new Error('test')
@@ -31,7 +31,18 @@ describe('list a tool result ', () => {
       }
       return result.filter(p => p !== path)
     }
-    FileStore = proxyquire('../../../providers/stores/file', { 'recursive-readdir': recursiveStub })
+    const fsStub = {
+      readFile: (path, cb) => {
+        if (path.startsWith('/foo/npm/npmjs/-/test/revision/1.0/tool/')) {
+          cb(null, JSON.stringify({ _metadata: { coordinates: 'npm/npmjs/-/test/1.0' } }))
+        } else if (path.startsWith('/foo/npm/npmjs/-/test/revision/2.0/tool/')) {
+          cb(null, JSON.stringify({ _metadata: { coordinates: 'npm/npmjs/-/test/2.0' } }))
+        } else {
+          cb(path + ' is not stubbed :(')
+        }
+      }
+    }
+    FileStore = proxyquire('../../../providers/stores/file', { 'recursive-readdir': recursiveStub, fs: fsStub })
   })
 
   afterEach(function() {
@@ -62,7 +73,7 @@ describe('list a tool result ', () => {
 
   it('works for zero result coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' })
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'), 'result')
+    const result = await fileStore.listResults(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'))
     assert.equal(result.length, 0)
   })
 
@@ -76,7 +87,7 @@ describe('list a tool result ', () => {
 
   it('works for single result coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' })
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), 'result')
+    const result = await fileStore.listResults(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'))
     const expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '1.0', 'testtool', '2.0').toString()
     assert.equal(result.length, 1)
     assert.deepEqual(result[0], expected)
@@ -93,7 +104,7 @@ describe('list a tool result ', () => {
 
   it('works for multiple result coordinates ', async () => {
     const fileStore = FileStore({ location: '/foo' })
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'), 'result')
+    const result = await fileStore.listResults(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'))
     assert.equal(result.length, 3)
     let expected = new ResultCoordinates('npm', 'npmjs', null, 'test', '2.0', 'testtool0', '1.0').toString()
     assert.deepEqual(result[0], expected)

@@ -27,7 +27,7 @@ const data = [
   },
   {
     location: linux,
-    path: 'npm/npmjs/namespace/name/revision/1.0/tool/testTool/2.0',
+    path: 'npm/npmjs/namespace/name/revision/1.0/tool/testtool/2.0',
     coordinates: {
       type: 'npm',
       provider: 'npmjs',
@@ -105,28 +105,15 @@ const data = [
   }
 ]
 
-describe('path to coordinates mapping', () => {
-  data.forEach(input => {
-    it('works well for ' + input.path, () => {
-      const fileStore = FileStore({ location: input.location })
-      const separator = input.location.includes('/') ? '/' : '\\'
-      const result = fileStore._toResultCoordinatesFromStoragePath(input.location + separator + input.path)
-      assert.deepEqual(result, input.coordinates)
-    })
-  })
-})
-
 describe('coordinates to path mapping', () => {
   data.forEach(input => {
     it('works well for ' + input.path, () => {
       const fileStore = FileStore({ location: input.location })
-      const result = fileStore._toStoragePathFromCoordinates(input.coordinates)
       const separator = input.location.includes('/') ? '/' : '\\'
+      const result = fileStore._toStoragePathFromCoordinates(input.coordinates)
       // account for platform differences in path separator.
       const normalizedResult = result.replace(/\\/g, '/')
-      // TODO We expect much of the path to be lowercased however the approach below requires ALL
-      // of the path to be lowercased. unclear if case variation on namespace, name and revision is ok.
-      const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/').toLowerCase()
+      const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/')
       assert.deepEqual(normalizedResult, normalizedInput)
     })
   })
@@ -200,7 +187,7 @@ describe('FileStore listing content ', () => {
     it('works for well structured resuilt data: ' + index, async () => {
       const fileStore = FileStore({ location: input.location })
       fileStore._list = () => input.paths.map(path => input.location + '/' + path)
-      const list = await fileStore.list('dummy', 'result')
+      const list = await fileStore.listResults('dummy')
       list.forEach((item, index) => {
         const expectedCoordinates = ResultCoordinates.fromString(input.coordinates[index])
         assert.deepEqual(item, expectedCoordinates)
