@@ -299,7 +299,7 @@ paths:
           description: The token identifying the attachment to access
       responses:
         200:
-          description: The raw contne of the attachment corresponding to the given token.
+          description: The raw content of the attachment corresponding to the given token.
 
 tags:
   - name: definitions

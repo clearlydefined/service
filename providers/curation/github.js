@@ -213,7 +213,7 @@ class GitHubCurationService {
 
   async apply(coordinates, curationSpec, summarized) {
     const curation = await this.get(coordinates, curationSpec)
-    utils.merge(summarized, curation)
+    utils.mergeDefinitions(summarized, curation)
     return summarized
   }
 

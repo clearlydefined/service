@@ -29,7 +29,7 @@
 // The function should return a summary schema.
 //
 
-const { getLatestVersion, merge } = require('../lib/utils')
+const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
 const { flattenDeep, set } = require('lodash')
 
 class AggregationService {
@@ -47,7 +47,7 @@ class AggregationService {
       const data = this._findData(tool, summarized)
       if (data) {
         tools.push(data.toolSpec)
-        merge(result, data.summary)
+        mergeDefinitions(result, data.summary)
       }
     })
     set(result, 'described.tools', tools.reverse())

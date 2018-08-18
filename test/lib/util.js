@@ -25,11 +25,11 @@ describe('Utils latest version', () => {
   })
 })
 
-describe('Utils merge', () => {
+describe('Utils mergeDefinitions', () => {
   it('should add new entries as needed', () => {
     const base = { described: { releaseDate: '2018-6-3' } }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.merge(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(1)
     expect(base.files[0].path).to.eq('1.txt')
@@ -39,7 +39,7 @@ describe('Utils merge', () => {
   it('should merge entries as needed', () => {
     const base = { described: { releaseDate: '2018-6-3' }, files: [{ path: '1.txt', license: 'MIT' }] }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.merge(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(1)
     expect(base.files[0].path).to.eq('1.txt')
@@ -53,7 +53,7 @@ describe('Utils merge', () => {
       files: [{ path: '1.txt', license: 'MIT' }, { path: '2.txt', license: 'GPL' }]
     }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.merge(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(2)
     expect(base.files[0].path).to.eq('1.txt')

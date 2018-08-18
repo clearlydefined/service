@@ -16,8 +16,8 @@ async function getAttachment(request, response) {
   // "coordinates" and not worry about how they are structured.
   const coordinates = new ResultCoordinates('attachment', null, request.params.token)
   const result = await harvestStore.get(coordinates)
-  if (result) return response.status(200).send(result.attachment)
-  response.sendStatus(404)
+  if (!result) return response.sendStatus(404)
+  response.status(200).send(result.attachment)
 }
 
 let harvestStore
