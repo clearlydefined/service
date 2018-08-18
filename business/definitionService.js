@@ -181,7 +181,7 @@ class DefinitionService {
     // For now it just checks that a few props are present
     let result = 0
     result += !!get(definition, 'described.releaseDate')
-    result += !!get(definition, 'described.sourceLocation')
+    result += !!get(definition, 'described.sourceLocation.url')
     // TODO add in validated
     return result
   }

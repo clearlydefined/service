@@ -60,7 +60,7 @@ describe('Definition Service score computation', () => {
     const raw = createDefinition(undefined, files)
     set(raw, 'licensed.declared', 'MIT')
     set(raw, 'described.releaseDate', '2018-08-09')
-    set(raw, 'described.sourceLocation', {})
+    set(raw, 'described.sourceLocation', { url: 'http://foo' })
     const { service, coordinates } = setup(raw)
     const definition = await service.compute(coordinates)
     expect(definition.described.score).to.eq(2)
