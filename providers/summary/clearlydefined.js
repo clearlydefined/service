@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { pick, get } = require('lodash')
-const { extractDate, setIfValue } = require('../../lib/utils')
+const { extractDate, setIfValue, extractLicenseFromLicenseUrl } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
   constructor(options) {
@@ -60,6 +60,7 @@ class ClearlyDescribedSummarizer {
 
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
   }
 
   addNpmData(result, data) {
