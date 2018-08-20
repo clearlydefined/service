@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, set } = require('lodash')
+const { concat, get, forIn, merge, set, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
 const extend = require('extend')
 const { exec } = require('child_process')
@@ -93,7 +93,7 @@ class GitHubCurationService {
         )
       )
     )
-    return (userGithub || serviceGithub).pullRequests.create({
+    const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
       title: prBranch,
@@ -101,6 +101,15 @@ class GitHubCurationService {
       head: `refs/heads/${prBranch}`,
       base: branch
     })
+    const number = result.data.number
+    const comment = {
+      owner,
+      repo,
+      number,
+      body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
+    }
+    await serviceGithub.issues.createComment(comment)
+    return result
   }
 
   /**
@@ -317,6 +326,27 @@ class GitHubCurationService {
       // @todo add logger
       throw error
     }
+  }
+
+  async getChangedDefinitions(number) {
+    const files = await this.getPrFiles(number)
+    const changedCoordinates = []
+    for (let i = 0; i < files.length; ++i) {
+      const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
+      const coordinates = EntityCoordinates.fromString(fileName)
+      const prDefinitions = (await this.getAll(coordinates, number)) || { revisions: [] }
+      const masterDefinitions = (await this.getAll(coordinates)) || { revisions: [] }
+      const allUnfilteredRevisions = concat(
+        Object.keys(prDefinitions.revisions),
+        Object.keys(masterDefinitions.revisions)
+      )
+      const allRevisions = uniq(allUnfilteredRevisions)
+      const changedRevisions = allRevisions.filter(
+        revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
+      )
+      changedRevisions.forEach(revision => changedCoordinates.push(`${fileName}/${revision}`))
+    }
+    return changedCoordinates
   }
 
   _getPrTitle(coordinates) {

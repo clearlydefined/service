@@ -6,7 +6,7 @@ info:
   description: The REST API for clearlydefined.io
 
 servers:
-- url: https://clearlydefined.io
+- url: https://api.clearlydefined.io
   description: Production environment
 - url: https://dev.clearlydefined.io
   description: Development environment
