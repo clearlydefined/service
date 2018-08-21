@@ -3,6 +3,7 @@
 
 module.exports = {
   scancode: require('./scancode'),
+  fossology: require('./fossology'),
   clearlydefined: require('./clearlydefined'),
   cdsource: require('./cdsource')
 }
