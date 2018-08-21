@@ -211,10 +211,9 @@ class GitHubCurationService {
     )
   }
 
-  async apply(coordinates, curationSpec, summarized) {
+  async apply(coordinates, curationSpec, definition) {
     const curation = await this.get(coordinates, curationSpec)
-    utils.mergeDefinitions(summarized, curation)
-    return summarized
+    return Curation.apply(definition, curation)
   }
 
   async getContent(ref, path) {

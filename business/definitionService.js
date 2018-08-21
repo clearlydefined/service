@@ -3,11 +3,12 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get, union, remove, pullAllWith, isEqual } = require('lodash')
+const { get, set, union, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
+const extend = require('extend')
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
@@ -135,29 +136,64 @@ class DefinitionService {
     const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
     const summarized = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregated = await this.aggregationService.process(coordinates, summarized)
-    const definition = await this.curationService.apply(coordinates, curation, aggregated)
+    const tooledDefinition = (await this.aggregationService.process(coordinates, summarized)) || {}
+    this._ensureToolScores(coordinates, tooledDefinition)
+    const definition = await this.curationService.apply(coordinates, curation, tooledDefinition)
+    this._finalizeDefinition(coordinates, definition, curation)
+    this._ensureCuratedScores(definition)
+    return definition
+  }
+
+  // Compute and store the scored for the given definition but do it in a way that does not affect the
+  // definition so that further curations can be done.
+  _ensureToolScores(coordinates, definition) {
+    const rawDefinition = extend(true, {}, definition)
+    this._finalizeDefinition(coordinates, rawDefinition)
+    const { describedScore, licensedScore } = this._computeScores(rawDefinition)
+    set(definition, 'described.toolScore', describedScore)
+    set(definition, 'licensed.toolScore', licensedScore)
+  }
+
+  _ensureCuratedScores(definition) {
+    const { describedScore, licensedScore } = this._computeScores(definition)
+    set(definition, 'described.score', describedScore)
+    set(definition, 'licensed.score', licensedScore)
+  }
+
+  _finalizeDefinition(coordinates, definition, curation) {
     this._ensureFacets(definition)
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
-    definition.score = this.computeScore(definition)
-    return definition
   }
 
-  /**
-   * Given a defintion, calculate a score for the definition
-   * @param {Defition} defintion
-   * @returns {number} The score for the definition
-   */
-  computeScore(definition) {
+  // Given a definition, calculate the scores for the definition and return an object with a score per dimension
+  _computeScores(definition) {
+    return {
+      licensedScore: this._computeLicensedScore(definition),
+      describedScore: this._computeDescribedScore(definition)
+    }
+  }
+
+  // Given a definition, calculate and return the score for the described dimension
+  _computeDescribedScore(definition) {
+    // @todo we need to flesh this out
+    // For now it just checks that a few props are present
+    let result = 0
+    result += !!get(definition, 'described.releaseDate')
+    result += !!get(definition, 'described.sourceLocation.url')
+    // TODO add in validated
+    return result
+  }
+
+  // Given a definition, calculate and return the score for the licensed dimension
+  _computeLicensedScore(definition) {
     // @todo we need to flesh this out
     // For now it just checks that a license and copyright holders are present
-    const hasLicense = get(definition, 'licensed.declared')
-    const hasAttributionParties = get(definition, 'licensed.attribution.parties[0]')
-    if (hasLicense && hasAttributionParties) return 2
-    if (hasLicense || hasAttributionParties) return 1
-    return 0
+    let result = 0
+    result += !!get(definition, 'licensed.declared')
+    result += !!get(definition, 'licensed.facets.core.attribution.parties[0]')
+    return result
   }
 
   /**
@@ -190,7 +226,7 @@ class DefinitionService {
   // ensure all the right facet information has been computed and added to the given definition
   _ensureFacets(definition) {
     if (!definition.files) return
-    const facetFiles = this._computeFacetFiles([...definition.files], definition.described.facets)
+    const facetFiles = this._computeFacetFiles([...definition.files], get(definition, 'described.facets'))
     for (const facet in facetFiles)
       setIfValue(definition, `licensed.facets.${facet}`, this._summarizeFacetInfo(facet, facetFiles[facet]))
   }
@@ -270,14 +306,14 @@ class DefinitionService {
   _ensureCurationInfo(definition, curation) {
     if (!curation) return
     this._ensureDescribed(definition)
-    const tools = (definition.described.tools = definition.described.tools || [])
     if (Object.getOwnPropertyNames(curation).length === 0) return
     const origin = get(curation, '_origin.sha')
-    tools.push(`curation${origin ? '/' + origin : 'supplied'}`)
+    definition.described.tools = definition.described.tools || []
+    definition.described.tools.push(`curation${origin ? '/' + origin : 'supplied'}`)
   }
 
   _ensureSourceLocation(coordinates, definition) {
-    if (definition.described && definition.described.sourceLocation) return
+    if (get(definition, 'described.sourceLocation')) return
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {
