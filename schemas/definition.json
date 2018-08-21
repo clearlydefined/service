@@ -2,6 +2,7 @@
   "$id": "https://api.clearlydefined.io/schemas/definition.json#",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "definition",
+  "version": "0.0.2",
   "required": ["coordinates"],
   "type": "object",
   "additionalProperties": false,
@@ -75,16 +76,14 @@
           },
           "facets": {
             "type": "array",
-            "description":
-              "The facets in which this file exists, if any. Note that the absence of facets implies the 'core' facet.",
+            "description": "The facets in which this file exists, if any. Note that the absence of facets implies the 'core' facet.",
             "items": {
               "type": "string"
             }
           },
-          "content": {
+          "token": {
             "type": "string",
-            "description":
-              "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+            "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
           }
         }
       }

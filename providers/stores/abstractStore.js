@@ -36,7 +36,7 @@ class AbstractStore {
   }
 
   _getEntry(entry, type) {
-    if (entry.startsWith('deadletter/')) return null
+    if (entry.startsWith('deadletter/') || entry.startsWith('attachments/')) return null
     if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(entry)
     if (type === 'result') return this._toResultCoordinatesFromStoragePath(entry)
     throw new Error(`Invalid list type: ${type}`)

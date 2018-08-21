@@ -29,30 +29,28 @@
 // The function should return a summary schema.
 //
 
-const extend = require('extend')
-const utils = require('../lib/utils')
-const _ = require('lodash')
+const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
+const { flattenDeep, set } = require('lodash')
 
 class AggregationService {
   constructor(options) {
     this.options = options
     this.workingPrecedence =
-      options.precedence && _.flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
+      options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
   }
 
   process(coordinates, summarized) {
-    let result = {}
+    const result = {}
     const order = this.workingPrecedence || []
     const tools = []
     order.forEach(tool => {
       const data = this._findData(tool, summarized)
       if (data) {
         tools.push(data.toolSpec)
-        extend(true, result, data.summary)
+        mergeDefinitions(result, data.summary)
       }
     })
-    result.described = result.described || {}
-    result.described.tools = tools.reverse()
+    set(result, 'described.tools', tools.reverse())
     return result
   }
 
@@ -63,7 +61,7 @@ class AggregationService {
     if (toolVersion) return { toolSpec, summary: summarized[tool][toolVersion] }
 
     const versions = Object.getOwnPropertyNames(summarized[tool])
-    const latest = utils.getLatestVersion(versions)
+    const latest = getLatestVersion(versions)
     return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null
   }
 }

@@ -41,7 +41,6 @@
     "painless-config": "^0.1.0",
     "passport": "^0.4.0",
     "passport-github": "^1.1.0",
-    "proxyquire": "^1.8.0",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
     "redis": "^2.8.0",
@@ -61,6 +60,7 @@
     "mocha": "^4.0.1",
     "node-mocks-http": "^1.6.7",
     "nodemon": "^1.18.2",
+    "proxyquire": "^2.0.1",
     "sinon": "^4.2.2"
   }
 }

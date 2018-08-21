@@ -70,13 +70,9 @@ router.post(
   })
 )
 
-let harvestService
-let curationService
 let definitionService
 
-function setup(harvest, curation, definition) {
-  harvestService = harvest
-  curationService = curation
+function setup(definition) {
   definitionService = definition
   return router
 }
