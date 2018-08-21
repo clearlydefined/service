@@ -259,6 +259,7 @@ class DefinitionService {
     for (let file of facetFiles) {
       file.license ? licenseExpressions.add(file.license) : unknownLicenses++
       const statements = this._simplifyAttributions(file.attributions)
+      setIfValue(file, 'attributions', statements)
       statements ? addArrayToSet(statements, attributions) : unknownParties++
       if (facet !== 'core') {
         // tag the file with the current facet if not core

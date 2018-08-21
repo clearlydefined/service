@@ -21,15 +21,15 @@ describe('ScanCode summarizer', () => {
 
   it('gets all the per file license info and attribution parties', () => {
     const { coordinates, harvested } = setup([
-      buildFile('foo.txt', 'MIT', ['Bob', 'Fred']),
+      buildFile('foo.txt', 'MIT', ['Bob', 'Fred', 'Bob', 'bob']),
       buildFile('bar.txt', 'GPL', ['Jane', 'Fred', 'John'])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].attributions.length).to.eq(2)
+    expect(summary.files[0].attributions.length).to.eq(3)
     expect(summary.files[0].path).to.equal('foo.txt')
-    expect(summary.files[0].attributions).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Fred'])
+    expect(summary.files[0].attributions).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Fred', 'Copyright bob'])
     expect(summary.files[0].license).to.equal('MIT')
     expect(summary.files[1].path).to.equal('bar.txt')
     expect(summary.files[1].attributions.length).to.eq(3)
