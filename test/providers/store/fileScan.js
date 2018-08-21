@@ -10,7 +10,7 @@ const assert = require('assert')
 const ResultCoordinates = require('../../../lib/resultCoordinates')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 
-var FileStore
+let FileStore
 
 describe('list a tool result ', () => {
   beforeEach(function() {

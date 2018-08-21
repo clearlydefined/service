@@ -13,6 +13,7 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
+    this.addInterestingFiles(result, data)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
@@ -48,6 +49,10 @@ class ClearlyDescribedSummarizer {
       'described.sourceLocation',
       pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
     )
+  }
+
+  addInterestingFiles(result, data) {
+    setIfValue(result, 'files', data.interestingFiles)
   }
 
   addMavenData(result, data) {
