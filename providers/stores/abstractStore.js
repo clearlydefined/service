@@ -60,7 +60,7 @@ class AbstractStore {
       .replace('/revision', '')
       .replace('/tool', '')
       .replace(new RegExp(preservedEntityCoordinates, 'ig'), preservedEntityCoordinates)
-    if (!value || value.startsWith('deadletter/')) return
+    if (!value || value.startsWith('deadletter/') || entry.startsWith('attachments/')) return
     return value
   }
 

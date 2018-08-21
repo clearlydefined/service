@@ -1,5 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+
+// TODO consider putting this in for real
+// process.on('unhandledRejection', (reason, p) => {
+//   throw reason
+// })
+
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
@@ -61,8 +67,9 @@ const definitionService = require('./business/definitionService')(
 )
 // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
 curationService.definitionService = definitionService
+const definitions = require('./routes/definitions')(definitionService)
 
-const definitions = require('./routes/definitions')(harvestStore, curationService, definitionService)
+const attachments = require('./routes/attachments')(harvestStore)
 
 const appLogger = console // @todo add real logger
 const githubSecret = config.webhook.githubSecret
@@ -115,6 +122,7 @@ app.use('/harvest', harvest)
 app.use(bodyParser.json())
 app.use('/curations', curations)
 app.use('/definitions', definitions)
+app.use('/attachments', attachments)
 
 // catch 404 and forward to error handler
 const requestHandler = (req, res, next) => {
