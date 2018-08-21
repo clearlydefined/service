@@ -37,8 +37,8 @@ class FileStore extends AbstractStore {
         })
       )
       files.forEach(file => {
-        const value = file.contents._metadata.coordinates
-        if (value) list.add(value)
+        const urn = file.contents._metadata.urn
+        if (urn) list.add(EntityCoordinates.fromUrn(urn).toString())
       })
       return Array.from(list).sort()
     } catch (error) {
@@ -67,11 +67,14 @@ class FileStore extends AbstractStore {
         })
       )
       files.forEach(file => {
-        const value = this._toPreservedCoordinatesFromResultsStoragePath(
-          file.path.slice(this.options.location.length + 1),
-          file.contents._metadata.coordinates
-        )
-        if (value) list.add(value)
+        const urn = file.contents._metadata.urn
+        if (urn) {
+          const value = this._toPreservedCoordinatesFromResultsStoragePath(
+            file.path.slice(this.options.location.length + 1),
+            EntityCoordinates.fromUrn(urn).toString()
+          )
+          if (value) list.add(value)
+        }
       })
       return Array.from(list).sort()
     } catch (error) {
@@ -175,23 +178,14 @@ class FileStore extends AbstractStore {
 
   async store(coordinates, stream) {
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    const preservedName = EntityCoordinates.fromObject(coordinates).toString()
     const dirName = path.dirname(filePath)
     await promisify(mkdirp)(dirName)
     return new Promise((resolve, reject) => {
-      const chunks = []
-      stream
-        .on('data', chunk => {
-          chunks.push(chunk)
-        })
-        .on('end', () => {
-          const data = JSON.parse(chunks.join(''))
-          data._metadata.coordinates = preservedName
-          fs.writeFile(filePath, JSON.stringify(data), err => {
-            if (err) reject(err)
-            resolve(true)
-          })
-        })
+      const file = fs
+        .createWriteStream(filePath)
+        .on('finish', () => resolve())
+        .on('error', error => reject(error))
+      stream.pipe(file)
     })
   }
 

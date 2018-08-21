@@ -46,8 +46,8 @@ class AzBlobStore extends AbstractStore {
         )
       })
       result.entries.forEach(entry => {
-        const value = entry.metadata.coordinates
-        if (value) list.add(value)
+        const urn = entry.metadata.urn
+        if (urn) list.add(EntityCoordinates.fromUrn(urn).toString())
       })
       continuation = result.continuationToken
     } while (continuation)
@@ -76,8 +76,14 @@ class AzBlobStore extends AbstractStore {
         )
       })
       result.entries.forEach(entry => {
-        const value = this._toPreservedCoordinatesFromResultsStoragePath(entry.name, entry.metadata.coordinates)
-        if (value) list.add(value)
+        const urn = entry.metadata.urn
+        if (urn) {
+          const value = this._toPreservedCoordinatesFromResultsStoragePath(
+            entry.name,
+            EntityCoordinates.fromUrn(urn).toString()
+          )
+          if (value) list.add(value)
+        }
       })
       continuation = result.continuationToken
     } while (continuation)
@@ -151,18 +157,13 @@ class AzBlobStore extends AbstractStore {
   }
 
   async store(coordinates, stream) {
-    const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    const preservedName = EntityCoordinates.fromObject(coordinates).toString()
+    const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) => {
       stream.pipe(
         this.blobService.createWriteStreamToBlockBlob(
           this.containerName,
-          blobName,
-          {
-            blockIdPrefix: 'block',
-            contentSettings: { contentType: 'application/json' },
-            metadata: { coordinates: preservedName }
-          },
+          name,
+          { blockIdPrefix: 'block', contentSettings: { contentType: 'application/json' } },
           responseOrError(resolve, reject)
         )
       )

@@ -11,11 +11,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -37,11 +37,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/JSONStream/1.3.4' }
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/JSONStream/1.3.4' }
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -73,19 +73,19 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/3.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/3.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
         }
       ],
       true
@@ -106,11 +106,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -132,11 +132,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/JSONStream/1.3.4' }
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/JSONStream/1.3.4' }
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -174,19 +174,19 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/4.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/3.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
-          metadata: { coordinates: 'npm/npmjs/-/co/3.6.0' }
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
         }
       ],
       true

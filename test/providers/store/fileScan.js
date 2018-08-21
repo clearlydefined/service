@@ -33,12 +33,21 @@ describe('list a tool result ', () => {
     }
     const fsStub = {
       readFile: (path, cb) => {
-        if (path.startsWith('/foo/npm/npmjs/-/test/revision/1.0/tool/')) {
-          cb(null, JSON.stringify({ _metadata: { coordinates: 'npm/npmjs/-/test/1.0' } }))
-        } else if (path.startsWith('/foo/npm/npmjs/-/test/revision/2.0/tool/')) {
-          cb(null, JSON.stringify({ _metadata: { coordinates: 'npm/npmjs/-/test/2.0' } }))
-        } else {
-          cb(path + ' is not stubbed :(')
+        switch (path) {
+          case '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json':
+            cb(null, JSON.stringify({ _metadata: { urn: 'urn:npm:npmjs:-:test:revision:1.0:tool:testtool:2.0' } }))
+            break
+          case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json':
+            cb(null, JSON.stringify({ _metadata: { urn: 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool0:1.0' } }))
+            break
+          case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool1/2.0.json':
+            cb(null, JSON.stringify({ _metadata: { urn: 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool1:2.0' } }))
+            break
+          case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json':
+            cb(null, JSON.stringify({ _metadata: { urn: 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool2:3.0' } }))
+            break
+          default:
+            cb(path + ' is not stubbed :(')
         }
       }
     }
