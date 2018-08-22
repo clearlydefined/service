@@ -122,6 +122,12 @@ describe('Definition Service Facet management', () => {
       'Copyright Bob',
       'Copyright Bob Bobberson'
     ])
+    expect(definition.files.length).to.eq(1)
+    expect(definition.files[0].attributions).to.deep.equalInAnyOrder([
+      'Copyright <Bob>',
+      'Copyright Bob',
+      'Copyright Bob Bobberson'
+    ])
   })
 
   it('handles files with no data', async () => {
