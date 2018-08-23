@@ -53,17 +53,6 @@ class AbstractStore {
     return result
   }
 
-  _toPreservedCoordinatesFromResultsStoragePath(path, preservedEntityCoordinates) {
-    if (!preservedEntityCoordinates) return null
-    const value = path
-      .replace(/.json$/, '')
-      .replace('/revision', '')
-      .replace('/tool', '')
-      .replace(new RegExp(preservedEntityCoordinates, 'ig'), preservedEntityCoordinates)
-    if (!value || value.startsWith('deadletter/') || entry.startsWith('attachments/')) return
-    return value
-  }
-
   _toResultCoordinatesFromStoragePath(path) {
     const trimmed = this._trimStoragePath(path)
     return ResultCoordinates.fromString(trimmed)

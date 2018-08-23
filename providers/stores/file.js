@@ -9,6 +9,7 @@ const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -68,13 +69,7 @@ class FileStore extends AbstractStore {
       )
       files.forEach(file => {
         const urn = file.contents._metadata.urn
-        if (urn) {
-          const value = this._toPreservedCoordinatesFromResultsStoragePath(
-            file.path.slice(this.options.location.length + 1),
-            EntityCoordinates.fromUrn(urn).toString()
-          )
-          if (value) list.add(value)
-        }
+        if (urn) list.add(ResultCoordinates.fromUrn(urn).toString())
       })
       return Array.from(list).sort()
     } catch (error) {

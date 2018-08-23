@@ -4,6 +4,7 @@
 const azure = require('azure-storage')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const ResultCoordinates = require('../../lib/resultCoordinates')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -77,13 +78,7 @@ class AzBlobStore extends AbstractStore {
       })
       result.entries.forEach(entry => {
         const urn = entry.metadata.urn
-        if (urn) {
-          const value = this._toPreservedCoordinatesFromResultsStoragePath(
-            entry.name,
-            EntityCoordinates.fromUrn(urn).toString()
-          )
-          if (value) list.add(value)
-        }
+        if (urn) list.add(ResultCoordinates.fromUrn(urn).toString())
       })
       continuation = result.continuationToken
     } while (continuation)
@@ -156,7 +151,7 @@ class AzBlobStore extends AbstractStore {
     })
   }
 
-  async store(coordinates, stream) {
+  store(coordinates, stream) {
     const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) => {
       stream.pipe(
