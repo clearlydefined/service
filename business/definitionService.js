@@ -150,6 +150,7 @@ class DefinitionService {
     this._finalizeDefinition(coordinates, definition, curation)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid defintion
+    this._ensureNoNulls(definition)
     this._validate(definition)
     return definition
   }
@@ -163,6 +164,14 @@ class DefinitionService {
       }
     }
     throw new Error('unable to find self link')
+  }
+
+  // Ensure that the given object (e.g., a definition) does not have any null properties.
+  _ensureNoNulls(object) {
+    Object.keys(object).forEach(key => {
+      if (object[key] && typeof object[key] === 'object') this._ensureNoNulls(object[key])
+      else if (object[key] == null) delete object[key]
+    })
   }
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
