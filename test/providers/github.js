@@ -37,10 +37,10 @@ describe('Github Curation Service', () => {
     sinon.stub(service, 'getCurations').callsFake(() => {
       return [createCuration()]
     })
-    await service.validateCurations(1, 'npm/npmjs/-/test', '42', 'testBranch')
+    await service.validateCurations(1, '42', 'testBranch')
     expect(service.postCommitStatus.calledTwice).to.be.true
-    expect(service.postCommitStatus.getCall(0).args[3]).to.be.eq('pending')
-    expect(service.postCommitStatus.getCall(1).args[3]).to.be.eq('success')
+    expect(service.postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
+    expect(service.postCommitStatus.getCall(1).args[2]).to.be.eq('success')
   })
 
   it('validates invalid PR change', async () => {
@@ -49,10 +49,10 @@ describe('Github Curation Service', () => {
     sinon.stub(service, 'getCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
-    await service.validateCurations(1, 'npm/npmjs/-/test', '42', 'testBranch')
+    await service.validateCurations(1, '42', 'testBranch')
     expect(service.postCommitStatus.calledTwice).to.be.true
-    expect(service.postCommitStatus.getCall(0).args[3]).to.be.eq('pending')
-    expect(service.postCommitStatus.getCall(1).args[3]).to.be.eq('error')
+    expect(service.postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
+    expect(service.postCommitStatus.getCall(1).args[2]).to.be.eq('error')
   })
 
   it('merges simple changes', async () => {
