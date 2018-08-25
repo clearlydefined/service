@@ -82,9 +82,8 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.handleMerge.calledOnce).to.be.false
     expect(service.validateCurations.calledOnce).to.be.true
     expect(service.validateCurations.getCall(0).args[0]).to.be.eq(1)
-    expect(service.validateCurations.getCall(0).args[1]).to.be.eq('test pr')
-    expect(service.validateCurations.getCall(0).args[2]).to.be.eq('24')
-    expect(service.validateCurations.getCall(0).args[3]).to.be.eq('changes')
+    expect(service.validateCurations.getCall(0).args[1]).to.be.eq('24')
+    expect(service.validateCurations.getCall(0).args[2]).to.be.eq('changes')
   })
 })
 

@@ -234,8 +234,8 @@ class GitHubCurationService {
     return this.definitionService.invalidate(coordinateList)
   }
 
-  async validateCurations(number, componentPath, sha, ref) {
-    await this.postCommitStatus(sha, number, componentPath, 'pending', 'Validation in progress')
+  async validateCurations(number, sha, ref) {
+    await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const curations = await this.getCurations(number, ref)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
@@ -244,13 +244,13 @@ class GitHubCurationService {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
     }
-    return this.postCommitStatus(sha, number, componentPath, state, description)
+    return this.postCommitStatus(sha, number, state, description)
   }
 
-  async postCommitStatus(sha, number, componentPath, state, description) {
+  async postCommitStatus(sha, number, state, description) {
     const { owner, repo } = this.options
     const github = Github.getClient(this.options)
-    const target_url = `${this.endpoints.website}/curate/${componentPath}/pr/${number}`
+    const target_url = `${this.endpoints.website}/curations/${number}`
     try {
       return github.repos.createStatus({
         owner,
