@@ -54,7 +54,7 @@ const searchProvider = config.search.provider
 const search = require(`./providers/search/${searchProvider}`)(config.search[searchProvider])
 initializers.push(() => {
   search.initialize()
-  // if (searchProvider === 'memory') definitionService.reload('definitions')
+  if (searchProvider === 'memory') definitionService.reload('definitions')
 })
 
 const definitionService = require('./business/definitionService')(

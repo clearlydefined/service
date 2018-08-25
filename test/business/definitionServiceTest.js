@@ -20,9 +20,6 @@ describe('Definition Service', () => {
     expect(service.definitionStore.delete.calledOnce).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
     expect(service.definitionStore.delete.getCall(0).args[0].tool).to.be.eq('definition')
-    expect(service.search.delete.calledOnce).to.be.true
-    expect(service.search.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(service.search.delete.getCall(0).args[0].tool).to.be.eq('definition')
   })
 
   it('invalidates array of coordinates', async () => {
@@ -35,9 +32,6 @@ describe('Definition Service', () => {
     expect(service.definitionStore.delete.calledTwice).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test0')
     expect(service.definitionStore.delete.getCall(1).args[0].name).to.be.eq('test1')
-    expect(service.search.delete.calledTwice).to.be.true
-    expect(service.search.delete.getCall(0).args[0].name).to.be.eq('test0')
-    expect(service.search.delete.getCall(1).args[0].name).to.be.eq('test1')
   })
 
   it('does not store empty definitions', async () => {

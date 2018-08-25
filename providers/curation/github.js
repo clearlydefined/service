@@ -3,7 +3,6 @@
 
 const { concat, get, forIn, merge, set, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
-const extend = require('extend')
 const { exec } = require('child_process')
 const fs = require('fs')
 const moment = require('moment')
@@ -13,7 +12,6 @@ const throat = require('throat')
 const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const utils = require('../../lib/utils')
 const tmp = require('tmp')
 const path = require('path')
 tmp.setGracefulCleanup()
@@ -227,11 +225,10 @@ class GitHubCurationService {
     }
   }
 
-  async handleMerge(number, ref) {
+  async getCurationCoordinates(number, ref) {
     const curations = await this.getCurations(number, ref)
     const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    const coordinateList = concat([], ...coordinateSet)
-    return this.definitionService.invalidate(coordinateList)
+    return concat([], ...coordinateSet)
   }
 
   async validateCurations(number, sha, ref) {

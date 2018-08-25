@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { set } = require('lodash')
 const { setIfValue } = require('../../lib/utils')
 
 class FOSSologySummarizer {
