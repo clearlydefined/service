@@ -135,6 +135,7 @@ class DefinitionService {
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
+    coordinates = this._getCasedCoordinates(raw, coordinates)
     const summarized = await this.summaryService.summarizeAll(coordinates, raw)
     const tooledDefinition = (await this.aggregationService.process(coordinates, summarized)) || {}
     this._ensureToolScores(coordinates, tooledDefinition)
@@ -142,6 +143,17 @@ class DefinitionService {
     this._finalizeDefinition(coordinates, definition, curation)
     this._ensureCuratedScores(definition)
     return definition
+  }
+
+  _getCasedCoordinates(raw, coordinates) {
+    if (!raw || !Object.keys(raw).length) return coordinates
+    for (const tool in raw) {
+      for (const version in raw[tool]) {
+        const cased = get(raw[tool][version], '_metadata.links.self.href')
+        if (cased) return EntityCoordinates.fromUrn(cased)
+      }
+    }
+    throw new Error('unable to find self link')
   }
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the

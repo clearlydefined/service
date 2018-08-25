@@ -10,7 +10,7 @@ const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
-const { sortedUniq } = require('lodash')
+const { sortedUniq, get } = require('lodash')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -29,21 +29,16 @@ class FileStore extends AbstractStore {
    */
   async list(coordinates, type = 'entity') {
     try {
+      const coordinateClass = type === 'result' ? ResultCoordinates : EntityCoordinates
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
       const list = await Promise.all(
         paths.map(path => {
+          if (!this._isValidPath(path)) return null
           return new Promise((resolve, reject) =>
-            fs.readFile(
-              path,
-              (error, data) =>
-                error
-                  ? reject(error)
-                  : resolve(
-                      type === 'result'
-                        ? ResultCoordinates.fromUrn(JSON.parse(data)._metadata.links.self.href).toString()
-                        : EntityCoordinates.fromUrn(JSON.parse(data)._metadata.links.self.href).toString()
-                    )
-            )
+            fs.readFile(path, (error, data) => {
+              if (error) return reject(error)
+              return resolve(coordinateClass.fromUrn(get(JSON.parse(data), '_metadata.links.self.href')).toString())
+            })
           )
         })
       )
@@ -53,6 +48,12 @@ class FileStore extends AbstractStore {
       if (error.code === 'ENOENT') return []
       throw error
     }
+  }
+
+  _isValidPath(entry) {
+    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(
+      this._toResultCoordinatesFromStoragePath(entry).type
+    )
   }
 
   _toStoragePathFromCoordinates(coordinates) {
@@ -116,7 +117,7 @@ class FileStore extends AbstractStore {
     try {
       files = await recursive(root, ['.DS_Store'])
     } catch (error) {
-      if (error.code === 'ENOENT') return []
+      if (error.code === 'ENOENT') return {}
       throw error
     }
     const contents = await Promise.all(
