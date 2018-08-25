@@ -9,6 +9,8 @@ const ajv = new Ajv({ allErrors: true })
 const DefinitionService = require('../../business/definitionService')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
+const Curation = require('../../lib/curation')
+const { set } = require('lodash')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -52,6 +54,49 @@ describe('Definition Service', () => {
   })
 })
 
+describe('Definition Service score computation', () => {
+  it('computes full score', async () => {
+    const files = [buildFile('bar.txt', 'MIT', ['Jane', 'Fred'])]
+    const raw = createDefinition(undefined, files)
+    set(raw, 'licensed.declared', 'MIT')
+    set(raw, 'described.releaseDate', '2018-08-09')
+    set(raw, 'described.sourceLocation', { url: 'http://foo' })
+    const { service, coordinates } = setup(raw)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(2)
+    expect(definition.described.toolScore).to.eq(2)
+    expect(definition.licensed.score).to.eq(2)
+    expect(definition.licensed.toolScore).to.eq(2)
+  })
+
+  it('computes zero score', async () => {
+    const files = [buildFile('bar.txt', 'MIT')]
+    const raw = createDefinition(undefined, files)
+    const { service, coordinates } = setup(raw)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(0)
+    expect(definition.described.toolScore).to.eq(0)
+    expect(definition.licensed.score).to.eq(0)
+    expect(definition.licensed.toolScore).to.eq(0)
+  })
+
+  it('higher score than tool score with a curation', async () => {
+    const files = [buildFile('bar.txt', 'MIT')]
+    const raw = createDefinition(undefined, files)
+    const curation = {
+      licensed: { declared: 'MIT' },
+      files: [{ path: 'bar.txt', attributions: ['Copyright Bob'] }],
+      described: { releaseDate: '2018-08-09' }
+    }
+    const { service, coordinates } = setup(raw, null, curation)
+    const definition = await service.compute(coordinates)
+    expect(definition.described.score).to.eq(1)
+    expect(definition.described.toolScore).to.eq(0)
+    expect(definition.licensed.score).to.eq(2)
+    expect(definition.licensed.toolScore).to.eq(0)
+  })
+})
+
 describe('Definition Service Facet management', () => {
   it('handle special characters', async () => {
     const files = [
@@ -73,6 +118,12 @@ describe('Definition Service Facet management', () => {
     expect(core.files).to.eq(1)
     expect(core.attribution.parties.length).to.eq(3)
     expect(core.attribution.parties).to.deep.equalInAnyOrder([
+      'Copyright <Bob>',
+      'Copyright Bob',
+      'Copyright Bob Bobberson'
+    ])
+    expect(definition.files.length).to.eq(1)
+    expect(definition.files[0].attributions).to.deep.equalInAnyOrder([
       'Copyright <Bob>',
       'Copyright Bob',
       'Copyright Bob Bobberson'
@@ -100,7 +151,9 @@ describe('Definition Service Facet management', () => {
     const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(0)
-    expect(definition.licensed).to.be.undefined
+    expect(definition.licensed.score).to.eq(0)
+    expect(definition.licensed.toolScore).to.eq(0)
+    expect(Object.keys(definition.licensed).length).to.eq(2)
   })
 
   it('gets all the attribution parties', async () => {
@@ -221,13 +274,11 @@ function validate(definition) {
 }
 
 function createDefinition(facets, files, tools) {
-  const result = { described: { facets }, files }
-  if (tools) result.described.tools = tools
+  const result = {}
+  if (facets) set(result, 'described.facets', facets)
+  if (files) result.files = files
+  if (tools) set(result, 'described.tools', tools)
   return result
-}
-
-function createFile(path, attributions = [], licenses = []) {
-  return { path, attributions, licenses }
 }
 
 function buildFile(path, license, holders) {
@@ -242,11 +293,11 @@ function setup(definition, coordinateSpec, curation) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
-    apply: () => Promise.resolve(definition)
+    apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvest = { getAll: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
-  const aggregator = { process: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvest, summary, aggregator, curator, store, search)
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
