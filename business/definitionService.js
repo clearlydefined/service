@@ -9,6 +9,9 @@ const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
+const definitionSchema = require('../schemas/definition')
+const Ajv = require('ajv')
+const ajv = new Ajv({ allErrors: true })
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
@@ -104,6 +107,10 @@ class DefinitionService {
     )
   }
 
+  _validate(definition) {
+    if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
+  }
+
   async computeAndStore(coordinates) {
     const definition = await this.compute(coordinates)
     // If no tools participated in the creation of the definition then don't bother storing.
@@ -142,6 +149,8 @@ class DefinitionService {
     const definition = await this.curationService.apply(coordinates, curation, tooledDefinition)
     this._finalizeDefinition(coordinates, definition, curation)
     this._ensureCuratedScores(definition)
+    // protect against any element of the compute producing an invalid defintion
+    this._validate(definition)
     return definition
   }
 
