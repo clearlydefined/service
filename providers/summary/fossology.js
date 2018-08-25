@@ -18,24 +18,22 @@ class FOSSologySummarizer {
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested) {
-    if (!harvested || !harvested.nomos || !harvested.nomos.version)
-      throw new Error('Not valid FOSSology data')
-
-    return {nomos: this._summarizeNomosLicenseInfo(harvested.nomos.output.content)}
+    if (!harvested || !harvested.nomos || !harvested.nomos.version) throw new Error('Not valid FOSSology data')
+    const result = {}
+    setIfValue(result, 'files', this._summarizeNomosLicenseInfo(harvested.nomos.output.content))
+    return result
   }
 
   _summarizeNomosLicenseInfo(content) {
     const nomosOutput = base64.decode(content)
-    const files = nomosOutput.split("\n")
-    return files.map(file => {
-      const path = file.match(/(?<=File ).*(?= contains)/g)
-      const license = file.match(/(?<=license\(s\) ).*/g)
-      if (path) {
-        const result = {path: path.join() }
-        setIfValue(result, 'license', license.join())
-        return result
-      }
-    })
+    const files = nomosOutput.split('\n')
+    return files
+      .map(file => {
+        const path = /^File (.*?) contains/.exec(file)
+        const license = /license\(s\) (.*?)$/.exec(file)
+        if (path && path[1] && license && license[1]) return { path: path[1], license: license[1] }
+      })
+      .filter(e => e)
   }
 }
 
