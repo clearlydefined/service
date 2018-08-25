@@ -18,7 +18,7 @@ class AbstractSearch {
    * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @returns The object found at the given coordinates
    */
-  // eslint-disable-next-line no-use-vars
+  // eslint-disable-next-line no-unused-vars
   async get(coordinates) {}
 
   /**
@@ -26,7 +26,7 @@ class AbstractSearch {
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
    */
-  // eslint-disable-next-line no-use-vars
+  // eslint-disable-next-line no-unused-vars
   async suggestCoordinates(pattern) {
     return []
   }
@@ -53,7 +53,7 @@ class AbstractSearch {
    *
    * @param {Definition} definition
    */
-  // eslint-disable-next-line no-use-vars
+  // eslint-disable-next-line no-unused-vars
   store(definition) {}
 
   /**
@@ -61,7 +61,7 @@ class AbstractSearch {
    *
    * @param {Definition} definition
    */
-  // eslint-disable-next-line no-use-vars
+  // eslint-disable-next-line no-unused-vars
   delete(coordinates) {}
 }
 
