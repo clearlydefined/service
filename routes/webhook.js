@@ -27,7 +27,6 @@ async function handleGitHubCall(request, response) {
   const pr = body.pull_request
   if (body.action === 'closed') pr.merged ? await curationService.handleMerge(pr.number, pr.head.ref) : null
   else await curationService.validateCurations(pr.number, pr.head.sha, pr.head.ref)
-
   response.status(200).end()
 }
 
