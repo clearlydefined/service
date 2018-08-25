@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { get, uniq, values } = require('lodash')
-const base64 = require('base-64')
 
 class AbstractSearch {
   constructor(options) {
@@ -19,13 +18,15 @@ class AbstractSearch {
    * @param {ResultCoordinates} coordinates - The coordinates of the result to get
    * @returns The object found at the given coordinates
    */
-  async get(pattern) {}
+  // eslint-disable-next-line no-unused-vars
+  async get(coordinates) {}
 
   /**
    * Get a list of suggested coordinates that match the given pattern
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
    */
+  // eslint-disable-next-line no-unused-vars
   async suggestCoordinates(pattern) {
     return []
   }
@@ -47,8 +48,20 @@ class AbstractSearch {
     )
   }
 
+  /**
+   * Add the given definition to the index
+   *
+   * @param {Definition} definition
+   */
+  // eslint-disable-next-line no-unused-vars
   store(definition) {}
 
+  /**
+   * Remove the given definition from the index
+   *
+   * @param {Definition} definition
+   */
+  // eslint-disable-next-line no-unused-vars
   delete(coordinates) {}
 }
 

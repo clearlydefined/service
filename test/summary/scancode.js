@@ -57,6 +57,17 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
+  it('skips directory entries', () => {
+    const { coordinates, harvested } = setup([buildDirectory('foo'), buildFile('foo/LICENSE.md', 'GPL', [])])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(1)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.files[0].attributions).to.be.undefined
+    expect(summary.files[0].path).to.equal('foo/LICENSE.md')
+    expect(summary.files[0].license).to.equal('GPL')
+  })
+
   it('skips license files in subdirectories', () => {
     const { coordinates, harvested } = setup([
       buildFile('foo/LICENSE.md', 'MIT', []),
@@ -101,23 +112,17 @@ function validate(definition) {
 function setup(files, coordinateSpec) {
   const harvested = {
     _metadata: {},
-    content: {
-      scancode_version: '2.2.1',
-      files
-    }
+    content: { scancode_version: '2.2.1', files }
   }
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, harvested }
 }
 
 function buildFile(path, license, holders) {
-  const wrapHolders = holders
-    ? {
-        statements: holders.map(holder => `Copyright ${holder}`)
-      }
-    : null
+  const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
   return {
     path,
+    type: 'file',
     licenses: license ? [{ spdx_license_key: license }] : null,
     copyrights: [wrapHolders]
   }
@@ -126,6 +131,11 @@ function buildFile(path, license, holders) {
 function buildPackageFile(path, license) {
   return {
     path,
+    type: 'file',
     packages: [{ asserted_licenses: license ? [{ spdx_license_key: license }] : null }]
   }
+}
+
+function buildDirectory(path) {
+  return { path, type: 'directory' }
 }

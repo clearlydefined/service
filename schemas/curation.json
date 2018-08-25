@@ -36,7 +36,7 @@
       }
     },
     "coordinates": {
-      "required": ["type", "provider", "namespace", "name"],
+      "required": ["type", "provider", "name"],
       "properties": {
         "type": {
           "$ref": "#/definitions/type"
@@ -149,8 +149,7 @@
       },
       "errorMessage": {
         "type": "Described must be an object",
-        "additionalProperties":
-          "Described object can only contain facets, sourceLocation, projectWebsite, issueTracker, and releaseDate"
+        "additionalProperties": "Described object can only contain facets, sourceLocation, projectWebsite, issueTracker, and releaseDate"
       }
     },
     "globList": {

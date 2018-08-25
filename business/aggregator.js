@@ -50,6 +50,7 @@ class AggregationService {
         mergeDefinitions(result, data.summary)
       }
     })
+    if (!tools.length) return null
     set(result, 'described.tools', tools.reverse())
     return result
   }

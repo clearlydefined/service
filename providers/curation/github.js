@@ -3,7 +3,6 @@
 
 const { concat, get, forIn, merge, set, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
-const extend = require('extend')
 const { exec } = require('child_process')
 const fs = require('fs')
 const moment = require('moment')
@@ -13,7 +12,6 @@ const throat = require('throat')
 const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const utils = require('../../lib/utils')
 const tmp = require('tmp')
 const path = require('path')
 tmp.setGracefulCleanup()
@@ -227,15 +225,14 @@ class GitHubCurationService {
     }
   }
 
-  async handleMerge(number, ref) {
+  async getCurationCoordinates(number, ref) {
     const curations = await this.getCurations(number, ref)
     const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    const coordinateList = concat([], ...coordinateSet)
-    return this.definitionService.invalidate(coordinateList)
+    return concat([], ...coordinateSet)
   }
 
-  async validateCurations(number, componentPath, sha, ref) {
-    await this.postCommitStatus(sha, number, componentPath, 'pending', 'Validation in progress')
+  async validateCurations(number, sha, ref) {
+    await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const curations = await this.getCurations(number, ref)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
@@ -244,13 +241,13 @@ class GitHubCurationService {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
     }
-    return this.postCommitStatus(sha, number, componentPath, state, description)
+    return this.postCommitStatus(sha, number, state, description)
   }
 
-  async postCommitStatus(sha, number, componentPath, state, description) {
+  async postCommitStatus(sha, number, state, description) {
     const { owner, repo } = this.options
     const github = Github.getClient(this.options)
-    const target_url = `${this.endpoints.website}/curate/${componentPath}/pr/${number}`
+    const target_url = `${this.endpoints.website}/curations/${number}`
     try {
       return github.repos.createStatus({
         owner,

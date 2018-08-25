@@ -19,10 +19,10 @@ describe('list a tool result ', () => {
       if (path.includes('error')) throw new Error('test error')
       const result = [
         '/foo/npm/npmjs/-/test/revision/0.0',
-        '/foo/npm/npmjs/-/test/revision/1.0/tool/testTool/2.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool0/1.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool1/2.0.json',
-        '/foo/npm/npmjs/-/test/revision/2.0/tool/testTool2/3.0.json'
+        '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool1/2.0.json',
+        '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json'
       ].filter(p => p.startsWith(path))
       if (result.length === 0) {
         const error = new Error('test')
@@ -31,8 +31,28 @@ describe('list a tool result ', () => {
       }
       return result.filter(p => p !== path)
     }
-    FileStore = proxyquire('../../../providers/stores/file', { 'recursive-readdir': recursiveStub })
+    const fsStub = {
+      readFile: (path, cb) => {
+        cb(null, JSON.stringify({ _metadata: { links: { self: { href: fileStubCb(path) } } } }))
+      }
+    }
+    FileStore = proxyquire('../../../providers/stores/file', { 'recursive-readdir': recursiveStub, fs: fsStub })
   })
+
+  function fileStubCb(path) {
+    switch (path) {
+      case '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json':
+        return 'urn:npm:npmjs:-:test:revision:1.0:tool:testtool:2.0'
+      case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json':
+        return 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool0:1.0'
+      case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool1/2.0.json':
+        return 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool1:2.0'
+      case '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json':
+        return 'urn:npm:npmjs:-:test:revision:2.0:tool:testtool2:3.0'
+      default:
+        throw new Error(path + ' is not stubbed :(')
+    }
+  }
 
   afterEach(function() {
     sandbox.restore()

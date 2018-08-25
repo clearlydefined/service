@@ -9,6 +9,9 @@ const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
+const definitionSchema = require('../schemas/definition')
+const Ajv = require('ajv')
+const ajv = new Ajv({ allErrors: true })
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
@@ -94,14 +97,17 @@ class DefinitionService {
         throat(10, async coordinates => {
           const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            await this.definitionStore.delete(definitionCoordinates)
-            return this.search.delete(definitionCoordinates)
+            return this.definitionStore.delete(definitionCoordinates)
           } catch (error) {
             if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
           }
         })
       )
     )
+  }
+
+  _validate(definition) {
+    if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
   }
 
   async computeAndStore(coordinates) {
@@ -135,13 +141,36 @@ class DefinitionService {
   async compute(coordinates, curationSpec) {
     const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
-    const summarized = await this.summaryService.summarizeAll(coordinates, raw)
-    const tooledDefinition = (await this.aggregationService.process(coordinates, summarized)) || {}
-    this._ensureToolScores(coordinates, tooledDefinition)
-    const definition = await this.curationService.apply(coordinates, curation, tooledDefinition)
+    coordinates = this._getCasedCoordinates(raw, coordinates)
+    const summaries = await this.summaryService.summarizeAll(coordinates, raw)
+    const aggregatedDefinition = (await this.aggregationService.process(coordinates, summaries)) || {}
+    this._ensureToolScores(coordinates, aggregatedDefinition)
+    const definition = await this.curationService.apply(coordinates, curation, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition, curation)
     this._ensureCuratedScores(definition)
+    // protect against any element of the compute producing an invalid defintion
+    this._ensureNoNulls(definition)
+    this._validate(definition)
     return definition
+  }
+
+  _getCasedCoordinates(raw, coordinates) {
+    if (!raw || !Object.keys(raw).length) return coordinates
+    for (const tool in raw) {
+      for (const version in raw[tool]) {
+        const cased = get(raw[tool][version], '_metadata.links.self.href')
+        if (cased) return EntityCoordinates.fromUrn(cased)
+      }
+    }
+    throw new Error('unable to find self link')
+  }
+
+  // Ensure that the given object (e.g., a definition) does not have any null properties.
+  _ensureNoNulls(object) {
+    Object.keys(object).forEach(key => {
+      if (object[key] && typeof object[key] === 'object') this._ensureNoNulls(object[key])
+      else if (object[key] == null) delete object[key]
+    })
   }
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the

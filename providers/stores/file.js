@@ -8,6 +8,9 @@ const mkdirp = require('mkdirp')
 const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
+const EntityCoordinates = require('../../lib/entityCoordinates')
+const ResultCoordinates = require('../../lib/resultCoordinates')
+const { sortedUniq, get } = require('lodash')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -17,16 +20,29 @@ class FileStore extends AbstractStore {
     this.options = options
   }
 
+  /**
+   * List all of the matching components for the given coordinates.
+   * Accepts partial coordinates.
+   *
+   * @param {EntityCoordinates} coordinates
+   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
+   */
   async list(coordinates, type = 'entity') {
     try {
+      const coordinateClass = type === 'result' ? ResultCoordinates : EntityCoordinates
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
-      const list = new Set()
-      paths.forEach(entry => {
-        const value = this._getEntry(entry, type)
-        if (!value) return
-        list.add(value.toString())
-      })
-      return Array.from(list).sort()
+      const list = await Promise.all(
+        paths.map(path => {
+          if (!this._isValidPath(path)) return null
+          return new Promise((resolve, reject) =>
+            fs.readFile(path, (error, data) => {
+              if (error) return reject(error)
+              return resolve(coordinateClass.fromUrn(get(JSON.parse(data), '_metadata.links.self.href')).toString())
+            })
+          )
+        })
+      )
+      return sortedUniq(list.filter(x => x))
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []
@@ -34,9 +50,10 @@ class FileStore extends AbstractStore {
     }
   }
 
-  _getEntry(entry, type) {
-    const result = super._getEntry(entry, type)
-    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(result.type) ? result : null
+  _isValidPath(entry) {
+    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(
+      this._toResultCoordinatesFromStoragePath(entry).type
+    )
   }
 
   _toStoragePathFromCoordinates(coordinates) {
@@ -47,11 +64,6 @@ class FileStore extends AbstractStore {
   _toResultCoordinatesFromStoragePath(path) {
     const trimmed = path.slice(this.options.location.length + 1)
     return super._toResultCoordinatesFromStoragePath(trimmed)
-  }
-
-  _toEntityCoordinatesFromStoragePath(path) {
-    const trimmed = path.slice(this.options.location.length + 1)
-    return super._toEntityCoordinatesFromStoragePath(trimmed)
   }
 
   /**
@@ -105,7 +117,7 @@ class FileStore extends AbstractStore {
     try {
       files = await recursive(root, ['.DS_Store'])
     } catch (error) {
-      if (error.code === 'ENOENT') return []
+      if (error.code === 'ENOENT') return {}
       throw error
     }
     const contents = await Promise.all(

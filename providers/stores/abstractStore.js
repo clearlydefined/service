@@ -2,18 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 
 class AbstractStore {
   /**
-   * List all of the tool output available for the given coordinates. The coordinates can be
-   * arbitrarily loose. The result will have an entry per discovered component. That entry will
-   * itself have an entry per tool with the value being the array of versions of the tool for
-   * which there are result.
+   * List all of the components for the given coordinates.
+   * Accepts partial coordinates.
    *
-   * @param {*} coordinatesList - an array of coordinate paths to list
-   * @returns A list of all components that have output and the output available
+   * @param {*} coordinatesList - an array of coordinates
+   * @param {string} type - Optional. entity | result
+   * @returns A list of coordinates
    */
   async listAll(coordinatesList, type = 'entity') {
     const result = {}
@@ -35,24 +33,10 @@ class AbstractStore {
     return result
   }
 
-  _getEntry(entry, type) {
-    if (entry.startsWith('deadletter/') || entry.startsWith('attachments/')) return null
-    if (type === 'entity') return this._toEntityCoordinatesFromStoragePath(entry)
-    if (type === 'result') return this._toResultCoordinatesFromStoragePath(entry)
-    throw new Error(`Invalid list type: ${type}`)
-  }
-
   _toResultCoordinatesFromStoragePath(path) {
     const trimmed = this._trimStoragePath(path)
     return ResultCoordinates.fromString(trimmed)
   }
-
-  // Extract the entity coordinates from the storage path
-  _toEntityCoordinatesFromStoragePath(path) {
-    const trimmed = this._trimStoragePath(path)
-    return EntityCoordinates.fromString(trimmed)
-  }
-
   _trimStoragePath(path) {
     const normalized = path.replace(/\\/g, '/').replace(/.json$/, '')
     const rawSegments = normalized.split('/')
@@ -71,7 +55,10 @@ class AbstractStore {
     // if there is a provider then consider the namespace otherwise there can't be one so ignore null
     const namespace = c.provider ? c.namespace || '-' : null
     // TODO validate that there are no intermediate nulls
-    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart].filter(s => s).join('/')
+    return [c.type, c.provider, namespace, c.name, revisionPart, toolPart, toolVersionPart]
+      .filter(s => s)
+      .join('/')
+      .toLowerCase()
   }
 }
 
