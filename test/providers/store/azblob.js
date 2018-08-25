@@ -5,7 +5,220 @@ const AzBlobStore = require('../../../providers/stores/azblob')
 const assert = require('assert')
 const sinon = require('sinon')
 
-describe('azblob store getall tool outputs', () => {
+describe('azblob store', () => {
+  it('should list entities', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list({
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: null,
+      name: 'co',
+      revision: '4.6.0'
+    })
+    assert.equal(result.length, 1)
+    assert.equal(result[0], 'npm/npmjs/-/co/4.6.0')
+  })
+
+  it('should list entities preserving case from blob metadata', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list({
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: null,
+      name: 'JSONStream',
+      revision: '1.3.4'
+    })
+    assert.equal(result.length, 1)
+    assert.equal(result[0], 'npm/npmjs/-/JSONStream/1.3.4')
+
+    const resultCased = await azblobStore.list({
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: null,
+      name: 'jsonstream',
+      revision: '1.3.4'
+    })
+    assert.equal(resultCased.length, 1)
+    assert.equal(resultCased[0], 'npm/npmjs/-/JSONStream/1.3.4')
+  })
+
+  it('list entities with partial coordinates', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list({
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: null,
+      name: 'co'
+    })
+    assert.equal(result.length, 2)
+    assert.deepEqual(result, ['npm/npmjs/-/co/3.6.0', 'npm/npmjs/-/co/4.6.0'])
+  })
+
+  it('should list results', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'co',
+        revision: '4.6.0'
+      },
+      'result'
+    )
+    assert.equal(result.length, 2)
+    assert.deepEqual(result, ['npm/npmjs/-/co/4.6.0/clearlydefined/1', 'npm/npmjs/-/co/4.6.0/scancode/2.2.1'])
+  })
+
+  it('should list results preserving case from blob metadata', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'JSONStream',
+        revision: '1.3.4'
+      },
+      'result'
+    )
+    assert.equal(result.length, 2)
+    assert.deepEqual(result, [
+      'npm/npmjs/-/JSONStream/1.3.4/clearlydefined/1',
+      'npm/npmjs/-/JSONStream/1.3.4/scancode/2.2.1'
+    ])
+
+    const resultCased = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'jsonstream',
+        revision: '1.3.4'
+      },
+      'result'
+    )
+    assert.equal(resultCased.length, 2)
+    assert.deepEqual(resultCased, [
+      'npm/npmjs/-/JSONStream/1.3.4/clearlydefined/1',
+      'npm/npmjs/-/JSONStream/1.3.4/scancode/2.2.1'
+    ])
+  })
+
+  it('should list results with partial coordinates', async () => {
+    const azblobStore = createAzBlobStore(
+      [
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
+        },
+        {
+          name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
+        }
+      ],
+      true
+    )
+
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'co'
+      },
+      'result'
+    )
+    assert.equal(result.length, 4)
+    assert.deepEqual(result, [
+      'npm/npmjs/-/co/3.6.0/clearlydefined/1',
+      'npm/npmjs/-/co/3.6.0/scancode/1.2.1',
+      'npm/npmjs/-/co/4.6.0/clearlydefined/1',
+      'npm/npmjs/-/co/4.6.0/scancode/2.2.1'
+    ])
+  })
+
   it('handles unversioned tool output', async () => {
     const azblobStore = createAzBlobStore([
       { name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json' },
@@ -36,9 +249,9 @@ describe('azblob store getall tool outputs', () => {
   })
 })
 
-function createAzBlobStore(entries) {
+function createAzBlobStore(entries, withMetadata) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(3, null, { entries }),
+    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
     getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
     createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
   }
