@@ -63,16 +63,23 @@ class ScanCodeSummarizer {
   }
 
   _summarizeFileInfo(files) {
-    return files.map(file => {
-      const asserted = get(file, 'packages[0].asserted_licenses')
-      const fileLicense = asserted || file.licenses
-      const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
-      const licenseExpression = this._toExpression(licenses)
-      const result = { path: file.path }
-      setIfValue(result, 'license', licenseExpression)
-      setIfValue(result, 'attributions', file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements))) : null)
-      return result
-    })
+    return files
+      .map(file => {
+        if (file.type !== 'file') return null
+        const asserted = get(file, 'packages[0].asserted_licenses')
+        const fileLicense = asserted || file.licenses
+        const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
+        const licenseExpression = this._toExpression(licenses)
+        const result = { path: file.path }
+        setIfValue(result, 'license', licenseExpression)
+        setIfValue(
+          result,
+          'attributions',
+          file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements))) : null
+        )
+        return result
+      })
+      .filter(e => e)
   }
 
   _toExpression(licenses) {
