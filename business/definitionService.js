@@ -97,8 +97,7 @@ class DefinitionService {
         throat(10, async coordinates => {
           const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            await this.definitionStore.delete(definitionCoordinates)
-            return this.search.delete(definitionCoordinates)
+            return this.definitionStore.delete(definitionCoordinates)
           } catch (error) {
             if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
           }

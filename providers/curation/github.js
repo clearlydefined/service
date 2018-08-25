@@ -227,11 +227,10 @@ class GitHubCurationService {
     }
   }
 
-  async handleMerge(number, ref) {
+  async getCurationCoordinates(number, ref) {
     const curations = await this.getCurations(number, ref)
     const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    const coordinateList = concat([], ...coordinateSet)
-    return this.definitionService.invalidate(coordinateList)
+    return concat([], ...coordinateSet)
   }
 
   async validateCurations(number, sha, ref) {

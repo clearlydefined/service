@@ -5,30 +5,16 @@ const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
 
-function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
-  return GitHubCurationService(
-    {
-      owner: 'foobar',
-      repo: 'foobar',
-      branch: 'foobar',
-      token: 'foobar',
-      tempLocation: '.'
-    },
-    endpoints,
-    definitionService
-  )
-}
-
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
-    const definitionService = { invalidate: sinon.stub().returns(Promise.resolve(null)) }
-    const service = createService(definitionService)
+    const service = createService()
     sinon.stub(service, 'getCurations').callsFake(() => {
-      return [createCuration()]
+      return [createCuration(simpleCuration)]
     })
-    await service.handleMerge(1, 42)
-    expect(definitionService.invalidate.calledOnce).to.be.true
-    expect(definitionService.invalidate.getCall(0).args[0][0].name).to.be.eq('test')
+    const result = await service.getCurationCoordinates(1, 42)
+    const coords = { ...simpleCuration.coordinates }
+    coords.revision = '1.0'
+    expect(result).to.be.deep.equalInAnyOrder([coords])
   })
 
   it('validates valid PR change', async () => {
@@ -110,7 +96,21 @@ describe('Github Curation Service', () => {
   })
 })
 
-const curationCoordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'test' }
+function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
+  return GitHubCurationService(
+    {
+      owner: 'foobar',
+      repo: 'foobar',
+      branch: 'foobar',
+      token: 'foobar',
+      tempLocation: '.'
+    },
+    endpoints,
+    definitionService
+  )
+}
+
+const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 const definitionCoordinates = { ...curationCoordinates, revision: '1.0' }
 
 const simpleCuration = {
@@ -142,8 +142,8 @@ const complexHarvested = {
   files: [{ path: '2.txt', token: '2 token' }, { path: '1.txt', token: '1 token' }]
 }
 
-function createCuration() {
-  return new Curation(simpleCuration)
+function createCuration(curation = simpleCuration) {
+  return new Curation(curation)
 }
 
 function createInvalidCuration() {
@@ -151,7 +151,6 @@ function createInvalidCuration() {
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
-      namespace: null,
       name: 'test'
     }
   })
