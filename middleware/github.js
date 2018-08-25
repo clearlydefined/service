@@ -3,7 +3,6 @@
 
 const crypto = require('crypto')
 const GitHubApi = require('@octokit/rest')
-
 const asyncMiddleware = require('./asyncMiddleware')
 const config = require('../lib/config')
 const Github = require('../lib/github')
@@ -31,7 +30,9 @@ module.exports = asyncMiddleware(async (req, res, next) => {
   const serviceClient = await setupServiceClient(req, serviceToken)
   const userToken = authHeader ? authHeader.split(' ')[1] : null
   const userClient = await setupUserClient(req, userToken)
-  const infoCacheKey = userClient ? await getCacheKey('github.user', userToken) : await getCacheKey('github.user', serviceToken)
+  const infoCacheKey = userClient
+    ? await getCacheKey('github.user', userToken)
+    : await getCacheKey('github.user', serviceToken)
   await setupInfo(req, infoCacheKey, userClient || serviceClient)
   const teamCacheKey = userClient ? await getCacheKey('github.team', userToken) : null
   await setupTeams(req, teamCacheKey, userClient)
@@ -52,7 +53,7 @@ async function setupUserClient(req, token) {
     return null
   }
   // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi()
+  const client = new GitHubApi(options)
   client.authenticate({ type: 'token', token })
   req.app.locals.user = { github: { client } }
   return client
@@ -67,7 +68,6 @@ async function setupInfo(req, cacheKey, client) {
     await req.app.locals.cache.set(cacheKey, info, config.auth.github.timeouts.info)
   }
   req.app.locals.user.github.info = info
-
 }
 
 // get the user's teams (from GitHub or the cache) and attach them to the request
@@ -97,7 +97,7 @@ async function getTeams(client, org) {
     if (err.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
-        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
     } else if (err.code === 401 && err.message === 'Bad credentials') {
       // the token was bad. trickle up the problem so the user can fix
