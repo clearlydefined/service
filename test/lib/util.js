@@ -82,6 +82,7 @@ describe('Utils mergeDefinitions', () => {
     expect(base.files.length).to.eq(2)
     expect(base.files[0].path).to.eq('1.txt')
     expect(base.files[0].token).to.eq('13')
+    expect(base.files[0].license).to.eq('MIT')
     expect(base.files[1].path).to.eq('2.txt')
     expect(base.files[1].license).to.eq('GPL')
   })

@@ -143,10 +143,10 @@ class DefinitionService {
     const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
-    const summarized = await this.summaryService.summarizeAll(coordinates, raw)
-    const tooledDefinition = (await this.aggregationService.process(coordinates, summarized)) || {}
-    this._ensureToolScores(coordinates, tooledDefinition)
-    const definition = await this.curationService.apply(coordinates, curation, tooledDefinition)
+    const summaries = await this.summaryService.summarizeAll(coordinates, raw)
+    const aggregatedDefinition = (await this.aggregationService.process(coordinates, summaries)) || {}
+    this._ensureToolScores(coordinates, aggregatedDefinition)
+    const definition = await this.curationService.apply(coordinates, curation, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition, curation)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid defintion

@@ -48,7 +48,7 @@ function setup(files, coordinateSpec) {
       version: '3.3.0',
       output: {
         contentType: 'application/base64',
-        content: new Buffer(files.map(file => file.licenses).join('\n')).toString('base64')
+        content: files.map(file => file.licenses).join('\n')
       }
     }
   }
