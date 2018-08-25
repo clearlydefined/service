@@ -187,7 +187,7 @@ describe('FileStore listing content ', () => {
     it('works for well structured resuilt data: ' + index, async () => {
       const fileStore = FileStore({ location: input.location })
       fileStore._list = () => input.paths.map(path => input.location + '/' + path)
-      const list = await fileStore.listResults('dummy')
+      const list = await fileStore.list('dummy', 'result')
       list.forEach((item, index) => {
         const expectedCoordinates = ResultCoordinates.fromString(input.coordinates[index])
         assert.deepEqual(item, expectedCoordinates)

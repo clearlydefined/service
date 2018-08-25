@@ -32,7 +32,7 @@ class AzBlobStore extends AbstractStore {
    * @param {EntityCoordinates} coordinates
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
-  async list(coordinates) {
+  async list(coordinates, type = 'entity') {
     const list = new Set()
     let continuation = null
     do {
@@ -48,37 +48,10 @@ class AzBlobStore extends AbstractStore {
       })
       result.entries.forEach(entry => {
         const urn = entry.metadata.urn
-        if (urn) list.add(EntityCoordinates.fromUrn(urn).toString())
-      })
-      continuation = result.continuationToken
-    } while (continuation)
-    return Array.from(list).sort()
-  }
-
-  /**
-   * List all of the matching tool output coordinates
-   * Accepts partial coordinates.
-   *
-   * @param {EntityCoordinates} coordinates
-   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3/clearlydefined/1', 'npm/npmjs/-/JSONStream/1.3.3/scancode/2.9.2' ]
-   */
-  async listResults(coordinates) {
-    const list = new Set()
-    let continuation = null
-    do {
-      const result = await new Promise((resolve, reject) => {
-        const name = this._toStoragePathFromCoordinates(coordinates)
-        this.blobService.listBlobsSegmentedWithPrefix(
-          this.containerName,
-          name,
-          continuation,
-          { include: azure.BlobUtilities.BlobListingDetails.METADATA },
-          resultOrError(resolve, reject)
-        )
-      })
-      result.entries.forEach(entry => {
-        const urn = entry.metadata.urn
-        if (urn) list.add(ResultCoordinates.fromUrn(urn).toString())
+        if (urn)
+          list.add(
+            type === 'result' ? ResultCoordinates.fromUrn(urn).toString() : EntityCoordinates.fromUrn(urn).toString()
+          )
       })
       continuation = result.continuationToken
     } while (continuation)

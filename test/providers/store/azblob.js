@@ -116,13 +116,16 @@ describe('azblob store', () => {
       true
     )
 
-    const result = await azblobStore.listResults({
-      type: 'npm',
-      provider: 'npmjs',
-      namespace: null,
-      name: 'co',
-      revision: '4.6.0'
-    })
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'co',
+        revision: '4.6.0'
+      },
+      'result'
+    )
     assert.equal(result.length, 2)
     assert.deepEqual(result, ['npm/npmjs/-/co/4.6.0/clearlydefined/1', 'npm/npmjs/-/co/4.6.0/scancode/2.2.1'])
   })
@@ -142,26 +145,32 @@ describe('azblob store', () => {
       true
     )
 
-    const result = await azblobStore.listResults({
-      type: 'npm',
-      provider: 'npmjs',
-      namespace: null,
-      name: 'JSONStream',
-      revision: '1.3.4'
-    })
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'JSONStream',
+        revision: '1.3.4'
+      },
+      'result'
+    )
     assert.equal(result.length, 2)
     assert.deepEqual(result, [
       'npm/npmjs/-/JSONStream/1.3.4/clearlydefined/1',
       'npm/npmjs/-/JSONStream/1.3.4/scancode/2.2.1'
     ])
 
-    const resultCased = await azblobStore.listResults({
-      type: 'npm',
-      provider: 'npmjs',
-      namespace: null,
-      name: 'jsonstream',
-      revision: '1.3.4'
-    })
+    const resultCased = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'jsonstream',
+        revision: '1.3.4'
+      },
+      'result'
+    )
     assert.equal(resultCased.length, 2)
     assert.deepEqual(resultCased, [
       'npm/npmjs/-/JSONStream/1.3.4/clearlydefined/1',
@@ -192,12 +201,15 @@ describe('azblob store', () => {
       true
     )
 
-    const result = await azblobStore.listResults({
-      type: 'npm',
-      provider: 'npmjs',
-      namespace: null,
-      name: 'co'
-    })
+    const result = await azblobStore.list(
+      {
+        type: 'npm',
+        provider: 'npmjs',
+        namespace: null,
+        name: 'co'
+      },
+      'result'
+    )
     assert.equal(result.length, 4)
     assert.deepEqual(result, [
       'npm/npmjs/-/co/3.6.0/clearlydefined/1',

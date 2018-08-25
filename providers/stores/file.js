@@ -10,6 +10,7 @@ const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
+const { sortedUniq } = require('lodash')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -26,52 +27,27 @@ class FileStore extends AbstractStore {
    * @param {EntityCoordinates} coordinates
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
-  async list(coordinates) {
+  async list(coordinates, type = 'entity') {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
-      const list = new Set()
-      const files = await Promise.all(
+      const list = await Promise.all(
         paths.map(path => {
           return new Promise((resolve, reject) =>
-            fs.readFile(path, (error, data) => (error ? reject(error) : resolve({ contents: JSON.parse(data) })))
+            fs.readFile(
+              path,
+              (error, data) =>
+                error
+                  ? reject(error)
+                  : resolve(
+                      type === 'result'
+                        ? ResultCoordinates.fromUrn(JSON.parse(data)._metadata.links.self.href).toString()
+                        : EntityCoordinates.fromUrn(JSON.parse(data)._metadata.links.self.href).toString()
+                    )
+            )
           )
         })
       )
-      files.forEach(file => {
-        const urn = file.contents._metadata.urn
-        if (urn) list.add(EntityCoordinates.fromUrn(urn).toString())
-      })
-      return Array.from(list).sort()
-    } catch (error) {
-      // If there is just no entry, that's fine, there is no content.
-      if (error.code === 'ENOENT') return []
-      throw error
-    }
-  }
-
-  /**
-   * List all of the matching tool output coordinates
-   * Accepts partial coordinates.
-   *
-   * @param {EntityCoordinates} coordinates
-   * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3/clearlydefined/1', 'npm/npmjs/-/JSONStream/1.3.3/scancode/2.9.2' ]
-   */
-  async listResults(coordinates) {
-    try {
-      const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
-      const list = new Set()
-      const files = await Promise.all(
-        paths.map(path => {
-          return new Promise((resolve, reject) =>
-            fs.readFile(path, (error, data) => (error ? reject(error) : resolve({ path, contents: JSON.parse(data) })))
-          )
-        })
-      )
-      files.forEach(file => {
-        const urn = file.contents._metadata.urn
-        if (urn) list.add(ResultCoordinates.fromUrn(urn).toString())
-      })
-      return Array.from(list).sort()
+      return sortedUniq(list.filter(x => x))
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []

@@ -10,42 +10,22 @@ class AbstractStore {
    * Accepts partial coordinates.
    *
    * @param {*} coordinatesList - an array of coordinates
+   * @param {string} type - Optional. entity | result
    * @returns A list of coordinates
    */
-  async listAll(coordinatesList) {
+  async listAll(coordinatesList, type = 'entity') {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const list = await this.list(coordinates)
-        list.forEach(entry => {
-          if (entry.length === 0) return
-          const spec = entry.asEntityCoordinates().toString()
-          result[spec] = result[spec] || {}
-        })
-      })
-    )
-    await Promise.all(promises)
-    return result
-  }
-
-  /**
-   * List all of the tool outputs for the given coordinates.
-   * Accepts partial coordinates.
-   *
-   * @param {*} coordinatesList - an array of coordinate paths
-   * @returns A list of coordinates to tool outputs
-   */
-  async listAllResults(coordinatesList) {
-    const result = {}
-    const promises = coordinatesList.map(
-      throat(10, async coordinates => {
-        const list = await this.listResults(coordinates)
+        const list = await this.list(coordinates, type)
         list.forEach(entry => {
           if (entry.length === 0) return
           const spec = entry.asEntityCoordinates().toString()
           const data = (result[spec] = result[spec] || {})
-          const current = (data[entry.tool] = data[entry.toolVersion] || [])
-          current.push(entry.toolVersion)
+          if (type === 'result') {
+            const current = (data[entry.tool] = data[entry.toolVersion] || [])
+            current.push(entry.toolVersion)
+          }
         })
       })
     )

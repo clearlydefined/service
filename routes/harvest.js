@@ -97,7 +97,7 @@ router.post(
   bodyParser.json(),
   asyncMiddleware(async (request, response) => {
     const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-    const result = await harvestStore.listAllResults(coordinatesList)
+    const result = await harvestStore.listAll(coordinatesList, 'result')
     response.status(200).send(result)
   })
 )
