@@ -3,7 +3,6 @@
 
 const { set } = require('lodash')
 const { setIfValue } = require('../../lib/utils')
-const base64 = require('base-64')
 
 class FOSSologySummarizer {
   constructor(options) {
@@ -25,8 +24,7 @@ class FOSSologySummarizer {
   }
 
   _summarizeNomosLicenseInfo(content) {
-    const nomosOutput = base64.decode(content)
-    const files = nomosOutput.split('\n')
+    const files = content.split('\n')
     return files
       .map(file => {
         const path = /^File (.*?) contains/.exec(file)
