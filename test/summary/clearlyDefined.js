@@ -20,12 +20,12 @@ describe('ClearlyDefined Maven summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', 'http://test')
+    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -55,12 +55,12 @@ describe('ClearlyDefined NuGet summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupNuGet('2018-03-06T11:38:10.284Z', 'http://test')
+    const { coordinates, harvested } = setupNuGet('2018-03-06T11:38:10.284Z', true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -90,12 +90,12 @@ describe('ClearlyDefined Source Archive summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupSourceArchive('2018-03-06T11:38:10.284Z', 'http://test')
+    const { coordinates, harvested } = setupSourceArchive('2018-03-06T11:38:10.284Z', true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -130,12 +130,12 @@ describe('ClearlyDefined NPM summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', null, null, null, 'http://test')
+    const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', null, null, null, true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -205,12 +205,12 @@ describe('ClearlyDefined Gem summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', null, 'http://test')
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', null, true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -241,12 +241,12 @@ describe('ClearlyDefined Pypi summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupPypi('2018-03-06T11:38:10.284Z', null, 'http://test')
+    const { coordinates, harvested } = setupPypi('2018-03-06T11:38:10.284Z', null, true)
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq('http://test')
+    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -263,7 +263,7 @@ function setupPypi(releaseDate, license, sourceInfo) {
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (sourceInfo) harvested.sourceInfo = createSourceLocation()
   return { coordinates, harvested }
 }
 
@@ -274,6 +274,10 @@ function validate(definition) {
   if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
 }
 
-function createSourceLocation(url) {
-  return { type: 'git', provider: 'github', namespace: 'clearlydefined', name: 'test', revision: '42', url }
+function createSourceLocation() {
+  return { type: 'git', provider: 'github', namespace: 'clearlydefined', name: 'test', revision: '42' }
+}
+
+function getSourceUrl() {
+  return 'https://github.com/clearlydefined/test/commit/42'
 }

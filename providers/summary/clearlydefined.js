@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 const { get, set } = require('lodash')
-const { extractDate, setIfValue, extractLicenseFromLicenseUrl } = require('../../lib/utils')
+const {
+  extractDate,
+  setIfValue,
+  extractLicenseFromLicenseUrl,
+  buildSourceUrl,
+  updateSourceLocation
+} = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
   constructor(options) {
@@ -42,45 +48,11 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.facets', data.facets)
   }
 
-  // migrate the format of the source location to the current norm
-  _updateSourceLocation(spec) {
-    // if there is a name then this is the new style source location so just use it
-    if (spec.name) return
-
-    if (spec.provider === 'github') {
-      const segments = this.url.split('/')
-      spec.namespace = segments[3]
-      spec.name = segments[4]
-    }
-
-    if (spec.provider === 'mavencentral') {
-      // handle old style maven data
-      const [namespace, name] = spec.url.split('/')
-      spec.namespace = namespace
-      spec.name = name
-    }
-  }
-
-  _addSourceUrl(spec) {
-    if (spec.url) return
-    switch (this.provider) {
-      case 'github':
-        spec.url = `https://github.com/${spec.namespace}/${spec.name}.git`
-      case 'mavencentral':
-        const fullName = `${spec.namespace}/${spec.name}`.replace(/\./g, '/')
-        spec.url = `https://search.maven.org/remotecontent?filepath=${fullName}/${spec.revision}/${spec.name}-${
-          spec.revision
-        }-sources.jar`
-      default:
-        return null
-    }
-  }
-
   addSourceLocation(result, data) {
     if (!data.sourceInfo) return
     const spec = data.sourceInfo
-    this._updateSourceLocation(spec)
-    if (!spec.url) this._addSourceUrl(spec)
+    updateSourceLocation(spec)
+    spec.url = buildSourceUrl(spec)
     set(result, 'described.sourceLocation', spec)
   }
 

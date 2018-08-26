@@ -5,7 +5,7 @@ const Readable = require('stream').Readable
 const throat = require('throat')
 const { get, set, union, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
+const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
@@ -146,7 +146,7 @@ class DefinitionService {
     const raw = await this.harvestService.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregatedDefinition = (await this.aggregationService.process(coordinates, summaries)) || {}
+    const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curation, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition, curation)
@@ -353,19 +353,15 @@ class DefinitionService {
   }
 
   _ensureSourceLocation(coordinates, definition) {
-    if (get(definition, 'described.sourceLocation')) return
+    if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {
       case 'github': {
-        const location = {
-          type: 'git',
-          provider: 'github',
-          url: `https://github.com/${coordinates.namespace}/${coordinates.name}`,
-          revision: coordinates.revision
-        }
+        const url = buildSourceUrl(coordinates)
+        if (!url) return
         this._ensureDescribed(definition)
-        definition.described.sourceLocation = location
+        definition.described.sourceLocation = { ...coordinates, url }
         break
       }
       default:
