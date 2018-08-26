@@ -10,7 +10,10 @@
     "coordinates": { "$ref": "#/definitions/coordinates" },
     "files": { "$ref": "#/definitions/files" },
     "described": { "$ref": "#/definitions/described" },
-    "licensed": { "$ref": "#/definitions/licensed" }
+    "licensed": { "$ref": "#/definitions/licensed" },
+    "schema": {
+      "type": "string"
+    }
   },
   "definitions": {
     "type": {
@@ -122,10 +125,16 @@
     "sourceLocation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "provider", "url", "revision"],
+      "required": ["type", "provider", "name", "revision"],
       "properties": {
         "type": { "$ref": "#/definitions/type" },
         "provider": { "$ref": "#/definitions/provider" },
+        "namespace": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
         "url": {
           "type": "string",
           "format": "uri"
