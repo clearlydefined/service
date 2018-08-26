@@ -48,10 +48,10 @@ class AzBlobStore extends AbstractStore {
       })
       result.entries.forEach(entry => {
         const urn = entry.metadata.urn
-        if (urn)
-          list.add(
-            type === 'result' ? ResultCoordinates.fromUrn(urn).toString() : EntityCoordinates.fromUrn(urn).toString()
-          )
+        if (urn) {
+          const entryCoordinates = (type === 'result' ? ResultCoordinates : EntityCoordinates).fromUrn(urn)
+          if (this.isInterestingCoordinates(entryCoordinates)) list.add(entryCoordinates.toString())
+        }
       })
       continuation = result.continuationToken
     } while (continuation)

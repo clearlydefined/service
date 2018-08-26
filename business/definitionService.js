@@ -244,9 +244,15 @@ class DefinitionService {
     return await Promise.all(
       list.map(
         throat(10, async coordinates => {
-          const definition = await this.get(coordinates, null, recompute)
-          if (recompute) return Promise.resolve(null)
-          return this.search.store(definition)
+          try {
+            const definition = await this.get(coordinates, null, recompute)
+            if (recompute) return Promise.resolve(null)
+            return this.search.store(definition)
+          } catch (e) {
+            // TODO add some logging here but continue on for best effort
+            console.log(coordinates.toString())
+            console.log(e.message)
+          }
         })
       )
     )

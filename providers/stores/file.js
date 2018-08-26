@@ -37,7 +37,11 @@ class FileStore extends AbstractStore {
           return new Promise((resolve, reject) =>
             fs.readFile(path, (error, data) => {
               if (error) return reject(error)
-              return resolve(coordinateClass.fromUrn(get(JSON.parse(data), '_metadata.links.self.href')).toString())
+              const object = JSON.parse(data)
+              const link = get(object, '_metadata.links.self.href')
+              if (link) return resolve(coordinateClass.fromUrn(link).toString())
+              // assume its a definition and look for a coordinates object
+              resolve(coordinateClass.fromObject(object.coordinates).toString())
             })
           )
         })
@@ -51,9 +55,7 @@ class FileStore extends AbstractStore {
   }
 
   _isValidPath(entry) {
-    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(
-      this._toResultCoordinatesFromStoragePath(entry).type
-    )
+    return this.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
 
   _toStoragePathFromCoordinates(coordinates) {
