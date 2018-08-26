@@ -13,6 +13,8 @@ const definitionSchema = require('../schemas/definition')
 const Ajv = require('ajv')
 const ajv = new Ajv({ allErrors: true })
 
+const currentSchema = '1.0.0'
+
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
     this.harvestService = harvest
@@ -40,7 +42,8 @@ class DefinitionService {
     }
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || (await this.computeAndStore(coordinates)))
+    const result = get(existing, 'schema') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    return this._cast(result)
   }
 
   // ensure the defintion is a properly classed object
@@ -194,6 +197,7 @@ class DefinitionService {
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
+    definition.schema = currentSchema
   }
 
   // Given a definition, calculate the scores for the definition and return an object with a score per dimension

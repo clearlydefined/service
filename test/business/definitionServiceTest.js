@@ -55,7 +55,14 @@ describe('Definition Service score computation', () => {
     const raw = createDefinition(undefined, files)
     set(raw, 'licensed.declared', 'MIT')
     set(raw, 'described.releaseDate', '2018-08-09')
-    set(raw, 'described.sourceLocation', { type: 'git', provider: 'github', url: 'http://foo', revision: '324325' })
+    set(raw, 'described.sourceLocation', {
+      type: 'git',
+      provider: 'github',
+      namespace: 'testns',
+      name: 'testname',
+      revision: '324325',
+      url: 'http://foo'
+    })
     const { service, coordinates } = setup(raw)
     const definition = await service.compute(coordinates)
     expect(definition.described.score).to.eq(2)

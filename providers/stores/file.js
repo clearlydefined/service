@@ -41,7 +41,8 @@ class FileStore extends AbstractStore {
               const link = get(object, '_metadata.links.self.href')
               if (link) return resolve(coordinateClass.fromUrn(link).toString())
               // assume its a definition and look for a coordinates object
-              resolve(coordinateClass.fromObject(object.coordinates).toString())
+              const definitionCoordinates = coordinateClass.fromObject(object.coordinates)
+              resolve(definitionCoordinates ? definitionCoordinates.toString() : null)
             })
           )
         })
