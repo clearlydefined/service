@@ -272,14 +272,14 @@ describe('Definition Service Facet management', () => {
 describe('Aggregation service', () => {
   it('handles no tool data', async () => {
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, {})
+    const aggregated = service.process({})
     expect(aggregated).to.be.null
   })
 
   it('handles one tool one version data', async () => {
     const summaries = { tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] } } }
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, summaries)
+    const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
   })
 
@@ -291,7 +291,7 @@ describe('Aggregation service', () => {
       }
     }
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, summaries)
+    const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].path).to.eq('foo.txt')
     expect(aggregated.files[0].license).to.eq('GPL')
@@ -303,7 +303,7 @@ describe('Aggregation service', () => {
       tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] } }
     }
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, summaries)
+    const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
   })
@@ -314,7 +314,7 @@ describe('Aggregation service', () => {
       tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] }, '2.0.0': { files: [buildFile('bar.txt', 'GPL')] } }
     }
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, summaries)
+    const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
   })
@@ -328,7 +328,7 @@ describe('Aggregation service', () => {
       }
     }
     const { service, coordinates } = setupAggregator()
-    const aggregated = service.process(coordinates, summaries)
+    const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(2)
     expect(aggregated.files[0].path).to.eq('foo.txt')
     expect(aggregated.files[0].license).to.eq('BSD')
