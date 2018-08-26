@@ -1,8 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { pick, get } = require('lodash')
-const { extractDate, setIfValue, extractLicenseFromLicenseUrl } = require('../../lib/utils')
+const { get, set } = require('lodash')
+const {
+  extractDate,
+  setIfValue,
+  extractLicenseFromLicenseUrl,
+  buildSourceUrl,
+  updateSourceLocation
+} = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
   constructor(options) {
@@ -44,11 +50,10 @@ class ClearlyDescribedSummarizer {
 
   addSourceLocation(result, data) {
     if (!data.sourceInfo) return
-    setIfValue(
-      result,
-      'described.sourceLocation',
-      pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
-    )
+    const spec = data.sourceInfo
+    updateSourceLocation(spec)
+    spec.url = buildSourceUrl(spec)
+    set(result, 'described.sourceLocation', spec)
   }
 
   addInterestingFiles(result, data) {

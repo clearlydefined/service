@@ -39,7 +39,7 @@ class AggregationService {
       options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
   }
 
-  process(coordinates, summarized) {
+  process(summarized) {
     const result = {}
     const order = this.workingPrecedence || []
     const tools = []

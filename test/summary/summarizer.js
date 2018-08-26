@@ -10,7 +10,6 @@ describe('Summarizer service', () => {
     const summarizer = Summarizer({})
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarizeAll(coordinates, output)
-    expect(summary.coordinates).to.eq(coordinates)
     const scancode = summary.scancode['2.2.1']
     expect(scancode).to.be.not.null
   })

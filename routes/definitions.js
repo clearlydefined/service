@@ -26,14 +26,18 @@ async function getDefinition(request, response) {
 router.get('', asyncMiddleware(getDefinitionSuggestions))
 async function getDefinitionSuggestions(request, response) {
   // TODO temporary endpoint to trigger reloading the index or definitions
-  if (request.query.reload) return reload(request, response)
+  if (request.query.reload) {
+    // TODO purposely do not await this call. This is a fire and forget long running operation for now.
+    reload(request, response)
+    return response.sendStatus(200)
+  }
   const type = request.query.type || 'coordinates'
   const pattern = request.query.pattern
   switch (type) {
     case 'coordinates':
       return response.send(await definitionService.suggestCoordinates(pattern))
     case 'copyright':
-      return response.send(definitionService.suggestCopyright(pattern))
+      return response.send(await definitionService.suggestCopyright(pattern))
     default:
       throw new Error(`Invalid search type: ${type}`)
   }

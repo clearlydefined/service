@@ -5,13 +5,15 @@ const Readable = require('stream').Readable
 const throat = require('throat')
 const { get, set, union, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const { setIfValue, setToArray, addArrayToSet } = require('../lib/utils')
+const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
 const definitionSchema = require('../schemas/definition')
 const Ajv = require('ajv')
 const ajv = new Ajv({ allErrors: true })
+
+const currentSchema = '1.0.0'
 
 class DefinitionService {
   constructor(harvest, summary, aggregator, curation, store, search) {
@@ -40,7 +42,8 @@ class DefinitionService {
     }
     const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
     const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    return this._cast(existing || (await this.computeAndStore(coordinates)))
+    const result = get(existing, 'schema') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    return this._cast(result)
   }
 
   // ensure the defintion is a properly classed object
@@ -143,7 +146,7 @@ class DefinitionService {
     const raw = await this.harvestService.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregatedDefinition = (await this.aggregationService.process(coordinates, summaries)) || {}
+    const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curation, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition, curation)
@@ -194,6 +197,7 @@ class DefinitionService {
     this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
+    definition.schema = currentSchema
   }
 
   // Given a definition, calculate the scores for the definition and return an object with a score per dimension
@@ -244,9 +248,15 @@ class DefinitionService {
     return await Promise.all(
       list.map(
         throat(10, async coordinates => {
-          const definition = await this.get(coordinates, null, recompute)
-          if (recompute) return Promise.resolve(null)
-          return this.search.store(definition)
+          try {
+            const definition = await this.get(coordinates, null, recompute)
+            if (recompute) return Promise.resolve(null)
+            return this.search.store(definition)
+          } catch (e) {
+            // TODO add some logging here but continue on for best effort
+            console.log(coordinates.toString())
+            console.log(e.message)
+          }
         })
       )
     )
@@ -343,19 +353,15 @@ class DefinitionService {
   }
 
   _ensureSourceLocation(coordinates, definition) {
-    if (get(definition, 'described.sourceLocation')) return
+    if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {
       case 'github': {
-        const location = {
-          type: 'git',
-          provider: 'github',
-          url: `https://github.com/${coordinates.namespace}/${coordinates.name}`,
-          revision: coordinates.revision
-        }
+        const url = buildSourceUrl(coordinates)
+        if (!url) return
         this._ensureDescribed(definition)
-        definition.described.sourceLocation = location
+        definition.described.sourceLocation = { ...coordinates, url }
         break
       }
       default:
