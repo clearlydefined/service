@@ -44,11 +44,16 @@ class ClearlyDescribedSummarizer {
 
   addSourceLocation(result, data) {
     if (!data.sourceInfo) return
-    setIfValue(
-      result,
-      'described.sourceLocation',
-      pick(data.sourceInfo, ['type', 'provider', 'url', 'revision', 'path'])
-    )
+    const spec = data.sourceInfo
+    if (spec.url.startsWith('http'))
+      return setIfValue(result, 'described.sourceLocation', pick(spec, ['type', 'provider', 'url', 'revision', 'path']))
+    if (spec.provider !== 'mavencentral') return
+    // handle old style maven data
+    const [namespace, name] = spec.url.split('/')
+    const fullName = spec.url.replace(/\./g, '/')
+    return `https://search.maven.org/remotecontent?filepath=${fullName}/${spec.revision}/${name}-${
+      spec.revision
+    }-sources.jar`
   }
 
   addInterestingFiles(result, data) {

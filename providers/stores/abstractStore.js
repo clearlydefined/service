@@ -33,6 +33,10 @@ class AbstractStore {
     return result
   }
 
+  isInterestingCoordinates(coordinates) {
+    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(coordinates.type)
+  }
+
   _toResultCoordinatesFromStoragePath(path) {
     const trimmed = this._trimStoragePath(path)
     return ResultCoordinates.fromString(trimmed)

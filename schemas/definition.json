@@ -14,10 +14,10 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven", "nuget"]
+      "enum": ["npm", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "mavencentralsource", "nuget"]
+      "enum": ["npmjs", "github", "mavencentral", "nuget", "rubygems", "pypi"]
     },
     "coordinates": {
       "type": "object",

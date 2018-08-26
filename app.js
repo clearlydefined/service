@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 // TODO consider putting this in for real
-// process.on('unhandledRejection', (reason, p) => {
-//   throw reason
-// })
+process.on('unhandledRejection', (reason, p) => {
+  throw reason
+})
 
 const express = require('express')
 const logger = require('morgan')
