@@ -37,16 +37,11 @@ class GitHubCurationService {
   }
 
   _updateContent(coordinates, currentContent, newContent) {
+    const newCoordinates = EntityCoordinates.fromObject(coordinates).asRevisionless()
     const result = {
-      coordinates: {
-        type: coordinates.type,
-        provider: coordinates.provider,
-        namespace: coordinates.namespace === '-' ? null : coordinates.namespace,
-        name: coordinates.name
-      }
+      coordinates: newCoordinates,
+      revisions: get(currentContent, 'revisions') || {}
     }
-    result.revisions = get(currentContent, 'revisions') || {}
-
     forIn(newContent, (value, key) => (result.revisions[key] = merge(result.revisions[key] || {}, value)))
     return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
   }
