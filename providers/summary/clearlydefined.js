@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set } = require('lodash')
+const { get, set, isArray } = require('lodash')
 const {
   extractDate,
   setIfValue,
@@ -78,7 +78,9 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
-    setIfValue(result, 'described.projectWebsite', manifest.homepage)
+    let homepage = manifest.homepage
+    if (homepage && isArray(homepage)) homepage = homepage[0]
+    setIfValue(result, 'described.projectWebsite', homepage)
     const bugs = manifest.bugs
     if (bugs) {
       if (typeof bugs === 'string') {
