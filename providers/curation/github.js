@@ -7,6 +7,7 @@ const { exec } = require('child_process')
 const fs = require('fs')
 const moment = require('moment')
 const readdirp = require('readdirp')
+const requestPromise = require('request-promise-native')
 const yaml = require('js-yaml')
 const throat = require('throat')
 const Github = require('../../lib/github')
@@ -139,44 +140,28 @@ class GitHubCurationService {
    * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
    * indicating the sha of the commit for the curations if that info is available.
    */
-  getAll(coordinates, pr = null) {
-    return pr ? this._getAllGitHub(coordinates, pr) : this._getAllLocal(coordinates)
-  }
-
-  async _getAllLocal(coordinates) {
-    await this.ensureCurations()
-    const filePath = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}.yaml`
-    let result
-    try {
-      result = yaml.safeLoad(fs.readFileSync(filePath))
-    } catch (error) {
-      if (error.code === 'ENOENT') return
-      throw error
-    }
-    const res = await this._getLocalSha(filePath)
-    set(result, '_origin', { sha: res.split(' ')[1], enumerable: false })
-    return result
-  }
-
-  async _getLocalSha(filepath) {
-    const parent = path.dirname(filepath)
-    const command = `cd ${parent} && git ls-files -s ${path.basename(filepath)}`
-    return new Promise((resolve, reject) => {
-      exec(command, (error, stdout) => {
-        if (error) return reject(error)
-        resolve(stdout)
-      })
-    })
-  }
-
-  async _getAllGitHub(coordinates, pr = null) {
-    const curationPath = this._getCurationPath(coordinates)
+  async getAll(coordinates, pr = null) {
+    // Check to see if there is content for the given coordinates
+    const path = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
-    const branch = await this.getBranch(pr)
+    const branch = await this.getBranchAndSha(pr)
+    const branchName = branch.sha || branch.ref
+    const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branchName}/${path}`
+    const content = await requestPromise({ url, method: 'GET', resolveWithFullResponse: true, simple: false })
+    if (content.statusCode !== 200) return null
+    // If there is content, go and get it. This is a little wasteful (two calls) but
+    // a) the vast majority of coordinates will not have any curation
+    // b) we need the sha of the curation to form part of the final definition tool chain
+    // At some point in the future we can look at caching and etags etc
+    return this._getFullContent(coordinates, branch.ref)
+  }
 
+  async _getFullContent(coordinates, ref) {
+    const path = this._getCurationPath(coordinates)
+    const { owner, repo } = this.options
     const github = Github.getClient(this.options)
     try {
-      const contentResponse = await github.repos.getContent({ owner, repo, ref: branch, path: curationPath })
+      const contentResponse = await github.repos.getContent({ owner, repo, ref, path })
       const content = yaml.safeLoad(base64.decode(contentResponse.data.content))
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
       Object.defineProperty(content, '_origin', { value: { sha: contentResponse.data.sha }, enumerable: false })
@@ -188,12 +173,12 @@ class GitHubCurationService {
     }
   }
 
-  async getBranch(number) {
-    if (!number) return this.options.branch
+  async getBranchAndSha(number) {
+    if (!number) return { ref: this.options.branch }
     const { owner, repo } = this.options
     const github = Github.getClient(this.options)
     const result = await github.pullRequests.get({ owner, repo, number })
-    return result.data.head.ref
+    return { ref: result.data.head.ref, sha: result.data.head.sha }
   }
 
   async getCurations(number, ref) {
