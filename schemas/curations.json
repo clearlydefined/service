@@ -2,27 +2,26 @@
   "$id": "https://api.clearlydefined.io/schemas/curation.json#",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "curation",
+  "required": ["coordinates", "revisions"],
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "described": {
-      "$ref": "#/definitions/described"
+    "coordinates": {
+      "$ref": "#/definitions/coordinates"
     },
-    "licensed": {
-      "$ref": "#/definitions/licensed"
-    },
-    "files": {
-      "$ref": "#/definitions/files"
+    "revisions": {
+      "$ref": "#/definitions/revisions"
     }
   },
   "errorMessage": {
-    "type": "An individual curation must be an object",
-    "additionalProperties": "A curation object can only contain described, licensed, and files"
+    "required": "Curation object requires coordinates and revisions",
+    "type": "Curation must be an object",
+    "additionalProperties": "Curation object can only have coordinates and revisions"
   },
   "definitions": {
     "type": {
       "type": "string",
-      "enum": ["npm", "crate", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"],
+      "enum": ["npm", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"],
       "errorMessage": {
         "enum": "Package type must be supported by ClearlyDefined",
         "type": "Package type must be a string"
@@ -30,10 +29,69 @@
     },
     "provider": {
       "type": "string",
-      "enum": ["npmjs", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"],
+      "enum": ["npmjs", "github", "mavencentral", "nuget", "rubygems", "pypi"],
       "errorMessage": {
         "enum": "Provider type must be supported by ClearlyDefined",
         "type": "Provider type must be a string"
+      }
+    },
+    "coordinates": {
+      "required": ["type", "provider", "name"],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "provider": {
+          "$ref": "#/definitions/provider"
+        },
+        "namespace": {
+          "type": ["string", "null"],
+          "errorMessage": {
+            "type": "Namespace must be a string or null"
+          }
+        },
+        "name": {
+          "type": "string",
+          "errorMessage": {
+            "type": "Name must be a string"
+          }
+        }
+      },
+      "errorMessage": {
+        "required": "Coordinates object require type, provider, namespace, and name"
+      }
+    },
+    "revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/definitions/revision"
+        }
+      },
+      "errorMessage": {
+        "type": "Revisions must be an object",
+        "additionalProperties": "Revisions object can only contain revision objects",
+        "patternProperties": "Revisions object keys must be sequence of letters, numbers, and dots"
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "described": {
+          "$ref": "#/definitions/described"
+        },
+        "licensed": {
+          "$ref": "#/definitions/licensed"
+        },
+        "files": {
+          "$ref": "#/definitions/files"
+        }
+      },
+      "errorMessage": {
+        "type": "Revision must be an object",
+        "additionalProperties": "Revision object can only contain described, licensed, and files"
       }
     },
     "described": {
