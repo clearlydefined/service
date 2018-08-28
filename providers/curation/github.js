@@ -147,7 +147,7 @@ class GitHubCurationService {
     const branch = await this.getBranchAndSha(pr)
     const branchName = branch.sha || branch.ref
     const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branchName}/${path}`
-    const content = await requestPromise({ url, method: 'GET', resolveWithFullResponse: true, simple: false })
+    const content = await requestPromise({ url, method: 'HEAD', resolveWithFullResponse: true, simple: false })
     if (content.statusCode !== 200) return null
     // If there is content, go and get it. This is a little wasteful (two calls) but
     // a) the vast majority of coordinates will not have any curation
