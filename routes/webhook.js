@@ -94,7 +94,8 @@ function fatal(request, response, code, error = null) {
 
 function setup(curation, definition, appLogger, githubToken, crawlerToken, testFlag = false) {
   curationService = curation
-  ;(definitionService = definition), (githubSecret = githubToken)
+  definitionService = definition
+  githubSecret = githubToken
   crawlerSecret = crawlerToken
   logger = appLogger
   test = testFlag
