@@ -59,7 +59,7 @@ function setup(files, coordinateSpec) {
     nomos: {
       version: '3.3.0',
       output: {
-        contentType: 'application/base64',
+        contentType: 'text/plain',
         content: files.map(file => file.licenses).join('\n')
       }
     }
