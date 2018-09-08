@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Middleware that checks for team membership.
+ * Middleware that checks for permissions for this request based on team membership.
  *
- * Usage: `app.get('/some/route', teamCheck('harvesters'), (req, res) => ...)`
+ * Usage: `app.get('/some/route', permissionCheck('harvesters'), (req, res) => ...)`
  */
 function middlewareFactory(permission) {
   return (request, response, next) => {
