@@ -20,7 +20,7 @@ class AzBlobStore extends AbstractStore {
     const blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
-    Object.defineProperty(this, 'blobService', { value: blobService, writable: false, configurable: true })
+    Object.defineProperty(this, 'blobService', {value: blobService, writable: false, configurable: true})
     this.blobService.createContainerIfNotExists(this.containerName, () => {})
     return this.blobService
   }
@@ -42,7 +42,7 @@ class AzBlobStore extends AbstractStore {
           this.containerName,
           name,
           continuation,
-          { include: azure.BlobUtilities.BlobListingDetails.METADATA },
+          {include: azure.BlobUtilities.BlobListingDetails.METADATA},
           resultOrError(resolve, reject)
         )
       })
@@ -105,14 +105,14 @@ class AzBlobStore extends AbstractStore {
           return new Promise((resolve, reject) => {
             this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
           }).then(result => {
-            return { name: file.name, content: JSON.parse(result) }
+            return {name: file.name, content: JSON.parse(result)}
           })
         })
       )
     })
     return contents.then(entries => {
       return entries.reduce((result, entry) => {
-        const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
+        const {tool, toolVersion} = this._toResultCoordinatesFromStoragePath(entry.name)
         if (!tool || !toolVersion) {
           // TODO: LOG HERE THERE ARE SOME BOGUS FILES HANGING AROUND
           return result
@@ -124,6 +124,34 @@ class AzBlobStore extends AbstractStore {
     })
   }
 
+  /**
+   * Get the attachment object by AttachmentCoordinates.
+   * The result object contains metadata about the attachment as well as the attachment itself
+   * If a stream is given, write the content directly on the stream and close.
+   * Otherwise, return an object that represents the result.
+   *
+   * @param {AttachmentCoordinates} coordinates - The coordinates of the attachment to get
+   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
+   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
+   */
+  async getAttachment(coordinates, stream) {
+    let name = coordinates.toString()
+    if (!name.endsWith('.json')) name += '.json'
+    if (stream)
+      return new Promise((resolve, reject) => {
+        this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject))
+      })
+    return new Promise((resolve, reject) => {
+      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
+    }).then(
+      result => JSON.parse(result),
+      error => {
+        if (error.statusCode === 404) return null
+        throw error
+      }
+    )
+  }
+
   store(coordinates, stream) {
     const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) => {
@@ -131,7 +159,7 @@ class AzBlobStore extends AbstractStore {
         this.blobService.createWriteStreamToBlockBlob(
           this.containerName,
           name,
-          { blockIdPrefix: 'block', contentSettings: { contentType: 'application/json' } },
+          {blockIdPrefix: 'block', contentSettings: {contentType: 'application/json'}},
           responseOrError(resolve, reject)
         )
       )

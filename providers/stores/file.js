@@ -5,12 +5,12 @@ const utils = require('../../lib/utils')
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const { promisify } = require('util')
+const {promisify} = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
-const { sortedUniq, get } = require('lodash')
+const {sortedUniq, get} = require('lodash')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -128,17 +128,46 @@ class FileStore extends AbstractStore {
         return new Promise((resolve, reject) =>
           fs.readFile(
             file,
-            (error, data) => (error ? reject(error) : resolve({ name: file, content: JSON.parse(data) }))
+            (error, data) => (error ? reject(error) : resolve({name: file, content: JSON.parse(data)}))
           )
         )
       })
     )
     return contents.reduce((result, entry) => {
-      const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
+      const {tool, toolVersion} = this._toResultCoordinatesFromStoragePath(entry.name)
       const current = (result[tool] = result[tool] || {})
       current[toolVersion] = entry.content
       return result
     }, {})
+  }
+
+  /**
+   * Get the attachment object by AttachmentCoordinates.
+   * The result object contains metadata about the attachment as well as the attachment itself
+   * If a stream is given, write the content directly on the stream and close.
+   * Otherwise, return an object that represents the result.
+   *
+   * @param {AttachmentCoordinates} coordinates - The coordinates of the attachment to get
+   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
+   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
+   */
+  async getAttachment(coordinates, stream) {
+    let filePath = path.join(this.options.location, coordinates.toString())
+    if (!filePath.endsWith('.json')) filePath += '.json'
+    if (stream)
+      return new Promise((resolve, reject) => {
+        const read = fs.createReadStream(filePath)
+        read.on('end', () => resolve(null))
+        read.on('error', error => reject(error))
+        read.pipe(stream)
+      })
+    return new Promise((resolve, reject) => fs.readFile(filePath, resultOrError(resolve, reject))).then(
+      result => JSON.parse(result),
+      error => {
+        if (error.code === 'ENOENT') return null
+        throw error
+      }
+    )
   }
 
   _findLatest(filePath) {
