@@ -5,12 +5,12 @@ const utils = require('../../lib/utils')
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const {promisify} = require('util')
+const { promisify } = require('util')
 const recursive = require('recursive-readdir')
 const AbstractStore = require('./abstractStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const ResultCoordinates = require('../../lib/resultCoordinates')
-const {sortedUniq, get} = require('lodash')
+const { sortedUniq, get } = require('lodash')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 
@@ -128,13 +128,13 @@ class FileStore extends AbstractStore {
         return new Promise((resolve, reject) =>
           fs.readFile(
             file,
-            (error, data) => (error ? reject(error) : resolve({name: file, content: JSON.parse(data)}))
+            (error, data) => (error ? reject(error) : resolve({ name: file, content: JSON.parse(data) }))
           )
         )
       })
     )
     return contents.reduce((result, entry) => {
-      const {tool, toolVersion} = this._toResultCoordinatesFromStoragePath(entry.name)
+      const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
       const current = (result[tool] = result[tool] || {})
       current[toolVersion] = entry.content
       return result

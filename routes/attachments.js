@@ -7,10 +7,10 @@ const router = express.Router()
 const AttachmentCoordinates = require('../lib/attachmentCoordinates')
 
 // Get a proposed patch for a specific revision of a component
-router.get('/:token', asyncMiddleware(getAttachment))
+router.get('/:id', asyncMiddleware(getAttachment))
 
 async function getAttachment(request, response) {
-  const coordinates = new AttachmentCoordinates(request.params.token)
+  const coordinates = new AttachmentCoordinates(request.params.id)
   const result = await harvestStore.getAttachment(coordinates)
   if (!result) return response.sendStatus(404)
   response.status(200).send(result.attachment)

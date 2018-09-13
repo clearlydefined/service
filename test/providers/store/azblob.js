@@ -12,11 +12,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -38,11 +38,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -74,19 +74,19 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
         }
       ],
       true
@@ -107,11 +107,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -136,11 +136,11 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/jsonstream/revision/1.3.4/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
         }
       ],
       true
@@ -184,19 +184,19 @@ describe('azblob store', () => {
       [
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/clearlydefined/1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:clearlydefined:1' }
         },
         {
           name: 'npm/npmjs/-/co/revision/3.6.0/tool/scancode/1.2.1.json',
-          metadata: {urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1'}
+          metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
         }
       ],
       true
@@ -222,11 +222,11 @@ describe('azblob store', () => {
 
   it('handles unversioned tool output', async () => {
     const azblobStore = createAzBlobStore([
-      {name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json'},
-      {name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json'},
-      {name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.1.json'},
-      {name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'},
-      {name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json'} // this is the problem file see https://github.com/clearlydefined/service/issues/184
+      { name: 'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json' },
+      { name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json' },
+      { name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.1.json' },
+      { name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json' },
+      { name: 'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json' } // this is the problem file see https://github.com/clearlydefined/service/issues/184
     ])
 
     const result = await azblobStore.getAll({
@@ -250,26 +250,26 @@ describe('azblob store', () => {
   })
 
   it('should get attachment', async () => {
-    const {blobServiceStub, azBlobStore} = createAzBlobAttachmentStore({
+    const { blobServiceStub, azBlobStore } = createAzBlobAttachmentStore({
       _metadata: {
         type: 'attachment',
-        url: 'cd:/attachment/thisisatoken'
+        url: 'cd:/attachment/thisisaid'
       },
       attachment: 'The attachmentText'
     })
 
-    const attachment = await azBlobStore.getAttachment(new AttachmentCoordinates('thisisatoken'))
+    const attachment = await azBlobStore.getAttachment(new AttachmentCoordinates('thisisaid'))
 
-    assert.ok(blobServiceStub.getBlobToText.calledWith(undefined, 'attachment/thisisatoken.json'))
+    assert.ok(blobServiceStub.getBlobToText.calledWith(undefined, 'attachment/thisisaid.json'))
     assert.equal(attachment._metadata.type, 'attachment')
-    assert.equal(attachment._metadata.url, 'cd:/attachment/thisisatoken')
+    assert.equal(attachment._metadata.url, 'cd:/attachment/thisisaid')
     assert.equal(attachment.attachment, 'The attachmentText')
   })
 })
 
 function createAzBlobStore(entries, withMetadata) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, {entries}),
+    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
     getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
     createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
   }
@@ -287,5 +287,5 @@ function createAzBlobAttachmentStore(attachment) {
   const azBlobStore = AzBlobStore({})
   sinon.stub(azBlobStore, 'blobService').get(() => blobServiceStub)
 
-  return {blobServiceStub, azBlobStore}
+  return { blobServiceStub, azBlobStore }
 }
