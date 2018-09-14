@@ -285,21 +285,21 @@ paths:
       responses:
         200:
           description: Component definition.
-  /attachments/{token}:
+  /attachments/{id}:
     get:
-      summary: Gets the attachment with the given content token.
+      summary: Gets the attachment with the given content id.
       tags:
         - attachments
       parameters:
         - in: path
-          name: token
+          name: id
           schema:
             type: string
           required: true
-          description: The token identifying the attachment to access
+          description: The id identifying the attachment to access
       responses:
         200:
-          description: The raw content of the attachment corresponding to the given token.
+          description: The raw content of the attachment corresponding to the given id.
 
 tags:
   - name: definitions
