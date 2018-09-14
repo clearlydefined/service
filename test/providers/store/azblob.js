@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const AttachmentCoordinates = require('../../../lib/attachmentCoordinates')
 const AzBlobStore = require('../../../providers/stores/azblob')
 const assert = require('assert')
 const sinon = require('sinon')
@@ -247,6 +248,23 @@ describe('azblob store', () => {
     assert.equal(scancodeVersions[2], '2.9.2')
     assert.equal(scancodeVersions.length, 3)
   })
+
+  it('should get attachment', async () => {
+    const { blobServiceStub, azBlobStore } = createAzBlobAttachmentStore({
+      _metadata: {
+        type: 'attachment',
+        url: 'cd:/attachment/thisisaid'
+      },
+      attachment: 'The attachmentText'
+    })
+
+    const attachment = await azBlobStore.getAttachment(new AttachmentCoordinates('thisisaid'))
+
+    assert.ok(blobServiceStub.getBlobToText.calledWith(undefined, 'attachment/thisisaid.json'))
+    assert.equal(attachment._metadata.type, 'attachment')
+    assert.equal(attachment._metadata.url, 'cd:/attachment/thisisaid')
+    assert.equal(attachment.attachment, 'The attachmentText')
+  })
 })
 
 function createAzBlobStore(entries, withMetadata) {
@@ -259,4 +277,15 @@ function createAzBlobStore(entries, withMetadata) {
   const azBlobStore = AzBlobStore({})
   sinon.stub(azBlobStore, 'blobService').get(() => blobServiceStub)
   return azBlobStore
+}
+
+function createAzBlobAttachmentStore(attachment) {
+  const blobServiceStub = {
+    getBlobToText: sinon.stub().callsArgWith(2, null, JSON.stringify(attachment)),
+    createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
+  }
+  const azBlobStore = AzBlobStore({})
+  sinon.stub(azBlobStore, 'blobService').get(() => blobServiceStub)
+
+  return { blobServiceStub, azBlobStore }
 }
