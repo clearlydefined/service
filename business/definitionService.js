@@ -142,14 +142,13 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
-    const curation = await this.curationService.get(coordinates, curationSpec)
     const raw = await this.harvestService.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
     this._ensureToolScores(coordinates, aggregatedDefinition)
-    const definition = await this.curationService.apply(coordinates, curation, aggregatedDefinition)
-    this._finalizeDefinition(coordinates, definition, curation)
+    const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid defintion
     this._ensureNoNulls(definition)
@@ -192,9 +191,8 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  _finalizeDefinition(coordinates, definition, curation) {
+  _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
-    this._ensureCurationInfo(definition, curation)
     this._ensureSourceLocation(coordinates, definition)
     this._ensureCoordinates(coordinates, definition)
     definition.schema = currentSchema
@@ -341,15 +339,6 @@ class DefinitionService {
 
   _ensureDescribed(definition) {
     definition.described = definition.described || {}
-  }
-
-  _ensureCurationInfo(definition, curation) {
-    if (!curation) return
-    this._ensureDescribed(definition)
-    if (Object.getOwnPropertyNames(curation).length === 0) return
-    const origin = get(curation, '_origin.sha')
-    definition.described.tools = definition.described.tools || []
-    definition.described.tools.push(`curation${origin ? '/' + origin : 'supplied'}`)
   }
 
   _ensureSourceLocation(coordinates, definition) {

@@ -191,7 +191,18 @@ class GitHubCurationService {
 
   async apply(coordinates, curationSpec, definition) {
     const curation = await this.get(coordinates, curationSpec)
-    return Curation.apply(definition, curation)
+    const result = Curation.apply(definition, curation)
+    this._ensureCurationInfo(result, curation)
+    return result
+  }
+
+  _ensureCurationInfo(definition, curation) {
+    if (!curation) return
+    if (Object.getOwnPropertyNames(curation).length === 0) return
+    const origin = get(curation, '_origin.sha')
+    definition.described = definition.described || {}
+    definition.described.tools = definition.described.tools || []
+    definition.described.tools.push(`curation/${origin ? origin : 'supplied'}`)
   }
 
   async getContent(ref, path) {
