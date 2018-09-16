@@ -3,9 +3,7 @@
 
 const { expect } = require('chai')
 const sinon = require('sinon')
-const definitionSchema = require('../../schemas/definition')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
+const validator = require('../../schemas/validator')
 const DefinitionService = require('../../business/definitionService')
 const AggregatorService = require('../../business/aggregator')
 const EntityCoordinates = require('../../lib/entityCoordinates')
@@ -351,7 +349,7 @@ describe('Aggregation service', () => {
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
+  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
 }
 
 function createDefinition(facets, files, tools) {

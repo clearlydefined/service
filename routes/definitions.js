@@ -6,9 +6,7 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
-const curationSchema = require('../schemas/curation')
+const validator = require('../schemas/validator')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -59,7 +57,7 @@ router.post(
   asyncMiddleware(async (request, response) => {
     if (!request.query.preview)
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!ajv.validate(curationSchema, request.body)) return response.status(400).send(ajv.errorsText())
+    if (!validator.validate('curations', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)

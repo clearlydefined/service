@@ -1,5 +1,5 @@
 {
-  "$id": "https://api.clearlydefined.io/schemas/curation.json#",
+  "$id": "https://api.clearlydefined.io/schemas/curations-1.0.json#",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "curation",
   "required": ["coordinates", "revisions"],
@@ -66,7 +66,7 @@
       "additionalProperties": false,
       "patternProperties": {
         "^.+$": {
-          "$ref": "<refernce to curation.json#/definitions/revision here. Not sure how to do that>"
+          "$ref": "curation-1.0.json"
         }
       },
       "errorMessage": {
