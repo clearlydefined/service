@@ -57,8 +57,9 @@ router.get('/github/start', passportOrPat(), (req, res) => {
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
   const token = req.user.githubAccessToken
+  const username = req.user.username
   const permissions = await getPermissions(token, config.auth.github.org)
-  const result = JSON.stringify({ type: 'github-token', token, permissions })
+  const result = JSON.stringify({ type: 'github-token', token, permissions, username })
 
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
@@ -135,7 +136,7 @@ setup.getStrategy = () => {
     },
     function(access, refresh, profile, done) {
       // this only lives for one request; see the 'finalize' endpoint
-      done(null, { githubAccessToken: access })
+      done(null, { githubAccessToken: access, username: profile.username })
     }
   )
 }
