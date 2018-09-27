@@ -58,6 +58,7 @@ class ClearlyDescribedSummarizer {
 
   addInterestingFiles(result, data) {
     setIfValue(result, 'files', data.interestingFiles)
+    setIfValue(result, 'licensed.declared', this._extractLicenseFromFiles(data.interestingFiles))
   }
 
   addMavenData(result, data) {
@@ -99,6 +100,14 @@ class ClearlyDescribedSummarizer {
   addPyPiData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data.declaredLicense)
+  }
+
+  _extractLicenseFromFiles(files) {
+    if (!files) return
+    for (const file of files) {
+      if (file.license && file.license != 'NOASSERTION')
+        return file.license
+    }
   }
 }
 
