@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const throat = require('throat')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const Github = require('../lib/github')
@@ -21,7 +22,7 @@ router.get(
       const github = getClient(request)
       const answer = await github.gitdata.getTags({ owner: login, repo, per_page: 100 })
       const unsorted = await Promise.all(answer.data
-        .map(async item => {
+        .map(throat(5, async item => {
           if (item.object.type === 'commit')
             return { tag: item.ref.slice(10), sha: item.object.sha }
 
@@ -38,7 +39,7 @@ router.get(
             return null
           }
           return { tag: item.ref.slice(10), sha: response.data.object.sha }
-        }))
+        })))
       const result = unsorted.filter(x => x)
         .sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
       return response.status(200).send(result)
