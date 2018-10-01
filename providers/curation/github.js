@@ -46,7 +46,7 @@ class GitHubCurationService {
     return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
   }
 
-  async _writePatch(userGithub, serviceGithub, info, description, patch, branch) {
+  async _writePatch(serviceGithub, info, patch, branch) {
     const { owner, repo } = this.options
     const coordinates = EntityCoordinates.fromObject(patch.coordinates)
     const currentContent = await this.getAll(coordinates)
@@ -81,17 +81,30 @@ class GitHubCurationService {
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(
-      patch.patches.map(
-        throat(1, component =>
-          this._writePatch(userGithub, serviceGithub, info, patch.description, component, prBranch)
-        )
-      )
+      patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
+    const { type, details, summary, resolution } = patch.constributionInfo
+    const Type = type.charAt(0).toUpperCase() + type.substr(1)
+    const description = `
+**Type:** ${Type}
+
+**Summary:**
+${summary}
+
+**Details:**
+${details}
+
+**Resolution:**
+${resolution}
+
+**Affected definitions**:
+${this.formatDefinitions(patch.patches)}`
+
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
       title: prBranch,
-      body: patch.description,
+      body: description,
       head: `refs/heads/${prBranch}`,
       base: branch
     })
@@ -104,6 +117,10 @@ class GitHubCurationService {
     }
     await serviceGithub.issues.createComment(comment)
     return result
+  }
+
+  formatDefinitions(definitions) {
+    return definitions.map(def => `- ${def.coordinates.name} ${Object.keys(def.revisions)[0]}`)
   }
 
   /**
