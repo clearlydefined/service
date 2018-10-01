@@ -4,21 +4,16 @@
 const crypto = require('crypto')
 const GitHubApi = require('@octokit/rest')
 const asyncMiddleware = require('./asyncMiddleware')
-const config = require('../lib/config')
 const Github = require('../lib/github')
 
-const options = {
-  headers: {
-    'user-agent': 'clearlydefined.io'
-  }
-}
+let options = null
 
 /**
  * GitHub convenience middleware that injects a client into the request object
  * that is pre-configured for the current user. Also injects a cached copy
  * of relevant teams the user is a member of.
  */
-module.exports = asyncMiddleware(async (req, res, next) => {
+const middleware = asyncMiddleware(async (req, res, next) => {
   const authHeader = req.get('authorization')
   // if there is an auth header, it had better be Bearer
   if (authHeader && !authHeader.startsWith('Bearer ')) {
@@ -26,7 +21,7 @@ module.exports = asyncMiddleware(async (req, res, next) => {
     return
   }
 
-  const serviceToken = req.app.locals.config.curation.store.github.token
+  const serviceToken = options.token
   const serviceClient = await setupServiceClient(req, serviceToken)
   const userToken = authHeader ? authHeader.split(' ')[1] : null
   const userClient = await setupUserClient(req, userToken)
@@ -53,7 +48,7 @@ async function setupUserClient(req, token) {
     return null
   }
   // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi(options)
+  const client = new GitHubApi({ headers: { 'user-agent': 'clearlydefined.io' } })
   client.authenticate({ type: 'token', token })
   req.app.locals.user = { github: { client } }
   return client
@@ -65,7 +60,7 @@ async function setupInfo(req, cacheKey, client) {
   if (!info) {
     info = await client.users.get({})
     info = { name: info.data.name, login: info.data.login, email: info.data.email }
-    await req.app.locals.cache.set(cacheKey, info, config.auth.github.timeouts.info)
+    await req.app.locals.cache.set(cacheKey, info, options.timeouts.info)
   }
   req.app.locals.user.github.info = info
 }
@@ -77,8 +72,8 @@ async function setupTeams(req, cacheKey, client) {
   // check cache for team data; hash the token so we're not storing them raw
   let teams = await req.app.locals.cache.get(cacheKey)
   if (!teams) {
-    teams = await getTeams(client, config.auth.github.org)
-    await req.app.locals.cache.set(cacheKey, teams, config.auth.github.timeouts.info)
+    teams = await getTeams(client, options.org)
+    await req.app.locals.cache.set(cacheKey, teams, options.timeouts.info)
   }
   req.app.locals.user.github.teams = teams
 }
@@ -117,4 +112,9 @@ async function getCacheKey(prefix, token) {
     .update(token)
     .digest('hex')
   return `${prefix}.${hashedToken}`
+}
+
+module.exports = authOptions => {
+  options = authOptions
+  return middleware
 }

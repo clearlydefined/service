@@ -6,21 +6,23 @@ const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 const { URL } = require('url')
 const GitHubApi = require('@octokit/rest')
-const config = require('../lib/config')
 
 const router = express.Router()
+let options = null
+let endpoints = null
 
 /**
  * If an OAuth token hasn't been configured, use a Personal Access Token
  * instead.
  */
 function passportOrPat() {
-  if (config.auth.github.clientId) {
-    return passport.authenticate('github', { session: false })
-  }
-
-  return (req, res, next) => {
-    req.user = { githubAccessToken: config.curation.store.github.token }
+  let passportAuth = null
+  return (request, response, next) => {
+    if (options.clientId) {
+      passportAuth = passportAuth || passport.authenticate('github', { session: false })
+      return passportAuth(request, response, next)
+    }
+    req.user = { githubAccessToken: options.token }
     next()
   }
 }
@@ -50,20 +52,20 @@ router.get('/github', (req, res) => {
 router.get('/github/start', passportOrPat(), (req, res) => {
   // this only runs if passport didn't kick in above, but double
   // check for sanity in case upstream changes
-  if (!config.auth.github.clientId) {
+  if (!options.clientId) {
     res.redirect('finalize')
   }
 })
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
   const token = req.user.githubAccessToken
-  const permissions = await getPermissions(token, config.auth.github.org)
+  const permissions = await getPermissions(token, options.org)
   const result = JSON.stringify({ type: 'github-token', token, permissions })
 
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
-  let origin = config.endpoints.website
-  if (config.endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
+  let origin = endpoints.website
+  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
     origin = req.cookies.localhostOrigin
   }
 
@@ -113,24 +115,27 @@ async function getPermissions(token, org) {
 }
 
 function findPermissions(team) {
-  const permissions = config.auth.github.permissions
+  const permissions = options.permissions
   for (const permission in permissions) {
     if (permissions[permission].includes(team)) return permission
   }
   return null
 }
 
-function setup() {
+function setup(authOptions, authEndpoints) {
+  options = authOptions
+  endpoints = authEndpoints
   return router
 }
 
+setup.usePassport = () => !!options.clientId
 setup.getStrategy = () => {
   return new GitHubStrategy(
     {
-      clientID: config.auth.github.clientId,
-      clientSecret: config.auth.github.clientSecret,
+      clientID: options.clientId,
+      clientSecret: options.clientSecret,
       // this needs to match the callback url on the oauth app on github
-      callbackURL: `${config.endpoints.service}/auth/github/finalize`,
+      callbackURL: `${endpoints.service}/auth/github/finalize`,
       scope: ['public_repo', 'read:user', 'read:org']
     },
     function(access, refresh, profile, done) {

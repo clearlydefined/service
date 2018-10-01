@@ -22,12 +22,11 @@ tmp.setGracefulCleanup()
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options, endpoints, definitionService) {
+  constructor(options, endpoints) {
     this.options = options
     this.endpoints = endpoints
     this.curationUpdateTime = null
     this.tempLocation = null
-    this.definitionService = definitionService
   }
 
   get tmpOptions() {
@@ -305,6 +304,10 @@ class GitHubCurationService {
     })
   }
 
+  getCurationUrl(number) {
+    return `https://github.com/${this.options.owner}/${this.options.repo}/pull/${number}`
+  }
+
   async getPrFiles(number) {
     const { owner, repo } = this.options
     const github = Github.getClient(this.options)
@@ -373,5 +376,4 @@ class GitHubCurationService {
   }
 }
 
-module.exports = (options, endpoints, definitionService) =>
-  new GitHubCurationService(options, endpoints, definitionService)
+module.exports = (options, endpoints) => new GitHubCurationService(options, endpoints)
