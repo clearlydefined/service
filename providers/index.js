@@ -7,6 +7,10 @@ module.exports = {
     file: require('../providers/stores/fileConfig').definition,
     mongo: require('../providers/stores/mongoConfig')
   },
+  attachment: {
+    azure: require('../providers/stores/azblobConfig').attachment,
+    file: require('../providers/stores/fileConfig').attachment
+  },
   search: {
     azure: require('../providers/search/azureConfig'),
     memory: require('../providers/search/memory')

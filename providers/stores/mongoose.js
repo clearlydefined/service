@@ -60,20 +60,6 @@ class MongooseStore {
     return result.toObject()
   }
 
-  /**
-   * Get the attachment object by AttachmentCoordinates.
-   * The result object contains metadata about the attachment as well as the attachment itself
-   * If a stream is given, write the content directly on the stream and close.
-   * Otherwise, return an object that represents the result.
-   *
-   * @param {AttachmentCoordinates} coordinates - The coordinates of the attachment to get
-   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
-   */
-  async getAttachment(coordinates, stream) {
-    return null
-  }
-
   store(coordinates, definition) {
     const path = definition.coordinates.toString()
     definition.coordinates = Object.assign({}, definition.coordinates)

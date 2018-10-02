@@ -11,5 +11,8 @@ function harvest(options) {
 function definition(options) {
   return require('./fileDefinitionStore')(options || { location: location + '-definition' })
 }
+function attachment(options) {
+  return require('./fileAttachmentStore')(options || { location: location + '-attachment' })
+}
 
-module.exports = { harvest, definition }
+module.exports = { harvest, definition, attachment }

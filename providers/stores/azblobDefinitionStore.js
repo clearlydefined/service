@@ -6,7 +6,6 @@ const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
 
-const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
 
 class AzBlobDefinitionStore extends AbstractAzBlobStore {
@@ -44,34 +43,6 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) =>
       this.blobService.deleteBlob(this.containerName, blobName, responseOrError(resolve, reject))
-    )
-  }
-
-  /**
-   * Get the attachment object by AttachmentCoordinates.
-   * The result object contains metadata about the attachment as well as the attachment itself
-   * If a stream is given, write the content directly on the stream and close.
-   * Otherwise, return an object that represents the result.
-   *
-   * @param {AttachmentCoordinates} coordinates - The coordinates of the attachment to get
-   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
-   */
-  async getAttachment(coordinates, stream) {
-    let name = coordinates.toString()
-    if (!name.endsWith('.json')) name += '.json'
-    if (stream)
-      return new Promise((resolve, reject) => {
-        this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject))
-      })
-    return new Promise((resolve, reject) => {
-      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
-    }).then(
-      result => JSON.parse(result),
-      error => {
-        if (error.statusCode === 404) return null
-        throw error
-      }
     )
   }
 }

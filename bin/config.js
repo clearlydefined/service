@@ -39,6 +39,9 @@ module.exports = {
   definition: {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
   },
+  attachment: {
+    store: loadFactory(config.get('ATTACHMENT_STORE_PROVIDER') || 'file', 'attachment')
+  },
   auth: {
     service: loadFactory(config.get('AUTH_PROVIDER') || 'github', 'auth')
   },

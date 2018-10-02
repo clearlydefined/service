@@ -38,6 +38,9 @@ function createApp(config) {
   const definitionStore = config.definition.store()
   initializers.push(async () => definitionStore.initialize())
 
+  const attachmentStore = config.attachment.store()
+  initializers.push(async () => attachmentStore.initialize())
+
   const searchService = config.search.service()
   initializers.push(async () => {
     await searchService.initialize()
@@ -57,7 +60,7 @@ function createApp(config) {
   curationService.definitionService = definitionService
   const definitions = require('./routes/definitions')(definitionService)
 
-  const attachments = require('./routes/attachments')(harvestStore)
+  const attachments = require('./routes/attachments')(attachmentStore)
 
   const appLogger = console // @todo add real logger
   const githubSecret = config.webhook.githubSecret

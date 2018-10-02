@@ -3,8 +3,7 @@
 
 const azure = require('azure-storage')
 const AbstractFileStore = require('./abstractFileStore')
-
-const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
+const { promisify } = require('util')
 
 class AbstractAzBlobStore {
   constructor(options) {
@@ -31,16 +30,13 @@ class AbstractAzBlobStore {
     const list = []
     let continuation = null
     do {
-      const result = await new Promise((resolve, reject) => {
-        const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
-        this.blobService.listBlobsSegmentedWithPrefix(
-          this.containerName,
-          name,
-          continuation,
-          { include: azure.BlobUtilities.BlobListingDetails.METADATA },
-          resultOrError(resolve, reject)
-        )
-      })
+      const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
+      const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix)(
+        this.containerName,
+        name,
+        continuation,
+        { include: azure.BlobUtilities.BlobListingDetails.METADATA }
+      )
       continuation = result.continuationToken
       result.entries.forEach(entry => list.push(visitor(entry)))
     } while (continuation)
@@ -53,18 +49,16 @@ class AbstractAzBlobStore {
    * @param {Coordinates} coordinates - The coordinates of the object to get
    * @returns The loaded object
    */
-  get(coordinates) {
+  async get(coordinates) {
     let name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) name += '.json'
-    return new Promise((resolve, reject) => {
-      this.blobService.getBlobToText(this.containerName, name, resultOrError(resolve, reject))
-    }).then(
-      result => JSON.parse(result),
-      error => {
-        if (error.statusCode === 404) return null
-        throw error
-      }
-    )
+    try {
+      const result = await promisify(this.blobService.getBlobToText)(this.containerName, name)
+      return JSON.parse(result)
+    } catch (error) {
+      if (error.statusCode === 404) return null
+      throw error
+    }
   }
 
   _toStoragePathFromCoordinates(coordinates) {

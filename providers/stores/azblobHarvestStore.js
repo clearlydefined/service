@@ -9,7 +9,7 @@ const { sortedUniq } = require('lodash')
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
 
-class AzBlobStore extends AbstractAzBlobStore {
+class AzHarvestBlobStore extends AbstractAzBlobStore {
   /**
    * List all of the results for the given coordinates.
    *
@@ -35,9 +35,9 @@ class AzBlobStore extends AbstractAzBlobStore {
   stream(coordinates, stream) {
     let name = this._toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) name += '.json'
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) =>
       this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject))
-    })
+    )
   }
 
   /**
@@ -51,15 +51,15 @@ class AzBlobStore extends AbstractAzBlobStore {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const list = new Promise((resolve, reject) => {
+    const list = new Promise((resolve, reject) =>
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
-    })
+    )
     const contents = list.then(files => {
       return Promise.all(
         files.entries.map(file => {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve, reject) =>
             this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
-          }).then(result => {
+          ).then(result => {
             return { name: file.name, content: JSON.parse(result) }
           })
         })
@@ -68,10 +68,8 @@ class AzBlobStore extends AbstractAzBlobStore {
     return contents.then(entries => {
       return entries.reduce((result, entry) => {
         const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
-        if (!tool || !toolVersion) {
-          // TODO: LOG HERE THERE ARE SOME BOGUS FILES HANGING AROUND
-          return result
-        }
+        // TODO: LOG HERE THERE IF THERE ARE SOME BOGUS FILES HANGING AROUND
+        if (!tool || !toolVersion) return result
         const current = (result[tool] = result[tool] || {})
         current[toolVersion] = entry.content
         return result
@@ -80,4 +78,4 @@ class AzBlobStore extends AbstractAzBlobStore {
   }
 }
 
-module.exports = options => new AzBlobStore(options)
+module.exports = options => new AzHarvestBlobStore(options)
