@@ -5,8 +5,7 @@ const AbstractAzBlobStore = require('./abstractAzblobStore')
 const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
-
-const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
+const { promisify } = require('util')
 
 class AzBlobDefinitionStore extends AbstractAzBlobStore {
   /**
@@ -26,29 +25,22 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
   }
 
   store(definition) {
-    const name = this._toStoragePathFromCoordinates(definition.coordinates) + '.json'
-    return new Promise((resolve, reject) => {
-      stream.pipe(
-        this.blobService.createBlockBlobFromText(
-          this.containerName,
-          name,
-          JSON.stringify(definition),
-          {
-            blockIdPrefix: 'block',
-            contentSettings: { contentType: 'application/json' },
-            metadata: { id: definition.coordinates.toString() }
-          },
-          responseOrError(resolve, reject)
-        )
-      )
-    })
+    const blobName = this._toStoragePathFromCoordinates(definition.coordinates) + '.json'
+    return promisify(this.blobService.createBlockBlobFromText)(
+      this.containerName,
+      blobName,
+      JSON.stringify(definition),
+      {
+        blockIdPrefix: 'block',
+        contentSettings: { contentType: 'application/json' },
+        metadata: { id: definition.coordinates.toString() }
+      }
+    )
   }
 
   delete(coordinates) {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    return new Promise((resolve, reject) =>
-      this.blobService.deleteBlob(this.containerName, blobName, responseOrError(resolve, reject))
-    )
+    return promisify(this.blobService.deleteBlob)(this.containerName, blobName)
   }
 }
 

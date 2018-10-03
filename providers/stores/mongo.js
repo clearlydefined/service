@@ -18,14 +18,11 @@ class MongoStore {
           { useNewUrlParser: true }
         )
         this.db = this.client.db(this.options.dbName)
+        this.collection = this.db.collection('definitions')
       } catch (error) {
         retry(error)
       }
     })
-  }
-
-  get definitions() {
-    return this.db.collection('definitions')
   }
 
   /**
@@ -35,8 +32,8 @@ class MongoStore {
    * @param {EntityCoordinates} coordinates
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
-  async list(coordinates, type = 'entity') {
-    const list = await this.definitionModel.find({ id: this._getId(coordinates) }, 'id')
+  async list(coordinates) {
+    const list = await this.collection.find({ id: this._getId(coordinates) }, 'id')
     return list.map(entry => entry.id)
   }
 
@@ -46,21 +43,23 @@ class MongoStore {
    * @param {Coordinates} coordinates - The coordinates of the object to get
    * @returns The loaded object
    */
-  get(coordinates, stream) {
-    return this.definitions.findOne({ id: this._getId(coordinates) }, { projection: { _id: 0, id: 0 } })
+  get(coordinates) {
+    return this.collection.findOne({ id: this._getId(coordinates) }, { projection: { _id: 0, id: 0 } })
   }
 
-  store(coordinates, definition) {
+  store(definition) {
     definition.id = this._getId(definition.coordinates)
-    return this.definitions.replaceOne({ id: definition.id }, definition, { upsert: true })
+    return this.collection.replaceOne({ id: definition.id }, definition, { upsert: true })
   }
 
   delete(coordinates) {
-    return this.definitions.deleteOne({ id: this._getId(definition.coordinates) })
+    return this.collection.deleteOne({ id: this._getId(coordinates) })
   }
 
   _getId(coordinates) {
-    return EntityCoordinates.fromObject(coordinates).toString()
+    return EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()
   }
 }
 
