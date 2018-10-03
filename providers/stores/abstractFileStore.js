@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const utils = require('../../lib/utils')
 const fs = require('fs')
 const path = require('path')
 const recursive = require('recursive-readdir')
 const { promisify } = require('util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
+const schema = require('../../schemas/definition')
 
 class AbstractFileStore {
   constructor(options) {
@@ -24,13 +24,13 @@ class AbstractFileStore {
   async list(coordinates, visitor) {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
-      return await Promise.all(
+      return (await Promise.all(
         paths.map(async path => {
           if (!this._isValidPath(path)) return null
           const data = await promisify(fs.readFile)(path)
           return data ? visitor(JSON.parse(data)) : null
         })
-      )
+      )).filter(x => x)
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []
@@ -45,7 +45,7 @@ class AbstractFileStore {
    * @returns The loaded object
    */
   async get(coordinates) {
-    const filePath = await this._getFilePath(coordinates)
+    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
     try {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result)
@@ -69,28 +69,10 @@ class AbstractFileStore {
     return AbstractFileStore.toResultCoordinatesFromStoragePath(trimmed)
   }
 
-  async _getFilePath(coordinates) {
-    const toolPath = this._toStoragePathFromCoordinates(coordinates)
-    if (coordinates.toolVersion) return toolPath + '.json'
-    const latest = await this._findLatest(toolPath)
-    if (!latest) return null
-    return path.join(toolPath, latest) + '.json'
-  }
-
-  _findLatest(filePath) {
-    return new Promise((resolve, reject) => {
-      fs.readdir(filePath, (error, list) => {
-        if (error) return reject(error)
-        const result = list.map(entry => (path.extname(entry) === '.json' ? path.basename(entry).slice(0, -5) : null))
-        resolve(utils.getLatestVersion(result.filter(e => e)))
-      })
-    })
-  }
-
   // Static helper methods shared between path-based stores
 
   static isInterestingCoordinates(coordinates) {
-    return ['gem', 'git', 'npm', 'maven', 'sourcearchive', 'nuget', 'pypi'].includes(coordinates.type)
+    return schema.definitions.type.enum.includes(coordinates.type)
   }
 
   static toResultCoordinatesFromStoragePath(path) {

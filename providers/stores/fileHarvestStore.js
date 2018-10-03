@@ -30,7 +30,7 @@ class FileHarvestStore extends AbstractFileStore {
    * @param {WriteStream} [stream] - The stream onto which the output is written
    */
   async stream(coordinates, stream) {
-    const filePath = await this._getFilePath(coordinates)
+    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
     return new Promise((resolve, reject) => {
       const read = fs.createReadStream(filePath)
       read.on('end', () => resolve(null))

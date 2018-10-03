@@ -17,22 +17,27 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
    */
   async list(coordinates) {
     const list = await super.list(coordinates, entry => {
-      const urn = entry.metadata.urn
-      if (!urn) return null
-      const entryCoordinates = EntityCoordinates.fromUrn(urn)
-      return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
+      const path = entry.metadata.id
+      if (!path) return null
+      const entryCoordinates = EntityCoordinates.fromString(path)
+      return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? path : null
     })
     return sortedUniq(list.filter(x => x))
   }
 
-  store(coordinates, stream) {
-    const name = this._toStoragePathFromCoordinates(coordinates) + '.json'
+  store(definition) {
+    const name = this._toStoragePathFromCoordinates(definition.coordinates) + '.json'
     return new Promise((resolve, reject) => {
       stream.pipe(
-        this.blobService.createWriteStreamToBlockBlob(
+        this.blobService.createBlockBlobFromText(
           this.containerName,
           name,
-          { blockIdPrefix: 'block', contentSettings: { contentType: 'application/json' } },
+          JSON.stringify(definition),
+          {
+            blockIdPrefix: 'block',
+            contentSettings: { contentType: 'application/json' },
+            metadata: { id: definition.coordinates.toString() }
+          },
           responseOrError(resolve, reject)
         )
       )

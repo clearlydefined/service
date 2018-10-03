@@ -40,8 +40,7 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-    const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
+    const existing = force ? null : await this.definitionStore.get(coordinates)
     const result = get(existing, 'schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
     return this._cast(result)
   }
@@ -97,9 +96,8 @@ class DefinitionService {
     return Promise.all(
       coordinateList.map(
         throat(10, async coordinates => {
-          const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            return this.definitionStore.delete(definitionCoordinates)
+            return this.definitionStore.delete(coordinates)
           } catch (error) {
             if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
           }
@@ -118,13 +116,12 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) return definition
-    await this._store(coordinates, definition)
+    await this._store(definition)
     return definition
   }
 
-  async _store(coordinates, definition) {
-    const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-    await this.definitionStore.store(definitionCoordinates, definition)
+  async _store(definition) {
+    await this.definitionStore.store(definition)
     return this.search.store(definition)
   }
 

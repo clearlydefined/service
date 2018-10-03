@@ -41,25 +41,22 @@ class MongoStore {
   }
 
   /**
-   * Get the results of running the tool specified in the coordinates on the entty specified
-   * in the coordinates. If a stream is given, write the content directly on the stream and close.
-   * Otherwise, return an object that represents the result.
+   * Get and return the object at the given coordinates.
    *
-   * @param {ResultCoordinates} coordinates - The coordinates of the result to get
-   * @param {WriteStream} [stream] - The stream onto which the output is written, if specified
-   * @returns The result object if no stream is specified, otherwise the return value is unspecified.
+   * @param {Coordinates} coordinates - The coordinates of the object to get
+   * @returns The loaded object
    */
   get(coordinates, stream) {
     return this.definitions.findOne({ id: this._getId(coordinates) }, { projection: { _id: 0, id: 0 } })
   }
 
   store(coordinates, definition) {
-    definition.id = definition.id || definition.coordinates.toString()
+    definition.id = this._getId(definition.coordinates)
     return this.definitions.replaceOne({ id: definition.id }, definition, { upsert: true })
   }
 
   delete(coordinates) {
-    return this.definitions.deleteOne({ id: definition.coordinates.toString() })
+    return this.definitions.deleteOne({ id: this._getId(definition.coordinates) })
   }
 
   _getId(coordinates) {

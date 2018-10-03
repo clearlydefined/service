@@ -82,25 +82,6 @@ paths:
       responses:
         201:
           description: Harvested file has been accepted.
-  /harvest/status:
-    post:
-      summary: Request the creation of a resoruce that is the summary of all harvested data available for the components outlined in the POST body
-      tags:
-        - harvest
-      requestBody:
-        description: List of components to report on.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/bodies/componentList'
-      responses:
-        200:
-          description: Status request has been accepted.
-          content:
-            application/json:
-              schema:
-                $ref: '#components/bodies/outputSummaryList'
 
   /harvest/{type}/{provider}/{namespace}/{name}/{revision}:
     get:

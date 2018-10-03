@@ -12,12 +12,10 @@ class AbstractAzBlobStore {
   }
 
   async initialize() {
-    const blobService = azure
+    this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
-    Object.defineProperty(this, 'blobService', { value: blobService, writable: false, configurable: true })
-    this.blobService.createContainerIfNotExists(this.containerName, () => {})
-    return this.blobService
+    return promisify(this.blobService.createContainerIfNotExists)(this.containerName)
   }
 
   /**
@@ -62,7 +60,8 @@ class AbstractAzBlobStore {
   }
 
   _toStoragePathFromCoordinates(coordinates) {
-    return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
+    const storageCoordinates = Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
+    return AbstractFileStore.toStoragePathFromCoordinates(storageCoordinates)
   }
 
   _toResultCoordinatesFromStoragePath(path) {

@@ -11,12 +11,10 @@ class AzBlobAttachmentStore {
   }
 
   async initialize() {
-    const blobService = azure
+    this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
-    Object.defineProperty(this, 'blobService', { value: blobService, writable: false, configurable: true })
-    await promisify(this.blobService.createContainerIfNotExists)(this.containerName)
-    return this.blobService
+    return promisify(this.blobService.createContainerIfNotExists)(this.containerName)
   }
 
   /**

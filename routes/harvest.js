@@ -90,18 +90,6 @@ router.get(
   })
 )
 
-// post a request to create a resoruce that is the summary of all harvested data available for
-// the components outlined in the POST body
-// router.post(
-//   '/status',
-//   bodyParser.json(),
-//   asyncMiddleware(async (request, response) => {
-//     const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-//     const result = await harvestStore.listAll(coordinatesList, 'result')
-//     response.status(200).send(result)
-//   })
-// )
-
 // Post a (set of) component to be harvested
 router.post(
   '/',
