@@ -33,7 +33,8 @@ class MongoStore {
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   async list(coordinates) {
-    const list = await this.collection.find({ id: this._getId(coordinates) }, 'id')
+    // TODO protect this regex from DoS attacks
+    const list = await this.collection.find({ id: new RegExp('^' + this._getId(coordinates)) }, 'id')
     return list.map(entry => entry.id)
   }
 
@@ -47,13 +48,15 @@ class MongoStore {
     return this.collection.findOne({ id: this._getId(coordinates) }, { projection: { _id: 0, id: 0 } })
   }
 
-  store(definition) {
+  async store(definition) {
     definition.id = this._getId(definition.coordinates)
-    return this.collection.replaceOne({ id: definition.id }, definition, { upsert: true })
+    await this.collection.replaceOne({ id: definition.id }, definition, { upsert: true })
+    return null
   }
 
-  delete(coordinates) {
-    return this.collection.deleteOne({ id: this._getId(coordinates) })
+  async delete(coordinates) {
+    await this.collection.deleteOne({ id: this._getId(coordinates) })
+    return null
   }
 
   _getId(coordinates) {

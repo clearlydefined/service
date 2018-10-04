@@ -4,6 +4,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// TODO remove this file
+
 class MongooseStore {
   constructor(options) {
     throw new Error('dont use this yet. Not sure we need it')

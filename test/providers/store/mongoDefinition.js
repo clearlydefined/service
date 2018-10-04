@@ -80,10 +80,10 @@ function createDefinition(coordinates) {
 function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async (filter, projection) => {
-      name = filter.id
-      if (name.includes('error')) throw new Error('test error')
+      const regex = filter.id
+      if (regex.toString().includes('error')) throw new Error('test error')
       return Object.keys(data)
-        .map(key => (key.startsWith(name) ? data[key] : null))
+        .map(key => (regex.exec(key) ? data[key] : null))
         .filter(e => e)
     }),
     findOne: sinon.stub().callsFake(async (filter, projection) => {

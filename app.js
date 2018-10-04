@@ -42,11 +42,7 @@ function createApp(config) {
   initializers.push(async () => attachmentStore.initialize())
 
   const searchService = config.search.service()
-  initializers.push(async () => {
-    await searchService.initialize()
-    // Bit of trick for local hosting. Preload search if using an in-memory search service
-    if (searchService.constructor.name === 'MemorySearch') definitionService.reload('definitions')
-  })
+  initializers.push(async () => searchService.initialize())
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
@@ -133,6 +129,8 @@ function createApp(config) {
   requestHandler.init = async (app, callback) => {
     Promise.all(initializers.map(init => init())).then(
       () => {
+        // Bit of trick for local hosting. Preload search if using an in-memory search service
+        if (searchService.constructor.name === 'MemorySearch') definitionService.reload('definitions')
         console.log('Service initialized')
         // call the callback but with no args.  An arg indicates an error.
         callback()
