@@ -128,11 +128,11 @@ function createApp(config) {
   // Attach the init code to any request handler
   requestHandler.init = async (app, callback) => {
     Promise.all(initializers.map(init => init())).then(
-      () => {
+      async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
-        if (searchService.constructor.name === 'MemorySearch') definitionService.reload('definitions')
+        if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
         console.log('Service initialized')
-        // call the callback but with no args.  An arg indicates an error.
+        // Signal system is up and ok (no error)
         callback()
       },
       error => {

@@ -37,10 +37,7 @@ router.get('/github', (req, res) => {
   if (referrer) {
     try {
       const url = new URL(referrer)
-
-      if (url.hostname === 'localhost') {
-        res.cookie('localhostOrigin', url.origin)
-      }
+      if (url.hostname === 'localhost') res.cookie('localhostOrigin', url.origin)
     } catch (err) {
       console.warn('Referrer parsing error, ignoring', err)
     }
@@ -52,9 +49,7 @@ router.get('/github', (req, res) => {
 router.get('/github/start', passportOrPat(), (req, res) => {
   // this only runs if passport didn't kick in above, but double
   // check for sanity in case upstream changes
-  if (!options.clientId) {
-    res.redirect('finalize')
-  }
+  if (!options.clientId) res.redirect('finalize')
 })
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
@@ -66,9 +61,7 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
   let origin = endpoints.website
-  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
-    origin = req.cookies.localhostOrigin
-  }
+  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) origin = req.cookies.localhostOrigin
 
   // passing in the 'website' endpoint below is very important;
   // using '*' instead means this page will gladly send out a
@@ -98,18 +91,16 @@ async function getPermissions(token, org) {
       .map(findPermissions)
       .filter(e => e)
   } catch (error) {
-    if (error.code === 404) {
+    if (error.code === 404)
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
           'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
-    } else if (error.code === 401 && error.message === 'Bad credentials') {
+    else if (error.code === 401 && error.message === 'Bad credentials')
       // the token was bad. trickle up the problem so the user can fix
       throw error
-    } else {
-      // XXX: Better logging situation?
-      console.error(error)
-    }
+    // XXX: Better logging situation?
+    else console.error(error)
     // in all other error cases assume the user has no teams. If they do then they can try again after the timeout
     return []
   }
@@ -117,9 +108,7 @@ async function getPermissions(token, org) {
 
 function findPermissions(team) {
   const permissions = options.permissions
-  for (const permission in permissions) {
-    if (permissions[permission].includes(team)) return permission
-  }
+  for (const permission in permissions) if (permissions[permission].includes(team)) return permission
   return null
 }
 
@@ -139,10 +128,9 @@ setup.getStrategy = () => {
       callbackURL: `${endpoints.service}/auth/github/finalize`,
       scope: ['public_repo', 'read:user', 'read:org']
     },
-    function(access, refresh, profile, done) {
+    (access, refresh, profile, done) =>
       // this only lives for one request; see the 'finalize' endpoint
       done(null, { githubAccessToken: access, username: profile.username })
-    }
   )
 }
 

@@ -13,8 +13,8 @@ const authOptions = {
     info: 10 * 60 // 10 mins
   },
   permissions: {
-    harvest: [config.get('AUTH_HARVEST_TEAM')].filter(e => e),
-    curate: [config.get('AUTH_CURATION_TEAM')].filter(e => e)
+    harvest: [config.get('AUTH_HARVEST_TEAM') || 'harvest-dev'],
+    curate: [config.get('AUTH_CURATION_TEAM'), 'curation-dev']
   }
 }
 

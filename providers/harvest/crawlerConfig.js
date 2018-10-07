@@ -7,7 +7,7 @@ const crawler = require('./crawler')
 function serviceFactory(options, endpoints) {
   const realOptions = options || {
     authToken: config.get('CRAWLER_SERVICE_AUTH_TOKEN'),
-    url: config.get('CRAWLER_SERVICE_URL')
+    url: config.get('CRAWLER_SERVICE_URL') || 'http://localhost:5000'
   }
   return crawler(realOptions)
 }
