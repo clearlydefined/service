@@ -25,7 +25,7 @@ class AzBlobAttachmentStore {
    */
   async get(key) {
     try {
-      const name = key + '.json'
+      const name = 'attachment/' + key + '.json'
       const result = await promisify(this.blobService.getBlobToText)(this.containerName, name)
       return JSON.parse(result).attachment
     } catch (error) {

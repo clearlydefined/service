@@ -30,9 +30,9 @@ describe('AzureAttachmentStore list definitions', () => {
 })
 
 const data = {
-  '42.json': JSON.stringify({ attachment: '42 attachment' }),
-  '4.json': JSON.stringify({ attachment: '4 attachment' }),
-  '1.json': JSON.stringify({ attachment: '1 attachment' })
+  'attachment/42.json': JSON.stringify({ attachment: '42 attachment' }),
+  'attachment/4.json': JSON.stringify({ attachment: '4 attachment' }),
+  'attachment/1.json': JSON.stringify({ attachment: '1 attachment' })
 }
 
 function createStore() {
