@@ -34,8 +34,8 @@ class MongoStore {
    */
   async list(coordinates) {
     // TODO protect this regex from DoS attacks
-    const list = await this.collection.find({ id: new RegExp('^' + this._getId(coordinates)) }, 'id')
-    return list.map(entry => entry.id)
+    const list = await this.collection.find({ _id: new RegExp('^' + this._getId(coordinates)) }, '_id')
+    return list.map(entry => entry._id)
   }
 
   /**
@@ -45,17 +45,17 @@ class MongoStore {
    * @returns The loaded object
    */
   get(coordinates) {
-    return this.collection.findOne({ id: this._getId(coordinates) }, { projection: { _id: 0, id: 0 } })
+    return this.collection.findOne({ _id: this._getId(coordinates) }, { projection: { _id: 0 } })
   }
 
   async store(definition) {
-    definition.id = this._getId(definition.coordinates)
-    await this.collection.replaceOne({ id: definition.id }, definition, { upsert: true })
+    definition._id = this._getId(definition.coordinates)
+    await this.collection.replaceOne({ _id: definition._id }, definition, { upsert: true })
     return null
   }
 
   async delete(coordinates) {
-    await this.collection.deleteOne({ id: this._getId(coordinates) })
+    await this.collection.deleteOne({ _id: this._getId(coordinates) })
     return null
   }
 
