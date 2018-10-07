@@ -34,7 +34,9 @@ class MongoStore {
    */
   async list(coordinates) {
     // TODO protect this regex from DoS attacks
-    const list = await this.collection.find({ _id: new RegExp('^' + this._getId(coordinates)) }, '_id')
+    const list = await this.collection
+      .find({ _id: new RegExp('^' + this._getId(coordinates)) }, { projection: { _id: 1 } })
+      .toArray()
     return list.map(entry => entry._id)
   }
 
@@ -60,6 +62,7 @@ class MongoStore {
   }
 
   _getId(coordinates) {
+    if (!coordinates) return ''
     return EntityCoordinates.fromObject(coordinates)
       .toString()
       .toLowerCase()
