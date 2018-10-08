@@ -1,11 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-// TODO consider putting this in for real
-process.on('unhandledRejection', (reason, p) => {
-  throw reason
-})
-
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
