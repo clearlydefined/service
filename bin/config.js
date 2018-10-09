@@ -58,7 +58,7 @@ module.exports = {
   },
   webhook: {
     githubSecret: config.get('WEBHOOK_GITHUB_SECRET'),
-    crawlerSecret: config.get('CRAWLER_WEBHOOK_SECRET') || 'secret'
+    crawlerSecret: config.get('WEBHOOK_CRAWLER_SECRET') || 'secret'
   },
   search: {
     service: loadFactory(config.get('SEARCH_PROVIDER') || 'memory', 'search')
