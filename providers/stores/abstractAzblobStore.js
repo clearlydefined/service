@@ -15,7 +15,7 @@ class AbstractAzBlobStore {
     this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
-    return promisify(this.blobService.createContainerIfNotExists)(this.containerName)
+    return promisify(this.blobService.createContainerIfNotExists).bind(this.blobService)(this.containerName)
   }
 
   /**

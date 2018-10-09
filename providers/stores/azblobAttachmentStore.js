@@ -14,7 +14,7 @@ class AzBlobAttachmentStore {
     this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
-    return promisify(this.blobService.createContainerIfNotExists)(this.containerName)
+    return promisify(this.blobService.createContainerIfNotExists).bind(this.blobService)(this.containerName)
   }
 
   /**
@@ -26,7 +26,7 @@ class AzBlobAttachmentStore {
   async get(key) {
     try {
       const name = 'attachment/' + key + '.json'
-      const result = await promisify(this.blobService.getBlobToText)(this.containerName, name)
+      const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
       return JSON.parse(result).attachment
     } catch (error) {
       if (error.statusCode === 404) return null
