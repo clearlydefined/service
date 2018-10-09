@@ -3,7 +3,7 @@
 
 const Readable = require('stream').Readable
 const throat = require('throat')
-const { get, set, union, remove, pullAllWith, isEqual } = require('lodash')
+const { get, set, sortedUniq, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -40,9 +40,8 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-    const existing = force ? null : await this.definitionStore.get(definitionCoordinates)
-    const result = get(existing, 'schema') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    const existing = force ? null : await this.definitionStore.get(coordinates)
+    const result = get(existing, 'schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
     return this._cast(result)
   }
 
@@ -79,12 +78,11 @@ class DefinitionService {
    * @returns {String[]} the list of all coordinates for all discovered definitions
    */
   async list(coordinates, recompute = false) {
-    if (recompute) {
-      const curated = await this.curationService.list(coordinates)
-      const harvest = await this.harvestService.list(coordinates)
-      return union(harvest, curated)
-    }
-    return this.definitionStore.list(coordinates)
+    if (!recompute) return this.definitionStore.list(coordinates)
+    const curated = await this.curationService.list(coordinates)
+    const tools = await this.harvestService.list(coordinates)
+    const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
+    return sortedUniq([...harvest, ...curated])
   }
 
   /**
@@ -98,9 +96,8 @@ class DefinitionService {
     return Promise.all(
       coordinateList.map(
         throat(10, async coordinates => {
-          const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
           try {
-            return this.definitionStore.delete(definitionCoordinates)
+            return this.definitionStore.delete(coordinates)
           } catch (error) {
             if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
           }
@@ -119,16 +116,12 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) return definition
-    await this._store(coordinates, definition)
+    await this._store(definition)
     return definition
   }
 
-  async _store(coordinates, definition) {
-    const stream = new Readable()
-    stream.push(JSON.stringify(definition, null, 2))
-    stream.push(null) // end of stream
-    const definitionCoordinates = this._getDefinitionCoordinates(coordinates)
-    await this.definitionStore.store(definitionCoordinates, stream)
+  async _store(definition) {
+    await this.definitionStore.store(definition)
     return this.search.store(definition)
   }
 
@@ -146,6 +139,7 @@ class DefinitionService {
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
+    aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition)
@@ -194,8 +188,7 @@ class DefinitionService {
   _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    this._ensureCoordinates(coordinates, definition)
-    definition.schema = currentSchema
+    definition.schemaVersion = currentSchema
   }
 
   // Given a definition, calculate the scores for the definition and return an object with a score per dimension
@@ -331,10 +324,6 @@ class DefinitionService {
       return result
     }, new Set())
     return setToArray(set)
-  }
-
-  _ensureCoordinates(coordinates, definition) {
-    definition.coordinates = EntityCoordinates.fromObject(coordinates)
   }
 
   _ensureDescribed(definition) {

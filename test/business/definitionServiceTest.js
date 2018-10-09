@@ -19,7 +19,6 @@ describe('Definition Service', () => {
     await service.invalidate(coordinates)
     expect(service.definitionStore.delete.calledOnce).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(service.definitionStore.delete.getCall(0).args[0].tool).to.be.eq('definition')
   })
 
   it('invalidates array of coordinates', async () => {

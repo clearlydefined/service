@@ -17,7 +17,7 @@ router.get(
     switch ((request.query.form || 'summary').toLowerCase()) {
       case 'streamed':
       case 'raw': {
-        const result = await harvestStore.get(coordinates, response)
+        const result = await harvestStore.stream(coordinates, response)
         // some harvest services will stream on the response and trigger sending
         return response.headersSent ? null : response.status(200).send(result)
       }
@@ -87,18 +87,6 @@ router.get(
     const coordinates = utils.toResultCoordinatesFromRequest(request)
     const result = await harvestStore.list(coordinates)
     return response.status(200).send(result)
-  })
-)
-
-// post a request to create a resoruce that is the summary of all harvested data available for
-// the components outlined in the POST body
-router.post(
-  '/status',
-  bodyParser.json(),
-  asyncMiddleware(async (request, response) => {
-    const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-    const result = await harvestStore.listAll(coordinatesList, 'result')
-    response.status(200).send(result)
   })
 )
 
