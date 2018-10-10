@@ -60,8 +60,7 @@ class AbstractAzBlobStore {
   }
 
   _toStoragePathFromCoordinates(coordinates) {
-    const storageCoordinates = Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
-    return AbstractFileStore.toStoragePathFromCoordinates(storageCoordinates)
+    return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }
 
   _toResultCoordinatesFromStoragePath(path) {
