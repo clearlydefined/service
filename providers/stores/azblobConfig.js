@@ -10,7 +10,7 @@ const attachmentConnectionString = config.get('ATTACHMENT_AZBLOB_CONNECTION_STRI
 const attachmentContainerName = config.get('ATTACHMENT_AZBLOB_CONTAINER_NAME') || harvestContainerName
 
 function harvest(options) {
-  require('./azblobHarvestStore')(
+  return require('./azblobHarvestStore')(
     options || {
       connectionString: harvestConnectionString,
       containerName: harvestContainerName
@@ -19,7 +19,7 @@ function harvest(options) {
 }
 
 function definition(options) {
-  require('./azblobDefinitionStore')(
+  return require('./azblobDefinitionStore')(
     options || {
       connectionString: definitionConnectionString,
       containerName: definitionContainerName
@@ -28,7 +28,7 @@ function definition(options) {
 }
 
 function attachment(options) {
-  require('./azblobAttachmentStore')(
+  return require('./azblobAttachmentStore')(
     options || {
       connectionString: attachmentConnectionString,
       containerName: attachmentContainerName

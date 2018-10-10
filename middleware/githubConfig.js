@@ -27,4 +27,4 @@ function route(options, endpoints) {
   return githubRoute(options || authOptions, endpoints)
 }
 
-module.exports = { middleware, route }
+module.exports = { middleware, route, authOptions }
