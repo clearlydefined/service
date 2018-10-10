@@ -66,16 +66,14 @@ describe('azblob Definition store', () => {
     const store = createStore()
     await store.store(definition)
     expect(store.blobService.createBlockBlobFromText.callCount).to.eq(1)
-    expect(store.blobService.createBlockBlobFromText.args[0][1]).to.eq(
-      'npm/npmjs/-/foo/revision/1.0/tool/definition/1.json'
-    )
+    expect(store.blobService.createBlockBlobFromText.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
     expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0/tool/definition/1.json')
+    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('gets a definition', async () => {

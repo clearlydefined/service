@@ -34,10 +34,11 @@ class MongoStore {
    */
   async list(coordinates) {
     // TODO protect this regex from DoS attacks
-    const list = await this.collection
-      .find({ _id: new RegExp('^' + this._getId(coordinates)) }, { projection: { _id: 1 } })
-      .toArray()
-    return list.map(entry => entry._id)
+    const list = await this.collection.find(
+      { _id: new RegExp('^' + this._getId(coordinates)) },
+      { projection: { _id: 1 } }
+    )
+    return (await list.toArray()).map(entry => entry._id)
   }
 
   /**

@@ -8,8 +8,8 @@ const EntityCoordinates = require('../../../lib/entityCoordinates')
 
 describe('Mongo Definition store', () => {
   const data = {
-    'npm/npmjs/-/co/4.6.0': { id: 'npm/npmjs/-/Co/4.6.0' },
-    'npm/npmjs/-/co/4.6.1': { id: 'npm/npmjs/-/Co/4.6.1' }
+    'npm/npmjs/-/co/4.6.0': createDefinition('npm/npmjs/-/Co/4.6.0'),
+    'npm/npmjs/-/co/4.6.1': createDefinition('npm/npmjs/-/Co/4.6.1')
   }
 
   it('throws original error', async () => {
@@ -51,14 +51,14 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.store(definition)
     expect(store.collection.replaceOne.callCount).to.eq(1)
-    expect(store.collection.replaceOne.args[0][0].id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.replaceOne.args[0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
     expect(store.collection.deleteOne.callCount).to.eq(1)
-    expect(store.collection.deleteOne.args[0][0].id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.deleteOne.args[0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
   })
 
   it('gets a definition', async () => {
@@ -74,20 +74,27 @@ describe('Mongo Definition store', () => {
 })
 
 function createDefinition(coordinates) {
-  return { coordinates: EntityCoordinates.fromString(coordinates) }
+  coordinates = EntityCoordinates.fromString(coordinates)
+  return { coordinates, _id: coordinates.toString() }
 }
 
 function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async (filter, projection) => {
-      const regex = filter.id
+      const regex = filter._id
       if (regex.toString().includes('error')) throw new Error('test error')
-      return Object.keys(data)
-        .map(key => (regex.exec(key) ? data[key] : null))
-        .filter(e => e)
+      // return an object that mimics a Mongo cursor (i.e., has toArray)
+      return {
+        toArray: () => {
+          const result = Object.keys(data)
+            .map(key => (regex.exec(key) ? data[key] : null))
+            .filter(e => e)
+          return result
+        }
+      }
     }),
     findOne: sinon.stub().callsFake(async (filter, projection) => {
-      name = filter.id
+      name = filter._id
       if (name.includes('error')) throw new Error('test error')
       if (data[name]) return data[name]
       throw new Error('not found')
