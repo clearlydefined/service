@@ -35,7 +35,7 @@ const { flattenDeep, set } = require('lodash')
 class AggregationService {
   constructor(options) {
     this.options = options
-    // we take the configured precedence exoected to be highest first
+    // we take the configured precedence expected to be highest first
     this.workingPrecedence =
       options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
   }

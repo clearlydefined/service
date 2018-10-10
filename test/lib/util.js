@@ -90,23 +90,14 @@ describe('Utils mergeDefinitions', () => {
 
 describe('Utils isLicenseFile', () => {
   it('should detect root level license files', () => {
-    const inputs = [
-      'LICENSE',
-      'license',
-      'License.txt',
-      'LICENSE.md',
-      'LICENSE.HTML',
-    ]
+    const inputs = ['LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML']
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.true
     }
   })
 
   it('should not detect nested license files without coordinates', () => {
-    const inputs = [
-      'package/LICENSE',
-      'licenses/license',
-    ]
+    const inputs = ['package/LICENSE', 'licenses/license']
 
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.false
@@ -119,10 +110,23 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML',
+      'package/LICENSE.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.true
+    }
+  })
+
+  it('should detect package level license files for mavens', () => {
+    const inputs = [
+      'meta-inf/LICENSE',
+      'meta-inf/license',
+      'meta-inf/License.txt',
+      'meta-inf/LICENSE.md',
+      'meta-inf/LICENSE.HTML'
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.true
     }
   })
 
@@ -132,7 +136,7 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML',
+      'package/LICENSE.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'nuget' }), `input: ${input}`).to.be.false
@@ -145,10 +149,23 @@ describe('Utils isLicenseFile', () => {
       'package/deeper/license',
       'deeper/package/License.txt',
       '.package/LICENSE.md',
-      'package2/LICENSE.HTML',
+      'package2/LICENSE.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.false
+    }
+  })
+
+  it('should not detect random folder license files for mavens', () => {
+    const inputs = [
+      'foobar/LICENSE',
+      'package/deeper/license',
+      'deeper/package/License.txt',
+      '.package/LICENSE.md',
+      'package2/LICENSE.HTML'
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.false
     }
   })
 

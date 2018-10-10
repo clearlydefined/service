@@ -65,7 +65,7 @@ class ClearlyDescribedSummarizer {
   addLicenseFromFiles(result, data, coordinates) {
     if (!data.interestingFiles) return
     const licenses = data.interestingFiles
-      .map(file => file.license != 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null)
+      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
       .filter(x => x)
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
