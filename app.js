@@ -18,6 +18,9 @@ const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'))
 
 function createApp(config) {
   const initializers = []
+
+  config.auth.service.permissionsSetup()
+
   const summaryService = require('./business/summarizer')(config.summary)
 
   const harvestStore = config.harvest.store()
@@ -81,12 +84,12 @@ function createApp(config) {
   app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook)
 
   // OAuth app initialization; skip if not configured (middleware can cope)
-  const authRoute = config.auth.service.route(null, config.endpoints)
-  if (authRoute.usePassport) {
-    passport.use(authRoute.getStrategy())
+  const auth = config.auth.service.route(null, config.endpoints)
+  if (auth.usePassport()) {
+    passport.use(auth.getStrategy())
     app.use(passport.initialize())
   }
-  app.use('/auth', authRoute)
+  app.use('/auth', auth.router)
   app.use(config.auth.service.middleware())
 
   // rate-limit the remaining routes

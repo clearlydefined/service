@@ -5,9 +5,8 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const minimatch = require('minimatch')
 const utils = require('../lib/utils')
-const EntityCoordinates = require('../lib/entityCoordinates')
 const bodyParser = require('body-parser')
-const { permissionCheck } = require('../middleware/permissions')
+const { middlewareFactory } = require('../middleware/permissions')
 
 // Gets a given harvested file
 router.get(
@@ -93,7 +92,7 @@ router.get(
 // Post a (set of) component to be harvested
 router.post(
   '/',
-  permissionCheck('harvest'),
+  middlewareFactory('harvest'),
   bodyParser.json(),
   asyncMiddleware(async (request, response) => {
     await harvestService.harvest(request.body)

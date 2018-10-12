@@ -1,17 +1,15 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('../bin/config')
-
 /**
  * Middleware that checks for team membership.
  *
  * Usage: `app.get('/some/route', teamCheck('harvesters'), (req, res) => ...)`
  */
-function permissionCheck(permission) {
+function middlewareFactory(permission) {
   return (req, res, next) => {
     const userTeams = req.app.locals.user.github.teams
-    const requiredTeams = config.auth.service.authOptions.permissions[permission] // whew!
+    const requiredTeams = permissions[permission]
     const intersection = requiredTeams.filter(t => userTeams.includes(t))
     if (requiredTeams.length === 0 || intersection.length > 0) {
       next()
@@ -23,6 +21,10 @@ function permissionCheck(permission) {
   }
 }
 
-module.exports = {
-  permissionCheck
+let permissions
+
+function setup(permissionsOptions) {
+  permissions = permissionsOptions
 }
+
+module.exports = { setup, middlewareFactory }

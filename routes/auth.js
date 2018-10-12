@@ -115,11 +115,13 @@ function findPermissions(team) {
 function setup(authOptions, authEndpoints) {
   options = authOptions
   endpoints = authEndpoints
-  return router
 }
 
-setup.usePassport = () => !!options.clientId
-setup.getStrategy = () => {
+function usePassport() {
+  return !!options.clientId
+}
+
+function getStrategy() {
   return new GitHubStrategy(
     {
       clientID: options.clientId,
@@ -134,4 +136,4 @@ setup.getStrategy = () => {
   )
 }
 
-module.exports = setup
+module.exports = { setup, router, usePassport, getStrategy }
