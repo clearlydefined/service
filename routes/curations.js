@@ -69,7 +69,7 @@ router.patch(
       return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
         response.status(200).send({
           prNumber: result.data.number,
-          url: this.curationService.getCurationUrl(result.data.number)
+          url: curationService.getCurationUrl(result.data.number)
         })
       )
   })
