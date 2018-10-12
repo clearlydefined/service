@@ -22,7 +22,7 @@ function passportOrPat() {
       passportAuth = passportAuth || passport.authenticate('github', { session: false })
       return passportAuth(request, response, next)
     }
-    req.user = { githubAccessToken: options.token }
+    request.user = { githubAccessToken: options.token }
     next()
   }
 }
