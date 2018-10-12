@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, first, flatten, uniq } = require('lodash')
-const { extractDate, setIfValue, addArrayToSet, setToArray } = require('../../lib/utils')
+const { get, flatten, uniq } = require('lodash')
+const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -21,7 +21,7 @@ class ScanCodeSummarizer {
     const result = {}
     this.addDescribedInfo(result, harvested)
     const declaredLicense =
-      this._summarizeDeclaredLicenseInfo(harvested.content.files) || this._summarizePackageInfo(harvested.content.files)
+      this._summarizeDeclaredLicenseInfo(harvested.content.files, coordinates) || this._summarizePackageInfo(harvested.content.files)
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files)
     return result
@@ -32,12 +32,9 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _summarizeDeclaredLicenseInfo(files) {
+  _summarizeDeclaredLicenseInfo(files, coordinates) {
     for (let file of files) {
-      const pathArray = file.path.split('/')
-      const baseName = first(pathArray)
-      const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(baseName.toLowerCase())
-      if (isLicense && file.licenses) {
+      if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
         const declaredLicenses = addArrayToSet(file.licenses, new Set(), license => license.spdx_license_key)
         return this._toExpression(declaredLicenses)

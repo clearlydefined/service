@@ -57,7 +57,7 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
-  it('skips directory entries', () => {
+  it('skips foo directory entries', () => {
     const { coordinates, harvested } = setup([buildDirectory('foo'), buildFile('foo/LICENSE.md', 'GPL', [])])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -80,6 +80,28 @@ describe('ScanCode summarizer', () => {
     expect(summary.files[0].attributions).to.be.undefined
     expect(summary.files[0].path).to.equal('foo/LICENSE.md')
     expect(summary.files[0].license).to.equal('MIT')
+  })
+
+  it('detects npm license file in package folder', () => {
+    const { coordinates, harvested } = setup([buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL', [])], 'npm/npmjs/-/test/1.0')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(1)
+    expect(summary.licensed.declared).to.be.equal('GPL')
+    expect(summary.files[0].attributions).to.be.undefined
+    expect(summary.files[0].path).to.equal('package/LICENSE.md')
+    expect(summary.files[0].license).to.equal('GPL')
+  })
+
+  it('skips nuget license file in package folder', () => {
+    const { coordinates, harvested } = setup([buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL', [])], 'nuget/nuget/-/test/1.0')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(1)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.files[0].attributions).to.be.undefined
+    expect(summary.files[0].path).to.equal('package/LICENSE.md')
+    expect(summary.files[0].license).to.equal('GPL')
   })
 
   it('handles scan with asserted license file even in a subdirectory', () => {
