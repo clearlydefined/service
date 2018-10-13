@@ -3,14 +3,10 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const Github = require('../lib/github')
+const { get } = require('lodash')
 
 function getClient(request) {
-  // return request.user.github.client;
-  // TODO reaching in and using the curation token for right now. When the GitHub Auth work is done
-  // delete the code below and uncomment the line above.
-  const token = request.app.locals.config.curation.store.github.token
-  return Github.getClient({ token })
+  return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
 }
 
 router.get(

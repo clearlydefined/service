@@ -6,21 +6,23 @@ const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 const { URL } = require('url')
 const GitHubApi = require('@octokit/rest')
-const config = require('../lib/config')
 
 const router = express.Router()
+let options = null
+let endpoints = null
 
 /**
  * If an OAuth token hasn't been configured, use a Personal Access Token
  * instead.
  */
 function passportOrPat() {
-  if (config.auth.github.clientId) {
-    return passport.authenticate('github', { session: false })
-  }
-
-  return (req, res, next) => {
-    req.user = { githubAccessToken: config.curation.store.github.token }
+  let passportAuth = null
+  return (request, response, next) => {
+    if (options.clientId) {
+      passportAuth = passportAuth || passport.authenticate('github', { session: false })
+      return passportAuth(request, response, next)
+    }
+    request.user = { githubAccessToken: options.token }
     next()
   }
 }
@@ -35,10 +37,7 @@ router.get('/github', (req, res) => {
   if (referrer) {
     try {
       const url = new URL(referrer)
-
-      if (url.hostname === 'localhost') {
-        res.cookie('localhostOrigin', url.origin)
-      }
+      if (url.hostname === 'localhost') res.cookie('localhostOrigin', url.origin)
     } catch (err) {
       console.warn('Referrer parsing error, ignoring', err)
     }
@@ -50,22 +49,19 @@ router.get('/github', (req, res) => {
 router.get('/github/start', passportOrPat(), (req, res) => {
   // this only runs if passport didn't kick in above, but double
   // check for sanity in case upstream changes
-  if (!config.auth.github.clientId) {
-    res.redirect('finalize')
-  }
+  if (!options.clientId) res.redirect('finalize')
 })
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
   const token = req.user.githubAccessToken
-  const permissions = await getPermissions(token, config.auth.github.org)
-  const result = JSON.stringify({ type: 'github-token', token, permissions })
+  const permissions = await getPermissions(token, options.org)
+  const username = req.user.username
+  const result = JSON.stringify({ type: 'github-token', token, permissions, username })
 
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
-  let origin = config.endpoints.website
-  if (config.endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
-    origin = req.cookies.localhostOrigin
-  }
+  let origin = endpoints.website
+  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) origin = req.cookies.localhostOrigin
 
   // passing in the 'website' endpoint below is very important;
   // using '*' instead means this page will gladly send out a
@@ -95,49 +91,49 @@ async function getPermissions(token, org) {
       .map(findPermissions)
       .filter(e => e)
   } catch (error) {
-    if (error.code === 404) {
+    if (error.code === 404)
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
           'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
-    } else if (error.code === 401 && error.message === 'Bad credentials') {
+    else if (error.code === 401 && error.message === 'Bad credentials')
       // the token was bad. trickle up the problem so the user can fix
       throw error
-    } else {
-      // XXX: Better logging situation?
-      console.error(error)
-    }
+    // XXX: Better logging situation?
+    else console.error(error)
     // in all other error cases assume the user has no teams. If they do then they can try again after the timeout
     return []
   }
 }
 
 function findPermissions(team) {
-  const permissions = config.auth.github.permissions
-  for (const permission in permissions) {
-    if (permissions[permission].includes(team)) return permission
-  }
+  const permissions = options.permissions
+  for (const permission in permissions) if (permissions[permission].includes(team)) return permission
   return null
 }
 
-function setup() {
-  return router
+function setup(authOptions, authEndpoints) {
+  options = authOptions
+  endpoints = authEndpoints
 }
 
-setup.getStrategy = () => {
+function usePassport() {
+  return !!options.clientId
+}
+
+function getStrategy() {
   return new GitHubStrategy(
     {
-      clientID: config.auth.github.clientId,
-      clientSecret: config.auth.github.clientSecret,
+      clientID: options.clientId,
+      clientSecret: options.clientSecret,
       // this needs to match the callback url on the oauth app on github
-      callbackURL: `${config.endpoints.service}/auth/github/finalize`,
+      callbackURL: `${endpoints.service}/auth/github/finalize`,
       scope: ['public_repo', 'read:user', 'read:org']
     },
-    function(access, refresh, profile, done) {
+    (access, refresh, profile, done) =>
       // this only lives for one request; see the 'finalize' endpoint
-      done(null, { githubAccessToken: access })
-    }
+      done(null, { githubAccessToken: access, username: profile.username })
   )
 }
 
-module.exports = setup
+module.exports = { setup, router, usePassport, getStrategy }

@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray } = require('lodash')
+const { get, set, isArray, uniq } = require('lodash')
 const {
   extractDate,
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
-  updateSourceLocation
+  updateSourceLocation,
+  isLicenseFile
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -20,6 +21,7 @@ class ClearlyDescribedSummarizer {
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
     this.addInterestingFiles(result, data)
+    this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
@@ -58,6 +60,14 @@ class ClearlyDescribedSummarizer {
 
   addInterestingFiles(result, data) {
     setIfValue(result, 'files', data.interestingFiles)
+  }
+
+  addLicenseFromFiles(result, data, coordinates) {
+    if (!data.interestingFiles) return
+    const licenses = data.interestingFiles
+      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .filter(x => x)
+    setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
   addMavenData(result, data) {

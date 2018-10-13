@@ -5,9 +5,8 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const minimatch = require('minimatch')
 const utils = require('../lib/utils')
-const EntityCoordinates = require('../lib/entityCoordinates')
 const bodyParser = require('body-parser')
-const { permissionCheck } = require('../middleware/permissions')
+const { middlewareFactory } = require('../middleware/permissions')
 
 // Gets a given harvested file
 router.get(
@@ -17,7 +16,7 @@ router.get(
     switch ((request.query.form || 'summary').toLowerCase()) {
       case 'streamed':
       case 'raw': {
-        const result = await harvestStore.get(coordinates, response)
+        const result = await harvestStore.stream(coordinates, response)
         // some harvest services will stream on the response and trigger sending
         return response.headersSent ? null : response.status(200).send(result)
       }
@@ -90,22 +89,10 @@ router.get(
   })
 )
 
-// post a request to create a resoruce that is the summary of all harvested data available for
-// the components outlined in the POST body
-router.post(
-  '/status',
-  bodyParser.json(),
-  asyncMiddleware(async (request, response) => {
-    const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-    const result = await harvestStore.listAll(coordinatesList, 'result')
-    response.status(200).send(result)
-  })
-)
-
 // Post a (set of) component to be harvested
 router.post(
   '/',
-  permissionCheck('harvest'),
+  middlewareFactory('harvest'),
   bodyParser.json(),
   asyncMiddleware(async (request, response) => {
     await harvestService.harvest(request.body)

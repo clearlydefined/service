@@ -23,16 +23,10 @@ router.get(
 router.get(
   '/pr/:pr',
   asyncMiddleware(async (request, response) => {
-    const repo = request.app.locals.config.curation.store.github.repo
-    const owner = request.app.locals.config.curation.store.github.owner
-    return curationService.getChangedDefinitions(request.params.pr).then(result => {
-      if (result && result.length > 0) {
-        return response
-          .status(200)
-          .send({ url: `https://github.com/${owner}/${repo}/pull/${request.params.pr}`, changes: result })
-      }
-      return response.sendStatus(404)
-    })
+    const url = curationService.getCurationUrl(request.params.pr)
+    const changes = await curationService.getChangedDefinitions(request.params.pr)
+    if (changes && changes.length > 0) return response.status(200).send({ url, changes })
+    return response.sendStatus(404)
   })
 )
 
@@ -63,8 +57,6 @@ router.patch(
     const serviceGithub = request.app.locals.service.github.client
     const userGithub = request.app.locals.user.github.client
     const info = request.app.locals.user.github.info
-    const repo = request.app.locals.config.curation.store.github.repo
-    const owner = request.app.locals.config.curation.store.github.owner
     let curationErrors = []
     request.body.patches.forEach(entry => {
       const curation = new Curation(entry)
@@ -77,7 +69,7 @@ router.patch(
       return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
         response.status(200).send({
           prNumber: result.data.number,
-          url: `https://github.com/${owner}/${repo}/pull/${result.data.number}`
+          url: curationService.getCurationUrl(result.data.number)
         })
       )
   })

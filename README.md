@@ -15,7 +15,7 @@ production data.
 If you do want to run the service locally, follow these steps.
 
 1. Clone this repo
-1. Copy the `template.env.json` file to the **parent** directory of the repo and rename it to `env.json` and set any property values you need. See below for simple, local setup and the [Configuration](#configuration) section for more details. If this repo is colocated with the other ClearlyDefined repos, you can share the `env.json` file. Just merge the templates. Any colliding properties names are meant to be shared.
+1. Copy the `minimal.env.json` file to the **parent** directory of the repo and rename it to `env.json` and set any property values you need. See below for simple, local setup and the [Configuration](#configuration) section for more details. If this repo is colocated with the other ClearlyDefined repos, you can share the `env.json` file. Just merge the templates. Any colliding properties names are meant to be shared.
 1. On a command line, `cd` to the repo dir and run `npm install`
 1. Run `npm start`
 
@@ -171,42 +171,42 @@ type
 
 How to handle different versions of scanners?
 
-* Results are immutable
-* Curations are tied to particular "tool configurations"
-* Tool configurations are immutable
-* Tool configuration and revision should be captured in the output directory
+- Results are immutable
+- Curations are tied to particular "tool configurations"
+- Tool configurations are immutable
+- Tool configuration and revision should be captured in the output directory
 
 Do we merge results from different versions of ScanCode? How does this impact curation?
 
-* New scan results flag previous curations as needing review (optimization: only if they change the result)
-* The summarization process will be configured as to what tool configurations to consider for summarization (this would need to be a priority list)
-* The summarization process should take into account the link from the package back to the source
+- New scan results flag previous curations as needing review (optimization: only if they change the result)
+- The summarization process will be configured as to what tool configurations to consider for summarization (this would need to be a priority list)
+- The summarization process should take into account the link from the package back to the source
 
 Scanning a package where it's actually the source you need to scan, what to store where
 Maven supports scanning sources JAR or scanning GitHub repository
 
-* If we can determine the source location from the package, then we'll queue up the source to be scanned
-* If we can't determine the source location, and the package contains "source" then we'll scan the package
-* Some scanners will run on packages (such as things that inspect package manifest)
-* We should track the link from the package to the source
+- If we can determine the source location from the package, then we'll queue up the source to be scanned
+- If we can't determine the source location, and the package contains "source" then we'll scan the package
+- Some scanners will run on packages (such as things that inspect package manifest)
+- We should track the link from the package to the source
 
 How to handle tags?
 
-* When we scan GitHub we need to track what tags/branches point at which commits
-* We will use the long commit (40 character) reference
+- When we scan GitHub we need to track what tags/branches point at which commits
+- We will use the long commit (40 character) reference
 
 Need to define "origin" and/or pick another term
 
-* Propose to use "provider"
+- Propose to use "provider"
 
 How do we handle case sensitivity?
 
-* If no package managers allow different packages with same name different case, then we can be case preserving, case insensitive
-* We need to be case preserving because some registry endpoints are case sensitive (e.g. NPM)
+- If no package managers allow different packages with same name different case, then we can be case preserving, case insensitive
+- We need to be case preserving because some registry endpoints are case sensitive (e.g. NPM)
 
 Define how to do the linking
 
-* We will store one end (package to source), we will cache/materialize the reverse link as part of a build job (or the like)
+- We will store one end (package to source), we will cache/materialize the reverse link as part of a build job (or the like)
 
 #### Format
 
@@ -218,36 +218,36 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 
 ## Type Registry
 
-* git
-* maven
-* npm
-* nuget
-* rubygem
+- git
+- maven
+- npm
+- nuget
+- rubygem
 
 ## Provider Registry
 
-* central.maven.org
-* github.com
-* npmjs.org
-* nuget.org
+- central.maven.org
+- github.com
+- npmjs.org
+- nuget.org
 
 ## Tool Name Registry
 
-* ScanCode
-* Fossology
+- ScanCode
+- Fossology
 
 ## Terminology
 
-* provider - the provider of metadata about the package (e.g. npmjs.org, github.com, nuget.org, myget.org)
-* revision - used instead of version because it's a superset and valid for source
-* tool configuration - a tuple used to describe the combination of a tool and a named configuration, at a minimum the named configuration should include the version of the tool, but it could also describe the combination of settings used, for example, ScanCode-2.2.1_deepscan and ScanCode-2.2.1_fastscan
-* type - the format of the package (e.g. git, maven, npm)
+- provider - the provider of metadata about the package (e.g. npmjs.org, github.com, nuget.org, myget.org)
+- revision - used instead of version because it's a superset and valid for source
+- tool configuration - a tuple used to describe the combination of a tool and a named configuration, at a minimum the named configuration should include the version of the tool, but it could also describe the combination of settings used, for example, ScanCode-2.2.1_deepscan and ScanCode-2.2.1_fastscan
+- type - the format of the package (e.g. git, maven, npm)
 
 ## TODO
 
-* Swagger to replace most of this doc
-* Complete registries
-* Complete terminology
+- Swagger to replace most of this doc
+- Complete registries
+- Complete terminology
 
 ## Running ORT for scanning
 

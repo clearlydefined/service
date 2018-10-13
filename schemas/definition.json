@@ -11,7 +11,7 @@
     "files": { "$ref": "#/definitions/files" },
     "described": { "$ref": "#/definitions/described" },
     "licensed": { "$ref": "#/definitions/licensed" },
-    "schema": {
+    "schemaVersion": {
       "type": "string"
     }
   },
