@@ -23,7 +23,7 @@ router.get(
 router.get(
   '/pr/:pr',
   asyncMiddleware(async (request, response) => {
-    const url = this.curationService.getCurationUrl(request.params.pr)
+    const url = curationService.getCurationUrl(request.params.pr)
     const changes = await curationService.getChangedDefinitions(request.params.pr)
     if (changes && changes.length > 0) return response.status(200).send({ url, changes })
     return response.sendStatus(404)
