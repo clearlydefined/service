@@ -21,10 +21,15 @@ router.get(
       const { login, repo } = request.params
       const github = getClient(request)
       const answer = await github.gitdata.getTags({ owner: login, repo, per_page: 100 })
+
+      // Strip 'refs/tags/' from the beginning
+      const tagName = item => item.ref.slice(10)
+
       const unsorted = await Promise.all(answer.data
         .map(throat(5, async item => {
           if (item.object.type === 'commit')
-            return { tag: item.ref.slice(10), sha: item.object.sha }
+            return { tag: tagName(item), sha: item.object.sha }
+
 
           if (item.object.type !== 'tag') {
             return null
@@ -38,7 +43,7 @@ router.get(
             console.error(e)
             return null
           }
-          return { tag: item.ref.slice(10), sha: response.data.object.sha }
+          return { tag: tagName(item), sha: response.data.object.sha }
         })))
       const result = unsorted.filter(x => x)
         .sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
