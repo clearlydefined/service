@@ -24,9 +24,18 @@ class CrawlingHarvester {
       method: 'POST',
       body,
       headers,
-      json: true
+      json: true,
+      resolveWithFullResponse: true
     })
+    .then(function (response) {
+        console.log("POST succeeded with status %d", response.statusCode);
+    })
+    .catch(function (err) {
+        console.log("POST failed with status %d", err.statusCode);
+        console.log(err)
+    });
   }
+
 }
 
 module.exports = options => new CrawlingHarvester(options)
