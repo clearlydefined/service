@@ -27,22 +27,8 @@ class CrawlingHarvester {
       json: true,
       resolveWithFullResponse: true
     })
-    .then(function (response) {
-        switch (response.statusCode) {
-        case 200:
-            text = "200 OK - Success";
-            break;
-        case 207:
-            text = "207 - At least one item was not successfully indexed";
-            break;
-        case 429:
-            text = "429 - You have exceeded your quota on the number of documents per index.";
-            break;
-        case 503:
-            text = "503 -Thhe system is under heavy load and your request can't be processed at this time.";
-            break;
-        }
-        console.log("POST returned with status %d", text);
+    .then(function (res) {
+        console.log("POST returned with status %d", handleResponseCodes(res.statusCode));
     })
     .catch(function (err) {
         console.log("POST failed with status %d", err.statusCode);
@@ -50,5 +36,24 @@ class CrawlingHarvester {
     });
   }
 }
+
+function handleResponseCodes(statusCode){
+    switch (statusCode) {
+    case 200:
+        text = "200 OK - Success";
+        break;
+    case 207:
+        text = "207 - At least one item was not successfully indexed";
+        break;
+    case 429:
+        text = "429 - You have exceeded your quota on the number of documents per index.";
+        break;
+    case 503:
+        text = "503 -The system is under heavy load and your request can't be processed at this time.";
+        break;
+    }
+    return text;
+}
+
 
 module.exports = options => new CrawlingHarvester(options)
