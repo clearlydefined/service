@@ -25,13 +25,20 @@ async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
   if (!body) return
   const pr = body.pull_request
-  if (body.action === 'closed') {
-    if (pr.merged) {
-      const coordinateList = await curationService.getCurationCoordinates(pr.number, pr.head.ref)
-      await definitionService.invalidate(coordinateList)
-      await Promise.all(coordinateList.map(coordinates => definitionService.computeAndStore(coordinates)))
+  switch (body.action) {
+    case 'opened': {
+      await curationService.prOpened(pr)
+      break
     }
-  } else await curationService.validateCurations(pr.number, pr.head.sha, pr.head.ref)
+    case 'closed': {
+      await (pr.merged ? curationService.prMerged(pr) : curationService.prClosed(pr))
+      break
+    }
+    case 'synchronized': {
+      curationService.prUpdated(pr)
+      break
+    }
+  }
   response.status(200).end()
 }
 

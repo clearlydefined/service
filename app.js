@@ -30,7 +30,8 @@ function createApp(config) {
 
   const aggregatorService = require('./business/aggregator')(config.aggregator)
 
-  const curationService = config.curation.service(null, config.endpoints)
+  const curationStore = config.curation.store()
+  const curationService = config.curation.service(null, curationStore, config.endpoints)
   const curations = require('./routes/curations')(curationService)
 
   const definitionStore = config.definition.store()

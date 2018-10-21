@@ -10,6 +10,8 @@ servers:
     description: Production environment
   - url: https://dev.clearlydefined.io
     description: Development environment
+  - url: http://localhost:4000/api-docs/
+    description: Local environment
 
 paths:
   /curations/{type}/{provider}/{namespace}/{name}:
@@ -78,7 +80,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/bodies/request'
+              $ref: '../schemas/curation.json#/definitions/revisions'
       responses:
         201:
           description: Harvested file has been accepted.

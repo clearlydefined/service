@@ -21,18 +21,13 @@ tmp.setGracefulCleanup()
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options, endpoints) {
+  constructor(options, store, endpoints, definition = null) {
     this.options = options
+    this.store = store
+    this.definitionService = definition
     this.endpoints = endpoints
     this.curationUpdateTime = null
     this.tempLocation = null
-  }
-
-  get tmpOptions() {
-    return {
-      unsafeCleanup: true,
-      template: `${this.options.tempLocation}/cd-XXXXXX`
-    }
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -48,7 +43,9 @@ class GitHubCurationService {
   async _writePatch(serviceGithub, info, patch, branch) {
     const { owner, repo } = this.options
     const coordinates = EntityCoordinates.fromObject(patch.coordinates)
-    const currentContent = await this.getAll(coordinates)
+
+    // TODO getAll is needed both here and in the github store factor out
+    const currentContent = await this.store.getAll(coordinates)
     const newContent = patch.revisions
     const updatedContent = this._updateContent(coordinates, currentContent, newContent)
     const content = base64.encode(updatedContent)
@@ -97,7 +94,7 @@ ${details}
 ${resolution}
 
 **Affected definitions**:
-${this.formatDefinitions(patch.patches)}`
+${this._formatDefinitions(patch.patches)}`
 
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
@@ -118,94 +115,12 @@ ${this.formatDefinitions(patch.patches)}`
     return result
   }
 
-  formatDefinitions(definitions) {
+  _formatDefinitions(definitions) {
     return definitions.map(def => `- ${def.coordinates.name} ${Object.keys(def.revisions)[0]}`)
   }
 
-  /**
-   * Get the curation for the entity at the given coordinates. If no curation is supplied
-   * then look up the standard curation. If the curation is a PR number, get the curation
-   * held in that PR. The curation arg might be the actual curation to use. If so, just
-   * return it.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @param {(number | string | Summary)} [curation] - The curation identifier if any. Could be a PR number,
-   * an actual curation object or null.
-   * @returns {Object} The requested curation and corresponding revision identifier (e.g., commit sha) if relevant
-   */
-  async get(coordinates, curation = null) {
-    if (!coordinates.revision) throw new Error('Coordinates must include a revision')
-    if (curation && typeof curation !== 'number' && typeof curation !== 'string') return curation
-    const all = await this.getAll(coordinates, curation)
-    if (!all || !all.revisions) return null
-    const result = all.revisions[coordinates.revision]
-    if (!result) return null
-    // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-    Object.defineProperty(result, '_origin', { value: all._origin, enumerable: false })
-    return result
-  }
-
-  /**
-   * Get the curations for the revisions of the entity at the given coordinates. Revision information
-   * in coordinates are ignored. If a PR number is provided, get the curations represented in that PR.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation.
-   * @param {(number | string} [pr] - The curation identifier if any. Could be a PR number/string.
-   * @returns {Object} The requested curations where the revisions property has a property for each
-   * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
-   * indicating the sha of the commit for the curations if that info is available.
-   */
-  async getAll(coordinates, pr = null) {
-    // Check to see if there is content for the given coordinates
-    const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
-    const branch = await this.getBranchAndSha(pr)
-    const branchName = branch.sha || branch.ref
-    const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branchName}/${path}`
-    const content = await requestPromise({ url, method: 'HEAD', resolveWithFullResponse: true, simple: false })
-    if (content.statusCode !== 200) return null
-    // If there is content, go and get it. This is a little wasteful (two calls) but
-    // a) the vast majority of coordinates will not have any curation
-    // b) we need the sha of the curation to form part of the final definition tool chain
-    // At some point in the future we can look at caching and etags etc
-    return this._getFullContent(coordinates, branch.ref)
-  }
-
-  async _getFullContent(coordinates, ref) {
-    const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
-    try {
-      const contentResponse = await github.repos.getContent({ owner, repo, ref, path })
-      const content = yaml.safeLoad(base64.decode(contentResponse.data.content))
-      // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-      Object.defineProperty(content, '_origin', { value: { sha: contentResponse.data.sha }, enumerable: false })
-      return content
-    } catch (error) {
-      // TODO: This isn't very safe how it is because any failure will return an empty object,
-      // ideally we only do this if the .yaml file doesn't exist.
-      return null
-    }
-  }
-
-  async getBranchAndSha(number) {
-    if (!number) return { ref: this.options.branch }
-    const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
-    const result = await github.pullRequests.get({ owner, repo, number })
-    return { ref: result.data.head.ref, sha: result.data.head.sha }
-  }
-
-  async getCurations(number, ref) {
-    const prFiles = await this.getPrFiles(number)
-    const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
-    return Promise.all(
-      curationFilenames.map(path => this.getContent(ref, path).then(content => new Curation(content, path)))
-    )
-  }
-
   async apply(coordinates, curationSpec, definition) {
-    const curation = await this.get(coordinates, curationSpec)
+    const curation = await this.store.get(coordinates, curationSpec)
     const result = Curation.apply(definition, curation)
     this._ensureCurationInfo(result, curation)
     return result
@@ -220,26 +135,9 @@ ${this.formatDefinitions(patch.patches)}`
     definition.described.tools.push(`curation/${origin ? origin : 'supplied'}`)
   }
 
-  async getContent(ref, path) {
-    const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
-    try {
-      const response = await github.repos.getContent({ owner, repo, ref, path })
-      return base64.decode(response.data.content)
-    } catch (error) {
-      // @todo add logger
-    }
-  }
-
-  async getCurationCoordinates(number, ref) {
-    const curations = await this.getCurations(number, ref)
-    const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    return concat([], ...coordinateSet)
-  }
-
   async validateCurations(number, sha, ref) {
     await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
-    const curations = await this.getCurations(number, ref)
+    const curations = await this.store.getCurations(number, ref)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
     let description = 'All curations are valid'
@@ -269,101 +167,26 @@ ${this.formatDefinitions(patch.patches)}`
     }
   }
 
-  /**
-   * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components
-   * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
-   * @returns {[URL]} - Array of URLs describing the available curations
-   */
-  async list(coordinates) {
-    await this.ensureCurations()
-    const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}`
-    if (!fs.existsSync(root)) return []
-    return new Promise((resolve, reject) => {
-      const result = []
-      readdirp({ root, fileFilter: '*.yaml' })
-        .on('data', entry => result.push(...this.handleEntry(entry)))
-        .on('end', () => resolve(result))
-        .on('error', reject)
-    })
+  prOpened(pr) {
+    return this.store.updatePR(pr)
   }
 
-  handleEntry(entry) {
-    const curation = yaml.safeLoad(fs.readFileSync(entry.fullPath.replace(/\\/g, '/')))
-    const { coordinates: c, revisions } = curation
-    const root = `${c.type}/${c.provider}/${c.namespace || '-'}/${c.name}/`
-    return Object.getOwnPropertyNames(revisions).map(version => root + version)
+  prClosed(pr) {
+    return this.store.updatePR(pr)
   }
 
-  async ensureCurations() {
-    if (this.curationUpdateTime && Date.now() - this.curationUpdateTime < this.options.curationFreshness) return
-    const { owner, repo } = this.options
-    const url = `https://github.com/${owner}/${repo}.git`
-    this.tempLocation = this.tempLocation || tmp.dirSync(this.tmpOptions)
-    // if the location does not exist (perhaps it got deleted?), create it.
-    return new Promise((resolve, reject) => {
-      if (!fs.existsSync(this.tempLocation.name)) {
-        this.tempLocation = tmp.dirSync(this.tmpOptions)
-        // if it's still not there bail. Perhaps permissions problem
-        if (!fs.existsSync(this.tempLocation.name)) reject(new Error('Curation cache location could not be created'))
-      }
-      const command = this.curationUpdateTime
-        ? `cd ${this.tempLocation.name}/${repo} && git pull`
-        : `cd ${this.tempLocation.name} && git clone ${url}`
-      this.curationUpdateTime = Date.now()
-      exec(command, (error, stdout) => {
-        if (error) {
-          this.curationUpdateTime = null
-          return reject(error)
-        }
-        resolve(stdout)
-      })
-    })
-  }
-
-  getCurationUrl(number) {
-    return `https://github.com/${this.options.owner}/${this.options.repo}/pull/${number}`
-  }
-
-  async getPrFiles(number) {
-    const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
-    try {
-      const response = await github.pullRequests.getFiles({ owner, repo, number })
-      return response.data
-    } catch (error) {
-      // @todo add logger
-      throw error
+  prMerged(pr) {
+    return this.store.updatePR(pr)
+    const coordinateList = await this.getCurationCoordinates(pr.number, pr.head.ref)
+    // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out 
+    // even if there are errors recomputing the definitions.
+    await this.definitionService.invalidate(coordinateList)
+    await Promise.all(coordinateList.map(coordinates => this.definitionService.computeAndStore(coordinates)))
     }
-  }
 
-  async getChangedDefinitions(number) {
-    const files = await this.getPrFiles(number)
-    const changedCoordinates = []
-    for (let i = 0; i < files.length; ++i) {
-      const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
-      const coordinates = EntityCoordinates.fromString(fileName)
-      const prDefinitions = (await this.getAll(coordinates, number)) || { revisions: [] }
-      const masterDefinitions = (await this.getAll(coordinates)) || { revisions: [] }
-      const allUnfilteredRevisions = concat(
-        Object.keys(prDefinitions.revisions),
-        Object.keys(masterDefinitions.revisions)
-      )
-      const allRevisions = uniq(allUnfilteredRevisions)
-      const changedRevisions = allRevisions.filter(
-        revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
-      )
-      changedRevisions.forEach(revision => changedCoordinates.push(`${fileName}/${revision}`))
-    }
-    return changedCoordinates
-  }
-
-  _getPrTitle(coordinates) {
-    // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
-    return coordinates.toString()
-  }
-
-  async _getBranchName(info) {
-    return `${info.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
+  async prUpdated(pr) {
+    await this.store.updatePR(pr)
+    return this.validateCurations(pr.number, pr.head.sha, pr.head.ref)
   }
 
   _getCurationPath(coordinates) {
@@ -371,25 +194,13 @@ ${this.formatDefinitions(patch.patches)}`
     return `curations/${path}.yaml`
   }
 
-  _getSearchRoot(coordinates) {
-    const path = coordinates.asRevisionless().toString()
-    return `curations/${path}`
+  getCurationUrl(number) {
+    return `https://github.com/${this.options.owner}/${this.options.repo}/pull/${number}`
   }
 
-  // @todo perhaps validate directory structure based on coordinates
-  isCurationFile(path) {
-    return path.startsWith('curations/') && path.endsWith('.yaml')
-  }
-
-  toEntityCoordinate(coordinates) {
-    return new EntityCoordinates(
-      coordinates.type,
-      coordinates.provider,
-      coordinates.namespace,
-      coordinates.name,
-      coordinates.revision
-    )
+  async _getBranchName(info) {
+    return `${info.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
   }
 }
 
-module.exports = (options, endpoints) => new GitHubCurationService(options, endpoints)
+module.exports = (options, store, endpoints, definition) => new GitHubCurationService(options, store, endpoints, definition)

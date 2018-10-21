@@ -19,7 +19,11 @@ module.exports = {
     github: require('../middleware/githubConfig')
   },
   curation: {
-    github: require('../providers/curation/githubConfig')
+    service: { github: require('../providers/curation/githubConfig').service },
+    store: {
+      github: require('../providers/curation/githubConfig').store,
+      mongo: require('../providers/curation/mongoConfig')
+    }
   },
   harvest: {
     service: { crawler: require('../providers/harvest/crawlerConfig') },
