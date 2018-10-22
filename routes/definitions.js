@@ -67,12 +67,30 @@ router.post(
   '/',
   asyncMiddleware(async (request, response) => {
     const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-    // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-    const force = request.hostname.includes('localhost') ? request.query.force || false : false
-    const result = await definitionService.getAll(coordinatesList, force)
-    response.status(200).send(result)
+
+    // Check for possible DDOS attack and handle 
+    if(countCharactersInRequest(String(coordinatesList[0])) > 400) {
+      console.log('Possible DDOS attack logged - request body greater than 400 characters');
+      response.status(400).send('This request failed due to the post containing too many coordinates')
+    }
+    else {
+      // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
+      const force = request.hostname.includes('localhost') ? request.query.force || false : false
+      const result = await definitionService.getAll(coordinatesList, force)
+      response.status(200).send(result)
+    }
   })
 )
+
+function countCharactersInRequest(str) {
+  var a = str.split("");
+  var count=0;
+  for(var j=0;j<a.length;j++){
+        count+=1;
+  }
+  return count;
+}
+
 
 let definitionService
 
