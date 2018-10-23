@@ -22,7 +22,7 @@ describe('Fossology summarizer', () => {
   it('gets all the per file license info and attribution parties', () => {
     const { coordinates, harvested } = setup([
       buildFile('foo.txt', 'MIT', ['Bob', 'Fred', 'Bob', 'bob']),
-      buildFile('bar.txt', 'GPL', ['Jane', 'Fred', 'John'])
+      buildFile('bar.txt', 'GPL-3.0', ['Jane', 'Fred', 'John'])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -30,7 +30,22 @@ describe('Fossology summarizer', () => {
     expect(summary.files[0].path).to.equal('foo.txt')
     expect(summary.files[0].license).to.equal('MIT')
     expect(summary.files[1].path).to.equal('bar.txt')
-    expect(summary.files[1].license).to.equal('GPL')
+    expect(summary.files[1].license).to.equal('GPL-3.0')
+  })
+
+  it('does not apply non-spdx licenses', () => {
+    const { coordinates, harvested } = setup([buildFile('foo.txt', 'No_license_found'), buildFile('bar.txt', ' ')])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files).to.deep.eq([{ path: 'foo.txt' }, { path: 'bar.txt' }])
+  })
+
+  it('mixes spdx and non-spdx licenses correctly', () => {
+    // summary should come out
+    const { coordinates, harvested } = setup([buildFile('foo.txt', 'No_license_found'), buildFile('bar.txt', 'MIT')])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files).to.deep.eq([{ path: 'foo.txt' }, { path: 'bar.txt', license: 'MIT' }])
   })
 })
 
