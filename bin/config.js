@@ -28,7 +28,7 @@ module.exports = {
   summary: {},
   curation: {
     service: loadFactory(config.get('CURATION_PROVIDER') || 'github', 'curation.service'),
-    store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'github', 'curation.store')
+    store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
   },
   harvest: {
     service: loadFactory(config.get('HARVESTER_PROVIDER') || 'crawler', 'harvest.service'),

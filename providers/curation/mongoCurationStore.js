@@ -6,6 +6,48 @@ class MongoCurationStore {
     this.options = options
   }
 
+  initialize() {
+    return promiseRetry(async retry => {
+      try {
+        this.client = await MongoClient.connect(
+          this.options.connectionString,
+          { useNewUrlParser: true }
+        )
+        this.db = this.client.db(this.options.dbName)
+        this.collection = this.db.collection('curations')
+      } catch (error) {
+        retry(error)
+      }
+    })
+  }
+
+  async updateContribution(contribution) {
+    contribution._id = contribution.number
+    await this.collection.replaceOne({ _id: contribution._id }, contribution, { upsert: true })
+    // explicitly return null rather than the result of replaceOne to hide the implementation
+    return null
+  }
+
+  async updateCurations(curations) {
+    await Promise.all(
+      curations.map(
+        throat(10, curation => {
+          curation._id = this._getCurationId(curation)
+          return this.collection.replaceOne({ _id: curation._id }, curation, { upsert: true })
+        })
+      )
+    )
+    // explicitly return null rather than the result of replaceOne to hide the implementation
+    return null
+  }
+
+  _getCurationId(coordinates) {
+    if (!coordinates) return ''
+    return EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()
+  }
+
   /**
    * Get the contribution or curation for the entity at the given coordinates. If no `contribution` is supplied
    * then look up the curation. If a contribution is identified (i.e., is a PR number), get the contribution
@@ -33,7 +75,7 @@ class MongoCurationStore {
    */
   async getContribution(coordinates, contribution) {
     if (!coordinates.revision) throw new Error('Coordinates must include a revision')
-    // TODO cal mongo here
+    // TODO call mongo here
   }
 
   /**
@@ -44,7 +86,7 @@ class MongoCurationStore {
    */
   async getCuration(coordinates) {
     if (!coordinates.revision) throw new Error('Coordinates must include a revision')
-    // TODO cal mongo here
+    // TODO call mongo here
   }
 
   /**
@@ -68,12 +110,6 @@ class MongoCurationStore {
     return Promise.all(
       curationFilenames.map(path => this._getContent(ref, path).then(content => new Curation(content, path)))
     )
-  }
-
-  async getCurationCoordinates(number, ref) {
-    const curations = await this.getCurations(number, ref)
-    const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    return concat([], ...coordinateSet)
   }
 
   /**

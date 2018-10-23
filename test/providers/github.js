@@ -8,7 +8,7 @@ const { find } = require('lodash')
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
     const service = createService()
-    sinon.stub(service, 'getCurations').callsFake(() => {
+    sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createCuration(simpleCuration)]
     })
     const result = await service.getCurationCoordinates(1, 42)
@@ -20,7 +20,7 @@ describe('Github Curation Service', () => {
   it('validates valid PR change', async () => {
     const service = createService()
     sinon.stub(service, 'postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, 'getCurations').callsFake(() => {
+    sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createCuration()]
     })
     await service.validateCurations(1, '42', 'testBranch')
@@ -32,7 +32,7 @@ describe('Github Curation Service', () => {
   it('validates invalid PR change', async () => {
     const service = createService()
     sinon.stub(service, 'postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, 'getCurations').callsFake(() => {
+    sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
     await service.validateCurations(1, '42', 'testBranch')

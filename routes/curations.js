@@ -60,18 +60,14 @@ router.patch(
     let curationErrors = []
     request.body.patches.forEach(entry => {
       const curation = new Curation(entry)
-      if (curation.errors.length > 0) {
-        curationErrors = [...curationErrors, curation.errors]
-      }
+      if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
     })
-    if (curationErrors.length > 0) response.status(400).send({ errors: curationErrors })
-    else
-      return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
-        response.status(200).send({
-          prNumber: result.data.number,
-          url: curationService.getCurationUrl(result.data.number)
-        })
-      )
+    if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors })
+    const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
+    response.status(200).send({
+      prNumber: result.data.number,
+      url: curationService.getCurationUrl(result.data.number)
+    })
   })
 )
 

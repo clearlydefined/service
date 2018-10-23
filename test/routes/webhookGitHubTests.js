@@ -15,8 +15,10 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.prOpened.calledOnce).to.be.false
+    expect(service.prClosed.calledOnce).to.be.false
+    expect(service.prMerged.calledOnce).to.be.false
+    expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
   })
 
@@ -29,8 +31,10 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.prOpened.calledOnce).to.be.false
+    expect(service.prClosed.calledOnce).to.be.false
+    expect(service.prMerged.calledOnce).to.be.false
+    expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -43,8 +47,10 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.prOpened.calledOnce).to.be.false
+    expect(service.prClosed.calledOnce).to.be.false
+    expect(service.prMerged.calledOnce).to.be.false
+    expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -72,8 +78,7 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.prClosed.calledOnce).to.be.true
   })
 
   it('calls valid for PR changes', async () => {
@@ -83,19 +88,16 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.true
-    expect(service.validateCurations.getCall(0).args[0]).to.be.eq(1)
-    expect(service.validateCurations.getCall(0).args[1]).to.be.eq('24')
-    expect(service.validateCurations.getCall(0).args[2]).to.be.eq('changes')
+    expect(service.prOpened.calledOnce).to.be.true
   })
 })
 
 function createCurationService(coordinates) {
   return {
-    handleMerge: sinon.stub(),
-    validateCurations: sinon.stub(),
-    getCurationCoordinates: () => coordinates
+    prOpened: sinon.stub(),
+    prClosed: sinon.stub(),
+    prUpdated: sinon.stub(),
+    prMerged: sinon.stub()
   }
 }
 

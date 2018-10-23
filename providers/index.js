@@ -19,9 +19,9 @@ module.exports = {
     github: require('../middleware/githubConfig')
   },
   curation: {
-    service: { github: require('../providers/curation/githubConfig').service },
+    service: { github: require('../providers/curation/githubConfig') },
     store: {
-      github: require('../providers/curation/githubConfig').store,
+      memory: require('../providers/curation/memoryStore'),
       mongo: require('../providers/curation/mongoConfig')
     }
   },
