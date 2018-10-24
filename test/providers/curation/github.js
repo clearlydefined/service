@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
 const { expect } = require('chai')
 const GitHubCurationService = require('../../../providers/curation/github')
 const CurationStore = require('../../../providers/curation/memoryStore')
@@ -121,31 +124,15 @@ const complexCuration = {
   }
 }
 
-const files = {
-  'curations/npm/npmjs/-/foo.yaml': { sha: 42, content: createCurationString(complexCuration) }
-}
-
-const prs = {
-  12: { head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmsj/-/foo.yaml' }] }
-}
-
 function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
   return GitHubCurationService(
-    {
-      owner: 'foobar',
-      repo: 'foobar',
-      branch: 'foobar',
-      token: 'foobar'
-    },
+    { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
     CurationStore({}),
     endpoints,
     definitionService
   )
 }
 
-function createCurationString(curation) {
-  return yaml.safeDump(curation, { sortKeys: true, lineWidth: 150 })
-}
 const simpleHarvested = {
   coordinates: definitionCoordinates
 }

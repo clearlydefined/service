@@ -53,6 +53,7 @@ class GitHubCurationService {
 
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
     // even if there are errors recomputing the definitions.
+    const coordinateList = curations.reduce((list, curation) => list.concat(curation.getCoordinates()), [])
     await this.definitionService.invalidate(coordinateList)
     return Promise.all(coordinateList.map(coordinates => this.definitionService.computeAndStore(coordinates)))
   }

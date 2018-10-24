@@ -12,14 +12,19 @@ class MemoryStore {
 
   updateCurations(curations) {
     curations.forEach(curation => {
-      const coordinates = EntityCoordinates.fromObject(curation.coordinates)
+      const coordinates = EntityCoordinates.fromObject(curation.data.coordinates)
       this.curations[coordinates.toString()] = curation
     })
   }
 
-  updateContribution(pr, curations) {
-    const files = {}
-    curations.forEach(curation => (files[curation.path] = curation.data))
+  updateContribution(pr, curations = null) {
+    if (curations) {
+      const files = {}
+      if (curations) curations.forEach(curation => (files[curation.path] = curation.data))
+      return (this.contributions[pr.number] = { pr, files })
+    }
+    const current = this.contributions[pr.number]
+    const files = current ? current.files : {}
     this.contributions[pr.number] = { pr, files }
   }
 
