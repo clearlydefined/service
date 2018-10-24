@@ -3,10 +3,7 @@
 
 const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
-const { exec } = require('child_process')
-const fs = require('fs')
 const moment = require('moment')
-const readdirp = require('readdirp')
 const requestPromise = require('request-promise-native')
 const yaml = require('js-yaml')
 const throat = require('throat')
@@ -28,6 +25,7 @@ class GitHubCurationService {
     this.definitionService = definition
     this.curationUpdateTime = null
     this.tempLocation = null
+    this.github = Github.getClient(options)
   }
 
   get tmpOptions() {
@@ -50,8 +48,7 @@ class GitHubCurationService {
     if (!this.store) return
     // update the merged PR and all of the related merged curations
     await this.store.updateContribution(pr)
-    const coordinateList = await this._getAffectedCoordinates(pr.number, pr.head.ref)
-    const curations = this._getCurations(coordinateList)
+    const curations = await this._getContributedCurations(pr.number, pr.head.ref)
     await this.store.updateCurations(curations)
 
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
@@ -68,9 +65,8 @@ class GitHubCurationService {
   // store the PR and its related curations
   async _storeContributions(pr) {
     if (!this.store) return
-    const coordinateList = await this._getAffectedCoordinates(pr.number, pr.head.ref)
     // update the store of curations
-    const curations = this._getContributedCurations(coordinateList)
+    const curations = await this._getContributedCurations(pr.number, pr.head.ref)
     return this.store.updateContribution(pr, curations)
   }
 
@@ -213,9 +209,8 @@ ${this._formatDefinitions(patch.patches)}`
   async _getFullContent(coordinates, ref) {
     const path = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
     try {
-      const contentResponse = await github.repos.getContent({ owner, repo, ref, path })
+      const contentResponse = await this.github.repos.getContent({ owner, repo, ref, path })
       const content = yaml.safeLoad(base64.decode(contentResponse.data.content))
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
       Object.defineProperty(content, '_origin', { value: { sha: contentResponse.data.sha }, enumerable: false })
@@ -230,8 +225,7 @@ ${this._formatDefinitions(patch.patches)}`
   async _getBranchAndSha(number) {
     if (!number) return { ref: this.options.branch }
     const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
-    const result = await github.pullRequests.get({ owner, repo, number })
+    const result = await this.github.pullRequests.get({ owner, repo, number })
     return { ref: result.data.head.ref, sha: result.data.head.sha }
   }
 
@@ -241,7 +235,10 @@ ${this._formatDefinitions(patch.patches)}`
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     return Promise.all(
       curationFilenames.map(
-        throat(10, path => this._getContent(ref, path).then(content => new Curation(content, path)))
+        throat(10, async path => {
+          const content = await this._getContent(ref, path)
+          return new Curation(content, path)
+        })
       )
     )
   }
@@ -264,22 +261,15 @@ ${this._formatDefinitions(patch.patches)}`
 
   async _getContent(ref, path) {
     const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
     try {
-      const response = await github.repos.getContent({ owner, repo, ref, path })
+      const response = await this.github.repos.getContent({ owner, repo, ref, path })
       return base64.decode(response.data.content)
     } catch (error) {
       // @todo add logger
     }
   }
 
-  async getCurationCoordinates(number, ref) {
-    const curations = await this._getContributedCurations(number, ref)
-    const coordinateSet = curations.filter(x => x.isValid).map(c => c.getCoordinates())
-    return concat([], ...coordinateSet)
-  }
-
-  async validateCurations(number, sha, ref) {
+  async _validateContributions(number, sha, ref) {
     await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const curations = await this._getContributedCurations(number, ref)
     const invalidCurations = curations.filter(x => !x.isValid)
@@ -294,10 +284,9 @@ ${this._formatDefinitions(patch.patches)}`
 
   async postCommitStatus(sha, number, state, description) {
     const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
     const target_url = `${this.endpoints.website}/curations/${number}`
     try {
-      return github.repos.createStatus({
+      return this.github.repos.createStatus({
         owner,
         repo,
         sha,
@@ -328,9 +317,8 @@ ${this._formatDefinitions(patch.patches)}`
   // get the list of files changed in the given PR.
   async _getPrFiles(number) {
     const { owner, repo } = this.options
-    const github = Github.getClient(this.options)
     try {
-      const response = await github.pullRequests.getFiles({ owner, repo, number })
+      const response = await this.github.pullRequests.getFiles({ owner, repo, number })
       return response.data
     } catch (error) {
       // @todo add logger

@@ -1,9 +1,11 @@
 const { expect } = require('chai')
-const GitHubCurationService = require('../../providers/curation/github')
-const Curation = require('../../lib/curation')
+const GitHubCurationService = require('../../../providers/curation/github')
+const CurationStore = require('../../../providers/curation/memoryStore')
+const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+const yaml = require('js-yaml')
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -11,10 +13,11 @@ describe('Github Curation Service', () => {
     sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createCuration(simpleCuration)]
     })
-    const result = await service.getCurationCoordinates(1, 42)
+    const result = await service._getContributedCurations(1, 42)
     const coords = { ...simpleCuration.coordinates }
-    coords.revision = '1.0'
-    expect(result).to.be.deep.equalInAnyOrder([coords])
+    const resultCoords = result.map(change => change.data.coordinates)
+    expect(resultCoords).to.be.deep.equalInAnyOrder([coords])
+    expect(result[0].data.revisions['1.0']).to.be.deep.equal(simpleCuration.revisions['1.0'])
   })
 
   it('validates valid PR change', async () => {
@@ -23,7 +26,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createCuration()]
     })
-    await service.validateCurations(1, '42', 'testBranch')
+    await service._validateContributions(1, '42', 'testBranch')
     expect(service.postCommitStatus.calledTwice).to.be.true
     expect(service.postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service.postCommitStatus.getCall(1).args[2]).to.be.eq('success')
@@ -35,7 +38,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
-    await service.validateCurations(1, '42', 'testBranch')
+    await service._validateContributions(1, '42', 'testBranch')
     expect(service.postCommitStatus.calledTwice).to.be.true
     expect(service.postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service.postCommitStatus.getCall(1).args[2]).to.be.eq('error')
@@ -96,20 +99,6 @@ describe('Github Curation Service', () => {
   })
 })
 
-function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
-  return GitHubCurationService(
-    {
-      owner: 'foobar',
-      repo: 'foobar',
-      branch: 'foobar',
-      token: 'foobar',
-      tempLocation: '.'
-    },
-    endpoints,
-    definitionService
-  )
-}
-
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 const definitionCoordinates = { ...curationCoordinates, revision: '1.0' }
 
@@ -132,6 +121,31 @@ const complexCuration = {
   }
 }
 
+const files = {
+  'curations/npm/npmjs/-/foo.yaml': { sha: 42, content: createCurationString(complexCuration) }
+}
+
+const prs = {
+  12: { head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmsj/-/foo.yaml' }] }
+}
+
+function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
+  return GitHubCurationService(
+    {
+      owner: 'foobar',
+      repo: 'foobar',
+      branch: 'foobar',
+      token: 'foobar'
+    },
+    CurationStore({}),
+    endpoints,
+    definitionService
+  )
+}
+
+function createCurationString(curation) {
+  return yaml.safeDump(curation, { sortKeys: true, lineWidth: 150 })
+}
 const simpleHarvested = {
   coordinates: definitionCoordinates
 }
