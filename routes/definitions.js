@@ -69,8 +69,8 @@ router.post(
     const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
 
     // Check for possible DDOS attack and handle
-    if(String(coordinatesList[0]).length > 400) {
-      console.log('Possible DDOS attack logged - request body greater than 400 characters');
+    if(coordinatesList.length > 100) {
+      console.log('Possible DDOS attack logged - request body coordinates list greater than 100 entries');
       response.status(400).send('This request failed due to the post containing too many coordinates')
     }
     else {
