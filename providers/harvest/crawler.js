@@ -19,40 +19,34 @@ class CrawlingHarvester {
         policy: entry.policy
       }
     })
-    return requestPromise({
+    const options = {
       url: `${this.options.url}/requests`,
       method: 'POST',
       body,
       headers,
       json: true,
-      resolveWithFullResponse: true
-    })
-    .then(function (res) {
-        console.log("POST returned with status %d", handleResponseCodes(res.statusCode));
-    })
-    .catch(function (err) {
-        console.log("POST failed with status %d", err.statusCode);
-        console.log(err)
-    });
-  }
-}
-
-function handleResponseCodes(statusCode){
-    switch (statusCode) {
-    case 200:
-        text = "200 OK - Success";
-        break;
-    case 207:
-        text = "207 - At least one item was not successfully indexed";
-        break;
-    case 429:
-        text = "429 - You have exceeded your quota on the number of documents per index.";
-        break;
-    case 503:
-        text = "503 -The system is under heavy load and your request can't be processed at this time.";
-        break;
+      resolveWithFullResponse: true,
     }
-    return text;
+    const cases = {
+      200: '200 OK -  Success',
+      207: '207 - At least one item was not successfully indexed',
+      400: 'Bad Request',
+      401: 'Unauthorized',
+      404: 'Not Found',
+      429: '429 - You have exceeded your quota on the number of documents per index.',
+      503: '503 -The system is under heavy load and your request cannot be processed at this time.'
+    }
+
+    try{
+        const result = await requestPromise(options, function(err, res, body) {
+            if(cases[res.statusCode] === '200') {
+              return cases[res.statusCode]
+            }
+        })
+    } catch (err) {
+          return cases[err.statusCode]
+    }
+  }
 }
 
 
