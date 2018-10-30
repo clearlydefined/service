@@ -46,6 +46,18 @@ describe('Definition Service', () => {
     expect(service.definitionStore.store.calledOnce).to.be.true
     expect(service.search.store.calledOnce).to.be.true
   })
+
+  it('harvests new defintions with empty tools', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, []))
+    await service.get(coordinates)
+    expect(service.harvestService.harvest.calledOnce).to.be.true
+  })
+
+  it('harvests new defintions with undefined tools', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, undefined))
+    const def = await service.get(coordinates)
+    expect(service.harvestService.harvest.calledOnce).to.be.true
+  })
 })
 
 describe('Definition Service score computation', () => {
@@ -364,10 +376,11 @@ function setup(definition, coordinateSpec, curation) {
     get: () => Promise.resolve(curation),
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
-  const harvest = { getAll: () => Promise.resolve(null) }
+  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestService = { harvest: sinon.stub() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvest, summary, aggregator, curator, store, search)
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
 }
