@@ -3,7 +3,6 @@
 
 const sinon = require('sinon')
 const { expect } = require('chai')
-const ResultCoordinates = require('../../../lib/resultCoordinates')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 const FileStore = require('../../../providers/stores/fileHarvestStore')

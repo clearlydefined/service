@@ -4,7 +4,7 @@
 const config = require('painless-config')
 const search = require('./azureSearch')
 
-function serviceFactory(options, endpoints) {
+function serviceFactory(options) {
   const realOptions = options || {
     service: config.get('SEARCH_AZURE_SERVICE'),
     apiKey: config.get('SEARCH_AZURE_API_KEY')

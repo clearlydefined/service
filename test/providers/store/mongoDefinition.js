@@ -80,7 +80,7 @@ function createDefinition(coordinates) {
 
 function createStore(data) {
   const collectionStub = {
-    find: sinon.stub().callsFake(async (filter, projection) => {
+    find: sinon.stub().callsFake(async filter => {
       const regex = filter._id
       if (regex.toString().includes('error')) throw new Error('test error')
       // return an object that mimics a Mongo cursor (i.e., has toArray)
@@ -93,8 +93,8 @@ function createStore(data) {
         }
       }
     }),
-    findOne: sinon.stub().callsFake(async (filter, projection) => {
-      name = filter._id
+    findOne: sinon.stub().callsFake(async filter => {
+      const name = filter._id
       if (name.includes('error')) throw new Error('test error')
       if (data[name]) return data[name]
       throw new Error('not found')

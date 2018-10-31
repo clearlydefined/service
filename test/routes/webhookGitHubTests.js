@@ -3,7 +3,6 @@
 
 const { expect } = require('chai')
 const webhookRoutes = require('../../routes/webhook')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 
@@ -91,15 +90,6 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.validateCurations.getCall(0).args[2]).to.be.eq('changes')
   })
 })
-
-const simpleCoords = new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0')
-
-function createDefinitionService() {
-  return {
-    computeAndStore: sinon.stub(),
-    invalidate: sinon.stub()
-  }
-}
 
 function createCurationService(coordinates) {
   return {

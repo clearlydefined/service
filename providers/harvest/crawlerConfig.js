@@ -4,7 +4,7 @@
 const config = require('painless-config')
 const crawler = require('./crawler')
 
-function serviceFactory(options, endpoints) {
+function serviceFactory(options) {
   const realOptions = options || {
     authToken: config.get('CRAWLER_API_AUTH_TOKEN'),
     url: config.get('CRAWLER_API_URL') || 'http://localhost:5000'

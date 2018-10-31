@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, set, isEqual, uniq } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
 const { exec } = require('child_process')
 const fs = require('fs')
@@ -14,7 +14,6 @@ const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
-const path = require('path')
 tmp.setGracefulCleanup()
 
 // Responsible for managing curation patches in a store
