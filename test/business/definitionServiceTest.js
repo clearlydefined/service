@@ -377,7 +377,7 @@ function setup(definition, coordinateSpec, curation) {
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
-  const harvestService = { harvest: sinon.stub() }
+  const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
