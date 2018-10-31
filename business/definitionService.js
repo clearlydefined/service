@@ -16,8 +16,9 @@ const ajv = new Ajv({ allErrors: true })
 const currentSchema = '1.0.0'
 
 class DefinitionService {
-  constructor(harvest, summary, aggregator, curation, store, search) {
-    this.harvestService = harvest
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search) {
+    this.harvestStore = harvestStore
+    this.harvestService = harvestService
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
@@ -80,7 +81,7 @@ class DefinitionService {
   async list(coordinates, recompute = false) {
     if (!recompute) return this.definitionStore.list(coordinates)
     const curated = await this.curationService.list(coordinates)
-    const tools = await this.harvestService.list(coordinates)
+    const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
     return sortedUniq([...harvest, ...curated])
   }
@@ -115,7 +116,10 @@ class DefinitionService {
     // If no tools participated in the creation of the definition then don't bother storing.
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
-    if (!tools || tools.length === 0) return definition
+    if (!tools || tools.length === 0) {
+      this.harvestService.harvest({ tool: 'package', coordinates }).catch(reason => console.log(reason))
+      return definition
+    }
     await this._store(definition)
     return definition
   }
@@ -135,7 +139,7 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
-    const raw = await this.harvestService.getAll(coordinates)
+    const raw = await this.harvestStore.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
@@ -352,5 +356,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvest, summary, aggregator, curation, store, search) =>
-  new DefinitionService(harvest, summary, aggregator, curation, store, search)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search) =>
+  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search)
