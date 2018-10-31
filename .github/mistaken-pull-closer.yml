@@ -1,0 +1,14 @@
+# The JSONPath filter expression used to identify which PRs to close.
+# The data filtered is the pull request data along with other metadata passed in
+# by probot.
+# See http://goessner.net/articles/JsonPath/
+filters:
+    - true
+
+# The message to post to the closed PR.
+commentBody: |
+  Please do not submit PRs to this repository.
+  Instead, see CONTRIBUTING.
+
+# Whether or not to add a label to the closed PR.
+addLabel: false
