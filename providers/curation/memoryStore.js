@@ -10,10 +10,12 @@ class MemoryStore {
     this.contributions = {}
   }
 
+  initialize() {}
+
   updateCurations(curations) {
     curations.forEach(curation => {
       const coordinates = EntityCoordinates.fromObject(curation.data.coordinates)
-      this.curations[coordinates.toString()] = curation
+      this.curations[this._getCurationId(coordinates)] = curation.data
     })
   }
 
@@ -29,10 +31,18 @@ class MemoryStore {
   }
 
   list(coordinates) {
-    const pattern = coordinates.asRevisionless().toString()
+    if (!coordinates) throw new Error('must specify coordinates to list')
+    const pattern = this._getCurationId(coordinates)
     return Object.keys(this.curations)
       .filter(key => key.startsWith(pattern))
       .map(key => this.curations[key])
+  }
+
+  _getCurationId(coordinates) {
+    if (!coordinates) return ''
+    return EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()
   }
 }
 

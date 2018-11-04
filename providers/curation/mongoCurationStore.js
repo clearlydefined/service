@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const MongoClient = require('mongodb').MongoClient
+const promiseRetry = require('promise-retry')
+const EntityCoordinates = require('../../lib/entityCoordinates')
+const throat = require('throat')
+const Curation = require('../../lib/curation')
+
 class MongoCurationStore {
   constructor(options) {
     this.options = options
@@ -21,24 +27,53 @@ class MongoCurationStore {
     })
   }
 
-  async updateContribution(contribution) {
-    contribution._id = contribution.number
-    await this.collection.replaceOne({ _id: contribution._id }, contribution, { upsert: true })
-    // explicitly return null rather than the result of replaceOne to hide the implementation
-    return null
-  }
-
+  /**
+   * Store the given set of curations overwriting any previous content. This effectively replicates the
+   * content of the files in the GitHub curation repo.
+   * @param {[Curation]} curations
+   */
   async updateCurations(curations) {
     await Promise.all(
       curations.map(
-        throat(10, curation => {
-          curation._id = this._getCurationId(curation)
-          return this.collection.replaceOne({ _id: curation._id }, curation, { upsert: true })
+        throat(10, async curation => {
+          const _id = this._getCurationId(curation.data.coordinates)
+          await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
         })
       )
     )
-    // explicitly return null rather than the result of replaceOne to hide the implementation
     return null
+  }
+
+  /**
+   * Update the contribution entry for the given PR and record the associated curations -- the
+   * actual file content in the PR. If the curations are not provided, just the PR data is updated,
+   * any existing curation data is preserved.
+   * @param {*} pr - the PR object as provided by GitHub
+   * @param {[Curation]} curations? - The set of actual proposed changes.
+   */
+  updateContribution(pr, curations = null) {
+    if (curations) {
+      const files = {}
+      if (curations) curations.forEach(curation => (files[curation.path] = curation.data))
+      return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
+    }
+    // TODO reconsider `upsert` here. Great for resiliency but will it result in undetected inconsistent data?
+    return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
+  }
+
+  /**
+   * List all of the Curations whose coordinates match the given partial coordinates.
+   * @param {EntityCoordinates} coordinates - partial coordinates to look for
+   * @returns the array of Curations found
+   */
+  // TODO need to do something about paging
+  list(coordinates) {
+    if (!coordinates) throw new Error('must specify coordinates to list')
+    const pattern = this._getCurationId(coordinates.asRevisionless())
+    return this.collection
+      .find({ _id: new RegExp('^' + pattern) })
+      .toArray()
+      .then(list => Curation.getAllCoordinates(list.map(entry => new Curation(entry, null, false))))
   }
 
   _getCurationId(coordinates) {
@@ -46,109 +81,6 @@ class MongoCurationStore {
     return EntityCoordinates.fromObject(coordinates)
       .toString()
       .toLowerCase()
-  }
-
-  /**
-   * Get the contribution or curation for the entity at the given coordinates. If no `contribution` is supplied
-   * then look up the curation. If a contribution is identified (i.e., is a PR number), get the contribution
-   * held in that PR. If the `contribution` is an object, just use that and return it.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @param {(number | string | Summary)} [contribution] - The contribution identifier if any. Could be a PR number
-   * (as a number or a string), an actual contribution object or null.
-   * @returns {Object} The requested curation and corresponding revision identifier (e.g., commit sha) if relevant
-   */
-  // TODO consider factoring out the contribution === an object case. Not really sure we need that here. Test in the caller
-  async get(coordinates, contribution = null) {
-    if (!contribution) return this.getCuration(coordinates)
-    // if the contribution is an object then we already have the result needed so return it
-    if (typeof contribution !== 'number' && typeof contribution !== 'string') return contribution
-    return this.getContribution(coordinates, contribution)
-  }
-
-  /**
-   * Get the identified contribution for the definition at the given coordinates.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @param {(number | string)} [contribution] - the contribution (PR) number to consult
-   * @returns {Object} The requested contribution
-   */
-  async getContribution(coordinates, contribution) {
-    if (!coordinates.revision) throw new Error('Coordinates must include a revision')
-    // TODO call mongo here
-  }
-
-  /**
-   * Get the current curation (if any) for the definition at the given coordinates.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @returns {Object} The requested contribution
-   */
-  async getCuration(coordinates) {
-    if (!coordinates.revision) throw new Error('Coordinates must include a revision')
-    // TODO call mongo here
-  }
-
-  /**
-   * Get the curations for the revisions of the entity at the given coordinates. Revision information
-   * in coordinates are ignored. If a PR number is provided, get the curations represented in that PR.
-   *
-   * @param {EntitySpec} coordinates - The entity for which we are looking for a curation.
-   * @param {(number | string} [pr] - The curation identifier if any. Could be a PR number/string.
-   * @returns {Object} The requested curations where the revisions property has a property for each
-   * curated revision. The returned value will be decorated with a non-enumerable `_origin` property
-   * indicating the sha of the commit for the curations if that info is available.
-   */
-  async getAll(coordinates, pr = null) {
-    // Check to see if there is content for the given coordinates
-    const path = this._getCurationPath(coordinates)
-  }
-
-  async getCurations(number, ref) {
-    const prFiles = await this._getPrFiles(number)
-    const curationFilenames = prFiles.map(x => x.filename).filter(this._isCurationFile)
-    return Promise.all(
-      curationFilenames.map(path => this._getContent(ref, path).then(content => new Curation(content, path)))
-    )
-  }
-
-  /**
-   * Given a partial spec, return the list of full spec urls for each curated version of the spec'd components
-   * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
-   * @returns {[URL]} - Array of URLs describing the available curations
-   */
-  async list(coordinates) {
-    await this._ensureCurations()
-    const root = `${this.tempLocation.name}/${this.options.repo}/${this._getSearchRoot(coordinates)}`
-    if (!fs.existsSync(root)) return []
-    return new Promise((resolve, reject) => {
-      const result = []
-      readdirp({ root, fileFilter: '*.yaml' })
-        .on('data', entry => result.push(...this._handleRepoEntry(entry)))
-        .on('end', () => resolve(result))
-        .on('error', reject)
-    })
-  }
-
-  async getChangedDefinitions(number) {
-    const files = await this._getPrFiles(number)
-    const changedCoordinates = []
-    for (let i = 0; i < files.length; ++i) {
-      const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
-      const coordinates = EntityCoordinates.fromString(fileName)
-      const prDefinitions = (await this.getAll(coordinates, number)) || { revisions: [] }
-      const masterDefinitions = (await this.getAll(coordinates)) || { revisions: [] }
-      const allUnfilteredRevisions = concat(
-        Object.keys(prDefinitions.revisions),
-        Object.keys(masterDefinitions.revisions)
-      )
-      const allRevisions = uniq(allUnfilteredRevisions)
-      const changedRevisions = allRevisions.filter(
-        revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
-      )
-      changedRevisions.forEach(revision => changedCoordinates.push(`${fileName}/${revision}`))
-    }
-    return changedCoordinates
   }
 }
 

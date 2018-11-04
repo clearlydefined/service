@@ -35,40 +35,38 @@ class GitHubCurationService {
     }
   }
 
-  async prOpened(pr) {
-    await this._storeContributions(pr)
-    return this._validateContributions(pr.number, pr.head.sha, pr.head.ref)
+  prOpened(pr) {
+    return this._storeAndValidateContribution(pr)
   }
 
   prClosed(pr) {
-    return this._storeContributions(pr)
+    return this.store.updateContribution(pr)
   }
 
   async prMerged(pr) {
-    if (!this.store) return
-    // update the merged PR and all of the related merged curations
+    // update the merged PR. Don't need to store the proposed changes as they should already be there.
     await this.store.updateContribution(pr)
-    const curations = await this._getContributedCurations(pr.number, pr.head.ref)
+
+    // get and store the current state of the curation branch
+    const curations = await this._getContributedCurations(pr.number, pr.head.sha)
     await this.store.updateCurations(curations)
 
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
     // even if there are errors recomputing the definitions.
-    const coordinateList = curations.reduce((list, curation) => list.concat(curation.getCoordinates()), [])
+    const coordinateList = Curation.getAllCoordinates(curations)
     await this.definitionService.invalidate(coordinateList)
     return Promise.all(coordinateList.map(coordinates => this.definitionService.computeAndStore(coordinates)))
   }
 
-  async prUpdated(pr) {
-    if (this.store) await this._storeContributions(pr)
-    return this._validateContributions(pr.number, pr.head.sha, pr.head.ref)
+  prUpdated(pr) {
+    return this._storeAndValidateContribution(pr)
   }
 
   // store the PR and its related curations
-  async _storeContributions(pr) {
-    if (!this.store) return
-    // update the store of curations
-    const curations = await this._getContributedCurations(pr.number, pr.head.ref)
-    return this.store.updateContribution(pr, curations)
+  async _storeAndValidateContribution(pr) {
+    const curations = await this._getContributedCurations(pr.number, pr.head.sha)
+    await this.store.updateContribution(pr, curations)
+    return this._validateContributions(pr.number, pr.head.sha)
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -231,13 +229,13 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   // get the content for all curations in a given PR
-  async _getContributedCurations(number, ref) {
+  async _getContributedCurations(number, sha) {
     const prFiles = await this._getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     return Promise.all(
       curationFilenames.map(
         throat(10, async path => {
-          const content = await this._getContent(ref, path)
+          const content = await this._getContent(sha, path)
           return new Curation(content, path)
         })
       )
@@ -270,9 +268,9 @@ ${this._formatDefinitions(patch.patches)}`
     }
   }
 
-  async _validateContributions(number, sha, ref) {
+  async _validateContributions(number, sha) {
     await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
-    const curations = await this._getContributedCurations(number, ref)
+    const curations = await this._getContributedCurations(number, sha)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
     let description = 'All curations are valid'
@@ -307,7 +305,6 @@ ${this._formatDefinitions(patch.patches)}`
    * @returns {[EntityCoordinates]} - Array of coordinates describing the available curations
    */
   async list(coordinates) {
-    if (!this.store) return []
     return this.store.list(coordinates)
   }
 
@@ -322,8 +319,8 @@ ${this._formatDefinitions(patch.patches)}`
       const response = await this.github.pullRequests.getFiles({ owner, repo, number })
       return response.data
     } catch (error) {
-      // @todo add logger
-      throw error
+      if (error.code === 404) throw new Error(`Could not find pr#${number} in ${owner}/${repo}`)
+      throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`)
     }
   }
 

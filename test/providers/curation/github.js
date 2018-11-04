@@ -8,7 +8,6 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
-const yaml = require('js-yaml')
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {

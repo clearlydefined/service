@@ -8,6 +8,7 @@ const proxyquire = require('proxyquire')
 const sandbox = sinon.createSandbox()
 const yaml = require('js-yaml')
 const base64 = require('base-64')
+const EntityCoordinates = require('../../../lib/entityCoordinates')
 
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 
@@ -27,6 +28,10 @@ const files = {
 
 const prs = {
   12: { number: 12, head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }] }
+}
+
+const defaultCurations = {
+  'npm/npmjs/-/test': complexCuration
 }
 
 let Service
@@ -91,8 +96,15 @@ describe('Curation service pr events', () => {
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
-    const data = updateSpy.args[0][1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration])
+  })
+
+  it('handles list', async () => {
+    const service = createService()
+    service.store.curations = defaultCurations
+    const list = await service.list(EntityCoordinates.fromString('npm/npmjs'))
+    const listSpy = service.store.list
+    expect(listSpy.calledOnce).to.be.true
+    expect(list).to.be.deep.equalInAnyOrder([complexCuration])
   })
 })
 

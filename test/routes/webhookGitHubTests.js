@@ -30,7 +30,7 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
+    expect(response.statusCode).to.be.eq(200)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
@@ -46,7 +46,7 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
+    expect(response.statusCode).to.be.eq(200)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
