@@ -55,7 +55,7 @@ describe('Definition Service', () => {
 
   it('harvests new defintions with undefined tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, undefined))
-    const def = await service.get(coordinates)
+    await service.get(coordinates)
     expect(service.harvestService.harvest.calledOnce).to.be.true
   })
 })
@@ -282,14 +282,14 @@ describe('Definition Service Facet management', () => {
 
 describe('Aggregation service', () => {
   it('handles no tool data', async () => {
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process({})
     expect(aggregated).to.be.null
   })
 
   it('handles one tool one version data', async () => {
     const summaries = { tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] } } }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
   })
@@ -301,7 +301,7 @@ describe('Aggregation service', () => {
         '2.0.0': { files: [buildFile('foo.txt', 'GPL')] }
       }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].path).to.eq('foo.txt')
@@ -313,7 +313,7 @@ describe('Aggregation service', () => {
       tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] }, '2.0.0': { files: [buildFile('foo.txt', 'GPL')] } },
       tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] } }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
@@ -324,7 +324,7 @@ describe('Aggregation service', () => {
       tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] }, '2.0.0': { files: [buildFile('foo.txt', 'GPL')] } },
       tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] }, '2.0.0': { files: [buildFile('bar.txt', 'GPL')] } }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
@@ -338,7 +338,7 @@ describe('Aggregation service', () => {
         '2.0.0': { files: [buildFile('bar.txt', 'GPL')] }
       }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(2)
     expect(aggregated.files[0].path).to.eq('foo.txt')

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Readable = require('stream').Readable
 const throat = require('throat')
 const { get, set, sortedUniq, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')

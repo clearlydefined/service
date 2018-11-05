@@ -4,6 +4,7 @@
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
+    "lint": "node node_modules/eslint/bin/eslint.js .",
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
