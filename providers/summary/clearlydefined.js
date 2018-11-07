@@ -7,6 +7,7 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
+  normalizeSpdx,
   updateSourceLocation,
   isLicenseFile
 } = require('../../lib/utils')
@@ -25,6 +26,9 @@ class ClearlyDescribedSummarizer {
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
+        break
+      case 'crate':
+        this.addCrateData(result, data)
         break
       case 'maven':
         this.addMavenData(result, data)
@@ -72,6 +76,23 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+  }
+
+  addCrateData(result, data) {
+    setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
+    setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
+    const license = get(data, 'registryData.license')
+    if (license) {
+      setIfValue(
+        result,
+        'licensed.declared',
+        license
+          .split('/')
+          .map(normalizeSpdx)
+          .filter(x => x)
+          .join(' OR ')
+      )
+    }
   }
 
   addSourceArchiveData(result, data) {
