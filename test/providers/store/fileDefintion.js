@@ -58,7 +58,7 @@ describe('FileDefinitionStore list definitions', () => {
     expect(result.length).to.eq(0)
   })
 
-  it('list s single definition', async () => {
+  it('list a single definition', async () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'))
     const expected = ['npm/npmjs/-/test/1.0']

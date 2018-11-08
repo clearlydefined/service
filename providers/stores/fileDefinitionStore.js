@@ -31,9 +31,13 @@ class FileDefinitionStore extends AbstractFileStore {
     return promisify(fs.writeFile)(filePath, JSON.stringify(definition, null, 2), 'utf8')
   }
 
-  delete(coordinates) {
+  async delete(coordinates) {
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    return promisify(fs.unlink)(filePath)
+    try {
+      await promisify(fs.unlink)(filePath)
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error
+    }
   }
 }
 
