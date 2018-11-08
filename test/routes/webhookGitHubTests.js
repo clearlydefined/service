@@ -92,7 +92,7 @@ describe('Webhook Route for GitHub calls', () => {
   })
 })
 
-function createCurationService(coordinates) {
+function createCurationService() {
   return {
     prOpened: sinon.stub(),
     prClosed: sinon.stub(),

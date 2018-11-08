@@ -60,7 +60,7 @@ class GitHubCurationService {
         throat(5, coordinates => {
           this.definitionService.computeAndStore(coordinates).catch(error => {
             // TODO log to a real logger rather than the console.
-            console.log(`Failed to compute/store ${coordinates.toString()}`)
+            console.log(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`)
           })
         })
       )
