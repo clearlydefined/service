@@ -80,7 +80,7 @@ class DefinitionService {
   async list(coordinates, recompute = false) {
     if (!recompute) return this.definitionStore.list(coordinates)
     const curated = (await this.curationService.list(coordinates)).map(c => c.toString())
-    const tools = await this.harvestService.list(coordinates)
+    const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
     return sortedUniq([...harvest, ...curated])
   }
