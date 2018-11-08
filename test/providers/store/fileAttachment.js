@@ -5,6 +5,7 @@ const sinon = require('sinon')
 const sandbox = sinon.createSandbox()
 const proxyquire = require('proxyquire')
 const { expect } = require('chai')
+let FileStore
 
 const data = {
   '/foo/42.json': JSON.stringify({ attachment: '42 attachment' }),

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Readable = require('stream').Readable
 const throat = require('throat')
 const { get, set, sortedUniq, remove, pullAllWith, isEqual } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
@@ -80,7 +79,7 @@ class DefinitionService {
    */
   async list(coordinates, recompute = false) {
     if (!recompute) return this.definitionStore.list(coordinates)
-    const curated = await this.curationService.list(coordinates)
+    const curated = (await this.curationService.list(coordinates)).map(c => c.toString())
     const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
     return sortedUniq([...harvest, ...curated])
@@ -94,17 +93,7 @@ class DefinitionService {
    */
   invalidate(coordinates) {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
-    return Promise.all(
-      coordinateList.map(
-        throat(10, async coordinates => {
-          try {
-            return this.definitionStore.delete(coordinates)
-          } catch (error) {
-            if (!['ENOENT', 'BlobNotFound'].includes(error.code)) throw error
-          }
-        })
-      )
-    )
+    return Promise.all(coordinateList.map(throat(10, coordinates => this.definitionStore.delete(coordinates))))
   }
 
   _validate(definition) {

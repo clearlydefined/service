@@ -17,10 +17,10 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"]
+      "enum": ["npm", "crate", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"]
     },
     "provider": {
-      "enum": ["npmjs", "github", "mavencentral", "nuget", "rubygems", "pypi"]
+      "enum": ["npmjs", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"]
     },
     "coordinates": {
       "type": "object",

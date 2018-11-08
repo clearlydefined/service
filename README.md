@@ -220,6 +220,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 
 - git
 - maven
+- crate
 - npm
 - nuget
 - rubygem
@@ -228,6 +229,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 
 - central.maven.org
 - github.com
+- crates.io
 - npmjs.org
 - nuget.org
 

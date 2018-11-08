@@ -38,9 +38,13 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
     )
   }
 
-  delete(coordinates) {
+  async delete(coordinates) {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
-    return promisify(this.blobService.deleteBlob)(this.containerName, blobName)
+    try {
+      await promisify(this.blobService.deleteBlob)(this.containerName, blobName)
+    } catch (error) {
+      if (error.code !== 'BlobNotFound') throw error
+    }
   }
 }
 

@@ -76,6 +76,13 @@ describe('azblob Definition store', () => {
     expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
+  it('does not throw deleting missing definition', async () => {
+    const store = createStore()
+    await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0'))
+    expect(store.blobService.deleteBlob.callCount).to.eq(1)
+    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
+  })
+
   it('gets a definition', async () => {
     const data = {
       'npm/npmjs/-/co/revision/4.6.0.json': createDefinitionJson('npm/npmjs/-/co/4.6.0'),
@@ -114,6 +121,7 @@ function createStore(data) {
     }),
     deleteBlob: sinon.stub().callsFake(async (container, name, callback) => {
       if (name.includes('error')) return callback(new Error('test error'))
+      if (name.includes('missing')) return callback({ code: 'BlobNotFound' })
       callback()
     }),
     getBlobToText: sinon.stub().callsFake(async (container, name, callback) => {

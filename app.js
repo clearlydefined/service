@@ -30,7 +30,9 @@ function createApp(config) {
 
   const aggregatorService = require('./business/aggregator')(config.aggregator)
 
-  const curationService = config.curation.service(null, config.endpoints)
+  const curationStore = config.curation.store()
+  initializers.push(async () => curationStore.initialize())
+  const curationService = config.curation.service(null, curationStore, config.endpoints)
   const curations = require('./routes/curations')(curationService)
 
   const definitionStore = config.definition.store()
@@ -105,6 +107,7 @@ function createApp(config) {
 
   app.use('/', require('./routes/index'))
   app.use('/origins/github', require('./routes/originGitHub')())
+  app.use('/origins/crate', require('./routes/originCrate')())
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/nuget', require('./routes/originNuget')())
