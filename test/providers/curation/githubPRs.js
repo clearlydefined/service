@@ -12,26 +12,34 @@ const EntityCoordinates = require('../../../lib/entityCoordinates')
 
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 
-const complexCuration = {
-  coordinates: curationCoordinates,
-  revisions: {
-    '1.0': {
-      described: { releaseDate: '2018-10-19', projectWebsite: 'http://foo.com' },
-      files: [{ path: '1.txt', license: 'MIT' }, { path: '2.txt', license: 'GPL' }]
+function complexCuration(name = 'foo') {
+  return {
+    coordinates: { ...curationCoordinates, name },
+    revisions: {
+      '1.0': {
+        described: { releaseDate: '2018-10-19', projectWebsite: `http://${name}.com` },
+        files: [{ path: `${name}.1.txt`, license: 'MIT' }, { path: `${name}.2.txt`, license: 'GPL' }]
+      }
     }
   }
 }
 
 const files = {
-  'curations/npm/npmjs/-/foo.yaml': { sha: 42, content: complexCuration }
+  'curations/npm/npmjs/-/foo.yaml': { sha: 42, content: complexCuration('foo') },
+  'curations/npm/npmjs/-/bar.yaml': { sha: 52, content: complexCuration('bar') }
 }
 
 const prs = {
-  12: { number: 12, head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }] }
+  12: { number: 12, head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }] },
+  13: {
+    number: 13,
+    head: { ref: 'master', sha: '72' },
+    files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }, { filename: 'curations/npm/npmjs/-/bar.yaml' }]
+  }
 }
 
 const defaultCurations = {
-  'npm/npmjs/-/test': complexCuration
+  'npm/npmjs/-/test': complexCuration()
 }
 
 let Service
@@ -54,7 +62,7 @@ describe('Curation service pr events', () => {
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const data = updateSpy.args[0][1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration])
+    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
   })
 
   it('handles update', async () => {
@@ -64,7 +72,7 @@ describe('Curation service pr events', () => {
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const data = updateSpy.args[0][1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration])
+    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
   })
 
   it('handles merge', async () => {
@@ -79,15 +87,15 @@ describe('Curation service pr events', () => {
     const curationSpy = service.store.updateCurations
     expect(curationSpy.calledOnce).to.be.true
     const curations = curationSpy.args[0][0].map(curation => curation.data)
-    expect(curations).to.be.deep.equalInAnyOrder([complexCuration])
+    expect(curations).to.be.deep.equalInAnyOrder([complexCuration()])
 
     const invalidateSpy = service.definitionService.invalidate
     expect(invalidateSpy.calledOnce).to.be.true
-    expect(invalidateSpy.args[0][0]).to.be.deep.equalInAnyOrder([{ ...complexCuration.coordinates, revision: '1.0' }])
+    expect(invalidateSpy.args[0][0]).to.be.deep.equalInAnyOrder([{ ...complexCuration().coordinates, revision: '1.0' }])
 
     const computeSpy = service.definitionService.computeAndStore
     expect(computeSpy.calledOnce).to.be.true
-    expect(computeSpy.args[0][0]).to.be.deep.equal({ ...complexCuration.coordinates, revision: '1.0' })
+    expect(computeSpy.args[0][0]).to.be.deep.equal({ ...complexCuration().coordinates, revision: '1.0' })
   })
 
   it('handles close', async () => {
@@ -104,16 +112,45 @@ describe('Curation service pr events', () => {
     const list = await service.list(EntityCoordinates.fromString('npm/npmjs'))
     const listSpy = service.store.list
     expect(listSpy.calledOnce).to.be.true
-    expect(list).to.be.deep.equalInAnyOrder([complexCuration])
+    expect(list).to.be.deep.equalInAnyOrder([complexCuration()])
+  })
+
+  it('handles failure to compute one definition of multiple', async () => {
+    const service = createService()
+    await service.prMerged(prs[13])
+
+    const updateSpy = service.store.updateContribution
+    expect(updateSpy.calledOnce).to.be.true
+    expect(updateSpy.args[0][0].number).to.be.equal(13)
+    expect(updateSpy.args[0][1]).to.be.undefined
+
+    const curationSpy = service.store.updateCurations
+    expect(curationSpy.calledOnce).to.be.true
+    const curations = curationSpy.args[0][0].map(curation => curation.data)
+    expect(curations).to.be.deep.equalInAnyOrder([complexCuration('foo'), complexCuration('bar')])
+
+    const invalidateSpy = service.definitionService.invalidate
+    expect(invalidateSpy.calledOnce).to.be.true
+    expect(invalidateSpy.args[0][0]).to.be.deep.equalInAnyOrder([
+      { ...complexCuration('foo').coordinates, revision: '1.0' },
+      { ...complexCuration('bar').coordinates, revision: '1.0' }
+    ])
+
+    const computeSpy = service.definitionService.computeAndStore
+    expect(computeSpy.calledTwice).to.be.true
+    expect(computeSpy.args[0][0]).to.be.deep.equal({ ...complexCuration('foo').coordinates, revision: '1.0' })
   })
 })
 
-function createService() {
+function createService(failsCompute = false) {
   const store = CurationStore({})
   sinon.spy(store, 'updateContribution')
   sinon.spy(store, 'updateCurations')
   sinon.spy(store, 'list')
-  const definitionService = { invalidate: sinon.stub(), computeAndStore: sinon.stub() }
+  const definitionService = {
+    invalidate: sinon.stub(),
+    computeAndStore: sinon.stub().callsFake(() => (failsCompute ? Promise.reject('error') : Promise.resolve(null)))
+  }
   const service = Service(
     { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
     store,
