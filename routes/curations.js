@@ -54,6 +54,7 @@ async function updateCurations(request, response) {
   const info = request.app.locals.user.github.info
   let curationErrors = []
   request.body.patches.forEach(entry => {
+     console.log('NAME', curation.data.coordinates.name);
     const curation = new Curation(entry)
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
   })
