@@ -55,7 +55,16 @@ class GitHubCurationService {
     // even if there are errors recomputing the definitions.
     const coordinateList = Curation.getAllCoordinates(curations)
     await this.definitionService.invalidate(coordinateList)
-    return Promise.all(coordinateList.map(coordinates => this.definitionService.computeAndStore(coordinates)))
+    return Promise.all(
+      coordinateList.map(
+        throat(5, coordinates => {
+          this.definitionService.computeAndStore(coordinates).catch(error => {
+            // TODO log to a real logger rather than the console.
+            console.log(`Failed to compute/store ${coordinates.toString()}`)
+          })
+        })
+      )
+    )
   }
 
   prUpdated(pr) {

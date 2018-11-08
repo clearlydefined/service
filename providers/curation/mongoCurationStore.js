@@ -37,7 +37,7 @@ class MongoCurationStore {
       curations.map(
         throat(10, async curation => {
           const _id = this._getCurationId(curation.data.coordinates)
-          await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
+          if (_id) await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
         })
       )
     )
@@ -54,7 +54,7 @@ class MongoCurationStore {
   updateContribution(pr, curations = null) {
     if (curations) {
       const files = {}
-      if (curations) curations.forEach(curation => (files[curation.path] = curation.data))
+      curations.forEach(curation => (files[curation.path] = curation.data))
       return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
     }
     // TODO reconsider `upsert` here. Great for resiliency but will it result in undetected inconsistent data?
@@ -70,6 +70,7 @@ class MongoCurationStore {
   list(coordinates) {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
+    if (!pattern) return []
     return this.collection
       .find({ _id: new RegExp('^' + pattern) })
       .toArray()

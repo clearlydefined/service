@@ -22,7 +22,7 @@ class MemoryStore {
   updateContribution(pr, curations = null) {
     if (curations) {
       const files = {}
-      if (curations) curations.forEach(curation => (files[curation.path] = curation.data))
+      curations.forEach(curation => (files[curation.path] = curation.data))
       return (this.contributions[pr.number] = { pr, files })
     }
     const current = this.contributions[pr.number]
