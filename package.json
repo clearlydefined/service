@@ -2,10 +2,11 @@
   "name": "service",
   "version": "0.1.0",
   "description": "Service side of clearlydefined.io.",
+  "main": "./bin/www",
   "scripts": {
     "test": "node node_modules/eslint/bin/eslint.js .; node_modules/mocha/bin/mocha test/**/*.js",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ."
   },
   "license": "MIT",
   "repository": {
