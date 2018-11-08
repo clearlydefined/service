@@ -109,8 +109,15 @@ class GitHubCurationService {
     // Github requires name/email to set committer
     if ((info.name || info.login) && info.email)
       fileBody.committer = { name: info.name || info.login, email: info.email }
+    else
+      console.log('Github requires name/email to set committer, info.email = ', info.email)
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
+      console.log('currentContent = ' , currentContent)
+      //console.log('fileBody = ', fileBody);
+      /* LOOKS LIKE THIS */
+      /* currentContent =  { coordinates: { name: 'async', provider: 'npmjs', type: 'npm' },
+        revisions: { '2.6.0': { described: [Object], licensed: [Object] } } } */ 
       return serviceGithub.repos.updateFile(fileBody)
     }
     return serviceGithub.repos.createFile(fileBody)
