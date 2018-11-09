@@ -4,11 +4,9 @@
 const azure = require('azure-storage')
 const AbstractFileStore = require('./abstractFileStore')
 const { promisify } = require('util')
-const logger = require('../logging/logger')
 
 class AbstractAzBlobStore {
   constructor(options) {
-    this.logger = logger()
     this.options = options
     this.containerName = options.containerName
   }

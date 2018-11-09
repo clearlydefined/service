@@ -6,11 +6,10 @@ const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const throat = require('throat')
 const Curation = require('../../lib/curation')
-const logger = require('../logging/logger')
+const logger = require('../logging/logger')()
 
 class MongoCurationStore {
   constructor(options) {
-    this.logger = logger()
     this.options = options
   }
 
@@ -24,6 +23,7 @@ class MongoCurationStore {
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection('curations')
       } catch (error) {
+        logger.info(`retrying mongo connection`)
         retry(error)
       }
     })

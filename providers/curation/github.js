@@ -20,7 +20,6 @@ const logger = require('../logging/logger')
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
-    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints
@@ -60,10 +59,9 @@ class GitHubCurationService {
     return Promise.all(
       coordinateList.map(
         throat(5, coordinates => {
-          this.definitionService.computeAndStore(coordinates).catch(error => {
-            // TODO log to a real logger rather than the console.
-            console.log(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`)
-          })
+          this.definitionService
+            .computeAndStore(coordinates)
+            .catch(error => logger.info(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`))
         })
       )
     )
@@ -275,7 +273,7 @@ ${this._formatDefinitions(patch.patches)}`
       const response = await this.github.repos.getContent({ owner, repo, ref, path })
       return base64.decode(response.data.content)
     } catch (error) {
-      // @todo add logger
+      logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}`)
     }
   }
 
@@ -306,7 +304,7 @@ ${this._formatDefinitions(patch.patches)}`
         context: 'ClearlyDefined'
       })
     } catch (error) {
-      // @todo add logger
+      logger.info(`Failed to create status for PR #${number}`)
     }
   }
 

@@ -4,11 +4,9 @@
 const fs = require('fs')
 const path = require('path')
 const { promisify } = require('util')
-const logger = require('../logging/logger')
 
 class FileAttachmentStore {
   constructor(options) {
-    this.logger = logger()
     this.options = options
   }
 

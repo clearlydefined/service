@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const logger = require('../logging/logger')
 
 class MemoryStore {
   constructor(options) {
-    this.logger = logger()
     this.options = options
     this.curations = {}
     this.contributions = {}
