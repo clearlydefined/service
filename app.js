@@ -152,10 +152,10 @@ function createApp(config) {
   }
 
   // error handler
-  // eslint-disable-next-line no-unused-vars
-  app.use((error, request, response, next) => {
+  app.use((error, request, response) => {
+    // Don't log Azure robot liveness checks
+    // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
     if (!(request && request.url && request.url.includes('robots933456.txt')))
-      // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
       logger.error('SvcRequestFailure', { exception: error, properties: { name: 'SvcRequestFailure' } })
 
     // set locals, only providing error in development
