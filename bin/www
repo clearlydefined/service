@@ -2,14 +2,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * Enable telemetry.
- */
-const appInsights = require('applicationinsights')
-if (process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] && process.env['APPINSIGHTS_INSTRUMENTATIONKEY'] !== 'mock')
-  appInsights.setup().start()
-else appInsights.defaultClient = require('../lib/mockInsights')
-
 const config = require('./config')
 const app = require('../app')(config)
 const debug = require('debug')('service:server')

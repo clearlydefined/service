@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const express = require('express')
-const logger = require('morgan')
+const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
@@ -15,9 +15,15 @@ const swaggerUi = require('swagger-ui-express')
 const fs = require('fs')
 const yaml = require('js-yaml')
 const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'))
+const loggerFactory = require('./providers/logging/logger')
 
 function createApp(config) {
   const initializers = []
+
+  const logger = loggerFactory(config.logging.logger())
+  process.on('unhandledRejection', reason =>
+    logger.error('unhandledRejection', { exception: reason, name: 'unhandledRejection' })
+  )
 
   config.auth.service.permissionsSetup()
 
@@ -26,14 +32,14 @@ function createApp(config) {
   const harvestStore = config.harvest.store()
   initializers.push(async () => harvestStore.initialize())
   const harvestService = config.harvest.service()
-  const harvest = require('./routes/harvest')(harvestService, harvestStore, summaryService)
+  const harvestRoute = require('./routes/harvest')(harvestService, harvestStore, summaryService)
 
   const aggregatorService = require('./business/aggregator')(config.aggregator)
 
   const curationStore = config.curation.store()
   initializers.push(async () => curationStore.initialize())
   const curationService = config.curation.service(null, curationStore, config.endpoints)
-  const curations = require('./routes/curations')(curationService)
+  const curationsRoute = require('./routes/curations')(curationService)
 
   const definitionStore = config.definition.store()
   initializers.push(async () => definitionStore.initialize())
@@ -55,14 +61,14 @@ function createApp(config) {
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
-  const definitions = require('./routes/definitions')(definitionService)
+  const definitionsRoute = require('./routes/definitions')(definitionService)
 
-  const attachments = require('./routes/attachments')(attachmentStore)
+  const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
   const appLogger = console // @todo add real logger
   const githubSecret = config.webhook.githubSecret
   const crawlerSecret = config.webhook.crawlerSecret
-  const webhook = require('./routes/webhook')(
+  const webhookRoute = require('./routes/webhook')(
     curationService,
     definitionService,
     appLogger,
@@ -82,9 +88,9 @@ function createApp(config) {
   app.use(requestId())
   app.use(cachingMiddleware(caching()))
 
-  app.use(logger('dev'))
+  app.use(morgan('dev'))
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
-  app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhook)
+  app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhookRoute)
 
   // OAuth app initialization; skip if not configured (middleware can cope)
   const auth = config.auth.service.route(null, config.endpoints)
@@ -113,11 +119,11 @@ function createApp(config) {
   app.use('/origins/nuget', require('./routes/originNuget')())
   app.use('/origins/pypi', require('./routes/originPyPi')())
   app.use('/origins/rubygems', require('./routes/originRubyGems')())
-  app.use('/harvest', harvest)
+  app.use('/harvest', harvestRoute)
   app.use(bodyParser.json())
-  app.use('/curations', curations)
-  app.use('/definitions', definitions)
-  app.use('/attachments', attachments)
+  app.use('/curations', curationsRoute)
+  app.use('/definitions', definitionsRoute)
+  app.use('/attachments', attachmentsRoute)
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {
@@ -147,22 +153,27 @@ function createApp(config) {
 
   // error handler
   // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
+  app.use((error, request, response, next) => {
+    if (!(request && request.url && request.url.includes('robots933456.txt')))
+      // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
+      logger.error('SvcRequestFailure', { exception: error, properties: { name: 'SvcRequestFailure' } })
+
     // set locals, only providing error in development
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
-    const status = typeof err.status === 'number' ? err.status : 500
-    const message = typeof err.status === 'number' ? err.message : (err.status || 'Unknown') + '\n' + err.message
+    response.locals.message = error.message
+    response.locals.error = request.app.get('env') === 'development' ? error : {}
+    const status = typeof error.status === 'number' ? error.status : 500
+    const message =
+      typeof error.status === 'number' ? error.message : (error.status || 'Unknown') + '\n' + error.message
 
     // return the error
-    res
+    response
       .status(status)
       .type('application/json')
       .send({
         error: {
           code: status.toString(),
           message,
-          innererror: serializeError(res.locals.error)
+          innererror: serializeError(response.locals.error)
         }
       })
   })

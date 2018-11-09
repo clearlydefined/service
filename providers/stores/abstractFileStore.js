@@ -7,10 +7,12 @@ const recursive = require('recursive-readdir')
 const { promisify } = require('util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 const schema = require('../../schemas/definition')
+const logger = require('../logging/logger')
 
 class AbstractFileStore {
   constructor(options) {
     this.options = options
+    this.logger = logger()
   }
 
   async initialize() {}

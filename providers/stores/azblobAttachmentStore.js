@@ -3,9 +3,11 @@
 
 const azure = require('azure-storage')
 const { promisify } = require('util')
+const logger = require('../logging/logger')
 
 class AzBlobAttachmentStore {
   constructor(options) {
+    this.logger = logger()
     this.options = options
     this.containerName = options.containerName
   }

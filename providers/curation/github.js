@@ -12,6 +12,7 @@ const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
+const logger = require('../logging/logger')
 
 // Responsible for managing curation patches in a store
 //
@@ -19,6 +20,7 @@ tmp.setGracefulCleanup()
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
+    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints
