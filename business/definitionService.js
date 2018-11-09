@@ -106,7 +106,7 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
-      this.harvestService.harvest({ tool: 'package', coordinates }).catch(reason => console.log(reason))
+      this.harvestService.harvest({ tool: 'component', coordinates }).catch(reason => console.log(reason))
       return definition
     }
     await this._store(definition)
