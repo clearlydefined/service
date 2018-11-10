@@ -21,9 +21,7 @@ function createApp(config) {
   const initializers = []
 
   const logger = loggerFactory(config.logging.logger())
-  process.on('unhandledRejection', reason =>
-    logger.error('unhandledRejection', { exception: reason, name: 'unhandledRejection' })
-  )
+  process.on('unhandledRejection', exception => logger.error('unhandledRejection', exception))
 
   config.auth.service.permissionsSetup()
 
@@ -65,13 +63,12 @@ function createApp(config) {
 
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
-  const appLogger = console // @todo add real logger
   const githubSecret = config.webhook.githubSecret
   const crawlerSecret = config.webhook.crawlerSecret
   const webhookRoute = require('./routes/webhook')(
     curationService,
     definitionService,
-    appLogger,
+    logger,
     githubSecret,
     crawlerSecret
   )
@@ -139,24 +136,25 @@ function createApp(config) {
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
-        console.log('Service initialized')
+        logger.info('Service initialized')
         // Signal system is up and ok (no error)
         callback()
       },
       error => {
-        console.log(`Service initialization error: ${error.message}`)
-        console.dir(error)
+        logger.error('Service initialization error', error)
         callback(error)
       }
     )
   }
 
   // error handler
-  app.use((error, request, response) => {
+  app.use((error, request, response, next) => {
+    if (response.headersSent) return next(error)
+
     // Don't log Azure robot liveness checks
     // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
     if (!(request && request.url && request.url.includes('robots933456.txt')))
-      logger.error('SvcRequestFailure', { exception: error, properties: { name: 'SvcRequestFailure' } })
+      logger.error('SvcRequestFailure: ' + request.url, error)
 
     // set locals, only providing error in development
     response.locals.message = error.message

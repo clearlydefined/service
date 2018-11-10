@@ -12,7 +12,7 @@ const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
-const logger = require('../logging/logger')
+const logger = require('../logging/logger')()
 
 // Responsible for managing curation patches in a store
 //
