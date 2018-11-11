@@ -71,12 +71,20 @@ class GitHubCurationService {
       console.log('Github requires name/email to set committer, info.email = ', info.email)
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
-      console.log('currentContent = ' , currentContent)
-      //console.log('fileBody = ', fileBody);
-      /* LOOKS LIKE THIS */
+      //console.log('currentContent = ' , currentContent)
+      const {coordinates, revisions} = currentContent
+      console.log('coordinates = ', coordinates)
+      console.log('revisions = ', revisions)
+
+      const {name, provider, type} = coordinates
+      console.log('name = ', name);
+      console.log('provider = ', provider);
+      console.log('type = ', type)
+
       /* currentContent =  { coordinates: { name: 'async', provider: 'npmjs', type: 'npm' },
-        revisions: { '2.6.0': { described: [Object], licensed: [Object] } } } */ 
-      return serviceGithub.repos.updateFile(fileBody)
+        revisions: { '2.6.0': { described: [Object], licensed: [Object] } } } */
+
+      //return serviceGithub.repos.updateFile(fileBody)
     }
     return serviceGithub.repos.createFile(fileBody)
   }
