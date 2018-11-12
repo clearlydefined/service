@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Middleware that checks for team membership.
+ * Middleware that checks for permissions for this request based on team membership.
  *
- * Usage: `app.get('/some/route', teamCheck('harvesters'), (req, res) => ...)`
+ * Usage: `app.get('/some/route', permissionsCheck('harvesters'), (req, res) => ...)`
  */
-function middlewareFactory(permission) {
+function permissionsCheck(permission) {
   return (request, response, next) => {
     const userTeams = request.app.locals.user.github.teams
     const requiredTeams = permissions[permission]
@@ -24,4 +24,4 @@ function setup(permissionsOptions) {
   permissions = permissionsOptions
 }
 
-module.exports = { setup, middlewareFactory }
+module.exports = { setup, permissionsCheck }
