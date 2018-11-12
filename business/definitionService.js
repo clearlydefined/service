@@ -116,7 +116,7 @@ class DefinitionService {
 
   async harvest(coordinates) {
     try {
-      await this.harvestService.harvest({ tool: 'package', coordinates })
+      await this.harvestService.harvest({ tool: 'component', coordinates })
     } catch (error) {
       logger.info('failed to harvest from definition service', {
         crawlerError: error,
