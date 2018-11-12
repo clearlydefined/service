@@ -7,10 +7,7 @@ const minimatch = require('minimatch')
 const utils = require('../lib/utils')
 const bodyParser = require('body-parser')
 const { permissionsCheck } = require('../middleware/permissions')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
-require('ajv-errors')(ajv)
-const harvestSchema = require('../schemas/harvest-1.0')
+const validator = require('../schemas/validator')
 
 // Gets a given harvested file
 router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(get))
@@ -95,11 +92,7 @@ router.post('/', permissionsCheck('harvest'), bodyParser.json(), asyncMiddleware
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
-  const isValid = ajv.validate(harvestSchema, requests)
-  if (!isValid)
-    return response
-      .status(400)
-      .send(ajv.errors.map(error => `${error.dataPath || ''} ${error.message}`.trim()).join('\n'))
+  if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
   await harvestService.harvest(request.body)
   response.sendStatus(201)
 }

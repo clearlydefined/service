@@ -21,7 +21,7 @@ describe('Harvest route', () => {
     const router = createRoutes()
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(response._getData()).to.be.eq('/0 should NOT have additional properties')
+    expect(response._getData()).to.be.eq('data/0 should NOT have additional properties')
   })
 
   it('rejects wrong value POST', async () => {
@@ -30,7 +30,7 @@ describe('Harvest route', () => {
     const router = createRoutes()
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(response._getData()).to.be.eq('/0/tool should be string')
+    expect(response._getData()).to.be.eq('data/0/tool should be string')
   })
 
   it('accepts good queuing POST', async () => {
