@@ -6,11 +6,11 @@ const router = require('express').Router()
 const minimatch = require('minimatch')
 const utils = require('../lib/utils')
 const bodyParser = require('body-parser')
-const { permissionCheck } = require('../middleware/permissions')
+const { permissionsCheck } = require('../middleware/permissions')
 const Ajv = require('ajv')
 const ajv = new Ajv({ allErrors: true })
 require('ajv-errors')(ajv)
-const harvestSchema = require('../schemas/harvest')
+const harvestSchema = require('../schemas/harvest-1.0')
 
 // Gets a given harvested file
 router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(get))
@@ -91,7 +91,7 @@ async function list(request, response) {
 }
 
 // Post a (set of) component to be harvested
-router.post('/', permissionCheck('harvest'), bodyParser.json(), asyncMiddleware(queue))
+router.post('/', permissionsCheck('harvest'), bodyParser.json(), asyncMiddleware(queue))
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
@@ -112,8 +112,7 @@ function setup(harvester, store, summarizer, testFlag = false) {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer
-  test = testFlag
-  if (test) router._queue = queue
+  if (testFlag) router._queue = queue
   return router
 }
 

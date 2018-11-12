@@ -48,10 +48,6 @@ function createRoutes(harvester) {
   return harvestRoutes(harvester, null, null, true)
 }
 
-function createEntry(tool, coordinates, payload) {
-  return { tool, coordinates, payload }
-}
-
 function createRequest(entries) {
   return httpMocks.createRequest({
     method: 'POST',
