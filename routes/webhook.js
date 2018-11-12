@@ -85,7 +85,7 @@ function validateGitHubCall(request, response) {
 }
 
 function fatal(request, response, code, error = null) {
-  error && logger.error(error)
+  error && logger.error('fatal webhook error', error)
   response.status(code)
   response.setHeader('content-type', 'text/plain')
   response.end(error)
