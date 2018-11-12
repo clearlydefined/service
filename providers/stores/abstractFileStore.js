@@ -6,7 +6,7 @@ const path = require('path')
 const recursive = require('recursive-readdir')
 const { promisify } = require('util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
-const schema = require('../../schemas/definition')
+const schema = require('../../schemas/definition-1.0')
 
 class AbstractFileStore {
   constructor(options) {
