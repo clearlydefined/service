@@ -167,6 +167,7 @@ function createService(failsCompute = false) {
       }
     },
     repos: {
+      createStatus: sinon.stub(),
       getContent: ({ path }) => {
         return {
           data: {

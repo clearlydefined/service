@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 module.exports = {
+  logging: {
+    winston: require('../providers/logging/winstonConfig')
+  },
   definition: {
     azure: require('../providers/stores/azblobConfig').definition,
     file: require('../providers/stores/fileConfig').definition,
