@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, first } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -12,7 +12,7 @@ const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
-const logger = require('../logging/logger')()
+const logger = require('../logging/logger')
 
 // Responsible for managing curation patches in a store
 //
@@ -20,6 +20,7 @@ const logger = require('../logging/logger')()
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
+    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints
@@ -109,23 +110,21 @@ class GitHubCurationService {
     // Github requires name/email to set committer
     if ((info.name || info.login) && info.email)
       fileBody.committer = { name: info.name || info.login, email: info.email }
-    else {
-      logger.info('Github requires name/email to set committer, info.email = ', info.email)
-    }
+    else logger.info('Github requires name/email to set committer, info.email is currently: ', info.email)
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
       // Extract the component values
       const { coordinates, revisions } = currentContent
       const { name, provider, type } = coordinates
-      let keys = Object.keys(revisions)
-      keys.forEach(revision => {
-        let component = name + '/' + revision
-        if(!this._validateComponentExists(component)){
-          //handle error
-          error => logger.info(`Failed to validate component exists ${component.toString()}: ${error.toString()}`)
-          return error;
-        }
-      });
+      // Only get the latest revision
+      let newRevision = Object.keys(patch.revisions)[0];
+      let component = name + '/' + newRevision
+      try{
+        const validateResult = await this._validateComponentExists(component)
+      } catch (error) {
+        this.logger.info(`version not found: ${error.toString()}`)
+        return null;
+      }
       return serviceGithub.repos.updateFile(fileBody)
     }
     return serviceGithub.repos.createFile(fileBody)
@@ -135,10 +134,7 @@ class GitHubCurationService {
     const baseUrl = 'https://registry.npmjs.com'
     const url = `${baseUrl}/${component}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    if(JSON.stringify(answer).includes("not found")){
-        return false
-    }
-    else return true
+    return answer;
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {

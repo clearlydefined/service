@@ -63,8 +63,7 @@ async function updateCurations(request, response) {
     prNumber: result.data.number,
     url: curationService.getCurationUrl(result.data.number)
   })
- )
-
+}
 
 let curationService
 

@@ -9,6 +9,7 @@ class AbstractAzBlobStore {
   constructor(options) {
     this.options = options
     this.containerName = options.containerName
+    this.logger = logger()
   }
 
   async initialize() {

@@ -10,6 +10,7 @@ const logger = require('../logging/logger')()
 
 class MongoCurationStore {
   constructor(options) {
+    this.logger = logger()
     this.options = options
   }
 
