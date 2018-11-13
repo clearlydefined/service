@@ -109,13 +109,36 @@ class GitHubCurationService {
     // Github requires name/email to set committer
     if ((info.name || info.login) && info.email)
       fileBody.committer = { name: info.name || info.login, email: info.email }
-    else
-      console.log('Github requires name/email to set committer, info.email = ', info.email)
+    else {
+      logger.info('Github requires name/email to set committer, info.email = ', info.email)
+    }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
+      // Extract the component values
+      const { coordinates, revisions } = currentContent
+      const { name, provider, type } = coordinates
+      let keys = Object.keys(revisions)
+      keys.forEach(revision => {
+        let component = name + '/' + revision
+        if(!this._validateComponentExists(component)){
+          //handle error
+          error => logger.info(`Failed to validate component exists ${component.toString()}: ${error.toString()}`)
+          return error;
+        }
+      });
       return serviceGithub.repos.updateFile(fileBody)
     }
     return serviceGithub.repos.createFile(fileBody)
+  }
+
+  async _validateComponentExists(component) {
+    const baseUrl = 'https://registry.npmjs.com'
+    const url = `${baseUrl}/${component}`
+    const answer = await requestPromise({ url, method: 'GET', json: true })
+    if(JSON.stringify(answer).includes("not found")){
+        return false
+    }
+    else return true
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
