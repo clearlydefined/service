@@ -8,9 +8,8 @@ const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocat
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
-const definitionSchema = require('../schemas/definition')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
+const logger = require('../providers/logging/logger')()
+const validator = require('../schemas/validator')
 
 const currentSchema = '1.0.0'
 
@@ -97,7 +96,7 @@ class DefinitionService {
   }
 
   _validate(definition) {
-    if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
+    if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
   }
 
   async computeAndStore(coordinates) {
@@ -106,11 +105,22 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
-      this.harvestService.harvest({ tool: 'package', coordinates }).catch(reason => console.log(reason))
+      this.harvest(coordinates)
       return definition
     }
     await this._store(definition)
     return definition
+  }
+
+  async harvest(coordinates) {
+    try {
+      await this.harvestService.harvest({ tool: 'component', coordinates })
+    } catch (error) {
+      logger.info('failed to harvest from definition service', {
+        crawlerError: error,
+        coordinates: coordinates.toString()
+      })
+    }
   }
 
   async _store(definition) {
@@ -236,10 +246,11 @@ class DefinitionService {
             const definition = await this.get(coordinates, null, recompute)
             if (recompute) return Promise.resolve(null)
             return this.search.store(definition)
-          } catch (e) {
-            // TODO add some logging here but continue on for best effort
-            console.log(coordinates.toString())
-            console.log(e.message)
+          } catch (error) {
+            logger.info('failed to reload in definition service', {
+              error,
+              coordinates: coordinates.toString()
+            })
           }
         })
       )

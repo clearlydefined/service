@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
+const validator = require('../schemas/validator')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -54,7 +55,9 @@ async function reload(request, response) {
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (request, response) => {
-    if (!request.query.preview) return response.sendStatus(400)
+    if (!request.query.preview)
+      return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
+    if (!validator.validate('curations', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)

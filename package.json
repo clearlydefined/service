@@ -16,7 +16,7 @@
     "@octokit/rest": "^14.0.0",
     "ajv": "^6.5.2",
     "ajv-errors": "^1.0.0",
-    "applicationinsights": "^1.0.2",
+    "applicationinsights": "^1.0.6",
     "azure-storage": "^2.7.0",
     "base-64": "^0.1.0",
     "body-parser": "~1.18.2",
@@ -55,7 +55,9 @@
     "swagger-ui-express": "^2.0.13",
     "throat": "^4.1.0",
     "tmp": "0.0.33",
-    "vso-node-api": "^6.2.8-preview"
+    "vso-node-api": "^6.2.8-preview",
+    "winston": "^2.3.0",
+    "winston-azure-application-insights": "^1.5.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",

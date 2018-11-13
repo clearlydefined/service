@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const chai = require('chai')
-const definitionSchema = require('../../schemas/definition')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
+const validator = require('../../schemas/validator')
 const { expect } = chai
 const Summarizer = require('../../providers/summary/clearlydefined')
 const { setIfValue } = require('../../lib/utils')
@@ -271,7 +269,7 @@ function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   if (!definition.coordinates)
     definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
+  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
 }
 
 function createSourceLocation() {

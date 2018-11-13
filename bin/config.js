@@ -26,6 +26,9 @@ function loadFactory(spec, namespace) {
 
 module.exports = {
   summary: {},
+  logging: {
+    logger: loadFactory(config.get('LOGGING_PROVIDER') || 'winston', 'logging')
+  },
   curation: {
     service: loadFactory(config.get('CURATION_PROVIDER') || 'github', 'curation.service'),
     store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
