@@ -55,6 +55,8 @@ router.patch(
     let curationErrors = []
     request.body.patches.forEach(entry => {
       const curation = new Curation(entry)
+      console.log('FROM THE SUPPLIED REQUEST')
+      , curation.data.coordinates.name);
       if (curation.errors.length > 0) {
         curationErrors = [...curationErrors, curation.errors]
       }
