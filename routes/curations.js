@@ -46,74 +46,30 @@ async function listCurations(request, response) {
   response.status(200).send(result)
 }
 
-<<<<<<< HEAD
-router.patch('', asyncMiddleware(updateCurations))
+router.patch(
+  '',
+  asyncMiddleware(async (request, response) => {
+    const serviceGithub = request.app.locals.service.github.client
+    const userGithub = request.app.locals.user.github.client
+    const info = request.app.locals.user.github.info
+    let curationErrors = []
+    request.body.patches.forEach(entry => {
+      const curation = new Curation(entry)
+      if (curation.errors.length > 0) {
+        curationErrors = [...curationErrors, curation.errors]
+      }
+    })
+    if (curationErrors.length > 0) response.status(400).send({ errors: curationErrors })
+    else
+      return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
+        response.status(200).send({
+          prNumber: result.data.number,
+          url: curationService.getCurationUrl(result.data.number)
+        })
+      )
+  })
+ )
 
-async function updateCurations(request, response) {
-  const serviceGithub = request.app.locals.service.github.client
-  const userGithub = request.app.locals.user.github.client
-  const info = request.app.locals.user.github.info
-  let curationErrors = []
-  request.body.patches.forEach(entry => {
-     console.log('NAME', curation.data.coordinates.name);
-    const curation = new Curation(entry)
-    if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
-  })
-  if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors })
-  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
-  response.status(200).send({
-    prNumber: result.data.number,
-    url: curationService.getCurationUrl(result.data.number)
-||||||| merged common ancestors
-router.patch(
-  '',
-  asyncMiddleware(async (request, response) => {
-    const serviceGithub = request.app.locals.service.github.client
-    const userGithub = request.app.locals.user.github.client
-    const info = request.app.locals.user.github.info
-    let curationErrors = []
-    request.body.patches.forEach(entry => {
-      const curation = new Curation(entry)
-      console.log('NAME', curation.data.coordinates.name);
-      if (curation.errors.length > 0) {
-        curationErrors = [...curationErrors, curation.errors]
-      }
-    })
-    if (curationErrors.length > 0) response.status(400).send({ errors: curationErrors })
-    else
-      return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
-        response.status(200).send({
-          prNumber: result.data.number,
-          url: curationService.getCurationUrl(result.data.number)
-        })
-      )
-=======
-router.patch(
-  '',
-  asyncMiddleware(async (request, response) => {
-    const serviceGithub = request.app.locals.service.github.client
-    const userGithub = request.app.locals.user.github.client
-    const info = request.app.locals.user.github.info
-    let curationErrors = []
-    request.body.patches.forEach(entry => {
-      const curation = new Curation(entry)
-      console.log('FROM THE SUPPLIED REQUEST')
-      , curation.data.coordinates.name);
-      if (curation.errors.length > 0) {
-        curationErrors = [...curationErrors, curation.errors]
-      }
-    })
-    if (curationErrors.length > 0) response.status(400).send({ errors: curationErrors })
-    else
-      return curationService.addOrUpdate(userGithub, serviceGithub, info, request.body).then(result =>
-        response.status(200).send({
-          prNumber: result.data.number,
-          url: curationService.getCurationUrl(result.data.number)
-        })
-      )
->>>>>>> extracting the data from the request
-  })
-}
 
 let curationService
 
