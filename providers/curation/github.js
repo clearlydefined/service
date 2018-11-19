@@ -117,13 +117,13 @@ class GitHubCurationService {
       const { coordinates, revisions } = currentContent
       const { name, provider, type } = coordinates
       // Only get the latest revision
-      let newRevision = Object.keys(patch.revisions)[0];
+      let newRevision = Object.keys(patch.revisions)[0]
       let component = name + '/' + newRevision
-      try{
+      try {
         const validateResult = await this._validateComponentExists(component)
       } catch (error) {
         this.logger.info(`version not found: ${error.toString()}`)
-        return null;
+        return false
       }
       return serviceGithub.repos.updateFile(fileBody)
     }
@@ -134,7 +134,7 @@ class GitHubCurationService {
     const baseUrl = 'https://registry.npmjs.com'
     const url = `${baseUrl}/${component}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return answer;
+    return answer
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
