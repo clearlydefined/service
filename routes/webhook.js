@@ -31,6 +31,7 @@ async function handleGitHubCall(request, response) {
     switch (body.action) {
       case 'opened': {
         await curationService.prOpened(pr)
+        console.log('after open')
         break
       }
       case 'closed': {
@@ -44,9 +45,14 @@ async function handleGitHubCall(request, response) {
     }
     logger.info(`Handled GitHub event "${body.action}" for PR#${pr.number}`)
   } catch (exception) {
-    if (exception.code === 404)
-      return info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
-    else logger.error(exception)
+    console.log('start catch')
+
+    if (exception.code === 404) {
+      console.log('got 404')
+      info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
+      console.log('after info')
+      return
+    } else logger.error(exception)
   }
   response.status(200).end()
 }
