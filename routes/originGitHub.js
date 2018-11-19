@@ -5,6 +5,7 @@ const throat = require('throat')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const { get } = require('lodash')
+const utils = require('../lib/utils')
 
 function getClient(request) {
   return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
