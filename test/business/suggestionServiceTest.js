@@ -41,13 +41,6 @@ function createDefinition(coordinates, releaseDate, license, files) {
   return result
 }
 
-function buildFile(path, license, holders) {
-  const result = { path }
-  setIfValue(result, 'license', license)
-  setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
-  return result
-}
-
 function setup(definition, others) {
   const definitionService = { get: sinon.stub().callsFake(() => Promise.resolve(definition)) }
   const definitionStore = { list: () => Promise.resolve([...others, definition]) }

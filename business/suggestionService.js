@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { find, findLast, get, set } = require('lodash')
-const EntityCoordinates = require('../lib/entityCoordinates')
 
 class SuggestionService {
   constructor(definitionService, definitionStore) {
