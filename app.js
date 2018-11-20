@@ -85,7 +85,7 @@ function createApp(config) {
 
   app.use(morgan('dev'))
 
-  const swaggerOptions = { swaggerUrl: 'http://localhost:4000/schemas/swagger.yaml' }
+  const swaggerOptions = { swaggerUrl: `${config.endpoints.service}/schemas/swagger.yaml` }
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, swaggerOptions))
   app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhookRoute)
 
