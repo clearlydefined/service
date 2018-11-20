@@ -12,9 +12,6 @@ const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
-const fs = require('fs')
-const yaml = require('js-yaml')
-const swaggerDoc = yaml.safeLoad(fs.readFileSync('./routes/swagger.yaml'))
 const loggerFactory = require('./providers/logging/logger')
 
 function createApp(config) {
@@ -84,9 +81,12 @@ function createApp(config) {
   app.use(helmet())
   app.use(requestId())
   app.use(cachingMiddleware(caching()))
+  app.use('/schemas', express.static('./schemas'))
 
   app.use(morgan('dev'))
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+
+  const swaggerOptions = { swaggerUrl: 'http://localhost:4000/schemas/swagger.yaml' }
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, swaggerOptions))
   app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhookRoute)
 
   // OAuth app initialization; skip if not configured (middleware can cope)
