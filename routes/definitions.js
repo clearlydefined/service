@@ -57,7 +57,7 @@ router.post(
   asyncMiddleware(async (request, response) => {
     if (!request.query.preview)
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curations', request.body)) return response.status(400).send(validator.errorsText())
+    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)

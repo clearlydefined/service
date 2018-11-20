@@ -36,14 +36,35 @@ class GitHubCurationService {
     }
   }
 
+  /**
+   * Process the fact that the given PR has been opened.
+   * @param {*} pr GitHub PR event object
+   * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
+   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
+   * to interaction with GitHub or PR storage
+   */
   prOpened(pr) {
     return this._storeAndValidateContribution(pr)
   }
 
+  /**
+   * Process the fact that the given PR has been closed.
+   * @param {*} pr GitHub PR event object
+   * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
+   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
+   * to interaction with GitHub or PR storage
+   */
   prClosed(pr) {
     return this.store.updateContribution(pr)
   }
 
+  /**
+   * Process the fact that the given PR has been merged.
+   * @param {*} pr GitHub PR event object
+   * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
+   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
+   * to interaction with GitHub or PR storage
+   */
   async prMerged(pr) {
     // update the merged PR. Don't need to store the proposed changes as they should already be there.
     await this.store.updateContribution(pr)
@@ -67,6 +88,13 @@ class GitHubCurationService {
     )
   }
 
+  /**
+   * Process the fact that the given PR has been updated.
+   * @param {*} pr GitHub PR event object
+   * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
+   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
+   * to interaction with GitHub or PR storage
+   */
   prUpdated(pr) {
     return this._storeAndValidateContribution(pr)
   }
@@ -278,7 +306,7 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async _validateContributions(number, sha) {
-    await this.postCommitStatus(sha, number, 'pending', 'Validation in progress')
+    await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const curations = await this._getContributedCurations(number, sha)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
@@ -287,10 +315,10 @@ ${this._formatDefinitions(patch.patches)}`
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
     }
-    return this.postCommitStatus(sha, number, state, description)
+    return this._postCommitStatus(sha, number, state, description)
   }
 
-  async postCommitStatus(sha, number, state, description) {
+  async _postCommitStatus(sha, number, state, description) {
     const { owner, repo } = this.options
     const target_url = `${this.endpoints.website}/curations/${number}`
     try {
@@ -328,7 +356,7 @@ ${this._formatDefinitions(patch.patches)}`
       const response = await this.github.pullRequests.getFiles({ owner, repo, number })
       return response.data
     } catch (error) {
-      if (error.code === 404) throw new Error(`Could not find pr#${number} in ${owner}/${repo}`)
+      if (error.code === 404) throw error
       throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`)
     }
   }
