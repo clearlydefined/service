@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, first } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -117,10 +117,11 @@ class GitHubCurationService {
       const { coordinates, revisions } = currentContent
       const { name, provider, type } = coordinates
       // Only get the latest revision
+
       let newRevision = Object.keys(patch.revisions)[0]
-      let component = name + '/' + newRevision
+      let component = `${name}/${newRevision}`
       try {
-        const validateResult = await this._validateComponentExists(component)
+        const validateResult = await this._validateComponentExists(name, provider, component)
       } catch (error) {
         this.logger.info(`version not found: ${error.toString()}`)
         return false
@@ -130,8 +131,17 @@ class GitHubCurationService {
     return serviceGithub.repos.createFile(fileBody)
   }
 
-  async _validateComponentExists(component) {
-    const baseUrl = 'https://registry.npmjs.com'
+  async _validateComponentExists(name, provider, component) {
+    const providerUrlLookup = {
+      npmjs: `https://registry.npmjs.com`,
+      crates: `https://crates.io/api/v1/crates/${name}`,
+      maven: `https://search.maven.org/solrsearch/select?q=g`,
+      nuget: `https://api-v2v3search-0.nuget.org`,
+      pypi: `https://pypi.python.org/pypi/${name}/json`,
+      rubygems: `https://rubygems.org/api/v1/versions/${name}.json`
+    }
+
+    const baseUrl = providerUrlLookup[provider]
     const url = `${baseUrl}/${component}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     return answer
