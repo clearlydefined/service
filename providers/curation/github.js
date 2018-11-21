@@ -153,7 +153,7 @@ class GitHubCurationService {
     await Promise.all(
       patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
-    const { type, details, summary, resolution } = patch.constributionInfo
+    const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     const description = `
 **Type:** ${Type}
