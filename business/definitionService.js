@@ -27,7 +27,7 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
   }
-
+ 
   /**
    * Get the final representation of the specified definition and optionally apply the indicated
    * curation.
