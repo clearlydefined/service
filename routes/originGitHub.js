@@ -4,7 +4,7 @@
 const throat = require('throat')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const { get } = require('lodash')
+const { get, uniq } = require('lodash')
 
 function getClient(request) {
   return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
@@ -43,7 +43,7 @@ router.get(
         )
       )
       const result = unsorted.filter(x => x).sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
-      return response.status(200).send(result)
+      return response.status(200).send(uniq(result))
     } catch (error) {
       console.error(error)
       if (error.code === 404) return response.status(200).send([])

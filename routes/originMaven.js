@@ -4,7 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
-const utils = require('../lib/utils')
+const { uniq } = require('lodash')
 
 // Get versions
 router.get(
@@ -15,7 +15,7 @@ router.get(
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&core=gav&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
       const result = answer.response.docs.map(item => item.v)
-      return response.status(200).send(utils.filterForUniqueItemsOnly(result))
+      return response.status(200).send(uniq(result))
     } catch (error) {
       if (error.code === 404) return response.status(200).send([])
       // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?

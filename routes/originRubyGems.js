@@ -4,7 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
-const utils = require('../lib/utils')
+const { uniq } = require('lodash')
 
 router.get(
   '/:name/revisions',
@@ -13,7 +13,7 @@ router.get(
     const url = `https://rubygems.org/api/v1/versions/${name}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.map(entry => entry.number)
-    return response.status(200).send(utils.filterForUniqueItemsOnly(result))
+    return response.status(200).send(uniq(result))
   })
 )
 

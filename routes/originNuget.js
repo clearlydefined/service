@@ -4,7 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
-const utils = require('../lib/utils')
+const { uniq } = require('lodash')
 
 router.get(
   '/:name/revisions',
@@ -13,7 +13,7 @@ router.get(
     const { name } = request.params
     const url = `${baseUrl}/autocomplete?id=${name}&prerelease=true`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(utils.filterForUniqueItemsOnly(answer.data))
+    return response.status(200).send(uniq(answer.data))
   })
 )
 
