@@ -138,7 +138,6 @@ class GitHubCurationService {
     // Github requires name/email to set committer
     if ((info.name || info.login) && info.email)
       fileBody.committer = { name: info.name || info.login, email: info.email }
-    else logger.info('Github requires name/email to set committer, info.email is currently: ', info.email)
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
       // Extract the component values
@@ -147,9 +146,9 @@ class GitHubCurationService {
       // Only get the latest revision
 
       let newRevision = Object.keys(patch.revisions)[0]
-      let component = `${name}/${newRevision}`
       try {
-        const validateResult = await this._validateComponentExists(name, provider, component)
+        coordinates['revision'] = newRevision
+        const validateResult = await this._validateComponentDefinitionExists(coordinates)
       } catch (error) {
         this.logger.info(`version not found: ${error.toString()}`)
         return false
@@ -159,20 +158,9 @@ class GitHubCurationService {
     return serviceGithub.repos.createFile(fileBody)
   }
 
-  async _validateComponentExists(name, provider, component) {
-    const providerUrlLookup = {
-      npmjs: `https://registry.npmjs.com`,
-      crates: `https://crates.io/api/v1/crates/${name}`,
-      maven: `https://search.maven.org/solrsearch/select?q=g`,
-      nuget: `https://api-v2v3search-0.nuget.org`,
-      pypi: `https://pypi.python.org/pypi/${name}/json`,
-      rubygems: `https://rubygems.org/api/v1/versions/${name}.json`
-    }
-
-    const baseUrl = providerUrlLookup[provider]
-    const url = `${baseUrl}/${component}`
-    const answer = await requestPromise({ url, method: 'GET', json: true })
-    return answer
+  async _validateComponentDefinitionExists(coordinates, revisions) {
+    const result = await this.definitionService.definitionStore.list(coordinates)
+    return result
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
