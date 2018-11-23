@@ -58,6 +58,9 @@ function createApp(config) {
   curationService.definitionService = definitionService
   const definitionsRoute = require('./routes/definitions')(definitionService)
 
+  const suggestionService = require('./business/suggestionService')(definitionService, definitionStore)
+  const suggestionsRoute = require('./routes/suggestions')(suggestionService)
+
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
   const githubSecret = config.webhook.githubSecret
@@ -121,6 +124,7 @@ function createApp(config) {
   app.use('/curations', curationsRoute)
   app.use('/definitions', definitionsRoute)
   app.use('/attachments', attachmentsRoute)
+  app.use('/suggestions', suggestionsRoute)
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {
