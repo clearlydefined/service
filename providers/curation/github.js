@@ -141,39 +141,38 @@ class GitHubCurationService {
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
 
-      // Extract the component values
-      /*const { coordinates, revisions } = currentContent*/
       try {
         let validateResult = await this._validateComponentDefinitionExists(patch)
-        console.log('validateResult', validateResult)
-        // This only gets the latest revision - not enough
-        /* coordinates['revision'] = = Object.keys(patch.revisions)[0]  */
+        for (var elem of validateResult) {
+          if (elem.revision) {
+            return response.status(400).send({ errors: `component does not exist: ${elem.revision.toString()}` })
+          }
+        }
       } catch (error) {
-        this.logger.info(`component does not exist: ${error.toString()}`)
-        return false
+        return response.status(400).send({ errors: `error in validating patch ${error.toString()}` })
       }
-      //return serviceGithub.repos.updateFile(fileBody)
+      return serviceGithub.repos.updateFile(fileBody)
     }
-    //return serviceGithub.repos.createFile(fileBody)
+    return serviceGithub.repos.createFile(fileBody)
   }
 
-  // This function should only return an array of the coordinates of the definitions that do not exist
+  // If a definition exists then return the patch.
+  // Otherwise return an array of just the coordinates of the definitions that do not exist
   async _validateComponentDefinitionExists(patch) {
-    const result = await map(patch.revisions, async (_, key) => {
-      const coordinates = Object.assign({}, patch.coordinates, {
-        revision: key,
-        tool: 'definition',
-        toolVersion: 1
-      })
-      try {
+    const result = await Promise.all(
+      map(patch.revisions, async (_, key) => {
+        const coordinates = Object.assign({}, patch.coordinates, {
+          revision: key,
+          tool: 'definition',
+          toolVersion: 1
+        })
         const singleResult = await this.definitionService.definitionStore.get(coordinates)
         if (singleResult === null) {
           return coordinates
         }
-      } catch (error) {
-        //if (definitionErrors.length > 0) return response.status(400).send({ errors: definitionErrors })
-      }
-    })
+        return singleResult
+      })
+    )
     return result
   }
 
