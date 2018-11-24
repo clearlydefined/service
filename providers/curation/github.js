@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -140,26 +140,40 @@ class GitHubCurationService {
       fileBody.committer = { name: info.name || info.login, email: info.email }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
-      // Extract the component values
-      const { coordinates, revisions } = currentContent
-      const { name, provider, type } = coordinates
-      // Only get the latest revision
 
-      let newRevision = Object.keys(patch.revisions)[0]
+      // Extract the component values
+      /*const { coordinates, revisions } = currentContent*/
       try {
-        coordinates['revision'] = newRevision
-        const validateResult = await this._validateComponentDefinitionExists(coordinates)
+        let validateResult = await this._validateComponentDefinitionExists(patch)
+        console.log('validateResult', validateResult)
+        // This only gets the latest revision - not enough
+        /* coordinates['revision'] = = Object.keys(patch.revisions)[0]  */
       } catch (error) {
-        this.logger.info(`version not found: ${error.toString()}`)
+        this.logger.info(`component does not exist: ${error.toString()}`)
         return false
       }
-      return serviceGithub.repos.updateFile(fileBody)
+      //return serviceGithub.repos.updateFile(fileBody)
     }
-    return serviceGithub.repos.createFile(fileBody)
+    //return serviceGithub.repos.createFile(fileBody)
   }
 
-  async _validateComponentDefinitionExists(coordinates, revisions) {
-    const result = await this.definitionService.definitionStore.list(coordinates)
+  // This function should only return an array of the coordinates of the definitions that do not exist
+  async _validateComponentDefinitionExists(patch) {
+    const result = await map(patch.revisions, async (_, key) => {
+      const coordinates = Object.assign({}, patch.coordinates, {
+        revision: key,
+        tool: 'definition',
+        toolVersion: 1
+      })
+      try {
+        const singleResult = await this.definitionService.definitionStore.get(coordinates)
+        if (singleResult === null) {
+          return coordinates
+        }
+      } catch (error) {
+        //if (definitionErrors.length > 0) return response.status(400).send({ errors: definitionErrors })
+      }
+    })
     return result
   }
 
