@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, map } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map, flatten } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -140,40 +140,35 @@ class GitHubCurationService {
       fileBody.committer = { name: info.name || info.login, email: info.email }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
-
-      try {
-        let validateResult = await this._validateComponentDefinitionExists(patch)
-        for (var elem of validateResult) {
-          if (elem.revision) {
-            return response.status(400).send({ errors: `component does not exist: ${elem.revision.toString()}` })
-          }
-        }
-      } catch (error) {
-        return response.status(400).send({ errors: `error in validating patch ${error.toString()}` })
-      }
       return serviceGithub.repos.updateFile(fileBody)
     }
     return serviceGithub.repos.createFile(fileBody)
   }
 
-  // If a definition exists then return the patch.
-  // Otherwise return an array of just the coordinates of the definitions that do not exist
-  async _validateComponentDefinitionExists(patch) {
-    const result = await Promise.all(
-      map(patch.revisions, async (_, key) => {
-        const coordinates = Object.assign({}, patch.coordinates, {
-          revision: key,
-          tool: 'definition',
-          toolVersion: 1
-        })
-        const singleResult = await this.definitionService.definitionStore.get(coordinates)
-        if (singleResult === null) {
-          return coordinates
-        }
-        return singleResult
-      })
+  // Return an array of just the coordinates of the definitions that do not exist
+  async _validateComponentDefinitionExists(patches) {
+    const notFoundDefinitions = []
+    const validPatches = Object.assign([], patches)
+    const promises = flatten(
+      map(patches, (patch, index) =>
+        map(
+          patch.revisions,
+          throat(10, async (_, key) => {
+            const coordinates = Object.assign({}, patch.coordinates, {
+              revision: key
+            })
+            try {
+              await this.definitionService.get(coordinates)
+            } catch (error) {
+              delete validPatches[index].revisions[key]
+              notFoundDefinitions.push(coordinates)
+            }
+          })
+        )
+      )
     )
-    return result
+    await Promise.all(promises)
+    return { validPatches, notFoundDefinitions }
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
@@ -182,8 +177,10 @@ class GitHubCurationService {
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
+    const { validPatches, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
+    // Add error handling
     await Promise.all(
-      patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
+      patch.patches.map(throat(1, validPatches => this._writePatch(serviceGithub, info, validPatches, prBranch)))
     )
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
