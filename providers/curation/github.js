@@ -161,7 +161,9 @@ class GitHubCurationService {
               await this.definitionService.get(coordinates)
             } catch (error) {
               delete validPatches[index].revisions[key]
-              notFoundDefinitions.push(`Definition ${EntitySpec.toString(coordinates)} has not been found`)
+              notFoundDefinitions.push(
+                `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
+              )
             }
           })
         )
