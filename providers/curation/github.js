@@ -161,7 +161,7 @@ class GitHubCurationService {
               await this.definitionService.get(coordinates)
             } catch (error) {
               delete validPatches[index].revisions[key]
-              notFoundDefinitions.push(coordinates)
+              notFoundDefinitions.push(`Definition ${EntitySpec.toString(coordinates)} has not been found`)
             }
           })
         )
@@ -178,10 +178,17 @@ class GitHubCurationService {
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     const { validPatches, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
-    // Add error handling
+    const validResult = { errors: notFoundDefinitions }
+    if (!validPatches) {
+      validResult.errors.push(
+        `The contribution has failed because none of the supplied component definitions were found`
+      )
+      return validResult
+    }
     await Promise.all(
-      patch.patches.map(throat(1, validPatches => this._writePatch(serviceGithub, info, validPatches, prBranch)))
+      validPatches.map(throat(10, validPatch => this._writePatch(serviceGithub, info, validPatch, prBranch)))
     )
+
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     const description = `
@@ -197,7 +204,7 @@ ${details}
 ${resolution}
 
 **Affected definitions**:
-${this._formatDefinitions(patch.patches)}`
+${this._formatDefinitions(validPatches)}`
 
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
@@ -215,7 +222,8 @@ ${this._formatDefinitions(patch.patches)}`
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
-    return result
+    validResult.result = result
+    return validResult
   }
 
   _formatDefinitions(definitions) {
