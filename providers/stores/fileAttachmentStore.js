@@ -8,7 +8,7 @@ const logger = require('../logging/logger')
 
 class FileAttachmentStore {
   constructor(options) {
-     this.logger = logger()
+    this.logger = logger()
     this.options = options
   }
 

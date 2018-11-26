@@ -183,7 +183,7 @@ class GitHubCurationService {
     const validResult = { errors: notFoundDefinitions }
     if (!validPatches) {
       validResult.errors.push(
-        `The contribution has failed because none of the supplied component definitions were found`
+        'The contribution has failed because none of the supplied component definitions were found'
       )
       return validResult
     }
