@@ -4,6 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
+const { uniq } = require('lodash')
 
 router.get(
   '/:name/revisions',
@@ -11,7 +12,7 @@ router.get(
     const { name } = request.params
     const url = `https://crates.io/api/v1/crates/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(answer.versions.map(x => x.num))
+    return response.status(200).send(uniq(answer.versions.map(x => x.num)))
   })
 )
 
