@@ -24,8 +24,7 @@ function handlePost(request, response) {
 
 async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
-  // if there is no body return 200 regardless so the caller does not get upset and stop sending webhooks.
-  if (!body) return info(request, response, 200, 'Bad GitHub PR event: no body')
+  if (!body) return
   const pr = body.pull_request
   try {
     switch (body.action) {
