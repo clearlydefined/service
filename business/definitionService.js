@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, set, sortedUniq, remove, pullAllWith, isEqual } = require('lodash')
+const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -82,6 +82,39 @@ class DefinitionService {
     const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
     return sortedUniq([...harvest, ...curated])
+  }
+
+  /**
+   * Get a list of all the definitions that exist in the store matching the given coordinates
+   * @param {Object[]} coordinatesList
+   * @returns {Object[]} A list of all components that have definitions that are available
+   */
+  async listAll(coordinatesList) {
+    //Take the array of coordinates, strip out the revision and only return uniques
+    const coordinatesWithoutRevision = uniqBy(
+      coordinatesList.map(coordinates => {
+        const { revision, ...withoutRevision } = coordinates
+        return withoutRevision
+      }),
+      isEqual
+    )
+
+    const promises = coordinatesWithoutRevision.map(async coordinates => {
+      try {
+        return await this.list(coordinates)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+    const foundDefinitions = flatten(await Promise.all(promises))
+    // Filter only the revisions matching the found definitions
+    return coordinatesList.filter(coordinates => {
+      return (
+        foundDefinitions.findIndex(definition => definition === EntityCoordinates.fromObject(coordinates).toString()) >
+        -1
+      )
+    })
   }
 
   /**

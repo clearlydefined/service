@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, map, flatten } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map, flatten, isEmpty, compact } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -145,32 +145,40 @@ class GitHubCurationService {
     return serviceGithub.repos.createFile(fileBody)
   }
 
-  // Return an array of just the coordinates of the definitions that do not exist
+  // Return an array of valid patches that exist
+  // and a list of definitions that do not exist in the store
   async _validateComponentDefinitionExists(patches) {
-    const notFoundDefinitions = []
-    const validPatches = Object.assign([], patches)
-    const promises = flatten(
-      map(patches, (patch, index) =>
-        map(
-          patch.revisions,
-          throat(10, async (_, key) => {
-            const coordinates = Object.assign({}, patch.coordinates, {
-              revision: key
-            })
-            try {
-              await this.definitionService.get(coordinates)
-            } catch (error) {
-              delete validPatches[index].revisions[key]
-              notFoundDefinitions.push(
-                `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
-              )
-            }
+    const coordinatesWithRevisions = flatten(
+      map(patches, patch =>
+        map(patch.revisions, (_, key) => {
+          return Object.assign({}, patch.coordinates, {
+            revision: key
           })
-        )
+        })
       )
     )
-    await Promise.all(promises)
-    return { validPatches, notFoundDefinitions }
+
+    const validDefinitions = await this.definitionService.listAll(coordinatesWithRevisions)
+    const validPatches = Object.assign([], patches)
+    const notFoundDefinitions = []
+    map(patches, (patch, index) =>
+      map(
+        patch.revisions,
+        throat(10, async (_, key) => {
+          const coordinates = Object.assign({}, patch.coordinates, {
+            revision: key
+          })
+          if (validDefinitions.findIndex(definition => isEqual(definition, coordinates)) === -1) {
+            delete validPatches[index].revisions[key]
+            if (isEmpty(validPatches[index].revisions)) delete validPatches[index]
+            notFoundDefinitions.push(
+              `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
+            )
+          }
+        })
+      )
+    )
+    return { validPatches: compact(validPatches), notFoundDefinitions }
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
@@ -181,7 +189,7 @@ class GitHubCurationService {
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     const { validPatches, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
     const validResult = { errors: notFoundDefinitions }
-    if (!validPatches) {
+    if (validPatches.length === 0) {
       validResult.errors.push(
         'The contribution has failed because none of the supplied component definitions were found'
       )
@@ -224,7 +232,7 @@ ${this._formatDefinitions(validPatches)}`
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
-    validResult.result = result
+    validResult.contribution = result
     return validResult
   }
 
