@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten } = require('lodash')
+const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten, omit } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -93,7 +93,7 @@ class DefinitionService {
     //Take the array of coordinates, strip out the revision and only return uniques
     const coordinatesWithoutRevision = uniqBy(
       coordinatesList.map(coordinates => {
-        const { revision, ...withoutRevision } = coordinates
+        const withoutRevision = omit(coordinates, ['revision'])
         return withoutRevision
       }),
       isEqual
