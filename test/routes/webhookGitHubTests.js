@@ -21,8 +21,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
     expect(logger.error.notCalled).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+    expect(logger.info.notCalled).to.be.true
   })
 
   it('handles missing signature', async () => {
@@ -33,7 +32,7 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(400)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
@@ -49,7 +48,7 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(400)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
