@@ -48,11 +48,14 @@ class GitHubCurationService {
       per_page: 100,
       state: 'all'
     })
-    let prs = response.data
+    this._processContributions(response.data)
     while (this.github.hasNextPage(response)) {
       response = await this.github.getNextPage(response)
-      prs = prs.concat(response.data)
+      this._processContributions(response.data)
     }
+  }
+
+  async _processContributions(prs) {
     for (let pr of prs) {
       const storedContribution = await this.store.getContribution(pr.number)
       if (new Date(get(storedContribution, 'pr.updated_at')).getTime() >= new Date(pr.updated_at).getTime()) continue
