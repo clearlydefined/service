@@ -47,6 +47,15 @@ class MongoCurationStore {
   }
 
   /**
+   * Retrieve the contribution by number
+   * @param {Number} prNumber - the PR number as provided by GitHub
+   * @returns the Curations found if any
+   */
+  getContribution(prNumber) {
+    return this.collection.findOne({ _id: prNumber })
+  }
+
+  /**
    * Update the contribution entry for the given PR and record the associated curations -- the
    * actual file content in the PR. If the curations are not provided, just the PR data is updated,
    * any existing curation data is preserved.

@@ -13,7 +13,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@octokit/rest": "^14.0.0",
+    "@octokit/rest": "^14.0.9",
     "ajv": "^6.5.2",
     "ajv-errors": "^1.0.0",
     "applicationinsights": "^1.0.6",

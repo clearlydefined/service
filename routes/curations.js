@@ -69,6 +69,13 @@ async function updateCurations(request, response) {
   })
 }
 
+router.post('/sync', asyncMiddleware(syncAllContributions))
+
+async function syncAllContributions(request, response) {
+  await curationService.syncAllContributions()
+  response.send({ status: 'OK' })
+}
+
 let curationService
 
 function setup(service) {

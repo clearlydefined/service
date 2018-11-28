@@ -28,16 +28,14 @@ async function handleGitHubCall(request, response) {
   const pr = body.pull_request
   try {
     switch (body.action) {
-      case 'opened': {
-        await curationService.prOpened(pr)
+      case 'opened':
+      case 'synchronize': {
+        curationService.validateContributions(pr.number, pr.head.sha)
+        await curationService.updateContribution(pr)
         break
       }
       case 'closed': {
-        await (pr.merged ? curationService.prMerged(pr) : curationService.prClosed(pr))
-        break
-      }
-      case 'synchronize': {
-        await curationService.prUpdated(pr)
+        await curationService.updateContribution(pr)
         break
       }
     }
