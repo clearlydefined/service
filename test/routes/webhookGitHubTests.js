@@ -7,7 +7,7 @@ const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 
 describe('Webhook Route for GitHub calls', () => {
-  /*it('handles invalid action', async () => {
+  it('handles invalid action', async () => {
     const request = createRequest('yeah, right')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -21,11 +21,11 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
     expect(logger.error.notCalled).to.be.true
-    //expect(logger.info.calledOnce).to.be.true
-    //expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
-  })*/
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+  })
 
-  /*it('handles missing signature', async () => {
+  it('handles missing signature', async () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-hub-signature']
     const response = httpMocks.createResponse()
@@ -33,7 +33,7 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    //expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(200)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
@@ -41,7 +41,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(response._getData().startsWith('Missing')).to.be.true
   })*/
 
-  /*it('handles missing event header', async () => {
+  it('handles missing event header', async () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-github-event']
     const response = httpMocks.createResponse()
@@ -49,13 +49,13 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    //expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(200)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
     expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
-  })*/
+  })
 
   // TODO for some reason this test is failing on Travis. Runs fine on my windows machine and
   // really should not be affected by environment. could be something with the async/await code
