@@ -28,7 +28,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createCuration()]
     })
-    await service._validateContributions(1, '42', 'testBranch')
+    await service.validateContributions('42', 'testBranch')
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('success')
@@ -40,7 +40,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, '_getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
-    await service._validateContributions(1, '42', 'testBranch')
+    await service.validateContributions('42', 'testBranch')
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
