@@ -38,7 +38,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.prMerged.calledOnce).to.be.false
     expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
-  })*/
+  })
 
   it('handles missing event header', async () => {
     const request = createRequest('yeah, right')
