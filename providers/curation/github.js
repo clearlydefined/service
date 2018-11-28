@@ -11,6 +11,7 @@ const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
+const loggerFactory = require('../logging/logger')
 tmp.setGracefulCleanup()
 
 // Responsible for managing curation patches in a store
@@ -26,7 +27,7 @@ class GitHubCurationService {
     this.curationUpdateTime = null
     this.tempLocation = null
     this.github = Github.getClient(options)
-    this.logger = require('../logging/logger')()
+    this.logger = loggerFactory()
   }
 
   get tmpOptions() {
@@ -40,8 +41,8 @@ class GitHubCurationService {
    * Enumerate all contributions in GitHub and in the store and updates any out of sync
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    */
-  async syncAllContributions() {
-    let response = await this.github.pullRequests.getAll({
+  async syncAllContributions(client) {
+    let response = await client.pullRequests.getAll({
       owner: this.options.owner,
       repo: this.options.repo,
       per_page: 100,

@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 const Curation = require('../lib/curation')
+const { permissionsCheck } = require('../middleware/permissions')
 
 // Get a proposed patch for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getChangesForCoordinatesInPr))
@@ -69,10 +70,10 @@ async function updateCurations(request, response) {
   })
 }
 
-router.post('/sync', asyncMiddleware(syncAllContributions))
+router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))
 
 async function syncAllContributions(request, response) {
-  await curationService.syncAllContributions()
+  await curationService.syncAllContributions(request.app.locals.user.github.client)
   response.send({ status: 'OK' })
 }
 
