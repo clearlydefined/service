@@ -16,6 +16,7 @@ ENV APPDIR=/opt/service
 # RUN chmod 755 /bin/init_container.sh
 # CMD ["/bin/init_container.sh"]
 ARG BUILD_NUMBER=0
+ENV BUILD_NUMBER=$BUILD_NUMBER
 
 COPY package*.json /tmp/
 RUN cd /tmp && npm install --production
