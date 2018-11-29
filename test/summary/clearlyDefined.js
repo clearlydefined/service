@@ -45,7 +45,7 @@ function setupMaven(releaseDate, sourceInfo) {
 
 describe('ClearlyDefined NuGet summarizer', () => {
   it('handles with all the data', () => {
-    const { coordinates, harvested } = setupNuGet('2018-03-06T11:38:10.284Z')
+    const { coordinates, harvested } = setupNuGet({ releaseDate: '2018-03-06T11:38:10.284Z' })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
@@ -53,7 +53,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
   })
 
   it('handles data with source location', () => {
-    const { coordinates, harvested } = setupNuGet('2018-03-06T11:38:10.284Z', true)
+    const { coordinates, harvested } = setupNuGet({ releaseDate: '2018-03-06T11:38:10.284Z', sourceInfo: true })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
@@ -62,18 +62,64 @@ describe('ClearlyDefined NuGet summarizer', () => {
   })
 
   it('handles no data', () => {
-    const { coordinates, harvested } = setupNuGet()
+    const { coordinates, harvested } = setupNuGet({})
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described).to.be.undefined
   })
+
+  it('includes files from manifest', () => {
+    const { coordinates, harvested } = setupNuGet({
+      packageEntries: [
+        { fullName: 'lib/net40/Project.dll' },
+        { fullName: 'LICENSE' },
+        { fullName: 'lib/netstandard1.3/Project.dll' }
+      ]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files).to.deep.equal([
+      { path: 'lib/net40/Project.dll' },
+      { path: 'LICENSE' },
+      { path: 'lib/netstandard1.3/Project.dll' }
+    ])
+  })
+
+  it('includes files from interestingFiles', () => {
+    const { coordinates, harvested } = setupNuGet({
+      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files).to.deep.equal([{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }])
+  })
+
+  it('merges files from manifest and interestingFiles', () => {
+    const { coordinates, harvested } = setupNuGet({
+      packageEntries: [
+        { fullName: 'lib/net40/Project.dll' },
+        { fullName: 'LICENSE' },
+        { fullName: 'lib/netstandard1.3/Project.dll' }
+      ],
+      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files).to.deep.equal([
+      { path: 'LICENSE', token: 'thisisatoken', license: 'MIT' },
+      { path: 'lib/net40/Project.dll' },
+      { path: 'lib/netstandard1.3/Project.dll' }
+    ])
+  })
 })
 
-function setupNuGet(releaseDate, sourceInfo) {
+function setupNuGet({ releaseDate, sourceInfo, packageEntries, interestingFiles }) {
   const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'manifest.packageEntries', packageEntries)
+  setIfValue(harvested, 'interestingFiles', interestingFiles)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }
