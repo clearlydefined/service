@@ -8,8 +8,10 @@ info:
 servers:
   - url: https://api.clearlydefined.io
     description: Production environment
-  - url: https://dev.clearlydefined.io
+  - url: https://dev-api.clearlydefined.io
     description: Development environment
+  - url: http://localhost:4000
+    description: localhost environment
 
 paths:
   /curations/{type}/{provider}/{namespace}/{name}:
@@ -54,31 +56,32 @@ paths:
       responses:
         200:
           description: Component revision curation.
+  /curations:
     patch:
-      summary: Patches the curation of a component revision.
+      summary: Patches the curation of a (set of) component revision.
       tags:
         - curations
-      parameters:
-        - $ref: '#/components/parameters/type'
-        - $ref: '#/components/parameters/provider'
-        - $ref: '#/components/parameters/namespace'
-        - $ref: '#/components/parameters/name'
-        - $ref: '#/components/parameters/revision'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: /schemas/curations-1.0.json
       responses:
         200:
-          description: Nothing. TODO - this should be 204 or return something.
+          description: A summary of the curation (PR) created
+          content:
+            application/json:
+              schema:
+                type: object
+
   /harvest:
     post:
       summary: Post the given components to be harvested
       tags:
         - harvest
       requestBody:
-        description: A single or array of requests
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/bodies/request'
+        $ref: '#/components/requestBodies/request'
       responses:
         201:
           description: Harvested file has been accepted.
@@ -186,19 +189,14 @@ paths:
       tags:
         - definitions
       requestBody:
-        description: List of components to report on.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/bodies/componentList'
+        $ref: '#/components/requestBodies/componentList'
       responses:
         200:
           description: Status request has been accepted.
           content:
             application/json:
               schema:
-                $ref: '#components/bodies/definitionList'
+                $ref: '#/components/requestBodies/definitionList'
     get:
       summary: Gets the coordinates for all definitions that match the given pattern in the specified part of the definition.
       tags:
@@ -293,69 +291,102 @@ tags:
     description: Definition attachments - Raw content of attachments for harvested component data
 
 components:
-  bodies:
-    componentList:
-      name: componentList
-      description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
-      type: array
-      items: string
-      example:
-        - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
-        - npm/npmjs/-/redie/0.3.0
-    request:
-      name: request
-      description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
+  schemas:
+    harvestRequest:
       type: object
+      properties:
+        tool:
+          type: string
+        path:
+          type: string
       example:
         - tool: package
           path: npm/npmjs/-/redie/0.3.0
         - tool: source
           path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
 
+  requestBodies:
+    componentList:
+      description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+              - npm/npmjs/-/redie/0.3.0
+    request:
+      description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tool:
+                type: string
+              path:
+                type: string
+            example:
+              - tool: package
+                path: npm/npmjs/-/redie/0.3.0
+              - tool: source
+                path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
     definitionList:
-      type: object
       description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
-      example:
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
-          coordinates:
-            type: git
-            provider: github
-            namespace: microsoft
-            name: redie
-            revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
-          described:
-            sourceLocation:
-              type: git
-              provider: github
-              namespace: microsoft
-              name: redie
-              revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
-            releaseDate: '2018-01-29'
-          licensed:
-            declared: MIT
-            facets:
-              core:
-                attribution:
-                  parties:
-                    - Microsoft Corporation
-                discovered:
-                  - MIT
-                  - GPL
-
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
+                coordinates:
+                  type: git
+                  provider: github
+                  namespace: microsoft
+                  name: redie
+                  revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
+                described:
+                  sourceLocation:
+                    type: git
+                    provider: github
+                    namespace: microsoft
+                    name: redie
+                    revision: 194269b5b7010ad6f8dc4ef608c88128615031ca
+                  releaseDate: '2018-01-29'
+                licensed:
+                  declared: MIT
+                  facets:
+                    core:
+                      attribution:
+                        parties:
+                          - Microsoft Corporation
+                      discovered:
+                        - MIT
+                        - GPL
     outputSummaryList:
-      type: object
       description: A list of tool outputs that are available (see harvest.json#definitions/definitionSummaryList)
-      example:
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
-          clearlydefined:
-            - 1
-          scancode:
-            - 2.2.1
-        'npm/npmjs/-/redie/0.3.0':
-          clearlydefined:
-            - 1
-          scancode:
-            - 2.2.1
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca':
+                clearlydefined:
+                  - 1
+                scancode:
+                  - 2.2.1
+              'npm/npmjs/-/redie/0.3.0':
+                clearlydefined:
+                  - 1
+                scancode:
+                  - 2.2.1
 
   parameters:
     type:

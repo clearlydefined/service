@@ -21,10 +21,14 @@ async function getChangesForCoordinatesInPr(request, response) {
 router.get('/pr/:pr', asyncMiddleware(getPr))
 
 async function getPr(request, response) {
-  const url = curationService.getCurationUrl(request.params.pr)
-  const changes = await curationService.getChangedDefinitions(request.params.pr)
-  if (changes && changes.length > 0) return response.status(200).send({ url, changes })
-  return response.sendStatus(404)
+  try {
+    const url = curationService.getCurationUrl(request.params.pr)
+    const changes = await curationService.getChangedDefinitions(request.params.pr)
+    return response.status(200).send({ url, changes })
+  } catch (exception) {
+    if (exception.code === 404) return response.sendStatus(404)
+    throw exception
+  }
 }
 
 // Get an existing patch for a specific revision of a component

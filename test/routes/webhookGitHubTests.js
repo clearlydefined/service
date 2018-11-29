@@ -10,7 +10,7 @@ describe('Webhook Route for GitHub calls', () => {
   it('handles invalid action', async () => {
     const request = createRequest('yeah, right')
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
@@ -20,17 +20,19 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.prMerged.calledOnce).to.be.false
     expect(service.prUpdated.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
+    expect(logger.error.notCalled).to.be.true
+    expect(logger.info.notCalled).to.be.true
   })
 
   it('handles missing signature', async () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-hub-signature']
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(400)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
@@ -42,11 +44,11 @@ describe('Webhook Route for GitHub calls', () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-github-event']
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    expect(response.statusCode).to.be.eq(400)
     expect(service.prOpened.calledOnce).to.be.false
     expect(service.prClosed.calledOnce).to.be.false
     expect(service.prMerged.calledOnce).to.be.false
@@ -74,27 +76,50 @@ describe('Webhook Route for GitHub calls', () => {
   it('skips closed event that is not merged', async () => {
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
+    const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.prClosed.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
   })
 
   it('calls valid for PR changes', async () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
+    const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.prOpened.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
+  })
+
+  it('calls missing for PR changes', async () => {
+    const request = createRequest('opened')
+    const response = httpMocks.createResponse()
+    const logger = createLogger()
+    const service = createCurationService(true)
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    await router._handlePost(request, response)
+    expect(response.statusCode).to.be.eq(200)
+    expect(service.prOpened.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
   })
 })
 
-function createCurationService() {
+function createLogger() {
+  return { info: sinon.stub(), error: sinon.stub() }
+}
+
+function createCurationService(failsMissing = false) {
   return {
-    prOpened: sinon.stub(),
+    prOpened: sinon.stub().callsFake(() => (failsMissing ? Promise.reject({ code: 404 }) : Promise.resolve(null))),
     prClosed: sinon.stub(),
     prUpdated: sinon.stub(),
     prMerged: sinon.stub()
