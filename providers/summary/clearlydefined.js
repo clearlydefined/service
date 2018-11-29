@@ -106,15 +106,12 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
     const packageEntries = get(data, 'manifest.packageEntries')
-    if (packageEntries) {
-      const newDefinition = cloneDeep(result)
-      newDefinition.files = packageEntries.map(x => {
-        return {
-          path: decodeURIComponent(x.fullName)
-        }
-      })
-      mergeDefinitions(result, newDefinition)
-    }
+    if (!packageEntries) return
+    const newDefinition = cloneDeep(result)
+    newDefinition.files = packageEntries.map(file => {
+      return { path: decodeURIComponent(file.fullName) }
+    })
+    mergeDefinitions(result, newDefinition)
   }
 
   addNpmData(result, data) {
