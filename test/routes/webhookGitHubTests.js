@@ -113,6 +113,7 @@ function createLogger() {
 
 function createCurationService() {
   return {
+    getContributedCurations: sinon.stub(),
     updateContribution: sinon.stub(),
     validateContributions: sinon.stub()
   }

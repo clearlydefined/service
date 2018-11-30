@@ -66,11 +66,11 @@ class GitHubCurationService {
   /**
    * Persist the updated contribution in the store and handle newly merged contributions
    * @param {*} pr - The GitHub PR object
+   * @param {*} curations -Optional. The contributed curations for this PR
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    */
-  async updateContribution(pr) {
-    const curations = await this._getContributedCurations(pr.number, pr.head.sha)
-
+  async updateContribution(pr, curations = null) {
+    curations = curations || (await this.getContributedCurations(pr.number, pr.head.sha))
     const data = {
       ...pick(pr, [
         'number',
@@ -85,8 +85,8 @@ class GitHubCurationService {
         'merge_commit_sha'
       ]),
       user: pick(pr.user, ['login']),
-      head: { ...pick(pr.head, ['sha']), repo: { ...pick(pr.head.repo, ['id']) } },
-      base: { ...pick(pr.base, ['sha']), repo: { ...pick(pr.base.repo, ['id']) } }
+      head: { ...pick(pr.head, ['sha']), repo: { ...pick(get(pr, 'head.repo'), ['id']) } },
+      base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
     }
     await this.store.updateContribution(data, curations)
     if (data.merged_at) await this._prMerged(curations)
@@ -116,9 +116,8 @@ class GitHubCurationService {
     )
   }
 
-  async validateContributions(number, sha) {
+  async validateContributions(number, sha, curations) {
     await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
-    const curations = await this._getContributedCurations(number, sha)
     const invalidCurations = curations.filter(x => !x.isValid)
     let state = 'success'
     let description = 'All curations are valid'
@@ -288,8 +287,13 @@ ${this._formatDefinitions(patch.patches)}`
     return { ref: result.data.head.ref, sha: result.data.head.sha }
   }
 
-  // get the content for all curations in a given PR
-  async _getContributedCurations(number, sha) {
+  /**
+   * get the content for all curations in a given PR
+   * @param {*} number - The GitHub PR number
+   * @param {*} sha - The GitHub PR head sha
+   * @returns {[Curation]} Promise for an array of Curations
+   */
+  async getContributedCurations(number, sha) {
     const prFiles = await this._getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     return Promise.all(
