@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -70,20 +70,23 @@ class GitHubCurationService {
    */
   async updateContribution(pr) {
     const curations = await this._getContributedCurations(pr.number, pr.head.sha)
+
     const data = {
-      number: pr.number,
-      id: pr.id,
-      state: pr.state,
-      title: pr.title,
-      user: { login: get(pr, 'user.login') },
-      body: pr.body,
-      created_at: pr.created_at,
-      updated_at: pr.updated_at,
-      closed_at: pr.closed_at,
-      merged_at: pr.merged_at,
-      merge_commit_sha: pr.merge_commit_sha,
-      head: { sha: get(pr, 'head.sha'), repo: { id: get(pr, 'head.repo.id') } },
-      base: { sha: get(pr, 'base.sha'), repo: { id: get(pr, 'base.repo.id') } }
+      ...pick(pr, [
+        'number',
+        'id',
+        'state',
+        'title',
+        'body',
+        'created_at',
+        'updated_at',
+        'closed_at',
+        'merged_at',
+        'merge_commit_sha'
+      ]),
+      user: pick(pr.user, ['login']),
+      head: { ...pick(pr.head, ['sha']), repo: { ...pick(pr.head.repo, ['id']) } },
+      base: { ...pick(pr.base, ['sha']), repo: { ...pick(pr.base.repo, ['id']) } }
     }
     await this.store.updateContribution(data, curations)
     if (data.merged_at) await this._prMerged(curations)
