@@ -27,7 +27,7 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
   }
- 
+
   /**
    * Get the final representation of the specified definition and optionally apply the indicated
    * curation.
@@ -231,14 +231,16 @@ class DefinitionService {
 
   _computeDiscoveredScore(definition) {
     if (!definition.files) return 0
-    const coreFiles = definition.files.filter(file => !file.facets || file.facets.includes('core'))
+    const coreFiles = definition.files.filter(DefinitionService._isInCoreFacet)
     if (!coreFiles.length) return 0
     const completeFiles = coreFiles.filter(file => file.license && (file.attributions && file.attributions.length))
-    return Math.ceil((completeFiles.length / coreFiles.length) * weights.discovered)
+    return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
   }
 
   _computeConsistencyScore(definition) {
     const declared = get(definition, 'licensed.declared')
+    // Note here that we are saying that every discovered license is satisfied by the declared
+    // license. If there are no discovered licenses then all is good.
     const discovered = get(definition, 'licensed.facets.core.discovered.expressions') || []
     if (!declared || !discovered) return 0
     return discovered.every(expression => satisfies(expression, declared)) ? weights.consistency : 0
@@ -252,23 +254,9 @@ class DefinitionService {
 
   _computeTextsScore(definition) {
     if (!definition.files || !definition.files.length) return 0
-    // Get the full set of license texts captured in the definition
-    // TODO for now just assume that if there is a known file, it is a license file and that the license
-    // of that file is the license the file represents.
-    const includedSet = new Set()
-    definition.files
-      .filter(file => file.token && (!file.facets || file.facets.includes('core')))
-      .forEach(file => this._extractLicenses(file.license, includedSet))
-    const includedTexts = Array.from(includedSet)
+    const includedTexts = this._collectLicenseTexts(definition)
     if (!includedTexts.length) return 0
-
-    // get all the licenses that have been referenced anywhere in the definition (declared and core)
-    const referencedExpressions = new Set(get(definition, 'licensed.facets.core.discovered.expressions') || [])
-    const declared = get(definition, 'licensed.declared')
-    if (declared) referencedExpressions.add(declared)
-    const referencedSet = new Set()
-    referencedExpressions.forEach(expression => this._extractLicenses(expression, referencedSet))
-    const referencedLicenses = Array.from(referencedSet)
+    const referencedLicenses = this._collectReferencedLicenses(definition)
     if (!referencedLicenses.length) return 0
 
     // check that all the referenced licenses have texts
@@ -276,11 +264,43 @@ class DefinitionService {
     return found.length === referencedLicenses.length ? weights.texts : 0
   }
 
-  _extractLicenses(expression, seen) {
+  // get all the licenses that have been referenced anywhere in the definition (declared and core)
+  _collectReferencedLicenses(definition) {
+    const referencedExpressions = new Set(get(definition, 'licensed.facets.core.discovered.expressions') || [])
+    const declared = get(definition, 'licensed.declared')
+    if (declared) referencedExpressions.add(declared)
+    const result = new Set()
+    referencedExpressions.forEach(expression => this._extractLicensesFromExpression(expression, result))
+    return Array.from(result)
+  }
+
+  // Get the full set of license texts captured in the definition
+  _collectLicenseTexts(definition) {
+    const result = new Set()
+    definition.files
+      .filter(DefinitionService._isLicenseFile)
+      .forEach(file => this._extractLicensesFromExpression(file.license, result))
+    return Array.from(result)
+  }
+
+  // recursively add all licenses mentioned in the given expression to the given set
+  _extractLicensesFromExpression(expression, seen) {
+    if (!expression) return null
     if (typeof expression === 'string') expression = parse(expression)
     if (expression.license) return seen.add(expression.license)
-    this._extractLicenses(expression.left)
-    this._extractLicenses(expression.right)
+    this._extractLicensesFromExpression(expression.left, seen)
+    this._extractLicensesFromExpression(expression.right, seen)
+  }
+
+  static _isInCoreFacet(file) {
+    return !file.facets || file.facets.includes('core')
+  }
+
+  // Answer whether or not the given file is a license text file
+  // TODO for now just assume that if there is a known file, it is a license file and that the license
+  // of that file is the license the file represents.
+  static _isLicenseFile(file) {
+    return file.token && DefinitionService._isInCoreFacet(file)
   }
 
   /**
