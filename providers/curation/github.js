@@ -58,8 +58,11 @@ class GitHubCurationService {
   async _processContributions(prs) {
     for (let pr of prs) {
       const storedContribution = await this.store.getContribution(pr.number)
-      if (new Date(get(storedContribution, 'pr.updated_at')).getTime() >= new Date(pr.updated_at).getTime()) continue
-      await this.updateContribution(pr)
+      const storedUpdated = get(storedContribution, 'pr.updated_at')
+      if (!storedUpdated || new Date(storedUpdated).getTime() < new Date(pr.updated_at).getTime()) {
+        this.logger.info(`Backfilling contribution for #${pr.number}`)
+        await this.updateContribution(pr)
+      }
     }
   }
 
