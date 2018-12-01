@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep } = require('lodash')
 const {
   extractDate,
   setIfValue,
@@ -9,7 +9,8 @@ const {
   buildSourceUrl,
   normalizeSpdx,
   updateSourceLocation,
-  isLicenseFile
+  isLicenseFile,
+  mergeDefinitions
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -63,7 +64,9 @@ class ClearlyDescribedSummarizer {
   }
 
   addInterestingFiles(result, data) {
-    setIfValue(result, 'files', data.interestingFiles)
+    const newDefinition = cloneDeep(result)
+    setIfValue(newDefinition, 'files', data.interestingFiles)
+    mergeDefinitions(result, newDefinition)
   }
 
   addLicenseFromFiles(result, data, coordinates) {
@@ -102,6 +105,13 @@ class ClearlyDescribedSummarizer {
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
+    const packageEntries = get(data, 'manifest.packageEntries')
+    if (!packageEntries) return
+    const newDefinition = cloneDeep(result)
+    newDefinition.files = packageEntries.map(file => {
+      return { path: decodeURIComponent(file.fullName) }
+    })
+    mergeDefinitions(result, newDefinition)
   }
 
   addNpmData(result, data) {
