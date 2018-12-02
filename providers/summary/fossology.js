@@ -17,10 +17,13 @@ class FOSSologySummarizer {
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested) {
-    if (!harvested || !harvested.nomos || !harvested.nomos.version) throw new Error('Not valid FOSSology data')
     const result = {}
-    this._summarizeNomos(result, harvested)
+    // TODO currently definition merging does not union values (licenses, copyrights) at the file level.
+    // That means the order here matters. Later merges overwrite earlier. So here we are explicitly taking
+    // Nomos over Monk. The Copyright info should be orthogonal so order does not matter. In the future
+    // we should resolve this merging problem but it's likely to be hard in general.
     this._summarizeMonk(result, harvested)
+    this._summarizeNomos(result, harvested)
     this._summarizeCopyright(result, harvested)
     return result
   }
@@ -48,7 +51,7 @@ class FOSSologySummarizer {
         const { path, output } = entry
         // TODO skip imprecise matches for now
         if (output.type !== 'full') return null
-        const license = normalizeSpdx(output.shortname)
+        const license = normalizeSpdx(output.license)
         if (path && license) return { path, license }
         if (path) return { path }
       })
@@ -64,8 +67,8 @@ class FOSSologySummarizer {
         const { path, output } = entry
         if (!output.results) return null
         // TODO there is a `type` prop for each entry, not sure what that is or what to do with it. Investigate
-        const copyrights = output.results.map(result => result.content)
-        if (path && copyrights) return { path, copyrights }
+        const attributions = output.results.map(result => result.content)
+        if (path && attributions) return { path, attributions }
         if (path) return { path }
       })
       .filter(e => e)
