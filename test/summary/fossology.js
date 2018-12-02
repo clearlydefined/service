@@ -87,13 +87,13 @@ describe('Monk summarizer', () => {
 describe('Copyright summarizer', () => {
   it('gets all the per file copyright info', () => {
     const { coordinates, harvested } = setup([
-      buildCopyrightFile('foo.txt', ['Jane']),
+      buildCopyrightFile('foo.txt', ['Jane', 'Fred']),
       buildCopyrightFile('bar.txt', ['Bob'])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files).to.deep.equalInAnyOrder([
-      { path: 'foo.txt', attributions: ['Jane'] },
+      { path: 'foo.txt', attributions: ['Jane', 'Fred'] },
       { path: 'bar.txt', attributions: ['Bob'] }
     ])
   })

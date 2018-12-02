@@ -93,6 +93,22 @@ describe('Definition Service', () => {
 })
 
 describe('Definition Service Facet management', () => {
+  it('merges complex attributions across files', async () => {
+    const files = [
+      buildFile('foo.txt', null, ['&#60;Bob&gt;', 'Jane   Inc.', 'Jane Inc']),
+      buildFile('bar.txt', null, ['<Bob>.', 'Jane Inc'])
+    ]
+    const { service, coordinates } = setup(createDefinition(undefined, files))
+    const definition = await service.compute(coordinates)
+    validate(definition)
+    const core = definition.licensed.facets.core
+    expect(core.attribution.parties).to.deep.equalInAnyOrder(['Copyright <Bob>.', 'Copyright Jane Inc.'])
+    expect(definition.files).to.deep.equalInAnyOrder([
+      { path: 'foo.txt', attributions: ['Copyright <Bob>', 'Copyright Jane Inc.'] },
+      { path: 'bar.txt', attributions: ['Copyright <Bob>.', 'Copyright Jane Inc'] }
+    ])
+  })
+
   it('handles files with no data', async () => {
     const files = [buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)]
     const { service, coordinates } = setup(createDefinition(undefined, files))
@@ -129,32 +145,6 @@ describe('Definition Service Facet management', () => {
     expect(core.attribution.parties.length).to.eq(3)
     expect(core.attribution.parties).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Jane', 'Copyright Fred'])
     expect(core.attribution.unknown).to.eq(0)
-  })
-
-  it('handle special characters', async () => {
-    const files = [
-      buildFile('foo.txt', 'MIT', [
-        '&#60;Bob&gt;',
-        'Bob\\n',
-        'Bob\\r',
-        'Bob\r',
-        'Bob\n',
-        'Bob\n',
-        'Bob ',
-        'Bob  Bobberson'
-      ])
-    ]
-    const { service, coordinates } = setup(createDefinition(undefined, files))
-    const definition = await service.compute(coordinates)
-    validate(definition)
-    const core = definition.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
   })
 
   it('summarizes with basic facets', async () => {

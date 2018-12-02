@@ -160,6 +160,23 @@ describe('Utils mergeDefinitions', () => {
   })
 })
 
+describe('Copyright simplification', () => {
+  it('handles duplicate entries', () => {
+    const result = utils.simplifyAttributions(['foo', 'foo', 'bar'])
+    expect(result).to.equalInAnyOrder(['foo', 'bar'])
+  })
+
+  it('handles bogus punctuation', () => {
+    const result = utils.simplifyAttributions(['%$#@foo*&^$', 'foo$.', 'foo.', 'foo.*&$!', 'bar,'])
+    expect(result).to.equalInAnyOrder(['foo.', 'foo$.', 'bar'])
+  })
+
+  it('decodes html, removes redundant white space', () => {
+    const result = utils.simplifyAttributions(['&lt;jane@foo.com&gt;', ' \r \nfoo   bar  \\n\r', 'foo bar'])
+    expect(result).to.equalInAnyOrder(['<jane@foo.com>', 'foo bar'])
+  })
+})
+
 describe('Utils isLicenseFile', () => {
   it('should detect root level license files', () => {
     const inputs = ['LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML']

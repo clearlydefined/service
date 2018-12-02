@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { normalizeSpdx, mergeDefinitions } = require('../../lib/utils')
+const { normalizeSpdx, mergeDefinitions, setIfValue } = require('../../lib/utils')
 const { get } = require('lodash')
 
 class FOSSologySummarizer {
@@ -67,9 +67,10 @@ class FOSSologySummarizer {
         const { path, output } = entry
         if (!output.results) return null
         // TODO there is a `type` prop for each entry, not sure what that is or what to do with it. Investigate
-        const attributions = output.results.map(result => result.content)
-        if (path && attributions) return { path, attributions }
-        if (path) return { path }
+        const attributions = output.results.map(result => result.content).filter(e => e)
+        const result = { path }
+        setIfValue(result, 'attributions', attributions)
+        return result
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
