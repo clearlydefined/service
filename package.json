@@ -13,7 +13,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@octokit/rest": "^14.0.0",
+    "@octokit/rest": "^14.0.9",
     "ajv": "^6.5.2",
     "ajv-errors": "^1.0.0",
     "applicationinsights": "^1.0.6",
@@ -51,7 +51,9 @@
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
-    "spdx-license-list": "^4.1.0",
+    "spdx-expression-parse": "^3.0.0",
+    "spdx-license-list": "^5.0.0",
+    "spdx-satisfies": "^4.0.0",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
     "tmp": "0.0.33",
