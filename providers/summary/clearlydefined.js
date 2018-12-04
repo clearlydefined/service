@@ -7,10 +7,10 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
-  normalizeSpdx,
   updateSourceLocation,
   isLicenseFile,
-  mergeDefinitions
+  mergeDefinitions,
+  normalizeSpdx
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
