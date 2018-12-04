@@ -64,8 +64,16 @@ class ClearlyDescribedSummarizer {
   }
 
   addInterestingFiles(result, data) {
+    if (!data.interestingFiles) return
     const newDefinition = cloneDeep(result)
-    setIfValue(newDefinition, 'files', data.interestingFiles)
+    set(
+      newDefinition,
+      'files',
+      data.interestingFiles.map(file => {
+        file.license = normalizeSpdx(file.license)
+        return file
+      })
+    )
     mergeDefinitions(result, newDefinition)
   }
 
