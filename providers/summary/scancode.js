@@ -3,6 +3,7 @@
 
 const { get, flatten, uniq } = require('lodash')
 const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
+const correct = require('spdx-correct')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -82,7 +83,7 @@ class ScanCodeSummarizer {
 
   _toExpression(licenses) {
     if (!licenses) return null
-    const list = setToArray(licenses)
+    const list = setToArray(licenses).map(correct)
     return list ? list.join(' AND ') : null
   }
 }
