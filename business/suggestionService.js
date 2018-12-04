@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { find, findLast, get, set } = require('lodash')
+const { find, findLast, get, set, sortBy } = require('lodash')
 
 class SuggestionService {
   constructor(definitionService, definitionStore) {
@@ -24,14 +24,29 @@ class SuggestionService {
     return result
   }
 
+  // All the related contents correspond to other definitions in harvested-data-definition
+  // The only differentiator for now is the revision and using mock test data
   async _getRelatedDefinitions(coordinates) {
     const related = await this.definitionStore.list(coordinates.asRevisionless(), 'definitions')
-    const sorted = related.sort((one, two) => (one.described.releaseDate > two.described.releaseDate ? 1 : -1))
-    const index = sorted.findIndex(entry => entry.coordinates.revision === coordinates.revision)
+    // If the related array only has one entry then return early (lodash isEmpty won't work)
+    if (Object.keys(related).length <= 1) {
+      return
+    }
+    // Create a coordinatesList from the array of strings
+    const coordinatesList = []
+    related.forEach(element => {
+      coordinatesList.push(EntityCoordinates.fromString(element))
+    })
+    // Get all the definition entries available for the given coordinates (down to the revision)
+    const validDefinitions = await this.definitionService.getAll(coordinatesList)
+    const sortedByReleaseDate = sortBy(validDefinitions, ['described.releaseDate'])
+
+    // Now just split the definitions to those before supplied coords and those after
+    const index = sortedByReleaseDate.findIndex(entry => entry.coordinates.revision === coordinates.revision)
     if (index === -1) return null
-    const before = sorted.slice(Math.max(index - 3, 0), index).reverse()
-    const after = sorted.slice(index + 1, index + 3)
-    return { sorted, index, before, after }
+    const before = sortedByReleaseDate.slice(Math.max(index - 3, 0), index).reverse()
+    const after = sortedByReleaseDate.slice(index + 1, index + 3)
+    return { sortedByReleaseDate, index, before, after }
   }
 
   _createBaseSuggestion(coordinates) {
@@ -42,12 +57,13 @@ class SuggestionService {
 
   _collectLicenseSuggestions(related, suggestions) {
     // for now only do suggestions if there is something missing
-    const definition = related.sorted[related.index]
+    const definition = related.sortedByReleaseDate[related.index]
     if (get(definition, 'licensed.declared') || !(related.before.length + related.after.length)) return
     const before = findLast(related.before, entry => get(entry, 'licensed.declared'))
     const after = find(related.after, entry => get(entry, 'licensed.declared'))
     const suggestionDefinitions = [before, after].filter(x => x)
     const suggestionObjects = suggestionDefinitions.map(suggestion => suggestion.licensed.declared)
+    // Add the second object to the original object
     set(suggestions, 'licensed.declared', suggestionObjects)
   }
 }
