@@ -51,7 +51,7 @@
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
-    "spdx-correct": "^3.0.2",
+    "spdx-correct": "github:clearlydefined/spdx-correct.js#upgrade-option",
     "spdx-expression-parse": "^3.0.0",
     "spdx-license-ids": "^3.0.2",
     "spdx-license-list": "^5.0.0",
