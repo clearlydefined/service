@@ -38,8 +38,8 @@ describe('Utils latest version', () => {
       'https://opensource.org/licenses/JUNK': null,
       'https://www.gnu.org/licenses/JUNK': null,
       'https://github.com/owner/repo/blob/master/LICENSE': null,
-      'https://raw.github.com/owner/repo/develop/LICENSE': undefined,
-      'http://aka.ms/windowsazureapache2': undefined
+      'https://raw.github.com/owner/repo/develop/LICENSE': null,
+      'http://aka.ms/windowsazureapache2': null
     }
 
     for (const licenseUrl of Object.getOwnPropertyNames(inputs)) {
