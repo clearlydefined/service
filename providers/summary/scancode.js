@@ -21,7 +21,8 @@ class ScanCodeSummarizer {
     const result = {}
     this.addDescribedInfo(result, harvested)
     const declaredLicense =
-      this._summarizeDeclaredLicenseInfo(harvested.content.files, coordinates) || this._summarizePackageInfo(harvested.content.files)
+      this._summarizeDeclaredLicenseInfo(harvested.content.files, coordinates) ||
+      this._summarizePackageInfo(harvested.content.files)
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files)
     return result
@@ -82,7 +83,7 @@ class ScanCodeSummarizer {
   _toExpression(licenses) {
     if (!licenses) return null
     const list = setToArray(licenses)
-    return list ? list.join(' and ') : null
+    return list ? list.join(' AND ') : null
   }
 }
 
