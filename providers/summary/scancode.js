@@ -82,8 +82,12 @@ class ScanCodeSummarizer {
 
   _toExpression(licenses) {
     if (!licenses) return null
-    const list = setToArray(licenses).map(normalizeSpdx)
-    return list ? list.join(' AND ') : null
+    const list = setToArray(licenses)
+    if (!list) return null
+    return list
+      .map(normalizeSpdx)
+      .filter(x => x)
+      .join(' AND ')
   }
 }
 
