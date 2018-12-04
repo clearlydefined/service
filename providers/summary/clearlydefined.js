@@ -134,8 +134,9 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    const license = manifest.license
-    license && setIfValue(result, 'licensed', { declared: typeof license === 'string' ? license : license.type })
+    const license =
+      manifest.license && normalizeSpdx(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+    license && setIfValue(result, 'licensed', { declared: license })
   }
 
   addGemData(result, data) {
