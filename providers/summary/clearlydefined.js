@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const correct = require('spdx-correct')
 const { get, set, isArray, uniq, cloneDeep } = require('lodash')
 const {
   extractDate,
@@ -10,7 +9,8 @@ const {
   buildSourceUrl,
   updateSourceLocation,
   isLicenseFile,
-  mergeDefinitions
+  mergeDefinitions,
+  normalizeSpdx
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -91,7 +91,7 @@ class ClearlyDescribedSummarizer {
         'licensed.declared',
         license
           .split('/')
-          .map(correct)
+          .map(normalizeSpdx)
           .filter(x => x)
           .join(' OR ')
       )

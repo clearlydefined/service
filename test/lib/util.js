@@ -35,9 +35,9 @@ describe('Utils latest version', () => {
       'https://www.gnu.org/licenses/gpl-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gPL-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gpl-2.0': 'GPL-2.0',
-      'https://opensource.org/licenses/JUNK': undefined,
-      'https://www.gnu.org/licenses/JUNK': undefined,
-      'https://github.com/owner/repo/blob/master/LICENSE': undefined,
+      'https://opensource.org/licenses/JUNK': null,
+      'https://www.gnu.org/licenses/JUNK': null,
+      'https://github.com/owner/repo/blob/master/LICENSE': null,
       'https://raw.github.com/owner/repo/develop/LICENSE': undefined,
       'http://aka.ms/windowsazureapache2': undefined
     }
