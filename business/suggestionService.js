@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { find, findLast, get, set, sortBy } = require('lodash')
+const { find, findLast, get, set, sortBy, filter, concat } = require('lodash')
+const EntityCoordinates = require('../lib/entityCoordinates')
 
 class SuggestionService {
   constructor(definitionService, definitionStore) {
@@ -58,10 +59,17 @@ class SuggestionService {
   _collectLicenseSuggestions(related, suggestions) {
     // for now only do suggestions if there is something missing
     const definition = related.sortedByReleaseDate[related.index]
+    // If there is already a declared licence or there are no related entries then return early
     if (get(definition, 'licensed.declared') || !(related.before.length + related.after.length)) return
-    const before = findLast(related.before, entry => get(entry, 'licensed.declared'))
-    const after = find(related.after, entry => get(entry, 'licensed.declared'))
-    const suggestionDefinitions = [before, after].filter(x => x)
+
+    const before = filter(related.before, entry => get(entry, 'licensed.declared'))
+    const after = filter(related.after, entry => get(entry, 'licensed.declared'))
+
+    // Now create a new merged array from both the before and after arrays
+    const suggestionDefinitions = concat(before, after)
+
+    // Only returning "Apache-2.0" string entry now. return full object e.g:
+    //{ "version": "0.0.2", "value": "Apache-2.0" ,"date": '2018-11-19', "curation": '365', "curator": '@storrisi'  }
     const suggestionObjects = suggestionDefinitions.map(suggestion => suggestion.licensed.declared)
     // Add the second object to the original object
     set(suggestions, 'licensed.declared', suggestionObjects)
