@@ -136,7 +136,7 @@ class ClearlyDescribedSummarizer {
     }
     const license =
       manifest.license && normalizeSpdx(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
-    license && setIfValue(result, 'licensed', { declared: license })
+    setIfValue(result, 'licensed.declared', license)
   }
 
   addGemData(result, data) {
