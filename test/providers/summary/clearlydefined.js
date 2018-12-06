@@ -120,6 +120,34 @@ describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
+  it('should filter invalid license properties', () => {
+    const data = new Map([
+      [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
+      [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
+      [{ path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }, { path: 'LICENSE', token: 'abcd' }],
+      [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
+    ])
+    for (let test of data) {
+      let result = {}
+      summarizer.addInterestingFiles(result, { interestingFiles: [test[0]] })
+      assert.deepEqual(result, { files: [test[1]] })
+    }
+  })
+
+  it('should merge existing files', () => {
+    let result = { files: [{ path: 'file1' }] }
+    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+    assert.deepEqual(result, { files: [{ path: 'file1' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  })
+
+  it('should merge the same file', () => {
+    let result = { files: [{ path: 'LICENSE', license: 'MIT' }] }
+    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+    assert.deepEqual(result, { files: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  })
+})
+
 describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('declares license from registryData', () => {
     let result = {}
