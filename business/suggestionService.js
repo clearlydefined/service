@@ -20,8 +20,13 @@ class SuggestionService {
   async get(coordinates) {
     const related = await this._getRelatedDefinitions(coordinates)
     if (!related) return null
-    const result = this._createBaseSuggestion(coordinates)
-    await this._collectLicenseSuggestions(related, result)
+    const baseSuggestion = this._createBaseSuggestion(coordinates)
+    // probably create a struct with the strings in it and iterate instead
+    const promises = [
+      await this._collectSuggestionsForField(related, baseSuggestion, 'licensed.declared'),
+      await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate')
+    ]
+    const result = await Promise.all(promises)
     return result
   }
 
@@ -56,7 +61,32 @@ class SuggestionService {
     }
   }
 
-  _collectLicenseSuggestions(related, suggestions) {
+  _collectSuggestionsForField(related, suggestions, field) {
+    //_collectLicenseSuggestions(related, suggestions) {
+    // for now only do suggestions if there is something missing
+    const definition = related.sortedByReleaseDate[related.index]
+    // If there is already a declared licence or there are no related entries then return early
+    if (get(definition, field) || !(related.before.length + related.after.length)) return
+
+    const before = filter(related.before, entry => get(entry, field))
+    const after = filter(related.after, entry => get(entry, field))
+
+    // Now create a new merged array from both the before and after arrays
+    const suggestionDefinitions = concat(before, after)
+    const splitFields = field.split('.')
+    const fieldOne = splitFields[0]
+    const fieldTwo = splitFields[1]
+    set(
+      suggestions,
+      field,
+      suggestionDefinitions.map(suggestion => {
+        return { value: suggestion[fieldOne][fieldTwo] }
+      })
+    )
+  }
+
+  /********** ORIG *******/
+  _collectSourceLocationSuggestions(related, suggestions) {
     // for now only do suggestions if there is something missing
     const definition = related.sortedByReleaseDate[related.index]
     // If there is already a declared licence or there are no related entries then return early
@@ -68,11 +98,15 @@ class SuggestionService {
     // Now create a new merged array from both the before and after arrays
     const suggestionDefinitions = concat(before, after)
 
-    // Only returning "Apache-2.0" string entry now. return full object e.g:
-    //{ "version": "0.0.2", "value": "Apache-2.0" ,"date": '2018-11-19', "curation": '365', "curator": '@storrisi'  }
-    const suggestionObjects = suggestionDefinitions.map(suggestion => suggestion.licensed.declared)
-    // Add the second object to the original object
-    set(suggestions, 'licensed.declared', suggestionObjects)
+    //{ "revision": "0.0.2", "value": "Apache-2.0" ,"date": '2018-11-19', "curation": '365', "curator": '@storrisi'  }
+    set(suggestions, 'licensed.declared.value', suggestionDefinitions.map(suggestion => suggestion.licensed.declared))
+    set(suggestions, 'described.releaseDate', suggestionDefinitions.map(suggestion => suggestion.described.releaseDate))
+    set(
+      suggestions,
+      'described.sourceLocation',
+      suggestionDefinitions.map(suggestion => suggestion.described.sourceLocation)
+    )
+    set(suggestions, 'revision', suggestionDefinitions.map(suggestion => suggestion.coordinates.revision))
   }
 }
 
