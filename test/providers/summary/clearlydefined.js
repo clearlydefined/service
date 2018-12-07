@@ -120,6 +120,34 @@ describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
+  it('should filter invalid license properties', () => {
+    const data = new Map([
+      [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
+      [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
+      [{ path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }, { path: 'LICENSE', token: 'abcd' }],
+      [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
+    ])
+    for (let test of data) {
+      let result = {}
+      summarizer.addInterestingFiles(result, { interestingFiles: [test[0]] })
+      assert.deepEqual(result, { files: [test[1]] })
+    }
+  })
+
+  it('should merge existing files', () => {
+    let result = { files: [{ path: 'file1' }] }
+    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+    assert.deepEqual(result, { files: [{ path: 'file1' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  })
+
+  it('should merge the same file', () => {
+    let result = { files: [{ path: 'LICENSE', license: 'MIT' }] }
+    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+    assert.deepEqual(result, { files: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  })
+})
+
 describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('declares license from registryData', () => {
     let result = {}
@@ -155,5 +183,87 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { created_at: '2018-06-01T21:41:57.990052+00:00' } })
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
+})
+
+describe('ClearlyDescribedSummarizer addNpmData', () => {
+  it('should set declared license from manifest', () => {
+    // prettier-ignore
+    const data = {
+      'MIT': 'MIT',
+      'mit': 'MIT',
+      'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
+      'See license': null,
+      'NOASSERTION': null,
+      '': null,
+      ' ': null
+    }
+
+    for (let license of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { manifest: { license: license } } })
+      if (data[license]) assert.deepEqual(result, { licensed: { declared: data[license] } })
+      else assert.deepEqual(result, {})
+    }
+
+    // should work in the type field as well
+    for (let license of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } })
+      if (data[license]) assert.deepEqual(result, { licensed: { declared: data[license] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+
+  it('should set release date', () => {
+    // prettier-ignore
+    const data = {
+      '2018-01-09T17:18:33.930Z': '2018-01-09',
+      '2018-01-08': '2018-01-08',
+      'JUNK': 'Invalid date' // Is this right behavior?
+    }
+    for (let date of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { releaseDate: date } })
+      assert.deepEqual(result, { described: { releaseDate: data[date] } })
+    }
+  })
+
+  it('should set projectWebsite', () => {
+    let result = {}
+    summarizer.addNpmData(result, { registryData: { manifest: { homepage: 'https://github.com/project/repo' } } })
+    assert.deepEqual(result, { described: { projectWebsite: 'https://github.com/project/repo' } })
+  })
+
+  it('should set issueTracker if it is http', () => {
+    let result = {}
+    summarizer.addNpmData(result, { registryData: { manifest: { bugs: 'https://github.com/project/repo/issues' } } })
+    assert.deepEqual(result, { described: { issueTracker: 'https://github.com/project/repo/issues' } })
+
+    let resul2 = {}
+    summarizer.addNpmData(resul2, { registryData: { manifest: { bugs: 'nothttps://github.com/project/repo/issues' } } })
+    assert.deepEqual(resul2, {})
+  })
+
+  it('should set issueTracker if it is url or email', () => {
+    let result = {}
+    summarizer.addNpmData(result, {
+      registryData: { manifest: { bugs: { url: 'https://github.com/project/repo/issues', email: 'bugs@project.com' } } }
+    })
+    assert.deepEqual(result, { described: { issueTracker: 'https://github.com/project/repo/issues' } })
+
+    let result2 = {}
+    summarizer.addNpmData(result2, { registryData: { manifest: { bugs: { email: 'bugs@project.com' } } } })
+    assert.deepEqual(result2, { described: { issueTracker: 'bugs@project.com' } })
+  })
+
+  it('should not set issueTracker if it is not http', () => {})
+
+  it('should return if no registry data', () => {
+    let result = {}
+    summarizer.addNpmData(result, {})
+    assert.deepEqual(result, {})
+    summarizer.addNpmData(result, { registryData: {} })
+    assert.deepEqual(result, {})
   })
 })

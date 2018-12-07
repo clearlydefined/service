@@ -29,11 +29,13 @@ class AbstractAzBlobStore {
     let continuation = null
     do {
       const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
-      const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix)(
+      const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
         this.containerName,
         name,
         continuation,
-        { include: azure.BlobUtilities.BlobListingDetails.METADATA }
+        {
+          include: azure.BlobUtilities.BlobListingDetails.METADATA
+        }
       )
       continuation = result.continuationToken
       result.entries.forEach(entry => list.push(visitor(entry)))
@@ -51,7 +53,7 @@ class AbstractAzBlobStore {
     let name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) name += '.json'
     try {
-      const result = await promisify(this.blobService.getBlobToText)(this.containerName, name)
+      const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
       return JSON.parse(result)
     } catch (error) {
       if (error.statusCode === 404) return null
