@@ -140,7 +140,7 @@ function createApp(config) {
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
-        logger.info('Service initialized')
+        logger.info('Service initialized', { buildNumber: process.env.BUILD_NUMBER })
         // Signal system is up and ok (no error)
         callback()
       },

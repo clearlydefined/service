@@ -4,7 +4,7 @@
 const throat = require('throat')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const { get } = require('lodash')
+const { get, uniq } = require('lodash')
 
 function getClient(request) {
   return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
@@ -21,29 +21,29 @@ router.get(
       // Strip 'refs/tags/' from the beginning
       const tagName = item => item.ref.slice(10)
 
-      const unsorted = await Promise.all(answer.data
-        .map(throat(5, async item => {
-          if (item.object.type === 'commit')
-            return { tag: tagName(item), sha: item.object.sha }
+      const unsorted = await Promise.all(
+        answer.data.map(
+          throat(5, async item => {
+            if (item.object.type === 'commit') return { tag: tagName(item), sha: item.object.sha }
 
+            if (item.object.type !== 'tag') {
+              return null
+            }
 
-          if (item.object.type !== 'tag') {
-            return null
-          }
-
-          // we know now that we have an annotated tag, get the associated commit hash
-          let response
-          try {
-            response = await github.gitdata.getTag({ owner: login, repo, sha: item.object.sha })
-          } catch (e) {
-            console.error(e)
-            return null
-          }
-          return { tag: tagName(item), sha: response.data.object.sha }
-        })))
-      const result = unsorted.filter(x => x)
-        .sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
-      return response.status(200).send(result)
+            // we know now that we have an annotated tag, get the associated commit hash
+            let response
+            try {
+              response = await github.gitdata.getTag({ owner: login, repo, sha: item.object.sha })
+            } catch (e) {
+              console.error(e)
+              return null
+            }
+            return { tag: tagName(item), sha: response.data.object.sha }
+          })
+        )
+      )
+      const result = unsorted.filter(x => x).sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
+      return response.status(200).send(uniq(result))
     } catch (error) {
       console.error(error)
       if (error.code === 404) return response.status(200).send([])

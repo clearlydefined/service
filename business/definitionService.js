@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten } = require('lodash')
+const { get, intersection, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -10,8 +10,12 @@ const he = require('he')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')()
 const validator = require('../schemas/validator')
+const satisfies = require('spdx-satisfies')
+const parse = require('spdx-expression-parse')
 
-const currentSchema = '1.0.0'
+const currentSchema = '1.1.0'
+
+const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
   constructor(harvestStore, harvestService, summary, aggregator, curation, store, search) {
@@ -44,7 +48,7 @@ class DefinitionService {
     return this._cast(result)
   }
 
-  // ensure the defintion is a properly classed object
+  // ensure the definition is a properly classed object
   _cast(definition) {
     definition.coordinates = EntityCoordinates.fromObject(definition.coordinates)
     return definition
@@ -56,7 +60,7 @@ class DefinitionService {
    *
    * @param {*} coordinatesList - an array of coordinate paths to list
    * @param {bool} force - whether or not to force re-computation of the requested definitions
-   * @returns A list of all components that have definitions and the defintions that are available
+   * @returns A list of all components that have definitions and the definitions that are available
    */
   async getAll(coordinatesList, force = false) {
     const result = {}
@@ -105,7 +109,8 @@ class DefinitionService {
         console.log(error)
       }
     })
-    const foundDefinitions = flatten(await Promise.all(promises))
+    const foundDefinitions = 
+          (await Promise.all(promises))
     // Filter only the revisions matching the found definitions
     return coordinatesList.filter(coordinates => {
       return (
@@ -178,7 +183,7 @@ class DefinitionService {
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
-    // protect against any element of the compute producing an invalid defintion
+    // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
     return definition
@@ -235,27 +240,103 @@ class DefinitionService {
 
   // Given a definition, calculate and return the score for the described dimension
   _computeDescribedScore(definition) {
-    // @todo we need to flesh this out
-    // For now it just checks that a few props are present
-    let result = 0
-    result += !!get(definition, 'described.releaseDate')
-    result += !!get(definition, 'described.sourceLocation.url')
-    // TODO add in validated
-    return result
+    const date = get(definition, 'described.releaseDate') ? weights.date : 0
+    const source = get(definition, 'described.sourceLocation.url') ? weights.source : 0
+    const total = date + source
+    return { total, date, source }
   }
 
   // Given a definition, calculate and return the score for the licensed dimension
   _computeLicensedScore(definition) {
-    // @todo we need to flesh this out
-    // For now it just checks that a license and copyright holders are present
-    let result = 0
-    result += !!get(definition, 'licensed.declared')
-    result += !!get(definition, 'licensed.facets.core.attribution.parties[0]')
-    return result
+    const declared = this._computeDeclaredScore(definition)
+    const discovered = this._computeDiscoveredScore(definition)
+    const consistency = this._computeConsistencyScore(definition)
+    const spdx = this._computeSPDXScore(definition)
+    const texts = this._computeTextsScore(definition)
+    const total = declared + discovered + consistency + spdx + texts
+    return { total, declared, discovered, consistency, spdx, texts }
+  }
+
+  _computeDeclaredScore(definition) {
+    return get(definition, 'licensed.declared') ? weights.declared : 0
+  }
+
+  _computeDiscoveredScore(definition) {
+    if (!definition.files) return 0
+    const coreFiles = definition.files.filter(DefinitionService._isInCoreFacet)
+    if (!coreFiles.length) return 0
+    const completeFiles = coreFiles.filter(file => file.license && (file.attributions && file.attributions.length))
+    return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
+  }
+
+  _computeConsistencyScore(definition) {
+    const declared = get(definition, 'licensed.declared')
+    // Note here that we are saying that every discovered license is satisfied by the declared
+    // license. If there are no discovered licenses then all is good.
+    const discovered = get(definition, 'licensed.facets.core.discovered.expressions') || []
+    if (!declared || !discovered) return 0
+    return discovered.every(expression => satisfies(expression, declared)) ? weights.consistency : 0
+  }
+
+  _computeSPDXScore(definition) {
+    // TODO given that we only recognize SPDX licenses, this is effectively a duplicate of the declared score.
+    // Even if we consider the licenses on the files, they will only be there if they are SPDX
+    return get(definition, 'licensed.declared') ? weights.spdx : 0
+  }
+
+  _computeTextsScore(definition) {
+    if (!definition.files || !definition.files.length) return 0
+    const includedTexts = this._collectLicenseTexts(definition)
+    if (!includedTexts.length) return 0
+    const referencedLicenses = this._collectReferencedLicenses(definition)
+    if (!referencedLicenses.length) return 0
+
+    // check that all the referenced licenses have texts
+    const found = intersection(referencedLicenses, includedTexts)
+    return found.length === referencedLicenses.length ? weights.texts : 0
+  }
+
+  // get all the licenses that have been referenced anywhere in the definition (declared and core)
+  _collectReferencedLicenses(definition) {
+    const referencedExpressions = new Set(get(definition, 'licensed.facets.core.discovered.expressions') || [])
+    const declared = get(definition, 'licensed.declared')
+    if (declared) referencedExpressions.add(declared)
+    const result = new Set()
+    referencedExpressions.forEach(expression => this._extractLicensesFromExpression(expression, result))
+    return Array.from(result)
+  }
+
+  // Get the full set of license texts captured in the definition
+  _collectLicenseTexts(definition) {
+    const result = new Set()
+    definition.files
+      .filter(DefinitionService._isLicenseFile)
+      .forEach(file => this._extractLicensesFromExpression(file.license, result))
+    return Array.from(result)
+  }
+
+  // recursively add all licenses mentioned in the given expression to the given set
+  _extractLicensesFromExpression(expression, seen) {
+    if (!expression) return null
+    if (typeof expression === 'string') expression = parse(expression)
+    if (expression.license) return seen.add(expression.license)
+    this._extractLicensesFromExpression(expression.left, seen)
+    this._extractLicensesFromExpression(expression.right, seen)
+  }
+
+  static _isInCoreFacet(file) {
+    return !file.facets || file.facets.includes('core')
+  }
+
+  // Answer whether or not the given file is a license text file
+  // TODO for now just assume that if there is a known file, it is a license file and that the license
+  // of that file is the license the file represents.
+  static _isLicenseFile(file) {
+    return file.token && DefinitionService._isInCoreFacet(file)
   }
 
   /**
-   * Suggest a set of defintion coordinates that match the given pattern. Only existing definitions are searched.
+   * Suggest a set of definition coordinates that match the given pattern. Only existing definitions are searched.
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
    */

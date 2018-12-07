@@ -16,7 +16,8 @@
       "type": "node",
       "request": "launch",
       "name": "CD service",
-      "program": "${workspaceFolder}/bin/www"
+      "program": "${workspaceFolder}/bin/www",
+      "env": { "BUILD_NUMBER": "0" }
     }
   ]
 }
