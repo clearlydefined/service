@@ -267,3 +267,45 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     assert.deepEqual(result, {})
   })
 })
+
+describe('ClearlyDescribedSummarizer addNuGetData', () => {
+  it('should set declared license from manifest licenseExpression', () => {
+    // prettier-ignore
+    const data = {
+      'MIT': 'MIT',
+      'mit': 'MIT',
+      'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
+      'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
+      'See license': null,
+      'NOASSERTION': null,
+      '': null,
+      ' ': null
+    }
+
+    for (let licenseExpression of Object.keys(data)) {
+      let result = {}
+      summarizer.addNuGetData(result, { manifest: { licenseExpression } })
+      if (data[licenseExpression]) assert.deepEqual(result, { licensed: { declared: data[licenseExpression] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+
+  it('should set declared license from manifest licenseUrl', () => {
+    // prettier-ignore
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
+      'See license': null,
+      'NOASSERTION': null,
+      '': null,
+      ' ': null
+    }
+
+    for (let licenseUrl of Object.keys(data)) {
+      let result = {}
+      summarizer.addNuGetData(result, { manifest: { licenseUrl } })
+      if (data[licenseUrl]) assert.deepEqual(result, { licensed: { declared: data[licenseUrl] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+})
