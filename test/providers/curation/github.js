@@ -12,10 +12,10 @@ const { find } = require('lodash')
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
     const service = createService()
-    sinon.stub(service, '_getContributedCurations').callsFake(() => {
+    sinon.stub(service, 'getContributedCurations').callsFake(() => {
       return [createCuration(simpleCuration)]
     })
-    const result = await service._getContributedCurations(1, 42)
+    const result = await service.getContributedCurations(1, 42)
     const coords = { ...simpleCuration.coordinates }
     const resultCoords = result.map(change => change.data.coordinates)
     expect(resultCoords).to.be.deep.equalInAnyOrder([coords])
@@ -25,10 +25,11 @@ describe('Github Curation Service', () => {
   it('validates valid PR change', async () => {
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, '_getContributedCurations').callsFake(() => {
+    sinon.stub(service, 'getContributedCurations').callsFake(() => {
       return [createCuration()]
     })
-    await service._validateContributions(1, '42', 'testBranch')
+    const curations = await service.getContributedCurations(42, 'testBranch')
+    await service.validateContributions('42', 'testBranch', curations)
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('success')
@@ -37,10 +38,11 @@ describe('Github Curation Service', () => {
   it('validates invalid PR change', async () => {
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, '_getContributedCurations').callsFake(() => {
+    sinon.stub(service, 'getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
-    await service._validateContributions(1, '42', 'testBranch')
+    const curations = await service.getContributedCurations(42, 'testBranch')
+    await service.validateContributions('42', 'testBranch', curations)
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
