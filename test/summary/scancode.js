@@ -128,6 +128,42 @@ describe('ScanCode summarizer', () => {
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
   })
+
+  it('creates expressions from matched_rule', () => {
+    const examples = new Map([
+      [{ license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT OR Apache-2.0'],
+      [{ license_expression: 'mit AND apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT AND Apache-2.0'],
+      [{ license_expression: 'mit WITH apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT WITH Apache-2.0'],
+      [{ license_expression: 'mit OR junk', licenses: ['mit', 'junk'] }, 'MIT'],
+      [{ license_expression: 'junk OR mit', licenses: ['mit', 'junk'] }, 'MIT']
+    ])
+
+    examples.forEach((expected, input) => {
+      const result = Summarizer()._createExpression(input)
+      expect(result).to.eq(expected)
+    })
+  })
+
+  it('creates expressions from license expressions', () => {
+    const examples = new Map([
+      [new Set(['ISC']), 'ISC'],
+      [new Set(['MIT', 'Apache-2.0']), '(Apache-2.0) AND (MIT)'],
+      [new Set(['MIT OR Apache-2.0', 'GPL']), '(GPL) AND (MIT OR Apache-2.0)'],
+      [new Set(null), null],
+      [new Set(), null],
+      [null, null]
+    ])
+
+    examples.forEach((expected, input) => {
+      const result = Summarizer()._toExpression(input)
+      expect(result).to.eq(expected)
+    })
+  })
+
+  it('uses licenseKey when no expression is available from matched_rule', () => {
+    const result = Summarizer()._createExpression({}, 'MIT')
+    expect(result).to.eq('MIT')
+  })
 })
 
 function validate(definition) {

@@ -37,7 +37,9 @@ class ScanCodeSummarizer {
     for (let file of files) {
       if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
-        const declaredLicenses = addArrayToSet(file.licenses, new Set(), license => license.spdx_license_key)
+        const declaredLicenses = new Set(
+          file.licenses.map(license => this._createExpression(license.matched_rule, license.spdx_license_key))
+        )
         return this._toExpression(declaredLicenses)
       }
     }
@@ -66,7 +68,12 @@ class ScanCodeSummarizer {
         if (file.type !== 'file') return null
         const asserted = get(file, 'packages[0].asserted_licenses')
         const fileLicense = asserted || file.licenses
-        const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
+        let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
+        if (!licenses.size) {
+          licenses = new Set(
+            fileLicense.map(license => this._createExpression(license.matched_rule, license.spdx_license_key))
+          )
+        }
         const licenseExpression = this._toExpression(licenses)
         const result = { path: file.path }
         setIfValue(result, 'license', licenseExpression)
@@ -84,10 +91,26 @@ class ScanCodeSummarizer {
     if (!licenses) return null
     const list = setToArray(licenses)
     if (!list) return null
-    return list
-      .map(normalizeSpdx)
-      .filter(x => x)
-      .join(' AND ')
+    if (list.length === 1) return list[0]
+    return list.map(x => `(${x})`).join(' AND ')
+  }
+
+  _createExpression(rule, licenseKey) {
+    const license_expression = get(rule, 'license_expression')
+    if (!license_expression) return normalizeSpdx(licenseKey)
+    let result = license_expression
+    rule.licenses.forEach(licence => {
+      result = result.replace(licence, normalizeSpdx(licence) || '').trim()
+    })
+    new Array('AND', 'OR', 'WITH').forEach(operator => {
+      if (result.endsWith(operator)) {
+        result = result.substring(0, result.lastIndexOf(operator))
+      }
+      if (result.startsWith(operator)) {
+        result = result.substring(operator.length)
+      }
+    })
+    return result.trim()
   }
 }
 
