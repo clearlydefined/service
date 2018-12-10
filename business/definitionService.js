@@ -91,23 +91,18 @@ class DefinitionService {
    */
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
-    const coordinatesWithoutRevision = uniqBy(
-      coordinatesList.map(coordinates => {
-        const withoutRevision = omit(coordinates, ['revision'])
-        return withoutRevision
-      }),
-      isEqual
+    const coordinatesWithoutRevision = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const promises = coordinatesWithoutRevision.map(
+      throat(1, async coordinates => {
+        try {
+          return await this.list(coordinates)
+        } catch (error) {
+          return null
+        }
+      })
     )
 
-    const promises = coordinatesWithoutRevision.map(async coordinates => {
-      try {
-        return await this.list(coordinates)
-      } catch (error) {
-        console.log(error)
-      }
-    })
-
-    const foundDefinitions = flatten(await Promise.all(promises))
+    const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
     return coordinatesList.filter(coordinates => {
       return (

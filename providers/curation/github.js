@@ -164,7 +164,7 @@ class GitHubCurationService {
     map(patches, (patch, index) =>
       map(
         patch.revisions,
-        throat(10, async (_, key) => {
+        throat(1, async (_, key) => {
           const coordinates = Object.assign({}, patch.coordinates, {
             revision: key
           })
