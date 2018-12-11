@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, map, flatten, isEmpty, compact } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map, flatten } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -158,45 +158,49 @@ class GitHubCurationService {
       )
     )
 
+    // Check if all the definitions exists into the store
     const validDefinitions = await this.definitionService.listAll(coordinatesWithRevisions)
-    const validPatches = Object.assign([], patches)
-    const notFoundDefinitions = []
-    map(patches, (patch, index) =>
-      map(
-        patch.revisions,
-        throat(1, async (_, key) => {
-          const coordinates = Object.assign({}, patch.coordinates, {
-            revision: key
+    if (coordinatesWithRevisions.length !== validDefinitions.length) {
+      const notFoundDefinitions = []
+      map(patches, patch =>
+        map(
+          patch.revisions,
+          throat(1, async (_, key) => {
+            const coordinates = Object.assign({}, patch.coordinates, {
+              revision: key
+            })
+            if (validDefinitions.findIndex(definition => isEqual(definition, coordinates)) === -1) {
+              notFoundDefinitions.push(
+                `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
+              )
+            }
           })
-          if (validDefinitions.findIndex(definition => isEqual(definition, coordinates)) === -1) {
-            delete validPatches[index].revisions[key]
-            if (isEmpty(validPatches[index].revisions)) delete validPatches[index]
-            notFoundDefinitions.push(
-              `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
-            )
-          }
-        })
+        )
       )
-    )
-    return { validPatches: compact(validPatches), notFoundDefinitions }
+      return { isValid: false, notFoundDefinitions }
+    }
+
+    return { isValid: true, patches }
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
+
+    const { isValid, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
+    if (!isValid) {
+      notFoundDefinitions.push(
+        'The contribution has failed because some of the supplied component definitions does not exists'
+      )
+      return { errors: notFoundDefinitions }
+    }
+
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-    const { validPatches, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
-    const validResult = { errors: notFoundDefinitions }
-    if (validPatches.length === 0) {
-      validResult.errors.push(
-        'The contribution has failed because none of the supplied component definitions were found'
-      )
-      return validResult
-    }
+
     await Promise.all(
-      validPatches.map(throat(10, validPatch => this._writePatch(serviceGithub, info, validPatch, prBranch)))
+      patch.patches.map(throat(10, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
 
     const { type, details, summary, resolution } = patch.contributionInfo
@@ -214,7 +218,7 @@ ${details}
 ${resolution}
 
 **Affected definitions**:
-${this._formatDefinitions(validPatches)}`
+${this._formatDefinitions(patch.patches)}`
 
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
@@ -232,8 +236,7 @@ ${this._formatDefinitions(validPatches)}`
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
-    validResult.contribution = result
-    return validResult
+    return { contribution: result }
   }
 
   _formatDefinitions(definitions) {

@@ -3,7 +3,9 @@
 
 const { expect } = require('chai')
 const GitHubCurationService = require('../../../providers/curation/github')
+const DefinitionService = require('../../../business/definitionService')
 const CurationStore = require('../../../providers/curation/memoryStore')
+const EntityCoordinates = require('../../../lib/entityCoordinates')
 const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
@@ -99,8 +101,23 @@ describe('Github Curation Service', () => {
     expect(file2.license).to.eq('GPL')
     expect(file2.token).to.eq('2 token')
   })
+
+  it('fail if definition exists', async () => {
+    const { service } = setup()
+    const gitHubService = createService(service)
+    const result = await gitHubService.addOrUpdate(userGithub, serviceGithub, info, contributionPatch)
+    expect(result).to.be.deep.equal({
+      errors: [
+        'Definition npm/npmjs/-/test/2.6.3 has not been found',
+        'The contribution has failed because some of the supplied component definitions does not exists'
+      ]
+    })
+  })
 })
 
+const serviceGithub = 'test'
+const userGithub = 'test'
+const info = 'test'
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 const definitionCoordinates = { ...curationCoordinates, revision: '1.0' }
 
@@ -111,6 +128,16 @@ const simpleCuration = {
       described: { projectWebsite: 'http://foo.com' }
     }
   }
+}
+
+const contributionPatch = {
+  contributionInfo: { summary: 'dgfg', details: 'dfg', resolution: 'sdfg', type: 'missing', removeDefinitions: false },
+  patches: [
+    {
+      coordinates: curationCoordinates,
+      revisions: { '2.6.3': { licensed: { declared: 'Apache-1.0' } } }
+    }
+  ]
 }
 
 const complexCuration = {
@@ -154,4 +181,20 @@ function createInvalidCuration() {
       name: 'test'
     }
   })
+}
+
+function setup(definition, coordinateSpec, curation) {
+  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
+  const search = { delete: sinon.stub(), store: sinon.stub() }
+  const curator = {
+    get: () => Promise.resolve(curation),
+    apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
+  }
+  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
+  const summary = { summarizeAll: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(definition) }
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  return { coordinates, service }
 }
