@@ -13,7 +13,8 @@ const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')
 describe('Suggestion Service', () => {
   it('gets suggestion for missing declared license', async () => {
     const now = moment()
-    const definition = createDefinition(testCoordinates, now)
+    const definition = createDefinition(testCoordinates, now, null, files)
+    console.log(definition)
     const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT')
     const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT')
     const after = createModifiedDefinition(testCoordinates, now, 2, 'GPL')
@@ -22,8 +23,6 @@ describe('Suggestion Service', () => {
     const suggestions = await service.get(testCoordinates)
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
-    console.log('suggestions,', suggestions)
-    console.log('declared,', declared)
     expect(declared).to.equalInAnyOrder([
       { value: 'MIT', version: '10-3.0' },
       { value: 'MIT', version: '10-5.0' },
@@ -31,6 +30,24 @@ describe('Suggestion Service', () => {
     ])
   })
 })
+
+const files = [
+  {
+    path: 'test.txt',
+    license: 'MIT',
+    attributions: ['test', 'test2', 'test3']
+  },
+  {
+    path: 'test2.txt',
+    license: 'MIT',
+    attributions: ['test', 'test2', 'test3']
+  },
+  {
+    path: 'test3.txt',
+    license: 'MIT',
+    attributions: ['test', 'test2', 'test3']
+  }
+]
 
 function createModifiedDefinition(coordinates, now, amount, license, files) {
   const newCoordinates = EntityCoordinates.fromObject({
