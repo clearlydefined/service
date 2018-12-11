@@ -185,7 +185,6 @@ class GitHubCurationService {
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
-
     const { isValid, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
     if (!isValid) {
       notFoundDefinitions.push(
@@ -193,16 +192,13 @@ class GitHubCurationService {
       )
       return { errors: notFoundDefinitions }
     }
-
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-
     await Promise.all(
       patch.patches.map(throat(10, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
-
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     const description = `

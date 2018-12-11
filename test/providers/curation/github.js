@@ -105,7 +105,22 @@ describe('Github Curation Service', () => {
   it('fail if definition exists', async () => {
     const { service } = setup()
     const gitHubService = createService(service)
-    const result = await gitHubService.addOrUpdate(userGithub, serviceGithub, info, contributionPatch)
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removeDefinitions: false
+      },
+      patches: [
+        {
+          coordinates: curationCoordinates,
+          revisions: { '2.6.3': { licensed: { declared: 'Apache-1.0' } } }
+        }
+      ]
+    }
+    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({
       errors: [
         'Definition npm/npmjs/-/test/2.6.3 has not been found',
@@ -113,10 +128,44 @@ describe('Github Curation Service', () => {
       ]
     })
   })
+
+  it('create a PR if all of the definitions exist', async () => {
+    const { service } = setup()
+    sinon.stub(service, 'listAll').callsFake(() => [
+      {
+        coordinates: curationCoordinates,
+        revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
+      }
+    ])
+    const gitHubService = createService(service)
+    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removeDefinitions: false
+      },
+      patches: [
+        {
+          coordinates: curationCoordinates,
+          revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
+        }
+      ]
+    }
+    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    expect(result).to.be.deep.equal({
+      contribution: {
+        data: {
+          number: 143
+        }
+      }
+    })
+  })
 })
 
-const serviceGithub = 'test'
-const userGithub = 'test'
 const info = 'test'
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 const definitionCoordinates = { ...curationCoordinates, revision: '1.0' }
@@ -130,16 +179,6 @@ const simpleCuration = {
   }
 }
 
-const contributionPatch = {
-  contributionInfo: { summary: 'dgfg', details: 'dfg', resolution: 'sdfg', type: 'missing', removeDefinitions: false },
-  patches: [
-    {
-      coordinates: curationCoordinates,
-      revisions: { '2.6.3': { licensed: { declared: 'Apache-1.0' } } }
-    }
-  ]
-}
-
 const complexCuration = {
   coordinates: curationCoordinates,
   revisions: {
@@ -151,12 +190,39 @@ const complexCuration = {
 }
 
 function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
-  return GitHubCurationService(
-    { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
+  const service = GitHubCurationService(
+    {
+      owner: 'foobar',
+      branch: 'foobar',
+      token: 'foobar'
+    },
     CurationStore({}),
     endpoints,
     definitionService
   )
+  service.github = {
+    repos: {
+      getBranch: () =>
+        Promise.resolve({
+          data: {
+            commit: {
+              sha: '7fd1a60b01f91b314f59955a4e4d4e80d8edf11d'
+            }
+          }
+        })
+    },
+    gitdata: { createReference: sinon.stub() },
+    issues: { createComment: sinon.stub() },
+    pullRequests: {
+      create: () =>
+        Promise.resolve({
+          data: {
+            number: 143
+          }
+        })
+    }
+  }
+  return service
 }
 
 const simpleHarvested = {
