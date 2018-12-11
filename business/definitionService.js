@@ -12,6 +12,7 @@ const {
   uniqBy,
   flatten,
   intersectionBy,
+  intersection,
   map,
   concat
 } = require('lodash')
