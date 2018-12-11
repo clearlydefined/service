@@ -128,6 +128,7 @@ class DefinitionService {
   }
 
   async _store(definition) {
+    definition.updated = new Date()
     await this.definitionStore.store(definition)
     return this.search.store(definition)
   }
