@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai')
-const sinon = require('sinon')
 const SuggestionService = require('../../business/suggestionService')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
@@ -23,12 +22,21 @@ describe('Suggestion Service', () => {
     const suggestions = await service.get(testCoordinates)
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.equalInAnyOrder(['MIT', 'GPL'])
+    console.log('suggestions,', suggestions)
+    console.log('declared,', declared)
+    expect(declared).to.equalInAnyOrder([
+      { value: 'MIT', version: '10-3.0' },
+      { value: 'MIT', version: '10-5.0' },
+      { value: 'GPL', version: '102.0' }
+    ])
   })
 })
 
 function createModifiedDefinition(coordinates, now, amount, license, files) {
-  const newCoordinates = { ...coordinates, revision: `${coordinates.revision.split('.')[0] + amount}.0` }
+  const newCoordinates = EntityCoordinates.fromObject({
+    ...coordinates,
+    revision: `${coordinates.revision.split('.')[0] + amount}.0`
+  })
   const newDate = moment(now).add(amount, 'days')
   return createDefinition(newCoordinates, newDate, license, files)
 }
@@ -42,7 +50,7 @@ function createDefinition(coordinates, releaseDate, license, files) {
 }
 
 function setup(definition, others) {
-  const definitionService = { get: sinon.stub().callsFake(() => Promise.resolve(definition)) }
+  const definitionService = { getAll: () => Promise.resolve([...others, definition]) }
   const definitionStore = { list: () => Promise.resolve([...others, definition]) }
   return SuggestionService(definitionService, definitionStore)
 }
