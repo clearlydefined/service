@@ -21,6 +21,10 @@ class MemoryStore {
     })
   }
 
+  getContribution(prNumber) {
+    return this.contributions[prNumber]
+  }
+
   updateContribution(pr, curations = null) {
     if (curations) {
       const files = {}
