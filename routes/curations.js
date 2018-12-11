@@ -66,8 +66,7 @@ async function updateCurations(request, response) {
   if (!result.contribution) return response.status(400).send({ errors: result.errors })
   response.status(200).send({
     prNumber: result.contribution.data.number,
-    url: curationService.getCurationUrl(result.contribution.data.number),
-    errors: result.errors
+    url: curationService.getCurationUrl(result.contribution.data.number)
   })
 }
 
