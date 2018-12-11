@@ -110,7 +110,12 @@ class ClearlyDescribedSummarizer {
 
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
+    setIfValue(
+      result,
+      'licensed.declared',
+      normalizeSpdx(get(data, 'manifest.licenseExpression')) ||
+        extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl'))
+    )
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
@@ -136,7 +141,7 @@ class ClearlyDescribedSummarizer {
     }
     const license =
       manifest.license && normalizeSpdx(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
-    license && setIfValue(result, 'licensed', { declared: license })
+    setIfValue(result, 'licensed.declared', license)
   }
 
   addGemData(result, data) {
