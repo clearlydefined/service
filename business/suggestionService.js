@@ -24,9 +24,12 @@ class SuggestionService {
     const promises = [
       await this._collectSuggestionsForField(related, baseSuggestion, 'licensed.declared'),
       await this._collectSuggestionsForField(related, baseSuggestion, 'described.sourceLocation'),
-      await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate')
+      await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate'),
+      await this._collectSuggestionsForFiles(related, baseSuggestion)
     ]
+
     const result = await Promise.all(promises)
+    console.log(result)
     return last(result.filter(res => !isEmpty(res)))
   }
 
@@ -67,7 +70,7 @@ class SuggestionService {
    * Collect Suggestions for a given related definition and field
    * Only give suggestions if there is something missing
    */
-  _collectSuggestionsForField(related, suggestions, field) {
+  async _collectSuggestionsForField(related, suggestions, field) {
     const definition = related.sortedByReleaseDate[related.index]
     // If there is already a declared licence or there are no related entries then return early
     if (get(definition, field) || !(related.before.length + related.after.length)) return []
@@ -83,6 +86,43 @@ class SuggestionService {
       })
     )
     return suggestions
+  }
+
+  /**
+   * Collect Suggestions for all the files of the definition
+   * Only give suggestions if there is something missing
+   */
+  async _collectSuggestionsForFiles(related, suggestions) {
+    const definition = related.sortedByReleaseDate[related.index]
+    if (!get(definition, 'files')) return null
+    //Find the same file in related definitions
+    const promises = definition.files.map(async file => {
+      if (get(file, 'license') && get(file, 'attributions')) return null
+      const filesSuggestions = await this._collectSuggestionsForFile(related, suggestions, file.path)
+      return { path: file.path, licence: filesSuggestions.license, attributions: filesSuggestions.attributions }
+    })
+    const result = await Promise.all(promises)
+    set(suggestions, 'files', result)
+    return suggestions
+  }
+
+  async _collectSuggestionsForFile(related, suggestions, filePath) {
+    // Search same path in related definitions
+    const before = filter(related.before, entry => get(entry, 'files'))
+    const after = filter(related.after, entry => get(entry, 'files'))
+    // Consider only same path in related definitions
+    const suggestionDefinitions = concat(before, after).map(definition => {
+      return { ...definition, file: definition.files.find(file => file.path === filePath) }
+    })
+    if (suggestionDefinitions.length === 0) return null
+    return {
+      license: suggestionDefinitions.map(suggestion => {
+        return { value: get(suggestion, 'file.license'), version: get(suggestion, 'coordinates.revision') }
+      }),
+      attributions: suggestionDefinitions.map(suggestion => {
+        return { value: get(suggestion, 'file.attributions'), version: get(suggestion, 'coordinates.revision') }
+      })
+    }
   }
 }
 

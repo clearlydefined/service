@@ -14,10 +14,9 @@ describe('Suggestion Service', () => {
   it('gets suggestion for missing declared license', async () => {
     const now = moment()
     const definition = createDefinition(testCoordinates, now, null, files)
-    console.log(definition)
-    const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT')
-    const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT')
-    const after = createModifiedDefinition(testCoordinates, now, 2, 'GPL')
+    const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
+    const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
+    const after = createModifiedDefinition(testCoordinates, now, 2, 'GPL', files, attributions)
     const others = [before1, before2, after]
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
@@ -31,31 +30,20 @@ describe('Suggestion Service', () => {
   })
 })
 
-const files = [
-  {
-    path: 'test.txt',
-    license: 'MIT',
-    attributions: ['test', 'test2', 'test3']
-  },
-  {
-    path: 'test2.txt',
-    license: 'MIT',
-    attributions: ['test', 'test2', 'test3']
-  },
-  {
-    path: 'test3.txt',
-    license: 'MIT',
-    attributions: ['test', 'test2', 'test3']
-  }
-]
+const attributions = ['test', 'test2', 'test3']
 
-function createModifiedDefinition(coordinates, now, amount, license, files) {
+const files = [{ path: 'test.txt' }, { path: 'test2.txt' }, { path: 'test3.txt' }]
+
+function createModifiedDefinition(coordinates, now, amount, license, files, attributions) {
   const newCoordinates = EntityCoordinates.fromObject({
     ...coordinates,
     revision: `${coordinates.revision.split('.')[0] + amount}.0`
   })
+  const newFiles = files.map(file => {
+    return { ...file, license, attributions }
+  })
   const newDate = moment(now).add(amount, 'days')
-  return createDefinition(newCoordinates, newDate, license, files)
+  return createDefinition(newCoordinates, newDate, license, newFiles)
 }
 
 function createDefinition(coordinates, releaseDate, license, files) {
