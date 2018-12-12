@@ -31,7 +31,6 @@ describe('Suggestion Service', () => {
 })
 
 const attributions = ['test', 'test2', 'test3']
-
 const files = [{ path: 'test.txt' }, { path: 'test2.txt' }, { path: 'test3.txt' }]
 
 function createModifiedDefinition(coordinates, now, amount, license, files, attributions) {
