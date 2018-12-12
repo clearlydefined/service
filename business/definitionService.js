@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, intersection, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten } = require('lodash')
+const { get, intersection, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -96,21 +96,18 @@ class DefinitionService {
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
     const coordinatesWithoutRevision = uniqBy(
-      coordinatesList.map(coordinates => {
-        const { revision, ...withoutRevision } = coordinates
-        return withoutRevision
-      }),
+      coordinatesList.map(coordinates => EntityCoordinates.fromObject(coordinates).asRevisionless()),
       isEqual
     )
+
     const promises = coordinatesWithoutRevision.map(async coordinates => {
       try {
         return await this.list(coordinates)
       } catch (error) {
-        console.log(error)
+        return null
       }
     })
-    const foundDefinitions = 
-          (await Promise.all(promises))
+    const foundDefinitions = await Promise.all(promises)
     // Filter only the revisions matching the found definitions
     return coordinatesList.filter(coordinates => {
       return (

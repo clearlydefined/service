@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { find, findLast, get, set, sortBy, filter, concat } = require('lodash')
-const EntityCoordinates = require('../lib/entityCoordinates')
+const { get, set, sortBy, filter, concat, last, isEmpty } = require('lodash')
 
 class SuggestionService {
   constructor(definitionService, definitionStore) {
@@ -28,7 +27,7 @@ class SuggestionService {
       await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate')
     ]
     const result = await Promise.all(promises)
-    return result
+    return last(result.filter(res => !isEmpty(res)))
   }
 
   /**
@@ -45,7 +44,7 @@ class SuggestionService {
     }
     const coordinatesList = []
     related.forEach(element => {
-      coordinatesList.push(EntityCoordinates.fromString(element))
+      coordinatesList.push(element.coordinates)
     })
     const validDefinitions = await this.definitionService.getAll(coordinatesList)
     const sortedByReleaseDate = sortBy(validDefinitions, ['described.releaseDate'])
@@ -80,7 +79,7 @@ class SuggestionService {
       suggestions,
       field,
       suggestionDefinitions.map(suggestion => {
-        return { value: get(suggestion, field) }
+        return { value: get(suggestion, field), version: get(suggestion, 'coordinates.revision') }
       })
     )
     return suggestions
