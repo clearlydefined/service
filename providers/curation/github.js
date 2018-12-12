@@ -188,7 +188,7 @@ class GitHubCurationService {
     const { isValid, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
     if (!isValid) {
       notFoundDefinitions.push(
-        'The contribution has failed because some of the supplied component definitions does not exists'
+        'The contribution has failed because some of the supplied component definitions do not exist'
       )
       return { errors: notFoundDefinitions }
     }
