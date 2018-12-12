@@ -30,11 +30,22 @@ const files = {
 }
 
 const prs = {
-  12: { number: 12, head: { ref: 'master', sha: '32' }, files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }] },
+  11: {
+    number: 12,
+    head: { ref: 'master', sha: '32' },
+    files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }]
+  },
+  12: {
+    number: 12,
+    head: { ref: 'master', sha: '32' },
+    files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }],
+    merged_at: '2018-11-13T02:44:34Z'
+  },
   13: {
     number: 13,
     head: { ref: 'master', sha: '72' },
-    files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }, { filename: 'curations/npm/npmjs/-/bar.yaml' }]
+    files: [{ filename: 'curations/npm/npmjs/-/foo.yaml' }, { filename: 'curations/npm/npmjs/-/bar.yaml' }],
+    merged_at: '2018-11-13T02:44:34Z'
   }
 }
 
@@ -57,7 +68,7 @@ describe('Curation service pr events', () => {
 
   it('handles open', async () => {
     const service = createService()
-    await service.prOpened(prs[12])
+    await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
@@ -67,7 +78,7 @@ describe('Curation service pr events', () => {
 
   it('handles update', async () => {
     const service = createService()
-    await service.prUpdated(prs[12])
+    await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
@@ -77,12 +88,13 @@ describe('Curation service pr events', () => {
 
   it('handles merge', async () => {
     const service = createService()
-    await service.prMerged(prs[12])
+    await service.updateContribution(prs[12])
 
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
-    expect(updateSpy.args[0][1]).to.be.undefined
+    const data = updateSpy.args[0][1].map(curation => curation.data)
+    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
 
     const curationSpy = service.store.updateCurations
     expect(curationSpy.calledOnce).to.be.true
@@ -100,7 +112,7 @@ describe('Curation service pr events', () => {
 
   it('handles close', async () => {
     const service = createService()
-    await service.prClosed(prs[12])
+    await service.updateContribution(prs[12])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
@@ -117,12 +129,13 @@ describe('Curation service pr events', () => {
 
   it('handles failure to compute one definition of multiple', async () => {
     const service = createService()
-    await service.prMerged(prs[13])
+    await service.updateContribution(prs[13])
 
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(13)
-    expect(updateSpy.args[0][1]).to.be.undefined
+    const data = updateSpy.args[0][1].map(curation => curation.data)
+    expect(data).to.be.deep.equalInAnyOrder([complexCuration('foo'), complexCuration('bar')])
 
     const curationSpy = service.store.updateCurations
     expect(curationSpy.calledOnce).to.be.true

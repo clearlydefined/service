@@ -19,7 +19,7 @@ describe('ScanCode summarizer', () => {
   it('gets all the per file license info and attribution parties', () => {
     const { coordinates, harvested } = setup([
       buildFile('foo.txt', 'MIT', ['Bob', 'Fred', 'Bob', 'bob']),
-      buildFile('bar.txt', 'GPL', ['Jane', 'Fred', 'John'])
+      buildFile('bar.txt', 'GPL-3.0', ['Jane', 'Fred', 'John'])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -35,11 +35,11 @@ describe('ScanCode summarizer', () => {
       'Copyright Jane',
       'Copyright Fred'
     ])
-    expect(summary.files[1].license).to.equal('GPL')
+    expect(summary.files[1].license).to.equal('GPL-3.0')
   })
 
   it('handles scan LICENSE file', () => {
-    const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', []), buildFile('LICENSE.foo', 'GPL-3.0', [])])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
@@ -47,7 +47,10 @@ describe('ScanCode summarizer', () => {
   })
 
   it('handles scan LICENSE.md file', () => {
-    const { coordinates, harvested } = setup([buildFile('LICENSE.md', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])])
+    const { coordinates, harvested } = setup([
+      buildFile('LICENSE.md', 'MIT', []),
+      buildFile('LICENSE.foo', 'GPL-3.0', [])
+    ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
@@ -55,20 +58,20 @@ describe('ScanCode summarizer', () => {
   })
 
   it('skips foo directory entries', () => {
-    const { coordinates, harvested } = setup([buildDirectory('foo'), buildFile('foo/LICENSE.md', 'GPL', [])])
+    const { coordinates, harvested } = setup([buildDirectory('foo'), buildFile('foo/LICENSE.md', 'GPL-3.0', [])])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(1)
     expect(summary.licensed).to.be.undefined
     expect(summary.files[0].attributions).to.be.undefined
     expect(summary.files[0].path).to.equal('foo/LICENSE.md')
-    expect(summary.files[0].license).to.equal('GPL')
+    expect(summary.files[0].license).to.equal('GPL-3.0')
   })
 
   it('skips license files in subdirectories', () => {
     const { coordinates, harvested } = setup([
       buildFile('foo/LICENSE.md', 'MIT', []),
-      buildFile('LICENSE.foo', 'GPL', [])
+      buildFile('LICENSE.foo', 'GPL-3.0', [])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -80,25 +83,31 @@ describe('ScanCode summarizer', () => {
   })
 
   it('detects npm license file in package folder', () => {
-    const { coordinates, harvested } = setup([buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL', [])], 'npm/npmjs/-/test/1.0')
+    const { coordinates, harvested } = setup(
+      [buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL-3.0', [])],
+      'npm/npmjs/-/test/1.0'
+    )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(1)
-    expect(summary.licensed.declared).to.be.equal('GPL')
+    expect(summary.licensed.declared).to.be.equal('GPL-3.0')
     expect(summary.files[0].attributions).to.be.undefined
     expect(summary.files[0].path).to.equal('package/LICENSE.md')
-    expect(summary.files[0].license).to.equal('GPL')
+    expect(summary.files[0].license).to.equal('GPL-3.0')
   })
 
   it('skips nuget license file in package folder', () => {
-    const { coordinates, harvested } = setup([buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL', [])], 'nuget/nuget/-/test/1.0')
+    const { coordinates, harvested } = setup(
+      [buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL-3.0', [])],
+      'nuget/nuget/-/test/1.0'
+    )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(1)
     expect(summary.licensed).to.be.undefined
     expect(summary.files[0].attributions).to.be.undefined
     expect(summary.files[0].path).to.equal('package/LICENSE.md')
-    expect(summary.files[0].license).to.equal('GPL')
+    expect(summary.files[0].license).to.equal('GPL-3.0')
   })
 
   it('handles scan with asserted license file even in a subdirectory', () => {
@@ -112,12 +121,36 @@ describe('ScanCode summarizer', () => {
   it('handles scan with both asserted discovered license file', () => {
     const { coordinates, harvested } = setup([
       buildPackageFile('package.json', 'MIT', []),
-      buildFile('LICENSE.foo', 'GPL', [])
+      buildFile('LICENSE.foo', 'GPL-3.0', [])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
     expect(summary.licensed.declared).to.eq('MIT')
+  })
+
+  it('handles multiple licenses in files', () => {
+    const { coordinates, harvested } = setup([
+      buildFile('file1', ['Apache-2.0', 'MIT'], []),
+      buildFile('file2', 'MIT', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.files[0].license).to.eq('Apache-2.0 AND MIT')
+    expect(summary.files[1].license).to.eq('MIT')
+  })
+
+  it('does not AND together invalid licensess', () => {
+    const { coordinates, harvested } = setup([
+      buildFile('file1', ['NOASSERTION', 'MIT'], []),
+      buildFile('file2', 'MIT', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.files[0].license).to.eq('MIT')
+    expect(summary.files[1].license).to.eq('MIT')
   })
 })
 
@@ -139,10 +172,13 @@ function setup(files, coordinateSpec) {
 
 function buildFile(path, license, holders) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
+  if (!Array.isArray(license)) license = [license]
   return {
     path,
     type: 'file',
-    licenses: license ? [{ spdx_license_key: license }] : null,
+    licenses: license.map(spdx_license_key => {
+      return { spdx_license_key }
+    }),
     copyrights: [wrapHolders]
   }
 }

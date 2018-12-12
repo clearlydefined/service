@@ -80,8 +80,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "score": { "$ref": "#/definitions/score" },
-        "toolScore": { "$ref": "#/definitions/toolScore" },
+        "score": { "$ref": "#/definitions/describedScore" },
+        "toolScore": { "$ref": "#/definitions/describedScore" },
         "facets": {
           "type": "object",
           "additionalProperties": false,
@@ -108,13 +108,30 @@
         }
       }
     },
-    "score": {
-      "type": "number",
-      "description": "The effective score (combining tool and curated data) for the parent aspect of the definintion"
+    "describedScore": {
+      "type": "object",
+      "description": "The score for the `described` portion of a definition",
+      "additionalProperties": false,
+      "required": ["total", "date", "source"],
+      "properties": {
+        "total": { "type": "number" },
+        "date": { "type": "number" },
+        "source": { "type": "number" }
+      }
     },
-    "toolScore": {
-      "type": "number",
-      "description": "The tool-based score for the parent aspect of the definintion"
+    "licensedScore": {
+      "type": "object",
+      "description": "The score for the `licensed` portion of a definition",
+      "additionalProperties": false,
+      "required": ["total", "declared", "discovered", "consistency", "spdx", "texts"],
+      "properties": {
+        "total": { "type": "number" },
+        "declared": { "type": "number" },
+        "discovered": { "type": "number" },
+        "consistency": { "type": "number" },
+        "spdx": { "type": "number" },
+        "texts": { "type": "number" }
+      }
     },
     "globList": {
       "type": "array",
@@ -151,8 +168,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "score": { "$ref": "#/definitions/score" },
-        "toolScore": { "$ref": "#/definitions/toolScore" },
+        "score": { "$ref": "#/definitions/licensedScore" },
+        "toolScore": { "$ref": "#/definitions/licensedScore" },
         "declared": { "$ref": "#/definitions/declared" },
         "facets": { "$ref": "#/definitions/facets" }
       }

@@ -11,6 +11,7 @@ const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
+const loggerFactory = require('../logging/logger')
 tmp.setGracefulCleanup()
 const logger = require('../logging/logger')
 
@@ -28,6 +29,7 @@ class GitHubCurationService {
     this.curationUpdateTime = null
     this.tempLocation = null
     this.github = Github.getClient(options)
+    this.logger = loggerFactory()
   }
 
   get tmpOptions() {
@@ -38,42 +40,72 @@ class GitHubCurationService {
   }
 
   /**
-   * Process the fact that the given PR has been opened.
-   * @param {*} pr GitHub PR event object
+   * Enumerate all contributions in GitHub and in the store and updates any out of sync
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
-   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
-   * to interaction with GitHub or PR storage
    */
-  prOpened(pr) {
-    return this._storeAndValidateContribution(pr)
+  async syncAllContributions(client) {
+    let response = await client.pullRequests.getAll({
+      owner: this.options.owner,
+      repo: this.options.repo,
+      per_page: 100,
+      state: 'all'
+    })
+    this._processContributions(response.data)
+    while (this.github.hasNextPage(response)) {
+      response = await this.github.getNextPage(response)
+      this._processContributions(response.data)
+    }
+  }
+
+  async _processContributions(prs) {
+    for (let pr of prs) {
+      const storedContribution = await this.store.getContribution(pr.number)
+      const storedUpdated = get(storedContribution, 'pr.updated_at')
+      if (!storedUpdated || new Date(storedUpdated).getTime() < new Date(pr.updated_at).getTime()) {
+        this.logger.info(`Backfilling contribution for #${pr.number}`)
+        await this.updateContribution(pr)
+      }
+    }
   }
 
   /**
-   * Process the fact that the given PR has been closed.
-   * @param {*} pr GitHub PR event object
+   * Persist the updated contribution in the store and handle newly merged contributions
+   * @param {*} pr - The GitHub PR object
+   * @param {*} curations -Optional. The contributed curations for this PR
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
-   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
-   * to interaction with GitHub or PR storage
    */
-  prClosed(pr) {
-    return this.store.updateContribution(pr)
+  async updateContribution(pr, curations = null) {
+    curations = curations || (await this.getContributedCurations(pr.number, pr.head.sha))
+    const data = {
+      ...pick(pr, [
+        'number',
+        'id',
+        'state',
+        'title',
+        'body',
+        'created_at',
+        'updated_at',
+        'closed_at',
+        'merged_at',
+        'merge_commit_sha'
+      ]),
+      user: pick(pr.user, ['login']),
+      head: { ...pick(pr.head, ['sha']), repo: { ...pick(get(pr, 'head.repo'), ['id']) } },
+      base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
+    }
+    await this.store.updateContribution(data, curations)
+    if (data.merged_at) await this._prMerged(curations)
   }
 
   /**
-   * Process the fact that the given PR has been merged.
-   * @param {*} pr GitHub PR event object
+   * Process the fact that the given PR has been merged by persisting the curation and invalidating the defintion
+   * @param {*} curations - The set of actual proposed changes
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
    * to interaction with GitHub or PR storage
    */
-  async prMerged(pr) {
-    // update the merged PR. Don't need to store the proposed changes as they should already be there.
-    await this.store.updateContribution(pr)
-
-    // get and store the current state of the curation branch
-    const curations = await this._getContributedCurations(pr.number, pr.head.sha)
+  async _prMerged(curations) {
     await this.store.updateCurations(curations)
-
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
     // even if there are errors recomputing the definitions.
     const coordinateList = Curation.getAllCoordinates(curations)
@@ -83,28 +115,22 @@ class GitHubCurationService {
         throat(5, coordinates => {
           this.definitionService
             .computeAndStore(coordinates)
-            .catch(error => logger.info(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`))
+            .catch(error => this.logger.info(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`))
         })
       )
     )
   }
 
-  /**
-   * Process the fact that the given PR has been updated.
-   * @param {*} pr GitHub PR event object
-   * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
-   * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
-   * to interaction with GitHub or PR storage
-   */
-  prUpdated(pr) {
-    return this._storeAndValidateContribution(pr)
-  }
-
-  // store the PR and its related curations
-  async _storeAndValidateContribution(pr) {
-    const curations = await this._getContributedCurations(pr.number, pr.head.sha)
-    await this.store.updateContribution(pr, curations)
-    return this._validateContributions(pr.number, pr.head.sha)
+  async validateContributions(number, sha, curations) {
+    await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
+    const invalidCurations = curations.filter(x => !x.isValid)
+    let state = 'success'
+    let description = 'All curations are valid'
+    if (invalidCurations.length) {
+      state = 'error'
+      description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
+    }
+    return this._postCommitStatus(sha, number, state, description)
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -311,8 +337,13 @@ ${this._formatDefinitions(patch.patches)}`
     return { ref: result.data.head.ref, sha: result.data.head.sha }
   }
 
-  // get the content for all curations in a given PR
-  async _getContributedCurations(number, sha) {
+  /**
+   * get the content for all curations in a given PR
+   * @param {*} number - The GitHub PR number
+   * @param {*} sha - The GitHub PR head sha
+   * @returns {[Curation]} Promise for an array of Curations
+   */
+  async getContributedCurations(number, sha) {
     const prFiles = await this._getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     return Promise.all(
@@ -347,21 +378,8 @@ ${this._formatDefinitions(patch.patches)}`
       const response = await this.github.repos.getContent({ owner, repo, ref, path })
       return base64.decode(response.data.content)
     } catch (error) {
-      logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}`)
+      this.logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}`)
     }
-  }
-
-  async _validateContributions(number, sha) {
-    await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
-    const curations = await this._getContributedCurations(number, sha)
-    const invalidCurations = curations.filter(x => !x.isValid)
-    let state = 'success'
-    let description = 'All curations are valid'
-    if (invalidCurations.length) {
-      state = 'error'
-      description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
-    }
-    return this._postCommitStatus(sha, number, state, description)
   }
 
   async _postCommitStatus(sha, number, state, description) {
@@ -378,7 +396,7 @@ ${this._formatDefinitions(patch.patches)}`
         context: 'ClearlyDefined'
       })
     } catch (error) {
-      logger.info(`Failed to create status for PR #${number}`)
+      this.logger.info(`Failed to create status for PR #${number}`)
     }
   }
 

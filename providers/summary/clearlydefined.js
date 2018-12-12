@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep } = require('lodash')
 const {
   extractDate,
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
-  normalizeSpdx,
   updateSourceLocation,
-  isLicenseFile
+  isLicenseFile,
+  mergeDefinitions,
+  normalizeSpdx
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -63,7 +64,15 @@ class ClearlyDescribedSummarizer {
   }
 
   addInterestingFiles(result, data) {
-    setIfValue(result, 'files', data.interestingFiles)
+    if (!data.interestingFiles) return
+    const newDefinition = cloneDeep(result)
+    const newFiles = cloneDeep(data.interestingFiles)
+    newFiles.forEach(file => {
+      file.license = normalizeSpdx(file.license)
+      if (!file.license) delete file.license
+    })
+    set(newDefinition, 'files', newFiles)
+    mergeDefinitions(result, newDefinition)
   }
 
   addLicenseFromFiles(result, data, coordinates) {
@@ -101,7 +110,19 @@ class ClearlyDescribedSummarizer {
 
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
+    setIfValue(
+      result,
+      'licensed.declared',
+      normalizeSpdx(get(data, 'manifest.licenseExpression')) ||
+        extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl'))
+    )
+    const packageEntries = get(data, 'manifest.packageEntries')
+    if (!packageEntries) return
+    const newDefinition = cloneDeep(result)
+    newDefinition.files = packageEntries.map(file => {
+      return { path: decodeURIComponent(file.fullName) }
+    })
+    mergeDefinitions(result, newDefinition)
   }
 
   addNpmData(result, data) {
@@ -118,8 +139,9 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    const license = manifest.license
-    license && setIfValue(result, 'licensed', { declared: typeof license === 'string' ? license : license.type })
+    const license =
+      manifest.license && normalizeSpdx(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+    setIfValue(result, 'licensed.declared', license)
   }
 
   addGemData(result, data) {

@@ -15,10 +15,7 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.prOpened.calledOnce).to.be.false
-    expect(service.prClosed.calledOnce).to.be.false
-    expect(service.prMerged.calledOnce).to.be.false
-    expect(service.prUpdated.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
     expect(logger.error.notCalled).to.be.true
     expect(logger.info.notCalled).to.be.true
@@ -33,10 +30,7 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.prOpened.calledOnce).to.be.false
-    expect(service.prClosed.calledOnce).to.be.false
-    expect(service.prMerged.calledOnce).to.be.false
-    expect(service.prUpdated.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -49,10 +43,7 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.prOpened.calledOnce).to.be.false
-    expect(service.prClosed.calledOnce).to.be.false
-    expect(service.prMerged.calledOnce).to.be.false
-    expect(service.prUpdated.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -81,7 +72,8 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.prClosed.calledOnce).to.be.true
+    expect(service.validateContributions.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.true
     expect(logger.info.calledOnce).to.be.true
     expect(logger.error.notCalled).to.be.true
   })
@@ -94,7 +86,8 @@ describe('Webhook Route for GitHub calls', () => {
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.prOpened.calledOnce).to.be.true
+    expect(service.validateContributions.calledOnce).to.be.true
+    expect(service.updateContribution.calledOnce).to.be.true
     expect(logger.info.calledOnce).to.be.true
     expect(logger.error.notCalled).to.be.true
   })
@@ -103,11 +96,12 @@ describe('Webhook Route for GitHub calls', () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
-    const service = createCurationService(true)
+    const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.prOpened.calledOnce).to.be.true
+    expect(service.validateContributions.calledOnce).to.be.true
+    expect(service.updateContribution.calledOnce).to.be.true
     expect(logger.info.calledOnce).to.be.true
     expect(logger.error.notCalled).to.be.true
   })
@@ -117,12 +111,11 @@ function createLogger() {
   return { info: sinon.stub(), error: sinon.stub() }
 }
 
-function createCurationService(failsMissing = false) {
+function createCurationService() {
   return {
-    prOpened: sinon.stub().callsFake(() => (failsMissing ? Promise.reject({ code: 404 }) : Promise.resolve(null))),
-    prClosed: sinon.stub(),
-    prUpdated: sinon.stub(),
-    prMerged: sinon.stub()
+    getContributedCurations: sinon.stub(),
+    updateContribution: sinon.stub(),
+    validateContributions: sinon.stub()
   }
 }
 
