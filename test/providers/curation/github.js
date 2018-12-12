@@ -104,7 +104,7 @@ describe('Github Curation Service', () => {
     expect(file2.token).to.eq('2 token')
   })
 
-  it('fail if definition exists', async () => {
+  it('fails if definition exists', async () => {
     const { service } = setup()
     const gitHubService = createService(service)
     const contributionPatch = {
@@ -126,12 +126,12 @@ describe('Github Curation Service', () => {
     expect(result).to.be.deep.equal({
       errors: [
         'Definition npm/npmjs/-/test/2.6.3 has not been found',
-        'The contribution has failed because some of the supplied component definitions does not exists'
+        'The contribution has failed because some of the supplied component definitions do not exist'
       ]
     })
   })
 
-  it('create a PR if all of the definitions exist', async () => {
+  it('create a PR only if all of the definitions exist', async () => {
     const { service } = setup()
     sinon.stub(service, 'listAll').callsFake(() => [
       {

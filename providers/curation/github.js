@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, map, flatten, pick } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map, flatten } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -214,7 +214,7 @@ class GitHubCurationService {
     const { isValid, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
     if (!isValid) {
       notFoundDefinitions.push(
-        'The contribution has failed because some of the supplied component definitions does not exists'
+        'The contribution has failed because some of the supplied component definitions do not exist'
       )
       return { errors: notFoundDefinitions }
     }
