@@ -98,7 +98,7 @@ class SuggestionService {
     //Find the same file in related definitions
     const promises = definition.files.map(async file => {
       if (get(file, 'license') && get(file, 'attributions')) return null
-      const filesSuggestions = await this._collectSuggestionsForFile(related, suggestions, file.path)
+      const filesSuggestions = await this._collectSuggestionsForFile(related, file.path)
       return { path: file.path, licence: filesSuggestions.license, attributions: filesSuggestions.attributions }
     })
     const result = await Promise.all(promises)
@@ -106,7 +106,7 @@ class SuggestionService {
     return suggestions
   }
 
-  async _collectSuggestionsForFile(related, suggestions, filePath) {
+  async _collectSuggestionsForFile(related, filePath) {
     // Search same path in related definitions
     const before = filter(related.before, entry => get(entry, 'files'))
     const after = filter(related.after, entry => get(entry, 'files'))
