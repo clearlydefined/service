@@ -146,7 +146,13 @@ class ClearlyDescribedSummarizer {
 
   addGemData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'licensed.declared', data.licenses)
+    if (!setIfValue(result, 'licensed.declared', normalizeSpdx(get(data, 'registryData.license')))) {
+      const licenses = (get(data, 'registryData.licenses') || [])
+        .map(normalizeSpdx)
+        .filter(x => x)
+        .join(' OR ')
+      setIfValue(result, 'licensed.declared', licenses)
+    }
   }
 
   addPyPiData(result, data) {
