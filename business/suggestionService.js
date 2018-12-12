@@ -29,7 +29,6 @@ class SuggestionService {
     ]
 
     const result = await Promise.all(promises)
-    console.log(result)
     return last(result.filter(res => !isEmpty(res)))
   }
 
