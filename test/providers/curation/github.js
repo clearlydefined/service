@@ -158,13 +158,7 @@ describe('Github Curation Service', () => {
       ]
     }
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
-    expect(result).to.be.deep.equal({
-      contribution: {
-        data: {
-          number: 143
-        }
-      }
-    })
+    expect(result).to.be.deep.equal({ data: { number: 143 } })
   })
 })
 
