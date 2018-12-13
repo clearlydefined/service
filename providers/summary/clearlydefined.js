@@ -136,11 +136,10 @@ class ClearlyDescribedSummarizer {
 
   addGemData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    if (!setIfValue(result, 'licensed.declared', normalizeSpdx(get(data, 'registryData.license')))) {
-      const licenses = (get(data, 'registryData.licenses') || [])
-        .map(normalizeSpdx)
-        .filter(x => x)
-        .join(' OR ')
+    const license = SPDX.normalize(get(data, 'registryData.license'))
+    if (license) set(result, 'licensed.declared', license)
+    else {
+      const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
   }

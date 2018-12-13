@@ -255,6 +255,13 @@ describe('ClearlyDefined Gem summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT OR BSD-2-Clause')
   })
 
+  it('normalizes multiple licenses', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT', 'JUNK'])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT OR NOASSERTION')
+  })
+
   it('handles singular license', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
     const summary = Summarizer().summarize(coordinates, harvested)
