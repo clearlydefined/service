@@ -7,7 +7,6 @@ const { expect } = chai
 const Summarizer = require('../../providers/summary/clearlydefined')
 const { setIfValue } = require('../../lib/utils')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const { set } = require('lodash')
 
 describe('ClearlyDefined Maven summarizer', () => {
   it('handles with all the data', () => {
@@ -257,8 +256,7 @@ describe('ClearlyDefined Gem summarizer', () => {
   })
 
   it('handles singular license', () => {
-    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z')
-    set(harvested, 'registryData.license', 'MIT')
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
@@ -286,7 +284,8 @@ function setupGem(releaseDate, licenses, sourceInfo) {
   const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
-  setIfValue(harvested, 'registryData.licenses', licenses)
+  if (typeof licenses === 'string') setIfValue(harvested, 'registryData.license', licenses)
+  else setIfValue(harvested, 'registryData.licenses', licenses)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }
