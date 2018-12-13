@@ -241,11 +241,25 @@ function setupNpm(releaseDate, license, homepage, bugs, sourceInfo) {
 
 describe('ClearlyDefined Gem summarizer', () => {
   it('handles with all the data', () => {
-    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT'])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.described.releaseDate).to.eq('2018-03-06')
+  })
+
+  it('handles multiple licenses', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT', 'BSD-2-Clause'])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT OR BSD-2-Clause')
+  })
+
+  it('handles singular license', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
   })
 
   it('handles data with source location', () => {
@@ -266,11 +280,12 @@ describe('ClearlyDefined Gem summarizer', () => {
   })
 })
 
-function setupGem(releaseDate, license, sourceInfo) {
+function setupGem(releaseDate, licenses, sourceInfo) {
   const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
-  setIfValue(harvested, 'licenses', license)
+  if (typeof licenses === 'string') setIfValue(harvested, 'registryData.license', licenses)
+  else setIfValue(harvested, 'registryData.licenses', licenses)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }
