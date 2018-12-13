@@ -201,7 +201,7 @@ class GitHubCurationService {
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(
-      patch.patches.map(throat(10, component => this._writePatch(serviceGithub, info, component, prBranch)))
+      patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
