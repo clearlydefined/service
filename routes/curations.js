@@ -63,12 +63,15 @@ async function updateCurations(request, response) {
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
   })
   if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors })
-  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
-  if (!result.contribution) return response.status(400).send({ errors: result.errors })
-  response.status(200).send({
-    prNumber: result.contribution.data.number,
-    url: curationService.getCurationUrl(result.contribution.data.number)
-  })
+  try {
+    const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
+    response.status(200).send({
+      prNumber: result.contribution.data.number,
+      url: curationService.getCurationUrl(result.contribution.data.number)
+    })
+  } catch (error) {
+    return response.status(400).send(error)
+  }
 }
 
 router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))

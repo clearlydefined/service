@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const GitHubCurationService = require('../../../providers/curation/github')
 const DefinitionService = require('../../../business/definitionService')
 const CurationStore = require('../../../providers/curation/memoryStore')
@@ -10,6 +11,9 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -122,23 +126,19 @@ describe('Github Curation Service', () => {
         }
       ]
     }
-    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
-    expect(result).to.be.deep.equal({
-      errors: [
-        'Definition npm/npmjs/-/test/2.6.3 has not been found',
-        'The contribution has failed because some of the supplied component definitions do not exist'
-      ]
-    })
+
+    expect(
+      gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    ).to.eventually.be.rejectedWith(Error)
   })
 
   it('create a PR only if all of the definitions exist', async () => {
     const { service } = setup()
-    sinon.stub(service, 'listAll').callsFake(() => [
-      {
-        coordinates: curationCoordinates,
-        revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
-      }
-    ])
+    sinon
+      .stub(service, 'listAll')
+      .callsFake(() => [
+        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+      ])
     const gitHubService = createService(service)
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
