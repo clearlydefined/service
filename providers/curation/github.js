@@ -201,6 +201,7 @@ class GitHubCurationService {
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(
+      // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
       patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
     const { type, details, summary, resolution } = patch.contributionInfo
@@ -236,7 +237,7 @@ ${this._formatDefinitions(patch.patches)}`
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
-    return { contribution: result }
+    return result
   }
 
   _formatDefinitions(definitions) {

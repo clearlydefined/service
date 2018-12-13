@@ -110,7 +110,7 @@ class DefinitionService {
     //Take the array of coordinates, strip out the revision and only return uniques
     const searchCoordinates = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
     const promises = searchCoordinates.map(
-      throat(1, async coordinates => {
+      throat(10, async coordinates => {
         try {
           return await this.list(coordinates)
         } catch (error) {
