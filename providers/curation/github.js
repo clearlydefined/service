@@ -179,9 +179,7 @@ class GitHubCurationService {
         result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
       return result
     }, [])
-    console.log('targetCoordinates', targetCoordinates)
     const validDefinitions = await this.definitionService.listAll(targetCoordinates)
-    console.log(validDefinitions)
     return targetCoordinates.reduce(
       (result, coordinates) => {
         result[validDefinitions.find(definition => isEqual(definition, coordinates)) ? 'valid' : 'missing'].push(
