@@ -338,5 +338,5 @@ function createSourceLocation() {
 }
 
 function getSourceUrl() {
-  return 'https://github.com/clearlydefined/test/commit/42'
+  return 'https://github.com/clearlydefined/test/tree/42'
 }
