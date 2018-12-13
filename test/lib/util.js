@@ -175,30 +175,3 @@ describe('Utils isLicenseFile', () => {
     expect(utils.isLicenseFile()).to.be.false
   })
 })
-
-describe('Utils normalizeSpdx', () => {
-  it('should normalize', () => {
-    // prettier-ignore
-    const data = {
-      'AGPL 3': null,
-      'AGPL-1.0': 'AGPL-1.0',
-      'apache-2.0': 'Apache-2.0',
-      'apache2': null,
-      'GPL-': null,
-      'GPL-2.0-with-autoconf-exception': 'GPL-2.0-with-autoconf-exception',
-      'GPL-3.0': 'GPL-3.0',
-      'GPL': null,
-      'mit': 'MIT',
-      'mit+': null,
-      'MIT ': 'MIT',
-      ' MIT': 'MIT',
-      'NOASSERTION': null,
-      'See license': null,
-      ' ': null,
-      null: null
-    }
-    for (let input of Object.keys(data)) {
-      expect(utils.normalizeSpdx(input)).to.eq(data[input])
-    }
-  })
-})

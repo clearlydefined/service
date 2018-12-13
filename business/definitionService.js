@@ -10,7 +10,7 @@ const he = require('he')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')()
 const validator = require('../schemas/validator')
-const satisfies = require('spdx-satisfies')
+const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
 const currentSchema = '1.1.0'
@@ -243,7 +243,7 @@ class DefinitionService {
     // license. If there are no discovered licenses then all is good.
     const discovered = get(definition, 'licensed.facets.core.discovered.expressions') || []
     if (!declared || !discovered) return 0
-    return discovered.every(expression => satisfies(expression, declared)) ? weights.consistency : 0
+    return discovered.every(expression => SPDX.satisfies(expression, declared)) ? weights.consistency : 0
   }
 
   _computeSPDXScore(definition) {

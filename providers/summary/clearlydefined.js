@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get, set, isArray, uniq, cloneDeep } = require('lodash')
+const SPDX = require('../../lib/spdx')
 const {
   extractDate,
   setIfValue,
@@ -9,8 +10,7 @@ const {
   buildSourceUrl,
   updateSourceLocation,
   isLicenseFile,
-  mergeDefinitions,
-  normalizeSpdx
+  mergeDefinitions
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -68,7 +68,7 @@ class ClearlyDescribedSummarizer {
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
     newFiles.forEach(file => {
-      file.license = normalizeSpdx(file.license)
+      file.license = SPDX.normalize(file.license)
       if (!file.license) delete file.license
     })
     set(newDefinition, 'files', newFiles)
@@ -97,7 +97,7 @@ class ClearlyDescribedSummarizer {
         'licensed.declared',
         license
           .split('/')
-          .map(normalizeSpdx)
+          .map(SPDX.normalize)
           .filter(x => x)
           .join(' OR ')
       )
@@ -113,7 +113,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'licensed.declared',
-      normalizeSpdx(get(data, 'manifest.licenseExpression')) ||
+      SPDX.normalize(get(data, 'manifest.licenseExpression')) ||
         extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl'))
     )
     const packageEntries = get(data, 'manifest.packageEntries')
@@ -140,7 +140,8 @@ class ClearlyDescribedSummarizer {
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
     const license =
-      manifest.license && normalizeSpdx(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+      manifest.license &&
+      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)
   }
 
