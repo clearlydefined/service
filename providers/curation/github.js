@@ -174,13 +174,11 @@ class GitHubCurationService {
   // Return an array of valid patches that exist
   // and a list of definitions that do not exist in the store
   async _validateDefinitionsExist(patches) {
-    const targetCoordinates = flatten(
-      map(patches, patch =>
-        map(patch.revisions, (_, key) => {
-          return EntityCoordinates.fromObject({ ...patch.coordinates, revision: key })
-        })
-      )
-    )
+    const targetCoordinates = patches.reduce((result, patch) => {
+      for (let key in patch.revisions)
+        result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+      return result
+    }, [])
     const validDefinitions = await this.definitionService.listAll(targetCoordinates)
     return targetCoordinates.reduce(
       (result, coordinates) => {
