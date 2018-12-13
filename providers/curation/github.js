@@ -196,13 +196,8 @@ class GitHubCurationService {
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
     const { missing } = await this._validateDefinitionsExist(patch.patches)
-    if (missing.length > 0) {
-      const errors = missing.map(
-        definition => `Definition ${EntityCoordinates.fromObject(definition).toString()} has not been found`
-      )
-      errors.push('The contribution has failed because some of the supplied component definitions do not exist')
-      return { errors }
-    }
+    if (missing.length > 0)
+      throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)

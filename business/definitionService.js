@@ -108,7 +108,6 @@ class DefinitionService {
 
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    console.log('foundDefinitions', foundDefinitions)
     return intersection(coordinatesList, foundDefinitions)
   }
 

@@ -122,13 +122,7 @@ describe('Github Curation Service', () => {
         }
       ]
     }
-    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
-    expect(result).to.be.deep.equal({
-      errors: [
-        'Definition npm/npmjs/-/test/2.6.3 has not been found',
-        'The contribution has failed because some of the supplied component definitions do not exist'
-      ]
-    })
+    expect(await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)).to.be.rejected
   })
 
   it('create a PR only if all of the definitions exist', async () => {
