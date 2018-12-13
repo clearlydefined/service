@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, sortBy, filter, concat, last, isEmpty } = require('lodash')
+const { get, set, sortBy, filter, concat } = require('lodash')
 
 class SuggestionService {
   constructor(definitionService, definitionStore) {
@@ -27,9 +27,8 @@ class SuggestionService {
       await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate'),
       await this._collectSuggestionsForFiles(related, baseSuggestion)
     ]
-
-    const result = await Promise.all(promises)
-    return last(result.filter(res => !isEmpty(res)))
+    await Promise.all(promises)
+    return baseSuggestion
   }
 
   /**
@@ -40,16 +39,10 @@ class SuggestionService {
    */
   async _getRelatedDefinitions(coordinates) {
     const related = await this.definitionStore.list(coordinates.asRevisionless(), 'definitions')
+
     // If the related array only has one entry then return early
-    if (Object.keys(related).length <= 1) {
-      return
-    }
-    const coordinatesList = []
-    related.forEach(element => {
-      coordinatesList.push(element.coordinates)
-    })
-    const validDefinitions = await this.definitionService.getAll(coordinatesList)
-    const sortedByReleaseDate = sortBy(validDefinitions, ['described.releaseDate'])
+    if (Object.keys(related).length <= 1) return
+    const sortedByReleaseDate = sortBy(related, ['described.releaseDate'])
 
     // Split the definitions into before supplied coords and those after
     const index = sortedByReleaseDate.findIndex(entry => entry.coordinates.revision === coordinates.revision)
@@ -60,9 +53,7 @@ class SuggestionService {
   }
 
   _createBaseSuggestion(coordinates) {
-    return {
-      coordinates: coordinates
-    }
+    return { coordinates }
   }
 
   /**
