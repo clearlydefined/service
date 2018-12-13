@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const GitHubCurationService = require('../../../providers/curation/github')
 const DefinitionService = require('../../../business/definitionService')
 const CurationStore = require('../../../providers/curation/memoryStore')
@@ -10,6 +11,9 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -122,7 +126,10 @@ describe('Github Curation Service', () => {
         }
       ]
     }
-    expect(await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)).to.be.rejected
+
+    expect(
+      gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    ).to.eventually.be.rejectedWith(Error)
   })
 
   it('create a PR only if all of the definitions exist', async () => {
