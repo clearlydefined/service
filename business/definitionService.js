@@ -12,7 +12,7 @@ const {
   uniqBy,
   flatten,
   intersection,
-  intersectionBy,
+  intersectionWith,
   concat,
   map
 } = require('lodash')
@@ -120,7 +120,7 @@ class DefinitionService {
     )
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersectionBy(
+    return intersectionWith(
       coordinatesList,
       map(foundDefinitions, coordinates => EntityCoordinates.fromString(coordinates)),
       isEqual
