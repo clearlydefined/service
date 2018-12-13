@@ -22,7 +22,7 @@ describe('SPDX utility functions', () => {
         }
       ],
       [
-        'MIT OR (BSD-2-Clause OR (BSD-3-Clause AND Unlicense))',
+        'MIT OR BSD-2-Clause OR (BSD-3-Clause AND Unlicense)',
         {
           left: { license: 'MIT' },
           conjunction: 'or',
@@ -34,7 +34,7 @@ describe('SPDX utility functions', () => {
         }
       ],
       [
-        '(MIT AND BSD-3-Clause WITH GCC-exception-3.1) OR (CC-BY-4.0 AND Apache-2.0)',
+        'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR (CC-BY-4.0 AND Apache-2.0)',
         {
           left: {
             left: { license: 'MIT' },
@@ -67,7 +67,7 @@ describe('SPDX utility functions', () => {
           conjunction: 'or',
           right: { left: { license: 'BSD-2-Clause' }, conjunction: 'and', right: { license: 'GPL-2.0' } }
         },
-        'MIT OR (BSD-2-Clause AND GPL-2.0)'
+        'MIT OR BSD-2-Clause AND GPL-2.0'
       ],
       [
         {
@@ -79,7 +79,7 @@ describe('SPDX utility functions', () => {
             right: { left: { license: 'BSD-3-Clause' }, conjunction: 'and', right: { license: 'Unlicense' } }
           }
         },
-        'MIT OR (BSD-2-Clause OR (BSD-3-Clause AND Unlicense))'
+        'MIT OR (BSD-2-Clause OR BSD-3-Clause AND Unlicense)'
       ],
       [
         {
@@ -95,12 +95,12 @@ describe('SPDX utility functions', () => {
             right: { license: 'Apache-2.0' }
           }
         },
-        '(MIT AND BSD-3-Clause WITH GCC-exception-3.1) OR (CC-BY-4.0 AND Apache-2.0)'
+        'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR CC-BY-4.0 AND Apache-2.0'
       ]
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.stringify(input)).to.deep.equal(expected)
+      expect(SPDX.stringify(input)).to.equal(expected)
     })
   })
 
@@ -135,9 +135,13 @@ describe('SPDX utility functions', () => {
       'mit': 'MIT',
       'MIT ': 'MIT',
       ' MIT': 'MIT',
+      'GPL-1.0+': 'GPL-1.0+',
       'NOASSERTION': null,
       'See license': null,
       'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
+      '(MIT AND (LGPL-2.1+ AND BSD-3-Clause))': 'MIT AND LGPL-2.1+ AND BSD-3-Clause',
+      '(MIT AND BSD-3-Clause WITH GCC-exception-3.1) OR (CC-BY-4.0 AND Apache-2.0)': 'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR CC-BY-4.0 AND Apache-2.0',
+      'MIT AND BSD-3-Clause AND CC-BY-4.0': 'MIT AND BSD-3-Clause AND CC-BY-4.0',
       'MIT OR Junk': 'MIT OR NOASSERTION',
       'mit OR Junk': 'MIT OR NOASSERTION',
       'Commercial AND Apache-2.0': 'NOASSERTION AND Apache-2.0',
