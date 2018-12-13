@@ -100,12 +100,11 @@ class ClearlyDescribedSummarizer {
 
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(
-      result,
-      'licensed.declared',
-      SPDX.normalize(get(data, 'manifest.licenseExpression')) ||
-        extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl'))
-    )
+    const licenseExpression = SPDX.normalize(get(data, 'manifest.licenseExpression'))
+    const licenseUrl = get(data, 'manifest.licenseUrl')
+    if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
+    else if (licenseUrl && licenseUrl.trim())
+      set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)

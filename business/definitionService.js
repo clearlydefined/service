@@ -226,7 +226,8 @@ class DefinitionService {
   }
 
   _computeDeclaredScore(definition) {
-    return get(definition, 'licensed.declared') ? weights.declared : 0
+    const declared = get(definition, 'licensed.declared')
+    return declared && declared !== 'NOASSERTION' ? weights.declared : 0
   }
 
   _computeDiscoveredScore(definition) {
@@ -247,9 +248,12 @@ class DefinitionService {
   }
 
   _computeSPDXScore(definition) {
-    // TODO given that we only recognize SPDX licenses, this is effectively a duplicate of the declared score.
-    // Even if we consider the licenses on the files, they will only be there if they are SPDX
-    return get(definition, 'licensed.declared') ? weights.spdx : 0
+    try {
+      parse(get(definition, 'licensed.declared')) // use strict spdx-expression-parse
+      return weights.spdx
+    } catch (e) {
+      return 0
+    }
   }
 
   _computeTextsScore(definition) {
@@ -286,7 +290,7 @@ class DefinitionService {
   // recursively add all licenses mentioned in the given expression to the given set
   _extractLicensesFromExpression(expression, seen) {
     if (!expression) return null
-    if (typeof expression === 'string') expression = parse(expression)
+    if (typeof expression === 'string') expression = SPDX.parse(expression)
     if (expression.license) return seen.add(expression.license)
     this._extractLicensesFromExpression(expression.left, seen)
     this._extractLicensesFromExpression(expression.right, seen)

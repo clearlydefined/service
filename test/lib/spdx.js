@@ -114,7 +114,8 @@ describe('SPDX utility functions', () => {
       [['MIT AND Apache-2.0', 'MIT'], false],
       [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], true],
       [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], true],
-      [['MIT OR JUNK', 'MIT'], true],
+      [['MIT AND NOASSERTION', 'MIT'], false],
+      [['MIT OR NOASSERTION', 'MIT'], true],
       [['NOASSERTION OR JUNK', 'MIT'], false]
     ])
 
@@ -128,29 +129,30 @@ describe('SPDX utility functions', () => {
     const data = {
       'AGPL-1.0': 'AGPL-1.0',
       'apache-2.0': 'Apache-2.0',
-      'apache2': null,
-      'GPL-': null,
+      'apache2': 'NOASSERTION',
+      'GPL-': 'NOASSERTION',
       'GPL-2.0-with-autoconf-exception': 'GPL-2.0-with-autoconf-exception',
       'GPL-3.0': 'GPL-3.0',
-      'GPL': null,
+      'GPL': 'NOASSERTION',
       'mit': 'MIT',
       'MIT ': 'MIT',
       ' MIT': 'MIT',
       'GPL-1.0+': 'GPL-1.0+',
-      'NOASSERTION': null,
-      'See license': null,
+      'NOASSERTION': 'NOASSERTION',
+      'See license': 'NOASSERTION',
       'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
-      '(MIT AND (LGPL-2.1+ AND BSD-3-Clause))': 'MIT AND LGPL-2.1+ AND BSD-3-Clause',
+      'MIT AND LGPL-2.1+ AND BSD-3-Clause': 'MIT AND LGPL-2.1+ AND BSD-3-Clause',
       '(MIT AND BSD-3-Clause WITH GCC-exception-3.1) OR (CC-BY-4.0 AND Apache-2.0)': 'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR CC-BY-4.0 AND Apache-2.0',
       'MIT AND BSD-3-Clause AND CC-BY-4.0': 'MIT AND BSD-3-Clause AND CC-BY-4.0',
       'MIT OR Junk': 'MIT OR NOASSERTION',
       'mit OR Junk': 'MIT OR NOASSERTION',
       'Commercial AND Apache-2.0': 'NOASSERTION AND Apache-2.0',
-      'Junk1 OR Junk 2': null,
+      'Junk1 OR Junk 2': 'NOASSERTION',
       ' ': null,
       null: null
     }
     for (let input of Object.keys(data)) {
+      if (input === 'null') input = null
       expect(SPDX.normalize(input)).to.eq(data[input])
     }
   })
