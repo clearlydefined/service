@@ -7,6 +7,7 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "_meta": { "$ref": "#/definitions/_meta" },
     "coordinates": { "$ref": "#/definitions/coordinates" },
     "files": { "$ref": "#/definitions/files" },
     "described": { "$ref": "#/definitions/described" },
@@ -21,6 +22,11 @@
     },
     "provider": {
       "enum": ["npmjs", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"]
+    },
+    "_meta": {
+      "type": "object",
+      "required": ["updated"],
+      "additionalProperties": false
     },
     "coordinates": {
       "type": "object",
