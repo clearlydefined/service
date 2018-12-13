@@ -2,7 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten, intersection, concat } = require('lodash')
+const {
+  get,
+  set,
+  sortedUniq,
+  remove,
+  pullAllWith,
+  isEqual,
+  uniqBy,
+  flatten,
+  intersection,
+  intersectionBy,
+  concat,
+  map
+} = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -105,10 +118,13 @@ class DefinitionService {
         }
       })
     )
-
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersection(coordinatesList, foundDefinitions)
+    return intersectionBy(
+      coordinatesList,
+      map(foundDefinitions, coordinates => EntityCoordinates.fromString(coordinates)),
+      isEqual
+    )
   }
 
   /**
