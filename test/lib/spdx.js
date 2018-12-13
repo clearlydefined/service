@@ -112,7 +112,8 @@ describe('SPDX utility functions', () => {
       [['MIT', 'BSD-3-Clause'], false],
       [['MIT OR Apache-2.0', 'MIT'], true],
       [['MIT AND Apache-2.0', 'MIT'], false],
-      [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], false],
+      [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], true],
+      [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], true],
       [['MIT OR JUNK', 'MIT'], true],
       [['NOASSERTION OR JUNK', 'MIT'], false]
     ])

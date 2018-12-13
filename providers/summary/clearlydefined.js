@@ -91,17 +91,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
     const license = get(data, 'registryData.license')
-    if (license) {
-      setIfValue(
-        result,
-        'licensed.declared',
-        license
-          .split('/')
-          .map(SPDX.normalize)
-          .filter(x => x)
-          .join(' OR ')
-      )
-    }
+    if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
   }
 
   addSourceArchiveData(result, data) {

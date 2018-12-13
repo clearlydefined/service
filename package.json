@@ -54,7 +54,7 @@
     "spdx-expression-parse": "github:clearlydefined/spdx-expression-parse.js#fork",
     "spdx-license-ids": "^3.0.2",
     "spdx-license-list": "^5.0.0",
-    "spdx-satisfies": "github:clearlydefined/spdx-satisfies.js#parse-override",
+    "spdx-satisfies": "github:clearlydefined/spdx-satisfies.js#fork",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
     "tmp": "0.0.33",

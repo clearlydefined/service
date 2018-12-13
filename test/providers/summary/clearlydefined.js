@@ -170,7 +170,7 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('normalizes to spdx only with slashes', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } })
-    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
   it('decribes projectWebsite from manifest', () => {
