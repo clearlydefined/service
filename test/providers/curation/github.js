@@ -133,12 +133,11 @@ describe('Github Curation Service', () => {
 
   it('create a PR only if all of the definitions exist', async () => {
     const { service } = setup()
-    sinon.stub(service, 'listAll').callsFake(() => [
-      {
-        coordinates: curationCoordinates,
-        revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
-      }
-    ])
+    sinon
+      .stub(service, 'listAll')
+      .callsFake(() => [
+        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+      ])
     const gitHubService = createService(service)
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 

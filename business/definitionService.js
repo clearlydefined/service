@@ -2,19 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const {
-  get,
-  set,
-  sortedUniq,
-  remove,
-  pullAllWith,
-  isEqual,
-  uniqBy,
-  flatten,
-  intersectionBy,
-  map,
-  concat
-} = require('lodash')
+const { get, set, sortedUniq, remove, pullAllWith, isEqual, uniqBy, flatten, intersection, concat } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -102,16 +90,13 @@ class DefinitionService {
 
   /**
    * Get a list of all the definitions that exist in the store matching the given coordinates
-   * @param {Object[]} coordinatesList
+   * @param {EntityCoordinates[]} coordinatesList
    * @returns {Object[]} A list of all components that have definitions that are available
    */
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
-    const coordinatesWithoutRevision = uniqBy(
-      coordinatesList.map(coordinates => EntityCoordinates.fromObject(coordinates).asRevisionless()),
-      isEqual
-    )
-    const promises = coordinatesWithoutRevision.map(
+    const searchCoordinates = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const promises = searchCoordinates.map(
       throat(1, async coordinates => {
         try {
           return await this.list(coordinates)
@@ -123,10 +108,8 @@ class DefinitionService {
 
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersectionBy(
-      map(coordinatesList, coordinates => EntityCoordinates.fromObject(coordinates).toString()),
-      foundDefinitions
-    )
+    console.log('foundDefinitions', foundDefinitions)
+    return intersection(coordinatesList, foundDefinitions)
   }
 
   /**

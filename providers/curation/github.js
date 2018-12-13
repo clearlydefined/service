@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, map, flatten } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, map, flatten, pick } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -173,50 +173,35 @@ class GitHubCurationService {
 
   // Return an array of valid patches that exist
   // and a list of definitions that do not exist in the store
-  async _validateComponentDefinitionExists(patches) {
-    const coordinatesWithRevisions = flatten(
+  async _validateDefinitionsExist(patches) {
+    const targetCoordinates = flatten(
       map(patches, patch =>
         map(patch.revisions, (_, key) => {
-          return Object.assign({}, patch.coordinates, {
-            revision: key
-          })
+          return EntityCoordinates.fromObject({ ...patch.coordinates, revision: key })
         })
       )
     )
-
-    // Check if all the definitions exists into the store
-    const validDefinitions = await this.definitionService.listAll(coordinatesWithRevisions)
-    if (coordinatesWithRevisions.length !== validDefinitions.length) {
-      const notFoundDefinitions = []
-      map(patches, patch =>
-        map(
-          patch.revisions,
-          throat(1, async (_, key) => {
-            const coordinates = Object.assign({}, patch.coordinates, {
-              revision: key
-            })
-            if (validDefinitions.findIndex(definition => isEqual(definition, coordinates)) === -1) {
-              notFoundDefinitions.push(
-                `Definition ${EntityCoordinates.fromObject(coordinates).toString()} has not been found`
-              )
-            }
-          })
+    const validDefinitions = await this.definitionService.listAll(targetCoordinates)
+    return targetCoordinates.reduce(
+      (result, coordinates) => {
+        result[validDefinitions.find(definition => isEqual(definition, coordinates)) ? 'valid' : 'missing'].push(
+          coordinates
         )
-      )
-      return { isValid: false, notFoundDefinitions }
-    }
-
-    return { isValid: true, patches }
+        return result
+      },
+      { valid: [], missing: [] }
+    )
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
-    const { isValid, notFoundDefinitions } = await this._validateComponentDefinitionExists(patch.patches)
-    if (!isValid) {
-      notFoundDefinitions.push(
-        'The contribution has failed because some of the supplied component definitions do not exist'
+    const { missing } = await this._validateDefinitionsExist(patch.patches)
+    if (missing.length > 0) {
+      const errors = missing.map(
+        definition => `Definition ${EntityCoordinates.fromObject(definition).toString()} has not been found`
       )
-      return { errors: notFoundDefinitions }
+      errors.push('The contribution has failed because some of the supplied component definitions do not exist')
+      return { errors }
     }
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
