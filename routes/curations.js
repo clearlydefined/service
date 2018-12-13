@@ -66,8 +66,8 @@ async function updateCurations(request, response) {
   try {
     const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
     response.status(200).send({
-      prNumber: result.contribution.data.number,
-      url: curationService.getCurationUrl(result.contribution.data.number)
+      prNumber: result.data.number,
+      url: curationService.getCurationUrl(result.data.number)
     })
   } catch (error) {
     return response.status(400).send(error)
