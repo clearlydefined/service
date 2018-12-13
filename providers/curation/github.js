@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, forEach } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -175,8 +175,11 @@ class GitHubCurationService {
   // and a list of definitions that do not exist in the store
   async _validateDefinitionsExist(patches) {
     const targetCoordinates = patches.reduce((result, patch) => {
-      for (let key in patch.revisions)
-        result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+      throat(10, () =>
+        forEach(patch.revisions, (_, key) => {
+          result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+        })
+      )
       return result
     }, [])
     const validDefinitions = await this.definitionService.listAll(targetCoordinates)
