@@ -156,4 +156,20 @@ describe('SPDX utility functions', () => {
       expect(SPDX.normalize(input)).to.eq(data[input])
     }
   })
+
+  it('looks up spdx by name', () => {
+    const data = {
+      'Apache License 2.0': 'Apache-2.0',
+      ' Apache License 2.0 ': 'Apache-2.0',
+      'apache license 2.0': 'Apache-2.0',
+      'MIT License': 'MIT',
+      MIT: null,
+      ' ': null,
+      null: null
+    }
+    for (let input of Object.keys(data)) {
+      if (input === 'null') input = null
+      expect(SPDX.lookupByName(input)).to.eq(data[input])
+    }
+  })
 })
