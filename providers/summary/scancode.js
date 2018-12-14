@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 const { get, flatten, uniq } = require('lodash')
-const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile, normalizeSpdx } = require('../../lib/utils')
+const SPDX = require('../../lib/spdx')
+const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -91,26 +92,10 @@ class ScanCodeSummarizer {
     if (!licenses) return null
     const list = setToArray(licenses)
     if (!list) return null
-    if (list.length === 1) return list[0]
-    return list.map(x => `(${x})`).join(' AND ')
-  }
-
-  _createExpression(rule, licenseKey) {
-    const license_expression = get(rule, 'license_expression')
-    if (!license_expression) return normalizeSpdx(licenseKey)
-    let result = license_expression
-    rule.licenses.forEach(licence => {
-      result = result.replace(licence, normalizeSpdx(licence) || '').trim()
-    })
-    new Array('AND', 'OR', 'WITH').forEach(operator => {
-      if (result.endsWith(operator)) {
-        result = result.substring(0, result.lastIndexOf(operator))
-      }
-      if (result.startsWith(operator)) {
-        result = result.substring(operator.length)
-      }
-    })
-    return result.trim()
+    return list
+      .map(SPDX.normalize)
+      .filter(x => x)
+      .join(' AND ')
   }
 }
 

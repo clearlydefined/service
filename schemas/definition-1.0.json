@@ -7,13 +7,11 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "_meta": { "$ref": "#/definitions/_meta" },
     "coordinates": { "$ref": "#/definitions/coordinates" },
     "files": { "$ref": "#/definitions/files" },
     "described": { "$ref": "#/definitions/described" },
-    "licensed": { "$ref": "#/definitions/licensed" },
-    "schemaVersion": {
-      "type": "string"
-    }
+    "licensed": { "$ref": "#/definitions/licensed" }
   },
   "definitions": {
     "type": {
@@ -21,6 +19,19 @@
     },
     "provider": {
       "enum": ["npmjs", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"]
+    },
+    "_meta": {
+      "type": "object",
+      "required": ["updated", "schemaVersion"],
+      "additionalProperties": false,
+      "properties": {
+        "updated": {
+          "type": "string"
+        },
+        "schemaVersion": {
+          "type": "string"
+        }
+      }
     },
     "coordinates": {
       "type": "object",

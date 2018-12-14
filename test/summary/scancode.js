@@ -163,6 +163,28 @@ describe('ScanCode summarizer', () => {
   it('uses licenseKey when no expression is available from matched_rule', () => {
     const result = Summarizer()._createExpression({}, 'MIT')
     expect(result).to.eq('MIT')
+  it('handles multiple licenses in files', () => {
+    const { coordinates, harvested } = setup([
+      buildFile('file1', ['Apache-2.0', 'MIT'], []),
+      buildFile('file2', 'MIT', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.files[0].license).to.eq('Apache-2.0 AND MIT')
+    expect(summary.files[1].license).to.eq('MIT')
+  })
+
+  it('ANDs together invalid licenses', () => {
+    const { coordinates, harvested } = setup([
+      buildFile('file1', ['NOASSERTION', 'MIT'], []),
+      buildFile('file2', 'MIT', [])
+    ])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.files[0].license).to.eq('MIT AND NOASSERTION')
+    expect(summary.files[1].license).to.eq('MIT')
   })
 })
 
@@ -184,10 +206,13 @@ function setup(files, coordinateSpec) {
 
 function buildFile(path, license, holders) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
+  if (!Array.isArray(license)) license = [license]
   return {
     path,
     type: 'file',
-    licenses: license ? [{ spdx_license_key: license }] : null,
+    licenses: license.map(spdx_license_key => {
+      return { spdx_license_key }
+    }),
     copyrights: [wrapHolders]
   }
 }
