@@ -34,13 +34,15 @@ class MongoStore {
    * @param {EntityCoordinates} coordinates
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
-  async list(coordinates) {
+  async list(coordinates, expand = null) {
     // TODO protect this regex from DoS attacks
     const list = await this.collection.find(
       { _id: new RegExp('^' + this._getId(coordinates)) },
-      { projection: { _id: 1 } }
+      { projection: { _id: expand === 'definitions' ? 0 : 1 } }
     )
-    return (await list.toArray()).map(entry => entry._id)
+    const result = await list.toArray()
+    if (expand === 'definitions') return result
+    return result.map(entry => entry._id)
   }
 
   /**
