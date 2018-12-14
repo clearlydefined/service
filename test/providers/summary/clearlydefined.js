@@ -121,11 +121,18 @@ describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
 })
 
 describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
-  it('should filter invalid license properties', () => {
+  it('should normalize license properties', () => {
     const data = new Map([
       [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
       [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [{ path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }, { path: 'LICENSE', token: 'abcd' }],
+      [
+        { path: 'LICENSE', token: 'abcd', license: 'garbage' },
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
+      ],
+      [
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' },
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
+      ],
       [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
     ])
     for (let test of data) {
@@ -164,13 +171,13 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('normalizes to spdx only', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage' } })
-    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
   it('normalizes to spdx only with slashes', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } })
-    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
   it('decribes projectWebsite from manifest', () => {
@@ -193,8 +200,8 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       'MIT': 'MIT',
       'mit': 'MIT',
       'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
-      'See license': null,
-      'NOASSERTION': null,
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
       '': null,
       ' ': null
     }
@@ -265,5 +272,47 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     assert.deepEqual(result, {})
     summarizer.addNpmData(result, { registryData: {} })
     assert.deepEqual(result, {})
+  })
+})
+
+describe('ClearlyDescribedSummarizer addNuGetData', () => {
+  it('should set declared license from manifest licenseExpression', () => {
+    // prettier-ignore
+    const data = {
+      'MIT': 'MIT',
+      'mit': 'MIT',
+      'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
+      'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
+      '': null,
+      ' ': null
+    }
+
+    for (let licenseExpression of Object.keys(data)) {
+      let result = {}
+      summarizer.addNuGetData(result, { manifest: { licenseExpression } })
+      if (data[licenseExpression]) assert.deepEqual(result, { licensed: { declared: data[licenseExpression] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+
+  it('should set declared license from manifest licenseUrl', () => {
+    // prettier-ignore
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
+      '': null,
+      ' ': null
+    }
+
+    for (let licenseUrl of Object.keys(data)) {
+      let result = {}
+      summarizer.addNuGetData(result, { manifest: { licenseUrl } })
+      if (data[licenseUrl]) assert.deepEqual(result, { licensed: { declared: data[licenseUrl] } })
+      else assert.deepEqual(result, {})
+    }
   })
 })
