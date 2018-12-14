@@ -21,7 +21,7 @@ const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocat
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
-const logger = require('../providers/logging/logger')()
+const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
@@ -39,6 +39,7 @@ class DefinitionService {
     this.curationService = curation
     this.definitionStore = store
     this.search = search
+    this.logger = logger()
   }
 
   /**
@@ -160,7 +161,7 @@ class DefinitionService {
     try {
       await this.harvestService.harvest({ tool: 'component', coordinates })
     } catch (error) {
-      logger.info('failed to harvest from definition service', {
+      this.logger.info('failed to harvest from definition service', {
         crawlerError: error,
         coordinates: coordinates.toString()
       })
@@ -372,7 +373,7 @@ class DefinitionService {
             if (recompute) return Promise.resolve(null)
             return this.search.store(definition)
           } catch (error) {
-            logger.info('failed to reload in definition service', {
+            this.logger.info('failed to reload in definition service', {
               error,
               coordinates: coordinates.toString()
             })
