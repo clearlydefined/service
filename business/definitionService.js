@@ -26,7 +26,7 @@ const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
-const currentSchema = '1.1.0'
+const currentSchema = '1.2.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
@@ -57,7 +57,8 @@ class DefinitionService {
       return this.compute(coordinates, curation)
     }
     const existing = force ? null : await this.definitionStore.get(coordinates)
-    const result = get(existing, 'schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    const result =
+      get(existing, '_meta.schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
     return this._cast(result)
   }
 
@@ -234,7 +235,8 @@ class DefinitionService {
   _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    definition.schemaVersion = currentSchema
+    set(definition, '_meta.schemaVersion', currentSchema)
+    set(definition, '_meta.updated', new Date().toISOString())
   }
 
   // Given a definition, calculate the scores for the definition and return an object with a score per dimension
