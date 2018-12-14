@@ -100,13 +100,9 @@ class ScanCodeSummarizer {
   _createExpressionFromRule(rule, licenseKey) {
     if (rule && rule.rule_relevance < 50) return null
     if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
-    const parsed = SPDX.parse(rule.license_expression, key => {
-      return SPDX.normalizeSingle(scancode_lookup[key] || key)
-    })
+    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scancode_lookup[key] || key))
     const result = SPDX.stringify(parsed)
-    if (result === 'NOASSERTION') {
-      this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
-    }
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
     return result
   }
 }
