@@ -46,6 +46,14 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
+  it('respects license score', () => {
+    const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', [], 10)])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(1)
+    expect(summary.licensed).to.be.undefined
+  })
+
   it('handles scan LICENSE.md file', () => {
     const { coordinates, harvested } = setup([
       buildFile('LICENSE.md', 'MIT', []),
@@ -129,13 +137,12 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
-  it('creates expressions from relevant matched_rule', () => {
+  it('creates expressions from matched_rule', () => {
     const examples = new Map([
       [
         { rule_relevance: 100, license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] },
         'MIT OR Apache-2.0'
       ],
-      [{ rule_relevance: 10, license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] }, null],
       [
         { rule_relevance: 100, license_expression: 'mit AND apache-2.0', licenses: ['mit', 'apache-2.0'] },
         'MIT AND Apache-2.0'
@@ -212,14 +219,14 @@ function setup(files, coordinateSpec) {
   return { coordinates, harvested }
 }
 
-function buildFile(path, license, holders) {
+function buildFile(path, license, holders, score = 100) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
   if (!Array.isArray(license)) license = [license]
   return {
     path,
     type: 'file',
     licenses: license.map(spdx_license_key => {
-      return { spdx_license_key }
+      return { spdx_license_key, score }
     }),
     copyrights: [wrapHolders]
   }

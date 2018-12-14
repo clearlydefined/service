@@ -42,9 +42,11 @@ class ScanCodeSummarizer {
       if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
         const declaredLicenses = new Set(
-          file.licenses.map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+          file.licenses
+            .filter(x => x.score >= 80)
+            .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
         )
-        return this._joinExpressions(declaredLicenses)
+        if (declaredLicenses.size) return this._joinExpressions(declaredLicenses)
       }
     }
     return null
@@ -75,7 +77,9 @@ class ScanCodeSummarizer {
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size) {
           licenses = new Set(
-            fileLicense.map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+            fileLicense
+              .filter(x => x.score >= 80)
+              .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
           )
         }
         const licenseExpression = this._joinExpressions(licenses)
@@ -99,7 +103,6 @@ class ScanCodeSummarizer {
   }
 
   _createExpressionFromRule(rule, licenseKey) {
-    if (rule && rule.rule_relevance < 50) return null
     if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
     const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
