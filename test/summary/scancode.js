@@ -141,7 +141,7 @@ describe('ScanCode summarizer', () => {
     expect(summary.files[1].license).to.eq('MIT')
   })
 
-  it('does not AND together invalid licensess', () => {
+  it('ANDs together invalid licenses', () => {
     const { coordinates, harvested } = setup([
       buildFile('file1', ['NOASSERTION', 'MIT'], []),
       buildFile('file2', 'MIT', [])
@@ -149,7 +149,7 @@ describe('ScanCode summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].license).to.eq('MIT')
+    expect(summary.files[0].license).to.eq('MIT AND NOASSERTION')
     expect(summary.files[1].license).to.eq('MIT')
   })
 })
