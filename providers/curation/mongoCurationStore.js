@@ -24,7 +24,7 @@ class MongoCurationStore {
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection('curations')
       } catch (error) {
-        logger.info('retrying mongo connection')
+        this.logger.info('retrying mongo connection')
         retry(error)
       }
     })
