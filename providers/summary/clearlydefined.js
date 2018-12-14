@@ -43,6 +43,9 @@ class ClearlyDescribedSummarizer {
       case 'gem':
         this.addGemData(result, data)
         break
+      case 'pod':
+        this.addPodData(result, data)
+        break
       case 'pypi':
         this.addPyPiData(result, data)
         break
@@ -132,6 +135,12 @@ class ClearlyDescribedSummarizer {
       manifest.license &&
       SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)
+  }
+
+  addPodData(result, data) {
+    // setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    // const license = SPDX.normalize(get(data, 'registryData.license'))
+    // setIfValue(result, 'licensed.declared', license)
   }
 
   addGemData(result, data) {
