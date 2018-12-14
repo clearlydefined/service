@@ -6,7 +6,7 @@ const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const throat = require('throat')
 const Curation = require('../../lib/curation')
-const logger = require('../logging/logger')()
+const logger = require('../logging/logger')
 
 class MongoCurationStore {
   constructor(options) {

@@ -4,10 +4,12 @@
 const { get, flatten, uniq } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
+const logger = require('../logging/logger')
 
 class ScanCodeSummarizer {
   constructor(options) {
     this.options = options
+    this.logger = logger()
   }
 
   /**
@@ -39,9 +41,9 @@ class ScanCodeSummarizer {
       if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
         const declaredLicenses = new Set(
-          file.licenses.map(license => this._createExpression(license.matched_rule, license.spdx_license_key))
+          file.licenses.map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
         )
-        return this._toExpression(declaredLicenses)
+        return this._joinExpressions(declaredLicenses)
       }
     }
     return null
@@ -57,7 +59,7 @@ class ScanCodeSummarizer {
           new Set(),
           license => license.license || license.spdx_license_key
         )
-        return this._toExpression(packageLicenses)
+        return this._joinExpressions(packageLicenses)
       }
     }
     return null
@@ -72,10 +74,10 @@ class ScanCodeSummarizer {
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size) {
           licenses = new Set(
-            fileLicense.map(license => this._createExpression(license.matched_rule, license.spdx_license_key))
+            fileLicense.map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
           )
         }
-        const licenseExpression = this._toExpression(licenses)
+        const licenseExpression = this._joinExpressions(licenses)
         const result = { path: file.path }
         setIfValue(result, 'license', licenseExpression)
         setIfValue(
@@ -88,15 +90,31 @@ class ScanCodeSummarizer {
       .filter(e => e)
   }
 
-  _toExpression(licenses) {
-    if (!licenses) return null
-    const list = setToArray(licenses)
+  _joinExpressions(expressions) {
+    if (!expressions) return null
+    const list = setToArray(expressions)
     if (!list) return null
-    return list
-      .map(SPDX.normalize)
-      .filter(x => x)
-      .join(' AND ')
+    return list.join(' AND ')
   }
+
+  _createExpressionFromRule(rule, licenseKey) {
+    if (rule && rule.rule_relevance < 50) return null
+    if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
+    const parsed = SPDX.parse(rule.license_expression, key => {
+      return SPDX.normalizeSingle(scancode_lookup[key] || key)
+    })
+    const result = SPDX.stringify(parsed)
+    if (result === 'NOASSERTION') {
+      this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    }
+    return result
+  }
+}
+
+const scancode_lookup = {
+  'boost-1.0': 'BSL-1.0',
+  'fsf-ap': 'FSFAP',
+  'gpl-2.0-plus': 'GPL-2.0-or-later'
 }
 
 module.exports = options => new ScanCodeSummarizer(options)

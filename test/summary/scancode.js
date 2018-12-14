@@ -129,17 +129,23 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
-  it('creates expressions from matched_rule', () => {
+  it('creates expressions from relevant matched_rule', () => {
     const examples = new Map([
-      [{ license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT OR Apache-2.0'],
-      [{ license_expression: 'mit AND apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT AND Apache-2.0'],
-      [{ license_expression: 'mit WITH apache-2.0', licenses: ['mit', 'apache-2.0'] }, 'MIT WITH Apache-2.0'],
-      [{ license_expression: 'mit OR junk', licenses: ['mit', 'junk'] }, 'MIT'],
-      [{ license_expression: 'junk OR mit', licenses: ['mit', 'junk'] }, 'MIT']
+      [
+        { rule_relevance: 100, license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] },
+        'MIT OR Apache-2.0'
+      ],
+      [{ rule_relevance: 10, license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] }, null],
+      [
+        { rule_relevance: 100, license_expression: 'mit AND apache-2.0', licenses: ['mit', 'apache-2.0'] },
+        'MIT AND Apache-2.0'
+      ],
+      [{ rule_relevance: 100, license_expression: 'mit OR junk', licenses: ['mit', 'junk'] }, 'MIT OR NOASSERTION'],
+      [{ rule_relevance: 100, license_expression: 'junk OR mit', licenses: ['mit', 'junk'] }, 'NOASSERTION OR MIT']
     ])
 
     examples.forEach((expected, input) => {
-      const result = Summarizer()._createExpression(input)
+      const result = Summarizer()._createExpressionFromRule(input)
       expect(result).to.eq(expected)
     })
   })
@@ -147,22 +153,24 @@ describe('ScanCode summarizer', () => {
   it('creates expressions from license expressions', () => {
     const examples = new Map([
       [new Set(['ISC']), 'ISC'],
-      [new Set(['MIT', 'Apache-2.0']), '(Apache-2.0) AND (MIT)'],
-      [new Set(['MIT OR Apache-2.0', 'GPL']), '(GPL) AND (MIT OR Apache-2.0)'],
+      [new Set(['MIT', 'Apache-2.0']), 'Apache-2.0 AND MIT'],
+      [new Set(['MIT OR Apache-2.0', 'GPL']), 'GPL AND MIT OR Apache-2.0'],
       [new Set(null), null],
       [new Set(), null],
       [null, null]
     ])
 
     examples.forEach((expected, input) => {
-      const result = Summarizer()._toExpression(input)
+      const result = Summarizer()._joinExpressions(input)
       expect(result).to.eq(expected)
     })
   })
 
   it('uses licenseKey when no expression is available from matched_rule', () => {
-    const result = Summarizer()._createExpression({}, 'MIT')
+    const result = Summarizer()._createExpressionFromRule({}, 'MIT')
     expect(result).to.eq('MIT')
+  })
+
   it('handles multiple licenses in files', () => {
     const { coordinates, harvested } = setup([
       buildFile('file1', ['Apache-2.0', 'MIT'], []),
