@@ -5,6 +5,7 @@ const { get, flatten, uniq } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
 const logger = require('../logging/logger')
+const scanodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -100,17 +101,11 @@ class ScanCodeSummarizer {
   _createExpressionFromRule(rule, licenseKey) {
     if (rule && rule.rule_relevance < 50) return null
     if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
-    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scancode_lookup[key] || key))
+    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
     if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
     return result
   }
-}
-
-const scancode_lookup = {
-  'boost-1.0': 'BSL-1.0',
-  'fsf-ap': 'FSFAP',
-  'gpl-2.0-plus': 'GPL-2.0-or-later'
 }
 
 module.exports = options => new ScanCodeSummarizer(options)
