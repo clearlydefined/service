@@ -13,6 +13,7 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
 const loggerFactory = require('../logging/logger')
 tmp.setGracefulCleanup()
+const logger = require('../logging/logger')
 
 // Responsible for managing curation patches in a store
 //
@@ -20,6 +21,7 @@ tmp.setGracefulCleanup()
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
+    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints
@@ -169,13 +171,37 @@ class GitHubCurationService {
     return serviceGithub.repos.createFile(fileBody)
   }
 
+  // Return an array of valid patches that exist
+  // and a list of definitions that do not exist in the store
+  async _validateDefinitionsExist(patches) {
+    const targetCoordinates = patches.reduce((result, patch) => {
+      for (let key in patch.revisions)
+        result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+      return result
+    }, [])
+    const validDefinitions = await this.definitionService.listAll(targetCoordinates)
+    return targetCoordinates.reduce(
+      (result, coordinates) => {
+        result[validDefinitions.find(definition => isEqual(definition, coordinates)) ? 'valid' : 'missing'].push(
+          coordinates
+        )
+        return result
+      },
+      { valid: [], missing: [] }
+    )
+  }
+
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
+    const { missing } = await this._validateDefinitionsExist(patch.patches)
+    if (missing.length > 0)
+      throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(
+      // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
       patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
     )
     const { type, details, summary, resolution } = patch.contributionInfo

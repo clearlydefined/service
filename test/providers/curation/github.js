@@ -1,13 +1,19 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const GitHubCurationService = require('../../../providers/curation/github')
+const DefinitionService = require('../../../business/definitionService')
 const CurationStore = require('../../../providers/curation/memoryStore')
+const EntityCoordinates = require('../../../lib/entityCoordinates')
 const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -101,8 +107,62 @@ describe('Github Curation Service', () => {
     expect(file2.license).to.eq('GPL')
     expect(file2.token).to.eq('2 token')
   })
+
+  it('fails if definition exists', async () => {
+    const { service } = setup()
+    const gitHubService = createService(service)
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removeDefinitions: false
+      },
+      patches: [
+        {
+          coordinates: curationCoordinates,
+          revisions: { '2.6.3': { licensed: { declared: 'Apache-1.0' } } }
+        }
+      ]
+    }
+
+    expect(
+      gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    ).to.eventually.be.rejectedWith(Error)
+  })
+
+  it('create a PR only if all of the definitions exist', async () => {
+    const { service } = setup()
+    sinon
+      .stub(service, 'listAll')
+      .callsFake(() => [
+        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+      ])
+    const gitHubService = createService(service)
+    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removeDefinitions: false
+      },
+      patches: [
+        {
+          coordinates: curationCoordinates,
+          revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
+        }
+      ]
+    }
+    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    expect(result).to.be.deep.equal({ data: { number: 143 } })
+  })
 })
 
+const info = 'test'
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 const definitionCoordinates = { ...curationCoordinates, revision: '1.0' }
 
@@ -126,12 +186,39 @@ const complexCuration = {
 }
 
 function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
-  return GitHubCurationService(
-    { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
+  const service = GitHubCurationService(
+    {
+      owner: 'foobar',
+      branch: 'foobar',
+      token: 'foobar'
+    },
     CurationStore({}),
     endpoints,
     definitionService
   )
+  service.github = {
+    repos: {
+      getBranch: () =>
+        Promise.resolve({
+          data: {
+            commit: {
+              sha: '7fd1a60b01f91b314f59955a4e4d4e80d8edf11d'
+            }
+          }
+        })
+    },
+    gitdata: { createReference: sinon.stub() },
+    issues: { createComment: sinon.stub() },
+    pullRequests: {
+      create: () =>
+        Promise.resolve({
+          data: {
+            number: 143
+          }
+        })
+    }
+  }
+  return service
 }
 
 const simpleHarvested = {
@@ -156,4 +243,20 @@ function createInvalidCuration() {
       name: 'test'
     }
   })
+}
+
+function setup(definition, coordinateSpec, curation) {
+  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
+  const search = { delete: sinon.stub(), store: sinon.stub() }
+  const curator = {
+    get: () => Promise.resolve(curation),
+    apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
+  }
+  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
+  const summary = { summarizeAll: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(definition) }
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  return { coordinates, service }
 }

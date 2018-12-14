@@ -2,7 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 const throat = require('throat')
-const { get, intersection, set, sortedUniq, remove, pullAllWith, isEqual } = require('lodash')
+const {
+  get,
+  set,
+  sortedUniq,
+  remove,
+  pullAllWith,
+  isEqual,
+  uniqBy,
+  flatten,
+  intersection,
+  intersectionWith,
+  concat,
+  map
+} = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
@@ -10,7 +23,7 @@ const he = require('he')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')()
 const validator = require('../schemas/validator')
-const satisfies = require('spdx-satisfies')
+const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
 const currentSchema = '1.2.0'
@@ -87,6 +100,32 @@ class DefinitionService {
     const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
     return sortedUniq([...harvest, ...curated])
+  }
+
+  /**
+   * Get a list of all the definitions that exist in the store matching the given coordinates
+   * @param {EntityCoordinates[]} coordinatesList
+   * @returns {Object[]} A list of all components that have definitions that are available
+   */
+  async listAll(coordinatesList) {
+    //Take the array of coordinates, strip out the revision and only return uniques
+    const searchCoordinates = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const promises = searchCoordinates.map(
+      throat(10, async coordinates => {
+        try {
+          return await this.list(coordinates)
+        } catch (error) {
+          return null
+        }
+      })
+    )
+    const foundDefinitions = flatten(await Promise.all(concat(promises)))
+    // Filter only the revisions matching the found definitions
+    return intersectionWith(
+      coordinatesList,
+      map(foundDefinitions, coordinates => EntityCoordinates.fromString(coordinates)),
+      isEqual
+    )
   }
 
   /**
@@ -228,7 +267,8 @@ class DefinitionService {
   }
 
   _computeDeclaredScore(definition) {
-    return get(definition, 'licensed.declared') ? weights.declared : 0
+    const declared = get(definition, 'licensed.declared')
+    return declared && declared !== 'NOASSERTION' ? weights.declared : 0
   }
 
   _computeDiscoveredScore(definition) {
@@ -245,13 +285,16 @@ class DefinitionService {
     // license. If there are no discovered licenses then all is good.
     const discovered = get(definition, 'licensed.facets.core.discovered.expressions') || []
     if (!declared || !discovered) return 0
-    return discovered.every(expression => satisfies(expression, declared)) ? weights.consistency : 0
+    return discovered.every(expression => SPDX.satisfies(expression, declared)) ? weights.consistency : 0
   }
 
   _computeSPDXScore(definition) {
-    // TODO given that we only recognize SPDX licenses, this is effectively a duplicate of the declared score.
-    // Even if we consider the licenses on the files, they will only be there if they are SPDX
-    return get(definition, 'licensed.declared') ? weights.spdx : 0
+    try {
+      parse(get(definition, 'licensed.declared')) // use strict spdx-expression-parse
+      return weights.spdx
+    } catch (e) {
+      return 0
+    }
   }
 
   _computeTextsScore(definition) {
@@ -288,7 +331,7 @@ class DefinitionService {
   // recursively add all licenses mentioned in the given expression to the given set
   _extractLicensesFromExpression(expression, seen) {
     if (!expression) return null
-    if (typeof expression === 'string') expression = parse(expression)
+    if (typeof expression === 'string') expression = SPDX.parse(expression)
     if (expression.license) return seen.add(expression.license)
     this._extractLicensesFromExpression(expression.left, seen)
     this._extractLicensesFromExpression(expression.right, seen)
