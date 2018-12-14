@@ -4,10 +4,13 @@
 const { get, flatten, uniq } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
+const logger = require('../logging/logger')
+const scanodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizer {
   constructor(options) {
     this.options = options
+    this.logger = logger()
   }
 
   /**
@@ -38,8 +41,12 @@ class ScanCodeSummarizer {
     for (let file of files) {
       if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
-        const declaredLicenses = addArrayToSet(file.licenses, new Set(), license => license.spdx_license_key)
-        return this._toExpression(declaredLicenses)
+        const declaredLicenses = new Set(
+          file.licenses
+            .filter(x => x.score >= 80)
+            .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+        )
+        if (declaredLicenses.size) return this._joinExpressions(declaredLicenses)
       }
     }
     return null
@@ -55,7 +62,7 @@ class ScanCodeSummarizer {
           new Set(),
           license => license.license || license.spdx_license_key
         )
-        return this._toExpression(packageLicenses)
+        return this._joinExpressions(packageLicenses)
       }
     }
     return null
@@ -67,8 +74,15 @@ class ScanCodeSummarizer {
         if (file.type !== 'file') return null
         const asserted = get(file, 'packages[0].asserted_licenses')
         const fileLicense = asserted || file.licenses
-        const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
-        const licenseExpression = this._toExpression(licenses)
+        let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
+        if (!licenses.size) {
+          licenses = new Set(
+            fileLicense
+              .filter(x => x.score >= 80)
+              .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+          )
+        }
+        const licenseExpression = this._joinExpressions(licenses)
         const result = { path: file.path }
         setIfValue(result, 'license', licenseExpression)
         setIfValue(
@@ -81,14 +95,19 @@ class ScanCodeSummarizer {
       .filter(e => e)
   }
 
-  _toExpression(licenses) {
-    if (!licenses) return null
-    const list = setToArray(licenses)
+  _joinExpressions(expressions) {
+    if (!expressions) return null
+    const list = setToArray(expressions)
     if (!list) return null
-    return list
-      .map(SPDX.normalize)
-      .filter(x => x)
-      .join(' AND ')
+    return list.join(' AND ')
+  }
+
+  _createExpressionFromRule(rule, licenseKey) {
+    if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
+    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
+    const result = SPDX.stringify(parsed)
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    return result
   }
 }
 

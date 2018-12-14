@@ -29,9 +29,8 @@ class FOSSologySummarizer {
     return files
       .map(file => {
         const path = get(/^File (.*?) contains/.exec(file), '[1]')
-        let license = get(/license\(s\) (.*?)$/.exec(file), '[1]')
-        if (license) license = license.trim()
-        if (path && license && license !== 'No_license_found') return { path, license: SPDX.normalize(license) }
+        let license = SPDX.normalize(get(/license\(s\) (.*?)$/.exec(file), '[1]'))
+        if (path && license && license !== 'NOASSERTION') return { path, license }
         if (path) return { path }
       })
       .filter(e => e)
