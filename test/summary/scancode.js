@@ -46,6 +46,14 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
+  it('respects license score', () => {
+    const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', [], 10)])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(1)
+    expect(summary.licensed).to.be.undefined
+  })
+
   it('handles scan LICENSE.md file', () => {
     const { coordinates, harvested } = setup([
       buildFile('LICENSE.md', 'MIT', []),
@@ -129,6 +137,47 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT')
   })
 
+  it('creates expressions from matched_rule', () => {
+    const examples = new Map([
+      [
+        { rule_relevance: 100, license_expression: 'mit OR apache-2.0', licenses: ['mit', 'apache-2.0'] },
+        'MIT OR Apache-2.0'
+      ],
+      [
+        { rule_relevance: 100, license_expression: 'mit AND apache-2.0', licenses: ['mit', 'apache-2.0'] },
+        'MIT AND Apache-2.0'
+      ],
+      [{ rule_relevance: 100, license_expression: 'mit OR junk', licenses: ['mit', 'junk'] }, 'MIT OR NOASSERTION'],
+      [{ rule_relevance: 100, license_expression: 'junk OR mit', licenses: ['mit', 'junk'] }, 'NOASSERTION OR MIT']
+    ])
+
+    examples.forEach((expected, input) => {
+      const result = Summarizer()._createExpressionFromRule(input)
+      expect(result).to.eq(expected)
+    })
+  })
+
+  it('creates expressions from license expressions', () => {
+    const examples = new Map([
+      [new Set(['ISC']), 'ISC'],
+      [new Set(['MIT', 'Apache-2.0']), 'Apache-2.0 AND MIT'],
+      [new Set(['MIT OR Apache-2.0', 'GPL']), 'GPL AND MIT OR Apache-2.0'],
+      [new Set(null), null],
+      [new Set(), null],
+      [null, null]
+    ])
+
+    examples.forEach((expected, input) => {
+      const result = Summarizer()._joinExpressions(input)
+      expect(result).to.eq(expected)
+    })
+  })
+
+  it('uses licenseKey when no expression is available from matched_rule', () => {
+    const result = Summarizer()._createExpressionFromRule({}, 'MIT')
+    expect(result).to.eq('MIT')
+  })
+
   it('handles multiple licenses in files', () => {
     const { coordinates, harvested } = setup([
       buildFile('file1', ['Apache-2.0', 'MIT'], []),
@@ -170,14 +219,14 @@ function setup(files, coordinateSpec) {
   return { coordinates, harvested }
 }
 
-function buildFile(path, license, holders) {
+function buildFile(path, license, holders, score = 100) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
   if (!Array.isArray(license)) license = [license]
   return {
     path,
     type: 'file',
     licenses: license.map(spdx_license_key => {
-      return { spdx_license_key }
+      return { spdx_license_key, score }
     }),
     copyrights: [wrapHolders]
   }
