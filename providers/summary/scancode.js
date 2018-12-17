@@ -73,7 +73,7 @@ class ScanCodeSummarizer {
       .map(file => {
         if (file.type !== 'file') return null
         const asserted = get(file, 'packages[0].asserted_licenses')
-        const fileLicense = asserted || file.licenses
+        const fileLicense = asserted || file.licenses || []
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size) {
           licenses = new Set(
