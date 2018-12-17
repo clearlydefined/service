@@ -11,7 +11,6 @@ const Github = require('../../lib/github')
 const Curation = require('../../lib/curation')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
-const loggerFactory = require('../logging/logger')
 tmp.setGracefulCleanup()
 const logger = require('../logging/logger')
 
@@ -21,7 +20,6 @@ const logger = require('../logging/logger')
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
-    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints
@@ -29,7 +27,7 @@ class GitHubCurationService {
     this.curationUpdateTime = null
     this.tempLocation = null
     this.github = Github.getClient(options)
-    this.logger = loggerFactory()
+    this.logger = logger()
   }
 
   get tmpOptions() {
