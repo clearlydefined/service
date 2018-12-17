@@ -121,11 +121,18 @@ describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
 })
 
 describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
-  it('should filter invalid license properties', () => {
+  it('should normalize license properties', () => {
     const data = new Map([
       [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
       [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [{ path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }, { path: 'LICENSE', token: 'abcd' }],
+      [
+        { path: 'LICENSE', token: 'abcd', license: 'garbage' },
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
+      ],
+      [
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' },
+        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
+      ],
       [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
     ])
     for (let test of data) {
@@ -164,13 +171,13 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('normalizes to spdx only', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage' } })
-    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
   it('normalizes to spdx only with slashes', () => {
     let result = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } })
-    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
   it('decribes projectWebsite from manifest', () => {
@@ -193,8 +200,8 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       'MIT': 'MIT',
       'mit': 'MIT',
       'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
-      'See license': null,
-      'NOASSERTION': null,
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
       '': null,
       ' ': null
     }
@@ -276,8 +283,8 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
       'mit': 'MIT',
       'MIT AND Apache-2.0': 'MIT AND Apache-2.0',
       'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
-      'See license': null,
-      'NOASSERTION': null,
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
       '': null,
       ' ': null
     }
@@ -295,8 +302,8 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT',
       'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
-      'See license': null,
-      'NOASSERTION': null,
+      'See license': 'NOASSERTION',
+      'NOASSERTION': 'NOASSERTION',
       '': null,
       ' ': null
     }

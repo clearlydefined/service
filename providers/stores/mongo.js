@@ -4,9 +4,11 @@
 const MongoClient = require('mongodb').MongoClient
 const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const logger = require('../logging/logger')
 
 class MongoStore {
   constructor(options) {
+    this.logger = logger()
     this.options = options
   }
 

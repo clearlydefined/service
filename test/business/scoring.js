@@ -87,6 +87,14 @@ describe('Definition Service Scoring', () => {
     expect(scores.licensedScore.consistency).to.be.equal(15)
   })
 
+  it('correctly filters NOASSERTION licenses', async () => {
+    const definition = createDefinition('NOASSERTION')
+    const service = createService()
+    const scores = service._computeScores(definition)
+    expect(scores.licensedScore.total).to.be.equal(15)
+    expect(scores.licensedScore.declared).to.be.equal(0)
+  })
+
   it('correctly finds mismatched discovered and declared licenses', async () => {
     const files = [
       buildFile('one.txt', 'MIT OR GPL-3.0'),

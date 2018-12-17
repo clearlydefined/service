@@ -21,7 +21,7 @@
   "definitions": {
     "type": {
       "type": "string",
-      "enum": ["npm", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"],
+      "enum": ["npm", "crate", "git", "maven", "nuget", "gem", "pypi", "sourcearchive"],
       "errorMessage": {
         "enum": "Package type must be supported by ClearlyDefined",
         "type": "Package type must be a string"
@@ -29,7 +29,7 @@
     },
     "provider": {
       "type": "string",
-      "enum": ["npmjs", "github", "mavencentral", "nuget", "rubygems", "pypi"],
+      "enum": ["npmjs", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"],
       "errorMessage": {
         "enum": "Provider type must be supported by ClearlyDefined",
         "type": "Provider type must be a string"
