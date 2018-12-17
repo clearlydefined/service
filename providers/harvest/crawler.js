@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
+const logger = require('../logging/logger')
 
 class CrawlingHarvester {
   constructor(options) {
+    this.logger = logger()
     this.options = options
   }
 
