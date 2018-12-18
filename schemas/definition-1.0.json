@@ -26,7 +26,8 @@
       "additionalProperties": false,
       "properties": {
         "updated": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "schemaVersion": {
           "type": "string"
@@ -80,9 +81,14 @@
               "type": "string"
             }
           },
+          "hash": { "type": "string" },
           "token": {
             "type": "string",
             "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
+          },
+          "nature": {
+            "enum": ["license", "notice"],
+            "description": "The nature of this file entry. Will only be set if there is a token and the file is archived by ClearlyDefinfed. `license` implies that the file itself includes one or more licenses. `notice` identifies a file containing additional licensing related content."
           }
         }
       }
@@ -111,6 +117,7 @@
           "type": "string",
           "format": "date"
         },
+        "hash": { "type": "string" },
         "tools": {
           "type": "array",
           "items": {

@@ -343,10 +343,8 @@ class DefinitionService {
   }
 
   // Answer whether or not the given file is a license text file
-  // TODO for now just assume that if there is a known file, it is a license file and that the license
-  // of that file is the license the file represents.
   static _isLicenseFile(file) {
-    return file.token && DefinitionService._isInCoreFacet(file)
+    return file.token && DefinitionService._isInCoreFacet(file) && (file.nature || []).includes('license')
   }
 
   /**

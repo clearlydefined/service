@@ -70,9 +70,15 @@ class ClearlyDescribedSummarizer {
     newFiles.forEach(file => {
       file.license = SPDX.normalize(file.license)
       if (!file.license) delete file.license
+      if (this._hasLicenseeData(file, data)) file.nature = 'license'
     })
     set(newDefinition, 'files', newFiles)
     mergeDefinitions(result, newDefinition)
+  }
+
+  _hasLicenseeData(path, data) {
+    if (!data.licensee) return false
+    return data.licensee.some(entry => entry.path === path)
   }
 
   addLicenseFromFiles(result, data, coordinates) {
