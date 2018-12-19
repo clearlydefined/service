@@ -6,14 +6,13 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
-// TODO: where does this come from? GitHub??
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://cocoapods.org/api/v1/pods/${name}`
+    const url = `https://trunk.cocoapods.org/api/v1/pods/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(x => x.num)))
+    return response.status(200).send(uniq(answer.versions.map(x => x.name)))
   })
 )
 
