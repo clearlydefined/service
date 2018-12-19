@@ -17,14 +17,23 @@ router.get(
   })
 )
 
-// TODO: where does this come from? GitHub??
 router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://cocoapods.org/api/v1/pods?per_page=100&q=${name}`
-    const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.crates.map(x => {
+    const algolia = {
+        appID: 'WBHHAMHYNM',
+        apiKey: '4f7544ca8701f9bf2a4e55daff1b09e9'
+    }
+    const url = `https://${algolia.appID}-dsn.algolia.net/1/indexes/cocoapods/query?x-algolia-application-id=${algolia.appID}&x-algolia-api-key=${algolia.apiKey}`
+    const answer = await requestPromise({ url,
+        method: 'POST',
+        body: {
+            params: `query=${name}`
+        },
+        json: true
+    })
+    const result = answer.hits.map(x => {
       return { id: x.name }
     })
     return response.status(200).send(result)
