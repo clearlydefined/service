@@ -138,9 +138,12 @@ class ClearlyDescribedSummarizer {
   }
 
   addPodData(result, data) {
-    // setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    // const license = SPDX.normalize(get(data, 'registryData.license'))
-    // setIfValue(result, 'licensed.declared', license)
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.homepage'))
+    const license = get(data, 'registryData.license')
+    if (license) {
+      setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))
+    }
   }
 
   addGemData(result, data) {
