@@ -76,11 +76,7 @@ class ScanCodeSummarizer {
         if (!licenseExpression) licenseExpression = this._parseFileLicenses(file.licenses)
         const result = { path: file.path }
         setIfValue(result, 'license', licenseExpression)
-        setIfValue(
-          result,
-          'attributions',
-          file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements))) : null
-        )
+        setIfValue(result, 'attributions', this._parseCopyrights(file.copyrights))
         return result
       })
       .filter(e => e)
@@ -104,6 +100,13 @@ class ScanCodeSummarizer {
       )
     }
     return SPDX.normalize(this._joinExpressions(licenses))
+  }
+
+  _parseCopyrights(copyrights) {
+    if (!copyrights || !copyrights.length) return null
+    let result = uniq(copyrights.map(c => c.value)).filter(x => x)
+    if (!result.length) result = uniq(flatten(copyrights.map(c => c.statements))) // < 2.9.8
+    return result
   }
 
   _joinExpressions(expressions) {

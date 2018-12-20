@@ -6,6 +6,7 @@ const summarizer = require('../../../providers/summary/scancode')()
 summarizer.logger = { info: () => {} }
 const fs = require('fs')
 const path = require('path')
+const { uniq, flatten } = require('lodash')
 
 const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8']
 
@@ -18,6 +19,7 @@ describe('ScancodeSummarizer expected summary from fixtures', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
     }
   })
 
@@ -33,6 +35,7 @@ describe('ScancodeSummarizer expected summary from fixtures', () => {
         `Declared license mismatch for version ${version}`
       )
       assert.equal(result.described.releaseDate, '2018-03-30', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
     }
   })
 })
