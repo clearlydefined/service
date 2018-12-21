@@ -38,6 +38,19 @@ describe('ScancodeSummarizer expected summary from fixtures', () => {
       assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
     }
   })
+
+  it('summarizes ruby gems', () => {
+    const coordinates = { type: 'gem', provider: 'rubygems' }
+    for (let version of scancodeVersions) {
+      const harvestData = getHarvestData(version, 'gem')
+      if (!harvestData) continue
+      const result = summarizer.summarize(coordinates, harvestData)
+
+      assert.equal(result.files.find(x => x.path === 'MIT-LICENSE.md').license, 'MIT')
+      assert.equal(result.described.releaseDate, '2018-08-09', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 3)
+    }
+  })
 })
 
 function getHarvestData(version, test) {
