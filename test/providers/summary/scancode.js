@@ -34,7 +34,7 @@ describe('ScancodeSummarizer expected summary from fixtures', () => {
         'BSD-3-Clause OR GPL-2.0',
         `Declared license mismatch for version ${version}`
       )
-      assert.equal(result.described.releaseDate, '2018-03-30', `releaseDate mismatch for version ${version}`)
+      assert.equal(result.described.releaseDate, '2018-03-31', `releaseDate mismatch for version ${version}`)
       assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
     }
   })
