@@ -5,7 +5,7 @@ const { get, flatten, uniq } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
 const logger = require('../logging/logger')
-const scanodeMap = require('../../lib/scancodeMap')
+const scancodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -60,9 +60,11 @@ class ScanCodeSummarizer {
   _summarizePackageInfo(files) {
     for (let file of files) {
       // Find the first package file and treat it as the authority
+
       const declared =
-        SPDX.normalize(get(file, 'packages[0].declared_license') || get(file, 'packages[0].declared_licensing')) ||
-        this._parseAssertedLicense(get(file, 'packages[0].asserted_licenses'))
+        this._scancodeNormalize(
+          get(file, 'packages[0].declared_license') || get(file, 'packages[0].declared_licensing')
+        ) || this._parseAssertedLicense(get(file, 'packages[0].asserted_licenses'))
       if (declared) return declared
     }
     return null
@@ -118,9 +120,14 @@ class ScanCodeSummarizer {
 
   _createExpressionFromRule(rule, licenseKey) {
     if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
-    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
+    return this._scancodeNormalize(rule.license_expression)
+  }
+
+  _scancodeNormalize(expression) {
+    if (!expression) return null
+    const parsed = SPDX.parse(expression, key => SPDX.normalizeSingle(scancodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
-    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${expression}`)
     return result
   }
 }
