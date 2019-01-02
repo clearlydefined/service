@@ -28,7 +28,7 @@
     "express": "^4.16.4",
     "express-init": "^1.1.0",
     "express-rate-limit": "^2.11.0",
-    "extend": "^3.0.1",
+    "extend": "^3.0.2",
     "he": "^1.1.1",
     "helmet": "^3.9.0",
     "js-yaml": "^3.10.0",
