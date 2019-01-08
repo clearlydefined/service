@@ -87,7 +87,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
   })
 })
 
-function setupNuGet({ releaseDate, sourceInfo, packageEntries, attachments }) {
+function setupNuGet({ releaseDate, sourceInfo, packageEntries }) {
   const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)

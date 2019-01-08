@@ -53,10 +53,11 @@ class ScanCodeSummarizer {
   // bar up to 100
   _summarizeFullLicenses(files) {
     const fullLicenses = files.reduce((licenses, file) => {
-      ;(file.licenses || []).forEach(license => {
-        if (license.score === 100 && license.matched_rule.is_license_text)
-          licenses.add(this._createExpressionFromLicense(license))
-      })
+      if (file.licenses)
+        file.licenses.forEach(license => {
+          if (license.score === 100 && license.matched_rule.is_license_text)
+            licenses.add(this._createExpressionFromLicense(license))
+        })
       return licenses
     }, new Set())
     return this._joinExpressions(fullLicenses)

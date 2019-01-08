@@ -9,7 +9,6 @@ const {
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
   updateSourceLocation,
-  isLicenseFile,
   mergeDefinitions
 } = require('../../lib/utils')
 
