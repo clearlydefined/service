@@ -237,6 +237,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 
 - ScanCode
 - Fossology
+- Licensee
 
 ## Terminology
 

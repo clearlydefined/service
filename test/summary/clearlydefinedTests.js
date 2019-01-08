@@ -2,156 +2,67 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const summarizer = require('../../../providers/summary/clearlydefined')()
+const summarizer = require('../../providers/summary/clearlydefined')()
 const { get } = require('lodash')
 
-describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
-  it('declares MIT license from license file', () => {
+describe('ClearlyDescribedSummarizer add files', () => {
+  it('adds no files', () => {
     const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT')
+    const files = {}
+    summarizer.addFiles(result, files)
+    assert.strictEqual(!!result.files, false)
   })
 
-  it('declares MIT license from license file in package folder for npm', () => {
+  it('adds one file', () => {
     const result = {}
-    const interestingFiles = [
-      {
-        path: 'package/LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles }, { type: 'npm' })
-    assert.strictEqual(result.licensed.declared, 'MIT')
+    const files = { files: [{ path: 'foo', hashes: { sha1: '1' } }] }
+    summarizer.addFiles(result, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].hashes.sha1, '1')
   })
 
-  it('declares nothing from license file in package folder for nuget', () => {
+  it('adds no attachments', () => {
     const result = {}
-    const interestingFiles = [
-      {
-        path: 'package/LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles }, { type: 'nuget' })
-    assert.strictEqual(result.licensed, undefined)
+    const files = {}
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(!!result.files, false)
   })
 
-  it('declares spdx license expression from multiple license files', () => {
+  it('does nothing with "extra" attachments', () => {
     const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      },
-      {
-        path: 'LICENSE.html',
-        token: 'abcd',
-        license: '0BSD'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT AND 0BSD')
+    const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(!!result.files, false)
   })
 
-  it('declares single license for multiple similar license files', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      },
-      {
-        path: 'LICENSE.html',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT')
+  it('does nothing with extra attachments', () => {
+    const result = { files: [{ path: 'foo' }] }
+    const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(!!result.files[0].token, false)
   })
 
-  it('declares nothing from non-license files with valid license', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'not-A-License',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
+  it('adds token for one file', () => {
+    const result = { files: [{ path: 'foo' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
   })
 
-  it('declares nothing from license files with no license', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
-  })
-
-  it('declares nothing from license files with NOASSERTION', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'NOASSERTION'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
-  })
-})
-
-describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
-  it('should normalize license properties', () => {
-    const data = new Map([
-      [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [
-        { path: 'LICENSE', token: 'abcd', license: 'garbage' },
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
-      ],
-      [
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' },
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
-      ],
-      [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
-    ])
-    for (let test of data) {
-      let result = {}
-      summarizer.addInterestingFiles(result, { interestingFiles: [test[0]] })
-      assert.deepEqual(result, { files: [test[1]] })
-    }
-  })
-
-  it('should merge existing files', () => {
-    let result = { files: [{ path: 'file1' }] }
-    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
-    assert.deepEqual(result, { files: [{ path: 'file1' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
-  })
-
-  it('should merge the same file', () => {
-    let result = { files: [{ path: 'LICENSE', license: 'MIT' }] }
-    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
-    assert.deepEqual(result, { files: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  it('adds tokens for multiple files', () => {
+    const result = { files: [{ path: 'foo' }, { path: 'bar' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'bar', token: 'dcba' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 2)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
+    assert.strictEqual(result.files[1].path, 'bar')
+    assert.strictEqual(result.files[1].token, 'dcba')
   })
 })
 

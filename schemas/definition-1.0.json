@@ -81,7 +81,7 @@
               "type": "string"
             }
           },
-          "hash": { "type": "string" },
+          "hashes": { "$ref": "#/definitions/hashes" },
           "token": {
             "type": "string",
             "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
@@ -91,6 +91,16 @@
             "description": "The nature of this file entry. Will only be set if there is a token and the file is archived by ClearlyDefinfed. `license` implies that the file itself includes one or more licenses. `notice` identifies a file containing additional licensing related content."
           }
         }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gitSha": { "type": "string" },
+        "sha1": { "type": "string" },
+        "sha256": { "type": "string" },
+        "md5": { "type": "string" }
       }
     },
     "described": {
@@ -117,7 +127,7 @@
           "type": "string",
           "format": "date"
         },
-        "hash": { "type": "string" },
+        "hashes": { "$ref": "#/definitions/hashes" },
         "tools": {
           "type": "array",
           "items": {

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq, cloneDeep } = require('lodash')
+const { get, set, isArray, cloneDeep } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const {
   extractDate,
@@ -22,8 +22,8 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
-    this.addInterestingFiles(result, data)
-    this.addLicenseFromFiles(result, data, coordinates)
+    this.addFiles(result, data)
+    this.addAttachedFiles(result, data)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
@@ -51,6 +51,11 @@ class ClearlyDescribedSummarizer {
     return result
   }
 
+  addSummaryInfo(result, data) {
+    if (!data.hashes) return
+    set(result, 'described.hashes', data.hashes)
+  }
+
   addFacetInfo(result, data) {
     setIfValue(result, 'described.facets', data.facets)
   }
@@ -63,30 +68,20 @@ class ClearlyDescribedSummarizer {
     set(result, 'described.sourceLocation', spec)
   }
 
-  addInterestingFiles(result, data) {
-    if (!data.interestingFiles) return
-    const newDefinition = cloneDeep(result)
-    const newFiles = cloneDeep(data.interestingFiles)
-    newFiles.forEach(file => {
-      file.license = SPDX.normalize(file.license)
-      if (!file.license) delete file.license
-      if (this._hasLicenseeData(file, data)) file.nature = 'license'
+  addFiles(result, data) {
+    if (!data.files) return
+    result.files = data.files.map(file => {
+      return { path: file.path, hashes: file.hashes }
     })
-    set(newDefinition, 'files', newFiles)
-    mergeDefinitions(result, newDefinition)
   }
 
-  _hasLicenseeData(path, data) {
-    if (!data.licensee) return false
-    return data.licensee.some(entry => entry.path === path)
-  }
-
-  addLicenseFromFiles(result, data, coordinates) {
-    if (!data.interestingFiles) return
-    const licenses = data.interestingFiles
-      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
-      .filter(x => x)
-    setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
+  addAttachedFiles(result, data) {
+    if (!data.attachments || !result.files) return
+    data.attachments.forEach(file => {
+      const existing = result.files.find(entry => entry.path === file.path)
+      if (!existing) return
+      existing.token = file.token
+    })
   }
 
   addMavenData(result, data) {
