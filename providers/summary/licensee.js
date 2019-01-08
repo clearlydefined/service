@@ -32,7 +32,7 @@ class LicenseeSummarizer {
         if (70 > +get(file, 'matcher.confidence')) return null
         const path = file.filename
         let license = SPDX.normalize(file.matched_license)
-        if (path && license && license !== 'NOASSERTION') return { path, license }
+        if (path && license && license !== 'NOASSERTION') return { path, license, natures: ['license'] }
       })
       .filter(e => e)
   }

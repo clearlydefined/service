@@ -47,7 +47,7 @@ describe('ScanCode summarizer', () => {
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].nature).to.be.equal('license')
+    expect(summary.files[0].natures[0]).to.be.equal('license')
   })
 
   it('respects low license score', () => {

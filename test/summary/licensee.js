@@ -13,7 +13,7 @@ describe('LicenseeSummarizer', () => {
       { path: 'bar.txt', license: 'MIT', confidence: '60' }
     ])
     const result = summarizer.summarize(null, data)
-    assert.deepEqual(result, { files: [{ path: 'LICENSE', license: 'MIT' }] })
+    assert.deepEqual(result, { files: [{ path: 'LICENSE', license: 'MIT', natures: ['license'] }] })
   })
 })
 

@@ -137,6 +137,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     // prettier-ignore
     const data = {
       '2018-01-09T17:18:33.930Z': '2018-01-09',
+      // TODO this causes moment to throw a warning as it is not an ISO date. Note sure if this date format
+      // is something we will/do see and if so, what we should do about it. Some fallback processing?
+      // It's a bit bogus that moment is throwing this to the console with no way to turn off.
       '2018-01-08': '2018-01-08',
       'JUNK': 'Invalid date' // Is this right behavior?
     }

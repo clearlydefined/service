@@ -98,8 +98,10 @@ class ScanCodeSummarizer {
         if (
           file.licenses &&
           file.licenses.some(license => get(license, 'matched_rule.is_license_text') && license.score >= 100)
-        )
-          result.nature = 'license'
+        ) {
+          result.natures = result.natures || []
+          if (!result.natures.includes('license')) result.natures.push('license')
+        }
         setIfValue(
           result,
           'attributions',

@@ -344,7 +344,7 @@ class DefinitionService {
 
   // Answer whether or not the given file is a license text file
   static _isLicenseFile(file) {
-    return file.token && DefinitionService._isInCoreFacet(file) && (file.nature || []).includes('license')
+    return file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
   }
 
   /**

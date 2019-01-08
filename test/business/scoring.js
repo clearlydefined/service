@@ -173,12 +173,12 @@ function createDefinition(declared, files) {
   return result
 }
 
-function buildFile(path, license, holders, token, facets, nature) {
+function buildFile(path, license, holders, token, facets, natures) {
   const result = { path }
   setIfValue(result, 'license', license)
   setIfValue(result, 'facets', facets)
   setIfValue(result, 'token', token)
   setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
-  setIfValue(result, 'nature', nature)
+  setIfValue(result, 'natures', natures)
   return result
 }
