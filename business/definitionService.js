@@ -9,12 +9,11 @@ const {
   remove,
   pullAllWith,
   isEqual,
-  uniqBy,
+  uniqWith,
   flatten,
   intersection,
   intersectionWith,
-  concat,
-  map
+  concat
 } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
@@ -110,7 +109,7 @@ class DefinitionService {
    */
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
-    const searchCoordinates = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const searchCoordinates = uniqWith(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
     const promises = searchCoordinates.map(
       throat(10, async coordinates => {
         try {
@@ -122,11 +121,7 @@ class DefinitionService {
     )
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersectionWith(
-      coordinatesList,
-      map(foundDefinitions, coordinates => EntityCoordinates.fromString(coordinates)),
-      isEqual
-    )
+    return intersectionWith(coordinatesList, foundDefinitions, (a, b) => a.toString().toLowerCase() === b)
   }
 
   /**
