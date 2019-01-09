@@ -92,7 +92,7 @@
               "type": "string",
               "enum": ["license", "notice"]
             },
-            "description": "The nature of this file entry. Will only be set if there is a token and the file is archived by ClearlyDefinfed. `license` implies that the file itself includes one or more licenses. `notice` identifies a file containing additional licensing related content."
+            "description": "The natures of this file entry. Will only be set if there is a token and the file is archived by ClearlyDefinfed. `license` implies that the file itself includes one or more licenses. `notice` identifies a file containing additional licensing related content."
           }
         }
       }
