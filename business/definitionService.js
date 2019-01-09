@@ -13,8 +13,7 @@ const {
   flatten,
   intersection,
   intersectionWith,
-  concat,
-  map
+  concat
 } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
