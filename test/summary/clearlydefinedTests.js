@@ -4,35 +4,43 @@
 const assert = require('assert')
 const summarizer = require('../../providers/summary/clearlydefined')()
 const { get } = require('lodash')
+const EntityCoordinates = require('../../lib/entityCoordinates')
+
+const testCoordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
+describe('ClearlyDescribedSummarizer general behavior', () => {
+  it('captures summary info', () => {
+    const data = { summaryInfo: { count: 42, k: 5, hashes: { sha1: '1' } } }
+    const result = summarizer.summarize(testCoordinates, data)
+    assert.strictEqual(result.described.files, 42)
+    assert.strictEqual(result.described.k, undefined)
+    assert.strictEqual(result.described.hashes.sha1, '1')
+  })
+})
 
 describe('ClearlyDescribedSummarizer add files', () => {
   it('adds no files', () => {
-    const result = {}
     const files = {}
-    summarizer.addFiles(result, files)
+    const result = summarizer.summarize(testCoordinates, files)
     assert.strictEqual(!!result.files, false)
   })
 
   it('adds one file', () => {
-    const result = {}
     const files = { files: [{ path: 'foo', hashes: { sha1: '1' } }] }
-    summarizer.addFiles(result, files)
+    const result = summarizer.summarize(testCoordinates, files)
     assert.strictEqual(result.files.length, 1)
     assert.strictEqual(result.files[0].path, 'foo')
     assert.strictEqual(result.files[0].hashes.sha1, '1')
   })
 
   it('adds no attachments', () => {
-    const result = {}
     const files = {}
-    summarizer.addAttachedFiles(result, files)
+    const result = summarizer.summarize(testCoordinates, files)
     assert.strictEqual(!!result.files, false)
   })
 
   it('does nothing with "extra" attachments', () => {
-    const result = {}
     const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
-    summarizer.addAttachedFiles(result, files)
+    const result = summarizer.summarize(testCoordinates, files)
     assert.strictEqual(!!result.files, false)
   })
 

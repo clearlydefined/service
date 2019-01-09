@@ -21,6 +21,7 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
+    this.addSummaryInfo(result, data)
     this.addFiles(result, data)
     this.addAttachedFiles(result, data)
     switch (coordinates.type) {
@@ -51,8 +52,8 @@ class ClearlyDescribedSummarizer {
   }
 
   addSummaryInfo(result, data) {
-    if (!data.hashes) return
-    set(result, 'described.hashes', data.hashes)
+    setIfValue(result, 'described.hashes', get(data, 'summaryInfo.hashes'))
+    setIfValue(result, 'described.files', get(data, 'summaryInfo.count'))
   }
 
   addFacetInfo(result, data) {
