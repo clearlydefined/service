@@ -64,16 +64,18 @@ class SuggestionService {
    */
   async _collectSuggestionsForField(related, suggestions, field) {
     const definition = related.sortedByReleaseDate[related.index]
-    // If there is already a declared licence or there are no related entries then return early
+    // If there is already a value for the field or there are no related entries then return early
     if (get(definition, field) || !(related.before.length + related.after.length)) return []
     const before = filter(related.before, entry => get(entry, field))
     const after = filter(related.after, entry => get(entry, field))
     // Merged the before and after arrays
     const suggestionDefinitions = concat(before, after)
+
     set(
       suggestions,
       field,
       suggestionDefinitions.map(suggestion => {
+        console.log(JSON.stringify(suggestion))
         return { value: get(suggestion, field), version: get(suggestion, 'coordinates.revision') }
       })
     )
@@ -91,10 +93,13 @@ class SuggestionService {
     const promises = definition.files.map(async file => {
       if (get(file, 'license') && get(file, 'attributions')) return null
       const filesSuggestions = await this._collectSuggestionsForFile(related, file.path)
-      return { path: file.path, licence: filesSuggestions.license, attributions: filesSuggestions.attributions }
+      const obj = { path: file.path }
+      if (filesSuggestions.license.length > 0) obj.license = filesSuggestions.license
+      if (filesSuggestions.attributions.length > 0) obj.attributions = filesSuggestions.attributions
+      return obj.license || obj.attributions ? obj : null
     })
     const result = await Promise.all(promises)
-    set(suggestions, 'files', result)
+    set(suggestions, 'files', result.filter(x => x))
     return suggestions
   }
 
@@ -108,12 +113,20 @@ class SuggestionService {
     })
     if (suggestionDefinitions.length === 0) return null
     return {
-      license: suggestionDefinitions.map(suggestion => {
-        return { value: get(suggestion, 'file.license'), version: get(suggestion, 'coordinates.revision') }
-      }),
-      attributions: suggestionDefinitions.map(suggestion => {
-        return { value: get(suggestion, 'file.attributions'), version: get(suggestion, 'coordinates.revision') }
-      })
+      license: suggestionDefinitions
+        .map(suggestion => {
+          return get(suggestion, 'file.license')
+            ? { value: get(suggestion, 'file.license'), version: get(suggestion, 'coordinates.revision') }
+            : null
+        })
+        .filter(x => x),
+      attributions: suggestionDefinitions
+        .map(suggestion => {
+          return get(suggestion, 'file.attributions')
+            ? { value: get(suggestion, 'file.attributions'), version: get(suggestion, 'coordinates.revision') }
+            : null
+        })
+        .filter(x => x)
     }
   }
 }
