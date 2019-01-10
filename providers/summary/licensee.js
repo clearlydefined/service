@@ -20,19 +20,26 @@ class LicenseeSummarizer {
   summarize(coordinates, harvested) {
     if (!harvested || !harvested.licensee || !harvested.licensee.version) throw new Error('Invalid Licensee data')
     const result = {}
-    setIfValue(result, 'files', this._summarizeFiles(get(harvested, 'licensee.output.content.matched_files')))
+    setIfValue(result, 'files', this._summarizeFiles(harvested))
     return result
   }
 
-  _summarizeFiles(files) {
+  _summarizeFiles(harvested) {
+    const files = get(harvested, 'licensee.output.content.matched_files')
+    const attachments = harvested.attachments || []
     if (!files) return null
     return files
       .map(file => {
         if (get(file, 'matcher.name') !== 'exact') return null
         if (70 > +get(file, 'matcher.confidence')) return null
         const path = file.filename
-        let license = SPDX.normalize(file.matched_license)
-        if (path && license && license !== 'NOASSERTION') return { path, license, natures: ['license'] }
+        const attachment = attachments.find(x => x.path === path)
+        const license = SPDX.normalize(file.matched_license)
+        if (path && license && license !== 'NOASSERTION') {
+          const resultFile = { path, license, natures: ['license'] }
+          setIfValue(resultFile, 'token', get(attachment, 'token'))
+          return resultFile
+        }
       })
       .filter(e => e)
   }

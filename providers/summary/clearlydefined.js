@@ -8,6 +8,7 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
+  isLicenseFile,
   updateSourceLocation,
   mergeDefinitions
 } = require('../../lib/utils')
@@ -23,7 +24,9 @@ class ClearlyDescribedSummarizer {
     this.addSourceLocation(result, data)
     this.addSummaryInfo(result, data)
     this.addFiles(result, data)
-    this.addAttachedFiles(result, data)
+    this.addAttachedFiles(result, data, coordinates)
+    this.addInterestingFiles(result, data, coordinates)
+    this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
@@ -75,13 +78,43 @@ class ClearlyDescribedSummarizer {
     })
   }
 
-  addAttachedFiles(result, data) {
+  addAttachedFiles(result, data, coordinates) {
     if (!data.attachments || !result.files) return
     data.attachments.forEach(file => {
       const existing = result.files.find(entry => entry.path === file.path)
       if (!existing) return
       existing.token = file.token
+      if (isLicenseFile(file.path, coordinates)) existing.natures = uniq((existing.natures || []).concat(['license']))
     })
+  }
+
+  /**
+   * Deprecated in favor of attachments from when licensee was a part of the CD tool
+   * TODO: remove when interestingFiles is no longer in harvested data
+   */
+  addInterestingFiles(result, data, coordinates) {
+    if (!data.interestingFiles) return
+    const newDefinition = cloneDeep(result)
+    const newFiles = cloneDeep(data.interestingFiles)
+    newFiles.forEach(file => {
+      file.license = SPDX.normalize(file.license)
+      if (!file.license) delete file.license
+      else if (isLicenseFile(file.path, coordinates)) file.natures = uniq((file.natures || []).concat(['license']))
+    })
+    set(newDefinition, 'files', newFiles)
+    mergeDefinitions(result, newDefinition)
+  }
+
+  /**
+   * Deprecated in favor of attachments from when licensee was a part of the CD tool
+   * TODO: remove when interestingFiles is no longer in harvested data
+   */
+  addLicenseFromFiles(result, data, coordinates) {
+    if (!data.interestingFiles) return
+    const licenses = data.interestingFiles
+      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .filter(x => x)
+    setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
   addMavenData(result, data) {

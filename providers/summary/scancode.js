@@ -106,7 +106,7 @@ class ScanCodeSummarizer {
           'attributions',
           file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements))) : null
         )
-        setIfValue(result, 'hash', file.sha1)
+        setIfValue(result, 'hashes.sha1', file.sha1)
         return result
       })
       .filter(e => e)

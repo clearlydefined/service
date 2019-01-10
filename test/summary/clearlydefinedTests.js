@@ -72,6 +72,19 @@ describe('ClearlyDescribedSummarizer add files', () => {
     assert.strictEqual(result.files[1].path, 'bar')
     assert.strictEqual(result.files[1].token, 'dcba')
   })
+
+  it('adds license nature for attachments named license', () => {
+    const result = { files: [{ path: 'foo' }, { path: 'LICENSE' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'LICENSE', token: 'dcba' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 2)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
+    assert.deepEqual(result.files[0].natures, undefined) // not named a recognized license name
+    assert.strictEqual(result.files[1].path, 'LICENSE')
+    assert.strictEqual(result.files[1].token, 'dcba')
+    assert.deepEqual(result.files[1].natures, ['license'])
+  })
 })
 
 describe('ClearlyDescribedSummarizer addCrateData', () => {

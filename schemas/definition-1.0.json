@@ -132,6 +132,7 @@
           "format": "date"
         },
         "hashes": { "$ref": "#/definitions/hashes" },
+        "files": { "type": "number" },
         "tools": {
           "type": "array",
           "items": {
