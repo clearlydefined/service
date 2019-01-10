@@ -72,6 +72,24 @@ describe('Definition Service', () => {
     expect(definition.licensed.score.total).to.eq(85)
     expect(definition.licensed.toolScore.total).to.eq(0)
   })
+
+  it('lists all coordinates found', async () => {
+    const { service } = setup()
+    service.definitionStore.list = coordinates => {
+      coordinates.revision = '2.3'
+      if (coordinates.name === 'missing') return Promise.resolve([])
+      return Promise.resolve([coordinates.toString().toLowerCase()])
+    }
+    const coordinates = [
+      EntityCoordinates.fromString('npm/npmjs/-/test0/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/test1/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/testUpperCase/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/missing/2.3')
+    ]
+    const result = await service.listAll(coordinates)
+    expect(result.length).to.eq(3)
+    expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
+  })
 })
 
 describe('Definition Service Facet management', () => {

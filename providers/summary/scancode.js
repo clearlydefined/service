@@ -24,7 +24,6 @@ class ScanCodeSummarizer {
       throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
-    // TODO should we just consider root files for package info?
     const files = this._getRootFiles(coordinates.type, harvested.content.files)
     const declaredLicense = this._summarizePackageInfo(files) || this._summarizeFullLicenses(files)
     setIfValue(result, 'licensed.declared', declaredLicense)
@@ -87,7 +86,7 @@ class ScanCodeSummarizer {
         if (file.type !== 'file') return null
         const result = { path: file.path }
         const asserted = get(file, 'packages[0].asserted_licenses')
-        const fileLicense = asserted || file.licenses
+        const fileLicense = asserted || file.licenses || []
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size)
           licenses = new Set(fileLicense.filter(x => x.score >= 80).map(this._createExpressionFromLicense))
