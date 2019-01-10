@@ -93,38 +93,6 @@ describe('Definition Service', () => {
 })
 
 describe('Definition Service Facet management', () => {
-  it('handle special characters', async () => {
-    const files = [
-      buildFile('foo.txt', 'MIT', [
-        '&#60;Bob&gt;',
-        'Bob\\n',
-        'Bob\\r',
-        'Bob\r',
-        'Bob\n',
-        'Bob\n',
-        'Bob ',
-        'Bob  Bobberson'
-      ])
-    ]
-    const { service, coordinates } = setup(createDefinition(undefined, files))
-    const definition = await service.compute(coordinates)
-    validate(definition)
-    const core = definition.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
-    expect(definition.files.length).to.eq(1)
-    expect(definition.files[0].attributions).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
-  })
-
   it('handles files with no data', async () => {
     const files = [buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)]
     const { service, coordinates } = setup(createDefinition(undefined, files))

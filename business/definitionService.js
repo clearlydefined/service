@@ -25,7 +25,7 @@ const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
-const currentSchema = '1.3.0'
+const currentSchema = '1.4.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
@@ -338,10 +338,8 @@ class DefinitionService {
   }
 
   // Answer whether or not the given file is a license text file
-  // TODO for now just assume that if there is a known file, it is a license file and that the license
-  // of that file is the license the file represents.
   static _isLicenseFile(file) {
-    return file.token && DefinitionService._isInCoreFacet(file)
+    return file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
   }
 
   /**
