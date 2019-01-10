@@ -17,22 +17,34 @@ async function get(request, response) {
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
-      const result = await harvestStore.get(coordinates, response)
-      // some harvest services will stream on the response and trigger sending
-      return response.headersSent ? null : response.status(200).send(result)
+      try {
+        const result = await harvestStore.get(coordinates, response)
+        // some harvest services will stream on the response and trigger sending
+        return response.headersSent ? null : response.status(200).send(result)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     case 'summary': {
-      const raw = await harvestStore.get(coordinates)
-      const filter = await getFilter(coordinates)
-      const result = await summarizeService.summarize(coordinates, filter, raw)
-      return response.status(200).send(result)
+      try {
+        const raw = await harvestStore.get(coordinates)
+        const filter = await getFilter(coordinates)
+        const result = await summarizeService.summarize(coordinates, filter, raw)
+        return response.status(200).send(result)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     case 'list': {
-      const result = await harvestStore.list(coordinates)
-      return response.status(200).send(result)
+      try {
+        const result = await harvestStore.list(coordinates)
+        return response.status(200).send(result)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     default:
-      throw new Error(`Invalid request form: ${request.query.form}`)
+      return response.status(400).send(`Invalid request form: ${request.query.form}`)
   }
 }
 
@@ -60,18 +72,30 @@ async function getAll(request, response) {
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
-      const result = await harvestStore.getAll(coordinates)
-      return response.status(200).send(result)
+      try {
+        const result = await harvestStore.getAll(coordinates)
+        return response.status(200).send(result)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     case 'summary': {
-      const raw = await harvestStore.getAll(coordinates)
-      const filter = await getFilter(coordinates)
-      const summarized = await summarizeService.summarizeAll(coordinates, raw, filter)
-      return response.status(200).send(summarized)
+      try {
+        const raw = await harvestStore.getAll(coordinates)
+        const filter = await getFilter(coordinates)
+        const summarized = await summarizeService.summarizeAll(coordinates, raw, filter)
+        return response.status(200).send(summarized)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     case 'list': {
-      const list = await harvestStore.list(coordinates)
-      return response.status(200).send(list)
+      try {
+        const list = await harvestStore.list(coordinates)
+        return response.status(200).send(list)
+      } catch (error) {
+        return response.sendStatus(500)
+      }
     }
     default:
       throw new Error(`Invalid request form: ${request.query.form}`)
@@ -83,8 +107,12 @@ router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddl
 
 async function list(request, response) {
   const coordinates = utils.toResultCoordinatesFromRequest(request)
-  const result = await harvestStore.list(coordinates)
-  return response.status(200).send(result)
+  try {
+    const result = await harvestStore.list(coordinates)
+    return response.status(200).send(result)
+  } catch (error) {
+    return response.sendStatus(500)
+  }
 }
 
 // Post a (set of) component to be harvested
@@ -93,8 +121,19 @@ router.post('/', permissionsCheck('harvest'), bodyParser.json(), asyncMiddleware
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
   if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
-  await harvestService.harvest(request.body)
-  response.sendStatus(201)
+  try {
+    await harvestService.harvest(request.body)
+    return response.status(201).send({ message: 'The required component has been harvested' })
+  } catch (error) {
+    switch (error.message) {
+      case 'Forbidden':
+        return response
+          .status(403)
+          .send({ error: { code: 403, message: 'You are not allowed to execute this operation' } })
+      default:
+        return response.sendStatus(500)
+    }
+  }
 }
 
 let harvestService
