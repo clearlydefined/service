@@ -4,21 +4,19 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
 const router = express.Router()
-const AttachmentCoordinates = require('../lib/attachmentCoordinates')
 
 // Get a proposed patch for a specific revision of a component
 router.get('/:id', asyncMiddleware(getAttachment))
 
 async function getAttachment(request, response) {
-  const coordinates = new AttachmentCoordinates(request.params.id)
-  const result = await harvestStore.getAttachment(coordinates)
+  const result = await attachmentStore.get(request.params.id)
   if (!result) return response.sendStatus(404)
-  response.status(200).send(result.attachment)
+  response.status(200).send(result)
 }
 
-let harvestStore
-function setup(harvest) {
-  harvestStore = harvest
+let attachmentStore
+function setup(attachment) {
+  attachmentStore = attachment
   return router
 }
 module.exports = setup

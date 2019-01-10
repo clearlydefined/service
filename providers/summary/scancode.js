@@ -1,12 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, first, flatten, uniq } = require('lodash')
-const { extractDate, setIfValue, addArrayToSet, setToArray } = require('../../lib/utils')
+const { get, flatten, uniq } = require('lodash')
+const SPDX = require('../../lib/spdx')
+const { extractDate, setIfValue, addArrayToSet, setToArray, isLicenseFile } = require('../../lib/utils')
+const logger = require('../logging/logger')
+const scanodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizer {
   constructor(options) {
     this.options = options
+    this.logger = logger()
   }
 
   /**
@@ -20,8 +24,13 @@ class ScanCodeSummarizer {
       throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
+    const packageInfo = this._summarizePackageInfo(harvested.content.files)
+    const licenseInfo = this._summarizeDeclaredLicenseInfo(harvested.content.files, coordinates)
+    // if source take license file as precedence, otherwise registry spec
     const declaredLicense =
-      this._summarizeDeclaredLicenseInfo(harvested.content.files) || this._summarizePackageInfo(harvested.content.files)
+      coordinates.type === 'git' || coordinates.type === 'sourcearchive'
+        ? licenseInfo || packageInfo
+        : packageInfo || licenseInfo
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files)
     return result
@@ -32,15 +41,16 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _summarizeDeclaredLicenseInfo(files) {
+  _summarizeDeclaredLicenseInfo(files, coordinates) {
     for (let file of files) {
-      const pathArray = file.path.split('/')
-      const baseName = first(pathArray)
-      const isLicense = ['license', 'license.txt', 'license.md', 'license.html'].includes(baseName.toLowerCase())
-      if (isLicense && file.licenses) {
+      if (isLicenseFile(file.path, coordinates) && file.licenses) {
         // Find the first license file and treat it as the authority
-        const declaredLicenses = addArrayToSet(file.licenses, new Set(), license => license.spdx_license_key)
-        return this._toExpression(declaredLicenses)
+        const declaredLicenses = new Set(
+          file.licenses
+            .filter(x => x.score >= 80)
+            .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+        )
+        if (declaredLicenses.size) return this._joinExpressions(declaredLicenses)
       }
     }
     return null
@@ -56,7 +66,7 @@ class ScanCodeSummarizer {
           new Set(),
           license => license.license || license.spdx_license_key
         )
-        return this._toExpression(packageLicenses)
+        return this._joinExpressions(packageLicenses)
       }
     }
     return null
@@ -67,9 +77,16 @@ class ScanCodeSummarizer {
       .map(file => {
         if (file.type !== 'file') return null
         const asserted = get(file, 'packages[0].asserted_licenses')
-        const fileLicense = asserted || file.licenses
-        const licenses = addArrayToSet(fileLicense, new Set(), license => license.license || license.spdx_license_key)
-        const licenseExpression = this._toExpression(licenses)
+        const fileLicense = asserted || file.licenses || []
+        let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
+        if (!licenses.size) {
+          licenses = new Set(
+            fileLicense
+              .filter(x => x.score >= 80)
+              .map(license => this._createExpressionFromRule(license.matched_rule, license.spdx_license_key))
+          )
+        }
+        const licenseExpression = this._joinExpressions(licenses)
         const result = { path: file.path }
         setIfValue(result, 'license', licenseExpression)
         setIfValue(
@@ -82,10 +99,19 @@ class ScanCodeSummarizer {
       .filter(e => e)
   }
 
-  _toExpression(licenses) {
-    if (!licenses) return null
-    const list = setToArray(licenses)
-    return list ? list.join(' and ') : null
+  _joinExpressions(expressions) {
+    if (!expressions) return null
+    const list = setToArray(expressions)
+    if (!list) return null
+    return list.join(' AND ')
+  }
+
+  _createExpressionFromRule(rule, licenseKey) {
+    if (!rule || !rule.license_expression) return SPDX.normalize(licenseKey)
+    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
+    const result = SPDX.stringify(parsed)
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    return result
   }
 }
 

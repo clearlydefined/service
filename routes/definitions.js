@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
+const validator = require('../schemas/validator')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -54,7 +55,9 @@ async function reload(request, response) {
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (request, response) => {
-    if (!request.query.preview) return response.sendStatus(400)
+    if (!request.query.preview)
+      return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
+    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)
@@ -67,6 +70,8 @@ router.post(
   '/',
   asyncMiddleware(async (request, response) => {
     const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
+    if (coordinatesList.length > 1000)
+      return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
     // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
     const force = request.hostname.includes('localhost') ? request.query.force || false : false
     const result = await definitionService.getAll(coordinatesList, force)

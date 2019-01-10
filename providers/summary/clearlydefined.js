@@ -1,13 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep, flatten } = require('lodash')
+const SPDX = require('../../lib/spdx')
 const {
   extractDate,
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
-  updateSourceLocation
+  updateSourceLocation,
+  isLicenseFile,
+  mergeDefinitions
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -20,9 +23,13 @@ class ClearlyDescribedSummarizer {
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
     this.addInterestingFiles(result, data)
+    this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
       case 'npm':
         this.addNpmData(result, data)
+        break
+      case 'crate':
+        this.addCrateData(result, data)
         break
       case 'maven':
         this.addMavenData(result, data)
@@ -57,11 +64,42 @@ class ClearlyDescribedSummarizer {
   }
 
   addInterestingFiles(result, data) {
-    setIfValue(result, 'files', data.interestingFiles)
+    if (!data.interestingFiles) return
+    const newDefinition = cloneDeep(result)
+    const newFiles = cloneDeep(data.interestingFiles)
+    newFiles.forEach(file => {
+      file.license = SPDX.normalize(file.license)
+      if (!file.license) delete file.license
+    })
+    set(newDefinition, 'files', newFiles)
+    mergeDefinitions(result, newDefinition)
+  }
+
+  addLicenseFromFiles(result, data, coordinates) {
+    if (!data.interestingFiles) return
+    const licenses = data.interestingFiles
+      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .filter(x => x)
+    setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    const projectSummary = get(data, 'manifest.summary.project')
+    if (!projectSummary) return
+    const licenseSummaries = flatten(projectSummary.licenses.map(x => x.license))
+    const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))
+    const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
+    let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
+    if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
+    if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+  }
+
+  addCrateData(result, data) {
+    setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
+    setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
+    const license = get(data, 'registryData.license')
+    if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
   }
 
   addSourceArchiveData(result, data) {
@@ -70,7 +108,18 @@ class ClearlyDescribedSummarizer {
 
   addNuGetData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'licensed.declared', extractLicenseFromLicenseUrl(get(data, 'manifest.licenseUrl')))
+    const licenseExpression = SPDX.normalize(get(data, 'manifest.licenseExpression'))
+    const licenseUrl = get(data, 'manifest.licenseUrl')
+    if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
+    else if (licenseUrl && licenseUrl.trim())
+      set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
+    const packageEntries = get(data, 'manifest.packageEntries')
+    if (!packageEntries) return
+    const newDefinition = cloneDeep(result)
+    newDefinition.files = packageEntries.map(file => {
+      return { path: decodeURIComponent(file.fullName) }
+    })
+    mergeDefinitions(result, newDefinition)
   }
 
   addNpmData(result, data) {
@@ -87,13 +136,20 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    const license = manifest.license
-    license && setIfValue(result, 'licensed', { declared: typeof license === 'string' ? license : license.type })
+    const license =
+      manifest.license &&
+      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+    setIfValue(result, 'licensed.declared', license)
   }
 
   addGemData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'licensed.declared', data.licenses)
+    const license = SPDX.normalize(get(data, 'registryData.license'))
+    if (license) set(result, 'licensed.declared', license)
+    else {
+      const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
+      setIfValue(result, 'licensed.declared', licenses)
+    }
   }
 
   addPyPiData(result, data) {

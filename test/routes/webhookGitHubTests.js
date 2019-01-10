@@ -3,7 +3,6 @@
 
 const { expect } = require('chai')
 const webhookRoutes = require('../../routes/webhook')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 
@@ -11,27 +10,27 @@ describe('Webhook Route for GitHub calls', () => {
   it('handles invalid action', async () => {
     const request = createRequest('yeah, right')
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData()).to.be.eq('')
+    expect(logger.error.notCalled).to.be.true
+    expect(logger.info.notCalled).to.be.true
   })
 
   it('handles missing signature', async () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-hub-signature']
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -39,13 +38,12 @@ describe('Webhook Route for GitHub calls', () => {
     const request = createRequest('yeah, right')
     delete request.headers['x-github-event']
     const response = httpMocks.createResponse()
-    const logger = { error: sinon.stub() }
+    const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
@@ -69,43 +67,55 @@ describe('Webhook Route for GitHub calls', () => {
   it('skips closed event that is not merged', async () => {
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
+    const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.false
+    expect(service.validateContributions.calledOnce).to.be.false
+    expect(service.updateContribution.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
   })
 
   it('calls valid for PR changes', async () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
+    const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, null, 'secret', 'secret', true)
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.handleMerge.calledOnce).to.be.false
-    expect(service.validateCurations.calledOnce).to.be.true
-    expect(service.validateCurations.getCall(0).args[0]).to.be.eq(1)
-    expect(service.validateCurations.getCall(0).args[1]).to.be.eq('24')
-    expect(service.validateCurations.getCall(0).args[2]).to.be.eq('changes')
+    expect(service.validateContributions.calledOnce).to.be.true
+    expect(service.updateContribution.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
+  })
+
+  it('calls missing for PR changes', async () => {
+    const request = createRequest('opened')
+    const response = httpMocks.createResponse()
+    const logger = createLogger()
+    const service = createCurationService()
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    await router._handlePost(request, response)
+    expect(response.statusCode).to.be.eq(200)
+    expect(service.validateContributions.calledOnce).to.be.true
+    expect(service.updateContribution.calledOnce).to.be.true
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.error.notCalled).to.be.true
   })
 })
 
-const simpleCoords = new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0')
-
-function createDefinitionService() {
-  return {
-    computeAndStore: sinon.stub(),
-    invalidate: sinon.stub()
-  }
+function createLogger() {
+  return { info: sinon.stub(), error: sinon.stub() }
 }
 
-function createCurationService(coordinates) {
+function createCurationService() {
   return {
-    handleMerge: sinon.stub(),
-    validateCurations: sinon.stub(),
-    getCurationCoordinates: () => coordinates
+    getContributedCurations: sinon.stub(),
+    updateContribution: sinon.stub(),
+    validateContributions: sinon.stub()
   }
 }
 

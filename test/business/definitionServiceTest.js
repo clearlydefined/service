@@ -3,9 +3,7 @@
 
 const { expect } = require('chai')
 const sinon = require('sinon')
-const definitionSchema = require('../../schemas/definition')
-const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
+const validator = require('../../schemas/validator')
 const DefinitionService = require('../../business/definitionService')
 const AggregatorService = require('../../business/aggregator')
 const EntityCoordinates = require('../../lib/entityCoordinates')
@@ -19,7 +17,6 @@ describe('Definition Service', () => {
     await service.invalidate(coordinates)
     expect(service.definitionStore.delete.calledOnce).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(service.definitionStore.delete.getCall(0).args[0].tool).to.be.eq('definition')
   })
 
   it('invalidates array of coordinates', async () => {
@@ -47,39 +44,17 @@ describe('Definition Service', () => {
     expect(service.definitionStore.store.calledOnce).to.be.true
     expect(service.search.store.calledOnce).to.be.true
   })
-})
 
-describe('Definition Service score computation', () => {
-  it('computes full score', async () => {
-    const files = [buildFile('bar.txt', 'MIT', ['Jane', 'Fred'])]
-    const raw = createDefinition(undefined, files)
-    set(raw, 'licensed.declared', 'MIT')
-    set(raw, 'described.releaseDate', '2018-08-09')
-    set(raw, 'described.sourceLocation', {
-      type: 'git',
-      provider: 'github',
-      namespace: 'testns',
-      name: 'testname',
-      revision: '324325',
-      url: 'http://foo'
-    })
-    const { service, coordinates } = setup(raw)
-    const definition = await service.compute(coordinates)
-    expect(definition.described.score).to.eq(2)
-    expect(definition.described.toolScore).to.eq(2)
-    expect(definition.licensed.score).to.eq(2)
-    expect(definition.licensed.toolScore).to.eq(2)
+  it('harvests new definitions with empty tools', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, []))
+    await service.get(coordinates)
+    expect(service.harvestService.harvest.calledOnce).to.be.true
   })
 
-  it('computes zero score', async () => {
-    const files = [buildFile('bar.txt', 'MIT')]
-    const raw = createDefinition(undefined, files)
-    const { service, coordinates } = setup(raw)
-    const definition = await service.compute(coordinates)
-    expect(definition.described.score).to.eq(0)
-    expect(definition.described.toolScore).to.eq(0)
-    expect(definition.licensed.score).to.eq(0)
-    expect(definition.licensed.toolScore).to.eq(0)
+  it('harvests new definitions with undefined tools', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, undefined))
+    await service.get(coordinates)
+    expect(service.harvestService.harvest.calledOnce).to.be.true
   })
 
   it('higher score than tool score with a curation', async () => {
@@ -92,10 +67,28 @@ describe('Definition Service score computation', () => {
     }
     const { service, coordinates } = setup(raw, null, curation)
     const definition = await service.compute(coordinates)
-    expect(definition.described.score).to.eq(1)
-    expect(definition.described.toolScore).to.eq(0)
-    expect(definition.licensed.score).to.eq(2)
-    expect(definition.licensed.toolScore).to.eq(0)
+    expect(definition.described.score.total).to.eq(30)
+    expect(definition.described.toolScore.total).to.eq(0)
+    expect(definition.licensed.score.total).to.eq(85)
+    expect(definition.licensed.toolScore.total).to.eq(0)
+  })
+
+  it('lists all coordinates found', async () => {
+    const { service } = setup()
+    service.definitionStore.list = coordinates => {
+      coordinates.revision = '2.3'
+      if (coordinates.name === 'missing') return Promise.resolve([])
+      return Promise.resolve([coordinates.toString().toLowerCase()])
+    }
+    const coordinates = [
+      EntityCoordinates.fromString('npm/npmjs/-/test0/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/test1/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/testUpperCase/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/missing/2.3')
+    ]
+    const result = await service.listAll(coordinates)
+    expect(result.length).to.eq(3)
+    expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
 })
 
@@ -153,8 +146,8 @@ describe('Definition Service Facet management', () => {
     const definition = await service.compute(coordinates)
     validate(definition)
     expect(definition.files.length).to.eq(0)
-    expect(definition.licensed.score).to.eq(0)
-    expect(definition.licensed.toolScore).to.eq(0)
+    expect(definition.licensed.score.total).to.eq(0)
+    expect(definition.licensed.toolScore.total).to.eq(0)
     expect(Object.keys(definition.licensed).length).to.eq(2)
   })
 
@@ -197,7 +190,7 @@ describe('Definition Service Facet management', () => {
   })
 
   it('summarizes with basic facets', async () => {
-    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
+    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL-2.0', [])]
     const facets = { tests: ['*.json'] }
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
@@ -205,7 +198,7 @@ describe('Definition Service Facet management', () => {
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL'])
+    expect(core.discovered.expressions).to.deep.eq(['GPL-2.0'])
     expect(core.discovered.unknown).to.eq(0)
     const tests = definition.licensed.facets.tests
     expect(tests.files).to.eq(1)
@@ -214,7 +207,7 @@ describe('Definition Service Facet management', () => {
   })
 
   it('summarizes with no core filters', async () => {
-    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
+    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL-2.0', [])]
     const facets = { tests: ['*.json'] }
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
@@ -222,7 +215,7 @@ describe('Definition Service Facet management', () => {
     expect(definition.files.length).to.eq(2)
     const core = definition.licensed.facets.core
     expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL'])
+    expect(core.discovered.expressions).to.deep.eq(['GPL-2.0'])
     expect(core.discovered.unknown).to.eq(0)
     const tests = definition.licensed.facets.tests
     expect(tests.files).to.eq(1)
@@ -231,7 +224,7 @@ describe('Definition Service Facet management', () => {
   })
 
   it('summarizes with everything grouped into non-core facet', async () => {
-    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL', [])]
+    const files = [buildFile('package.json', 'MIT', []), buildFile('LICENSE.foo', 'GPL-2.0', [])]
     const facets = { tests: ['*.json'], dev: ['*.foo'] }
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
@@ -240,7 +233,7 @@ describe('Definition Service Facet management', () => {
     expect(definition.licensed.facets.core).to.be.undefined
     const dev = definition.licensed.facets.dev
     expect(dev.files).to.eq(1)
-    expect(dev.discovered.expressions).to.deep.eq(['GPL'])
+    expect(dev.discovered.expressions).to.deep.eq(['GPL-2.0'])
     expect(dev.discovered.unknown).to.eq(0)
     const tests = definition.licensed.facets.tests
     expect(tests.files).to.eq(1)
@@ -249,7 +242,7 @@ describe('Definition Service Facet management', () => {
   })
 
   it('summarizes files in multiple facets', async () => {
-    const files = [buildFile('LICENSE.json', 'GPL', []), buildFile('Test.json', 'MIT', [])]
+    const files = [buildFile('LICENSE.json', 'GPL-2.0', []), buildFile('Test.json', 'MIT', [])]
     const facets = { tests: ['*.json'], dev: ['*.json'] }
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
@@ -260,25 +253,25 @@ describe('Definition Service Facet management', () => {
     expect(definition.licensed.facets.core).to.be.undefined
     const dev = definition.licensed.facets.dev
     expect(dev.files).to.eq(2)
-    expect(dev.discovered.expressions).to.deep.equalInAnyOrder(['GPL', 'MIT'])
+    expect(dev.discovered.expressions).to.deep.equalInAnyOrder(['GPL-2.0', 'MIT'])
     expect(dev.discovered.unknown).to.eq(0)
     const tests = definition.licensed.facets.tests
     expect(tests.files).to.eq(2)
-    expect(tests.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL'])
+    expect(tests.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL-2.0'])
     expect(tests.discovered.unknown).to.eq(0)
   })
 })
 
 describe('Aggregation service', () => {
   it('handles no tool data', async () => {
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process({})
     expect(aggregated).to.be.null
   })
 
   it('handles one tool one version data', async () => {
     const summaries = { tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] } } }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
   })
@@ -287,22 +280,25 @@ describe('Aggregation service', () => {
     const summaries = {
       tool2: {
         '1.0.0': { files: [buildFile('foo.txt', 'MIT'), buildFile('bar.txt', 'MIT')] },
-        '2.0.0': { files: [buildFile('foo.txt', 'GPL')] }
+        '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
       }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].path).to.eq('foo.txt')
-    expect(aggregated.files[0].license).to.eq('GPL')
+    expect(aggregated.files[0].license).to.eq('GPL-2.0')
   })
 
   it('handles multiple tools and one file data', async () => {
     const summaries = {
-      tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] }, '2.0.0': { files: [buildFile('foo.txt', 'GPL')] } },
+      tool2: {
+        '1.0.0': { files: [buildFile('foo.txt', 'MIT')] },
+        '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
+      },
       tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] } }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
@@ -310,10 +306,16 @@ describe('Aggregation service', () => {
 
   it('handles multiple tools and multiple file data with extras ignored', async () => {
     const summaries = {
-      tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] }, '2.0.0': { files: [buildFile('foo.txt', 'GPL')] } },
-      tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] }, '2.0.0': { files: [buildFile('bar.txt', 'GPL')] } }
+      tool2: {
+        '1.0.0': { files: [buildFile('foo.txt', 'MIT')] },
+        '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
+      },
+      tool1: {
+        '3.0.0': { files: [buildFile('foo.txt', 'BSD')] },
+        '2.0.0': { files: [buildFile('bar.txt', 'GPL-2.0')] }
+      }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
     expect(aggregated.files[0].license).to.eq('BSD')
@@ -321,26 +323,29 @@ describe('Aggregation service', () => {
 
   it('handles multiple tools and multiple file data with extras included', async () => {
     const summaries = {
-      tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] }, '2.0.0': { files: [buildFile('foo.txt', 'GPL')] } },
+      tool2: {
+        '1.0.0': { files: [buildFile('foo.txt', 'MIT')] },
+        '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
+      },
       tool1: {
-        '3.0.0': { files: [buildFile('foo.txt', 'BSD'), buildFile('bar.txt', 'GPL')] },
-        '2.0.0': { files: [buildFile('bar.txt', 'GPL')] }
+        '3.0.0': { files: [buildFile('foo.txt', 'BSD'), buildFile('bar.txt', 'GPL-2.0')] },
+        '2.0.0': { files: [buildFile('bar.txt', 'GPL-2.0')] }
       }
     }
-    const { service, coordinates } = setupAggregator()
+    const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(2)
     expect(aggregated.files[0].path).to.eq('foo.txt')
     expect(aggregated.files[0].license).to.eq('BSD')
     expect(aggregated.files[1].path).to.eq('bar.txt')
-    expect(aggregated.files[1].license).to.eq('GPL')
+    expect(aggregated.files[1].license).to.eq('GPL-2.0')
   })
 })
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!ajv.validate(definitionSchema, definition)) throw new Error(ajv.errorsText())
+  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
 }
 
 function createDefinition(facets, files, tools) {
@@ -365,10 +370,11 @@ function setup(definition, coordinateSpec, curation) {
     get: () => Promise.resolve(curation),
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
-  const harvest = { getAll: () => Promise.resolve(null) }
+  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvest, summary, aggregator, curator, store, search)
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
 }

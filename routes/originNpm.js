@@ -4,6 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
+const { uniq } = require('lodash')
 
 router.get(
   '/:namespace?/:name/revisions',
@@ -14,7 +15,7 @@ router.get(
     const url = `${baseUrl}/${encodeURIComponent(fullName).replace('%40', '@')}` // npmjs doesn't handle the escaped version
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = Object.getOwnPropertyNames(answer.versions).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
-    return response.status(200).send(result)
+    return response.status(200).send(uniq(result))
   })
 )
 

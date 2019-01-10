@@ -14,7 +14,7 @@ const coordinatesIndexName = 'coordinates'
 class AzureSearch extends AbstractSearch {
   async initialize() {
     super.initialize()
-    if (!(await this._hasIndex(coordinatesIndexName))) this._createIndex(this._buildCoordinatesIndex())
+    if (!(await this._hasIndex(coordinatesIndexName))) return this._createIndex(this._buildCoordinatesIndex())
   }
 
   /**
