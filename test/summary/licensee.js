@@ -14,14 +14,39 @@ describe('LicenseeSummarizer', () => {
       { license: 'MIT', confidence: '100' }
     ])
     const result = summarizer.summarize(null, data)
-    assert.deepEqual(result, { files: [{ path: 'LICENSE', license: 'MIT', natures: ['license'] }] })
+    assert.deepEqual(result, {
+      files: [{ path: 'LICENSE', license: 'MIT', natures: ['license'] }],
+      licensed: { declared: 'MIT' }
+    })
   })
 
   it('should include attachment tokens where available', () => {
     const data = setup([{ path: 'LICENSE', license: 'MIT' }], [{ path: 'LICENSE', token: 'thisistoken' }])
     const result = summarizer.summarize(null, data)
     assert.deepEqual(result, {
-      files: [{ path: 'LICENSE', license: 'MIT', natures: ['license'], token: 'thisistoken' }]
+      files: [{ path: 'LICENSE', license: 'MIT', natures: ['license'], token: 'thisistoken' }],
+      licensed: { declared: 'MIT' }
+    })
+  })
+
+  it('should AND together matched declared licenses', () => {
+    const data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    const result = summarizer.summarize(null, data)
+    assert.deepEqual(result, {
+      files: [
+        { path: 'LICENSE-MIT', license: 'MIT', natures: ['license'] },
+        { path: 'LICENSE-APACHE', license: 'Apache-2.0', natures: ['license'] }
+      ],
+      licensed: { declared: 'MIT AND Apache-2.0' }
+    })
+  })
+
+  it('should filter NOASSERTION for matched declared licenses', () => {
+    const data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE', license: 'NOASSERTION' }])
+    const result = summarizer.summarize(null, data)
+    assert.deepEqual(result, {
+      files: [{ path: 'LICENSE-MIT', license: 'MIT', natures: ['license'] }],
+      licensed: { declared: 'MIT' }
     })
   })
 

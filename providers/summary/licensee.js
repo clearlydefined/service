@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { setIfValue } = require('../../lib/utils')
+const { setIfValue, isLicenseFile } = require('../../lib/utils')
 const SPDX = require('../../lib/spdx')
-const { get } = require('lodash')
+const { get, uniq } = require('lodash')
 
 class LicenseeSummarizer {
   constructor(options) {
@@ -21,6 +21,7 @@ class LicenseeSummarizer {
     if (!harvested || !harvested.licensee || !harvested.licensee.version) throw new Error('Invalid Licensee data')
     const result = {}
     setIfValue(result, 'files', this._summarizeFiles(harvested))
+    this._addLicenseFromFiles(result, coordinates)
     return result
   }
 
@@ -31,7 +32,7 @@ class LicenseeSummarizer {
     return files
       .map(file => {
         if (get(file, 'matcher.name') !== 'exact') return null
-        if (70 > +get(file, 'matcher.confidence')) return null
+        if (80 > +get(file, 'matcher.confidence')) return null
         const path = file.filename
         const attachment = attachments.find(x => x.path === path)
         const license = SPDX.normalize(file.matched_license)
@@ -42,6 +43,14 @@ class LicenseeSummarizer {
         }
       })
       .filter(e => e)
+  }
+
+  _addLicenseFromFiles(result, coordinates) {
+    if (!result.files) return
+    const licenses = result.files
+      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .filter(x => x)
+    setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 }
 
