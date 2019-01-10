@@ -316,3 +316,45 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     }
   })
 })
+
+describe('ClearlyDescribedSummarizer addMavenData', () => {
+  it('should set declared license from manifest licenseUrl', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
+      'See license': null,
+      NOASSERTION: null,
+      '': null,
+      ' ': null
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } })
+      if (data[url]) assert.deepEqual(result, { licensed: { declared: data[url] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+
+  it('should set declared license from manifest license name', () => {
+    const data = new Map([
+      [[{ license: { name: 'MIT' } }], 'MIT'],
+      [[{ license: { name: 'MIT License' } }], 'MIT'],
+      [[{ license: { name: 'Apache-2.0' } }], 'Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Apache-2.0' } }], 'MIT OR Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Garbage' } }], 'MIT OR NOASSERTION'],
+      [[{ license: { name: 'My favorite license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'See license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'NOASSERTION' } }], 'NOASSERTION'],
+      [[{ license: { name: '' } }], null],
+      [[{ license: { name: ' ' } }], null]
+    ])
+
+    data.forEach((expected, licenses) => {
+      let result = {}
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } })
+      if (expected) assert.deepEqual(result, { licensed: { declared: expected } })
+      else assert.deepEqual(result, {})
+    })
+  })
+})

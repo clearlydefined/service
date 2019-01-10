@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq, cloneDeep } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep, flatten } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const {
   extractDate,
@@ -85,6 +85,14 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    const projectSummary = get(data, 'manifest.summary.project')
+    if (!projectSummary) return
+    const licenseSummaries = flatten(projectSummary.licenses.map(x => x.license))
+    const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))
+    const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
+    let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
+    if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
+    if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
 
   addCrateData(result, data) {
