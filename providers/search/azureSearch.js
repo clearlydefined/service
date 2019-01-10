@@ -40,37 +40,32 @@ class AzureSearch extends AbstractSearch {
    * @param {Definition or Definition[]} definitions - the definition(s) to index
    */
 
-   store(definitions) {
-     const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
-
-     const cases = {
-       200: '200 OK -  Success',
-       207: '207 - At least one item was not successfully indexed',
-       400: '400 - Bad Request',
-       401: '401 - Unauthorized',
-       404: '404 - Not Found',
-       429: '429 - You have exceeded your quota on the number of documents per index.',
-       503: '503 -The system is under heavy load and your request cannot be processed at this time.'
-     }
-     const options = {
-       method: 'POST',
-       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
-       headers: this._getHeaders(),
-       body: { value: entries },
-       withCredentials: false,
-       resolveWithFullResponse: true
-     }
-
-     try{
-         const result = await requestPromise(options, function(err, res, body) {
-           if(cases[res.statusCode] === '200') {
-             return cases[res.statusCode]
-           }
-         })
-     } catch (err) {
-         return cases[err.statusCode]
-     }
-   }
+  async store(definitions) {
+    const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
+    const options = {
+      method: 'POST',
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
+      headers: this._getHeaders(),
+      body: { value: entries },
+      withCredentials: false,
+      resolveWithFullResponse: true
+    }
+    try {
+      const response = await requestPromise(options)
+      if (response.statusCode === '200') return
+    } catch (error) {
+      this.logger.info('failed to store from azureSearch service', {
+        azureSearchError: error.error,
+        definitions: definitions.toString()
+      })
+      switch (error.statusCode) {
+        case 403:
+          throw new Error('Forbidden')
+        default:
+          throw new Error('Unable to queue request')
+      }
+    }
+  }
 
   _getEntries(definitions) {
     return definitions.map(definition => {
@@ -94,37 +89,32 @@ class AzureSearch extends AbstractSearch {
    * Deletely the identified definition from the search system
    * @param {EntityCoordinates} coordinates - the coordinates of the definition to delete
    */
-   delete(coordinates) {
+  async delete(coordinates) {
+    const options = {
+      method: 'POST',
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
+      headers: this._getHeaders(),
+      body: { value: [{ '@search.action': 'delete', key: this._getKey(coordinates) }] },
+      withCredentials: false,
+      resolveWithFullResponse: true
+    }
 
-     const cases = {
-       200: '200 OK -  Success',
-       207: '207 - At least one item was not successfully indexed',
-       400: '400 - Bad Request',
-       401: '401 - Unauthorized',
-       404: '404 - Not Found',
-       429: '429 - You have exceeded your quota on the number of documents per index.',
-       503: '503 -The system is under heavy load and your request cannot be processed at this time.'
-     }
-     const options = {
-       method: 'POST',
-       url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
-       headers: this._getHeaders(),
-       body: { value: [{ '@search.action': 'delete', key: this._getKey(coordinates) }] },
-       withCredentials: false,
-       resolveWithFullResponse: true
-     }
-
-     try{
-         const result = await requestPromise(options, function(err, res, body) {
-           if(cases[res.statusCode] === '200') {
-             return cases[res.statusCode]
-           }
-         })
-     } catch (err) {
-         return cases[err.statusCode]
-     }
-   }
-
+    try {
+      const response = await requestPromise(options)
+      if (response.statusCode === '200') return
+    } catch (error) {
+      this.logger.info('failed to delete from azureSearch service', {
+        azureSearchError: error.error,
+        coordinates: coordinates.toString()
+      })
+      switch (error.statusCode) {
+        case 403:
+          throw new Error('Forbidden')
+        default:
+          throw new Error('Unable to queue request')
+      }
+    }
+  }
 
   _getKey(coordinates) {
     return base64.encode(coordinates.toString())
@@ -163,17 +153,7 @@ class AzureSearch extends AbstractSearch {
     }
   }
 
-  _createIndex(body) {
-
-    const cases = {
-      200: '200 OK -  Success',
-      207: '207 - At least one item was not successfully indexed',
-      400: '400 - Bad Request',
-      401: '401 - Unauthorized',
-      404: '404 - Not Found',
-      429: '429 - You have exceeded your quota on the number of documents per index.',
-      503: '503 -The system is under heavy load and your request cannot be processed at this time.'
-    }
+  async _createIndex(body) {
     const options = {
       method: 'POST',
       url: this._buildUrl('indexes'),
@@ -183,14 +163,20 @@ class AzureSearch extends AbstractSearch {
       resolveWithFullResponse: true
     }
 
-    try{
-        const result = await requestPromise(options, function(err, res, body) {
-          if(cases[res.statusCode] === '200') {
-            return cases[res.statusCode]
-          }
-        })
-    } catch (err) {
-        return cases[err.statusCode]
+    try {
+      const response = await requestPromise(options)
+      if (response.statusCode === '200') return
+    } catch (error) {
+      this.logger.info('failed to createIndex from azureSearch', {
+        azureSearchError: error.error,
+        body
+      })
+      switch (error.statusCode) {
+        case 403:
+          throw new Error('Forbidden')
+        default:
+          throw new Error('Unable to queue request')
+      }
     }
   }
 
