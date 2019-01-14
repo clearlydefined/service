@@ -89,7 +89,7 @@ class ScanCodeSummarizer {
         const fileLicense = asserted || file.licenses || []
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size)
-          licenses = new Set(fileLicense.filter(x => x.score >= 80).map(this._createExpressionFromLicense))
+          licenses = new Set(fileLicense.filter(x => x.score >= 80).map(x => this._createExpressionFromLicense(x)))
         const licenseExpression = this._joinExpressions(licenses)
         setIfValue(result, 'license', licenseExpression)
         // TODO see note above re: ScanCode's meaning of `is_license_text` (really has license text). Pump the
