@@ -21,16 +21,19 @@ router.get(
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
     const algolia = {
-        appID: 'WBHHAMHYNM',
-        apiKey: '4f7544ca8701f9bf2a4e55daff1b09e9'
+      appID: 'WBHHAMHYNM',
+      apiKey: '4f7544ca8701f9bf2a4e55daff1b09e9'
     }
-    const url = `https://${algolia.appID}-dsn.algolia.net/1/indexes/cocoapods/query?x-algolia-application-id=${algolia.appID}&x-algolia-api-key=${algolia.apiKey}`
-    const answer = await requestPromise({ url,
-        method: 'POST',
-        body: {
-            params: `query=${name}`
-        },
-        json: true
+    const url = `https://${algolia.appID}-dsn.algolia.net/1/indexes/cocoapods/query?x-algolia-application-id=${
+      algolia.appID
+    }&x-algolia-api-key=${algolia.apiKey}`
+    const answer = await requestPromise({
+      url,
+      method: 'POST',
+      body: {
+        params: `query=${name}`
+      },
+      json: true
     })
     const result = answer.hits.map(x => {
       return { id: x.name }
