@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq, cloneDeep } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep, flatten } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const {
   extractDate,
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
-  updateSourceLocation,
   isLicenseFile,
+  updateSourceLocation,
   mergeDefinitions
 } = require('../../lib/utils')
 
@@ -22,7 +22,10 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
-    this.addInterestingFiles(result, data)
+    this.addSummaryInfo(result, data)
+    this.addFiles(result, data)
+    this.addAttachedFiles(result, data, coordinates)
+    this.addInterestingFiles(result, data, coordinates)
     this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
       case 'npm':
@@ -54,6 +57,11 @@ class ClearlyDescribedSummarizer {
     return result
   }
 
+  addSummaryInfo(result, data) {
+    setIfValue(result, 'described.hashes', get(data, 'summaryInfo.hashes'))
+    setIfValue(result, 'described.files', get(data, 'summaryInfo.count'))
+  }
+
   addFacetInfo(result, data) {
     setIfValue(result, 'described.facets', data.facets)
   }
@@ -66,18 +74,44 @@ class ClearlyDescribedSummarizer {
     set(result, 'described.sourceLocation', spec)
   }
 
-  addInterestingFiles(result, data) {
+  addFiles(result, data) {
+    if (!data.files) return
+    result.files = data.files.map(file => {
+      return { path: file.path, hashes: file.hashes }
+    })
+  }
+
+  addAttachedFiles(result, data, coordinates) {
+    if (!data.attachments || !result.files) return
+    data.attachments.forEach(file => {
+      const existing = result.files.find(entry => entry.path === file.path)
+      if (!existing) return
+      existing.token = file.token
+      if (isLicenseFile(file.path, coordinates)) existing.natures = uniq((existing.natures || []).concat(['license']))
+    })
+  }
+
+  /**
+   * Deprecated in favor of attachments from when licensee was a part of the CD tool
+   * TODO: remove when interestingFiles is no longer in harvested data
+   */
+  addInterestingFiles(result, data, coordinates) {
     if (!data.interestingFiles) return
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
     newFiles.forEach(file => {
       file.license = SPDX.normalize(file.license)
       if (!file.license) delete file.license
+      else if (isLicenseFile(file.path, coordinates)) file.natures = uniq((file.natures || []).concat(['license']))
     })
     set(newDefinition, 'files', newFiles)
     mergeDefinitions(result, newDefinition)
   }
 
+  /**
+   * Deprecated in favor of attachments from when licensee was a part of the CD tool
+   * TODO: remove when interestingFiles is no longer in harvested data
+   */
   addLicenseFromFiles(result, data, coordinates) {
     if (!data.interestingFiles) return
     const licenses = data.interestingFiles
@@ -88,6 +122,14 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    const projectSummary = get(data, 'manifest.summary.project')
+    if (!projectSummary) return
+    const licenseSummaries = flatten(projectSummary.licenses.map(x => x.license))
+    const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))
+    const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
+    let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
+    if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
+    if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
 
   addCrateData(result, data) {

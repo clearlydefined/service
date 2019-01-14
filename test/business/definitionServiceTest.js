@@ -72,41 +72,27 @@ describe('Definition Service', () => {
     expect(definition.licensed.score.total).to.eq(85)
     expect(definition.licensed.toolScore.total).to.eq(0)
   })
+
+  it('lists all coordinates found', async () => {
+    const { service } = setup()
+    service.definitionStore.list = coordinates => {
+      coordinates.revision = '2.3'
+      if (coordinates.name === 'missing') return Promise.resolve([])
+      return Promise.resolve([coordinates.toString().toLowerCase()])
+    }
+    const coordinates = [
+      EntityCoordinates.fromString('npm/npmjs/-/test0/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/test1/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/testUpperCase/2.3'),
+      EntityCoordinates.fromString('npm/npmjs/-/missing/2.3')
+    ]
+    const result = await service.listAll(coordinates)
+    expect(result.length).to.eq(3)
+    expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
+  })
 })
 
 describe('Definition Service Facet management', () => {
-  it('handle special characters', async () => {
-    const files = [
-      buildFile('foo.txt', 'MIT', [
-        '&#60;Bob&gt;',
-        'Bob\\n',
-        'Bob\\r',
-        'Bob\r',
-        'Bob\n',
-        'Bob\n',
-        'Bob ',
-        'Bob  Bobberson'
-      ])
-    ]
-    const { service, coordinates } = setup(createDefinition(undefined, files))
-    const definition = await service.compute(coordinates)
-    validate(definition)
-    const core = definition.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
-    expect(definition.files.length).to.eq(1)
-    expect(definition.files[0].attributions).to.deep.equalInAnyOrder([
-      'Copyright <Bob>',
-      'Copyright Bob',
-      'Copyright Bob Bobberson'
-    ])
-  })
-
   it('handles files with no data', async () => {
     const files = [buildFile('foo.txt', null, null), buildFile('bar.txt', null, null)]
     const { service, coordinates } = setup(createDefinition(undefined, files))

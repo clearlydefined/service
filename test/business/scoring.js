@@ -17,7 +17,7 @@ describe('Definition Service Scoring', () => {
   it('computes full score', async () => {
     const files = [
       buildFile('bar.txt', 'MIT', ['Jane', 'Fred'], null, ['core']),
-      buildFile('LICENSE.md', 'MIT', ['Jane', 'Fred'], 42)
+      buildFile('LICENSE.md', 'MIT', ['Jane', 'Fred'], 42, null, ['license'])
     ]
     const definition = createDefinition(undefined, files)
     set(definition, 'licensed.declared', 'MIT')
@@ -112,15 +112,30 @@ describe('Definition Service Scoring', () => {
     const files = [
       buildFile('one.txt', 'MIT OR GPL-3.0'),
       buildFile('two.txt', 'MIT AND GPL-3.0'),
-      buildFile('LICENSE.MIT', 'MIT', null, 42),
-      buildFile('LICENSE.GPL', 'GPL-3.0', null, 42),
-      buildFile('LICENSE.APACHE', 'Apache-2.0', null, 42)
+      buildFile('LICENSE.MIT', 'MIT', null, 42, null, ['license']),
+      buildFile('LICENSE.GPL', 'GPL-3.0', null, 42, null, ['license']),
+      buildFile('LICENSE.APACHE', 'Apache-2.0', null, 42, null, ['license'])
     ]
     const definition = createDefinition('Apache-2.0', files)
     const service = createService()
     const scores = service._computeScores(definition)
     expect(scores.licensedScore.total).to.be.equal(60)
     expect(scores.licensedScore.texts).to.be.equal(15)
+  })
+
+  it('correctly skips license files that are recognized as license texts', async () => {
+    const files = [
+      buildFile('one.txt', 'MIT OR GPL-3.0'),
+      buildFile('two.txt', 'MIT AND GPL-3.0'),
+      buildFile('LICENSE.MIT', 'MIT', null, 42),
+      buildFile('LICENSE.GPL', 'GPL-3.0', null, 42, null, ['license']),
+      buildFile('LICENSE.APACHE', 'Apache-2.0', null, 42, null, ['license'])
+    ]
+    const definition = createDefinition('Apache-2.0', files)
+    const service = createService()
+    const scores = service._computeScores(definition)
+    expect(scores.licensedScore.total).to.be.equal(45)
+    expect(scores.licensedScore.texts).to.be.equal(0)
   })
 
   it('correctly finds mismatched licenses and texts', async () => {
@@ -158,11 +173,12 @@ function createDefinition(declared, files) {
   return result
 }
 
-function buildFile(path, license, holders, token, facets) {
+function buildFile(path, license, holders, token, facets, natures) {
   const result = { path }
   setIfValue(result, 'license', license)
   setIfValue(result, 'facets', facets)
   setIfValue(result, 'token', token)
   setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
+  setIfValue(result, 'natures', natures)
   return result
 }

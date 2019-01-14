@@ -85,41 +85,13 @@ describe('ClearlyDefined NuGet summarizer', () => {
       { path: 'lib/netstandard1.3/Project.dll' }
     ])
   })
-
-  it('includes files from interestingFiles', () => {
-    const { coordinates, harvested } = setupNuGet({
-      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
-    })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.files).to.deep.equal([{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }])
-  })
-
-  it('merges files from manifest and interestingFiles', () => {
-    const { coordinates, harvested } = setupNuGet({
-      packageEntries: [
-        { fullName: 'lib/net40/Project.dll' },
-        { fullName: 'LICENSE' },
-        { fullName: 'lib/netstandard1.3/Project.dll' }
-      ],
-      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
-    })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.files).to.deep.equal([
-      { path: 'LICENSE', token: 'thisisatoken', license: 'MIT' },
-      { path: 'lib/net40/Project.dll' },
-      { path: 'lib/netstandard1.3/Project.dll' }
-    ])
-  })
 })
 
-function setupNuGet({ releaseDate, sourceInfo, packageEntries, interestingFiles }) {
+function setupNuGet({ releaseDate, sourceInfo, packageEntries }) {
   const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.packageEntries', packageEntries)
-  setIfValue(harvested, 'interestingFiles', interestingFiles)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }

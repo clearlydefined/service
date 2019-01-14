@@ -2,156 +2,88 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const summarizer = require('../../../providers/summary/clearlydefined')()
+const summarizer = require('../../providers/summary/clearlydefined')()
 const { get } = require('lodash')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
-describe('ClearlyDescribedSummarizer addLicenseFromFiles', () => {
-  it('declares MIT license from license file', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT')
-  })
-
-  it('declares MIT license from license file in package folder for npm', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'package/LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles }, { type: 'npm' })
-    assert.strictEqual(result.licensed.declared, 'MIT')
-  })
-
-  it('declares nothing from license file in package folder for nuget', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'package/LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles }, { type: 'nuget' })
-    assert.strictEqual(result.licensed, undefined)
-  })
-
-  it('declares spdx license expression from multiple license files', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      },
-      {
-        path: 'LICENSE.html',
-        token: 'abcd',
-        license: '0BSD'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT AND 0BSD')
-  })
-
-  it('declares single license for multiple similar license files', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'MIT'
-      },
-      {
-        path: 'LICENSE.html',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed.declared, 'MIT')
-  })
-
-  it('declares nothing from non-license files with valid license', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'not-A-License',
-        token: 'abcd',
-        license: 'MIT'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
-  })
-
-  it('declares nothing from license files with no license', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
-  })
-
-  it('declares nothing from license files with NOASSERTION', () => {
-    const result = {}
-    const interestingFiles = [
-      {
-        path: 'LICENSE',
-        token: 'abcd',
-        license: 'NOASSERTION'
-      }
-    ]
-    summarizer.addLicenseFromFiles(result, { interestingFiles })
-    assert.strictEqual(result.licensed, undefined)
+const testCoordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
+describe('ClearlyDescribedSummarizer general behavior', () => {
+  it('captures summary info', () => {
+    const data = { summaryInfo: { count: 42, k: 5, hashes: { sha1: '1' } } }
+    const result = summarizer.summarize(testCoordinates, data)
+    assert.strictEqual(result.described.files, 42)
+    assert.strictEqual(result.described.k, undefined)
+    assert.strictEqual(result.described.hashes.sha1, '1')
   })
 })
 
-describe('ClearlyDescribedSummarizer addInterestingFiles', () => {
-  it('should normalize license properties', () => {
-    const data = new Map([
-      [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [{ path: 'LICENSE', token: 'abcd', license: 'mit' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }],
-      [
-        { path: 'LICENSE', token: 'abcd', license: 'garbage' },
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
-      ],
-      [
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' },
-        { path: 'LICENSE', token: 'abcd', license: 'NOASSERTION' }
-      ],
-      [{ path: 'LICENSE', token: 'abcd' }, { path: 'LICENSE', token: 'abcd' }]
-    ])
-    for (let test of data) {
-      let result = {}
-      summarizer.addInterestingFiles(result, { interestingFiles: [test[0]] })
-      assert.deepEqual(result, { files: [test[1]] })
-    }
+describe('ClearlyDescribedSummarizer add files', () => {
+  it('adds no files', () => {
+    const files = {}
+    const result = summarizer.summarize(testCoordinates, files)
+    assert.strictEqual(!!result.files, false)
   })
 
-  it('should merge existing files', () => {
-    let result = { files: [{ path: 'file1' }] }
-    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
-    assert.deepEqual(result, { files: [{ path: 'file1' }, { path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  it('adds one file', () => {
+    const files = { files: [{ path: 'foo', hashes: { sha1: '1' } }] }
+    const result = summarizer.summarize(testCoordinates, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].hashes.sha1, '1')
   })
 
-  it('should merge the same file', () => {
-    let result = { files: [{ path: 'LICENSE', license: 'MIT' }] }
-    summarizer.addInterestingFiles(result, { interestingFiles: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
-    assert.deepEqual(result, { files: [{ path: 'LICENSE', token: 'abcd', license: 'MIT' }] })
+  it('adds no attachments', () => {
+    const files = {}
+    const result = summarizer.summarize(testCoordinates, files)
+    assert.strictEqual(!!result.files, false)
+  })
+
+  it('does nothing with "extra" attachments', () => {
+    const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
+    const result = summarizer.summarize(testCoordinates, files)
+    assert.strictEqual(!!result.files, false)
+  })
+
+  it('does nothing with extra attachments', () => {
+    const result = { files: [{ path: 'foo' }] }
+    const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(!!result.files[0].token, false)
+  })
+
+  it('adds token for one file', () => {
+    const result = { files: [{ path: 'foo' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 1)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
+  })
+
+  it('adds tokens for multiple files', () => {
+    const result = { files: [{ path: 'foo' }, { path: 'bar' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'bar', token: 'dcba' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 2)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
+    assert.strictEqual(result.files[1].path, 'bar')
+    assert.strictEqual(result.files[1].token, 'dcba')
+  })
+
+  it('adds license nature for attachments named license', () => {
+    const result = { files: [{ path: 'foo' }, { path: 'LICENSE' }] }
+    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'LICENSE', token: 'dcba' }] }
+    summarizer.addAttachedFiles(result, files)
+    assert.strictEqual(result.files.length, 2)
+    assert.strictEqual(result.files[0].path, 'foo')
+    assert.strictEqual(result.files[0].token, 'abcd')
+    assert.deepEqual(result.files[0].natures, undefined) // not named a recognized license name
+    assert.strictEqual(result.files[1].path, 'LICENSE')
+    assert.strictEqual(result.files[1].token, 'dcba')
+    assert.deepEqual(result.files[1].natures, ['license'])
   })
 })
 
@@ -226,6 +158,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     // prettier-ignore
     const data = {
       '2018-01-09T17:18:33.930Z': '2018-01-09',
+      // TODO this causes moment to throw a warning as it is not an ISO date. Note sure if this date format
+      // is something we will/do see and if so, what we should do about it. Some fallback processing?
+      // It's a bit bogus that moment is throwing this to the console with no way to turn off.
       '2018-01-08': '2018-01-08',
       'JUNK': 'Invalid date' // Is this right behavior?
     }
@@ -314,5 +249,47 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
       if (data[licenseUrl]) assert.deepEqual(result, { licensed: { declared: data[licenseUrl] } })
       else assert.deepEqual(result, {})
     }
+  })
+})
+
+describe('ClearlyDescribedSummarizer addMavenData', () => {
+  it('should set declared license from manifest licenseUrl', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
+      'See license': null,
+      NOASSERTION: null,
+      '': null,
+      ' ': null
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } })
+      if (data[url]) assert.deepEqual(result, { licensed: { declared: data[url] } })
+      else assert.deepEqual(result, {})
+    }
+  })
+
+  it('should set declared license from manifest license name', () => {
+    const data = new Map([
+      [[{ license: { name: 'MIT' } }], 'MIT'],
+      [[{ license: { name: 'MIT License' } }], 'MIT'],
+      [[{ license: { name: 'Apache-2.0' } }], 'Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Apache-2.0' } }], 'MIT OR Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Garbage' } }], 'MIT OR NOASSERTION'],
+      [[{ license: { name: 'My favorite license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'See license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'NOASSERTION' } }], 'NOASSERTION'],
+      [[{ license: { name: '' } }], null],
+      [[{ license: { name: ' ' } }], null]
+    ])
+
+    data.forEach((expected, licenses) => {
+      let result = {}
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } })
+      if (expected) assert.deepEqual(result, { licensed: { declared: expected } })
+      else assert.deepEqual(result, {})
+    })
   })
 })

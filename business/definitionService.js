@@ -9,24 +9,23 @@ const {
   remove,
   pullAllWith,
   isEqual,
-  uniqBy,
+  uniqWith,
   flatten,
   intersection,
   intersectionWith,
-  concat,
-  map
+  concat
 } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
-const logger = require('../providers/logging/logger')()
+const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
-const currentSchema = '1.2.0'
+const currentSchema = '1.4.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
@@ -39,6 +38,7 @@ class DefinitionService {
     this.curationService = curation
     this.definitionStore = store
     this.search = search
+    this.logger = logger()
   }
 
   /**
@@ -109,7 +109,7 @@ class DefinitionService {
    */
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
-    const searchCoordinates = uniqBy(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const searchCoordinates = uniqWith(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
     const promises = searchCoordinates.map(
       throat(10, async coordinates => {
         try {
@@ -121,11 +121,7 @@ class DefinitionService {
     )
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersectionWith(
-      coordinatesList,
-      map(foundDefinitions, coordinates => EntityCoordinates.fromString(coordinates)),
-      isEqual
-    )
+    return intersectionWith(coordinatesList, foundDefinitions, (a, b) => a.toString().toLowerCase() === b)
   }
 
   /**
@@ -160,7 +156,7 @@ class DefinitionService {
     try {
       await this.harvestService.harvest({ tool: 'component', coordinates })
     } catch (error) {
-      logger.info('failed to harvest from definition service', {
+      this.logger.info('failed to harvest from definition service', {
         crawlerError: error,
         coordinates: coordinates.toString()
       })
@@ -342,10 +338,8 @@ class DefinitionService {
   }
 
   // Answer whether or not the given file is a license text file
-  // TODO for now just assume that if there is a known file, it is a license file and that the license
-  // of that file is the license the file represents.
   static _isLicenseFile(file) {
-    return file.token && DefinitionService._isInCoreFacet(file)
+    return file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
   }
 
   /**
@@ -372,7 +366,7 @@ class DefinitionService {
             if (recompute) return Promise.resolve(null)
             return this.search.store(definition)
           } catch (error) {
-            logger.info('failed to reload in definition service', {
+            this.logger.info('failed to reload in definition service', {
               error,
               coordinates: coordinates.toString()
             })
