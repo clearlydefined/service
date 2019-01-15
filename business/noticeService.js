@@ -10,8 +10,9 @@ const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
 const logger = require('../providers/logging/logger')
 
 class NoticeService {
-  constructor(definitionService) {
+  constructor(definitionService, attachmentStore) {
     this.definitionService = definitionService
+    this.attachmentStore = attachmentStore
     this.logger = logger()
   }
 
@@ -19,28 +20,36 @@ class NoticeService {
     const textRenderer = new TextRenderer()
     const docbuilder = new DocBuilder(textRenderer)
     const result = await this.definitionService.getAll(coordinates)
+
     const source = new JsonSource(
       JSON.stringify({
-        packages: Object.keys(result).map(id => {
-          const definition = result[id]
-          return {
-            name: this._getName(definition),
-            version: get(definition, 'coordinates.revision'),
-            license: get(definition, 'licensed.declared'),
-            copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
-            website: get(definition, 'described.projectWebsite') || ''
-          }
-        })
+        packages: await Promise.all(
+          Object.keys(result).map(async id => {
+            const definition = result[id]
+            return {
+              name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
+              version: get(definition, 'coordinates.revision'),
+              license: get(definition, 'licensed.declared'),
+              copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
+              website: get(definition, 'described.projectWebsite') || '',
+              text: await this._getPackageText(definition)
+            }
+          })
+        )
       })
     )
     await docbuilder.read(source)
     return docbuilder.build()
   }
 
-  _getName(definition) {
-    if (!definition.coordinates) return null
-    return [(definition.coordinates.namespace, definition.coordinates.name)].filter(x => x).join('/')
+  async _getPackageText(definition) {
+    const texts = await Promise.all(
+      definition.files
+        .filter(file => file.token && file.natures && file.natures.includes('license'))
+        .map(file => this.attachmentStore.get(file.token))
+    )
+    return texts.join('\n\n')
   }
 }
 
-module.exports = definitionService => new NoticeService(definitionService)
+module.exports = (definitionService, attachmentStore) => new NoticeService(definitionService, attachmentStore)

@@ -56,7 +56,7 @@ function createApp(config) {
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
-  const noticeService = require('./business/noticeService')(definitionService)
+  const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
   const definitionsRoute = require('./routes/definitions')(definitionService)
   const noticesRoute = require('./routes/notices')(noticeService)
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
