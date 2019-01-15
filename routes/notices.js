@@ -10,7 +10,7 @@ router.post(
   '/',
   asyncMiddleware(async (request, response) => {
     const coordinatesList = request.body.coordinates.map(entry => EntityCoordinates.fromString(entry))
-    const output = await noticeService.generate(coordinatesList)
+    const output = await noticeService.generate(coordinatesList, request.body.template)
     response.send(output)
   })
 )

@@ -5,6 +5,7 @@ const { get } = require('lodash')
 const validator = require('../schemas/validator')
 const DocBuilder = require('tiny-attribution-generator/lib/docbuilder').default
 const TextRenderer = require('tiny-attribution-generator/lib/outputs/text').default
+const TemplateRenderer = require('tiny-attribution-generator/lib/outputs/template').default
 const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
 
 const logger = require('../providers/logging/logger')
@@ -16,11 +17,10 @@ class NoticeService {
     this.logger = logger()
   }
 
-  async generate(coordinates) {
-    const textRenderer = new TextRenderer()
-    const docbuilder = new DocBuilder(textRenderer)
+  async generate(coordinates, template = '') {
+    const renderer = template ? new TemplateRenderer(template) : new TextRenderer()
+    const docbuilder = new DocBuilder(renderer)
     const result = await this.definitionService.getAll(coordinates)
-
     const source = new JsonSource(
       JSON.stringify({
         packages: await Promise.all(
