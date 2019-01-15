@@ -122,9 +122,9 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const projectSummary = get(data, 'manifest.summary.project')
-    if (!projectSummary) return
-    const licenseSummaries = flatten(projectSummary.licenses.map(x => x.license))
+    const projectSummaryLicenses = get(data, 'manifest.summary.project.licenses')
+    if (!projectSummaryLicenses) return
+    const licenseSummaries = flatten(projectSummaryLicenses.map(x => x.license))
     const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))
     const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
