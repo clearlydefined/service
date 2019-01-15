@@ -1,0 +1,26 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/notice-request.json#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "noticeRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["coordinates"],
+  "properties": {
+    "coordinates": {
+      "type": "array",
+      "errorMessage": {
+        "type": "coordinates type must be an array"
+      }
+    },
+    "template": {
+      "type": "string",
+      "errorMessage": {
+        "type": "template type must be a string"
+      }
+    }
+  },
+  "errorMessage": {
+    "type": "A notice request must be an object",
+    "additionalProperties": "A notice request can only contain coordinates array and template string"
+  }
+}

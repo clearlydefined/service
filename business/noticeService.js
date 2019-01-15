@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { get } = require('lodash')
-const validator = require('../schemas/validator')
 const DocBuilder = require('tiny-attribution-generator/lib/docbuilder').default
 const TextRenderer = require('tiny-attribution-generator/lib/outputs/text').default
 const TemplateRenderer = require('tiny-attribution-generator/lib/outputs/template').default
