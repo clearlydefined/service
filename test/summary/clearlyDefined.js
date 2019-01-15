@@ -334,6 +334,48 @@ function setupPypi(releaseDate, license, sourceInfo) {
   return { coordinates, harvested }
 }
 
+describe('ClearlyDefined CocoaPod summarizer', () => {
+  it('handles with all the data', () => {
+    const { coordinates, harvested } = setupCocoaPod('MIT', '2018-03-06T11:38:10.284Z', 'https://clearlydefined.com')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.projectWebsite).to.eq('https://clearlydefined.com')
+  })
+
+  it('handles license type', () => {
+    const { coordinates, harvested } = setupCocoaPod({ type: 'MIT' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+  })
+
+  it('Sets noassertion for license', () => {
+    const { coordinates, harvested } = setupCocoaPod({ type: 'Commercial' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('NOASSERTION')
+  })
+
+  it('handles no data', () => {
+    const { coordinates, harvested } = setupCocoaPod()
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described).to.be.undefined
+  })
+})
+
+function setupCocoaPod(license, releaseDate, homepage) {
+  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
+  const harvested = {}
+  setIfValue(harvested, 'registryData.license', license)
+  setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'registryData.homepage', homepage)
+  return { coordinates, harvested }
+}
+
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   if (!definition.coordinates)

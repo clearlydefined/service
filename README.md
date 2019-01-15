@@ -223,12 +223,14 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - crate
 - npm
 - nuget
+- pod
 - rubygem
 
 ## Provider Registry
 
 - central.maven.org
 - github.com
+- cocoapods.org
 - crates.io
 - npmjs.org
 - nuget.org
