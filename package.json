@@ -57,6 +57,7 @@
     "spdx-satisfies": "github:clearlydefined/spdx-satisfies.js#fork",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
+    "tiny-attribution-generator": "0.0.5",
     "tmp": "0.0.33",
     "vso-node-api": "^6.2.8-preview",
     "winston": "^2.3.0",

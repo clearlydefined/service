@@ -56,8 +56,9 @@ function createApp(config) {
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
+  const noticeService = require('./business/noticeService')(definitionService)
   const definitionsRoute = require('./routes/definitions')(definitionService)
-
+  const noticesRoute = require('./routes/notices')(noticeService)
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
   const githubSecret = config.webhook.githubSecret
@@ -121,6 +122,7 @@ function createApp(config) {
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
   app.use('/definitions', definitionsRoute)
+  app.use('/notices', noticesRoute)
   app.use('/attachments', attachmentsRoute)
 
   // catch 404 and forward to error handler
