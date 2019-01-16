@@ -8,6 +8,7 @@
   "properties": {
     "coordinates": {
       "type": "array",
+      "items": { "type": "string" },
       "errorMessage": {
         "type": "coordinates type must be an array"
       }
