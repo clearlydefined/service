@@ -22,7 +22,7 @@ class MongoCurationStore {
           { useNewUrlParser: true }
         )
         this.db = this.client.db(this.options.dbName)
-        this.collection = this.db.collection('curations')
+        this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
         this.logger.info('retrying mongo connection')
         retry(error)
