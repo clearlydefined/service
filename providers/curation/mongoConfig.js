@@ -7,7 +7,8 @@ const storeFactory = require('./mongoCurationStore')
 function store(options) {
   const realOptions = options || {
     connectionString: config.get('CURATION_MONGO_CONNECTION_STRING'),
-    dbName: config.get('CURATION_MONGO_DB_NAME') || 'clearlydefined'
+    dbName: config.get('CURATION_MONGO_DB_NAME') || 'clearlydefined',
+    collectionName: config.get('CURATION_MONGO_COLLECTION_NAME') || 'curations'
   }
   return storeFactory(realOptions)
 }
