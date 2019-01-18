@@ -7,9 +7,9 @@ const redis = require('redis')
 const assert = require('assert')
 const redisCache = require('../../../providers/caching/redis')
 
-describe('get a tool result ', () => {
+describe('get a tool result', () => {
   const store = {}
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox.stub(redis, 'createClient').callsFake(() => {
       return {
         get: (key, callback) => callback(null, store[key]),
@@ -21,7 +21,7 @@ describe('get a tool result ', () => {
     })
   })
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore()
   })
 
@@ -31,14 +31,14 @@ describe('get a tool result ', () => {
     const result = await cache.get('foo')
     assert.equal(result, 'bar')
   })
-  it('works well for a specific tool version', async () => {
+  it('works well for an object', async () => {
     const cache = redisCache(null)
     await cache.set('foo', { temp: 3 })
     const result = await cache.get('foo')
     assert.equal(result.temp, 3)
   })
 
-  it('works well for a specific tool version', async () => {
+  it('returns null for missing entry', async () => {
     const cache = redisCache(null)
     const result = await cache.get('bar')
     assert.equal(result, null)

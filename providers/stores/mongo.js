@@ -20,7 +20,7 @@ class MongoStore {
           { useNewUrlParser: true }
         )
         this.db = this.client.db(this.options.dbName)
-        this.collection = this.db.collection('definitions')
+        this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
         retry(error)
       }

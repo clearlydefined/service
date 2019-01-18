@@ -17,7 +17,9 @@
       "request": "launch",
       "name": "CD service",
       "program": "${workspaceFolder}/bin/www",
-      "env": { "BUILD_NUMBER": "0" }
+      "env": { "BUILD_NUMBER": "0" },
+      "skipFiles": ["<node_internals>/**/*.js"],
+      "showAsyncStacks": true
     }
   ]
 }

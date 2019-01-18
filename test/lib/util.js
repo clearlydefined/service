@@ -88,6 +88,76 @@ describe('Utils mergeDefinitions', () => {
     expect(base.files[1].path).to.eq('2.txt')
     expect(base.files[1].license).to.eq('GPL')
   })
+
+  it('overrides NOASSERTION', () => {
+    const base = {
+      licensed: { declared: '2018-6-3' },
+      files: [{ path: '1.txt', license: 'NOASSERTION' }]
+    }
+    const newDefinition = { licensed: { declared: 'MIT' }, files: [{ path: '1.txt', license: 'GPL-3.0' }] }
+    utils.mergeDefinitions(base, newDefinition)
+    expect(base.licensed.declared).to.eq('MIT')
+    expect(base.files.length).to.eq(1)
+    expect(base.files[0].license).to.eq('GPL-3.0')
+  })
+
+  it('merges files correctly', () => {
+    const base = {
+      files: [
+        {
+          path: '1.txt',
+          license: 'MIT',
+          attributions: ['1', '2'],
+          facets: ['core'],
+          hashes: { sha1: '1', sha256: '256' },
+          natures: ['license']
+        }
+      ]
+    }
+    const newDefinition = {
+      files: [
+        {
+          path: '1.txt',
+          license: 'GPL-3.0',
+          attributions: ['1', '3'],
+          facets: ['dev'],
+          hashes: { sha1: '1', sha256: '257' },
+          natures: ['test']
+        }
+      ]
+    }
+    utils.mergeDefinitions(base, newDefinition)
+    const file = base.files[0]
+    expect(file.license).to.eq('GPL-3.0')
+    expect(file.attributions).to.have.members(['1', '2', '3'])
+    expect(file.facets).to.have.members(['core', 'dev'])
+    expect(file.hashes.sha1).to.eq('1')
+    expect(file.hashes.sha256).to.eq('257')
+    expect(file.natures).to.have.members(['license', 'test'])
+  })
+
+  it('merges described correctly', () => {
+    const base = {
+      described: {
+        projectWebsite: 'https://test',
+        hashes: { sha1: '1', sha256: '256' },
+        facets: { dev: 'foo', core: 'bar' }
+      }
+    }
+    const newDefinition = {
+      described: {
+        hashes: { sha1: '1', sha256: '257' },
+        facets: { dev: 'foo', core: 'test', doc: 'this' }
+      }
+    }
+    utils.mergeDefinitions(base, newDefinition)
+    expect(base.described.projectWebsite).to.eq('https://test')
+    expect(base.described.hashes.sha1).to.eq('1')
+    expect(base.described.hashes.sha256).to.eq('257')
+    expect(base.described.facets.dev).to.eq('foo')
+    expect(base.described.facets.core).to.eq('test')
+    expect(base.described.facets.doc).to.eq('this')
+  })
 })
 
 describe('Utils isLicenseFile', () => {
