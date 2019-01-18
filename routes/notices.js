@@ -9,11 +9,19 @@ const validator = require('../schemas/validator')
 
 router.post('/', asyncMiddleware(generateNotices))
 
+/**
+ *
+ * {
+ *   coordinates: [""],
+ *   output: "text|html|template|json",
+ *   options: { "template": ""}
+ * }
+ */
 async function generateNotices(request, response) {
   if (!validator.validate('notice-request', request.body)) return response.status(400).send(validator.errorsText())
-  const coordinatesList = request.body.coordinates.map(entry => EntityCoordinates.fromString(entry))
-  const output = await noticeService.generate(coordinatesList, request.body.template)
-  response.send(output)
+  const coordinates = request.body.coordinates.map(entry => EntityCoordinates.fromString(entry))
+  const result = await noticeService.generate(coordinates, request.body.output, request.body.options)
+  response.send(result)
 }
 
 let noticeService

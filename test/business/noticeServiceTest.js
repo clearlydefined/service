@@ -69,6 +69,22 @@ describe('Notice Service', () => {
     const notice = await service.generate()
     expect(notice).to.eq('')
   })
+
+  it('gets renderer by choice', () => {
+    const { service } = setup({})
+    expect(service._getRenderer().constructor.name).to.eq('TextRenderer')
+    expect(service._getRenderer('text').constructor.name).to.eq('TextRenderer')
+    expect(service._getRenderer('html', {}).constructor.name).to.eq('HtmlRenderer')
+    expect(service._getRenderer('template', { template: 'template' }).constructor.name).to.eq('TemplateRenderer')
+    expect(service._getRenderer('json').constructor.name).to.eq('JsonRenderer')
+
+    try {
+      service._getRenderer('junk')
+      expect(true).to.be.false
+    } catch (e) {
+      expect(e.message).to.eq('"junk" is not a supported output')
+    }
+  })
 })
 
 function setup(defintions, attachments = {}) {

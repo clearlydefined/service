@@ -13,10 +13,16 @@
         "type": "coordinates type must be an array"
       }
     },
-    "template": {
+    "output": {
       "type": "string",
       "errorMessage": {
-        "type": "template type must be a string"
+        "type": "output must be a string"
+      }
+    },
+    "options": {
+      "type": "object",
+      "errorMessage": {
+        "type": "options must be an object"
       }
     }
   },
