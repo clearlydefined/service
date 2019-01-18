@@ -23,9 +23,19 @@ class NoticeService {
     let renderer = this._getRenderer(output, options)
     const docbuilder = new DocBuilder(renderer)
     const result = await this.definitionService.getAll(coordinates)
-    const packages = await Promise.all(
+    const notHarvested = []
+    const noLicenseDeclared = []
+    const noCopyrights = []
+    const packages = (await Promise.all(
       Object.keys(result).map(async id => {
         const definition = result[id]
+        if (!get(definition, 'described.tools[0]')) {
+          notHarvested.push(id)
+          return
+        }
+        const declaredLicense = get(definition, 'licensed.declared')
+        if (!declaredLicense || declaredLicense === 'NOASSERTION') noLicenseDeclared.push(id)
+        if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyrights.push(id)
         return {
           name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
           version: get(definition, 'coordinates.revision'),
@@ -35,10 +45,22 @@ class NoticeService {
           text: await this._getPackageText(definition)
         }
       })
-    )
-    const source = new JsonSource(JSON.stringify({ packages: packages.filter(x => x.license) }))
+    )).filter(x => x && x.license && x.license !== 'NOASSERTION')
+    const source = new JsonSource(JSON.stringify({ packages: packages }))
     await docbuilder.read(source)
-    return docbuilder.build()
+    const content = docbuilder.build()
+    return {
+      content,
+      summary: {
+        totalCoordinates: coordinates.length,
+        clearlyNoticedCoordinates: packages.length,
+        warnings: {
+          notHarvested,
+          noLicenseDeclared,
+          noCopyrights
+        }
+      }
+    }
   }
 
   _getRenderer(output, options) {
