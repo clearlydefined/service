@@ -114,6 +114,7 @@ function createApp(config) {
   app.use('/', require('./routes/index'))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
+  app.use('/origins/pod', require('./routes/originPod')())
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/nuget', require('./routes/originNuget')())

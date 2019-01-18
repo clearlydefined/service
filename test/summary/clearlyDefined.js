@@ -17,6 +17,34 @@ describe('ClearlyDefined Maven summarizer', () => {
     expect(summary.described.releaseDate).to.eq('2018-03-06')
   })
 
+  it('handles licenseUrl', () => {
+    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true, {
+      licenses: [{ license: { url: 'https://opensource.org/licenses/MIT' } }]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+  })
+
+  it('handles licenseName', () => {
+    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true, {
+      licenses: [{ license: { name: 'MIT' } }]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+  })
+
+  it('handles missing license of projectSummary', () => {
+    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true, {})
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+  })
+
   it('handles data with source location', () => {
     const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true)
     const summary = Summarizer().summarize(coordinates, harvested)
@@ -35,10 +63,11 @@ describe('ClearlyDefined Maven summarizer', () => {
   })
 })
 
-function setupMaven(releaseDate, sourceInfo) {
+function setupMaven(releaseDate, sourceInfo, projectSummary) {
   const coordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'manifest.summary.project', projectSummary)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }
@@ -85,41 +114,13 @@ describe('ClearlyDefined NuGet summarizer', () => {
       { path: 'lib/netstandard1.3/Project.dll' }
     ])
   })
-
-  it('includes files from interestingFiles', () => {
-    const { coordinates, harvested } = setupNuGet({
-      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
-    })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.files).to.deep.equal([{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }])
-  })
-
-  it('merges files from manifest and interestingFiles', () => {
-    const { coordinates, harvested } = setupNuGet({
-      packageEntries: [
-        { fullName: 'lib/net40/Project.dll' },
-        { fullName: 'LICENSE' },
-        { fullName: 'lib/netstandard1.3/Project.dll' }
-      ],
-      interestingFiles: [{ path: 'LICENSE', token: 'thisisatoken', license: 'MIT' }]
-    })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.files).to.deep.equal([
-      { path: 'LICENSE', token: 'thisisatoken', license: 'MIT' },
-      { path: 'lib/net40/Project.dll' },
-      { path: 'lib/netstandard1.3/Project.dll' }
-    ])
-  })
 })
 
-function setupNuGet({ releaseDate, sourceInfo, packageEntries, interestingFiles }) {
+function setupNuGet({ releaseDate, sourceInfo, packageEntries }) {
   const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.packageEntries', packageEntries)
-  setIfValue(harvested, 'interestingFiles', interestingFiles)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
   return { coordinates, harvested }
 }
@@ -330,6 +331,48 @@ function setupPypi(releaseDate, license, sourceInfo) {
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
   if (sourceInfo) harvested.sourceInfo = createSourceLocation()
+  return { coordinates, harvested }
+}
+
+describe('ClearlyDefined CocoaPod summarizer', () => {
+  it('handles with all the data', () => {
+    const { coordinates, harvested } = setupCocoaPod('MIT', '2018-03-06T11:38:10.284Z', 'https://clearlydefined.com')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.projectWebsite).to.eq('https://clearlydefined.com')
+  })
+
+  it('handles license type', () => {
+    const { coordinates, harvested } = setupCocoaPod({ type: 'MIT' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+  })
+
+  it('Sets noassertion for license', () => {
+    const { coordinates, harvested } = setupCocoaPod({ type: 'Commercial' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('NOASSERTION')
+  })
+
+  it('handles no data', () => {
+    const { coordinates, harvested } = setupCocoaPod()
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described).to.be.undefined
+  })
+})
+
+function setupCocoaPod(license, releaseDate, homepage) {
+  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
+  const harvested = {}
+  setIfValue(harvested, 'registryData.license', license)
+  setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'registryData.homepage', homepage)
   return { coordinates, harvested }
 }
 
