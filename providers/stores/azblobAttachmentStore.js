@@ -3,6 +3,8 @@
 
 const azure = require('azure-storage')
 const { promisify } = require('util')
+const Bottleneck = require('bottleneck').default
+const limiter = new Bottleneck({ maxConcurrent: 1000 })
 
 class AzBlobAttachmentStore {
   constructor(options) {
@@ -23,15 +25,17 @@ class AzBlobAttachmentStore {
    * @param {string} key - The key that identifies the attachment to get
    * @returns The requested attachment.
    */
-  async get(key) {
-    try {
-      const name = 'attachment/' + key + '.json'
-      const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
-      return JSON.parse(result).attachment
-    } catch (error) {
-      if (error.statusCode === 404) return null
-      throw error
-    }
+  get(key) {
+    return limiter.wrap(async () => {
+      try {
+        const name = 'attachment/' + key + '.json'
+        const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
+        return JSON.parse(result).attachment
+      } catch (error) {
+        if (error.statusCode === 404) return null
+        throw error
+      }
+    })()
   }
 }
 
