@@ -8,7 +8,6 @@ const HtmlRenderer = require('tiny-attribution-generator/lib/outputs/html').defa
 const TemplateRenderer = require('tiny-attribution-generator/lib/outputs/template').default
 const JsonRenderer = require('tiny-attribution-generator/lib/outputs/json').default
 const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
-
 const logger = require('../providers/logging/logger')
 
 class NoticeService {
@@ -20,22 +19,41 @@ class NoticeService {
 
   async generate(coordinates, output, options) {
     options = options || {}
-    let renderer = this._getRenderer(output, options)
+    const definitions = await this.definitionService.getAll(coordinates)
+    const packages = await this._getPackages(definitions)
+    const source = new JsonSource(JSON.stringify({ packages: packages.packages }))
+    const renderer = this._getRenderer(output, options)
     const docbuilder = new DocBuilder(renderer)
-    const result = await this.definitionService.getAll(coordinates)
-    const notHarvested = []
-    const noLicenseDeclared = []
-    const noCopyrights = []
+    await docbuilder.read(source)
+    const content = docbuilder.build()
+    return {
+      content,
+      summary: {
+        total: coordinates.length,
+        missing: packages.noDefinition.length,
+        warnings: {
+          noDefinition: packages.noDefinition,
+          noLicense: packages.noLicense,
+          noCopyright: packages.noCopyright
+        }
+      }
+    }
+  }
+
+  async _getPackages(definitions) {
+    const noDefinition = []
+    const noLicense = []
+    const noCopyright = []
     const packages = (await Promise.all(
-      Object.keys(result).map(async id => {
-        const definition = result[id]
+      Object.keys(definitions).map(async id => {
+        const definition = definitions[id]
         if (!get(definition, 'described.tools[0]')) {
-          notHarvested.push(id)
+          noDefinition.push(id)
           return
         }
         const declaredLicense = get(definition, 'licensed.declared')
-        if (!declaredLicense || declaredLicense === 'NOASSERTION') noLicenseDeclared.push(id)
-        if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyrights.push(id)
+        if (!declaredLicense || declaredLicense === 'NOASSERTION') noLicense.push(id)
+        if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
         return {
           name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
           version: get(definition, 'coordinates.revision'),
@@ -46,37 +64,23 @@ class NoticeService {
         }
       })
     )).filter(x => x && x.license && x.license !== 'NOASSERTION')
-    const source = new JsonSource(JSON.stringify({ packages: packages }))
-    await docbuilder.read(source)
-    const content = docbuilder.build()
-    return {
-      content,
-      summary: {
-        totalCoordinates: coordinates.length,
-        clearlyNoticedCoordinates: packages.length,
-        warnings: {
-          notHarvested,
-          noLicenseDeclared,
-          noCopyrights
-        }
-      }
-    }
+    return { packages, noDefinition, noLicense, noCopyright }
   }
 
-  _getRenderer(output, options) {
-    if (!output) return new TextRenderer()
-    switch (output) {
+  _getRenderer(name, options) {
+    if (!name) return new TextRenderer()
+    switch (name) {
       case 'text':
         return new TextRenderer()
       case 'html':
         return new HtmlRenderer(options.template)
       case 'template':
-        if (!options.template) throw new Error('options.template is required for template output')
+        if (!options.template) throw new Error('options.template is required for template renderer')
         return new TemplateRenderer(options.template)
       case 'json':
         return new JsonRenderer()
       default:
-        throw new Error(`"${output}" is not a supported output`)
+        throw new Error(`"${name}" is not a supported renderer`)
     }
   }
 

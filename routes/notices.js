@@ -20,7 +20,7 @@ router.post('/', asyncMiddleware(generateNotices))
 async function generateNotices(request, response) {
   if (!validator.validate('notice-request', request.body)) return response.status(400).send(validator.errorsText())
   const coordinates = request.body.coordinates.map(entry => EntityCoordinates.fromString(entry))
-  const result = await noticeService.generate(coordinates, request.body.output, request.body.options)
+  const result = await noticeService.generate(coordinates, request.body.renderer, request.body.options)
   response.send(result)
 }
 

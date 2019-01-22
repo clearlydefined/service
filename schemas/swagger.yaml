@@ -81,7 +81,7 @@ paths:
       tags:
         - harvest
       requestBody:
-        $ref: '#/components/requestBodies/request'
+        $ref: '#/components/requestBodies/harvestRequest'
       responses:
         201:
           description: Harvested file has been accepted.
@@ -279,6 +279,20 @@ paths:
       responses:
         200:
           description: The raw content of the attachment corresponding to the given id.
+  /notices:
+    post:
+      summary: Request the creation of a resource that is the notice file for the components outlined in the POST body
+      tags:
+        - notices
+      requestBody:
+        $ref: '#/components/requestBodies/noticeFile'
+      responses:
+        200:
+          description: Status request has been accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/noticeFile'
 
 tags:
   - name: definitions
@@ -292,18 +306,6 @@ tags:
 
 components:
   schemas:
-    harvestRequest:
-      type: object
-      properties:
-        tool:
-          type: string
-        path:
-          type: string
-      example:
-        - tool: package
-          path: npm/npmjs/-/redie/0.3.0
-        - tool: source
-          path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
 
   requestBodies:
     componentList:
@@ -317,7 +319,7 @@ components:
             example:
               - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
               - npm/npmjs/-/redie/0.3.0
-    request:
+    harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
       required: true
       content:
@@ -387,6 +389,32 @@ components:
                   - 1
                 scancode:
                   - 2.2.1
+
+  responses:
+    noticeFile:
+      content:
+        type: string
+      summary:
+        properties:
+          total:
+            type: number
+          missing:
+            type: number
+          warnings:
+            type: object
+            properties:
+              noDefinition:
+                type: array
+                items:
+                  type: string
+              noLicense:
+                type: array
+                items:
+                  type: string
+              noCopyright:
+                type: array
+                items:
+                  type: string
 
   parameters:
     type:
