@@ -36,7 +36,7 @@ describe('Nomos summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.eq([{ path: 'foo.txt' }, { path: 'bar.txt' }])
+    expect(summary.files).to.deep.eq([{ path: 'foo.txt', license: 'NOASSERTION' }, { path: 'bar.txt' }])
   })
 
   it('mixes spdx and non-spdx licenses correctly', () => {
@@ -47,7 +47,10 @@ describe('Nomos summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt' }, { path: 'bar.txt', license: 'MIT' }])
+    expect(summary.files).to.deep.equalInAnyOrder([
+      { path: 'foo.txt', license: 'NOASSERTION' },
+      { path: 'bar.txt', license: 'MIT' }
+    ])
   })
 })
 
@@ -69,7 +72,7 @@ describe('Monk summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt' }, { path: 'bar.txt' }])
+    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt', license: 'NOASSERTION' }, { path: 'bar.txt' }])
   })
 
   it('mixes spdx and non-spdx licenses correctly', () => {
@@ -80,7 +83,10 @@ describe('Monk summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt' }, { path: 'bar.txt', license: 'MIT' }])
+    expect(summary.files).to.deep.equalInAnyOrder([
+      { path: 'foo.txt', license: 'NOASSERTION' },
+      { path: 'bar.txt', license: 'MIT' }
+    ])
   })
 })
 
