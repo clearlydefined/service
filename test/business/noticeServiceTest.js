@@ -19,7 +19,6 @@ describe('Notice Service', () => {
     expect(notice.content).to.eq('** test; version 1.0.0 -- \ncopyright me\n\n' + spdxLicenseList.MIT.licenseText)
     expect(notice.summary).to.deep.eq({
       total: 1,
-      missing: 0,
       warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
   })
@@ -94,7 +93,6 @@ describe('Notice Service', () => {
     expect(notice.content).to.eq('** no-copyright; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
     expect(notice.summary).to.deep.eq({
       total: 3,
-      missing: 2,
       warnings: {
         noDefinition: ['npm/npmjs/-/not-harvested/1.0.0'],
         noLicense: ['npm/npmjs/-/no-license/1.0.0'],
@@ -120,7 +118,6 @@ describe('Notice Service', () => {
     expect(notice.content).to.eq('** none; version 1.0.0 -- \ncopyright me\n\nNONE')
     expect(notice.summary).to.deep.eq({
       total: 2,
-      missing: 1,
       warnings: { noCopyright: [], noDefinition: [], noLicense: ['npm/npmjs/-/no-assertion/1.0.0'] }
     })
   })
@@ -131,7 +128,6 @@ describe('Notice Service', () => {
     expect(notice.content).to.eq('')
     expect(notice.summary).to.deep.eq({
       total: 0,
-      missing: 0,
       warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
   })
