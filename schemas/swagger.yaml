@@ -398,8 +398,6 @@ components:
         properties:
           total:
             type: number
-          missing:
-            type: number
           warnings:
             type: object
             properties:

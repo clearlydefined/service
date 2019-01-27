@@ -30,7 +30,6 @@ class NoticeService {
       content,
       summary: {
         total: coordinates.length,
-        missing: packages.noDefinition.length,
         warnings: {
           noDefinition: packages.noDefinition,
           noLicense: packages.noLicense,
