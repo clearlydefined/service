@@ -181,7 +181,7 @@ class DefinitionService {
     const raw = await this.harvestStore.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
+    const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)

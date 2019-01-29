@@ -30,7 +30,8 @@
 //
 
 const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
-const { flattenDeep, set } = require('lodash')
+const { flattenDeep, get, set, differenceBy, intersectionBy } = require('lodash')
+const logger = require('../providers/logging/logger')
 
 class AggregationService {
   constructor(options) {
@@ -38,9 +39,10 @@ class AggregationService {
     // we take the configured precedence expected to be highest first
     this.workingPrecedence =
       options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
+    this.logger = logger()
   }
 
-  process(summarized) {
+  process(summarized, coordinates) {
     const result = {}
     const order = this.workingPrecedence || []
     const tools = []
@@ -53,6 +55,7 @@ class AggregationService {
     })
     if (!tools.length) return null
     set(result, 'described.tools', tools.reverse())
+    this._normalizeFiles(result, summarized, coordinates)
     return result
   }
 
@@ -65,6 +68,22 @@ class AggregationService {
     const versions = Object.getOwnPropertyNames(summarized[tool])
     const latest = getLatestVersion(versions)
     return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null
+  }
+
+  /*
+   * Take the clearlydefined tool as the source of truth for file paths as it is just a recursive dir
+   * Intersect the summarized file list with the clearlydefined file list by path
+   */
+  _normalizeFiles(result, summarized, coordinates) {
+    const cdFiles = get(this._findData('clearlydefined', summarized), 'summary.files')
+    if (!cdFiles) return
+    const difference = differenceBy(result.files, cdFiles, 'path')
+    if (!difference.length) return
+    this.logger.info('difference between summary file count and cd file count', {
+      count: difference.length,
+      coordinates: coordinates.toString()
+    })
+    result.files = intersectionBy(result.files, cdFiles, 'path')
   }
 }
 
