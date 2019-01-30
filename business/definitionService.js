@@ -59,7 +59,7 @@ class DefinitionService {
     const existing = force ? null : await this.definitionStore.get(coordinates)
     let result
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
-      this.logger.info('current definition exists', { coordinates: coordinates.toString() })
+      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
@@ -152,7 +152,7 @@ class DefinitionService {
       this.harvest(coordinates)
       return definition
     }
-    this.logger.info('definition is available', { coordinates: coordinates.toString() })
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
     await this._store(definition)
     return definition
   }
