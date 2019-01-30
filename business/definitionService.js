@@ -57,8 +57,11 @@ class DefinitionService {
       return this.compute(coordinates, curation)
     }
     const existing = force ? null : await this.definitionStore.get(coordinates)
-    const result =
-      get(existing, '_meta.schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    let result
+    if (get(existing, '_meta.schemaVersion') === currentSchema) {
+      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
+      result = existing
+    } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
   }
 
@@ -145,9 +148,11 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
+      this.logger.info('definition not available', { coordinates: coordinates.toString() })
       this.harvest(coordinates)
       return definition
     }
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
     await this._store(definition)
     return definition
   }

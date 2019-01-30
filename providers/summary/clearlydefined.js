@@ -122,7 +122,8 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const projectSummaryLicenses = get(data, 'manifest.summary.project.licenses')
+    const projectSummaryLicenses =
+      get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
     const licenseSummaries = flatten(projectSummaryLicenses.map(x => x.license))
     const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))

@@ -96,7 +96,7 @@ class GitHubCurationService {
   }
 
   /**
-   * Process the fact that the given PR has been merged by persisting the curation and invalidating the defintion
+   * Process the fact that the given PR has been merged by persisting the curation and invalidating the definition
    * @param {*} curations - The set of actual proposed changes
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    * @throws Exception with `code` === 404 if the given PR is missing. Other exceptions may be thrown related
