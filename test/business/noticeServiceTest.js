@@ -122,7 +122,7 @@ describe('Notice Service', () => {
     })
   })
 
-  it('generates empty notices for no defintions', async () => {
+  it('generates empty notices for no definitions', async () => {
     const { service, coordinates } = setup({})
     const notice = await service.generate(coordinates)
     expect(notice.content).to.eq('')
