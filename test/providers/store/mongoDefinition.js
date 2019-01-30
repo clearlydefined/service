@@ -52,10 +52,10 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.store(definition)
     expect(store.collection.deleteMany.callCount).to.eq(1)
-    expect(store.collection.deleteMany.args[0][0]._id).to.deep.eq(/^npm\/npmjs\/-\/foo\/1.0(\/.+)?$/)
+    expect(store.collection.deleteMany.args[0][0]['_mongo.partitionKey']).to.eq('npm/npmjs/-/foo/1.0')
     expect(store.collection.insertMany.callCount).to.eq(1)
     expect(store.collection.insertMany.args[0][0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
-    expect(store.collection.insertMany.args[0][0][0]._mongo.currentPage).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._mongo.page).to.eq(1)
     expect(store.collection.insertMany.args[0][0][0]._mongo.totalPages).to.eq(1)
   })
 
@@ -67,15 +67,15 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.store(definition)
     expect(store.collection.deleteMany.callCount).to.eq(1)
-    expect(store.collection.deleteMany.args[0][0]._id).to.deep.eq(/^npm\/npmjs\/-\/foo\/1.0(\/.+)?$/)
+    expect(store.collection.deleteMany.args[0][0]['_mongo.partitionKey']).to.eq('npm/npmjs/-/foo/1.0')
     expect(store.collection.insertMany.callCount).to.eq(1)
     expect(store.collection.insertMany.args[0][0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
     expect(store.collection.insertMany.args[0][0][0].files.length).to.eq(1000)
-    expect(store.collection.insertMany.args[0][0][0]._mongo.currentPage).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._mongo.page).to.eq(1)
     expect(store.collection.insertMany.args[0][0][0]._mongo.totalPages).to.eq(2)
     expect(store.collection.insertMany.args[0][0][1]._id).to.eq('npm/npmjs/-/foo/1.0/1')
     expect(store.collection.insertMany.args[0][0][1].files.length).to.eq(500)
-    expect(store.collection.insertMany.args[0][0][1]._mongo.currentPage).to.eq(2)
+    expect(store.collection.insertMany.args[0][0][1]._mongo.page).to.eq(2)
     expect(store.collection.insertMany.args[0][0][1]._mongo.totalPages).to.eq(2)
   })
 
@@ -100,25 +100,28 @@ describe('Mongo Definition store', () => {
 
 function createDefinition(coordinates) {
   coordinates = EntityCoordinates.fromString(coordinates)
-  return { coordinates, _id: coordinates.toString() }
+  return { coordinates, _id: coordinates.toString(), '_mongo.partitionKey': coordinates.toString() }
 }
 
 function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async filter => {
       const regex = filter._id
-      if (regex.toString().includes('error')) throw new Error('test error')
+      const partitionKey = filter['_mongo.partitionKey']
+      if (regex && regex.toString().includes('error')) throw new Error('test error')
+      if (partitionKey && partitionKey.includes('error')) throw new Error('test error')
       // return an object that mimics a Mongo cursor (i.e., has toArray)
       return {
         toArray: () => {
-          const result = Object.keys(data)
-            .map(key => (regex.exec(key) ? data[key] : null))
-            .filter(e => e)
-          return result
+          const result = partitionKey
+            ? Object.keys(data).map(key => (key.indexOf(partitionKey) > -1 ? data[key] : null))
+            : Object.keys(data).map(key => (regex.exec(key) ? data[key] : null))
+          return result.filter(e => e)
         },
         forEach: cb => {
           Object.keys(data).forEach(key => {
-            if (regex.exec(key)) cb(data[key])
+            if (regex && regex.exec(key)) cb(data[key])
+            if (partitionKey && key.indexOf(partitionKey) > -1) cb(data[key])
           })
         }
       }

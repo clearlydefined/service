@@ -52,8 +52,8 @@ class MongoStore {
    */
   async get(coordinates) {
     const cursor = await this.collection.find(
-      { _id: new RegExp(`^${this._getId(coordinates)}`) },
-      { projection: { _id: 0, _mongo: 0 }, sort: { _id: 1 } }
+      { '_mongo.partitionKey': this._getId(coordinates) },
+      { projection: { _id: 0, _mongo: 0 }, sort: { '_mongo.page': 1 } }
     )
     let definition
     await cursor.forEach(page => {
@@ -66,7 +66,7 @@ class MongoStore {
   async store(definition) {
     const pageSize = 1000
     definition._id = this._getId(definition.coordinates)
-    await this.collection.deleteMany({ _id: new RegExp(`^${definition._id}(\\/.+)?$`) })
+    await this.collection.deleteMany({ '_mongo.partitionKey': definition._id })
     const pages = Math.ceil((get(definition, 'files.length') || 1) / pageSize)
     const result = await this.collection.insertMany(
       range(pages).map(
@@ -74,13 +74,13 @@ class MongoStore {
           if (index === 0) {
             const definitionPage = clone(definition)
             if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
-            return { ...definitionPage, _mongo: { partitionKey: definition._id, currentPage: 1, totalPages: pages } }
+            return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
           }
           return {
             _id: definition._id + `/${index}`,
             _mongo: {
               partitionKey: definition._id,
-              currentPage: index + 1,
+              page: index + 1,
               totalPages: pages
             },
             files: definition.files.slice(index * pageSize, index * pageSize + pageSize)

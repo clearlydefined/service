@@ -30,7 +30,7 @@
 //
 
 const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
-const { flattenDeep, get, set, differenceBy, intersectionBy } = require('lodash')
+const { flattenDeep, get, set, intersectionBy } = require('lodash')
 const logger = require('../providers/logging/logger')
 
 class AggregationService {
@@ -77,10 +77,10 @@ class AggregationService {
   _normalizeFiles(result, summarized, coordinates) {
     const cdFiles = get(this._findData('clearlydefined', summarized), 'summary.files')
     if (!cdFiles) return
-    const difference = differenceBy(result.files, cdFiles, 'path')
-    if (!difference.length) return
+    const difference = result.files.length - cdFiles.length
+    if (!difference) return
     this.logger.info('difference between summary file count and cd file count', {
-      count: difference.length,
+      count: difference,
       coordinates: coordinates.toString()
     })
     result.files = intersectionBy(result.files, cdFiles, 'path')
