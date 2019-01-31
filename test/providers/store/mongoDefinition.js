@@ -5,6 +5,7 @@ const Store = require('../../../providers/stores/mongo')
 const sinon = require('sinon')
 const { expect } = require('chai')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
+const { range } = require('lodash')
 
 describe('Mongo Definition store', () => {
   const data = {
@@ -50,15 +51,39 @@ describe('Mongo Definition store', () => {
     const definition = createDefinition('npm/npmjs/-/foo/1.0')
     const store = createStore()
     await store.store(definition)
-    expect(store.collection.replaceOne.callCount).to.eq(1)
-    expect(store.collection.replaceOne.args[0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.deleteMany.callCount).to.eq(1)
+    expect(store.collection.deleteMany.args[0][0]['_mongo.partitionKey']).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.insertMany.callCount).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.insertMany.args[0][0][0]._mongo.page).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._mongo.totalPages).to.eq(1)
+  })
+
+  it('stores a paged definition', async () => {
+    const definition = createDefinition('npm/npmjs/-/foo/1.0')
+    definition.files = range(0, 1500).map(x => {
+      return { path: `/path/to/${x}.txt` }
+    })
+    const store = createStore()
+    await store.store(definition)
+    expect(store.collection.deleteMany.callCount).to.eq(1)
+    expect(store.collection.deleteMany.args[0][0]['_mongo.partitionKey']).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.insertMany.callCount).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.insertMany.args[0][0][0].files.length).to.eq(1000)
+    expect(store.collection.insertMany.args[0][0][0]._mongo.page).to.eq(1)
+    expect(store.collection.insertMany.args[0][0][0]._mongo.totalPages).to.eq(2)
+    expect(store.collection.insertMany.args[0][0][1]._id).to.eq('npm/npmjs/-/foo/1.0/1')
+    expect(store.collection.insertMany.args[0][0][1].files.length).to.eq(500)
+    expect(store.collection.insertMany.args[0][0][1]._mongo.page).to.eq(2)
+    expect(store.collection.insertMany.args[0][0][1]._mongo.totalPages).to.eq(2)
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(store.collection.deleteOne.callCount).to.eq(1)
-    expect(store.collection.deleteOne.args[0][0]._id).to.eq('npm/npmjs/-/foo/1.0')
+    expect(store.collection.deleteMany.callCount).to.eq(1)
+    expect(store.collection.deleteMany.args[0][0]._id).to.deep.eq(/^npm\/npmjs\/-\/foo\/1.0(\/.+)?$/)
   })
 
   it('gets a definition', async () => {
@@ -75,32 +100,34 @@ describe('Mongo Definition store', () => {
 
 function createDefinition(coordinates) {
   coordinates = EntityCoordinates.fromString(coordinates)
-  return { coordinates, _id: coordinates.toString() }
+  return { coordinates, _id: coordinates.toString(), '_mongo.partitionKey': coordinates.toString() }
 }
 
 function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async filter => {
       const regex = filter._id
-      if (regex.toString().includes('error')) throw new Error('test error')
+      const partitionKey = filter['_mongo.partitionKey']
+      if (regex && regex.toString().includes('error')) throw new Error('test error')
+      if (partitionKey && partitionKey.includes('error')) throw new Error('test error')
       // return an object that mimics a Mongo cursor (i.e., has toArray)
       return {
         toArray: () => {
-          const result = Object.keys(data)
-            .map(key => (regex.exec(key) ? data[key] : null))
-            .filter(e => e)
-          return result
+          const result = partitionKey
+            ? Object.keys(data).map(key => (key.indexOf(partitionKey) > -1 ? data[key] : null))
+            : Object.keys(data).map(key => (regex.exec(key) ? data[key] : null))
+          return result.filter(e => e)
+        },
+        forEach: cb => {
+          Object.keys(data).forEach(key => {
+            if (regex && regex.exec(key)) cb(data[key])
+            if (partitionKey && key.indexOf(partitionKey) > -1) cb(data[key])
+          })
         }
       }
     }),
-    findOne: sinon.stub().callsFake(async filter => {
-      const name = filter._id
-      if (name.includes('error')) throw new Error('test error')
-      if (data[name]) return data[name]
-      throw new Error('not found')
-    }),
-    replaceOne: sinon.stub(),
-    deleteOne: sinon.stub()
+    insertMany: sinon.stub(),
+    deleteMany: sinon.stub()
   }
   const store = Store({})
   store.collection = collectionStub

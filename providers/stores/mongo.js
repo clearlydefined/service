@@ -5,6 +5,7 @@ const MongoClient = require('mongodb').MongoClient
 const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const logger = require('../logging/logger')
+const { clone, get, range } = require('lodash')
 
 class MongoStore {
   constructor(options) {
@@ -49,18 +50,50 @@ class MongoStore {
    * @param {Coordinates} coordinates - The coordinates of the object to get
    * @returns The loaded object
    */
-  get(coordinates) {
-    return this.collection.findOne({ _id: this._getId(coordinates) }, { projection: { _id: 0 } })
+  async get(coordinates) {
+    const cursor = await this.collection.find(
+      { '_mongo.partitionKey': this._getId(coordinates) },
+      { projection: { _id: 0, _mongo: 0 }, sort: { '_mongo.page': 1 } }
+    )
+    let definition
+    await cursor.forEach(page => {
+      if (!definition) definition = page
+      else definition.files = definition.files.concat(page.files)
+    })
+    return definition
   }
 
   async store(definition) {
+    const pageSize = 1000
     definition._id = this._getId(definition.coordinates)
-    await this.collection.replaceOne({ _id: definition._id }, definition, { upsert: true })
-    return null
+    await this.collection.deleteMany({ '_mongo.partitionKey': definition._id })
+    const pages = Math.ceil((get(definition, 'files.length') || 1) / pageSize)
+    const result = await this.collection.insertMany(
+      range(pages).map(
+        index => {
+          if (index === 0) {
+            const definitionPage = clone(definition)
+            if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
+            return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
+          }
+          return {
+            _id: definition._id + `/${index}`,
+            _mongo: {
+              partitionKey: definition._id,
+              page: index + 1,
+              totalPages: pages
+            },
+            files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
+          }
+        },
+        { ordered: false }
+      )
+    )
+    return result
   }
 
   async delete(coordinates) {
-    await this.collection.deleteOne({ _id: this._getId(coordinates) })
+    await this.collection.deleteMany({ _id: new RegExp(`^${this._getId(coordinates)}(\\/.+)?$`) })
     return null
   }
 
