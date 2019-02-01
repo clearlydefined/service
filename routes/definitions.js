@@ -79,6 +79,13 @@ router.post(
   })
 )
 
+router.post('/find', asyncMiddleware(findDefinitions))
+async function findDefinitions(request, response) {
+  if (!validator.validate('definitions-find', request.body)) return response.status(400).send(validator.errorsText())
+  const result = await definitionService.find(request.body)
+  response.send(result)
+}
+
 let definitionService
 
 function setup(definition) {

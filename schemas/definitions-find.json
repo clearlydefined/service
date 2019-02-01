@@ -1,0 +1,99 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/definitions-find.json#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "definitionsFind",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "errorMessage": {
+        "type": "type must be a string"
+      }
+    },
+    "provider": {
+      "type": "string",
+      "errorMessage": {
+        "type": "provider must be a string"
+      }
+    },
+    "name": {
+      "type": "string",
+      "errorMessage": {
+        "type": "name must be a string"
+      }
+    },
+    "namespace": {
+      "type": "string",
+      "errorMessage": {
+        "type": "namespace must be a string"
+      }
+    },
+    "license": {
+      "type": "string",
+      "errorMessage": {
+        "type": "license must be a string"
+      }
+    },
+    "releasedAfter": {
+      "type": "string",
+      "errorMessage": {
+        "type": "releasedAfter must be a string"
+      }
+    },
+    "releasedBefore": {
+      "type": "string",
+      "errorMessage": {
+        "type": "releasedBefore must be a string"
+      }
+    },
+    "minLicensedScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "minLicensedScore must be a number"
+      }
+    },
+    "maxLicensedScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "maxLicensedScore must be a number"
+      }
+    },
+    "minDescribedScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "minDescribedScore must be a number"
+      }
+    },
+    "maxDescribedScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "maxDescribedScore must be a number"
+      }
+    },
+    "sort": {
+      "enum": ["type", "provider", "name", "namespace", "license", "releaseDate", "licensedScore", "describedScore"],
+      "type": "string",
+      "errorMessage": {
+        "type": "sort must be a string"
+      }
+    },
+    "sortDesc": {
+      "type": "boolean",
+      "description": "Whether to sort descending or not. Default false.",
+      "errorMessage": {
+        "type": "sortDesc must be a bool"
+      }
+    },
+    "continuationToken": {
+      "type": "string",
+      "errorMessage": {
+        "type": "continuationToken must be a string"
+      }
+    }
+  },
+  "errorMessage": {
+    "type": "A definitions query must be an object",
+    "additionalProperties": "A definitions query may not contain additional properties"
+  }
+}

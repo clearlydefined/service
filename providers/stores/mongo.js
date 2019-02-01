@@ -6,6 +6,7 @@ const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const logger = require('../logging/logger')
 const { clone, get, range } = require('lodash')
+const base64 = require('base-64')
 
 class MongoStore {
   constructor(options) {
@@ -16,10 +17,7 @@ class MongoStore {
   initialize() {
     return promiseRetry(async retry => {
       try {
-        this.client = await MongoClient.connect(
-          this.options.connectionString,
-          { useNewUrlParser: true }
-        )
+        this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
@@ -36,9 +34,8 @@ class MongoStore {
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   async list(coordinates) {
-    // TODO protect this regex from DoS attacks
     const list = await this.collection.find(
-      { _id: new RegExp('^' + this._getId(coordinates)) },
+      { '_mongo.partitionKey': this._getId(coordinates), '_mongo.page': 1 },
       { projection: { _id: 1 } }
     )
     return (await list.toArray()).map(entry => entry._id)
@@ -61,6 +58,29 @@ class MongoStore {
       else definition.files = definition.files.concat(page.files)
     })
     return definition
+  }
+
+  /**
+   * Query and return the objects based on the query
+   *
+   * @param {object} query - The filters and sorts for the request
+   * @returns The data and continuationToken if there is more results
+   */
+  async find(query, continuationToken = '') {
+    const pageSize = 50 // no option for page size, just next tokens
+    const filter = this._buildQuery(query, continuationToken)
+    const sort = this._buildSort(query)
+    const cursor = await this.collection.find(filter, {
+      projection: { _id: 0, files: 0 },
+      sort: sort,
+      limit: pageSize
+    })
+    const data = await cursor.toArray()
+    continuationToken = this._getContinuationToken(pageSize, data)
+    data.forEach(def => {
+      delete def._mongo
+    })
+    return { data, continuationToken }
   }
 
   async store(definition) {
@@ -102,6 +122,61 @@ class MongoStore {
     return EntityCoordinates.fromObject(coordinates)
       .toString()
       .toLowerCase()
+  }
+
+  _buildQuery(parameters, continuationToken) {
+    const filter = { '_mongo.page': 1 } // only get page 1 of each definition
+    if (parameters.type) filter['coordinates.type'] = parameters.type
+    if (parameters.provider) filter['coordinates.provider'] = parameters.provider
+    if (parameters.name) filter['coordinates.name'] = new RegExp(parameters.name, 'i')
+    if (parameters.namespace) filter['coordinates.namespace'] = new RegExp(parameters.namespace, 'i')
+    if (parameters.license) filter['licensed.declared'] = parameters.license
+    if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
+    if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
+    if (parameters.minLicensedScore) filter['licensed.score.total'] = { $gt: parseInt(parameters.minLicensedScore) }
+    if (parameters.maxLicensedScore) filter['licensed.score.total'] = { $lt: parseInt(parameters.maxLicensedScore) }
+    if (parameters.minDescribedScore) filter['described.score.total'] = { $gt: parseInt(parameters.minDescribedScore) }
+    if (parameters.maxDescribedScore) filter['described.score.total'] = { $lt: parseInt(parameters.maxDescribedScore) }
+    if (continuationToken) filter['_mongo.partitionKey'] = { $gt: base64.decode(continuationToken) }
+    return filter
+  }
+
+  _buildSort(parameters) {
+    let sort
+    switch (parameters.sort) {
+      case 'type':
+        sort = 'coordinates.type'
+        break
+      case 'provider':
+        sort = 'coordinates.provider'
+        break
+      case 'name':
+        sort = 'coordinates.name'
+        break
+      case 'namespace':
+        sort = 'coordinates.namespace'
+        break
+      case 'license':
+        sort = 'licensed.declared'
+        break
+      case 'releaseDate':
+        sort = 'described.releaseDate'
+        break
+      case 'licensedScore':
+        sort = 'licensed.score.total'
+        break
+      case 'describedScore':
+        sort = 'described.score.total'
+        break
+      default:
+        sort = '_mongo.partitionKey'
+    }
+    return { [sort]: parameters.sortDesc ? -1 : 1 }
+  }
+
+  _getContinuationToken(pageSize, data) {
+    if (data.length !== pageSize) return ''
+    return base64.encode(data[data.length - 1]._mongo.partitionKey)
   }
 }
 
