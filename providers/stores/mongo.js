@@ -93,7 +93,7 @@ class MongoStore {
   }
 
   async delete(coordinates) {
-    await this.collection.deleteMany({ _id: new RegExp(`^${this._getId(coordinates)}(\\/.+)?$`) })
+    await this.collection.deleteMany({ '_mongo.partitionKey': this._getId(coordinates) })
     return null
   }
 
