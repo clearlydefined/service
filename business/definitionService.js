@@ -80,10 +80,19 @@ class DefinitionService {
    * @returns A list of all components that have definitions and the definitions that are available
    */
   async getAll(coordinatesList, force = false) {
-    const result = {}
+    const existingDefinitions = force ? [] : await this.definitionStore.getAll(coordinatesList)
+    const result = existingDefinitions.reduce((data, definition) => {
+      data[EntityCoordinates.fromObject(definition.coordinates).toString()] = definition
+      return data
+    }, {})
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force)
+        const existing = result[coordinates.toString()]
+        if (get(existing, '_meta.schemaVersion') === currentSchema) {
+          this.logger.info('computed definition available (bulk)', { coordinates: coordinates.toString() })
+          return
+        }
+        const definition = await this.get(coordinates, null, true)
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition

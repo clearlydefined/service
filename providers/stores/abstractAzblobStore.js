@@ -4,6 +4,7 @@
 const azure = require('azure-storage')
 const AbstractFileStore = require('./abstractFileStore')
 const logger = require('../logging/logger')
+const throat = require('throat')
 
 const { promisify } = require('util')
 
@@ -62,6 +63,22 @@ class AbstractAzBlobStore {
       if (error.statusCode === 404) return null
       throw error
     }
+  }
+
+  /**
+   * Get and return the objects at the given coordinates list.
+   *
+   * @param {Array<Coordinates>} coordinatesList - Array of the coordinates for the objects to get
+   * @returns Array of the loaded objects
+   */
+  getAll(coordinatesList) {
+    return Promise.all(
+      coordinatesList.map(
+        throat(10, coordinates => {
+          return this.get(coordinates)
+        })
+      )
+    )
   }
 
   _toStoragePathFromCoordinates(coordinates) {

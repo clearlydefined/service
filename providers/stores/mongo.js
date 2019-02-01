@@ -16,10 +16,7 @@ class MongoStore {
   initialize() {
     return promiseRetry(async retry => {
       try {
-        this.client = await MongoClient.connect(
-          this.options.connectionString,
-          { useNewUrlParser: true }
-        )
+        this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
@@ -36,7 +33,6 @@ class MongoStore {
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   async list(coordinates) {
-    // TODO protect this regex from DoS attacks
     const list = await this.collection.find(
       { _id: new RegExp('^' + this._getId(coordinates)) },
       { projection: { _id: 1 } }
@@ -61,6 +57,30 @@ class MongoStore {
       else definition.files = definition.files.concat(page.files)
     })
     return definition
+  }
+
+  /**
+   * Get and return the objects at the given coordinates list.
+   *
+   * @param {Array<Coordinates>} coordinatesList - Array of the coordinates for the objects to get
+   * @returns Array of the loaded objects
+   */
+  async getAll(coordinatesList) {
+    const cursor = await this.collection.find(
+      { '_mongo.partitionKey': { $in: coordinatesList.map(this._getId).filter(x => x) } },
+      { projection: { _id: 0 }, sort: { '_mongo.page': 1 } }
+    )
+    const definitions = {}
+    await cursor.forEach(doc => {
+      const partitionKey = doc._mongo.partitionKey
+      if (!definitions[partitionKey]) definitions[partitionKey] = doc
+      else definitions[partitionKey].files = definitions[partitionKey].files.concat(doc.files)
+    })
+    const result = Object.values(definitions)
+    result.forEach(x => {
+      delete x._mongo
+    })
+    return result
   }
 
   async store(definition) {

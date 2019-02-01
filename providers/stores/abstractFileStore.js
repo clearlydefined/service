@@ -55,6 +55,20 @@ class AbstractFileStore {
     }
   }
 
+  /**
+   * Get and return the objects at the given coordinates list.
+   *
+   * @param {Array<Coordinates>} coordinatesList - Array of the coordinates for the objects to get
+   * @returns Array of the loaded objects
+   */
+  getAll(coordinatesList) {
+    return Promise.all(
+      coordinatesList.map(coordinates => {
+        return this.get(coordinates)
+      })
+    )
+  }
+
   _isValidPath(entry) {
     return AbstractFileStore.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
