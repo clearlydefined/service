@@ -83,7 +83,7 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
     expect(store.collection.deleteMany.callCount).to.eq(1)
-    expect(store.collection.deleteMany.args[0][0]._id).to.deep.eq(/^npm\/npmjs\/-\/foo\/1.0(\/.+)?$/)
+    expect(store.collection.deleteMany.args[0][0]['_mongo.partitionKey']).to.eq('npm/npmjs/-/foo/1.0')
   })
 
   it('gets a definition', async () => {
