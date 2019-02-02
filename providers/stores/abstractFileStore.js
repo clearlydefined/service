@@ -55,6 +55,42 @@ class AbstractFileStore {
     }
   }
 
+  /**
+   * Query and return the objects based on the query
+   *
+   * @param {object} query - The filters and sorts for the request
+   * @returns The data and continuationToken if there is more results
+   */
+  async find(query) {
+    const paths = await recursive(this.options.location, ['.DS_Store'])
+    return (await Promise.all(
+      paths.map(async path => {
+        try {
+          if (!this._isValidPath(path)) return null
+          const data = await promisify(fs.readFile)(path)
+          if (!data) return null
+          const definition = JSON.parse(data)
+          if (query.type && definition.coordinates.type !== query.type) return null
+          if (query.provider && definition.coordinates.provider !== query.provider) return null
+          if (query.name && definition.coordinates.name !== query.name) return null
+          if (query.namespace && definition.coordinates.namespace !== query.namespace) return null
+          if (query.license && definition.licensed.declared !== query.license) return null
+          if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return null
+          if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return null
+          if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return null
+          if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return null
+          if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return null
+          if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return null
+          return definition
+        } catch (error) {
+          // If there is just no entry, that's fine, there is no content.
+          if (error.code === 'ENOENT') return []
+          throw error
+        }
+      })
+    )).filter(x => x)
+  }
+
   _isValidPath(entry) {
     return AbstractFileStore.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
