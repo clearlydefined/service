@@ -70,25 +70,28 @@ class AbstractFileStore {
           const data = await promisify(fs.readFile)(path)
           if (!data) return null
           const definition = JSON.parse(data)
-          if (query.type && definition.coordinates.type !== query.type) return null
-          if (query.provider && definition.coordinates.provider !== query.provider) return null
-          if (query.name && definition.coordinates.name !== query.name) return null
-          if (query.namespace && definition.coordinates.namespace !== query.namespace) return null
-          if (query.license && definition.licensed.declared !== query.license) return null
-          if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return null
-          if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return null
-          if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return null
-          if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return null
-          if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return null
-          if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return null
           return definition
         } catch (error) {
           // If there is just no entry, that's fine, there is no content.
-          if (error.code === 'ENOENT') return []
+          if (error.code === 'ENOENT') return null
           throw error
         }
       })
-    )).filter(x => x)
+    )).filter(definition => {
+      if (!definition) return false
+      if (query.type && definition.coordinates.type !== query.type) return false
+      if (query.provider && definition.coordinates.provider !== query.provider) return false
+      if (query.name && definition.coordinates.name !== query.name) return false
+      if (query.namespace && definition.coordinates.namespace !== query.namespace) return false
+      if (query.license && definition.licensed.declared !== query.license) return false
+      if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return false
+      if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return false
+      if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return false
+      if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return false
+      if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return false
+      if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return false
+      return true
+    })
   }
 
   _isValidPath(entry) {
