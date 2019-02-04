@@ -128,6 +128,15 @@ class DefinitionService {
   }
 
   /**
+   * Get the definitions that exist in the store matching the given query
+   * @param {object} query
+   * @returns The data and continuationToken if there is more results
+   */
+  find(query) {
+    return this.definitionStore.find(query, query.continuationToken)
+  }
+
+  /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
    *
