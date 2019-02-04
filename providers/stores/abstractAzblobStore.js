@@ -4,7 +4,6 @@
 const azure = require('azure-storage')
 const AbstractFileStore = require('./abstractFileStore')
 const logger = require('../logging/logger')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 
 const { promisify } = require('util')
 
@@ -66,30 +65,10 @@ class AbstractAzBlobStore {
   }
 
   /**
-   * Query and return the objects based on the query
-   *
-   * @param {object} query - The filters and sorts for the request
-   * @returns The data and continuationToken if there is more results
+   * Unsupported. The Blob definition store is not queryable
    */
-  async find(query, continuationToken = '') {
-    const prefix = this._buildPrefix(query)
-    const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
-      this.containerName,
-      prefix,
-      continuationToken,
-      {
-        include: azure.BlobUtilities.BlobListingDetails.METADATA
-      }
-    )
-    const data = []
-    result.entries
-      .forEach(entry => {
-        const path = entry.metadata.id
-        if (!path) return
-        data.push(this.get(EntityCoordinates.fromString(path)))
-      })
-      .filter(x => x)
-    return { data, continuationToken: result.continuationToken }
+  async find() {
+    throw new Error('find() is unsupported')
   }
 
   _toStoragePathFromCoordinates(coordinates) {
@@ -98,19 +77,6 @@ class AbstractAzBlobStore {
 
   _toResultCoordinatesFromStoragePath(path) {
     return AbstractFileStore.toResultCoordinatesFromStoragePath(path)
-  }
-
-  _buildPrefix(parameters) {
-    let result = ''
-    if (!parameters.type) return result
-    result += `${parameters.type}/`
-    if (!parameters.provider) return result
-    result += `${parameters.provider}/`
-    if (!parameters.namespace) return result
-    result += `${parameters.namespace}/`
-    if (!parameters.name) return result
-    result += `${parameters.name}/`
-    return result
   }
 }
 
