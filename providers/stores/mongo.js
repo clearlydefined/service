@@ -8,6 +8,17 @@ const logger = require('../logging/logger')
 const { clone, get, range } = require('lodash')
 const base64 = require('base-64')
 
+const sortOptions = {
+  type: 'coordinates.type',
+  provider: 'coordinates.provider',
+  name: 'coordinates.name',
+  namespace: 'coordinates.namespace',
+  license: 'licensed.declared',
+  releaseDate: 'described.releaseDate',
+  licensedScore: 'licensed.score.total',
+  describedScore: 'described.score.total'
+}
+
 class MongoStore {
   constructor(options) {
     this.logger = logger()
@@ -142,35 +153,7 @@ class MongoStore {
   }
 
   _buildSort(parameters) {
-    let sort
-    switch (parameters.sort) {
-      case 'type':
-        sort = 'coordinates.type'
-        break
-      case 'provider':
-        sort = 'coordinates.provider'
-        break
-      case 'name':
-        sort = 'coordinates.name'
-        break
-      case 'namespace':
-        sort = 'coordinates.namespace'
-        break
-      case 'license':
-        sort = 'licensed.declared'
-        break
-      case 'releaseDate':
-        sort = 'described.releaseDate'
-        break
-      case 'licensedScore':
-        sort = 'licensed.score.total'
-        break
-      case 'describedScore':
-        sort = 'described.score.total'
-        break
-      default:
-        sort = '_mongo.partitionKey'
-    }
+    const sort = sortOptions[parameters.sort] || '_mongo.partitionKey'
     return { [sort]: parameters.sortDesc ? -1 : 1 }
   }
 
