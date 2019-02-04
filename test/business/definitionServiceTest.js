@@ -343,6 +343,7 @@ function setup(definition, coordinateSpec, curation) {
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
+  service.logger = { info: sinon.stub() }
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
 }

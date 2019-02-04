@@ -57,8 +57,11 @@ class DefinitionService {
       return this.compute(coordinates, curation)
     }
     const existing = force ? null : await this.definitionStore.get(coordinates)
-    const result =
-      get(existing, '_meta.schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    let result
+    if (get(existing, '_meta.schemaVersion') === currentSchema) {
+      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
+      result = existing
+    } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
   }
 
@@ -125,6 +128,15 @@ class DefinitionService {
   }
 
   /**
+   * Get the definitions that exist in the store matching the given query
+   * @param {object} query
+   * @returns The data and continuationToken if there is more results
+   */
+  find(query) {
+    return this.definitionStore.find(query, query.continuationToken)
+  }
+
+  /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
    *
@@ -145,9 +157,11 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
+      this.logger.info('definition not available', { coordinates: coordinates.toString() })
       this.harvest(coordinates)
       return definition
     }
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
     await this._store(definition)
     return definition
   }
@@ -181,7 +195,7 @@ class DefinitionService {
     const raw = await this.harvestStore.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
+    const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)

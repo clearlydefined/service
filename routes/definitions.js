@@ -68,16 +68,26 @@ router.post(
 // the components outlined in the POST body
 router.post(
   '/',
-  asyncMiddleware(async (request, response) => {
-    const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-    if (coordinatesList.length > 1000)
-      return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
-    // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-    const force = request.hostname.includes('localhost') ? request.query.force || false : false
-    const result = await definitionService.getAll(coordinatesList, force)
-    response.status(200).send(result)
+  asyncMiddleware((request, response) => {
+    if (Array.isArray(request.body)) return listDefinitions(request, response)
+    return findDefinitions(request, response)
   })
 )
+async function listDefinitions(request, response) {
+  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
+  if (coordinatesList.length > 1000)
+    return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
+  const force = request.hostname.includes('localhost') ? request.query.force || false : false
+  const result = await definitionService.getAll(coordinatesList, force)
+  response.send(result)
+}
+
+async function findDefinitions(request, response) {
+  if (!validator.validate('definitions-find', request.body)) return response.status(400).send(validator.errorsText())
+  const result = await definitionService.find(request.body)
+  response.send(result)
+}
 
 let definitionService
 

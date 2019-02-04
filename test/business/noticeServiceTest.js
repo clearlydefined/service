@@ -18,9 +18,8 @@ describe('Notice Service', () => {
     const notice = await service.generate(coordinates)
     expect(notice.content).to.eq('** test; version 1.0.0 -- \ncopyright me\n\n' + spdxLicenseList.MIT.licenseText)
     expect(notice.summary).to.deep.eq({
-      totalCoordinates: 1,
-      clearlyNoticedCoordinates: 1,
-      warnings: { noCopyrights: [], notHarvested: [], noLicenseDeclared: [] }
+      total: 1,
+      warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
   })
 
@@ -93,12 +92,11 @@ describe('Notice Service', () => {
     const notice = await service.generate(coordinates)
     expect(notice.content).to.eq('** no-copyright; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
     expect(notice.summary).to.deep.eq({
-      totalCoordinates: 3,
-      clearlyNoticedCoordinates: 1,
+      total: 3,
       warnings: {
-        notHarvested: ['npm/npmjs/-/not-harvested/1.0.0'],
-        noLicenseDeclared: ['npm/npmjs/-/no-license/1.0.0'],
-        noCopyrights: ['npm/npmjs/-/no-copyright/1.0.0']
+        noDefinition: ['npm/npmjs/-/not-harvested/1.0.0'],
+        noLicense: ['npm/npmjs/-/no-license/1.0.0'],
+        noCopyright: ['npm/npmjs/-/no-copyright/1.0.0']
       }
     })
   })
@@ -119,20 +117,18 @@ describe('Notice Service', () => {
     const notice = await service.generate(coordinates)
     expect(notice.content).to.eq('** none; version 1.0.0 -- \ncopyright me\n\nNONE')
     expect(notice.summary).to.deep.eq({
-      totalCoordinates: 2,
-      clearlyNoticedCoordinates: 1,
-      warnings: { noCopyrights: [], notHarvested: [], noLicenseDeclared: ['npm/npmjs/-/no-assertion/1.0.0'] }
+      total: 2,
+      warnings: { noCopyright: [], noDefinition: [], noLicense: ['npm/npmjs/-/no-assertion/1.0.0'] }
     })
   })
 
-  it('generates empty notices for no defintions', async () => {
+  it('generates empty notices for no definitions', async () => {
     const { service, coordinates } = setup({})
     const notice = await service.generate(coordinates)
     expect(notice.content).to.eq('')
     expect(notice.summary).to.deep.eq({
-      totalCoordinates: 0,
-      clearlyNoticedCoordinates: 0,
-      warnings: { noCopyrights: [], notHarvested: [], noLicenseDeclared: [] }
+      total: 0,
+      warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
   })
 
@@ -148,14 +144,14 @@ describe('Notice Service', () => {
       service._getRenderer('junk')
       expect(true).to.be.false
     } catch (error) {
-      expect(error.message).to.eq('"junk" is not a supported output')
+      expect(error.message).to.eq('"junk" is not a supported renderer')
     }
 
     try {
       service._getRenderer('template', {})
       expect(true).to.be.false
     } catch (error) {
-      expect(error.message).to.eq('options.template is required for template output')
+      expect(error.message).to.eq('options.template is required for template renderer')
     }
   })
 })

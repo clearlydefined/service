@@ -81,7 +81,7 @@ paths:
       tags:
         - harvest
       requestBody:
-        $ref: '#/components/requestBodies/request'
+        $ref: '#/components/requestBodies/harvestRequest'
       responses:
         201:
           description: Harvested file has been accepted.
@@ -189,7 +189,13 @@ paths:
       tags:
         - definitions
       requestBody:
-        $ref: '#/components/requestBodies/componentList'
+        description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/componentList'
+                - $ref: '#/components/schemas/definitionQuery'
       responses:
         200:
           description: Status request has been accepted.
@@ -279,6 +285,20 @@ paths:
       responses:
         200:
           description: The raw content of the attachment corresponding to the given id.
+  /notices:
+    post:
+      summary: Request the creation of a resource that is the notice file for the components outlined in the POST body
+      tags:
+        - notices
+      requestBody:
+        $ref: '#/components/requestBodies/noticeFile'
+      responses:
+        200:
+          description: Status request has been accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/noticeFile'
 
 tags:
   - name: definitions
@@ -292,32 +312,50 @@ tags:
 
 components:
   schemas:
-    harvestRequest:
+    componentList:
+      type: array
+      items:
+        type: string
+      example:
+        - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+        - npm/npmjs/-/redie/0.3.0
+    definitionQuery:
       type: object
       properties:
-        tool:
+        type:
           type: string
-        path:
+        provider:
+          type: string
+        name:
+          type: string
+        namespace:
+          type: string
+        license:
+          type: string
+        releasedAfter:
+          type: string
+        releasedBefore:
+          type: string
+        minLicensedScore:
+          type: integer
+        maxLicensedScore:
+          type: integer
+        minDescribedScore:
+          type: integer
+        maxDescribedScore:
+          type: integer
+        sort:
+          type: string
+        sortDesc:
+          type: boolean
+        continuationToken:
           type: string
       example:
-        - tool: package
-          path: npm/npmjs/-/redie/0.3.0
-        - tool: source
-          path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+        provider: npmjs
+        sort: name
 
   requestBodies:
-    componentList:
-      description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: string
-            example:
-              - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
-              - npm/npmjs/-/redie/0.3.0
-    request:
+    harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
       required: true
       content:
@@ -387,6 +425,30 @@ components:
                   - 1
                 scancode:
                   - 2.2.1
+
+  responses:
+    noticeFile:
+      content:
+        type: string
+      summary:
+        properties:
+          total:
+            type: number
+          warnings:
+            type: object
+            properties:
+              noDefinition:
+                type: array
+                items:
+                  type: string
+              noLicense:
+                type: array
+                items:
+                  type: string
+              noCopyright:
+                type: array
+                items:
+                  type: string
 
   parameters:
     type:

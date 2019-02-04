@@ -13,14 +13,16 @@
         "type": "coordinates type must be an array"
       }
     },
-    "output": {
-      "type": "string",
+    "renderer": {
+      "enum": ["text", "json", "html", "template"],
+      "description": "Name of the renderer to use",
       "errorMessage": {
-        "type": "output must be a string"
+        "type": "renderer must be a string"
       }
     },
     "options": {
       "type": "object",
+      "description": "Options to be given to the renderer",
       "errorMessage": {
         "type": "options must be an object"
       }
