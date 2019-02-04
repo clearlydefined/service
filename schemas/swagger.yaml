@@ -189,7 +189,13 @@ paths:
       tags:
         - definitions
       requestBody:
-        $ref: '#/components/requestBodies/componentList'
+        description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/componentList'
+                - $ref: '#/components/schemas/definitionQuery'
       responses:
         200:
           description: Status request has been accepted.
@@ -306,19 +312,49 @@ tags:
 
 components:
   schemas:
+    componentList:
+      type: array
+      items:
+        type: string
+      example:
+        - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+        - npm/npmjs/-/redie/0.3.0
+    definitionQuery:
+      type: object
+      properties:
+        type:
+          type: string
+        provider:
+          type: string
+        name:
+          type: string
+        namespace:
+          type: string
+        license:
+          type: string
+        releasedAfter:
+          type: string
+        releasedBefore:
+          type: string
+        minLicensedScore:
+          type: integer
+        maxLicensedScore:
+          type: integer
+        minDescribedScore:
+          type: integer
+        maxDescribedScore:
+          type: integer
+        sort:
+          type: string
+        sortDesc:
+          type: boolean
+        continuationToken:
+          type: string
+      example:
+        provider: npmjs
+        sort: name
 
   requestBodies:
-    componentList:
-      description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: string
-            example:
-              - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
-              - npm/npmjs/-/redie/0.3.0
     harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
       required: true
