@@ -58,7 +58,7 @@ function createApp(config) {
   curationService.definitionService = definitionService
   const definitionsRoute = require('./routes/definitions')(definitionService)
 
-  const suggestionService = require('./business/suggestionService')(definitionService, definitionStore)
+  const suggestionService = require('./business/suggestionService')(definitionService)
   const suggestionsRoute = require('./routes/suggestions')(suggestionService)
 
   const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
