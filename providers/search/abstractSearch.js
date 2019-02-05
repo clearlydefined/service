@@ -57,6 +57,16 @@ class AbstractSearch {
   store(definition) {}
 
   /**
+   * Query the definitions in the index
+   *
+   * @param {object} body
+   */
+  // eslint-disable-next-line no-unused-vars
+  query(body) {
+    return {}
+  }
+
+  /**
    * Remove the given definition from the index
    *
    * @param {Definition} definition

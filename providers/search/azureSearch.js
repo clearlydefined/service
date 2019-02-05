@@ -52,6 +52,17 @@ class AzureSearch extends AbstractSearch {
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
+  async query(body) {
+    return requestPromise({
+      method: 'POST',
+      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/search`),
+      headers: this._getHeaders(),
+      withCredentials: false,
+      json: true,
+      body
+    })
+  }
+
   _getEntries(definitions) {
     return definitions.map(definition => {
       const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
