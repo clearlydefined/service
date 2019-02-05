@@ -96,6 +96,83 @@ describe('Mongo Definition store', () => {
     const result = await store.get(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
     expect(result.coordinates).to.deep.eq(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
   })
+
+  it('builds a mongo query', () => {
+    const store = createStore()
+    const data = new Map([
+      [{}, { '_mongo.page': 1 }],
+      [{ type: 'npm' }, { '_mongo.page': 1, 'coordinates.type': 'npm' }],
+      [{ provider: 'npmjs' }, { '_mongo.page': 1, 'coordinates.provider': 'npmjs' }],
+      [{ name: 'package' }, { '_mongo.page': 1, 'coordinates.name': /package/i }],
+      [
+        { namespace: '@owner', name: 'package' },
+        { '_mongo.page': 1, 'coordinates.name': /package/i, 'coordinates.namespace': /@owner/i }
+      ],
+      [{ license: 'MIT' }, { '_mongo.page': 1, 'licensed.declared': 'MIT' }],
+      [{ releasedAfter: '2018-01-01' }, { '_mongo.page': 1, 'described.releaseDate': { $gt: '2018-01-01' } }],
+      [{ releasedBefore: '2017-12-30' }, { '_mongo.page': 1, 'described.releaseDate': { $lt: '2017-12-30' } }],
+      [{ minLicensedScore: 50 }, { '_mongo.page': 1, 'licensed.score.total': { $gt: 50 } }],
+      [{ maxLicensedScore: 50 }, { '_mongo.page': 1, 'licensed.score.total': { $lt: 50 } }],
+      [{ minDescribedScore: 50 }, { '_mongo.page': 1, 'described.score.total': { $gt: 50 } }],
+      [{ maxDescribedScore: 50 }, { '_mongo.page': 1, 'described.score.total': { $lt: 50 } }]
+    ])
+    data.forEach((expected, input) => {
+      expect(store._buildQuery(input)).to.deep.equal(expected)
+    })
+  })
+
+  it('builds a mongo query with continuationToken', () => {
+    const store = createStore()
+    const parameters = { namespace: '@owner', name: 'package' }
+    const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
+    const expected = {
+      '_mongo.page': 1,
+      'coordinates.name': /package/i,
+      'coordinates.namespace': /@owner/i,
+      '_mongo.partitionKey': { $gt: 'npm/npmjs/-/verror/1.10.0' }
+    }
+    expect(store._buildQuery(parameters, continuationToken)).to.deep.equal(expected)
+  })
+
+  it('builds a mongo sort', () => {
+    const store = createStore()
+    const data = new Map([
+      [{}, { '_mongo.partitionKey': 1 }],
+      [{ sort: 'type' }, { 'coordinates.type': 1 }],
+      [{ sort: 'provider' }, { 'coordinates.provider': 1 }],
+      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1 }],
+      [{ sort: 'namespace' }, { 'coordinates.namespace': 1 }],
+      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1 }],
+      [{ sort: 'releaseDate' }, { 'described.releaseDate': 1 }],
+      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1 }],
+      [{ sort: 'describedScore' }, { 'described.score.total': 1 }]
+    ])
+    data.forEach((expected, input) => {
+      expect(store._buildSort(input)).to.deep.equal(expected)
+    })
+  })
+
+  it('gets a continuationToken', () => {
+    const store = createStore()
+    const token = store._getContinuationToken(5, [
+      { _mongo: { partitionKey: 'npm/npmjs/-/a/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/b/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/c/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/d/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/e/1.0.0' } }
+    ])
+    expect(token).to.eq('bnBtL25wbWpzLy0vZS8xLjAuMA==')
+  })
+
+  it('does not get a continuationToken', () => {
+    const store = createStore()
+    const token = store._getContinuationToken(5, [
+      { _mongo: { partitionKey: 'npm/npmjs/-/a/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/b/1.0.0' } },
+      { _mongo: { partitionKey: 'npm/npmjs/-/c/1.0.0' } }
+    ])
+    expect(token).to.eq('')
+  })
 })
 
 function createDefinition(coordinates) {
