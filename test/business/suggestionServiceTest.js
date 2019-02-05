@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai')
+const sinon = require('sinon')
 const SuggestionService = require('../../business/suggestionService')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
 const moment = require('moment')
-const { get, map } = require('lodash')
+const { get } = require('lodash')
 
 const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')
 
@@ -21,12 +22,63 @@ describe('Suggestion Service', () => {
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
     expect(suggestions).to.not.be.null
+    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+      type: 'npm',
+      provider: 'npmjs',
+      name: '^test$',
+      namespace: null,
+      sort: 'releaseDate'
+    })
     const declared = get(suggestions, 'licensed.declared')
     expect(declared).to.equalInAnyOrder([
       { value: 'MIT', version: '10-3.0' },
       { value: 'MIT', version: '10-5.0' },
       { value: 'GPL', version: '102.0' }
     ])
+  })
+
+  it('gets no suggestions for definition with declared license', async () => {
+    const now = moment()
+    const definition = createDefinition(testCoordinates, now, 'MIT', files)
+    const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
+    const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
+    const after = createModifiedDefinition(testCoordinates, now, 2, 'GPL', files, attributions)
+    const others = [before1, before2, after]
+    const service = setup(definition, others)
+    const suggestions = await service.get(testCoordinates)
+    expect(suggestions).to.not.be.null
+    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+      type: 'npm',
+      provider: 'npmjs',
+      name: '^test$',
+      namespace: null,
+      sort: 'releaseDate'
+    })
+    const declared = get(suggestions, 'licensed.declared')
+    expect(declared).to.be.undefined
+  })
+
+  it('returns no suggestions if there are no related definitions', async () => {
+    const now = moment()
+    const definition = createDefinition(testCoordinates, now, null, files)
+    const service = setup(definition, [])
+    const suggestions = await service.get(testCoordinates)
+    expect(suggestions).to.be.null
+  })
+
+  it('queries related definitions with namespace', async () => {
+    const now = moment()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/@scope/scope-test/1.0.0')
+    const definition = createDefinition(coordinates, now, null, files)
+    const service = setup(definition, [])
+    await service.get(coordinates)
+    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+      type: 'npm',
+      provider: 'npmjs',
+      name: '^scope-test$',
+      namespace: '^@scope$',
+      sort: 'releaseDate'
+    })
   })
 })
 
@@ -54,14 +106,7 @@ function createDefinition(coordinates, releaseDate, license, files) {
 }
 
 function setup(definition, others) {
-  const definitionService = {
-    getAll: () => Promise.resolve([...others, definition]),
-    list: () => {
-      const otherCoordinates = map(others, definition =>
-        EntityCoordinates.fromObject(definition.coordinates).toString()
-      )
-      return Promise.resolve([...otherCoordinates, EntityCoordinates.fromObject(testCoordinates).toString()])
-    }
-  }
+  const definitionService = { find: () => {} }
+  sinon.stub(definitionService, 'find').resolves({ data: [...others, definition] })
   return SuggestionService(definitionService)
 }

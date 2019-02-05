@@ -16,7 +16,14 @@ const {
   concat
 } = require('lodash')
 const EntityCoordinates = require('../lib/entityCoordinates')
-const { setIfValue, setToArray, addArrayToSet, buildSourceUrl, updateSourceLocation } = require('../lib/utils')
+const {
+  setIfValue,
+  setToArray,
+  addArrayToSet,
+  buildSourceUrl,
+  isDeclaredLicense,
+  updateSourceLocation
+} = require('../lib/utils')
 const minimatch = require('minimatch')
 const he = require('he')
 const extend = require('extend')
@@ -278,7 +285,7 @@ class DefinitionService {
 
   _computeDeclaredScore(definition) {
     const declared = get(definition, 'licensed.declared')
-    return declared && declared !== 'NOASSERTION' ? weights.declared : 0
+    return isDeclaredLicense(declared) ? weights.declared : 0
   }
 
   _computeDiscoveredScore(definition) {

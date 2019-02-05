@@ -1,13 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, sortBy, filter, concat } = require('lodash')
-const EntityCoordinates = require('../lib/entityCoordinates')
+const { get } = require('lodash')
+const { isDeclaredLicense, setIfValue } = require('../lib/utils')
 
 class SuggestionService {
-  constructor(definitionService, definitionStore) {
+  constructor(definitionService) {
     this.definitionService = definitionService
-    this.definitionStore = definitionStore
   }
 
   /**
@@ -18,18 +17,14 @@ class SuggestionService {
    * `null` is returned if no such coordinates are found.
    */
   async get(coordinates) {
-    const related = await this._getRelatedDefinitions(coordinates)
-    if (!related) return null
-    const baseSuggestion = this._createBaseSuggestion(coordinates)
-    // create a struct with the strings in it and iterate instead
-    const promises = [
-      await this._collectSuggestionsForField(related, baseSuggestion, 'licensed.declared'),
-      await this._collectSuggestionsForField(related, baseSuggestion, 'described.sourceLocation'),
-      await this._collectSuggestionsForField(related, baseSuggestion, 'described.releaseDate'),
-      await this._collectSuggestionsForFiles(related, baseSuggestion)
-    ]
-    await Promise.all(promises)
-    return baseSuggestion
+    const definitions = await this._getRelatedDefinitions(coordinates)
+    if (!definitions) return null
+    const suggestion = { coordinates }
+    this._collectSuggestionsForField(definitions, suggestion, 'licensed.declared', (definition, field) =>
+      isDeclaredLicense(get(definition, field))
+    )
+    this._collectSuggestionsForField(definitions, suggestion, 'described.sourceLocation')
+    return suggestion
   }
 
   /**
@@ -39,96 +34,37 @@ class SuggestionService {
    * @param {EntityCoordinates} coordinates - The entity we are looking for related defintions to
    */
   async _getRelatedDefinitions(coordinates) {
-    const related = await this.definitionService.list(coordinates.asRevisionless(), true)
+    const query = { ...coordinates.asRevisionless(), sort: 'releaseDate' }
+    query.name = `^${query.name}$` // exact name matches only
+    query.namespace = query.namespace ? `^${query.namespace}$` : null // exact namespace matches only
+    const results = await this.definitionService.find(query)
+    const definitions = results.data
     // If the related array only has one entry then return early
-    if (Object.keys(related).length <= 1) return
-    const validDefinitions = await this.definitionService.getAll(
-      related.map(element => EntityCoordinates.fromString(element))
-    )
-    const sortedByReleaseDate = sortBy(validDefinitions, ['described.releaseDate'])
+    if (definitions.length <= 1) return null
     // Split the definitions into before supplied coords and those after
-    const index = sortedByReleaseDate.findIndex(entry => entry.coordinates.revision === coordinates.revision)
+    const index = definitions.findIndex(entry => entry.coordinates.revision === coordinates.revision)
     if (index === -1) return null
-    const before = sortedByReleaseDate.slice(Math.max(index - 3, 0), index).reverse()
-    const after = sortedByReleaseDate.slice(index + 1, index + 3)
-    return { sortedByReleaseDate, index, before, after }
-  }
-
-  _createBaseSuggestion(coordinates) {
-    return { coordinates }
+    const before = definitions.slice(Math.max(index - 3, 0), index).reverse()
+    const after = definitions.slice(index + 1, index + 3)
+    return { original: definitions[index], related: before.concat(after) }
   }
 
   /**
    * Collect Suggestions for a given related definition and field
-   * Only give suggestions if there is something missing
+   * Only give suggestions if they are valid
    */
-  async _collectSuggestionsForField(related, suggestions, field) {
-    const definition = related.sortedByReleaseDate[related.index]
-    // If there is already a value for the field or there are no related entries then return early
-    if (get(definition, field) || !(related.before.length + related.after.length)) return []
-    const before = filter(related.before, entry => get(entry, field))
-    const after = filter(related.after, entry => get(entry, field))
-    // Merged the before and after arrays
-    const suggestionDefinitions = concat(before, after)
-
-    set(
-      suggestions,
+  _collectSuggestionsForField(definitions, suggestion, field, isValid = get) {
+    if (isValid(definitions.original, field)) return
+    setIfValue(
+      suggestion,
       field,
-      suggestionDefinitions.map(suggestion => {
-        console.log(JSON.stringify(suggestion))
-        return { value: get(suggestion, field), version: get(suggestion, 'coordinates.revision') }
-      })
+      definitions.related
+        .filter(x => isValid(x, field))
+        .map(x => {
+          return { value: get(x, field), version: get(x, 'coordinates.revision') }
+        })
     )
-    return suggestions
-  }
-
-  /**
-   * Collect Suggestions for all the files of the definition
-   * Only give suggestions if there is something missing
-   */
-  async _collectSuggestionsForFiles(related, suggestions) {
-    const definition = related.sortedByReleaseDate[related.index]
-    if (!get(definition, 'files')) return null
-    //Find the same file in related definitions
-    const promises = definition.files.map(async file => {
-      if (get(file, 'license') && get(file, 'attributions')) return null
-      const filesSuggestions = await this._collectSuggestionsForFile(related, file.path)
-      const obj = { path: file.path }
-      if (filesSuggestions.license.length > 0) obj.license = filesSuggestions.license
-      if (filesSuggestions.attributions.length > 0) obj.attributions = filesSuggestions.attributions
-      return obj.license || obj.attributions ? obj : null
-    })
-    const result = await Promise.all(promises)
-    set(suggestions, 'files', result.filter(x => x))
-    return suggestions
-  }
-
-  async _collectSuggestionsForFile(related, filePath) {
-    // Search same path in related definitions
-    const before = filter(related.before, entry => get(entry, 'files'))
-    const after = filter(related.after, entry => get(entry, 'files'))
-    // Consider only same path in related definitions
-    const suggestionDefinitions = concat(before, after).map(definition => {
-      return { ...definition, file: definition.files.find(file => file.path === filePath) }
-    })
-    if (suggestionDefinitions.length === 0) return null
-    return {
-      license: suggestionDefinitions
-        .map(suggestion => {
-          return get(suggestion, 'file.license')
-            ? { value: get(suggestion, 'file.license'), version: get(suggestion, 'coordinates.revision') }
-            : null
-        })
-        .filter(x => x),
-      attributions: suggestionDefinitions
-        .map(suggestion => {
-          return get(suggestion, 'file.attributions')
-            ? { value: get(suggestion, 'file.attributions'), version: get(suggestion, 'coordinates.revision') }
-            : null
-        })
-        .filter(x => x)
-    }
   }
 }
 
-module.exports = (definitionService, definitionStore) => new SuggestionService(definitionService, definitionStore)
+module.exports = definitionService => new SuggestionService(definitionService)
