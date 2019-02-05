@@ -46,7 +46,7 @@ class MongoStore {
    */
   async list(coordinates) {
     const list = await this.collection.find(
-      { '_mongo.partitionKey': this._getId(coordinates), '_mongo.page': 1 },
+      { '_mongo.partitionKey': new RegExp(`^${this._getId(coordinates)}`), '_mongo.page': 1 },
       { projection: { _id: 1 } }
     )
     return (await list.toArray()).map(entry => entry._id)
