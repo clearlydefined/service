@@ -20,6 +20,7 @@ const logger = require('../logging/logger')
 // Validate the schema of the curation patch
 class GitHubCurationService {
   constructor(options, store, endpoints, definition) {
+    this.logger = logger()
     this.options = options
     this.store = store
     this.endpoints = endpoints

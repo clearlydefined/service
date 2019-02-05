@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { setIfValue } = require('../../lib/utils')
+const { isDeclaredLicense, setIfValue } = require('../../lib/utils')
 const SPDX = require('../../lib/spdx')
 const { get } = require('lodash')
 
@@ -30,7 +30,7 @@ class FOSSologySummarizer {
       .map(file => {
         const path = get(/^File (.*?) contains/.exec(file), '[1]')
         let license = SPDX.normalize(get(/license\(s\) (.*?)$/.exec(file), '[1]'))
-        if (path && license && license !== 'NOASSERTION') return { path, license }
+        if (path && isDeclaredLicense(license)) return { path, license }
         if (path) return { path }
       })
       .filter(e => e)
