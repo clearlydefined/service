@@ -183,22 +183,21 @@ function createDefinition(coordinates) {
 function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async filter => {
-      const regex = filter._id
       const partitionKey = filter['_mongo.partitionKey']
-      if (regex && regex.toString().includes('error')) throw new Error('test error')
-      if (partitionKey && partitionKey.includes('error')) throw new Error('test error')
+      if (partitionKey && partitionKey.toString().includes('error')) throw new Error('test error')
       // return an object that mimics a Mongo cursor (i.e., has toArray)
       return {
         toArray: () => {
-          const result = partitionKey
-            ? Object.keys(data).map(key => (key.indexOf(partitionKey) > -1 ? data[key] : null))
-            : Object.keys(data).map(key => (regex.exec(key) ? data[key] : null))
+          const result =
+            typeof partitionKey === 'string'
+              ? Object.keys(data).map(key => (key.indexOf(partitionKey) > -1 ? data[key] : null))
+              : Object.keys(data).map(key => (partitionKey.exec(key) ? data[key] : null))
           return result.filter(e => e)
         },
         forEach: cb => {
           Object.keys(data).forEach(key => {
-            if (regex && regex.exec(key)) cb(data[key])
-            if (partitionKey && key.indexOf(partitionKey) > -1) cb(data[key])
+            if (typeof partitionKey === 'string' && key.indexOf(partitionKey) > -1) cb(data[key])
+            else if (partitionKey.exec && partitionKey.exec(key)) cb(data[key])
           })
         }
       }
