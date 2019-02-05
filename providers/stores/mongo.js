@@ -94,6 +94,13 @@ class MongoStore {
     return { data, continuationToken }
   }
 
+  /**
+   * Query and perform an aggregate average on the defintions
+   *
+   * @param {object} query - The filters for the request
+   * @param {string[]} fields - The fields to average
+   * @returns The result of the aggregation
+   */
   async average(query, fields) {
     const filter = this._buildQuery(query)
     const groups = fields.reduce((result, field) => {

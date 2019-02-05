@@ -52,6 +52,11 @@ class AzureSearch extends AbstractSearch {
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
+  /**
+   * Query the search index. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#request-body
+   * @param {object} body - the request body to send to search
+   * @returns {String[]} The search response. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#response
+   */
   async query(body) {
     return requestPromise({
       method: 'POST',
