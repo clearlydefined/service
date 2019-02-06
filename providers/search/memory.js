@@ -28,6 +28,11 @@ class MemorySearch extends AbstractSearch {
     entries.forEach(entry => (this.index[entry.coordinates] = entry))
   }
 
+  async query(body) {
+    if (!body.count) throw new Error('unsupported query')
+    return { count: Object.keys(this.index).length }
+  }
+
   _getEntries(definitions) {
     return definitions.map(definition => {
       return {

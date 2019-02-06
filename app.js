@@ -64,6 +64,9 @@ function createApp(config) {
   const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
   const noticesRoute = require('./routes/notices')(noticeService)
 
+  const statsService = require('./business/statsService')(definitionService, searchService)
+  const statsRoute = require('./routes/stats')(statsService)
+
   const statusService = require('./business/statusService')(config.insights)
   const statusRoute = require('./routes/status')(statusService)
 
@@ -133,6 +136,7 @@ function createApp(config) {
   app.use('/notices', noticesRoute)
   app.use('/attachments', attachmentsRoute)
   app.use('/suggestions', suggestionsRoute)
+  app.use('/stats', statsRoute)
   app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
