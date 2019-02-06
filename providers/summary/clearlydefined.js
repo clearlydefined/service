@@ -8,6 +8,7 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
+  isDeclaredLicense,
   isLicenseFile,
   updateSourceLocation,
   mergeDefinitions
@@ -115,7 +116,7 @@ class ClearlyDescribedSummarizer {
   addLicenseFromFiles(result, data, coordinates) {
     if (!data.interestingFiles) return
     const licenses = data.interestingFiles
-      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .map(file => (isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null))
       .filter(x => x)
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }

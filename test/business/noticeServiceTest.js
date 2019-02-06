@@ -115,10 +115,14 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** none; version 1.0.0 -- \ncopyright me\n\nNONE')
+    expect(notice.content).to.eq('')
     expect(notice.summary).to.deep.eq({
       total: 2,
-      warnings: { noCopyright: [], noDefinition: [], noLicense: ['npm/npmjs/-/no-assertion/1.0.0'] }
+      warnings: {
+        noCopyright: [],
+        noDefinition: [],
+        noLicense: ['npm/npmjs/-/no-assertion/1.0.0', 'npm/npmjs/-/none/1.0.0']
+      }
     })
   })
 

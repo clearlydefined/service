@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const { isDeclaredLicense } = require('../lib/utils')
 const { get } = require('lodash')
 const DocBuilder = require('tiny-attribution-generator/lib/docbuilder').default
 const TextRenderer = require('tiny-attribution-generator/lib/outputs/text').default
@@ -50,8 +51,7 @@ class NoticeService {
           noDefinition.push(id)
           return
         }
-        const declaredLicense = get(definition, 'licensed.declared')
-        if (!declaredLicense || declaredLicense === 'NOASSERTION') noLicense.push(id)
+        if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
         if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
         return {
           name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
@@ -62,7 +62,7 @@ class NoticeService {
           text: await this._getPackageText(definition)
         }
       })
-    )).filter(x => x && x.license && x.license !== 'NOASSERTION')
+    )).filter(x => x && isDeclaredLicense(x.license))
     return { packages, noDefinition, noLicense, noCopyright }
   }
 

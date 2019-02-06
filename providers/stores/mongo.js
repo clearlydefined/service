@@ -139,8 +139,12 @@ class MongoStore {
     const filter = { '_mongo.page': 1 } // only get page 1 of each definition
     if (parameters.type) filter['coordinates.type'] = parameters.type
     if (parameters.provider) filter['coordinates.provider'] = parameters.provider
-    if (parameters.name) filter['coordinates.name'] = new RegExp(parameters.name, 'i')
     if (parameters.namespace) filter['coordinates.namespace'] = new RegExp(parameters.namespace, 'i')
+    if (parameters.name) filter['coordinates.name'] = new RegExp(parameters.name, 'i')
+    if (parameters.type === null) filter['coordinates.type'] = null
+    if (parameters.provider === null) filter['coordinates.provider'] = null
+    if (parameters.name === null) filter['coordinates.name'] = null
+    if (parameters.namespace === null) filter['coordinates.namespace'] = null
     if (parameters.license) filter['licensed.declared'] = parameters.license
     if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
     if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
