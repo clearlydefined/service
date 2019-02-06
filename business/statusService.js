@@ -73,7 +73,7 @@ class StatusService {
     )
     const grouped = data.tables[0].rows.reduce((result, row) => {
       let date = row[0]
-      result[date] = result[data] || {}
+      result[date] = result[date] || {}
       result[date][row[1]] = row[2]
       return result
     }, {})
