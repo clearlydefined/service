@@ -64,6 +64,9 @@ function createApp(config) {
   const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
   const noticesRoute = require('./routes/notices')(noticeService)
 
+  const statusService = require('./business/statusService')(config.insights)
+  const statusRoute = require('./routes/status')(statusService)
+
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
   const githubSecret = config.webhook.githubSecret
@@ -130,6 +133,7 @@ function createApp(config) {
   app.use('/notices', noticesRoute)
   app.use('/attachments', attachmentsRoute)
   app.use('/suggestions', suggestionsRoute)
+  app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {
