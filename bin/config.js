@@ -66,5 +66,11 @@ module.exports = {
   },
   search: {
     service: loadFactory(config.get('SEARCH_PROVIDER') || 'memory', 'search')
+  },
+  insights: {
+    serviceId: config.get('APPINSIGHTS_SERVICE_APPLICATIONID'),
+    serviceKey: config.get('APPINSIGHTS_SERVICE_APIKEY'),
+    crawlerId: config.get('APPINSIGHTS_CRAWLER_APPLICATIONID'),
+    crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   }
 }
