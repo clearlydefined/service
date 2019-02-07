@@ -9,10 +9,15 @@ router.get('', (request, response) => {
   response.send(statusService.list())
 })
 
-router.get('/:key', asyncMiddleware(getRequests))
+router.get('/:status', asyncMiddleware(getRequests))
 async function getRequests(request, response) {
-  const result = await statusService.get(request.params.key)
-  response.send(result)
+  const cacheKey = `status_${request.params.status.toLowerCase()}`
+  let status = await request.app.locals.cache.get(cacheKey)
+  if (!status) {
+    status = await statusService.get(request.params.status)
+    await request.app.locals.cache.set(cacheKey, status, 60 * 60 /* 1 hr */)
+  }
+  response.send(status)
 }
 
 let statusService
