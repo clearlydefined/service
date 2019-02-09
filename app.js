@@ -56,7 +56,8 @@ function createApp(config) {
     aggregatorService,
     curationService,
     definitionStore,
-    searchService
+    searchService,
+    cachingService
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService

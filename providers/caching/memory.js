@@ -5,12 +5,11 @@ const Cache = require('memory-cache').Cache
 
 class MemoryCache {
   constructor(options) {
+    this.cache = new Cache()
     this.defaultExpirationSeconds = options.defaultExpirationSeconds
   }
 
-  initialize() {
-    this.cache = new Cache()
-  }
+  initialize() {}
 
   async get(item) {
     return this.cache.get(item)

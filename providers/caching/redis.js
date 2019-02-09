@@ -3,6 +3,7 @@
 
 const redis = require('redis')
 const util = require('util')
+const pako = require('pako')
 
 const objectPrefix = '*!~%'
 
@@ -18,23 +19,32 @@ class RedisCache {
     })
     this._redisGet = util.promisify(this.redis.get).bind(this.redis)
     this._redisSet = util.promisify(this.redis.set).bind(this.redis)
+    this._redisDel = util.promisify(this.redis.del).bind(this.redis)
   }
 
   async get(item) {
     const cacheItem = await this._redisGet(item)
-    if (cacheItem && cacheItem.startsWith(objectPrefix)) {
+    if (!cacheItem) return null
+    const result = pako.inflate(cacheItem, { to: 'string' })
+    if (result.startsWith(objectPrefix)) {
       try {
-        return JSON.parse(cacheItem.substring(4))
+        return JSON.parse(result.substring(4))
       } catch (error) {
         return null
       }
     }
-    return cacheItem
+    return result
   }
 
   async set(item, value, expirationSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
-    await this._redisSet(item, value, 'EX', expirationSeconds)
+    const data = pako.deflate(value, { to: 'string' })
+    if (expirationSeconds) await this._redisSet(item, data, 'EX', expirationSeconds)
+    else await this._redisSet(item, data)
+  }
+
+  async delete(item) {
+    await this._redisDel(item)
   }
 }
 
