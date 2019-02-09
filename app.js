@@ -13,6 +13,7 @@ const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
+const cachingMiddleware = require('./middleware/caching')
 
 function createApp(config) {
   const initializers = []
@@ -44,6 +45,9 @@ function createApp(config) {
 
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
+
+  const cachingService = config.caching.service()
+  initializers.push(async () => cachingService.initialize())
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
@@ -82,17 +86,13 @@ function createApp(config) {
     crawlerSecret
   )
 
-  const cachingProvider = config.caching.provider
-  const caching = require(`./providers/caching/${cachingProvider}`)
-  const cachingMiddleware = require('./middleware/caching')
-
   const app = express()
   app.use(cors())
   app.options('*', cors())
   app.use(cookieParser())
   app.use(helmet())
   app.use(requestId())
-  app.use(cachingMiddleware(caching()))
+  app.use(cachingMiddleware(cachingService))
   app.use('/schemas', express.static('./schemas'))
 
   app.use(morgan('dev'))

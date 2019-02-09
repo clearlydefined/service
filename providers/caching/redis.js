@@ -8,9 +8,16 @@ const objectPrefix = '*!~%'
 
 class RedisCache {
   constructor(options) {
-    this.redis = redis.createClient(options)
-    this._redisGet = util.promisify(this.redis.get)
-    this._redisSet = util.promisify(this.redis.set)
+    this.options = options
+  }
+
+  initialize() {
+    this.redis = redis.createClient(6380, this.options.service, {
+      auth_pass: this.options.apiKey,
+      tls: { servername: this.options.service }
+    })
+    this._redisGet = util.promisify(this.redis.get).bind(this.redis)
+    this._redisSet = util.promisify(this.redis.set).bind(this.redis)
   }
 
   async get(item) {
