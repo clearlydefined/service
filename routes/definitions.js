@@ -35,8 +35,6 @@ async function getDefinitions(request, response) {
   const pattern = request.query.pattern
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
-  const query = request.query
-  query.sortDesc = query.sortDesc === 'true'
   const result = await definitionService.find(request.query)
   response.send(result)
 }
