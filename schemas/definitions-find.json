@@ -79,10 +79,11 @@
       }
     },
     "sortDesc": {
-      "type": "boolean",
+      "enum": ["true", "false"],
+      "type": "string",
       "description": "Whether to sort descending or not. Default false.",
       "errorMessage": {
-        "type": "sortDesc must be a bool"
+        "type": "sortDesc must be a string"
       }
     },
     "continuationToken": {

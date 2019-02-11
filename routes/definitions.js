@@ -24,24 +24,21 @@ async function getDefinition(request, response) {
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
-router.get('', asyncMiddleware(getDefinitionSuggestions))
-async function getDefinitionSuggestions(request, response) {
+router.get('', asyncMiddleware(getDefinitions))
+async function getDefinitions(request, response) {
   // TODO temporary endpoint to trigger reloading the index or definitions
   if (request.query.reload) {
     // TODO purposely do not await this call. This is a fire and forget long running operation for now.
     reload(request, response)
     return response.sendStatus(200)
   }
-  const type = request.query.type || 'coordinates'
   const pattern = request.query.pattern
-  switch (type) {
-    case 'coordinates':
-      return response.send(await definitionService.suggestCoordinates(pattern))
-    case 'copyright':
-      return response.send(await definitionService.suggestCopyright(pattern))
-    default:
-      throw new Error(`Invalid search type: ${type}`)
-  }
+  if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
+  if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
+  const query = request.query
+  query.sortDesc = query.sortDesc === 'true'
+  const result = await definitionService.find(request.query)
+  response.send(result)
 }
 
 // TODO temporary method used to trigger the reloading of the search index
@@ -66,13 +63,7 @@ router.post(
 
 // POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
-router.post(
-  '/',
-  asyncMiddleware((request, response) => {
-    if (Array.isArray(request.body)) return listDefinitions(request, response)
-    return findDefinitions(request, response)
-  })
-)
+router.post('/', asyncMiddleware(listDefinitions))
 async function listDefinitions(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000)
@@ -80,12 +71,6 @@ async function listDefinitions(request, response) {
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const result = await definitionService.getAll(coordinatesList, force)
-  response.send(result)
-}
-
-async function findDefinitions(request, response) {
-  if (!validator.validate('definitions-find', request.body)) return response.status(400).send(validator.errorsText())
-  const result = await definitionService.find(request.body)
   response.send(result)
 }
 
