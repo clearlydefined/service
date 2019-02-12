@@ -519,12 +519,9 @@ class DefinitionService {
   }
 
   _getCacheKey(coordinates) {
-    return (
-      'def_' +
-      EntityCoordinates.fromObject(coordinates)
-        .toString()
-        .toLowerCase()
-    )
+    return `def_${EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()}`
   }
 }
 
