@@ -120,6 +120,8 @@ function createApp(config) {
     })
   )
 
+  app.use(require('./middleware/querystring'))
+
   app.use('/', require('./routes/index'))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
