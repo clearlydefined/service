@@ -20,7 +20,7 @@ class StatsService {
       const cached = await this.cache.get(cacheKey)
       if (cached) return cached
       const result = await this.statLookup[stat].bind(this)()
-      if (result) await this.cache.set(cacheKey, result)
+      if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
       return result
     } catch (error) {
       this.logger.error(`Stat service failed for ${stat}`, error)

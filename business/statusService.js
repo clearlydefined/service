@@ -20,7 +20,7 @@ class StatusService {
       const cached = await this.cache.get(cacheKey)
       if (cached) return cached
       const result = await this.statusLookup[key].bind(this)()
-      if (result) await this.cache.set(cacheKey, result)
+      if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
       return result
     } catch (error) {
       this.logger.error(`Status service failed for ${key}`, error)
