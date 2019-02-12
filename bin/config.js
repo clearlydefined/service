@@ -50,7 +50,7 @@ module.exports = {
     service: loadFactory(config.get('AUTH_PROVIDER') || 'github', 'auth')
   },
   caching: {
-    provider: config.get('CACHING_PROVIDER') || 'memory'
+    service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching')
   },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',

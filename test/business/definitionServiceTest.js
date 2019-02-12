@@ -17,6 +17,8 @@ describe('Definition Service', () => {
     await service.invalidate(coordinates)
     expect(service.definitionStore.delete.calledOnce).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.cache.delete.calledOnce).to.be.true
+    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test/1.0')
   })
 
   it('invalidates array of coordinates', async () => {
@@ -27,8 +29,11 @@ describe('Definition Service', () => {
     ]
     await service.invalidate(coordinates)
     expect(service.definitionStore.delete.calledTwice).to.be.true
+    expect(service.cache.delete.calledTwice).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test0')
     expect(service.definitionStore.delete.getCall(1).args[0].name).to.be.eq('test1')
+    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test0/2.3')
+    expect(service.cache.delete.getCall(1).args[0]).to.be.eq('def_npm/npmjs/-/test1/2.3')
   })
 
   it('does not store empty definitions', async () => {
@@ -334,6 +339,7 @@ function buildFile(path, license, holders) {
 function setup(definition, coordinateSpec, curation) {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
+  const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
@@ -342,7 +348,7 @@ function setup(definition, coordinateSpec, curation) {
   const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
   service.logger = { info: sinon.stub() }
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
