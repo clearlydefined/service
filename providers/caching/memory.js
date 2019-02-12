@@ -6,7 +6,7 @@ const Cache = require('memory-cache').Cache
 class MemoryCache {
   constructor(options) {
     this.cache = new Cache()
-    this.defaultExpirationSeconds = options.defaultExpirationSeconds
+    this.defaultTtlSeconds = options.defaultTtlSeconds
   }
 
   initialize() {}
@@ -15,8 +15,8 @@ class MemoryCache {
     return this.cache.get(item)
   }
 
-  set(item, value, expirationSeconds = null) {
-    const expiration = 1000 * (expirationSeconds || this.defaultExpirationSeconds)
+  set(item, value, ttlSeconds = null) {
+    const expiration = 1000 * (ttlSeconds || this.defaultTtlSeconds)
     this.cache.put(item, value, expiration)
   }
 

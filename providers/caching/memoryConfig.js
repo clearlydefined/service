@@ -4,7 +4,7 @@
 const memory = require('./memory')
 
 function serviceFactory() {
-  return memory({ defaultExpirationSeconds: 60 * 60 })
+  return memory({ defaultTtlSeconds: 60 * 60 })
 }
 
 module.exports = serviceFactory

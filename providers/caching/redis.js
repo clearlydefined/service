@@ -36,10 +36,10 @@ class RedisCache {
     return result
   }
 
-  async set(item, value, expirationSeconds) {
+  async set(item, value, ttlSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
     const data = pako.deflate(value, { to: 'string' })
-    if (expirationSeconds) await this._redisSet(item, data, 'EX', expirationSeconds)
+    if (ttlSeconds) await this._redisSet(item, data, 'EX', ttlSeconds)
     else await this._redisSet(item, data)
   }
 
