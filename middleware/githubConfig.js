@@ -4,24 +4,24 @@ const config = require('painless-config')
 const githubMiddleware = require('./github')
 const githubRoute = require('../routes/auth')
 const permissions = require('./permissions')
+const memoryCache = require('../providers/caching/memory')
 
 const defaultOptions = {
   clientId: config.get('AUTH_GITHUB_CLIENT_ID'),
   clientSecret: config.get('AUTH_GITHUB_CLIENT_SECRET'),
   token: config.get('CURATION_GITHUB_TOKEN'),
   org: config.get('AUTH_GITHUB_ORG') || 'clearlydefined',
-  timeouts: {
-    info: 10 * 60 // 10 mins
-  },
   permissions: {
     harvest: [config.get('AUTH_HARVEST_TEAM') || 'harvest-dev'],
     curate: [config.get('AUTH_CURATION_TEAM'), 'curation-dev']
   }
 }
+const defaultCache = memoryCache({ defaultTtlSeconds: 10 * 60 /* 10 mins */ })
 
-function middleware(options) {
+function middleware(options, cache) {
   const realOptions = options || defaultOptions
-  return githubMiddleware(realOptions)
+  const realCache = cache || defaultCache
+  return githubMiddleware(realOptions, realCache)
 }
 
 function route(options, endpoints) {

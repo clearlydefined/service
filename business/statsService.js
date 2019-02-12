@@ -4,18 +4,24 @@
 const logger = require('../providers/logging/logger')
 
 class StatsService {
-  constructor(definitionService, searchService) {
+  constructor(definitionService, searchService, cache) {
     this.definitionService = definitionService
     this.searchService = searchService
     this.logger = logger()
+    this.cache = cache
     this.statLookup = this._getStatLookup()
   }
 
-  get(stat) {
+  async get(stat) {
     stat = stat.toLowerCase()
     if (!this.statLookup[stat]) throw new Error('Not found')
     try {
-      return this.statLookup[stat].bind(this)()
+      const cacheKey = this._getCacheKey(stat)
+      const cached = await this.cache.get(cacheKey)
+      if (cached) return cached
+      const result = await this.statLookup[stat].bind(this)()
+      if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
+      return result
     } catch (error) {
       this.logger.error(`Stat service failed for ${stat}`, error)
       throw new Error('unexpected error')
@@ -49,6 +55,10 @@ class StatsService {
     const result = await this.definitionService.average({ type }, ['licensed.score.total', 'described.score.total'])
     return result
   }
+
+  _getCacheKey(stat) {
+    return `stat_${stat.toLowerCase()}`
+  }
 }
 
-module.exports = (definitionService, searchService) => new StatsService(definitionService, searchService)
+module.exports = (definitionService, searchService, cache) => new StatsService(definitionService, searchService, cache)

@@ -7,6 +7,7 @@ const asyncMiddleware = require('./asyncMiddleware')
 const Github = require('../lib/github')
 
 let options = null
+let cache = null
 
 /**
  * GitHub convenience middleware that injects a client into the request object
@@ -56,11 +57,11 @@ async function setupUserClient(req, token) {
 
 // Get GitHub user info and attach it to the request
 async function setupInfo(req, cacheKey, client) {
-  let info = await req.app.locals.cache.get(cacheKey)
+  let info = await cache.get(cacheKey)
   if (!info) {
     info = await client.users.get({})
     info = { name: info.data.name, login: info.data.login, email: info.data.email }
-    await req.app.locals.cache.set(cacheKey, info, options.timeouts.info)
+    await cache.set(cacheKey, info)
   }
   req.app.locals.user.github.info = info
 }
@@ -70,10 +71,10 @@ async function setupTeams(req, cacheKey, client) {
   // anonymous users are not members of any team
   if (!cacheKey || !client) return null
   // check cache for team data; hash the token so we're not storing them raw
-  let teams = await req.app.locals.cache.get(cacheKey)
+  let teams = await cache.get(cacheKey)
   if (!teams) {
     teams = await getTeams(client, options.org)
-    await req.app.locals.cache.set(cacheKey, teams, options.timeouts.info)
+    await cache.set(cacheKey, teams)
   }
   req.app.locals.user.github.teams = teams
 }
@@ -114,7 +115,8 @@ async function getCacheKey(prefix, token) {
   return `${prefix}.${hashedToken}`
 }
 
-module.exports = authOptions => {
+module.exports = (authOptions, authCache) => {
   options = authOptions
+  cache = authCache
   return middleware
 }

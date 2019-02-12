@@ -37,7 +37,7 @@ const currentSchema = '1.4.0'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -45,6 +45,7 @@ class DefinitionService {
     this.curationService = curation
     this.definitionStore = store
     this.search = search
+    this.cache = cache
     this.logger = logger()
   }
 
@@ -63,13 +64,23 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    const existing = force ? null : await this.definitionStore.get(coordinates)
+    const existing = await this._cacheExistingAside(coordinates, force)
     let result
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
+  }
+
+  async _cacheExistingAside(coordinates, force) {
+    if (force) return null
+    const cacheKey = this._getCacheKey(coordinates)
+    const cached = await this.cache.get(cacheKey)
+    if (cached) return cached
+    const stored = await this.definitionStore.get(coordinates)
+    if (stored) await this.cache.set(cacheKey, stored)
+    return stored
   }
 
   // ensure the definition is a properly classed object
@@ -155,7 +166,14 @@ class DefinitionService {
    */
   invalidate(coordinates) {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
-    return Promise.all(coordinateList.map(throat(10, coordinates => this.definitionStore.delete(coordinates))))
+    return Promise.all(
+      coordinateList.map(
+        throat(10, async coordinates => {
+          await this.definitionStore.delete(coordinates)
+          await this.cache.delete(this._getCacheKey(coordinates))
+        })
+      )
+    )
   }
 
   _validate(definition) {
@@ -190,7 +208,8 @@ class DefinitionService {
 
   async _store(definition) {
     await this.definitionStore.store(definition)
-    return this.search.store(definition)
+    await this.search.store(definition)
+    await this.cache.set(this._getCacheKey(definition.coordinates), definition)
   }
 
   /**
@@ -498,7 +517,13 @@ class DefinitionService {
   _getDefinitionCoordinates(coordinates) {
     return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
   }
+
+  _getCacheKey(coordinates) {
+    return `def_${EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()}`
+  }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
+  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)
