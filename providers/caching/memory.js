@@ -11,13 +11,17 @@ class MemoryCache {
 
   initialize() {}
 
-  async get(item) {
+  get(item) {
     return this.cache.get(item)
   }
 
-  async set(item, value, expirationSeconds = null) {
+  set(item, value, expirationSeconds = null) {
     const expiration = 1000 * (expirationSeconds || this.defaultExpirationSeconds)
     this.cache.put(item, value, expiration)
+  }
+
+  delete(item) {
+    this.cache.del(item)
   }
 }
 

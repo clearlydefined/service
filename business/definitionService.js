@@ -64,15 +64,23 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    const existing = force
-      ? null
-      : (await this.cache.get(this._getCacheKey(coordinates))) || (await this.definitionStore.get(coordinates))
+    const existing = await this._cacheExistingAside(coordinates, force)
     let result
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
+  }
+
+  async _cacheExistingAside(coordinates, force) {
+    if (force) return null
+    const cacheKey = this._getCacheKey(coordinates)
+    const cached = await this.cache.get(cacheKey)
+    if (cached) return cached
+    const stored = await this.definitionStore.get(coordinates)
+    if (stored) await this.cache.set(cacheKey, stored)
+    return stored
   }
 
   // ensure the definition is a properly classed object
@@ -200,8 +208,8 @@ class DefinitionService {
 
   async _store(definition) {
     await this.definitionStore.store(definition)
+    await this.search.store(definition)
     await this.cache.set(this._getCacheKey(definition.coordinates), definition)
-    return this.search.store(definition)
   }
 
   /**
