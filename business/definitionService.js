@@ -520,7 +520,7 @@ class DefinitionService {
 
   _getCacheKey(coordinates) {
     return (
-      'co_' +
+      'def_' +
       EntityCoordinates.fromObject(coordinates)
         .toString()
         .toLowerCase()

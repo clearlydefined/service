@@ -11,12 +11,7 @@ router.get('', (request, response) => {
 
 router.get('/:stat', asyncMiddleware(getStat))
 async function getStat(request, response) {
-  const cacheKey = `stat_${request.params.stat.toLowerCase()}`
-  let stat = await request.app.locals.cache.get(cacheKey)
-  if (!stat) {
-    stat = await statsService.get(request.params.stat)
-    await request.app.locals.cache.set(cacheKey, stat, 60 * 60 /* 1 hr */)
-  }
+  const stat = await statsService.get(request.params.stat)
   response.send({ value: stat })
 }
 

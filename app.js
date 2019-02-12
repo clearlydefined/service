@@ -13,7 +13,6 @@ const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
-const cachingMiddleware = require('./middleware/caching')
 
 function createApp(config) {
   const initializers = []
@@ -69,10 +68,10 @@ function createApp(config) {
   const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
   const noticesRoute = require('./routes/notices')(noticeService)
 
-  const statsService = require('./business/statsService')(definitionService, searchService)
+  const statsService = require('./business/statsService')(definitionService, searchService, cachingService)
   const statsRoute = require('./routes/stats')(statsService)
 
-  const statusService = require('./business/statusService')(config.insights)
+  const statusService = require('./business/statusService')(config.insights, cachingService)
   const statusRoute = require('./routes/status')(statusService)
 
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
@@ -93,7 +92,6 @@ function createApp(config) {
   app.use(cookieParser())
   app.use(helmet())
   app.use(requestId())
-  app.use(cachingMiddleware(cachingService))
   app.use('/schemas', express.static('./schemas'))
 
   app.use(morgan('dev'))

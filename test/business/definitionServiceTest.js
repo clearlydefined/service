@@ -18,7 +18,7 @@ describe('Definition Service', () => {
     expect(service.definitionStore.delete.calledOnce).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
     expect(service.cache.delete.calledOnce).to.be.true
-    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('co_npm/npmjs/-/test/1.0')
+    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test/1.0')
   })
 
   it('invalidates array of coordinates', async () => {
@@ -32,8 +32,8 @@ describe('Definition Service', () => {
     expect(service.cache.delete.calledTwice).to.be.true
     expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test0')
     expect(service.definitionStore.delete.getCall(1).args[0].name).to.be.eq('test1')
-    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('co_npm/npmjs/-/test0/2.3')
-    expect(service.cache.delete.getCall(1).args[0]).to.be.eq('co_npm/npmjs/-/test1/2.3')
+    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test0/2.3')
+    expect(service.cache.delete.getCall(1).args[0]).to.be.eq('def_npm/npmjs/-/test1/2.3')
   })
 
   it('does not store empty definitions', async () => {

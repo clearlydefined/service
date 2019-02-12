@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
+const logger = require('../providers/logging/logger')
 
 class StatusService {
-  constructor(options) {
+  constructor(options, cache) {
     this.options = options
+    this.logger = logger()
+    this.cache = cache
     this.statusLookup = this._getStatusLookup()
   }
 
@@ -13,7 +16,12 @@ class StatusService {
     key = key.toLowerCase()
     if (!this.statusLookup[key]) throw new Error('Not found')
     try {
-      return this.statusLookup[key].bind(this)()
+      const cacheKey = this._getCacheKey(key)
+      const cached = await this.cache.get(cacheKey)
+      if (cached) return cached
+      const result = await this.statusLookup[key].bind(this)()
+      if (result) await this.cache.set(cacheKey, result)
+      return result
     } catch (error) {
       this.logger.error(`Status service failed for ${key}`, error)
       throw new Error('unexpected error')
@@ -122,6 +130,10 @@ class StatusService {
       json: true
     }
   }
+
+  _getCacheKey(key) {
+    return `status_${key.toLowerCase()}`
+  }
 }
 
-module.exports = options => new StatusService(options)
+module.exports = (options, cache) => new StatusService(options, cache)

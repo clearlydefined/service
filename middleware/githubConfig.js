@@ -14,13 +14,14 @@ const defaultOptions = {
   permissions: {
     harvest: [config.get('AUTH_HARVEST_TEAM') || 'harvest-dev'],
     curate: [config.get('AUTH_CURATION_TEAM'), 'curation-dev']
-  },
-  cache: memoryCache({ defaultExpirationSeconds: 10 * 60 /* 10 mins */ })
+  }
 }
+const defaultCache = memoryCache({ defaultExpirationSeconds: 10 * 60 /* 10 mins */ })
 
-function middleware(options) {
+function middleware(options, cache) {
   const realOptions = options || defaultOptions
-  return githubMiddleware(realOptions)
+  const realCache = cache || defaultCache
+  return githubMiddleware(realOptions, realCache)
 }
 
 function route(options, endpoints) {
