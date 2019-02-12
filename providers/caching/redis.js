@@ -26,14 +26,12 @@ class RedisCache {
     const cacheItem = await this._redisGet(item)
     if (!cacheItem) return null
     const result = pako.inflate(cacheItem, { to: 'string' })
-    if (result.startsWith(objectPrefix)) {
-      try {
-        return JSON.parse(result.substring(4))
-      } catch (error) {
-        return null
-      }
+    if (!result.startsWith(objectPrefix)) return result
+    try {
+      return JSON.parse(result.substring(4))
+    } catch (error) {
+      return null
     }
-    return result
   }
 
   async set(item, value, ttlSeconds) {

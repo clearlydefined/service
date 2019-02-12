@@ -25,4 +25,4 @@ class MemoryCache {
   }
 }
 
-module.exports = options => new MemoryCache(options)
+module.exports = options => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })

@@ -20,7 +20,7 @@ module.exports = {
   },
   caching: {
     redis: require('../providers/caching/redisConfig'),
-    memory: require('../providers/caching/memoryConfig')
+    memory: require('../providers/caching/memory')
   },
   auth: {
     github: require('../middleware/githubConfig')
