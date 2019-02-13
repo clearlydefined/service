@@ -193,9 +193,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/componentList'
-                - $ref: '#/components/schemas/definitionQuery'
+              $ref: '#/components/schemas/componentList'
       responses:
         200:
           description: Status request has been accepted.
@@ -212,13 +210,77 @@ paths:
           name: pattern
           schema:
             type: string
-          required: true
-          description: The string to search for in definition coordinates
+          description: The string to search for in definition coordinates to get coordinate suggestions
         - in: query
           name: type
           schema:
             type: string
-          description: The part of the definition to search for the given pattern. Valid values are 'coordinates' (default) and 'copyrights'.
+          description: The 'type' coordinates segment
+        - in: query
+          name: provider
+          schema:
+            type: string
+          description: The 'provider' coordinates segment
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: The 'name' coordinates segment
+        - in: query
+          name: namespace
+          schema:
+            type: string
+          description: The 'namespace' coordinates segment
+        - in: query
+          name: license
+          schema:
+            type: string
+          description: The SPDX license identifier
+        - in: query
+          name: releasedAfter
+          schema:
+            type: string
+          description: The minimum release date for the component
+        - in: query
+          name: releasedBefore
+          schema:
+            type: string
+          description: The maximum release date for the component
+        - in: query
+          name: minLicensedScore
+          schema:
+            type: integer
+          description: The minimum effective licensed score for the component
+        - in: query
+          name: maxLicensedScore
+          schema:
+            type: integer
+          description: The maximum effective licensed score for the component
+        - in: query
+          name: minDescribedScore
+          schema:
+            type: integer
+          description: The minimum effective described score for the component
+        - in: query
+          name: maxDescribedScore
+          schema:
+            type: integer
+          description: The maximum effective described score for the component
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: The field to sort the results by, e.g license, releaseDate, name, etc
+        - in: query
+          name: sortDesc
+          schema:
+            type: boolean
+          description: The direction to sort the results by
+        - in: query
+          name: continuationToken
+          schema:
+            type: string
+          description: Used for pagination. Seeded from the results of the previous query
       responses:
         200:
           description: List of definitions that have definitions.
@@ -319,41 +381,6 @@ components:
       example:
         - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
         - npm/npmjs/-/redie/0.3.0
-    definitionQuery:
-      type: object
-      properties:
-        type:
-          type: string
-        provider:
-          type: string
-        name:
-          type: string
-        namespace:
-          type: string
-        license:
-          type: string
-        releasedAfter:
-          type: string
-        releasedBefore:
-          type: string
-        minLicensedScore:
-          type: integer
-        maxLicensedScore:
-          type: integer
-        minDescribedScore:
-          type: integer
-        maxDescribedScore:
-          type: integer
-        sort:
-          type: string
-        sortDesc:
-          type: boolean
-        continuationToken:
-          type: string
-      example:
-        provider: npmjs
-        sort: name
-
   requestBodies:
     harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
