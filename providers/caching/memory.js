@@ -4,17 +4,25 @@
 const Cache = require('memory-cache').Cache
 
 class MemoryCache {
-  constructor() {
+  constructor(options) {
     this.cache = new Cache()
+    this.defaultTtlSeconds = options.defaultTtlSeconds
   }
 
-  async get(item) {
+  initialize() {}
+
+  get(item) {
     return this.cache.get(item)
   }
 
-  async set(item, value, expirationSeconds) {
-    this.cache.put(item, value, 1000 * expirationSeconds)
+  set(item, value, ttlSeconds = null) {
+    const expiration = 1000 * (ttlSeconds || this.defaultTtlSeconds)
+    this.cache.put(item, value, expiration)
+  }
+
+  delete(item) {
+    this.cache.del(item)
   }
 }
 
-module.exports = () => new MemoryCache()
+module.exports = options => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })

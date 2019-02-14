@@ -45,6 +45,9 @@ function createApp(config) {
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
 
+  const cachingService = config.caching.service()
+  initializers.push(async () => cachingService.initialize())
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
     harvestService,
@@ -52,11 +55,24 @@ function createApp(config) {
     aggregatorService,
     curationService,
     definitionStore,
-    searchService
+    searchService,
+    cachingService
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
   const definitionsRoute = require('./routes/definitions')(definitionService)
+
+  const suggestionService = require('./business/suggestionService')(definitionService)
+  const suggestionsRoute = require('./routes/suggestions')(suggestionService)
+
+  const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
+  const noticesRoute = require('./routes/notices')(noticeService)
+
+  const statsService = require('./business/statsService')(definitionService, searchService, cachingService)
+  const statsRoute = require('./routes/stats')(statsService)
+
+  const statusService = require('./business/statusService')(config.insights, cachingService)
+  const statusRoute = require('./routes/status')(statusService)
 
   const attachmentsRoute = require('./routes/attachments')(attachmentStore)
 
@@ -70,24 +86,19 @@ function createApp(config) {
     crawlerSecret
   )
 
-  const cachingProvider = config.caching.provider
-  const caching = require(`./providers/caching/${cachingProvider}`)
-  const cachingMiddleware = require('./middleware/caching')
-
   const app = express()
   app.use(cors())
   app.options('*', cors())
   app.use(cookieParser())
   app.use(helmet())
   app.use(requestId())
-  app.use(cachingMiddleware(caching()))
   app.use('/schemas', express.static('./schemas'))
 
   app.use(morgan('dev'))
 
   const swaggerOptions = { swaggerUrl: `${config.endpoints.service}/schemas/swagger.yaml` }
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, swaggerOptions))
-  app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhookRoute)
+  app.use('/webhook', bodyParser.raw({ limit: '10mb', type: '*/*' }), webhookRoute)
 
   // OAuth app initialization; skip if not configured (middleware can cope)
   const auth = config.auth.service.route(null, config.endpoints)
@@ -108,9 +119,12 @@ function createApp(config) {
     })
   )
 
+  app.use(require('./middleware/querystring'))
+
   app.use('/', require('./routes/index'))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
+  app.use('/origins/pod', require('./routes/originPod')())
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/nuget', require('./routes/originNuget')())
@@ -120,7 +134,11 @@ function createApp(config) {
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
   app.use('/definitions', definitionsRoute)
+  app.use('/notices', noticesRoute)
   app.use('/attachments', attachmentsRoute)
+  app.use('/suggestions', suggestionsRoute)
+  app.use('/stats', statsRoute)
+  app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {

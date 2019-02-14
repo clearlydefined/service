@@ -7,7 +7,8 @@ function definition(options) {
   return mongo(
     options || {
       connectionString: config.get('DEFINITION_MONGO_CONNECTION_STRING'),
-      dbName: config.get('DEFINITION_MONGO_DB_NAME') || 'clearlydefined'
+      dbName: config.get('DEFINITION_MONGO_DB_NAME') || 'clearlydefined',
+      collectionName: config.get('DEFINITON_MONGO_COLLECTION_NAME') || 'definitions'
     }
   )
 }

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 module.exports = {
+  licensee: require('./licensee'),
   scancode: require('./scancode'),
   fossology: require('./fossology'),
   clearlydefined: require('./clearlydefined'),
