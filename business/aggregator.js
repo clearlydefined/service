@@ -76,7 +76,7 @@ class AggregationService {
    */
   _normalizeFiles(result, summarized, coordinates) {
     const cdFiles = get(this._findData('clearlydefined', summarized), 'summary.files')
-    if (!cdFiles) return
+    if (!cdFiles || !cdFiles.length) return
     const difference = result.files.length - cdFiles.length
     if (!difference) return
     this.logger.info('difference between summary file count and cd file count', {
