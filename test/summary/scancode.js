@@ -38,9 +38,9 @@ describe('ScanCode summarizer', () => {
     expect(summary.files[1].license).to.equal('GPL-3.0')
   })
 
-  it('uses discovered full text license as decalred license', () => {
+  it('uses discovered full text license as declared license', () => {
     const { coordinates, harvested } = setup([
-      buildFile('LICENSE', 'MIT', [], undefined, { is_license_text: true }),
+      buildFile('LICENSE', 'MIT', [], undefined, {}, { is_license_text: true }),
       buildFile('LICENSE.foo', 'GPL-3.0', [])
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
@@ -60,8 +60,8 @@ describe('ScanCode summarizer', () => {
 
   it('finds multiple license text files', () => {
     const { coordinates, harvested } = setup([
-      buildFile('LICENSE1.md', 'MIT', [], undefined, { is_license_text: true }),
-      buildFile('LICENSE2.bar', 'GPL-3.0', [], undefined, { is_license_text: true })
+      buildFile('LICENSE1.md', 'MIT', [], undefined, {}, { is_license_text: true }),
+      buildFile('LICENSE2.bar', 'GPL-3.0', [], undefined, {}, { is_license_text: true })
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -85,7 +85,7 @@ describe('ScanCode summarizer', () => {
 
   it('DETECTS npm license file in package folder', () => {
     const { coordinates, harvested } = setup(
-      [buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL-3.0', [], 100, { is_license_text: true })],
+      [buildDirectory('package'), buildFile('package/LICENSE.md', 'GPL-3.0', [], 100, {}, { is_license_text: true })],
       'npm/npmjs/-/test/1.0'
     )
     const summary = Summarizer().summarize(coordinates, harvested)
@@ -114,7 +114,8 @@ describe('ScanCode summarizer', () => {
   it('DETECTS asserted license file in the NPM package subdirectory', () => {
     const { coordinates, harvested } = setup(
       [buildPackageFile('package/package.json', 'MIT', [])],
-      'npm/npmjs/-/test/1.0'
+      'npm/npmjs/-/test/1.0',
+      '2.2.1'
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -131,7 +132,11 @@ describe('ScanCode summarizer', () => {
   })
 
   it('DETECTS asserted license file in root', () => {
-    const { coordinates, harvested } = setup([buildPackageFile('foo.nuspec', 'MIT', [])])
+    const { coordinates, harvested } = setup(
+      [buildPackageFile('foo.nuspec', 'MIT', [])],
+      'npm/npmjs/-/test/1.0',
+      '2.2.1'
+    )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(1)
@@ -146,10 +151,25 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed).to.be.undefined
   })
 
-  it('prioritizes package manifest over full text license file', () => {
+  it('prioritizes package manifest over full text license file for 2.2', () => {
     const { coordinates, harvested } = setup(
       [
-        buildFile('package/LICENSE.foo', 'GPL-3.0', [], 100, { is_license_text: true }),
+        buildFile('package/LICENSE.foo', 'GPL-3.0', [], 100, {}, { is_license_text: true }),
+        buildPackageFile('package/package.json', 'MIT', [])
+      ],
+      'npm/npmjs/-/test/1.0',
+      '2.2.1'
+    )
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.files.length).to.eq(2)
+    expect(summary.licensed.declared).to.eq('MIT')
+  })
+
+  it('prioritizes full text license file over package manifest for 3.0', () => {
+    const { coordinates, harvested } = setup(
+      [
+        buildFile('package/LICENSE.foo', 'GPL-3.0', [], 100, {}, { is_license_text: true }),
         buildPackageFile('package/package.json', 'MIT', [])
       ],
       'npm/npmjs/-/test/1.0'
@@ -157,7 +177,7 @@ describe('ScanCode summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.licensed.declared).to.eq('GPL-3.0')
   })
 
   it('creates expressions from matched_rule', () => {
@@ -225,16 +245,16 @@ function validate(definition) {
   if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
 }
 
-function setup(files, coordinateSpec) {
+function setup(files, coordinateSpec, scancode_version = '3.0.2') {
   const harvested = {
     _metadata: {},
-    content: { scancode_version: '2.2.1', files }
+    content: { scancode_version, files }
   }
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'nuget/nuget/-/test/1.0')
   return { coordinates, harvested }
 }
 
-function buildFile(path, license, holders, score = 100, rule = {}) {
+function buildFile(path, license, holders, score = 100, rule = {}, fileProps = {}) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
   if (!Array.isArray(license)) license = [license]
   return {
@@ -243,7 +263,8 @@ function buildFile(path, license, holders, score = 100, rule = {}) {
     licenses: license.map(spdx_license_key => {
       return { spdx_license_key, score, matched_rule: rule }
     }),
-    copyrights: [wrapHolders]
+    copyrights: [wrapHolders],
+    ...fileProps
   }
 }
 
