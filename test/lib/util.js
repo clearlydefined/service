@@ -203,6 +203,19 @@ describe('Utils isLicenseFile', () => {
     }
   })
 
+  it('should detect package level license files for pythons', () => {
+    const inputs = [
+      'redis-3.1/LICENSE',
+      'redis-3.1/license',
+      'redis-3.1/License.txt',
+      'redis-3.1/LICENSE.md',
+      'redis-3.1/LICENSE.HTML'
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be.true
+    }
+  })
+
   it('should not detect package level license files for NuGets', () => {
     const inputs = [
       'package/LICENSE',
@@ -239,6 +252,20 @@ describe('Utils isLicenseFile', () => {
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.false
+    }
+  })
+
+  it('should not detect other license files for pythons', () => {
+    const inputs = [
+      'special/LICENSE',
+      'redis-3.1/nested/LICENSE',
+      'redis-3.2/LICENSE',
+      'other-3.1/LICENSE',
+      'package/LICENSE'
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be
+        .false
     }
   })
 
