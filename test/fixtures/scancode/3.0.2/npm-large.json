@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/npm/npmjs/-/node-forge/0.7.5",
-    "fetchedAt": "2018-12-18T22:14:37.801Z",
+    "fetchedAt": "2019-02-20T21:37:12.442Z",
     "links": {
       "self": {
-        "href": "urn:npm:npmjs:-:node-forge:revision:0.7.5:tool:scancode:2.9.8",
+        "href": "urn:npm:npmjs:-:node-forge:revision:0.7.5:tool:scancode:3.1.2",
         "type": "resource"
       },
       "siblings": {
@@ -13,37 +13,447 @@
         "type": "collection"
       }
     },
-    "version": "2.9.8",
+    "schemaVersion": "3.1.2",
+    "toolVersion": "3.0.2",
     "contentType": "application/json",
     "releaseDate": "2018-03-31T00:24:46.810Z",
-    "processedAt": "2018-12-18T22:15:10.062Z"
+    "processedAt": "2019-02-20T21:37:52.683Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "2.9.8",
+        "tool_version": "3.0.2",
         "options": {
-          "input": "/tmp/cd-KRNh3D",
+          "input": "/tmp/cd-bgaTbz",
+          "--classify": true,
           "--copyright": true,
+          "--email": true,
+          "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-wlUfst",
+          "--is-license-text": true,
+          "--json-pp": "/tmp/cd-1IryPq",
           "--license": true,
+          "--license-clarity-score": true,
           "--license-diag": true,
-          "--only-findings": true,
+          "--license-text": true,
           "--package": true,
           "--processes": "2",
           "--strip-root": true,
-          "--timeout": "1000.0"
+          "--summary": true,
+          "--summary-key-files": true,
+          "--timeout": "1000.0",
+          "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2018-12-18T221438.757232",
-        "end_timestamp": "2018-12-18T221509.290364",
+        "start_timestamp": "2019-02-20T213713.612944",
+        "end_timestamp": "2019-02-20T213751.739766",
         "message": null,
         "errors": [],
-        "extra_data": { "files_count": 53 }
+        "extra_data": { "files_count": 62 }
       }
     ],
+    "summary": {
+      "license_expressions": [
+        { "value": null, "count": 51 },
+        { "value": "bsd-new", "count": 10 },
+        { "value": "gpl-2.0", "count": 7 },
+        { "value": "mit", "count": 3 },
+        { "value": "public-domain", "count": 3 },
+        { "value": "gpl-1.0-plus", "count": 2 },
+        { "value": "lgpl-2.1-plus", "count": 1 },
+        { "value": "mit-addition", "count": 1 },
+        { "value": "unknown", "count": 1 },
+        { "value": "warranty-disclaimer", "count": 1 }
+      ],
+      "copyrights": [
+        { "value": "Copyright (c) Digital Bazaar, Inc.", "count": 45 },
+        { "value": null, "count": 12 },
+        {
+          "value": "Copyright (c) Stefan Siegl <stesie@brokenpipe.de>",
+          "count": 9
+        },
+        { "value": "Copyright (c) Tom Wu", "count": 3 },
+        {
+          "value": "Copyright (c) Ellis Pritchard, Guardian Unlimited",
+          "count": 1
+        },
+        { "value": "Copyright (c) Free Software Foundation, Inc.", "count": 1 },
+        { "value": "Copyright (c) Kenji Urushima", "count": 1 },
+        {
+          "value": "Copyright (c) Lautaro Cozzani <lautaro.cozzani@scytl.com>",
+          "count": 1
+        },
+        { "value": "copyrighted by the Free Software Foundation", "count": 1 }
+      ],
+      "holders": [
+        { "value": "Digital Bazaar, Inc.", "count": 45 },
+        { "value": null, "count": 13 },
+        { "value": "Stefan Siegl", "count": 9 },
+        { "value": "Tom Wu", "count": 3 },
+        { "value": "Free Software Foundation, Inc.", "count": 2 },
+        { "value": "Ellis Pritchard, Guardian Unlimited", "count": 1 },
+        { "value": "Kenji Urushima", "count": 1 },
+        { "value": "Lautaro Cozzani", "count": 1 }
+      ],
+      "authors": [
+        { "value": "Dave Longley", "count": 41 },
+        { "value": null, "count": 15 },
+        { "value": "Stefan Siegl", "count": 7 },
+        { "value": "David I. Lehn <dlehn@digitalbazaar.com>", "count": 4 },
+        { "value": "Stefan Siegl <stesie@brokenpipe.de>", "count": 2 },
+        { "value": "Evan Jones (http://evanjones.ca/)", "count": 1 },
+        { "value": "Lautaro Cozzani Rodriguez", "count": 1 },
+        { "value": "Mike Johnson", "count": 1 },
+        { "value": "https://github.com/shellac", "count": 1 }
+      ],
+      "programming_language": [
+        { "value": "JavaScript", "count": 53 },
+        { "value": null, "count": 7 },
+        { "value": "Objective-C", "count": 2 }
+      ],
+      "packages": [
+        {
+          "type": "npm",
+          "namespace": null,
+          "name": "node-forge",
+          "version": "0.7.5",
+          "qualifiers": null,
+          "subpath": null,
+          "primary_language": "JavaScript",
+          "description": "JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.",
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "author",
+              "name": "Digital Bazaar, Inc.",
+              "email": "support@digitalbazaar.com",
+              "url": "http://digitalbazaar.com/"
+            },
+            {
+              "type": "person",
+              "role": "contributor",
+              "name": "Dave Longley",
+              "email": "dlongley@digitalbazaar.com",
+              "url": null
+            },
+            {
+              "type": "person",
+              "role": "contributor",
+              "name": "David I. Lehn",
+              "email": "dlehn@digitalbazaar.com",
+              "url": null
+            },
+            {
+              "type": "person",
+              "role": "contributor",
+              "name": "Stefan Siegl",
+              "email": "stesie@brokenpipe.de",
+              "url": null
+            },
+            {
+              "type": "person",
+              "role": "contributor",
+              "name": "Christoph Dorn",
+              "email": "christoph@christophdorn.com",
+              "url": null
+            }
+          ],
+          "keywords": [
+            "aes",
+            "asn",
+            "asn.1",
+            "cbc",
+            "crypto",
+            "cryptography",
+            "csr",
+            "des",
+            "gcm",
+            "hmac",
+            "http",
+            "https",
+            "md5",
+            "network",
+            "pkcs",
+            "pki",
+            "prng",
+            "rc2",
+            "rsa",
+            "sha1",
+            "sha256",
+            "sha384",
+            "sha512",
+            "ssh",
+            "tls",
+            "x.509",
+            "x509"
+          ],
+          "homepage_url": "https://github.com/digitalbazaar/forge",
+          "download_url": "https://registry.npmjs.org/node-forge/-/node-forge-0.7.5.tgz",
+          "size": null,
+          "sha1": null,
+          "md5": null,
+          "sha256": null,
+          "sha512": null,
+          "bug_tracking_url": "https://github.com/digitalbazaar/forge/issues",
+          "code_view_url": null,
+          "vcs_url": "git+https://github.com/digitalbazaar/forge",
+          "copyright": null,
+          "license_expression": "bsd-new OR gpl-2.0",
+          "declared_license": "(BSD-3-Clause OR GPL-2.0)",
+          "notice_text": null,
+          "manifest_path": "package.json",
+          "dependencies": [
+            {
+              "purl": "pkg:npm/browserify",
+              "requirement": "^16.1.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/commander",
+              "requirement": "^2.14.1",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/cross-env",
+              "requirement": "^5.1.3",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/express",
+              "requirement": "^4.16.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/jscs",
+              "requirement": "^3.0.7",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/jshint",
+              "requirement": "^2.9.5",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma",
+              "requirement": "^2.0.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-browserify",
+              "requirement": "^5.2.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-chrome-launcher",
+              "requirement": "^2.2.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-edge-launcher",
+              "requirement": "^0.4.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-firefox-launcher",
+              "requirement": "^1.1.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-ie-launcher",
+              "requirement": "^1.0.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-mocha",
+              "requirement": "^1.3.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-mocha-reporter",
+              "requirement": "^2.2.5",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-phantomjs-launcher",
+              "requirement": "^1.0.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-safari-launcher",
+              "requirement": "^1.0.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-sauce-launcher",
+              "requirement": "^1.2.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-sourcemap-loader",
+              "requirement": "^0.3.7",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-tap-reporter",
+              "requirement": "0.0.6",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/karma-webpack",
+              "requirement": "^2.0.13",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/mocha",
+              "requirement": "^5.0.1",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/mocha-lcov-reporter",
+              "requirement": "^1.2.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/nodejs-websocket",
+              "requirement": "^1.7.1",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/nyc",
+              "requirement": "^11.5.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/opts",
+              "requirement": "^1.2.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/webpack",
+              "requirement": "^3.11.0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            }
+          ],
+          "contains_source_code": null,
+          "source_packages": [],
+          "purl": "pkg:npm/node-forge@0.7.5",
+          "repository_homepage_url": "https://www.npmjs.com/package/node-forge",
+          "repository_download_url": "https://registry.npmjs.org/node-forge/-/node-forge-0.7.5.tgz",
+          "api_data_url": "https://registry.npmjs.org/node-forge/0.7.5",
+          "files": [{ "path": "package", "type": "directory" }]
+        }
+      ]
+    },
+    "license_clarity_score": {
+      "score": 30,
+      "has_declared_license_in_key_files": true,
+      "file_level_license_and_copyright_coverage": 0.02,
+      "has_consistent_key_and_file_level_licenses": false,
+      "is_using_only_spdx_licenses": false,
+      "has_full_text_for_all_licenses": false
+    },
+    "summary_of_key_files": {
+      "license_expressions": [
+        { "value": "bsd-new", "count": 6 },
+        { "value": "gpl-2.0", "count": 6 },
+        { "value": "gpl-1.0-plus", "count": 2 },
+        { "value": "lgpl-2.1-plus", "count": 1 },
+        { "value": "unknown", "count": 1 }
+      ],
+      "copyrights": [
+        { "value": null, "count": 2 },
+        { "value": "Copyright (c) Digital Bazaar, Inc.", "count": 1 },
+        { "value": "Copyright (c) Free Software Foundation, Inc.", "count": 1 },
+        { "value": "copyrighted by the Free Software Foundation", "count": 1 }
+      ],
+      "holders": [
+        { "value": null, "count": 2 },
+        { "value": "Free Software Foundation, Inc.", "count": 2 },
+        { "value": "Digital Bazaar, Inc.", "count": 1 }
+      ],
+      "authors": [{ "value": null, "count": 3 }],
+      "programming_language": [{ "value": null, "count": 2 }, { "value": "Objective-C", "count": 1 }]
+    },
     "files": [
       {
         "path": "package",
@@ -79,7 +489,6 @@
             "subpath": null,
             "primary_language": "JavaScript",
             "description": "JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.",
-            "size": null,
             "release_date": null,
             "parties": [
               {
@@ -149,17 +558,16 @@
             ],
             "homepage_url": "https://github.com/digitalbazaar/forge",
             "download_url": "https://registry.npmjs.org/node-forge/-/node-forge-0.7.5.tgz",
-            "download_sha1": null,
-            "download_md5": null,
-            "download_sha256": null,
-            "download_sha512": null,
+            "size": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "sha512": null,
             "bug_tracking_url": "https://github.com/digitalbazaar/forge/issues",
             "code_view_url": null,
-            "vcs_tool": "git",
-            "vcs_repository": "https://github.com/digitalbazaar/forge",
-            "vcs_revision": null,
+            "vcs_url": "git+https://github.com/digitalbazaar/forge",
             "copyright": null,
-            "license_expression": "bsd-new AND gpl-2.0 AND unknown",
+            "license_expression": "bsd-new OR gpl-2.0",
             "declared_license": "(BSD-3-Clause OR GPL-2.0)",
             "notice_text": null,
             "manifest_path": "package.json",
@@ -378,12 +786,72 @@
             "purl": "pkg:npm/node-forge@0.7.5",
             "repository_homepage_url": "https://www.npmjs.com/package/node-forge",
             "repository_download_url": "https://registry.npmjs.org/node-forge/-/node-forge-0.7.5.tgz",
-            "api_data_url": "https://registry.npmjs.org/node-forge/0.7.5"
+            "api_data_url": "https://registry.npmjs.org/node-forge/0.7.5",
+            "files": [{ "path": "package", "type": "directory" }]
           }
         ],
-        "files_count": 53,
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 62,
+        "dirs_count": 4,
+        "size_count": 1670906,
+        "scan_errors": []
+      },
+      {
+        "path": "package/CHANGELOG.md",
+        "type": "file",
+        "name": "CHANGELOG.md",
+        "base_name": "CHANGELOG",
+        "extension": ".md",
+        "size": 5086,
+        "date": "1985-10-26",
+        "sha1": "91c325a8612a6c8e41f197ca75cc5cd34407ee93",
+        "md5": "46db54c68312821897afd7bd58447b5e",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/digitalbazaar/forge-dist",
+            "start_line": 60,
+            "end_line": 60
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge",
+            "start_line": 138,
+            "end_line": 138
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
         "dirs_count": 0,
-        "size_count": 1029183,
+        "size_count": 0,
         "scan_errors": []
       },
       {
@@ -408,7 +876,7 @@
         "licenses": [
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -433,12 +901,13 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "the BSD License"
           },
           {
             "key": "gpl-2.0",
-            "score": 41,
+            "score": 38,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -463,12 +932,13 @@
               "rule_length": 7,
               "matched_length": 7,
               "match_coverage": 100,
-              "rule_relevance": 41
-            }
+              "rule_relevance": 38
+            },
+            "matched_text": "GNU General Public License (GPL) Version 2."
           },
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -493,8 +963,9 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "The BSD License"
           },
           {
             "key": "gpl-1.0-plus",
@@ -512,7 +983,7 @@
             "start_line": 8,
             "end_line": 8,
             "matched_rule": {
-              "identifier": "gpl_61.RULE",
+              "identifier": "gpl_bare_word_only.RULE",
               "license_expression": "gpl-1.0-plus",
               "licenses": ["gpl-1.0-plus"],
               "is_license_text": false,
@@ -524,11 +995,12 @@
               "matched_length": 1,
               "match_coverage": 100,
               "rule_relevance": 5
-            }
+            },
+            "matched_text": "GPL"
           },
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -553,8 +1025,9 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "New BSD License ("
           },
           {
             "key": "bsd-new",
@@ -584,11 +1057,12 @@
               "matched_length": 207,
               "match_coverage": 97.64,
               "rule_relevance": 100
-            }
+            },
+            "matched_text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n    * Neither the name of [Digital] [Bazaar], Inc. nor the\n      names of its contributors may be used to endorse or promote products\n      derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL [DIGITAL] [BAZAAR] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
           },
           {
             "key": "gpl-2.0",
-            "score": 35,
+            "score": 33,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -613,12 +1087,75 @@
               "rule_length": 6,
               "matched_length": 6,
               "match_coverage": 100,
-              "rule_relevance": 35
-            }
+              "rule_relevance": 33
+            },
+            "matched_text": "GNU GENERAL PUBLIC LICENSE\n           Version 2,"
+          },
+          {
+            "key": "gpl-1.0-plus",
+            "score": 27,
+            "name": "GNU General Public License 1.0 or later",
+            "short_name": "GPL 1.0 or later",
+            "category": "Copyleft",
+            "is_exception": false,
+            "owner": "Free Software Foundation (FSF)",
+            "homepage_url": "http://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html",
+            "text_url": "http://www.gnu.org/licenses/old-licenses/gpl-1.0-standalone.html",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:gpl-1.0-plus",
+            "spdx_license_key": "GPL-1.0-or-later",
+            "spdx_url": "https://spdx.org/licenses/GPL-1.0-or-later",
+            "start_line": 64,
+            "end_line": 65,
+            "matched_rule": {
+              "identifier": "gpl-1.0-plus_33.RULE",
+              "license_expression": "gpl-1.0-plus",
+              "licenses": ["gpl-1.0-plus"],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "matcher": "2-aho",
+              "rule_length": 5,
+              "matched_length": 5,
+              "match_coverage": 100,
+              "rule_relevance": 27
+            },
+            "matched_text": "the GNU General Public\nLicense"
+          },
+          {
+            "key": "lgpl-2.1-plus",
+            "score": 33,
+            "name": "GNU Lesser General Public License 2.1 or later",
+            "short_name": "LGPL 2.1 or later",
+            "category": "Copyleft Limited",
+            "is_exception": false,
+            "owner": "Free Software Foundation (FSF)",
+            "homepage_url": "http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html",
+            "text_url": "http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:lgpl-2.1-plus",
+            "spdx_license_key": "LGPL-2.1-or-later",
+            "spdx_url": "https://spdx.org/licenses/LGPL-2.1-or-later",
+            "start_line": 70,
+            "end_line": 70,
+            "matched_rule": {
+              "identifier": "lgpl-2.1-plus_83_1.RULE",
+              "license_expression": "lgpl-2.1-plus",
+              "licenses": ["lgpl-2.1-plus"],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "matcher": "2-aho",
+              "rule_length": 6,
+              "matched_length": 6,
+              "match_coverage": 100,
+              "rule_relevance": 33
+            },
+            "matched_text": "the GNU Lesser General Public License"
           },
           {
             "key": "gpl-2.0",
-            "score": 94.79,
+            "score": 100,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -629,26 +1166,58 @@
             "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:gpl-2.0",
             "spdx_license_key": "GPL-2.0-only",
             "spdx_url": "https://spdx.org/licenses/GPL-2.0-only",
-            "start_line": 57,
-            "end_line": 308,
+            "start_line": 111,
+            "end_line": 145,
             "matched_rule": {
-              "identifier": "gpl-2.0_and_unknown_trommel_1.RULE",
-              "license_expression": "gpl-2.0 AND unknown",
-              "licenses": ["gpl-2.0", "unknown"],
+              "identifier": "gpl-2.0_84.RULE",
+              "license_expression": "gpl-2.0",
+              "licenses": ["gpl-2.0"],
               "is_license_text": false,
-              "is_license_notice": false,
-              "is_license_reference": "text",
+              "is_license_notice": true,
+              "is_license_reference": false,
               "is_license_tag": false,
-              "matcher": "3-seq",
-              "rule_length": 2285,
-              "matched_length": 2280,
-              "match_coverage": 99.78,
-              "rule_relevance": 95
-            }
+              "matcher": "2-aho",
+              "rule_length": 326,
+              "matched_length": 326,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "GNU GENERAL PUBLIC LICENSE\n   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION\n\n  0. This License applies to any program or other work which contains\na notice placed by the copyright holder saying it may be distributed\nunder the terms of this General Public License.  The \"Program\", below,\nrefers to any such program or work, and a \"work based on the Program\"\nmeans either the Program or any derivative work under copyright law:\nthat is to say, a work containing the Program or a portion of it,\neither verbatim or with modifications and/or translated into another\nlanguage.  (Hereinafter, translation is included without limitation in\nthe term \"modification\".)  Each licensee is addressed as \"you\".\n\nActivities other than copying, distribution and modification are not\ncovered by this License; they are outside its scope.  The act of\nrunning the Program is not restricted, and the output from the Program\nis covered only if its contents constitute a work based on the\nProgram (independent of having been made by running the Program).\nWhether that is true depends on what the Program does.\n\n  1. You may copy and distribute verbatim copies of the Program's\nsource code as you receive it, in any medium, provided that you\nconspicuously and appropriately publish on each copy an appropriate\ncopyright notice and disclaimer of warranty; keep intact all the\nnotices that refer to this License and to the absence of any warranty;\nand give any other recipients of the Program a copy of this License\nalong with the Program.\n\nYou may charge a fee for the physical act of transferring a copy, and\nyou may at your option offer warranty protection in exchange for a fee.\n\n  2. You may modify your copy or copies of the Program or any portion\nof it, thus forming a work based on the Program, and copy and\ndistribute such modifications or work under the terms of Section 1\nabove, provided that you also meet all of these conditions:"
+          },
+          {
+            "key": "gpl-2.0",
+            "score": 90,
+            "name": "GNU General Public License 2.0",
+            "short_name": "GPL 2.0",
+            "category": "Copyleft",
+            "is_exception": false,
+            "owner": "Free Software Foundation (FSF)",
+            "homepage_url": "http://www.gnu.org/licenses/gpl-2.0.html",
+            "text_url": "http://www.gnu.org/licenses/gpl-2.0.txt",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:gpl-2.0",
+            "spdx_license_key": "GPL-2.0-only",
+            "spdx_url": "https://spdx.org/licenses/GPL-2.0-only",
+            "start_line": 147,
+            "end_line": 164,
+            "matched_rule": {
+              "identifier": "gpl-2.0_19.RULE",
+              "license_expression": "gpl-2.0",
+              "licenses": ["gpl-2.0"],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "matcher": "2-aho",
+              "rule_length": 174,
+              "matched_length": 174,
+              "match_coverage": 100,
+              "rule_relevance": 90
+            },
+            "matched_text": "a) You must cause the modified files to carry prominent notices\n    stating that you changed the files and the date of any change.\n\n    b) You must cause any work that you distribute or publish, that in\n    whole or in part contains or is derived from the Program or any\n    part thereof, to be licensed as a whole at no charge to all third\n    parties under the terms of this License.\n\n    c) If the modified program normally reads commands interactively\n    when run, you must cause it, when started running for such\n    interactive use in the most ordinary way, to print or display an\n    announcement including an appropriate copyright notice and a\n    notice that there is no warranty (or else, saying that you provide\n    a warranty) and that users may redistribute the program under\n    these conditions, and telling the user how to view a copy of this\n    License.  (Exception: if the Program itself is interactive but\n    does not normally print such an announcement, your work based on\n    the Program is not required to print an announcement.)"
           },
           {
             "key": "unknown",
-            "score": 94.79,
+            "score": 22,
             "name": "Unknown license detected but not recognized",
             "short_name": "unknown",
             "category": "Unstated License",
@@ -659,52 +1228,23 @@
             "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:unknown",
             "spdx_license_key": "",
             "spdx_url": "",
-            "start_line": 57,
-            "end_line": 308,
+            "start_line": 211,
+            "end_line": 212,
             "matched_rule": {
-              "identifier": "gpl-2.0_and_unknown_trommel_1.RULE",
-              "license_expression": "gpl-2.0 AND unknown",
-              "licenses": ["gpl-2.0", "unknown"],
+              "identifier": "unknown_11.RULE",
+              "license_expression": "unknown",
+              "licenses": ["unknown"],
               "is_license_text": false,
               "is_license_notice": false,
-              "is_license_reference": "text",
+              "is_license_reference": true,
               "is_license_tag": false,
-              "matcher": "3-seq",
-              "rule_length": 2285,
-              "matched_length": 2280,
-              "match_coverage": 99.78,
-              "rule_relevance": 95
-            }
-          },
-          {
-            "key": "infineon-free",
-            "score": 99.02,
-            "name": "Infineon Free Software License",
-            "short_name": "Infineon Free Software License",
-            "category": "Permissive",
-            "is_exception": false,
-            "owner": "Infineon Technologies",
-            "homepage_url": "",
-            "text_url": "",
-            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:infineon-free",
-            "spdx_license_key": "",
-            "spdx_url": "",
-            "start_line": 312,
-            "end_line": 330,
-            "matched_rule": {
-              "identifier": "infineon-free.LICENSE",
-              "license_expression": "infineon-free",
-              "licenses": ["infineon-free"],
-              "is_license_text": true,
-              "is_license_notice": false,
-              "is_license_reference": false,
-              "is_license_tag": false,
-              "matcher": "3-seq",
-              "rule_length": 204,
-              "matched_length": 202,
-              "match_coverage": 99.02,
-              "rule_relevance": 100
-            }
+              "matcher": "2-aho",
+              "rule_length": 4,
+              "matched_length": 4,
+              "match_coverage": 100,
+              "rule_relevance": 22
+            },
+            "matched_text": "as a\nspecial exception,"
           }
         ],
         "license_expressions": [
@@ -715,8 +1255,11 @@
           "bsd-new",
           "bsd-new",
           "gpl-2.0",
-          "gpl-2.0 AND unknown",
-          "infineon-free"
+          "gpl-1.0-plus",
+          "lgpl-2.1-plus",
+          "gpl-2.0",
+          "gpl-2.0",
+          "unknown"
         ],
         "holders": [
           { "value": "Digital Bazaar, Inc.", "start_line": 27, "end_line": 28 },
@@ -750,6 +1293,15 @@
         ],
         "authors": [],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": true,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -777,7 +1329,7 @@
         "licenses": [
           {
             "key": "bsd-new",
-            "score": 23,
+            "score": 22,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -802,12 +1354,13 @@
               "rule_length": 4,
               "matched_length": 4,
               "match_coverage": 100,
-              "rule_relevance": 23
-            }
+              "rule_relevance": 22
+            },
+            "matched_text": "license\": \"(BSD-3-Clause"
           },
           {
             "key": "gpl-2.0",
-            "score": 17,
+            "score": 80,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -832,8 +1385,9 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 80
+            },
+            "matched_text": "GPL-2.0)\","
           }
         ],
         "license_expressions": ["bsd-new", "gpl-2.0"],
@@ -841,6 +1395,49 @@
         "copyrights": [],
         "authors": [],
         "packages": [],
+        "emails": [
+          {
+            "email": "support@digitalbazaar.com",
+            "start_line": 8,
+            "end_line": 8
+          },
+          {
+            "email": "dlongley@digitalbazaar.com",
+            "start_line": 12,
+            "end_line": 12
+          },
+          {
+            "email": "dlehn@digitalbazaar.com",
+            "start_line": 13,
+            "end_line": 13
+          },
+          { "email": "stesie@brokenpipe.de", "start_line": 14, "end_line": 14 },
+          {
+            "email": "christoph@christophdorn.com",
+            "start_line": 15,
+            "end_line": 15
+          }
+        ],
+        "urls": [
+          {
+            "url": "https://github.com/digitalbazaar/forge",
+            "start_line": 5,
+            "end_line": 5
+          },
+          { "url": "http://digitalbazaar.com/", "start_line": 9, "end_line": 9 },
+          {
+            "url": "https://github.com/digitalbazaar/forge/issues",
+            "start_line": 50,
+            "end_line": 50
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": true,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -868,7 +1465,7 @@
         "licenses": [
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -893,12 +1490,13 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "the BSD License"
           },
           {
             "key": "gpl-2.0",
-            "score": 41,
+            "score": 38,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -923,8 +1521,9 @@
               "rule_length": 7,
               "matched_length": 7,
               "match_coverage": 100,
-              "rule_relevance": 41
-            }
+              "rule_relevance": 38
+            },
+            "matched_text": "GNU General Public\nLicense (GPL) Version 2."
           }
         ],
         "license_expressions": ["bsd-new", "gpl-2.0"],
@@ -932,9 +1531,740 @@
         "copyrights": [],
         "authors": [],
         "packages": [],
+        "emails": [
+          {
+            "email": "support@digitalbazaar.com",
+            "start_line": 2046,
+            "end_line": 2046
+          },
+          {
+            "email": "paypal@digitalbazaar.com",
+            "start_line": 2054,
+            "end_line": 2054
+          }
+        ],
+        "urls": [
+          {
+            "url": "https://nodei.co/npm/node-forge.png?downloads=true&downloadRank=true&stars=true",
+            "start_line": 3,
+            "end_line": 3
+          },
+          {
+            "url": "https://nodei.co/npm/node-forge",
+            "start_line": 3,
+            "end_line": 3
+          },
+          {
+            "url": "https://img.shields.io/travis/digitalbazaar/forge.svg?branch=master",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://travis-ci.org/digitalbazaar/forge",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "http://dominictarr.github.io/crypto-bench/",
+            "start_line": 23,
+            "end_line": 23
+          },
+          {
+            "url": "http://cryptojs.altervista.org/test/simulate-threading-speed_test.html",
+            "start_line": 24,
+            "end_line": 24
+          },
+          {
+            "url": "https://npmjs.org/package/node-forge",
+            "start_line": 109,
+            "end_line": 109
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge-dist",
+            "start_line": 129,
+            "end_line": 129
+          },
+          {
+            "url": "https://www.jsdelivr.com/package/npm/node-forge",
+            "start_line": 138,
+            "end_line": 138
+          },
+          {
+            "url": "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js",
+            "start_line": 141,
+            "end_line": 141
+          },
+          { "url": "https://unpkg.com/", "start_line": 146, "end_line": 146 },
+          {
+            "url": "https://unpkg.com/node-forge@0.7.0/dist/forge.min.js",
+            "start_line": 149,
+            "end_line": 149
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge/blob/cbebca3780658703d925b61b2caffb1d263a6c1d/LICENSE",
+            "start_line": 290,
+            "end_line": 290
+          },
+          {
+            "url": "https://tools.ietf.org/html/rfc4880)/",
+            "start_line": 743,
+            "end_line": 743
+          },
+          { "url": "https://www.gnupg.org/", "start_line": 743, "end_line": 743 },
+          {
+            "url": "http://www.domain.net/",
+            "start_line": 1495,
+            "end_line": 1495
+          },
+          {
+            "url": "http://digitalbazaar.com/2010/07/20/javascript-tls-1/",
+            "start_line": 2038,
+            "end_line": 2038
+          },
+          {
+            "url": "http://digitalbazaar.com/2010/07/20/javascript-tls-2/",
+            "start_line": 2039,
+            "end_line": 2039
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge",
+            "start_line": 2044,
+            "end_line": 2044
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge/issues",
+            "start_line": 2045,
+            "end_line": 2045
+          },
+          {
+            "url": "https://webchat.freenode.net/?channels=#forgejs",
+            "start_line": 2057,
+            "end_line": 2057
+          },
+          {
+            "url": "https://github.com/digitalbazaar/forge/tree/0.6.x",
+            "start_line": 2058,
+            "end_line": 2058
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Triple_DES",
+            "start_line": 2059,
+            "end_line": 2059
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Advanced_Encryption_Standard",
+            "start_line": 2060,
+            "end_line": 2060
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/ASN.1",
+            "start_line": 2061,
+            "end_line": 2061
+          },
+          { "url": "https://bower.io/", "start_line": 2062, "end_line": 2062 },
+          {
+            "url": "http://browserify.org/",
+            "start_line": 2063,
+            "end_line": 2063
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Block_cipher_mode_of_operation",
+            "start_line": 2064,
+            "end_line": 2064
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/CommonJS",
+            "start_line": 2067,
+            "end_line": 2067
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Data_Encryption_Standard",
+            "start_line": 2068,
+            "end_line": 2068
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Fortuna_",
+            "start_line": 2070,
+            "end_line": 2070
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/GCM_mode",
+            "start_line": 2071,
+            "end_line": 2071
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/HMAC",
+            "start_line": 2072,
+            "end_line": 2072
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/JavaScript",
+            "start_line": 2073,
+            "end_line": 2073
+          },
+          {
+            "url": "https://karma-runner.github.io/",
+            "start_line": 2074,
+            "end_line": 2074
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/MD5",
+            "start_line": 2075,
+            "end_line": 2075
+          },
+          { "url": "http://nodejs.org/", "start_line": 2076, "end_line": 2076 },
+          {
+            "url": "http://en.wikipedia.org/wiki/Certificate_signing_request",
+            "start_line": 2078,
+            "end_line": 2078
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/PKCS_%E2%99%AF12",
+            "start_line": 2079,
+            "end_line": 2079
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/PKCS",
+            "start_line": 2080,
+            "end_line": 2080
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Cryptographic_Message_Syntax",
+            "start_line": 2081,
+            "end_line": 2081
+          },
+          {
+            "url": "https://www.paypal.com/",
+            "start_line": 2082,
+            "end_line": 2082
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/RC2",
+            "start_line": 2083,
+            "end_line": 2083
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/SHA-1",
+            "start_line": 2084,
+            "end_line": 2084
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/SHA-256",
+            "start_line": 2085,
+            "end_line": 2085
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/SHA-384",
+            "start_line": 2086,
+            "end_line": 2086
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/SHA-512",
+            "start_line": 2087,
+            "end_line": 2087
+          },
+          {
+            "url": "https://www.w3.org/TR/SRI/",
+            "start_line": 2088,
+            "end_line": 2088
+          },
+          {
+            "url": "http://en.wikipedia.org/wiki/Transport_Layer_Security",
+            "start_line": 2089,
+            "end_line": 2089
+          },
+          {
+            "url": "https://github.com/umdjs/umd",
+            "start_line": 2090,
+            "end_line": 2090
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist",
+        "type": "directory",
+        "name": "dist",
+        "base_name": "dist",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 6,
+        "dirs_count": 0,
+        "size_count": 613978,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/forge.all.min.js",
+        "type": "file",
+        "name": "forge.all.min.js",
+        "base_name": "forge.all.min",
+        "extension": ".js",
+        "size": 307095,
+        "date": "1985-10-26",
+        "sha1": "d984fb5030a967e1d102ff04667db7668e951057",
+        "md5": "587ae7e2d977f707250c4c33e8b6edac",
+        "mime_type": "application/octet-stream",
+        "file_type": "data",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/forge.all.min.js.map",
+        "type": "file",
+        "name": "forge.all.min.js.map",
+        "base_name": "forge.all.min.js",
+        "extension": ".map",
+        "size": 115,
+        "date": "1985-10-26",
+        "sha1": "48638cbeda382cc166e793e998e757bae5d1f5f3",
+        "md5": "a0695227ecf4d150ebee644034e2bb50",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text, with no line terminators",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/forge.min.js",
+        "type": "file",
+        "name": "forge.min.js",
+        "base_name": "forge.min",
+        "extension": ".js",
+        "size": 285391,
+        "date": "1985-10-26",
+        "sha1": "b11b0fa658b4ec8502f6826d4d6c4d0b7efb51b8",
+        "md5": "bb3ebe57fc19c4f17899a7f92be87498",
+        "mime_type": "application/octet-stream",
+        "file_type": "data",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/forge.min.js.map",
+        "type": "file",
+        "name": "forge.min.js.map",
+        "base_name": "forge.min.js",
+        "extension": ".map",
+        "size": 107,
+        "date": "1985-10-26",
+        "sha1": "55ce81cbe55106b7036421e1871270f1d2beeb33",
+        "md5": "9afff2f3d71fbbdae53a9b471a6d8011",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text, with no line terminators",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/prime.worker.min.js",
+        "type": "file",
+        "name": "prime.worker.min.js",
+        "base_name": "prime.worker.min",
+        "extension": ".js",
+        "size": 21149,
+        "date": "1985-10-26",
+        "sha1": "7504916d96e41ecb768273d4de68ac5e7aff2efa",
+        "md5": "89d550ec523c6ad54e235e077850b233",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text, with very long lines",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/dist/prime.worker.min.js.map",
+        "type": "file",
+        "name": "prime.worker.min.js.map",
+        "base_name": "prime.worker.min.js",
+        "extension": ".map",
+        "size": 121,
+        "date": "1985-10-26",
+        "sha1": "c77df10579aafe86e21947c415f9907af7648ed4",
+        "md5": "21bed492d284d4634709bda9f2986b68",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text, with no line terminators",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/flash",
+        "type": "directory",
+        "name": "flash",
+        "base_name": "flash",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 2,
+        "dirs_count": 1,
+        "size_count": 22659,
+        "scan_errors": []
+      },
+      {
+        "path": "package/flash/README.md",
+        "type": "file",
+        "name": "README.md",
+        "base_name": "README",
+        "extension": ".md",
+        "size": 1497,
+        "date": "1985-10-26",
+        "sha1": "fc1f6f77cb8a8af6e73338dc4db418a604cd5d39",
+        "md5": "324d5ed3d3bede2305b1dba74e262350",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "Objective-C",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          { "url": "http://httpd.apache.org/", "start_line": 46, "end_line": 46 },
+          { "url": "https://flex.apache.org/", "start_line": 47, "end_line": 47 },
+          {
+            "url": "https://github.com/bichinger/nodejs_socket_policy_server",
+            "start_line": 48,
+            "end_line": 48
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/flash/swf",
+        "type": "directory",
+        "name": "swf",
+        "base_name": "swf",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 1,
+        "dirs_count": 0,
+        "size_count": 21162,
+        "scan_errors": []
+      },
+      {
+        "path": "package/flash/swf/SocketPool.swf",
+        "type": "file",
+        "name": "SocketPool.swf",
+        "base_name": "SocketPool",
+        "extension": ".swf",
+        "size": 21162,
+        "date": "1985-10-26",
+        "sha1": "5ab6353aa898960e3a24ac29d3371492f9543f5b",
+        "md5": "b7ed67975b878c30aa236f3192654e4d",
+        "mime_type": "application/x-shockwave-flash",
+        "file_type": "Macromedia Flash data (compressed), version 14",
+        "programming_language": null,
+        "is_binary": true,
+        "is_text": false,
+        "is_archive": true,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/lib",
+        "type": "directory",
+        "name": "lib",
+        "base_name": "lib",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "holders": [],
+        "copyrights": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 50,
+        "dirs_count": 0,
+        "size_count": 947838,
         "scan_errors": []
       },
       {
@@ -973,7 +2303,7 @@
             "start_line": 4,
             "end_line": 4,
             "matched_rule": {
-              "identifier": "public-domain_79.RULE",
+              "identifier": "public-domain_bare_words.RULE",
               "license_expression": "public-domain",
               "licenses": ["public-domain"],
               "is_license_text": false,
@@ -985,7 +2315,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 50
-            }
+            },
+            "matched_text": "public domain"
           }
         ],
         "license_expressions": ["public-domain"],
@@ -999,6 +2330,19 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 14, "end_line": 14 }],
         "packages": [],
+        "emails": [
+          { "email": "estark@stanford.edu", "start_line": 7, "end_line": 7 },
+          { "email": "mhamburg@stanford.edu", "start_line": 8, "end_line": 8 },
+          { "email": "dabo@cs.stanford.edu", "start_line": 9, "end_line": 9 }
+        ],
+        "urls": [{ "url": "http://www.openssl.org/", "start_line": 12, "end_line": 12 }],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1035,6 +2379,21 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2011/february/double-hmac-verification/",
+            "start_line": 264,
+            "end_line": 264
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1071,6 +2430,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1124,7 +2492,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 11
-            }
+            },
+            "matched_text": "MIT licensed:"
           },
           {
             "key": "mit",
@@ -1154,7 +2523,8 @@
               "matched_length": 167,
               "match_coverage": 100,
               "rule_relevance": 100
-            }
+            },
+            "matched_text": "The MIT License (MIT)\n *\n * [Copyright] [base]-[x] [contributors] ([c]) [2016]\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\n * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\n * DEALINGS IN THE SOFTWARE."
           }
         ],
         "license_expressions": ["mit", "mit"],
@@ -1162,6 +2532,21 @@
         "copyrights": [{ "value": "(c) 2016", "start_line": 11, "end_line": 11 }],
         "authors": [],
         "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/cryptocoinjs/base-x",
+            "start_line": 5,
+            "end_line": 5
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1198,6 +2583,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1234,6 +2628,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1276,6 +2679,15 @@
           }
         ],
         "packages": [],
+        "emails": [{ "email": "dlehn@digitalbazaar.com", "start_line": 4, "end_line": 4 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1329,7 +2741,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 11
-            }
+            },
+            "matched_text": "BSD-licensed"
           },
           {
             "key": "warranty-disclaimer",
@@ -1359,7 +2772,8 @@
               "matched_length": 109,
               "match_coverage": 100,
               "rule_relevance": 100
-            }
+            },
+            "matched_text": "THIS SOFTWARE IS PROVIDED \"AS IS\" AND\n * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE\n * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\n * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS\n * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)\n * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT\n * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY\n * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF\n * SUCH DAMAGE."
           }
         ],
         "license_expressions": ["bsd-new", "warranty-disclaimer"],
@@ -1384,6 +2798,22 @@
           { "value": "Dave Longley", "start_line": 25, "end_line": 26 }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 28, "end_line": 28 }],
+        "urls": [
+          { "url": "http://www.tero.co.uk/des/", "start_line": 8, "end_line": 8 },
+          {
+            "url": "http://www.netdealing.com/",
+            "start_line": 11,
+            "end_line": 11
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1425,7 +2855,7 @@
             "start_line": 7,
             "end_line": 7,
             "matched_rule": {
-              "identifier": "public-domain_79.RULE",
+              "identifier": "public-domain_bare_words.RULE",
               "license_expression": "public-domain",
               "licenses": ["public-domain"],
               "is_license_text": false,
@@ -1437,7 +2867,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 50
-            }
+            },
+            "matched_text": "public domain."
           }
         ],
         "license_expressions": ["public-domain"],
@@ -1451,6 +2882,26 @@
         ],
         "authors": [],
         "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/dchest/tweetnacl-js",
+            "start_line": 9,
+            "end_line": 9
+          },
+          {
+            "url": "https://tools.ietf.org/html/rfc8032",
+            "start_line": 26,
+            "end_line": 26
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1487,6 +2938,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1531,6 +2991,15 @@
           { "value": "Mike Johnson", "start_line": 4, "end_line": 6 }
         ],
         "packages": [],
+        "emails": [{ "email": "dlehn@digitalbazaar.com", "start_line": 4, "end_line": 4 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1567,6 +3036,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 6, "end_line": 6 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1603,6 +3081,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [{ "url": "http://www.someurl.com/", "start_line": 921, "end_line": 921 }],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1639,6 +3126,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1675,6 +3171,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1728,7 +3233,8 @@
               "matched_length": 195,
               "match_coverage": 100,
               "rule_relevance": 100
-            }
+            },
+            "matched_text": "Permission is hereby granted, free of charge, to any person obtaining\n * a copy of this software and associated documentation files (the\n * \"Software\"), to deal in the Software without restriction, including\n * without limitation the rights to use, copy, modify, merge, publish,\n * distribute, sublicense, and/or sell copies of the Software, and to\n * permit persons to whom the Software is furnished to do so, subject to\n * the following conditions:\n *\n * The above copyright notice and this permission notice shall be\n * included in all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS-IS\" AND WITHOUT WARRANTY OF ANY KIND,\n * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY\n * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.\n *\n * IN NO EVENT SHALL TOM WU BE LIABLE FOR ANY SPECIAL, INCIDENTAL,\n * INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER\n * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ADVISED OF\n * THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY, ARISING OUT\n * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.\n *\n * In addition, the following condition applies:\n *\n * All redistributions must retain an intact copy of this copyright notice\n * and disclaimer."
           }
         ],
         "license_expressions": ["mit-addition"],
@@ -1756,6 +3262,15 @@
         ],
         "authors": [],
         "packages": [],
+        "emails": [{ "email": "tjw@cs.Stanford.EDU", "start_line": 47, "end_line": 47 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1807,6 +3322,15 @@
           { "value": "Dave Longley", "start_line": 4, "end_line": 5 }
         ],
         "packages": [],
+        "emails": [{ "email": "lautaro.cozzani@scytl.com", "start_line": 7, "end_line": 7 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1849,6 +3373,15 @@
           }
         ],
         "packages": [],
+        "emails": [{ "email": "dlehn@digitalbazaar.com", "start_line": 4, "end_line": 4 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1885,6 +3418,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1921,6 +3463,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1957,6 +3508,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -1993,6 +3553,15 @@
         ],
         "authors": [{ "value": "Stefan Siegl", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 6, "end_line": 6 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2040,6 +3609,15 @@
           { "value": "Dave Longley", "start_line": 4, "end_line": 5 }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 7, "end_line": 7 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2076,6 +3654,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2127,6 +3714,21 @@
           }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 5, "end_line": 5 }],
+        "urls": [
+          {
+            "url": "http://www.openssl.org/docs/crypto/EVP_BytesToKey.html",
+            "start_line": 925,
+            "end_line": 925
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2163,6 +3765,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 6, "end_line": 6 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2199,6 +3810,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 6, "end_line": 6 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2252,7 +3872,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 11
-            }
+            },
+            "matched_text": "BSD licensed"
           },
           {
             "key": "mit",
@@ -2282,11 +3903,12 @@
               "matched_length": 165,
               "match_coverage": 98.8,
               "rule_relevance": 100
-            }
+            },
+            "matched_text": "License\n *\n * Copyright ([c]) [2012] [Kenji] [Urushima]\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
           },
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -2311,8 +3933,9 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "the BSD License."
           }
         ],
         "license_expressions": ["bsd-new", "mit", "bsd-new"],
@@ -2351,6 +3974,32 @@
           { "value": "Dave Longley", "start_line": 41, "end_line": 42 }
         ],
         "packages": [],
+        "emails": [{ "email": "ellis@nukinetics.com", "start_line": 36, "end_line": 36 }],
+        "urls": [
+          {
+            "url": "https://github.com/kjur/jsjws/blob/master/rsa.js",
+            "start_line": 6,
+            "end_line": 6
+          },
+          {
+            "url": "http://webrsa.cvs.sourceforge.net/viewvc/webrsa/Client/RSAES-OAEP.js?content-type=text/plain",
+            "start_line": 30,
+            "end_line": 30
+          },
+          {
+            "url": "http://www.rsa.com/rsalabs/node.asp?id=2125",
+            "start_line": 39,
+            "end_line": 39
+          },
+          { "url": "http://evanjones.ca/", "start_line": 41, "end_line": 41 }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2402,6 +4051,21 @@
           }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 5, "end_line": 5 }],
+        "urls": [
+          {
+            "url": "ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-12/pkcs-12-tc1.pdf",
+            "start_line": 11,
+            "end_line": 11
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2449,6 +4113,15 @@
           { "value": "Dave Longley", "start_line": 4, "end_line": 5 }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 7, "end_line": 7 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2496,6 +4169,21 @@
           { "value": "Stefan Siegl", "start_line": 4, "end_line": 5 }
         ],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 8, "end_line": 8 }],
+        "urls": [
+          {
+            "url": "http://www.ietf.org/rfc/rfc2315.txt",
+            "start_line": 11,
+            "end_line": 11
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2532,6 +4220,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 5, "end_line": 5 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2568,6 +4265,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2604,6 +4310,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2645,7 +4360,7 @@
             "start_line": 305,
             "end_line": 305,
             "matched_rule": {
-              "identifier": "public-domain_79.RULE",
+              "identifier": "public-domain_bare_words.RULE",
               "license_expression": "public-domain",
               "licenses": ["public-domain"],
               "is_license_text": false,
@@ -2657,7 +4372,8 @@
               "matched_length": 2,
               "match_coverage": 100,
               "rule_relevance": 50
-            }
+            },
+            "matched_text": "Public Domain). */"
           }
         ],
         "license_expressions": ["public-domain"],
@@ -2671,6 +4387,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 8, "end_line": 8 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2707,6 +4432,15 @@
         ],
         "authors": [{ "value": "Stefan Siegl", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 6, "end_line": 6 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2743,6 +4477,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 12, "end_line": 12 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2779,6 +4522,21 @@
         ],
         "authors": [{ "value": "Stefan Siegl", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [{ "email": "stesie@brokenpipe.de", "start_line": 6, "end_line": 6 }],
+        "urls": [
+          {
+            "url": "http://www.ietf.org/rfc/rfc2268.txt",
+            "start_line": 9,
+            "end_line": 9
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2815,6 +4573,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2851,6 +4618,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2887,6 +4663,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 6, "end_line": 6 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2923,6 +4708,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 9, "end_line": 9 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2959,6 +4753,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -2986,7 +4789,7 @@
         "licenses": [
           {
             "key": "bsd-new",
-            "score": 17,
+            "score": 16,
             "name": "BSD-3-Clause",
             "short_name": "BSD-3-Clause",
             "category": "Permissive",
@@ -3011,12 +4814,13 @@
               "rule_length": 3,
               "matched_length": 3,
               "match_coverage": 100,
-              "rule_relevance": 17
-            }
+              "rule_relevance": 16
+            },
+            "matched_text": "the BSD License"
           },
           {
             "key": "gpl-2.0",
-            "score": 41,
+            "score": 38,
             "name": "GNU General Public License 2.0",
             "short_name": "GPL 2.0",
             "category": "Copyleft",
@@ -3041,8 +4845,9 @@
               "rule_length": 7,
               "matched_length": 7,
               "match_coverage": 100,
-              "rule_relevance": 41
-            }
+              "rule_relevance": 38
+            },
+            "matched_text": "GNU General Public License (GPL) Version 2."
           }
         ],
         "license_expressions": ["bsd-new", "gpl-2.0"],
@@ -3056,6 +4861,22 @@
           }
         ],
         "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/digitalbazaar/forge/blob/cbebca3780658703d925b61b2caffb1d263a6c1d/LICENSE",
+            "start_line": 7,
+            "end_line": 7
+          },
+          { "url": "https://github.com/shellac", "start_line": 9, "end_line": 9 }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3099,6 +4920,15 @@
           }
         ],
         "packages": [],
+        "emails": [{ "email": "dlehn@digitalbazaar.com", "start_line": 6, "end_line": 6 }],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3135,6 +4965,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3171,6 +5010,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3207,6 +5055,47 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object-from-json/679937#679937",
+            "start_line": 2591,
+            "end_line": 2591
+          },
+          {
+            "url": "http://snipplr.com/view/5945/javascript-numberformat--ported-from-php/",
+            "start_line": 2663,
+            "end_line": 2663
+          },
+          {
+            "url": "http://kevin.vanzonneveld.net/",
+            "start_line": 2666,
+            "end_line": 2666
+          },
+          {
+            "url": "http://www.jsfromhell.com/",
+            "start_line": 2667,
+            "end_line": 2667
+          },
+          { "url": "http://crestidg.com/", "start_line": 2669, "end_line": 2669 },
+          {
+            "url": "http://www.winternet.no/",
+            "start_line": 2671,
+            "end_line": 2671
+          },
+          {
+            "url": "http://snipplr.com/view/5949/format-humanize-file-byte-size-presentation-in-javascript/",
+            "start_line": 2690,
+            "end_line": 2690
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3243,6 +5132,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 5, "end_line": 5 }],
         "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
@@ -3279,6 +5177,15 @@
         ],
         "authors": [{ "value": "Dave Longley", "start_line": 4, "end_line": 4 }],
         "packages": [],
+        "emails": [],
+        "urls": [{ "url": "https://myserver.com/", "start_line": 98, "end_line": 98 }],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
         "files_count": 0,
         "dirs_count": 0,
         "size_count": 0,
