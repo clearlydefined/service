@@ -8,6 +8,7 @@ const DefinitionService = require('../../business/definitionService')
 const AggregatorService = require('../../business/aggregator')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
+const SPDX = require('../../lib/spdx')
 const Curation = require('../../lib/curation')
 const { set } = require('lodash')
 
@@ -269,12 +270,12 @@ describe('Aggregation service', () => {
         '1.0.0': { files: [buildFile('foo.txt', 'MIT')] },
         '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
       },
-      tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD')] } }
+      tool1: { '3.0.0': { files: [buildFile('foo.txt', 'BSD-3-Clause')] } }
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
-    expect(aggregated.files[0].license).to.eq('BSD')
+    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
   })
 
   it('handles multiple tools and multiple file data with extras ignored', async () => {
@@ -284,14 +285,14 @@ describe('Aggregation service', () => {
         '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
       },
       tool1: {
-        '3.0.0': { files: [buildFile('foo.txt', 'BSD')] },
+        '3.0.0': { files: [buildFile('foo.txt', 'BSD-3-Clause')] },
         '2.0.0': { files: [buildFile('bar.txt', 'GPL-2.0')] }
       }
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
-    expect(aggregated.files[0].license).to.eq('BSD')
+    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
   })
 
   it('handles multiple tools and multiple file data with extras included', async () => {
@@ -301,7 +302,7 @@ describe('Aggregation service', () => {
         '2.0.0': { files: [buildFile('foo.txt', 'GPL-2.0')] }
       },
       tool1: {
-        '3.0.0': { files: [buildFile('foo.txt', 'BSD'), buildFile('bar.txt', 'GPL-2.0')] },
+        '3.0.0': { files: [buildFile('foo.txt', 'BSD-3-Clause'), buildFile('bar.txt', 'GPL-2.0')] },
         '2.0.0': { files: [buildFile('bar.txt', 'GPL-2.0')] }
       }
     }
@@ -309,7 +310,7 @@ describe('Aggregation service', () => {
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(2)
     expect(aggregated.files[0].path).to.eq('foo.txt')
-    expect(aggregated.files[0].license).to.eq('BSD')
+    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
     expect(aggregated.files[1].path).to.eq('bar.txt')
     expect(aggregated.files[1].license).to.eq('GPL-2.0')
   })
