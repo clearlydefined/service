@@ -223,7 +223,7 @@ ${this._formatDefinitions(patch.patches)}`
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
       repo,
-      title: prBranch,
+      title: summary,
       body: description,
       head: `refs/heads/${prBranch}`,
       base: branch
