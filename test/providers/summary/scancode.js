@@ -125,7 +125,7 @@ describe('ScancodeSummarizer fixtures', () => {
     })
   })
 
-  it('summarizes common-clause in 3.0.2', () => {
+  it('summarizes commons-clause as NOASSERTION in 3.0.2', () => {
     const coordinates = {
       type: 'git',
       provider: 'github',
@@ -136,13 +136,13 @@ describe('ScancodeSummarizer fixtures', () => {
     const harvestData = getHarvestData('3.0.2', 'commons-clause')
     const result = summarizer.summarize(coordinates, harvestData)
     assert.deepEqual(result.described, { releaseDate: '2019-01-31' })
-    assert.deepEqual(result.licensed, { declared: 'Apache-2.0 WITH commons-clause' })
+    assert.deepEqual(result.licensed, { declared: 'NOASSERTION' })
     assert.deepEqual(result.files.length, 576)
     assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 21)
     assert.deepEqual(result.files.filter(x => x.natures), [
       {
         path: 'LICENSE',
-        license: 'Apache-2.0 WITH commons-clause',
+        license: 'NOASSERTION',
         natures: ['license'],
         attributions: ['Copyright 2018-2019 Redis Labs Ltd. and Contributors.'],
         hashes: { sha1: '6c9da49858267f91fa10f08ad556f02fdc689e63' }
