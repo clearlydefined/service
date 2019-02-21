@@ -1,0 +1,391 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/npm/npmjs/-/glob/7.1.2",
+    "fetchedAt": "2018-06-30T00:41:42.796Z",
+    "links": {
+      "self": { "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode:2.9.2", "type": "resource" },
+      "siblings": { "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode", "type": "collection" }
+    },
+    "version": "2.9.2",
+    "contentType": "application/json",
+    "releaseDate": "2017-05-19T20:15:25.471Z",
+    "processedAt": "2018-06-30T00:42:04.237Z"
+  },
+  "content": {
+    "scancode_notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+    "scancode_version": "2.9.2",
+    "scancode_options": {
+      "input": "/tmp/cd-YYArvG",
+      "--copyright": true,
+      "--info": true,
+      "--json-pp": "/tmp/cd-HuKvjm",
+      "--license": true,
+      "--license-diag": true,
+      "--only-findings": true,
+      "--package": true,
+      "--processes": "2",
+      "--strip-root": true,
+      "--timeout": "1000.0"
+    },
+    "files_count": 2,
+    "files": [
+      {
+        "path": "package",
+        "type": "directory",
+        "name": "package",
+        "base_name": "package",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "copyrights": [],
+        "package_manifest": null,
+        "packages": [
+          {
+            "type": "npm",
+            "namespace": null,
+            "name": "glob",
+            "version": "7.1.2",
+            "qualifiers": null,
+            "subpath": null,
+            "primary_language": "JavaScript",
+            "code_type": null,
+            "description": "a little globber",
+            "size": null,
+            "release_date": null,
+            "parties": [
+              {
+                "type": "person",
+                "role": "author",
+                "name": "Isaac Z. Schlueter",
+                "email": "i@izs.me",
+                "url": "http://blog.izs.me/"
+              }
+            ],
+            "keywords": [],
+            "homepage_url": null,
+            "download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+            "download_checksums": [],
+            "bug_tracking_url": null,
+            "code_view_url": null,
+            "vcs_tool": "git",
+            "vcs_repository": "git://github.com/isaacs/node-glob.git",
+            "vcs_revision": null,
+            "copyright": null,
+            "license_expression": null,
+            "declared_licensing": "ISC",
+            "notice_text": null,
+            "dependencies": [
+              {
+                "purl": "pkg:npm/fs.realpath",
+                "requirement": "^1.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/inflight",
+                "requirement": "^1.0.4",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/inherits",
+                "requirement": "2",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/minimatch",
+                "requirement": "^3.0.4",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/once",
+                "requirement": "^1.3.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/path-is-absolute",
+                "requirement": "^1.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/mkdirp",
+                "requirement": "0",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/rimraf",
+                "requirement": "^2.2.8",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/tap",
+                "requirement": "^7.1.2",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/tick",
+                "requirement": "0.0.6",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              }
+            ],
+            "related_packages": []
+          }
+        ],
+        "files_count": 2,
+        "dirs_count": 0,
+        "size_count": 1778,
+        "scan_errors": []
+      },
+      {
+        "path": "package/LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 765,
+        "date": "2014-07-28",
+        "sha1": "bb408e929caeb1731945b2ba54bc337edb87cc66",
+        "md5": "82703a69f6d7411dde679954c2fd9dca",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "isc",
+            "score": 100,
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/software/license",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:isc",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 5,
+            "end_line": 15,
+            "matched_rule": {
+              "identifier": "isc.LICENSE",
+              "license_expression": "isc",
+              "licenses": ["isc"],
+              "matcher": "2-aho",
+              "rule_length": 112,
+              "matched_length": 112,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": ["Copyright (c) Isaac Z. Schlueter and Contributors"],
+            "holders": ["Isaac Z. Schlueter", "Contributors"],
+            "authors": [],
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/package.json",
+        "type": "file",
+        "name": "package.json",
+        "base_name": "package",
+        "extension": ".json",
+        "size": 1013,
+        "date": "2017-05-19",
+        "sha1": "844f90fa8a6fbf45d581593a333f69c5cb1f2d58",
+        "md5": "c48f03d61da8b37477bf9711d56aea41",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JSON",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "copyrights": [],
+        "package_manifest": {
+          "type": "npm",
+          "namespace": null,
+          "name": "glob",
+          "version": "7.1.2",
+          "qualifiers": null,
+          "subpath": null,
+          "primary_language": "JavaScript",
+          "code_type": null,
+          "description": "a little globber",
+          "size": null,
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "author",
+              "name": "Isaac Z. Schlueter",
+              "email": "i@izs.me",
+              "url": "http://blog.izs.me/"
+            }
+          ],
+          "keywords": [],
+          "homepage_url": null,
+          "download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+          "download_checksums": [],
+          "bug_tracking_url": null,
+          "code_view_url": null,
+          "vcs_tool": "git",
+          "vcs_repository": "git://github.com/isaacs/node-glob.git",
+          "vcs_revision": null,
+          "copyright": null,
+          "license_expression": null,
+          "declared_licensing": "ISC",
+          "notice_text": null,
+          "dependencies": [
+            {
+              "purl": "pkg:npm/fs.realpath",
+              "requirement": "^1.0.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/inflight",
+              "requirement": "^1.0.4",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/inherits",
+              "requirement": "2",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/minimatch",
+              "requirement": "^3.0.4",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/once",
+              "requirement": "^1.3.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/path-is-absolute",
+              "requirement": "^1.0.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/mkdirp",
+              "requirement": "0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/rimraf",
+              "requirement": "^2.2.8",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/tap",
+              "requirement": "^7.1.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/tick",
+              "requirement": "0.0.6",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            }
+          ],
+          "related_packages": []
+        },
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}

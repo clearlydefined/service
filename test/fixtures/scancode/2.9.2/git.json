@@ -1,0 +1,193 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/git/github/isaacs/rimraf/d84fe2cc6646d30a401baadcee22ae105a2d4909",
+    "fetchedAt": "2018-12-20T19:10:49.154Z",
+    "links": {
+      "self": {
+        "href": "urn:git:github:isaacs:rimraf:revision:d84fe2cc6646d30a401baadcee22ae105a2d4909:tool:scancode:2.9.2",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:git:github:isaacs:rimraf:revision:d84fe2cc6646d30a401baadcee22ae105a2d4909:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "version": "2.9.2",
+    "contentType": "application/json",
+    "releaseDate": "2017-02-24T03:44:16.000Z",
+    "processedAt": "2018-12-20T19:10:58.527Z"
+  },
+  "content": {
+    "scancode_notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+    "scancode_version": "2.9.2",
+    "scancode_options": {
+      "input": "/tmp/cd-25AMbI/rimraf",
+      "--copyright": true,
+      "--info": true,
+      "--json-pp": "/tmp/cd-0PjTJo",
+      "--license": true,
+      "--license-diag": true,
+      "--only-findings": true,
+      "--package": true,
+      "--processes": "2",
+      "--strip-root": true,
+      "--timeout": "1000.0"
+    },
+    "files_count": 2,
+    "files": [
+      {
+        "path": "LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 765,
+        "date": "2018-12-20",
+        "sha1": "bb408e929caeb1731945b2ba54bc337edb87cc66",
+        "md5": "82703a69f6d7411dde679954c2fd9dca",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "isc",
+            "score": 100,
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/software/license",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:isc",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 5,
+            "end_line": 15,
+            "matched_rule": {
+              "identifier": "isc.LICENSE",
+              "license_expression": "isc",
+              "licenses": ["isc"],
+              "matcher": "2-aho",
+              "rule_length": 112,
+              "matched_length": 112,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": ["Copyright (c) Isaac Z. Schlueter and Contributors"],
+            "holders": ["Isaac Z. Schlueter", "Contributors"],
+            "authors": [],
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package.json",
+        "type": "file",
+        "name": "package.json",
+        "base_name": "package",
+        "extension": ".json",
+        "size": 545,
+        "date": "2018-12-20",
+        "sha1": "1e25c5d0bb710a7d725649d9c0f637fafbc3741f",
+        "md5": "c6f20dc81675ee414427b7de550558a8",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JSON",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "copyrights": [],
+        "package_manifest": {
+          "type": "npm",
+          "namespace": null,
+          "name": "rimraf",
+          "version": "2.6.1",
+          "qualifiers": null,
+          "subpath": null,
+          "primary_language": "JavaScript",
+          "code_type": null,
+          "description": "A deep deletion module for node (like `rm -rf`)",
+          "size": null,
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "author",
+              "name": "Isaac Z. Schlueter",
+              "email": "i@izs.me",
+              "url": "http://blog.izs.me/"
+            }
+          ],
+          "keywords": [],
+          "homepage_url": null,
+          "download_url": "https://registry.npmjs.org/rimraf/-/rimraf-2.6.1.tgz",
+          "download_checksums": [],
+          "bug_tracking_url": null,
+          "code_view_url": null,
+          "vcs_tool": null,
+          "vcs_repository": "git://github.com/isaacs/rimraf.git",
+          "vcs_revision": null,
+          "copyright": null,
+          "license_expression": null,
+          "declared_licensing": "ISC",
+          "notice_text": null,
+          "dependencies": [
+            {
+              "purl": "pkg:npm/glob",
+              "requirement": "^7.0.5",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/mkdirp",
+              "requirement": "^0.5.1",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/tap",
+              "requirement": "^10.1.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            }
+          ],
+          "related_packages": []
+        },
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}
