@@ -48,7 +48,9 @@ describe('SPDX utility functions', () => {
             right: { license: 'Apache-2.0' }
           }
         }
-      ]
+      ],
+      ['Apache-2.0 WITH Autoconf-exception-2.0', { license: 'Apache-2.0', exception: 'Autoconf-exception-2.0' }],
+      ['Apache-2.0 WITH commons-clause', { license: 'Apache-2.0', exception: 'NOASSERTION' }]
     ])
 
     data.forEach((expected, input) => {
@@ -96,7 +98,9 @@ describe('SPDX utility functions', () => {
           }
         },
         'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR CC-BY-4.0 AND Apache-2.0'
-      ]
+      ],
+      [{ license: 'Apache-2.0', exception: 'Autoconf-exception-2.0' }, 'Apache-2.0 WITH Autoconf-exception-2.0'],
+      [{ license: 'Apache-2.0', exception: 'NOASSERTION' }, 'NOASSERTION']
     ])
 
     data.forEach((expected, input) => {
@@ -138,6 +142,7 @@ describe('SPDX utility functions', () => {
       'MIT ': 'MIT',
       ' MIT': 'MIT',
       'GPL-1.0+': 'GPL-1.0+',
+      'Apache-2.0 WITH commons-clause': 'NOASSERTION',
       'NOASSERTION': 'NOASSERTION',
       'See license': 'NOASSERTION',
       'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
