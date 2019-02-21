@@ -99,6 +99,93 @@ describe('ScancodeSummarizer basic compatability', () => {
   })
 })
 
+describe('ScancodeSummarizer fixtures', () => {
+  it('summarizes basic npm 3.0.2', () => {
+    const coordinates = { type: 'npm', provider: 'npmjs', name: 'glob', revision: '7.1.2' }
+    const harvestData = getHarvestData('3.0.2', 'npm-basic')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.deepEqual(result, {
+      described: { releaseDate: '2017-05-19' },
+      licensed: { declared: 'ISC' },
+      files: [
+        {
+          path: 'package/LICENSE',
+          license: 'ISC',
+          natures: ['license'],
+          attributions: ['Copyright (c) Isaac Z. Schlueter and Contributors'],
+          hashes: { sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66' }
+        },
+        { path: 'package/changelog.md', hashes: { sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00' } },
+        { path: 'package/common.js', hashes: { sha1: '2f948b495467f2a7ac0afbb1008af557ab040143' } },
+        { path: 'package/glob.js', hashes: { sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d' } },
+        { path: 'package/package.json', hashes: { sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58' } },
+        { path: 'package/README.md', hashes: { sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f' } },
+        { path: 'package/sync.js', hashes: { sha1: '7482bc56682b97175655976b07044afcb65b0cc9' } }
+      ]
+    })
+  })
+
+  it('summarizes common-clause in 3.0.2', () => {
+    const coordinates = {
+      type: 'git',
+      provider: 'github',
+      namespace: 'RedisLabsModules',
+      name: 'RediSearch',
+      revision: '7f1082687d4779918be0d8109a134d79e6fbcb41'
+    }
+    const harvestData = getHarvestData('3.0.2', 'commons-clause')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.deepEqual(result.described, { releaseDate: '2019-01-31' })
+    assert.deepEqual(result.licensed, { declared: 'Apache-2.0 WITH commons-clause' })
+    assert.deepEqual(result.files.length, 576)
+    assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 21)
+    assert.deepEqual(result.files.filter(x => x.natures), [
+      {
+        path: 'LICENSE',
+        license: 'Apache-2.0 WITH commons-clause',
+        natures: ['license'],
+        attributions: ['Copyright 2018-2019 Redis Labs Ltd. and Contributors.'],
+        hashes: { sha1: '6c9da49858267f91fa10f08ad556f02fdc689e63' }
+      },
+      {
+        path: 'src/dep/friso/LICENSE.md',
+        license: 'Apache-2.0 AND MIT',
+        natures: ['license'],
+        attributions: ['Copyright (c) 2010'],
+        hashes: { sha1: 'aeb9db6237c570c389886e0540e01a0ec78134bb' }
+      },
+      {
+        path: 'src/dep/hll/LICENSE',
+        license: 'MIT',
+        natures: ['license'],
+        attributions: ['Copyright (c) 2015 Artem Zaytsev <arepo@nologin.ru>'],
+        hashes: { sha1: 'c0e8a4bbdcbc9c81f7ea72b0631f67973aa0f244' }
+      },
+      {
+        path: 'src/dep/libnu/LICENSE',
+        license: 'MIT',
+        natures: ['license'],
+        attributions: ['Copyright (c) 2013 Aleksey Tulinov <aleksey.tulinov@gmail.com>'],
+        hashes: { sha1: 'ea1ed91b37e5c99835b9ebf0861f96dfda2524cd' }
+      },
+      {
+        path: 'src/dep/snowball/COPYING',
+        license: 'BSD-3-Clause',
+        natures: ['license'],
+        attributions: ['Copyright (c) 2001, Dr Martin Porter', 'Copyright (c) 2004,2005, Richard Boulton'],
+        hashes: { sha1: '3938505906e841002141cb01bbda1e971614e34a' }
+      },
+      {
+        path: 'src/dep/triemap/LICENSE',
+        license: 'BSD-2-Clause',
+        natures: ['license'],
+        attributions: ['Copyright (c) 2017, Redis Labs'],
+        hashes: { sha1: 'f35ea366f34f63097146d8b77417d393aab877d3' }
+      }
+    ])
+  })
+})
+
 function getHarvestData(version, test) {
   const fileName = path.join(__dirname, `../../fixtures/scancode/${version}/${test}.json`)
   if (fs.existsSync(fileName)) {

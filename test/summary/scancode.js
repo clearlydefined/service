@@ -213,6 +213,16 @@ describe('ScanCode summarizer', () => {
     expect(result).to.eq('MIT')
   })
 
+  it('gets root files', () => {
+    const result = Summarizer()._getRootFiles({ type: 'npm' }, [
+      { path: 'realroot' },
+      { path: 'package/packageRoot' },
+      { path: 'other/nonroot' },
+      { path: 'package/deep/path' }
+    ])
+    expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
+  })
+
   it('handles multiple licenses in files', () => {
     const { coordinates, harvested } = setup([
       buildFile('file1', ['Apache-2.0', 'MIT'], []),
