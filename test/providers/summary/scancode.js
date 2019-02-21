@@ -108,6 +108,9 @@ describe('ScancodeSummarizer fixtures', () => {
       described: { releaseDate: '2017-05-19' },
       licensed: { declared: 'ISC' },
       files: [
+        { path: 'package/changelog.md', hashes: { sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00' } },
+        { path: 'package/common.js', hashes: { sha1: '2f948b495467f2a7ac0afbb1008af557ab040143' } },
+        { path: 'package/glob.js', hashes: { sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d' } },
         {
           path: 'package/LICENSE',
           license: 'ISC',
@@ -115,9 +118,6 @@ describe('ScancodeSummarizer fixtures', () => {
           attributions: ['Copyright (c) Isaac Z. Schlueter and Contributors'],
           hashes: { sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66' }
         },
-        { path: 'package/changelog.md', hashes: { sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00' } },
-        { path: 'package/common.js', hashes: { sha1: '2f948b495467f2a7ac0afbb1008af557ab040143' } },
-        { path: 'package/glob.js', hashes: { sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d' } },
         { path: 'package/package.json', hashes: { sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58' } },
         { path: 'package/README.md', hashes: { sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f' } },
         { path: 'package/sync.js', hashes: { sha1: '7482bc56682b97175655976b07044afcb65b0cc9' } }
