@@ -165,7 +165,7 @@ function setupNomos(result, data) {
   if (!data) return
   const licenses = data.map(file => file.licenses).filter(e => e)
   result.nomos = {
-    version: '3.3.0',
+    version: '3.4.0',
     output: {
       contentType: 'text/plain',
       content: licenses.join('\n')
@@ -175,10 +175,10 @@ function setupNomos(result, data) {
 
 function setupMonk(result, data) {
   if (!data) return
-  const content = stripType(data)
+  const files = data.map(x => x.output).filter(x => x)
   result.monk = {
-    version: '3.3.0',
-    output: { contentType: 'application/json', content }
+    version: '3.4.0',
+    output: { contentType: 'text/plain', content: files.join('\n') }
   }
 }
 
@@ -186,7 +186,7 @@ function setupCopyright(result, data) {
   if (!data) return
   const content = stripType(data)
   result.copyright = {
-    version: '3.3.0',
+    version: '3.4.0',
     output: { contentType: 'application/json', content }
   }
 }
@@ -204,16 +204,16 @@ function buildNomosFile(path, license) {
 }
 
 function buildMonkFile(path, license, type = 'full') {
-  return {
-    type: 'monk',
-    path,
-    output: { type, license }
-  }
+  if (type === 'full')
+    return {
+      type: 'monk',
+      output: `found full match between \\"${path}\\" and \\"${license}\\" (rf_pk=311); matched: 61+1022`
+    }
 }
 
 function buildCopyrightFile(path, parties) {
   const entries = parties.map(party => {
-    return { content: party }
+    return { content: party, type: 'statement' }
   })
   return {
     type: 'copyright',

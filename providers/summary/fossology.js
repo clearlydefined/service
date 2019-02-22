@@ -23,9 +23,9 @@ class FOSSologySummarizer {
     // That means the order here matters. Later merges overwrite earlier. So here we are explicitly taking
     // Nomos over Monk. The Copyright info should be orthogonal so order does not matter. In the future
     // we should resolve this merging problem but it's likely to be hard in general.
+    this._summarizeMonk(result, harvested)
     this._summarizeNomos(result, harvested)
     this._summarizeCopyright(result, harvested)
-    this._summarizeMonk(result, harvested)
     return result
   }
 
@@ -51,9 +51,10 @@ class FOSSologySummarizer {
       .split('\n')
       .map(file => {
         // only pickup full matches
-        const [, path, license] = get(/^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file))
-        if (path && license) return { path, license: SPDX.normalize(license) }
-        return null
+        const [, path, rawLicense] = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
+        const license = SPDX.normalize(rawLicense)
+        if (path && license) return { path, license }
+        return { path }
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
