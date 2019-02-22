@@ -32,24 +32,31 @@ describe('Nomos summarizer', () => {
   it('does not apply non-spdx licenses', () => {
     const { coordinates, harvested } = setup([
       buildNomosFile('foo.txt', 'No_license_found'),
-      buildNomosFile('bar.txt', ' ')
+      buildNomosFile('bar.txt', ' '),
+      buildNomosFile('mit.txt', 'MIT-like')
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.eq([{ path: 'foo.txt', license: 'NOASSERTION' }, { path: 'bar.txt' }])
+    expect(summary.files).to.deep.eq([
+      { path: 'foo.txt' },
+      { path: 'bar.txt' },
+      { path: 'mit.txt', license: 'NOASSERTION' }
+    ])
   })
 
   it('mixes spdx and non-spdx licenses correctly', () => {
     // summary should come out
     const { coordinates, harvested } = setup([
       buildNomosFile('foo.txt', 'No_license_found'),
-      buildNomosFile('bar.txt', 'MIT')
+      buildNomosFile('bar.txt', 'MIT'),
+      buildNomosFile('junk.txt', 'Junk')
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.files).to.deep.equalInAnyOrder([
-      { path: 'foo.txt', license: 'NOASSERTION' },
-      { path: 'bar.txt', license: 'MIT' }
+      { path: 'foo.txt' },
+      { path: 'bar.txt', license: 'MIT' },
+      { path: 'junk.txt', license: 'NOASSERTION' }
     ])
   })
 })

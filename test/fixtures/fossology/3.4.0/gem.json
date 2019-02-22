@@ -1,0 +1,794 @@
+{
+  "_metadata": {
+    "type": "fossology",
+    "url": "cd:/gem/rubygems/-/mocha/1.7.0",
+    "fetchedAt": "2019-02-22T20:56:29.960Z",
+    "links": {
+      "self": { "href": "urn:gem:rubygems:-:mocha:revision:1.7.0:tool:fossology:3.6.0", "type": "resource" },
+      "siblings": { "href": "urn:gem:rubygems:-:mocha:revision:1.7.0:tool:fossology", "type": "collection" }
+    },
+    "schemaVersion": "3.6.0",
+    "toolVersion": "3.4.0",
+    "processedAt": "2019-02-22T20:57:00.403Z"
+  },
+  "nomos": {
+    "version": "3.4.0",
+    "parameters": "",
+    "output": {
+      "contentType": "text/plain",
+      "content": "File .rubocop.yml contains license(s) No_license_found\nFile COPYING.md contains license(s) MIT\nFile yard-templates/default/layout/html/setup.rb contains license(s) No_license_found\nFile test/integration/test_unit_test.rb contains license(s) No_license_found\nFile test/integration/mini_test_test.rb contains license(s) No_license_found\nFile test/method_definer.rb contains license(s) No_license_found\nFile test/assertions.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_frozen_object_test.rb contains license(s) No_license_found\nFile test/acceptance/bug_21465_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_class_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_class_and_aliased_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_class_method_defined_on_module_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_existent_any_instance_method_test.rb contains license(s) No_license_found\nFile test/acceptance/expected_invocation_count_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_public_instance_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_class_method_defined_on_class_test.rb contains license(s) No_license_found\nFile test/acceptance/mocha_example_test.rb contains license(s) No_license_found\nFile test/acceptance/failure_messages_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_on_non_mock_object_test.rb contains license(s) No_license_found\nFile test/acceptance/return_value_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_existent_class_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_module_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_kernel_module_test.rb contains license(s) No_license_found\nFile test/acceptance/bug_18914_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_public_any_instance_method_test.rb contains license(s) No_license_found\nFile test/acceptance/sequence_test.rb contains license(s) No_license_found\nFile test/acceptance/mock_with_initializer_block_test.rb contains license(s) No_license_found\nFile test/acceptance/exception_rescue_test.rb contains license(s) No_license_found\nFile test/acceptance/optional_parameters_test.rb contains license(s) No_license_found\nFile test/acceptance/states_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_method_defined_on_module_and_aliased_test.rb contains license(s) No_license_found\nFile test/acceptance/stubba_example_test.rb contains license(s) No_license_found\nFile test/acceptance/partial_mocks_test.rb contains license(s) No_license_found\nFile test/acceptance/acceptance_test_helper.rb contains license(s) No_license_found\nFile test/acceptance/raise_exception_test.rb contains license(s) No_license_found\nFile test/acceptance/parameter_matcher_test.rb contains license(s) No_license_found\nFile test/acceptance/mocha_test_result_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_class_method_defined_on_active_record_association_proxy_test.rb contains license(s) No_license_found\nFile /tmFile CONTRIBUTING.md contains license(s) No_license_found\nFile bin/build-matrix contains license(s) No_license_found\nFile yard-templates/default/layout/html/google_analytics.erb contains license(s) No_license_found\nFile README.md contains license(s) MIT\nFile test/integration/shared_tests.rb contains license(s) No_license_found\nFile test/mini_test_result.rb contains license(s) No_license_found\nFile test/test_helper.rb contains license(s) No_license_found\nFile test/acceptance/prepend_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_module_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_same_class_method_on_parent_and_child_classes_test.rb contains license(s) No_license_found\nFile test/acceptance/issue_70_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_existent_instance_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_non_public_class_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_error_backtrace_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_method_unnecessarily_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_method_accepting_block_parameter_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_any_instance_method_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_superclass_test.rb contains license(s) No_license_found\nFile test/acceptance/stubbing_nil_test.rb contains license(s) No_license_found\nFile test/acceptance/prevent_use_of_mocha_outside_test_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_any_instance_method_defined_on_superclass_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_active_record_association_proxy_test.rb contains license(s) No_license_found\nFile test/acceptance/throw_test.rb contains license(s) No_license_found\nFile test/acceptance/multiple_expectations_failure_message_test.rb contains license(s) No_license_found\nFile test/acceptance/expectations_on_multiple_methods_test.rb contains license(s) No_license_found\nFile test/acceptance/mock_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_singleton_class_test.rb contains license(s) No_license_found\nFile test/acceptance/unstubbing_test.rb contains license(s) No_license_found\nFile test/acceptance/issue_272_test.rb contains license(s) No_license_found\nFile test/acceptance/issue_65_test.rb contains license(s) No_license_found\nFile test/acceptance/bug_21563_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_instance_method_defined_on_object_class_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_class_method_defined_on_superclass_test.rb contains license(s) No_license_found\nFile test/acceptance/mocked_methods_dispatch_test.rb contains license(s) No_license_found\nFile test/acceptance/unexpected_invocation_test.rb contains license(s) No_license_found\nFile test/acceptance/stubba_test_result_test.rb contains license(s) No_license_found\nFile test/acceptance/stub_everything_test.rb contains license(s) No_license_found\nFile /p/cd-VtnWMR/data/test/unit/object_methods_test.rb contains license(s) No_license_found\nFile test/unit/return_values_test.rb contains license(s) No_license_found\nFile test/unit/state_machine_test.rb contains license(s) No_license_found\nFile test/unit/mockery_test.rb contains license(s) No_license_found\nFile test/unit/backtrace_filter_test.rb contains license(s) No_license_found\nFile test/unit/expectation_test.rb contains license(s) No_license_found\nFile test/unit/no_yields_test.rb contains license(s) No_license_found\nFile test/unit/date_time_inspect_test.rb contains license(s) No_license_found\nFile test/unit/hash_inspect_test.rb contains license(s) No_license_found\nFile test/unit/sequence_test.rb contains license(s) No_license_found\nFile test/unit/single_return_value_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/equivalent_uri_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/regexp_matches_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/any_of_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/has_key_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/stub_matcher.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/anything_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/responds_with_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/instance_of_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/is_a_test.rb contains license(s) No_license_found\nFile test/unit/yield_parameters_test.rb contains license(s) No_license_found\nFile test/unit/parameters_matcher_test.rb contains license(s) No_license_found\nFile test/unit/class_methods_test.rb contains license(s) No_license_found\nFile test/unit/central_test.rb contains license(s) No_license_found\nFile test/unit/exception_raiser_test.rb contains license(s) No_license_found\nFile test/unit/cardinality_test.rb contains license(s) No_license_found\nFile test/deprecation_disabler.rb contains license(s) No_license_found\nFile test/test_unit_result.rb contains license(s) No_license_found\nFile test/test_runner.rb contains license(s) No_license_found\nFile lib/mocha.rb contains license(s) No_license_found\nFile lib/mocha/method_matcher.rb contains license(s) No_license_found\nFile lib/mocha/argument_iterator.rb contains license(s) No_license_found\nFile lib/mocha/integration/monkey_patcher.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/gem_version_230_to_250.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/gem_version_200.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/adapter.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/gem_version_203_to_220.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_201_to_222.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_2110_to_2111.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_200.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_230_to_2101.rb contains license(s) Notmp/cd-VtnWMR/data/test/unit/object_inspect_test.rb contains license(s) No_license_found\nFile test/unit/receivers_test.rb contains license(s) No_license_found\nFile test/unit/array_inspect_test.rb contains license(s) No_license_found\nFile test/unit/module_methods_test.rb contains license(s) No_license_found\nFile test/unit/single_yield_test.rb contains license(s) No_license_found\nFile test/unit/hooks_test.rb contains license(s) No_license_found\nFile test/unit/any_instance_method_test.rb contains license(s) No_license_found\nFile test/unit/change_state_side_effect_test.rb contains license(s) No_license_found\nFile test/unit/in_state_ordering_constraint_test.rb contains license(s) No_license_found\nFile test/unit/mock_test.rb contains license(s) No_license_found\nFile test/unit/thrower_test.rb contains license(s) No_license_found\nFile test/unit/string_inspect_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/yaml_equivalent_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/equals_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/has_value_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/not_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/includes_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/has_entries_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/has_entry_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/kind_of_test.rb contains license(s) No_license_found\nFile test/unit/parameter_matchers/all_of_test.rb contains license(s) No_license_found\nFile test/unit/configuration_test.rb contains license(s) No_license_found\nFile test/unit/class_method_test.rb contains license(s) No_license_found\nFile test/unit/multiple_yields_test.rb contains license(s) No_license_found\nFile test/unit/method_matcher_test.rb contains license(s) No_license_found\nFile test/unit/expectation_list_test.rb contains license(s) No_license_found\nFile test/minitest_result.rb contains license(s) No_license_found\nFile test/execution_point.rb contains license(s) No_license_found\nFile test/simple_counter.rb contains license(s) No_license_found\nFile lib/mocha_standalone.rb contains license(s) No_license_found\nFile lib/mocha/change_state_side_effect.rb contains license(s) No_license_found\nFile lib/mocha/class_methods.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/nothing.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/gem_version_201_to_202.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/ruby_version_186_and_above.rb contains license(s) No_license_found\nFile lib/mocha/integration/test_unit/ruby_version_185_and_below.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/nothing.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_140.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/adapter.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_13.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_142_to_172.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/exception_translation.rb contains license(s) No_license_found\nFile lib/mocha/return_values.rb contains license(s) No_license_found\nFile lib/mocha/test_unit.rb contains license(s) No_license_found\nFile lib/mocha/backtrace_filter.rb contains license(s) No_license_found\nFile lib/mocha/module_method.rb contains license(s) No_license_found\nFile lib/mocha/mock.rb contains license(s) No_license_found\nFile lib/mocha/module_methods.rb contains license(s) No_license_found\nFile lib/mocha/single_return_value.rb contains license(s) No_license_found\nFile lib/mocha/version.rb contains license(s) No_license_found\nFile lib/mocha/mockery.rb contains license(s) No_license_found\nFile lib/mocha/pretty_parameters.rb contains license(s) No_license_found\nFile lib/mocha/expectation_error_factory.rb contains license(s) No_license_found\nFile lib/mocha/error_with_filtered_backtrace.rb contains license(s) No_license_found\nFile lib/mocha/inspect.rb contains license(s) No_license_found\nFile lib/mocha/standalone.rb contains license(s) No_license_found\nFile lib/mocha/mini_test.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/base.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/instance_of.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/all_of.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/equals.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/includes.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/is_a.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/anything.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/kind_of.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/responds_with.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/has_value.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/optionally.rb contains license(s) No_license_found\nFile lib/mocha/unexpected_invocation.rb contains license(s) No_license_found\nFile lib/mocha/detection/test_unit.rb contains license(s) No_license_found\nFile lib/mocha/central.rb contains license(s) No_license_found\nFile lib/mocha/no_yields.rb contains license(s) No_license_found\nFile lib/mocha/hooks.rb contains license(s) No_license_found\nFile lib/mocha/names.rb contains license(s) No_license_found\nFile lib/mocha/instance_method.rb contains license(s) No_license_found\nFile lib/mocha/api.rb contains license(s) No_license_found\nFile lib/mocha/configuration.rb contains license(s) No_license_found\nFile lib/mocha/debug.rb contains license(s) No_license_found\nFile lib/mocha/class_method.rb contains license(s) No_license_found\nFile init.rb contains license(s) No_license_found\nFile .rubocop_todo.yml contains license(s) No_license_found\nFile mocha.gemspec contains license(s) BSD-2-Clause\nFile .yardopts contains license(s) No_license_found\nFile gemfiles/Gemfi_license_found\nFile lib/mocha/integration/mini_test/version_141.rb contains license(s) No_license_found\nFile lib/mocha/integration/mini_test/version_2112_to_320.rb contains license(s) No_license_found\nFile lib/mocha/integration/assertion_counter.rb contains license(s) No_license_found\nFile lib/mocha/ruby_version.rb contains license(s) No_license_found\nFile lib/mocha/logger.rb contains license(s) No_license_found\nFile lib/mocha/yield_parameters.rb contains license(s) No_license_found\nFile lib/mocha/parameters_matcher.rb contains license(s) No_license_found\nFile lib/mocha/single_yield.rb contains license(s) No_license_found\nFile lib/mocha/setup.rb contains license(s) No_license_found\nFile lib/mocha/expectation_error.rb contains license(s) No_license_found\nFile lib/mocha/in_state_ordering_constraint.rb contains license(s) No_license_found\nFile lib/mocha/object_methods.rb contains license(s) No_license_found\nFile lib/mocha/any_instance_method.rb contains license(s) No_license_found\nFile lib/mocha/expectation_list.rb contains license(s) No_license_found\nFile lib/mocha/exception_raiser.rb contains license(s) No_license_found\nFile lib/mocha/cardinality.rb contains license(s) No_license_found\nFile lib/mocha/is_a.rb contains license(s) No_license_found\nFile lib/mocha/integration.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/any_of.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/regexp_matches.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/object.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/any_parameters.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/has_key.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/equivalent_uri.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/has_entry.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/not.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/has_entries.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers/yaml_equivalent.rb contains license(s) No_license_found\nFile lib/mocha/multiple_yields.rb contains license(s) No_license_found\nFile lib/mocha/not_initialized_error.rb contains license(s) No_license_found\nFile lib/mocha/detection/mini_test.rb contains license(s) No_license_found\nFile lib/mocha/parameter_matchers.rb contains license(s) No_license_found\nFile lib/mocha/thrower.rb contains license(s) No_license_found\nFile lib/mocha/sequence.rb contains license(s) No_license_found\nFile lib/mocha/state_machine.rb contains license(s) No_license_found\nFile lib/mocha/receivers.rb contains license(s) No_license_found\nFile lib/mocha/expectation.rb contains license(s) No_license_found\nFile lib/mocha/deprecation.rb contains license(s) No_license_found\nFile lib/mocha/stubbing_error.rb contains license(s) No_license_found\nFile lib/mocha/minitest.rb contains license(s) No_license_found\nFile Rakefile contains license(s) No_license_found\nFile RELEASE.md contains license(s) MIT\nFile Gemfile contains license(s) No_license_found\nFile .gemtest contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.2.11.2 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.1.3.0 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.2.0.0 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.1.4.1 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.1.4.2 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.2.3.0 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.2.11.0 contains license(s) No_license_found\nle.test-unit.2.0.1 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.1.4.0 contains license(s) No_license_found\nFile gemfiles/Gemfile.test-unit.2.0.3 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.2.0.1 contains license(s) No_license_found\nFile gemfiles/Gemfile.minitest.latest contains license(s) No_license_found\nFile gemfiles/Gemfile.test-unit.2.0.0 contains license(s) No_license_found\nFile gemfiles/Gemfile.test-unit.latest contains license(s) No_license_found\nFile MIT-LICENSE.md contains license(s) MIT\n"
+    }
+  },
+  "copyright": {
+    "version": "0.0.0",
+    "parameters": ["-J"],
+    "output": {
+      "contentType": "application/json",
+      "content": [
+        { "path": ".gemtest", "output": { "results": null } },
+        { "path": ".rubocop.yml", "output": { "results": null } },
+        { "path": ".rubocop_todo.yml", "output": { "results": null } },
+        { "path": ".yardopts", "output": { "results": null } },
+        {
+          "path": "CONTRIBUTING.md",
+          "output": {
+            "results": [
+              { "content": "https://travis-ci.org/freerange/mocha)", "end": 694, "start": 656, "type": "url" }
+            ]
+          }
+        },
+        {
+          "path": "COPYING.md",
+          "output": {
+            "results": [
+              { "content": "Copyright Revieworld Ltd. 2006", "end": 30, "start": 0, "type": "statement" },
+              { "content": "http://www.ruby-lang.org/en/LICENSE.txt)", "end": 158, "start": 118, "type": "url" },
+              { "content": "http://www.opensource.org/licenses/MIT)", "end": 225, "start": 186, "type": "url" }
+            ]
+          }
+        },
+        {
+          "path": "Gemfile",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "MIT-LICENSE.md",
+          "output": {
+            "results": [
+              { "content": "Copyright (c) 2006 Revieworld Ltd.", "end": 34, "start": 0, "type": "statement" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                "end": 1058,
+                "start": 822,
+                "type": "author"
+              }
+            ]
+          }
+        },
+        {
+          "path": "README.md",
+          "output": {
+            "results": [
+              { "content": "&copy; Copyright Revieworld Ltd. 2006", "end": 11164, "start": 11127, "type": "statement" },
+              {
+                "content": "https://travis-ci.org/freerange/mocha.svg?branch=master)](https://travis-ci.org/freerange/mocha)",
+                "end": 122,
+                "start": 26,
+                "type": "url"
+              },
+              {
+                "content": "https://badge.fury.io/rb/mocha.svg)](http://badge.fury.io/rb/mocha)",
+                "end": 206,
+                "start": 139,
+                "type": "url"
+              },
+              {
+                "content": "https://api.dependabot.com/badges/compatibility_score?dependency-name=mocha&package-manager=bundler&version-scheme=semver)](https://dependabot.com/compatibility-score.html?dependency-name=mocha&package-manager=bundler&version-scheme=semver)",
+                "end": 458,
+                "start": 218,
+                "type": "url"
+              },
+              { "content": "https://bugs.ruby-lang.org/issues/12832)", "end": 2954, "start": 2914, "type": "url" },
+              { "content": "https://bugs.ruby-lang.org/issues/12876)", "end": 3150, "start": 3110, "type": "url" },
+              {
+                "content": "http://gofreerange.com/mocha/docs/Mocha/Mock.html)",
+                "end": 8715,
+                "start": 8665,
+                "type": "url"
+              },
+              {
+                "content": "http://gofreerange.com/mocha/docs/Mocha/Configuration.html)",
+                "end": 9067,
+                "start": 9008,
+                "type": "url"
+              },
+              { "content": "http://gofreerange.com/mocha/docs/)", "end": 9197, "start": 9162, "type": "url" },
+              { "content": "http://github.com/freerange/mocha)", "end": 9248, "start": 9214, "type": "url" },
+              {
+                "content": "http://groups.google.com/group/mocha-developer)",
+                "end": 9313,
+                "start": 9266,
+                "type": "url"
+              },
+              { "content": "http://jamesmead.org/blog/)", "end": 9363, "start": 9336, "type": "url" },
+              {
+                "content": "http://jamesmead.org/talks/2007-07-09-introduction-to-mock-objects-in-ruby-at-lrug/)",
+                "end": 9492,
+                "start": 9408,
+                "type": "url"
+              },
+              {
+                "content": "http://martinfowler.com/articles/mocksArentStubs.html)",
+                "end": 9570,
+                "start": 9516,
+                "type": "url"
+              },
+              {
+                "content": "http://www.growing-object-oriented-software.com/)",
+                "end": 9673,
+                "start": 9624,
+                "type": "url"
+              },
+              { "content": "http://www.jmock.org/oopsla2004.pdf)", "end": 9737, "start": 9701, "type": "url" },
+              { "content": "http://www.jmock.org/)", "end": 9770, "start": 9748, "type": "url" },
+              {
+                "content": "https://github.com/freerange/mocha/graphs/contributors)",
+                "end": 9877,
+                "start": 9822,
+                "type": "url"
+              },
+              { "content": "http://science.webhostinggeeks.com/mocha)", "end": 9958, "start": 9917, "type": "url" },
+              { "content": "http://webhostinggeeks.com/)", "end": 10001, "start": 9973, "type": "url" },
+              { "content": "https://travis-ci.org/freerange/mocha", "end": 10254, "start": 10217, "type": "url" },
+              { "content": "https://rubygems.org/profile/edit", "end": 10334, "start": 10301, "type": "url" },
+              { "content": "https://rubygems.org/api/v1/api_key.yaml", "end": 10415, "start": 10375, "type": "url" },
+              { "content": "https://analytics.google.com/analytics/web/", "end": 10549, "start": 10506, "type": "url" },
+              { "content": "http://www.reevoo.com/)", "end": 11040, "start": 11017, "type": "url" },
+              { "content": "http://www.jmock.org)", "end": 11111, "start": 11090, "type": "url" },
+              { "content": "http://www.ruby-lang.org/en/LICENSE.txt)", "end": 11292, "start": 11252, "type": "url" },
+              { "content": "http://www.opensource.org/licenses/MIT)", "end": 11359, "start": 11320, "type": "url" },
+              { "content": "james@floehopper.org", "end": 10374, "start": 10354, "type": "email" },
+              { "content": "Contributors See this", "end": 9798, "start": 9776, "type": "author" },
+              { "content": "contributors", "end": 9820, "start": 9808, "type": "author" },
+              { "content": "contributors", "end": 9876, "start": 9864, "type": "author" }
+            ]
+          }
+        },
+        {
+          "path": "RELEASE.md",
+          "output": {
+            "results": [
+              {
+                "content": "https://github.com/freerange/mocha/compare/73af600...9732726)",
+                "end": 1295,
+                "start": 1234,
+                "type": "url"
+              },
+              { "content": "https://bugs.ruby-lang.org/issues/12832", "end": 2972, "start": 2933, "type": "url" },
+              { "content": "http://gofreerange.com/mocha/docs", "end": 13274, "start": 13241, "type": "url" },
+              { "content": "https://github.com/rails/rails/pull/5907", "end": 13668, "start": 13628, "type": "url" },
+              {
+                "content": "https://github.com/floehopper/mocha/issues/20",
+                "end": 17557,
+                "start": 17512,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289/tickets/52",
+                "end": 19824,
+                "start": 19763,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289-mocha/tickets/66",
+                "end": 19994,
+                "start": 19927,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/floehopper/mocha/issues#issue/6",
+                "end": 20102,
+                "start": 20052,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/floehopper/mocha/issues#issue/15",
+                "end": 20319,
+                "start": 20268,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/floehopper/mocha/issues/closed#issue/11",
+                "end": 20448,
+                "start": 20390,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/floehopper/mocha/issues/closed#issue/14",
+                "end": 20633,
+                "start": 20575,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289-mocha/tickets/50#ticket-50-13",
+                "end": 21016,
+                "start": 20936,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289/tickets/53",
+                "end": 23891,
+                "start": 23830,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289/tickets/51",
+                "end": 24490,
+                "start": 24429,
+                "type": "url"
+              },
+              { "content": "http://gist.github.com/54177", "end": 25303, "start": 25275, "type": "url" },
+              {
+                "content": "http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/2060",
+                "end": 27249,
+                "start": 27178,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289-mocha/tickets/41",
+                "end": 27720,
+                "start": 27653,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289-mocha/tickets/43",
+                "end": 27847,
+                "start": 27780,
+                "type": "url"
+              },
+              {
+                "content": "http://floehopper.lighthouseapp.com/projects/22289/tickets/49",
+                "end": 28287,
+                "start": 28226,
+                "type": "url"
+              },
+              {
+                "content": "http://intertwingly.net/blog/2008/01/07/Rake-Contrib-for-1-9",
+                "end": 29197,
+                "start": 29137,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=23055&group_id=1917&atid=7480",
+                "end": 29928,
+                "start": 29844,
+                "type": "url"
+              },
+              {
+                "content": "http://blog.jayfields.com/2008/07/ruby-underuse-of-modules.html",
+                "end": 30483,
+                "start": 30420,
+                "type": "url"
+              },
+              {
+                "content": "http://blog.jayfields.com/2008/07/ruby-redefine-method-behavior.html",
+                "end": 30554,
+                "start": 30486,
+                "type": "url"
+              },
+              {
+                "content": "http://www.dcmanges.com/blog/rubygems-0-9-5-platform-bug",
+                "end": 34234,
+                "start": 34178,
+                "type": "url"
+              },
+              {
+                "content": "http://rubygems.org/read/chapter/20#platform",
+                "end": 34283,
+                "start": 34239,
+                "type": "url"
+              },
+              {
+                "content": "http://ola-bini.blogspot.com/2008/01/ruby-antipattern-using-eval-without.html",
+                "end": 34737,
+                "start": 34660,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=18914&group_id=1917&atid=7477",
+                "end": 34863,
+                "start": 34779,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=18917&group_id=1917&atid=7477",
+                "end": 34976,
+                "start": 34892,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=18336&group_id=1917&atid=7477",
+                "end": 35089,
+                "start": 35005,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=17835&group_id=1917&atid=7477",
+                "end": 35202,
+                "start": 35118,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=17412&group_id=1917&atid=7477",
+                "end": 35315,
+                "start": 35231,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=15977&group_id=1917&atid=7477",
+                "end": 35428,
+                "start": 35344,
+                "type": "url"
+              },
+              {
+                "content": "http://rubyforge.org/tracker/index.php?func=detail&aid=11885&group_id=1917&atid=7477",
+                "end": 35541,
+                "start": 35457,
+                "type": "url"
+              },
+              { "content": "http://www.lukeredpath.co.uk)", "end": 42664, "start": 42635, "type": "url" },
+              { "content": "http://rspec.rubyforge.org)", "end": 42727, "start": 42700, "type": "url" },
+              { "content": "author of Minitest", "end": 8615, "start": 8597, "type": "author" },
+              { "content": "authors.", "end": 11625, "start": 11617, "type": "author" }
+            ]
+          }
+        },
+        { "path": "Rakefile", "output": { "results": null } },
+        { "path": "init.rb", "output": { "results": null } },
+        {
+          "path": "mocha.gemspec",
+          "output": {
+            "results": [
+              { "content": "http://gofreerange.com/mocha/docs'", "end": 660, "start": 626, "type": "url" },
+              { "content": "mocha-developer@googlegroups.com", "end": 504, "start": 472, "type": "email" },
+              { "content": "authors", "end": 292, "start": 285, "type": "author" }
+            ]
+          }
+        },
+        { "path": "bin/build-matrix", "output": { "results": null } },
+        {
+          "path": "gemfiles/Gemfile.minitest.1.3.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.1.4.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.1.4.1",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.1.4.2",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.2.0.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.2.0.1",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.2.11.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.2.11.2",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.2.3.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.minitest.latest",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.test-unit.2.0.0",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.test-unit.2.0.1",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.test-unit.2.0.3",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        {
+          "path": "gemfiles/Gemfile.test-unit.latest",
+          "output": { "results": [{ "content": "https://rubygems.org'", "end": 29, "start": 8, "type": "url" }] }
+        },
+        { "path": "test/assertions.rb", "output": { "results": null } },
+        { "path": "test/deprecation_disabler.rb", "output": { "results": null } },
+        { "path": "test/execution_point.rb", "output": { "results": null } },
+        { "path": "test/method_definer.rb", "output": { "results": null } },
+        { "path": "test/minitest_result.rb", "output": { "results": null } },
+        { "path": "test/mini_test_result.rb", "output": { "results": null } },
+        { "path": "test/simple_counter.rb", "output": { "results": null } },
+        { "path": "test/test_helper.rb", "output": { "results": null } },
+        { "path": "test/test_runner.rb", "output": { "results": null } },
+        { "path": "test/test_unit_result.rb", "output": { "results": null } },
+        { "path": "test/integration/mini_test_test.rb", "output": { "results": null } },
+        { "path": "test/integration/shared_tests.rb", "output": { "results": null } },
+        { "path": "test/integration/test_unit_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/acceptance_test_helper.rb", "output": { "results": null } },
+        { "path": "test/acceptance/bug_18914_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/bug_21465_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/bug_21563_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/exception_rescue_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/expectations_on_multiple_methods_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/expected_invocation_count_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/failure_messages_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/issue_272_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/issue_65_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/issue_70_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/mocha_example_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/mocha_test_result_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/mock_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/mock_with_initializer_block_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/mocked_methods_dispatch_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/multiple_expectations_failure_message_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/optional_parameters_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/parameter_matcher_test.rb",
+          "output": {
+            "results": [
+              { "content": "http://example.com/foo?b=2&a=1'))", "end": 7551, "start": 7518, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2')", "end": 7603, "start": 7571, "type": "url" },
+              { "content": "http://example.com/foo?a=1'))", "end": 7842, "start": 7813, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2')", "end": 7894, "start": 7862, "type": "url" }
+            ]
+          }
+        },
+        { "path": "test/acceptance/partial_mocks_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/prepend_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/prevent_use_of_mocha_outside_test_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/raise_exception_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/return_value_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/sequence_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/states_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stub_any_instance_method_defined_on_superclass_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/stub_any_instance_method_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stub_class_method_defined_on_active_record_association_proxy_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/stub_class_method_defined_on_class_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_class_method_defined_on_module_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_class_method_defined_on_superclass_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_everything_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stub_instance_method_defined_on_active_record_association_proxy_test.rb",
+          "output": { "results": null }
+        },
+        {
+          "path": "test/acceptance/stub_instance_method_defined_on_class_and_aliased_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/stub_instance_method_defined_on_class_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stub_instance_method_defined_on_kernel_module_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/stub_instance_method_defined_on_module_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stub_instance_method_defined_on_object_class_test.rb",
+          "output": { "results": null }
+        },
+        {
+          "path": "test/acceptance/stub_instance_method_defined_on_singleton_class_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/stub_instance_method_defined_on_superclass_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_method_defined_on_module_and_aliased_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_module_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stub_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubba_example_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubba_test_result_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_error_backtrace_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_frozen_object_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_method_accepting_block_parameter_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_method_unnecessarily_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_nil_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_existent_any_instance_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_existent_class_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_existent_instance_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_public_any_instance_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_public_class_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_non_public_instance_method_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/stubbing_on_non_mock_object_test.rb", "output": { "results": null } },
+        {
+          "path": "test/acceptance/stubbing_same_class_method_on_parent_and_child_classes_test.rb",
+          "output": { "results": null }
+        },
+        { "path": "test/acceptance/throw_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/unexpected_invocation_test.rb", "output": { "results": null } },
+        { "path": "test/acceptance/unstubbing_test.rb", "output": { "results": null } },
+        { "path": "test/unit/any_instance_method_test.rb", "output": { "results": null } },
+        { "path": "test/unit/array_inspect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/backtrace_filter_test.rb", "output": { "results": null } },
+        { "path": "test/unit/cardinality_test.rb", "output": { "results": null } },
+        { "path": "test/unit/central_test.rb", "output": { "results": null } },
+        { "path": "test/unit/change_state_side_effect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/class_method_test.rb", "output": { "results": null } },
+        { "path": "test/unit/class_methods_test.rb", "output": { "results": null } },
+        { "path": "test/unit/configuration_test.rb", "output": { "results": null } },
+        { "path": "test/unit/date_time_inspect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/exception_raiser_test.rb", "output": { "results": null } },
+        { "path": "test/unit/expectation_list_test.rb", "output": { "results": null } },
+        { "path": "test/unit/expectation_test.rb", "output": { "results": null } },
+        { "path": "test/unit/hash_inspect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/hooks_test.rb", "output": { "results": null } },
+        { "path": "test/unit/in_state_ordering_constraint_test.rb", "output": { "results": null } },
+        { "path": "test/unit/method_matcher_test.rb", "output": { "results": null } },
+        { "path": "test/unit/mock_test.rb", "output": { "results": null } },
+        { "path": "test/unit/mockery_test.rb", "output": { "results": null } },
+        { "path": "test/unit/module_methods_test.rb", "output": { "results": null } },
+        { "path": "test/unit/multiple_yields_test.rb", "output": { "results": null } },
+        { "path": "test/unit/no_yields_test.rb", "output": { "results": null } },
+        { "path": "test/unit/object_inspect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/object_methods_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameters_matcher_test.rb", "output": { "results": null } },
+        { "path": "test/unit/receivers_test.rb", "output": { "results": null } },
+        { "path": "test/unit/return_values_test.rb", "output": { "results": null } },
+        { "path": "test/unit/sequence_test.rb", "output": { "results": null } },
+        { "path": "test/unit/single_return_value_test.rb", "output": { "results": null } },
+        { "path": "test/unit/single_yield_test.rb", "output": { "results": null } },
+        { "path": "test/unit/state_machine_test.rb", "output": { "results": null } },
+        { "path": "test/unit/string_inspect_test.rb", "output": { "results": null } },
+        { "path": "test/unit/thrower_test.rb", "output": { "results": null } },
+        { "path": "test/unit/yield_parameters_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/all_of_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/any_of_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/anything_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/equals_test.rb", "output": { "results": null } },
+        {
+          "path": "test/unit/parameter_matchers/equivalent_uri_test.rb",
+          "output": {
+            "results": [
+              { "content": "http://example.com/foo?a=1&b=2')", "end": 356, "start": 324, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2'])", "end": 420, "start": 387, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2')", "end": 581, "start": 549, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2'])", "end": 647, "start": 614, "type": "url" },
+              { "content": "http://example.com/foo?b=2&a=1')", "end": 782, "start": 750, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2'])", "end": 846, "start": 813, "type": "url" },
+              { "content": "http://example.com/foo?a=1')", "end": 972, "start": 944, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2'])", "end": 1037, "start": 1004, "type": "url" },
+              { "content": "http://example.com/foo')", "end": 1161, "start": 1137, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2'])", "end": 1226, "start": 1193, "type": "url" },
+              { "content": "http://a.example.com/foo?a=1&b=2')", "end": 1352, "start": 1318, "type": "url" },
+              { "content": "http://b.example.com/foo?a=1&b=2'])", "end": 1419, "start": 1384, "type": "url" },
+              { "content": "http://example.com/foo?a=&b=2')", "end": 1709, "start": 1678, "type": "url" },
+              { "content": "http://example.com/foo?a=&b=2'])", "end": 1772, "start": 1740, "type": "url" }
+            ]
+          }
+        },
+        { "path": "test/unit/parameter_matchers/has_entries_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/has_entry_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/has_key_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/has_value_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/includes_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/instance_of_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/is_a_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/kind_of_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/not_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/regexp_matches_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/responds_with_test.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/stub_matcher.rb", "output": { "results": null } },
+        { "path": "test/unit/parameter_matchers/yaml_equivalent_test.rb", "output": { "results": null } },
+        { "path": "lib/mocha.rb", "output": { "results": null } },
+        { "path": "lib/mocha_standalone.rb", "output": { "results": null } },
+        { "path": "lib/mocha/any_instance_method.rb", "output": { "results": null } },
+        { "path": "lib/mocha/api.rb", "output": { "results": null } },
+        { "path": "lib/mocha/argument_iterator.rb", "output": { "results": null } },
+        { "path": "lib/mocha/backtrace_filter.rb", "output": { "results": null } },
+        { "path": "lib/mocha/cardinality.rb", "output": { "results": null } },
+        { "path": "lib/mocha/central.rb", "output": { "results": null } },
+        { "path": "lib/mocha/change_state_side_effect.rb", "output": { "results": null } },
+        { "path": "lib/mocha/class_method.rb", "output": { "results": null } },
+        { "path": "lib/mocha/class_methods.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/configuration.rb",
+          "output": {
+            "results": [
+              {
+                "content": "http://martinfowler.com/bliki/DefinitionOfRefactoring.html",
+                "end": 519,
+                "start": 461,
+                "type": "url"
+              },
+              { "content": "http://www.jmock.org/oopsla2004.pdf", "end": 1478, "start": 1443, "type": "url" },
+              {
+                "content": "http://www.mockobjects.com/2007/04/test-smell-mocking-concrete-classes.html",
+                "end": 1586,
+                "start": 1511,
+                "type": "url"
+              },
+              {
+                "content": "http://java.sun.com/docs/books/tutorial/java/concepts/interface.html",
+                "end": 1798,
+                "start": 1730,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        { "path": "lib/mocha/debug.rb", "output": { "results": null } },
+        { "path": "lib/mocha/deprecation.rb", "output": { "results": null } },
+        { "path": "lib/mocha/error_with_filtered_backtrace.rb", "output": { "results": null } },
+        { "path": "lib/mocha/exception_raiser.rb", "output": { "results": null } },
+        { "path": "lib/mocha/expectation.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/expectation_error.rb",
+          "output": {
+            "results": [{ "content": "Authors of test libraries may use", "end": 157, "start": 124, "type": "author" }]
+          }
+        },
+        {
+          "path": "lib/mocha/expectation_error_factory.rb",
+          "output": {
+            "results": [
+              { "content": "authors of test libraries and not by typical", "end": 271, "start": 227, "type": "author" },
+              {
+                "content": "authors of test libraries in order to have Mocha raise exceptions of a specific class when there is an unexpected invocation or an unsatisfied expectation.",
+                "end": 920,
+                "start": 765,
+                "type": "author"
+              }
+            ]
+          }
+        },
+        { "path": "lib/mocha/expectation_list.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/hooks.rb",
+          "output": {
+            "results": [
+              { "content": "authors.", "end": 85, "start": 77, "type": "author" },
+              { "content": "authors of test libraries and not by typical", "end": 370, "start": 326, "type": "author" },
+              { "content": "authors of test libraries", "end": 1123, "start": 1098, "type": "author" },
+              { "content": "authors of test libraries", "end": 1386, "start": 1361, "type": "author" },
+              { "content": "authors of test libraries", "end": 1761, "start": 1736, "type": "author" }
+            ]
+          }
+        },
+        { "path": "lib/mocha/in_state_ordering_constraint.rb", "output": { "results": null } },
+        { "path": "lib/mocha/inspect.rb", "output": { "results": null } },
+        { "path": "lib/mocha/instance_method.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration.rb", "output": { "results": null } },
+        { "path": "lib/mocha/is_a.rb", "output": { "results": null } },
+        { "path": "lib/mocha/logger.rb", "output": { "results": null } },
+        { "path": "lib/mocha/method_matcher.rb", "output": { "results": null } },
+        { "path": "lib/mocha/mini_test.rb", "output": { "results": null } },
+        { "path": "lib/mocha/minitest.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/mock.rb",
+          "output": {
+            "results": [
+              { "content": "modified by methods on", "end": 3728, "start": 3706, "type": "author" },
+              { "content": "modified by methods on", "end": 5801, "start": 5779, "type": "author" }
+            ]
+          }
+        },
+        { "path": "lib/mocha/mockery.rb", "output": { "results": null } },
+        { "path": "lib/mocha/module_method.rb", "output": { "results": null } },
+        { "path": "lib/mocha/module_methods.rb", "output": { "results": null } },
+        { "path": "lib/mocha/multiple_yields.rb", "output": { "results": null } },
+        { "path": "lib/mocha/names.rb", "output": { "results": null } },
+        { "path": "lib/mocha/no_yields.rb", "output": { "results": null } },
+        { "path": "lib/mocha/not_initialized_error.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/object_methods.rb",
+          "output": {
+            "results": [
+              { "content": "modified by methods on", "end": 346, "start": 324, "type": "author" },
+              { "content": "modified by methods on", "end": 1628, "start": 1606, "type": "author" },
+              { "content": "modified by methods on", "end": 3916, "start": 3894, "type": "author" }
+            ]
+          }
+        },
+        { "path": "lib/mocha/parameter_matchers.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameters_matcher.rb", "output": { "results": null } },
+        { "path": "lib/mocha/pretty_parameters.rb", "output": { "results": null } },
+        { "path": "lib/mocha/receivers.rb", "output": { "results": null } },
+        { "path": "lib/mocha/return_values.rb", "output": { "results": null } },
+        { "path": "lib/mocha/ruby_version.rb", "output": { "results": null } },
+        { "path": "lib/mocha/sequence.rb", "output": { "results": null } },
+        { "path": "lib/mocha/setup.rb", "output": { "results": null } },
+        { "path": "lib/mocha/single_return_value.rb", "output": { "results": null } },
+        { "path": "lib/mocha/single_yield.rb", "output": { "results": null } },
+        { "path": "lib/mocha/standalone.rb", "output": { "results": null } },
+        { "path": "lib/mocha/state_machine.rb", "output": { "results": null } },
+        { "path": "lib/mocha/stubbing_error.rb", "output": { "results": null } },
+        { "path": "lib/mocha/test_unit.rb", "output": { "results": null } },
+        { "path": "lib/mocha/thrower.rb", "output": { "results": null } },
+        { "path": "lib/mocha/unexpected_invocation.rb", "output": { "results": null } },
+        { "path": "lib/mocha/version.rb", "output": { "results": null } },
+        { "path": "lib/mocha/yield_parameters.rb", "output": { "results": null } },
+        { "path": "lib/mocha/detection/mini_test.rb", "output": { "results": null } },
+        { "path": "lib/mocha/detection/test_unit.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/all_of.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/any_of.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/any_parameters.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/anything.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/base.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/equals.rb", "output": { "results": null } },
+        {
+          "path": "lib/mocha/parameter_matchers/equivalent_uri.rb",
+          "output": {
+            "results": [
+              { "content": "http://example.com/foo?a=1&b=2))", "end": 510, "start": 478, "type": "url" },
+              { "content": "http://example.com/foo?b=2&a=1')", "end": 568, "start": 536, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=2))", "end": 757, "start": 725, "type": "url" },
+              { "content": "http://example.com/foo?a=1&b=3')", "end": 815, "start": 783, "type": "url" }
+            ]
+          }
+        },
+        { "path": "lib/mocha/parameter_matchers/has_entries.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/has_entry.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/has_key.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/has_value.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/includes.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/instance_of.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/is_a.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/kind_of.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/not.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/object.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/optionally.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/regexp_matches.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/responds_with.rb", "output": { "results": null } },
+        { "path": "lib/mocha/parameter_matchers/yaml_equivalent.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/assertion_counter.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/monkey_patcher.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/adapter.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/exception_translation.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/nothing.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_13.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_140.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_141.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_142_to_172.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_200.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_201_to_222.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_2110_to_2111.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_2112_to_320.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/mini_test/version_230_to_2101.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/adapter.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/gem_version_200.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/gem_version_201_to_202.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/gem_version_203_to_220.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/gem_version_230_to_250.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/nothing.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/ruby_version_185_and_below.rb", "output": { "results": null } },
+        { "path": "lib/mocha/integration/test_unit/ruby_version_186_and_above.rb", "output": { "results": null } },
+        { "path": "yard-templates/default/layout/html/google_analytics.erb", "output": { "results": null } },
+        { "path": "yard-templates/default/layout/html/setup.rb", "output": { "results": null } }
+      ]
+    }
+  },
+  "monk": {
+    "version": "0.0.0",
+    "parameters": ["-k", "monk_knowledgebase"],
+    "output": {
+      "contentType": "text/plain",
+      "content": "found full match between \"MIT-LICENSE.md\" and \"MIT\" (rf_pk=311); matched: 36+1022\n"
+    }
+  }
+}

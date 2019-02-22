@@ -1,0 +1,130 @@
+{
+  "_metadata": {
+    "type": "fossology",
+    "url": "cd:/git/github/microsoft/redie/8a38bc262b675da0dbd7d885af765582f398a613",
+    "fetchedAt": "2019-02-22T22:17:35.048Z",
+    "links": {
+      "self": {
+        "href": "urn:git:github:microsoft:redie:revision:8a38bc262b675da0dbd7d885af765582f398a613:tool:fossology:3.6.0",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:git:github:microsoft:redie:revision:8a38bc262b675da0dbd7d885af765582f398a613:tool:fossology",
+        "type": "collection"
+      }
+    },
+    "schemaVersion": "3.6.0",
+    "toolVersion": "3.4.0",
+    "processedAt": "2019-02-22T22:17:47.336Z"
+  },
+  "nomos": {
+    "version": "3.4.0",
+    "parameters": "",
+    "output": {
+      "contentType": "text/plain",
+      "content": "File screenshot.png contains license(s) No_license_found\nFile README.md contains license(s) Microsoft-possibility\nFile .vscode/launch.json contains license(s) No_license_found\nFile .gitignore contains license(s) No_license_found\nFile package.json contains license(s) MIT\nFile .gitattributes contains license(s) No_license_found\nFile LICENSE contains license(s) MIT\nFile index.js contains license(s) MIT\n"
+    }
+  },
+  "copyright": {
+    "version": "0.0.0",
+    "parameters": ["-J"],
+    "output": {
+      "contentType": "application/json",
+      "content": [
+        { "path": ".gitattributes", "output": { "results": null } },
+        { "path": ".gitignore", "output": { "results": null } },
+        {
+          "path": "LICENSE",
+          "output": {
+            "results": [
+              { "content": "Copyright (c) Microsoft Corporation", "end": 54, "start": 19, "type": "statement" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER",
+                "end": 947,
+                "start": 877,
+                "type": "author"
+              }
+            ]
+          }
+        },
+        {
+          "path": "README.md",
+          "output": {
+            "results": [
+              { "content": "https://img.shields.io/npm/v/redie.svg)", "end": 50, "start": 11, "type": "url" },
+              {
+                "content": "https://img.shields.io/github/license/Microsoft/redie.svg)",
+                "end": 120,
+                "start": 62,
+                "type": "url"
+              },
+              { "content": "https://img.shields.io/npm/dt/redie.svg)", "end": 174, "start": 134, "type": "url" },
+              { "content": "https://www.npmjs.com/package/painless-config)", "end": 463, "start": 417, "type": "url" },
+              {
+                "content": "https://opensource.microsoft.com/codeofconduct/)",
+                "end": 2208,
+                "start": 2160,
+                "type": "url"
+              },
+              {
+                "content": "https://opensource.microsoft.com/codeofconduct/faq/)",
+                "end": 2313,
+                "start": 2261,
+                "type": "url"
+              },
+              { "content": "opencode@microsoft.com", "end": 2348, "start": 2326, "type": "email" },
+              { "content": "opencode@microsoft.com", "end": 2379, "start": 2357, "type": "email" }
+            ]
+          }
+        },
+        {
+          "path": "index.js",
+          "output": {
+            "results": [
+              {
+                "content": "Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.",
+                "end": 269,
+                "start": 120,
+                "type": "statement"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package.json",
+          "output": {
+            "results": [
+              { "content": "https://github.com/Microsoft/redie\"", "end": 385, "start": 350, "type": "url" },
+              { "content": "https://github.com/Microsoft/redie/issues\"", "end": 440, "start": 398, "type": "url" },
+              { "content": "https://github.com/Microsoft/redie.git\"", "end": 530, "start": 491, "type": "url" },
+              { "content": "willbar@microsoft.com", "end": 591, "start": 570, "type": "email" }
+            ]
+          }
+        },
+        {
+          "path": "screenshot.png",
+          "output": {
+            "results": [
+              {
+                "content": "http://www.w3.org/1999/02/22-rdf-syntax-ns#\">",
+                "end": 2937,
+                "start": 2892,
+                "type": "url"
+              },
+              { "content": "http://ns.adobe.com/exif/1.0/\">", "end": 3029, "start": 2998, "type": "url" }
+            ]
+          }
+        },
+        { "path": ".vscode/launch.json", "output": { "results": null } }
+      ]
+    }
+  },
+  "monk": {
+    "version": "0.0.0",
+    "parameters": ["-k", "monk_knowledgebase"],
+    "output": {
+      "contentType": "text/plain",
+      "content": "found diff match between \"LICENSE\" and \"MIT\" (rf_pk=311); rank 96; diffs: {t[91+586] M0 s[0+596], t[679+7] MR s[597+8], t[687+426] M0 s[606+432]}\nWARNING: cannot re-encode 'screenshot.png', going binary from now on\n"
+    }
+  }
+}
