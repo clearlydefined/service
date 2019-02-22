@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { mergeDefinitions, setIfValue } = require('../../lib/utils')
+const { mergeDefinitions, setIfValue, isLicenseFile } = require('../../lib/utils')
 const SPDX = require('../../lib/spdx')
 const { get, uniq } = require('lodash')
 
@@ -26,6 +26,7 @@ class FOSSologySummarizer {
     this._summarizeMonk(result, harvested)
     this._summarizeNomos(result, harvested)
     this._summarizeCopyright(result, harvested)
+    this._declareLicense(coordinates, result)
     return result
   }
 
@@ -35,8 +36,11 @@ class FOSSologySummarizer {
     const files = content
       .split('\n')
       .map(file => {
-        const path = get(/^File (.*?) contains/.exec(file), '[1]')
-        let license = SPDX.normalize(get(/license\(s\) (.*?)$/.exec(file), '[1]'))
+        // File package/dist/ajv.min.js contains license(s) No_license_found
+        const match = /^File (.*?) contains license\(s\) (.*?)$/.exec(file)
+        if (!match) return null
+        const [, path, rawLicense] = match
+        const license = rawLicense !== 'No_license_found' ? SPDX.normalize(rawLicense) : null
         if (path && license) return { path, license }
         if (path) return { path }
       })
@@ -50,11 +54,12 @@ class FOSSologySummarizer {
     const files = content
       .split('\n')
       .map(file => {
-        // only pickup full matches
-        const [, path, rawLicense] = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
+        const fullMatch = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
+        if (!fullMatch) return null
+        const [, path, rawLicense] = fullMatch
         const license = SPDX.normalize(rawLicense)
         if (path && license) return { path, license }
-        return { path }
+        if (path) return { path }
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
@@ -79,6 +84,16 @@ class FOSSologySummarizer {
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
+  }
+
+  _declareLicense(coordinates, result) {
+    if (!result.files) return
+    // if we know this is a license file by the name of it and it has a license detected in it
+    // then let's declare the license for the component
+    const licenses = uniq(
+      result.files.filter(file => file.license && isLicenseFile(file.path, coordinates)).map(file => file.license)
+    )
+    setIfValue(result, 'licensed.declared', licenses.join(' AND '))
   }
 }
 
