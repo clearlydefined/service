@@ -3,7 +3,7 @@
 
 const { mergeDefinitions, setIfValue } = require('../../lib/utils')
 const SPDX = require('../../lib/spdx')
-const { get } = require('lodash')
+const { get, uniq } = require('lodash')
 
 class FOSSologySummarizer {
   constructor(options) {
@@ -23,9 +23,9 @@ class FOSSologySummarizer {
     // That means the order here matters. Later merges overwrite earlier. So here we are explicitly taking
     // Nomos over Monk. The Copyright info should be orthogonal so order does not matter. In the future
     // we should resolve this merging problem but it's likely to be hard in general.
-    this._summarizeMonk(result, harvested)
     this._summarizeNomos(result, harvested)
     this._summarizeCopyright(result, harvested)
+    this._summarizeMonk(result, harvested)
     return result
   }
 
@@ -48,13 +48,12 @@ class FOSSologySummarizer {
     const content = get(output, 'monk.output.content')
     if (!content) return
     const files = content
-      .map(entry => {
-        const { path, output } = entry
-        // TODO skip imprecise matches for now
-        if (output.type !== 'full') return null
-        const license = SPDX.normalize(output.license)
-        if (path && license) return { path, license }
-        if (path) return { path }
+      .split('\n')
+      .map(file => {
+        // only pickup full matches
+        const [, path, license] = get(/^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file))
+        if (path && license) return { path, license: SPDX.normalize(license) }
+        return null
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
@@ -67,11 +66,15 @@ class FOSSologySummarizer {
       .map(entry => {
         const { path, output } = entry
         if (!output.results) return null
-        // TODO there is a `type` prop for each entry, not sure what that is or what to do with it. Investigate
-        const attributions = output.results.map(result => result.content).filter(e => e)
-        const result = { path }
-        setIfValue(result, 'attributions', attributions)
-        return result
+        const attributions = uniq(
+          output.results
+            .filter(result => result.type === 'statement')
+            .map(result => result.content)
+            .filter(e => e)
+        )
+        const file = { path }
+        setIfValue(file, 'attributions', attributions)
+        return file
       })
       .filter(e => e)
     mergeDefinitions(result, { files })
