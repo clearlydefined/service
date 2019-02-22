@@ -64,6 +64,20 @@ class AbstractAzBlobStore {
     }
   }
 
+  /**
+   * Unsupported. The Blob definition store is not queryable
+   */
+  async find() {
+    throw new Error('find() is unsupported')
+  }
+
+  /**
+   * Unsupported. The Blob definition store is not queryable
+   */
+  async average() {
+    throw new Error('average() is unsupported')
+  }
+
   _toStoragePathFromCoordinates(coordinates) {
     return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }

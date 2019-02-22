@@ -8,6 +8,7 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
+  isDeclaredLicense,
   isLicenseFile,
   updateSourceLocation,
   mergeDefinitions
@@ -115,14 +116,15 @@ class ClearlyDescribedSummarizer {
   addLicenseFromFiles(result, data, coordinates) {
     if (!data.interestingFiles) return
     const licenses = data.interestingFiles
-      .map(file => (file.license !== 'NOASSERTION' && isLicenseFile(file.path, coordinates) ? file.license : null))
+      .map(file => (isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null))
       .filter(x => x)
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
   addMavenData(result, data) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const projectSummaryLicenses = get(data, 'manifest.summary.project.licenses')
+    const projectSummaryLicenses =
+      get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
     const licenseSummaries = flatten(projectSummaryLicenses.map(x => x.license))
     const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))

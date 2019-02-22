@@ -21,6 +21,7 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
+  isDeclaredLicense,
   simplifyAttributions,
   updateSourceLocation
 } = require('../lib/utils')
@@ -36,7 +37,7 @@ const currentSchema = '1.4.0'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -44,6 +45,7 @@ class DefinitionService {
     this.curationService = curation
     this.definitionStore = store
     this.search = search
+    this.cache = cache
     this.logger = logger()
   }
 
@@ -62,10 +64,23 @@ class DefinitionService {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
     }
-    const existing = force ? null : await this.definitionStore.get(coordinates)
-    const result =
-      get(existing, '_meta.schemaVersion') === currentSchema ? existing : await this.computeAndStore(coordinates)
+    const existing = await this._cacheExistingAside(coordinates, force)
+    let result
+    if (get(existing, '_meta.schemaVersion') === currentSchema) {
+      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
+      result = existing
+    } else result = await this.computeAndStore(coordinates)
     return this._cast(result)
+  }
+
+  async _cacheExistingAside(coordinates, force) {
+    if (force) return null
+    const cacheKey = this._getCacheKey(coordinates)
+    const cached = await this.cache.get(cacheKey)
+    if (cached) return cached
+    const stored = await this.definitionStore.get(coordinates)
+    if (stored) await this.cache.set(cacheKey, stored)
+    return stored
   }
 
   // ensure the definition is a properly classed object
@@ -131,6 +146,19 @@ class DefinitionService {
   }
 
   /**
+   * Get the definitions that exist in the store matching the given query
+   * @param {object} query
+   * @returns The data and continuationToken if there is more results
+   */
+  find(query) {
+    return this.definitionStore.find(query, query.continuationToken)
+  }
+
+  average(query, fields) {
+    return this.definitionStore.average(query, fields)
+  }
+
+  /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
    *
@@ -138,7 +166,14 @@ class DefinitionService {
    */
   invalidate(coordinates) {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
-    return Promise.all(coordinateList.map(throat(10, coordinates => this.definitionStore.delete(coordinates))))
+    return Promise.all(
+      coordinateList.map(
+        throat(10, async coordinates => {
+          await this.definitionStore.delete(coordinates)
+          await this.cache.delete(this._getCacheKey(coordinates))
+        })
+      )
+    )
   }
 
   _validate(definition) {
@@ -151,9 +186,11 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
+      this.logger.info('definition not available', { coordinates: coordinates.toString() })
       this.harvest(coordinates)
       return definition
     }
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
     await this._store(definition)
     return definition
   }
@@ -171,7 +208,8 @@ class DefinitionService {
 
   async _store(definition) {
     await this.definitionStore.store(definition)
-    return this.search.store(definition)
+    await this.search.store(definition)
+    await this.cache.set(this._getCacheKey(definition.coordinates), definition)
   }
 
   /**
@@ -187,7 +225,7 @@ class DefinitionService {
     const raw = await this.harvestStore.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    const aggregatedDefinition = (await this.aggregationService.process(summaries)) || {}
+    const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
@@ -270,7 +308,7 @@ class DefinitionService {
 
   _computeDeclaredScore(definition) {
     const declared = get(definition, 'licensed.declared')
-    return declared && declared !== 'NOASSERTION' ? weights.declared : 0
+    return isDeclaredLicense(declared) ? weights.declared : 0
   }
 
   _computeDiscoveredScore(definition) {
@@ -465,7 +503,13 @@ class DefinitionService {
   _getDefinitionCoordinates(coordinates) {
     return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
   }
+
+  _getCacheKey(coordinates) {
+    return `def_${EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()}`
+  }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
+  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)

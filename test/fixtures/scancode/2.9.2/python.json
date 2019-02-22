@@ -1,0 +1,426 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/pypi/pypi/-/redis/3.0.1/tool/fossology",
+    "fetchedAt": "2019-01-18T15:44:24.376Z",
+    "links": {
+      "self": { "href": "urn:pypi:pypi:-:redis:revision:3.0.1:tool:scancode:2.10.2", "type": "resource" },
+      "siblings": { "href": "urn:pypi:pypi:-:redis:revision:3.0.1:tool:fossology", "type": "collection" }
+    },
+    "schemaVersion": "2.10.2",
+    "toolVersion": "2.9.2",
+    "contentType": "application/json",
+    "releaseDate": "2018-11-15T21:46:13",
+    "processedAt": "2019-01-18T15:44:39.500Z"
+  },
+  "content": {
+    "scancode_notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+    "scancode_version": "2.9.2",
+    "scancode_options": {
+      "input": "/tmp/cd-Do2GTI",
+      "--copyright": true,
+      "--info": true,
+      "--json-pp": "/tmp/cd-limEI3",
+      "--license": true,
+      "--license-diag": true,
+      "--only-findings": true,
+      "--package": true,
+      "--processes": "2",
+      "--strip-root": true,
+      "--timeout": "1000.0"
+    },
+    "files_count": 5,
+    "files": [
+      {
+        "path": "redis-3.0.1/LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 1074,
+        "date": "2018-10-10",
+        "sha1": "a4b61fde3ceaed3091f9f7ac886713a60beef947",
+        "md5": "51d9ad56299ab60ba7be65a621004f27",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "mit",
+            "score": 100,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 3,
+            "end_line": 22,
+            "matched_rule": {
+              "identifier": "mit.LICENSE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 163,
+              "matched_length": 163,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": ["Copyright (c) 2012 Andy McCurdy"],
+            "holders": ["Andy McCurdy"],
+            "authors": [],
+            "start_line": 1,
+            "end_line": 1
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "redis-3.0.1/PKG-INFO",
+        "type": "file",
+        "name": "PKG-INFO",
+        "base_name": "PKG-INFO",
+        "extension": "",
+        "size": 39211,
+        "date": "2018-11-15",
+        "sha1": "8288d041f4532bfc2eea895b44fec8f475a38c47",
+        "md5": "2aa3450aec25b4742fc7440207ad9896",
+        "mime_type": "text/x-python",
+        "file_type": "Python script, ASCII text executable",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "mit",
+            "score": 10,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 10,
+            "end_line": 10,
+            "matched_rule": {
+              "identifier": "mit_34.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 10
+            }
+          },
+          {
+            "key": "mit",
+            "score": 25,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 830,
+            "end_line": 830,
+            "matched_rule": {
+              "identifier": "pypi_mit_license.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 5,
+              "matched_length": 5,
+              "match_coverage": 100,
+              "rule_relevance": 25
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": [],
+            "holders": [],
+            "authors": [
+              "Andy McCurdy Author-email sedrik@gmail.com",
+              "Maintainer Andy McCurdy Maintainer-email sedrik@gmail.com"
+            ],
+            "start_line": 5,
+            "end_line": 9
+          },
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["the core Redis team. Pieter Noordhuis"],
+            "start_line": 287,
+            "end_line": 289
+          },
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["Andy McCurdy (sedrik@gmail.com)."],
+            "start_line": 814,
+            "end_line": 815
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "redis-3.0.1/README.rst",
+        "type": "file",
+        "name": "README.rst",
+        "base_name": "README",
+        "extension": ".rst",
+        "size": 31677,
+        "date": "2018-11-15",
+        "sha1": "c365a1ede98aa4d5daa80841d4070b460cdf5fc2",
+        "md5": "be0a97feab6d09c63c55134a47ae32c2",
+        "mime_type": "text/x-python",
+        "file_type": "Python script, ASCII text executable",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": true,
+        "licenses": [],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["the core Redis team. Pieter Noordhuis"],
+            "start_line": 277,
+            "end_line": 279
+          },
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["Andy McCurdy (sedrik@gmail.com)."],
+            "start_line": 804,
+            "end_line": 805
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "redis-3.0.1/setup.py",
+        "type": "file",
+        "name": "setup.py",
+        "base_name": "setup",
+        "extension": ".py",
+        "size": 2055,
+        "date": "2018-11-15",
+        "sha1": "76275b9ad17554b43a6574eff32d5b9f252fcc78",
+        "md5": "afc5c4af9bd60c6a759683c247102b45",
+        "mime_type": "text/x-python",
+        "file_type": "Python script, ASCII text executable",
+        "programming_language": "Python",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "mit",
+            "score": 10,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 46,
+            "end_line": 46,
+            "matched_rule": {
+              "identifier": "mit_34.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 10
+            }
+          },
+          {
+            "key": "mit",
+            "score": 25,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 63,
+            "end_line": 63,
+            "matched_rule": {
+              "identifier": "pypi_mit_license.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 5,
+              "matched_length": 5,
+              "match_coverage": 100,
+              "rule_relevance": 25
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "redis-3.0.1/redis.egg-info/PKG-INFO",
+        "type": "file",
+        "name": "PKG-INFO",
+        "base_name": "PKG-INFO",
+        "extension": "",
+        "size": 39211,
+        "date": "2018-11-15",
+        "sha1": "8288d041f4532bfc2eea895b44fec8f475a38c47",
+        "md5": "2aa3450aec25b4742fc7440207ad9896",
+        "mime_type": "text/x-python",
+        "file_type": "Python script, ASCII text executable",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "mit",
+            "score": 10,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 10,
+            "end_line": 10,
+            "matched_rule": {
+              "identifier": "mit_34.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 10
+            }
+          },
+          {
+            "key": "mit",
+            "score": 25,
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 830,
+            "end_line": 830,
+            "matched_rule": {
+              "identifier": "pypi_mit_license.RULE",
+              "license_expression": "mit",
+              "licenses": ["mit"],
+              "matcher": "2-aho",
+              "rule_length": 5,
+              "matched_length": 5,
+              "match_coverage": 100,
+              "rule_relevance": 25
+            }
+          }
+        ],
+        "license_expressions": [],
+        "copyrights": [
+          {
+            "statements": [],
+            "holders": [],
+            "authors": [
+              "Andy McCurdy Author-email sedrik@gmail.com",
+              "Maintainer Andy McCurdy Maintainer-email sedrik@gmail.com"
+            ],
+            "start_line": 5,
+            "end_line": 9
+          },
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["the core Redis team. Pieter Noordhuis"],
+            "start_line": 287,
+            "end_line": 289
+          },
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["Andy McCurdy (sedrik@gmail.com)."],
+            "start_line": 814,
+            "end_line": 815
+          }
+        ],
+        "package_manifest": null,
+        "packages": [],
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}

@@ -50,7 +50,7 @@ module.exports = {
     service: loadFactory(config.get('AUTH_PROVIDER') || 'github', 'auth')
   },
   caching: {
-    provider: config.get('CACHING_PROVIDER') || 'memory'
+    service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching')
   },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',
@@ -66,5 +66,11 @@ module.exports = {
   },
   search: {
     service: loadFactory(config.get('SEARCH_PROVIDER') || 'memory', 'search')
+  },
+  insights: {
+    serviceId: config.get('APPINSIGHTS_SERVICE_APPLICATIONID'),
+    serviceKey: config.get('APPINSIGHTS_SERVICE_APIKEY'),
+    crawlerId: config.get('APPINSIGHTS_CRAWLER_APPLICATIONID'),
+    crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   }
 }

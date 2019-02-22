@@ -55,6 +55,49 @@ class AbstractFileStore {
     }
   }
 
+  /**
+   * Query and return the objects based on the query
+   *
+   * @param {object} query - The filters and sorts for the request
+   * @returns The data and continuationToken if there is more results
+   */
+  async find(query) {
+    const paths = await recursive(this.options.location, ['.DS_Store'])
+    return (await Promise.all(
+      paths.map(async path => {
+        try {
+          if (!this._isValidPath(path)) return null
+          const data = await promisify(fs.readFile)(path)
+          if (!data) return null
+          const definition = JSON.parse(data)
+          return definition
+        } catch (error) {
+          // If there is just no entry, that's fine, there is no content.
+          if (error.code === 'ENOENT') return null
+          throw error
+        }
+      })
+    )).filter(definition => {
+      if (!definition) return false
+      if (query.type && definition.coordinates.type !== query.type) return false
+      if (query.provider && definition.coordinates.provider !== query.provider) return false
+      if (query.name && definition.coordinates.name !== query.name) return false
+      if (query.namespace && definition.coordinates.namespace !== query.namespace) return false
+      if (query.license && definition.licensed.declared !== query.license) return false
+      if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return false
+      if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return false
+      if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return false
+      if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return false
+      if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return false
+      if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return false
+      return true
+    })
+  }
+
+  async average() {
+    throw new Error('average() is unsupported')
+  }
+
   _isValidPath(entry) {
     return AbstractFileStore.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
