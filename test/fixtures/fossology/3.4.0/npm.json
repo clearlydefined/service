@@ -1,0 +1,1308 @@
+{
+  "_metadata": {
+    "type": "fossology",
+    "url": "cd:/npm/npmjs/-/ajv/5.1.0",
+    "fetchedAt": "2019-02-22T20:54:59.288Z",
+    "links": {
+      "self": { "href": "urn:npm:npmjs:-:ajv:revision:5.1.0:tool:fossology:3.6.0", "type": "resource" },
+      "siblings": { "href": "urn:npm:npmjs:-:ajv:revision:5.1.0:tool:fossology", "type": "collection" }
+    },
+    "schemaVersion": "3.6.0",
+    "toolVersion": "3.4.0",
+    "processedAt": "2019-02-22T20:56:06.890Z"
+  },
+  "nomos": {
+    "version": "3.4.0",
+    "parameters": "",
+    "output": {
+      "contentType": "text/plain",
+      "content": "File package/dist/ajv.min.js contains license(s) No_license_found\nFile package/dist/nodent.min.js contains license(s) BSD-2-Clause\nFile package/dist/ajv.min.js.map contains license(s) No_license_found\nFile package/lib/refs/$data.json contains license(s) No_license_found\nFile package/lib/refs/json-schema-draft-06.json contains license(s) No_license_found\nFile package/lib/patternGroups.js contains license(s) No_license_found\nFile package/lib/dot/ref.jst contains license(s) No_license_found\nFile package/lib/dot/pattern.jst contains license(s) No_license_found\nFile package/lib/dot/coerce.def contains license(s) No_license_found\nFile package/lib/dot/_limitItems.jst contains license(s) No_license_found\nFile package/lib/dot/allOf.jst contains license(s) No_license_found\nFile package/lib/dot/_limitProperties.jst contains license(s) No_license_found\nFile package/lib/dot/format.jst contains license(s) No_license_found\nFile package/lib/dot/validate.jst contains license(s) No_license_found\nFile package/lib/dot/errors.def contains license(s) No_license_found\nFile package/lib/dot/enum.jst contains license(s) No_license_found\nFile package/lib/dot/contains.jst contains license(s) No_license_found\nFile package/lib/dot/not.jst contains license(s) No_license_found\nFile package/lib/dot/uniqueItems.jst contains license(s) No_license_found\nFile package/lib/dot/properties.jst contains license(s) No_license_found\nFile package/lib/ajv.js contains license(s) No_license_found\nFile package/lib/dotjs/dependencies.js contains license(s) No_license_found\nFile package/lib/dotjs/_limitLength.js contains license(s) No_license_found\nFile package/lib/dotjs/ref.js contains license(s) No_license_found\nFile package/lib/dotjs/items.js contains license(s) No_license_found\nFile package/lib/dotjs/propertyNames.js contains license(s) No_license_found\nFile package/lib/dotjs/oneOf.js contains license(s) No_license_found\nFile package/lib/dotjs/_limitItems.js contains license(s) No_license_found\nFile package/lib/dotjs/format.js contains license(s) No_license_found\nFile package/lib/dotjs/README.md contains license(s) No_license_found\nFile package/lib/dotjs/validate.js contains license(s) No_license_found\nFile package/lib/dotjs/properties.js contains license(s) No_license_found\nFile package/lib/dotjs/_limit.js contains license(s) No_license_found\nFile package/lib/$data.js contains license(s) No_license_found\nFile package/lib/compile/ucs2length.js contains license(s) No_license_found\nFile package/lib/compile/formats.js contains license(s) No_license_found\nFile package/lib/compile/error_classes.js contains license(s) No_license_found\nFile package/lib/compile/schema_obj.js contains license(s) No_license_found\nFile package/lib/compile/rules.js contains license(s) No_license_found\nFile package/lib/compile/index.js contains license(s) No_license_found\nFile package/.tonic_example.js contains license(s) No_license_found\nFile package/scripts/.eslintrc.yml contains license(s) No_license_found\nFile package/scripts/travis-gh-pages contains license(s) No_license_found\nFile package/scripts/bundle.js contains license(s) No_license_found\nFile package/package.json contains license(s) MIT\nFile package/dist/ajv.bundle.js contains license(s) MIT\nFile package/dist/regenerator.min.js contains license(s) MIT\nFile package/README.md contains license(s) MIT\nFile package/lib/refs/json-schema-draft-04.json contains license(s) No_license_found\nFile package/lib/refs/json-schema-v5.json contains license(s) No_license_found\nFile package/lib/dot/dependencies.jst contains license(s) No_license_found\nFile package/lib/dot/defaults.def contains license(s) No_license_found\nFile package/lib/dot/_limit.jst contains license(s) No_license_found\nFile package/lib/dot/oneOf.jst contains license(s) No_license_found\nFile package/lib/dot/definitions.def contains license(s) No_license_found\nFile package/lib/dot/anyOf.jst contains license(s) No_license_found\nFile package/lib/dot/items.jst contains license(s) No_license_found\nFile package/lib/dot/multipleOf.jst contains license(s) No_license_found\nFile package/lib/dot/const.jst contains license(s) No_license_found\nFile package/lib/dot/_limitLength.jst contains license(s) No_license_found\nFile package/lib/dot/required.jst contains license(s) No_license_found\nFile package/lib/dot/custom.jst contains license(s) No_license_found\nFile package/lib/dot/propertyNames.jst contains license(s) No_license_found\nFile package/lib/dot/missing.def contains license(s) No_license_found\nFile package/lib/cache.js contains license(s) No_license_found\nFile package/lib/dotjs/multipleOf.js contains license(s) No_license_found\nFile package/lib/dotjs/required.js contains license(s) No_license_found\nFile package/lib/dotjs/_limitProperties.js contains license(s) No_license_found\nFile package/lib/dotjs/uniqueItems.js contains license(s) No_license_found\nFile package/lib/dotjs/custom.js contains license(s) No_license_found\nFile package/lib/dotjs/enum.js contains license(s) No_license_found\nFile package/lib/dotjs/pattern.js contains license(s) No_license_found\nFile package/lib/dotjs/const.js contains license(s) No_license_found\nFile package/lib/dotjs/allOf.js contains license(s) No_license_found\nFile package/lib/dotjs/not.js contains license(s) No_license_found\nFile package/lib/dotjs/anyOf.js contains license(s) No_license_found\nFile package/lib/dotjs/contains.js contains license(s) No_license_found\nFile package/lib/keyword.js contains license(s) No_license_found\nFile package/lib/ajv.d.ts contains license(s) No_license_found\nFile package/lib/compile/equal.js contains license(s) No_license_found\nFile package/lib/compile/async.js contains license(s) No_license_found\nFile package/lib/compile/util.js contains license(s) No_license_found\nFile package/lib/compile/_rules.js contains license(s) No_license_found\nFile package/lib/compile/resolve.js contains license(s) No_license_found\nFile package/LICENSE contains license(s) MIT\nFile package/scripts/prepare-tests contains license(s) No_license_found\nFile package/scripts/compile-dots.js contains license(s) No_license_found\nFile package/scripts/info contains license(s) No_license_found\n"
+    }
+  },
+  "copyright": {
+    "version": "0.0.0",
+    "parameters": ["-J"],
+    "output": {
+      "contentType": "application/json",
+      "content": [
+        { "path": "package/.tonic_example.js", "output": { "results": null } },
+        {
+          "path": "package/LICENSE",
+          "output": {
+            "results": [
+              { "content": "Copyright (c) 2015 Evgeny Poberezkin", "end": 59, "start": 23, "type": "statement" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER",
+                "end": 917,
+                "start": 847,
+                "type": "author"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package/README.md",
+          "output": {
+            "results": [
+              {
+                "content": "http://epoberezkin.github.io/ajv/images/ajv_logo.png\">",
+                "end": 105,
+                "start": 51,
+                "type": "url"
+              },
+              {
+                "content": "https://travis-ci.org/epoberezkin/ajv.svg?branch=master)](https://travis-ci.org/epoberezkin/ajv)",
+                "end": 340,
+                "start": 244,
+                "type": "url"
+              },
+              {
+                "content": "https://badge.fury.io/js/ajv.svg)](https://www.npmjs.com/package/ajv)",
+                "end": 426,
+                "start": 357,
+                "type": "url"
+              },
+              {
+                "content": "https://img.shields.io/npm/dm/ajv.svg)](https://www.npmjs.com/package/ajv)",
+                "end": 519,
+                "start": 445,
+                "type": "url"
+              },
+              {
+                "content": "https://codeclimate.com/github/epoberezkin/ajv/badges/gpa.svg)](https://codeclimate.com/github/epoberezkin/ajv)",
+                "end": 648,
+                "start": 537,
+                "type": "url"
+              },
+              {
+                "content": "https://coveralls.io/repos/epoberezkin/ajv/badge.svg?branch=master&service=github)](https://coveralls.io/github/epoberezkin/ajv?branch=master)",
+                "end": 811,
+                "start": 669,
+                "type": "url"
+              },
+              {
+                "content": "https://img.shields.io/gitter/room/ajv-validator/ajv.svg)](https://gitter.im/ajv-validator/ajv)",
+                "end": 918,
+                "start": 823,
+                "type": "url"
+              },
+              {
+                "content": "https://trac.tools.ietf.org/html/draft-wright-json-schema-validation-01)",
+                "end": 1036,
+                "start": 964,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/5.0.0)",
+                "end": 1126,
+                "start": 1072,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/FAQ.md)",
+                "end": 1467,
+                "start": 1413,
+                "type": "url"
+              },
+              { "content": "https://github.com/olado/doT)", "end": 2412, "start": 2383, "type": "url" },
+              {
+                "content": "https://github.com/ebdrup/json-schema-benchmark)",
+                "end": 2689,
+                "start": 2641,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/pandastrike/jsck#benchmarks)",
+                "end": 2791,
+                "start": 2744,
+                "type": "url"
+              },
+              {
+                "content": "https://rawgit.com/zaggino/z-schema/master/benchmark/results.html)",
+                "end": 2898,
+                "start": 2832,
+                "type": "url"
+              },
+              {
+                "content": "https://cdn.rawgit.com/playlyfe/themis/master/benchmark/results.html)",
+                "end": 2989,
+                "start": 2920,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/ebdrup/json-schema-benchmark):",
+                "end": 3103,
+                "start": 3054,
+                "type": "url"
+              },
+              {
+                "content": "https://chart.googleapis.com/chart?chxt=x,y&cht=bhs&chco=76A4FB&chls=2.0&chbh=32,4,1&chs=600x416&chxl=-1:%7Cajv%7Cis-my-json-valid%7Cjsen%7Cschemasaurus%7Cthemis%7Cz-schema%7Cjsck%7Cjsonschema%7Cskeemas%7Ctv4%7Cjayschema&chd=t:100,68,61,22.8,17.6,6.6,2.7,0.9,0.7,0.4,0.1)](https://github.com/ebdrup/json-schema-benchmark/blob/master/README.md#performance)",
+                "end": 3476,
+                "start": 3121,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/)", "end": 3560, "start": 3536, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md))",
+                "end": 3711,
+                "start": 3651,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-i18n)", "end": 4552, "start": 4512, "type": "url" },
+              {
+                "content": "https://github.com/json-schema/json-schema/wiki/v5-Proposals)",
+                "end": 5194,
+                "start": 5133,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-keywords)", "end": 5259, "start": 5215, "type": "url" },
+              {
+                "content": "https://github.com/json-schema/JSON-Schema-Test-Suite)",
+                "end": 5609,
+                "start": 5555,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/ebdrup/json-schema-benchmark)",
+                "end": 5696,
+                "start": 5648,
+                "type": "url"
+              },
+              { "content": "https://tonicdev.com/npm/ajv", "end": 5940, "start": 5912, "type": "url" },
+              {
+                "content": "https://github.com/substack/json-stable-stringify)",
+                "end": 6708,
+                "start": 6658,
+                "type": "url"
+              },
+              { "content": "https://github.com/siddo420))", "end": 7570, "start": 7541, "type": "url" },
+              { "content": "https://cdnjs.com/libraries/ajv)", "end": 7847, "start": 7815, "type": "url" },
+              {
+                "content": "https://saucelabs.com/browser-matrix/epoberezkin.svg)](https://saucelabs.com/u/epoberezkin)",
+                "end": 7999,
+                "start": 7908,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/234))",
+                "end": 8297,
+                "start": 8250,
+                "type": "url"
+              },
+              { "content": "https://github.com/jessedc/ajv-cli)", "end": 8416, "start": 8381, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-pack))", "end": 8631, "start": 8590, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/json-schema-migrate))",
+                "end": 8743,
+                "start": 8691,
+                "type": "url"
+              },
+              { "content": "https://tools.ietf.org/html/rfc6902)", "end": 9042, "start": 9006, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#type)",
+                "end": 9225,
+                "start": 9161,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#keywords-for-numbers)",
+                "end": 9322,
+                "start": 9242,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#keywords-for-strings)",
+                "end": 9486,
+                "start": 9406,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#keywords-for-arrays)",
+                "end": 9621,
+                "start": 9542,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#contains)",
+                "end": 9760,
+                "start": 9692,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#keywords-for-objects)",
+                "end": 9857,
+                "start": 9777,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#propertynames)",
+                "end": 10056,
+                "start": 9983,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#keywords-for-all-types)",
+                "end": 10157,
+                "start": 10075,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#const)",
+                "end": 10239,
+                "start": 10174,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#compound-keywords)",
+                "end": 10339,
+                "start": 10262,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv-keywords)",
+                "end": 10432,
+                "start": 10388,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/json-schema/json-schema/wiki/v5-Proposals)",
+                "end": 10579,
+                "start": 10518,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#switch-proposed)",
+                "end": 10693,
+                "start": 10618,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#patternrequired-proposed)",
+                "end": 10858,
+                "start": 10774,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md#formatmaximum--formatminimum-and-exclusiveformatmaximum--exclusiveformatminimum-proposed)",
+                "end": 11157,
+                "start": 11009,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/KEYWORDS.md)",
+                "end": 11294,
+                "start": 11235,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6)",
+                "end": 11499,
+                "start": 11452,
+                "type": "url"
+              },
+              { "content": "https://url.spec.whatwg.org/#concept-url)", "end": 11838, "start": 11797, "type": "url" },
+              { "content": "https://tools.ietf.org/html/rfc6570)", "end": 11930, "start": 11894, "type": "url" },
+              {
+                "content": "http://tools.ietf.org/html/rfc1034#section-3.5)",
+                "end": 12051,
+                "start": 12004,
+                "type": "url"
+              },
+              { "content": "http://tools.ietf.org/html/rfc4122)", "end": 12302, "start": 12267, "type": "url" },
+              { "content": "https://tools.ietf.org/html/rfc6901)", "end": 12394, "start": 12358, "type": "url" },
+              {
+                "content": "http://tools.ietf.org/html/draft-luff-relative-json-pointer-00)",
+                "end": 12534,
+                "start": 12471,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/lib/compile/formats.js)",
+                "end": 13295,
+                "start": 13225,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/json-schema/json-schema/wiki/$data-(v5-proposal))",
+                "end": 13504,
+                "start": 13436,
+                "type": "url"
+              },
+              { "content": "https://tools.ietf.org/html/rfc6901)", "end": 13954, "start": 13918, "type": "url" },
+              {
+                "content": "http://tools.ietf.org/html/draft-luff-relative-json-pointer-00)",
+                "end": 14168,
+                "start": 14105,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv-merge-patch)",
+                "end": 15418,
+                "start": 15371,
+                "type": "url"
+              },
+              { "content": "https://tools.ietf.org/html/rfc7396)", "end": 15593, "start": 15557, "type": "url" },
+              { "content": "https://tools.ietf.org/html/rfc6902)", "end": 15658, "start": 15622, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv-merge-patch)",
+                "end": 16834,
+                "start": 16787,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv-keywords)",
+                "end": 19151,
+                "start": 19107,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/CUSTOM.md)",
+                "end": 19339,
+                "start": 19282,
+                "type": "url"
+              },
+              {
+                "content": "https://tonicdev.com/esp/ajv-asynchronous-validation",
+                "end": 20171,
+                "start": 20119,
+                "type": "url"
+              },
+              {
+                "content": "http://tc39.github.io/ecmascript-asyncawait/)",
+                "end": 21363,
+                "start": 21318,
+                "type": "url"
+              },
+              { "content": "https://github.com/MatAtBread/nodent)", "end": 21449, "start": 21412, "type": "url" },
+              { "content": "https://github.com/facebook/regenerator)", "end": 21512, "start": 21472, "type": "url" },
+              {
+                "content": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)",
+                "end": 21628,
+                "start": 21541,
+                "type": "url"
+              },
+              { "content": "https://github.com/tj/co)", "end": 22085, "start": 22060, "type": "url" },
+              { "content": "http://koajs.com/)", "end": 22190, "start": 22172, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-async)", "end": 23116, "start": 23075, "type": "url" },
+              { "content": "https://github.com/MatAtBread/nodent)", "end": 26037, "start": 26000, "type": "url" },
+              { "content": "https://github.com/andyscott))", "end": 26432, "start": 26402, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/129)",
+                "end": 28869,
+                "start": 28823,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/134))",
+                "end": 28925,
+                "start": 28878,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/42))",
+                "end": 31724,
+                "start": 31678,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/COERCION.md)",
+                "end": 33541,
+                "start": 33482,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/draft-06/schema", "end": 37590, "start": 37552, "type": "url" },
+              { "content": "http://json-schema.org/schema)", "end": 37625, "start": 37595, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv-keywords)",
+                "end": 40046,
+                "start": 40002,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/291#issuecomment-259923858)",
+                "end": 40523,
+                "start": 40454,
+                "type": "url"
+              },
+              { "content": "https://tools.ietf.org/html/rfc6901)", "end": 46822, "start": 46786, "type": "url" },
+              {
+                "content": "https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03#section-3)",
+                "end": 50242,
+                "start": 50175,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/COERCION.md)",
+                "end": 52651,
+                "start": 52592,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-async)", "end": 53350, "start": 53309, "type": "url" },
+              { "content": "http://kangax.github.io/compat-table/es7/))", "end": 53633, "start": 53590, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-async)", "end": 53895, "start": 53854, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-async)", "end": 54350, "start": 54309, "type": "url" },
+              { "content": "https://github.com/MatAtBread/nodent)", "end": 54533, "start": 54496, "type": "url" },
+              { "content": "https://github.com/facebook/regenerator)", "end": 54758, "start": 54718, "type": "url" },
+              { "content": "http://json-schema.org/documentation.html)", "end": 55202, "start": 55160, "type": "url" },
+              { "content": "http://json-schema.org/schema", "end": 55589, "start": 55560, "type": "url" },
+              { "content": "http://json-schema.org/draft-04/schema", "end": 55631, "start": 55593, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv/issues/84))",
+                "end": 58138,
+                "start": 58092,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-i18n))", "end": 58737, "start": 58696, "type": "url" },
+              {
+                "content": "https://github.com/beautify-web/js-beautify)",
+                "end": 59281,
+                "start": 59237,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-async)", "end": 59530, "start": 59489, "type": "url" },
+              { "content": "https://github.com/epoberezkin/sacjs)", "end": 59808, "start": 59771, "type": "url" },
+              {
+                "content": "https://github.com/substack/json-stable-stringify)",
+                "end": 60275,
+                "start": 60225,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-i18n)", "end": 61404, "start": 61364, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-cli)", "end": 64196, "start": 64157, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv-i18n)", "end": 64283, "start": 64243, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv-merge-patch)",
+                "end": 64386,
+                "start": 64339,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv-keywords)",
+                "end": 64479,
+                "start": 64435,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv-errors)", "end": 64632, "start": 64590, "type": "url" },
+              { "content": "https://github.com/webpack/webpack)", "end": 64742, "start": 64707, "type": "url" },
+              {
+                "content": "https://github.com/JSONScript/jsonscript-js)",
+                "end": 64895,
+                "start": 64851,
+                "type": "url"
+              },
+              { "content": "http://www.jsonscript.org)", "end": 64957, "start": 64931, "type": "url" },
+              {
+                "content": "https://github.com/mulesoft-labs/osprey-method-handler)",
+                "end": 65096,
+                "start": 65041,
+                "type": "url"
+              },
+              { "content": "https://github.com/mulesoft/osprey)", "end": 65239, "start": 65204, "type": "url" },
+              {
+                "content": "https://github.com/ahmadnassri/har-validator)",
+                "end": 65359,
+                "start": 65314,
+                "type": "url"
+              },
+              { "content": "https://github.com/josdejong/jsoneditor)", "end": 65446, "start": 65406, "type": "url" },
+              { "content": "http://jsoneditoronline.org", "end": 65534, "start": 65507, "type": "url" },
+              {
+                "content": "https://github.com/nickcmaynard/jsonschemalint)",
+                "end": 65603,
+                "start": 65556,
+                "type": "url"
+              },
+              { "content": "http://jsonschemalint.com", "end": 65702, "start": 65677, "type": "url" },
+              { "content": "https://github.com/vincit/objection.js)", "end": 65756, "start": 65717, "type": "url" },
+              { "content": "https://github.com/gajus/table)", "end": 65829, "start": 65798, "type": "url" },
+              { "content": "https://github.com/ripple/ripple-lib)", "end": 65917, "start": 65880, "type": "url" },
+              { "content": "https://ripple.com)", "end": 65986, "start": 65967, "type": "url" },
+              { "content": "https://github.com/wikimedia/restbase)", "end": 66065, "start": 66027, "type": "url" },
+              {
+                "content": "https://github.com/CacheControl/hippie-swagger)",
+                "end": 66289,
+                "start": 66242,
+                "type": "url"
+              },
+              { "content": "https://github.com/vesln/hippie)", "end": 66333, "start": 66301, "type": "url" },
+              {
+                "content": "https://github.com/seeden/react-form-controlled)",
+                "end": 66477,
+                "start": 66429,
+                "type": "url"
+              },
+              { "content": "https://github.com/tjmehta/rabbitmq-schema)", "end": 66592, "start": 66549, "type": "url" },
+              {
+                "content": "https://www.npmjs.com/package/@query/schema)",
+                "end": 66717,
+                "start": 66673,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/peon374/chai-ajv-json-schema)",
+                "end": 66862,
+                "start": 66814,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/SignpostMarv/grunt-jsonschema-ajv)",
+                "end": 67000,
+                "start": 66947,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/webpack-contrib/extract-text-webpack-plugin)",
+                "end": 67152,
+                "start": 67089,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/electron-userland/electron-builder)",
+                "end": 67267,
+                "start": 67213,
+                "type": "url"
+              },
+              { "content": "https://github.com/mozilla/addons-linter)", "end": 67400, "start": 67359, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/gh-pages-generator)",
+                "end": 67499,
+                "start": 67449,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/tree/master/lib/dot)",
+                "end": 67780,
+                "start": 67725,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/tree/master/lib/dotjs)",
+                "end": 67958,
+                "start": 67901,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/CONTRIBUTING.md)",
+                "end": 68152,
+                "start": 68089,
+                "type": "url"
+              },
+              { "content": "https://github.com/epoberezkin/ajv/releases", "end": 68222, "start": 68179, "type": "url" },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/5.0.0)",
+                "end": 68322,
+                "start": 68268,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/4.6.0)",
+                "end": 68406,
+                "start": 68352,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/4.0.0)",
+                "end": 68490,
+                "start": 68436,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/3.0.0)",
+                "end": 68574,
+                "start": 68520,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/releases/tag/2.0.0)",
+                "end": 68658,
+                "start": 68604,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/epoberezkin/ajv/blob/master/LICENSE)",
+                "end": 68735,
+                "start": 68680,
+                "type": "url"
+              },
+              { "content": "joe.bloggs@example.com", "end": 15004, "start": 14982, "type": "email" }
+            ]
+          }
+        },
+        {
+          "path": "package/package.json",
+          "output": {
+            "results": [
+              { "content": "https://github.com/epoberezkin/ajv.git\"", "end": 1730, "start": 1691, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv/issues\"", "end": 2032, "start": 1990, "type": "url" },
+              { "content": "https://github.com/epoberezkin/ajv\"", "end": 2088, "start": 2053, "type": "url" }
+            ]
+          }
+        },
+        {
+          "path": "package/dist/ajv.bundle.js",
+          "output": {
+            "results": [
+              {
+                "content": "Copyright Joyent, Inc. and other Node contributors.",
+                "end": 205660,
+                "start": 205609,
+                "type": "statement"
+              },
+              {
+                "content": "Copyright Joyent, Inc. and other Node contributors.",
+                "end": 208215,
+                "start": 208164,
+                "type": "statement"
+              },
+              {
+                "content": "Copyright Joyent, Inc. and other Node contributors.",
+                "end": 211003,
+                "start": 210952,
+                "type": "statement"
+              },
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#'",
+                "end": 1822,
+                "start": 1744,
+                "type": "url"
+              },
+              { "content": "https://tools.ietf.org/html/rfc6570", "end": 11630, "start": 11595, "type": "url" },
+              { "content": "https://gist.github.com/dperini/729294", "end": 11890, "start": 11852, "type": "url" },
+              { "content": "https://mathiasbynens.be/demo/url-regex", "end": 11949, "start": 11910, "type": "url" },
+              {
+                "content": "https://github.com/eslint/eslint/issues/7983",
+                "end": 12087,
+                "start": 12043,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 14826,
+                "start": 14780,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 14927,
+                "start": 14881,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/mafintosh/is-my-json-valid/blob/master/formats.js",
+                "end": 15177,
+                "start": 15109,
+                "type": "url"
+              },
+              {
+                "content": "http://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address#answer-8829363",
+                "end": 15497,
+                "start": 15385,
+                "type": "url"
+              },
+              {
+                "content": "http://www.w3.org/TR/html5/forms.html#valid-e-mail-address",
+                "end": 15561,
+                "start": 15503,
+                "type": "url"
+              },
+              {
+                "content": "https://www.safaribooksonline.com/library/view/regular-expressions-cookbook/9780596802837/ch07s16.html",
+                "end": 15860,
+                "start": 15758,
+                "type": "url"
+              },
+              {
+                "content": "http://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses",
+                "end": 16054,
+                "start": 15961,
+                "type": "url"
+              },
+              { "content": "http://tools.ietf.org/html/rfc4122", "end": 17298, "start": 17264, "type": "url" },
+              { "content": "https://tools.ietf.org/html/rfc6901", "end": 17367, "start": 17332, "type": "url" },
+              {
+                "content": "https://tools.ietf.org/html/rfc3986#appendix-A",
+                "end": 17433,
+                "start": 17387,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/draft-luff-relative-json-pointer-00",
+                "end": 17556,
+                "start": 17494,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 19408,
+                "start": 19362,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 19990,
+                "start": 19944,
+                "type": "url"
+              },
+              {
+                "content": "https://tools.ietf.org/html/rfc1034#section-3.5",
+                "end": 20200,
+                "start": 20153,
+                "type": "url"
+              },
+              {
+                "content": "https://tools.ietf.org/html/rfc1123#section-2",
+                "end": 20251,
+                "start": 20206,
+                "type": "url"
+              },
+              {
+                "content": "http://jmrware.com/articles/2009/uri_regexp/URI_regex.html",
+                "end": 20421,
+                "start": 20363,
+                "type": "url"
+              },
+              {
+                "content": "https://mathiasbynens.be/notes/javascript-encoding",
+                "end": 41177,
+                "start": 41127,
+                "type": "url"
+              },
+              { "content": "https://github.com/bestiejs/punycode.js", "end": 41220, "start": 41181, "type": "url" },
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#'",
+                "end": 182903,
+                "start": 182825,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/draft-06/schema';", "end": 184791, "start": 184751, "type": "url" },
+              { "content": "http://json-schema.org/draft-06/schema#\"", "end": 185779, "start": 185739, "type": "url" },
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#\"",
+                "end": 185871,
+                "start": 185793,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/draft-06/schema#\"", "end": 186389, "start": 186349, "type": "url" },
+              { "content": "http://json-schema.org/draft-06/schema#\"", "end": 186443, "start": 186403, "type": "url" },
+              { "content": "https://mths.be/punycode", "end": 190783, "start": 190759, "type": "url" },
+              {
+                "content": "https://mathiasbynens.be/notes/javascript-encoding>",
+                "end": 194197,
+                "start": 194146,
+                "type": "url"
+              },
+              {
+                "content": "https://tools.ietf.org/html/rfc3492#section-3.4",
+                "end": 197079,
+                "start": 197032,
+                "type": "url"
+              },
+              {
+                "content": "https://mathiasbynens.be/notes/javascript-encoding>",
+                "end": 204540,
+                "start": 204489,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/joyent/node/issues/1707",
+                "end": 206904,
+                "start": 206862,
+                "type": "url"
+              },
+              {
+                "content": "https://code.google.com/p/chromium/issues/detail?id=25916",
+                "end": 214954,
+                "start": 214897,
+                "type": "url"
+              },
+              { "content": "http://foo.com", "end": 215335, "start": 215321, "type": "url" },
+              { "content": "http://a@b@c/", "end": 217058, "start": 217045, "type": "url" },
+              { "content": "http://a@b?@c", "end": 217098, "start": 217085, "type": "url" },
+              { "content": "http://a@b/c@d", "end": 217866, "start": 217852, "type": "url" },
+              { "content": "http://www.example.com", "end": 226083, "start": 226061, "type": "url" },
+              { "content": "https://github.com/tj/co/issues/180", "end": 235669, "start": 235634, "type": "url" },
+              { "content": "http://json-schema.org/draft-06/schema';", "end": 256727, "start": 256687, "type": "url" },
+              {
+                "content": "https://github.com/substack/json-stable-stringify)",
+                "end": 258175,
+                "start": 258125,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/schema']", "end": 269702, "start": 269671, "type": "url" },
+              { "content": "contributors.", "end": 205660, "start": 205647, "type": "author" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM",
+                "end": 206545,
+                "start": 206493,
+                "type": "author"
+              },
+              { "content": "contributors.", "end": 208215, "start": 208202, "type": "author" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM",
+                "end": 209100,
+                "start": 209048,
+                "type": "author"
+              },
+              { "content": "contributors.", "end": 211003, "start": 210990, "type": "author" },
+              {
+                "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM",
+                "end": 211888,
+                "start": 211836,
+                "type": "author"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package/dist/ajv.min.js",
+          "output": {
+            "results": [
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#\"}]})}}return",
+                "end": 1376,
+                "start": 1286,
+                "type": "url"
+              },
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#\"}]}),r.validateSchema=this.compile(c,!0))}s.keywords[e]=s.all[e]=!0}function",
+                "end": 90388,
+                "start": 90234,
+                "type": "url"
+              },
+              {
+                "content": "http://json-schema.org/draft-06/schema\";r.exports=function(e){var",
+                "end": 90881,
+                "start": 90816,
+                "type": "url"
+              },
+              {
+                "content": "http://json-schema.org/draft-06/schema#\",$id:\"https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#\",description:\"Meta-schema",
+                "end": 91447,
+                "start": 91298,
+                "type": "url"
+              },
+              {
+                "content": "http://json-schema.org/draft-06/schema#\",$id:\"http://json-schema.org/draft-06/schema#\",title:\"Core",
+                "end": 91803,
+                "start": 91705,
+                "type": "url"
+              },
+              {
+                "content": "http://json-schema.org/schema\"]=V}}function",
+                "end": 117531,
+                "start": 117488,
+                "type": "url"
+              },
+              {
+                "content": "http://json-schema.org/draft-06/schema\",N=[\"removeAdditional\",\"useDefaults\",\"coerceTypes\"],T=[\"/properties\"]},{\"./$data\":1,\"./cache\":2,\"./compile\":8,\"./compile/async\":4,\"./compile/error_classes\":6,\"./compile/formats\":7,\"./compile/resolve\":9,\"./compile/rules\":10,\"./compile/schema_obj\":11,\"./compile/util\":13,\"./keyword\":37,\"./patternGroups\":38,\"./refs/$data.json\":39,\"./refs/json-schema-draft-06.json\":40,co:47,\"json-stable-stringify\":48}]},{},[])(\"ajv\")});",
+                "end": 119181,
+                "start": 118724,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        { "path": "package/dist/ajv.min.js.map", "output": { "results": null } },
+        {
+          "path": "package/dist/nodent.min.js",
+          "output": {
+            "results": [
+              {
+                "content": "https://github.com/MatAtBread/nodent#differences-from-the-es7-specification\"),e.consequent.push(r(s)))}}),!0}}function",
+                "end": 34239,
+                "start": 34121,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/MatAtBread/nodent#differences-from-the-es7-specification\")}var",
+                "end": 37798,
+                "start": 37717,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/MatAtBread/nodent#differences-from-the-es7-specification\"))}function",
+                "end": 49657,
+                "start": 49570,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/MatAtBread/nodent.git\"},engines:\"node",
+                "end": 207667,
+                "start": 207611,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/MatAtBread/nodent/issues\"},gitHead:\"1a48bd0e8d0b4df69aa7b4b3cf8483c03c1cfbd5\",homepage:\"https://github.com/MatAtBread/nodent#readme\",_id:\"nodent@3.0.17\",_shasum:\"22df57d33c5346d6acc3722d9d69fa68bff518e4\",_from:\"nodent@>=3.0.2",
+                "end": 208139,
+                "start": 207895,
+                "type": "url"
+              },
+              {
+                "content": "https://registry.npmjs.org/nodent/-/nodent-3.0.17.tgz\"},_npmOperationalInternal:{host:\"packages-12-west.internal.npmjs.com\",tmp:\"tmp/nodent-3.0.17.tgz_1490780005669_0.5196401283610612\"},directories:{},_resolved:\"https://registry.npmjs.org/nodent/-/nodent-3.0.17.tgz\",readme:\"ERROR:",
+                "end": 208649,
+                "start": 208368,
+                "type": "url"
+              },
+              { "content": "nodent@mailed.me.uk", "end": 207858, "start": 207839, "type": "email" },
+              { "content": "npm@mailed.me.uk", "end": 208241, "start": 208225, "type": "email" },
+              { "content": "npm@mailed.me.uk", "end": 208299, "start": 208283, "type": "email" },
+              { "content": "maintainers", "end": 208255, "start": 208244, "type": "author" }
+            ]
+          }
+        },
+        {
+          "path": "package/dist/regenerator.min.js",
+          "output": {
+            "results": [
+              { "content": "http://babeljs.io/docs/usage/options/", "end": 107281, "start": 107244, "type": "url" },
+              {
+                "content": "http://babeljs.io/docs/plugins/#pluginpresets-options.\";this.log.error(h+\"\\n\\n\"+d,ReferenceError)}}(0,D.normaliseOptions)(l),l.plugins&&(l.plugins=t.normalisePlugins(o,u,l.plugins)),l.presets&&(l.passPerPreset?l.presets=this.resolvePresets(l.presets,u,function(e,t){n.mergeOptions({options:e,extending:e,alias:t,loc:t,dirname:u})}):(this.mergePresets(l.presets,u),delete",
+                "end": 107996,
+                "start": 107626,
+                "type": "url"
+              },
+              {
+                "content": "http://babeljs.io/docs/plugins/external-helpers/\"},extra:{message:\"\"},jsxPragma:{message:\"use",
+                "end": 111590,
+                "start": 111497,
+                "type": "url"
+              },
+              {
+                "content": "http://babeljs.io/docs/plugins/transform-react-jsx/\"},loose:{message:\"Specify",
+                "end": 111726,
+                "start": 111649,
+                "type": "url"
+              },
+              {
+                "content": "http://babeljs.io/docs/plugins/#modules\"},nonStandard:{message:\"Use",
+                "end": 112073,
+                "start": 112006,
+                "type": "url"
+              },
+              {
+                "content": "http://babeljs.io/docs/plugins/preset-react/\"},optional:{message:\"Put",
+                "end": 112247,
+                "start": 112178,
+                "type": "url"
+              },
+              {
+                "content": "http://babeljs.io/docs/plugins/#presets\"},whitelist:{message:\"Put",
+                "end": 112491,
+                "start": 112426,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/babel/babel/issues\",unsupportedOutputType:\"Unsupported",
+                "end": 229836,
+                "start": 229763,
+                "type": "url"
+              },
+              { "content": "https://git.io/debug_fd)\")();var", "end": 560286, "start": 560254, "type": "url" },
+              {
+                "content": "https://babeljs.io/\",license:\"MIT\",repository:{type:\"git\",url:\"https://github.com/babel/babel/tree/master/packages/babel-core\"},keywords:[\"6to5\",\"babel\",\"classes\",\"const\",\"es6\",\"harmony\",\"let\",\"modules\",\"transpile\",\"transpiler\",\"var\",\"babel-core\",\"compiler\"],scripts:{bench:\"make",
+                "end": 654054,
+                "start": 653775,
+                "type": "url"
+              },
+              {
+                "content": "https://registry.npmjs.org/babel-core/-/babel-core-6.24.1.tgz\"},maintainers:[{name:\"amasad\",email:\"amjad.masad@gmail.com\"},{name:\"hzoo\",email:\"hi@henryzoo.com\"},{name:\"jmm\",email:\"npm-public@jessemccarthy.net\"},{name:\"loganfsmyth\",email:\"loganfsmyth@gmail.com\"},{name:\"sebmck\",email:\"sebmck@gmail.com\"},{name:\"thejameskyle\",email:\"me@thejameskyle.com\"}],_npmOperationalInternal:{host:\"packages-12-west.internal.npmjs.com\",tmp:\"tmp/babel-core-6.24.1.tgz_1491578389054_0.9957534451968968\"},directories:{},_resolved:\"https://registry.npmjs.org/babel-core/-/babel-core-6.24.1.tgz\"}},{}],521:[function(e,t,n){function",
+                "end": 655544,
+                "start": 654932,
+                "type": "url"
+              },
+              { "content": "sebmck@gmail.com", "end": 653762, "start": 653746, "type": "email" },
+              { "content": "hi@henryzoo.com", "end": 654864, "start": 654849, "type": "email" },
+              { "content": "amjad.masad@gmail.com", "end": 655052, "start": 655031, "type": "email" },
+              { "content": "hi@henryzoo.com", "end": 655090, "start": 655075, "type": "email" },
+              { "content": "npm-public@jessemccarthy.net", "end": 655140, "start": 655112, "type": "email" },
+              { "content": "loganfsmyth@gmail.com", "end": 655191, "start": 655170, "type": "email" },
+              { "content": "sebmck@gmail.com", "end": 655232, "start": 655216, "type": "email" },
+              { "content": "me@thejameskyle.com", "end": 655282, "start": 655263, "type": "email" },
+              { "content": "maintainers", "end": 655007, "start": 654996, "type": "author" }
+            ]
+          }
+        },
+        { "path": "package/scripts/.eslintrc.yml", "output": { "results": null } },
+        { "path": "package/scripts/bundle.js", "output": { "results": null } },
+        { "path": "package/scripts/compile-dots.js", "output": { "results": null } },
+        { "path": "package/scripts/info", "output": { "results": null } },
+        { "path": "package/scripts/prepare-tests", "output": { "results": null } },
+        {
+          "path": "package/scripts/travis-gh-pages",
+          "output": {
+            "results": [
+              {
+                "content": "https://${GITHUB_TOKEN}@github.com/epoberezkin/ajv.git",
+                "end": 354,
+                "start": 300,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package/lib/ajv.d.ts",
+          "output": {
+            "results": [
+              {
+                "content": "https://github.com/substack/json-stable-stringify)",
+                "end": 328,
+                "start": 278,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package/lib/ajv.js",
+          "output": {
+            "results": [
+              { "content": "http://json-schema.org/draft-06/schema';", "end": 1415, "start": 1375, "type": "url" },
+              {
+                "content": "https://github.com/substack/json-stable-stringify)",
+                "end": 2863,
+                "start": 2813,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/schema']", "end": 14390, "start": 14359, "type": "url" }
+            ]
+          }
+        },
+        { "path": "package/lib/cache.js", "output": { "results": null } },
+        {
+          "path": "package/lib/keyword.js",
+          "output": {
+            "results": [
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/$data.json#'",
+                "end": 1783,
+                "start": 1705,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        {
+          "path": "package/lib/patternGroups.js",
+          "output": {
+            "results": [
+              { "content": "http://json-schema.org/draft-06/schema';", "end": 77, "start": 37, "type": "url" }
+            ]
+          }
+        },
+        { "path": "package/lib/compile/_rules.js", "output": { "results": null } },
+        { "path": "package/lib/compile/async.js", "output": { "results": null } },
+        { "path": "package/lib/compile/equal.js", "output": { "results": null } },
+        { "path": "package/lib/compile/error_classes.js", "output": { "results": null } },
+        {
+          "path": "package/lib/compile/formats.js",
+          "output": {
+            "results": [
+              { "content": "https://tools.ietf.org/html/rfc6570", "end": 2697, "start": 2662, "type": "url" },
+              { "content": "https://gist.github.com/dperini/729294", "end": 2957, "start": 2919, "type": "url" },
+              { "content": "https://mathiasbynens.be/demo/url-regex", "end": 3016, "start": 2977, "type": "url" },
+              { "content": "https://github.com/eslint/eslint/issues/7983", "end": 3154, "start": 3110, "type": "url" },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 5893,
+                "start": 5847,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 5994,
+                "start": 5948,
+                "type": "url"
+              },
+              {
+                "content": "https://github.com/mafintosh/is-my-json-valid/blob/master/formats.js",
+                "end": 6244,
+                "start": 6176,
+                "type": "url"
+              },
+              {
+                "content": "http://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address#answer-8829363",
+                "end": 6564,
+                "start": 6452,
+                "type": "url"
+              },
+              {
+                "content": "http://www.w3.org/TR/html5/forms.html#valid-e-mail-address",
+                "end": 6628,
+                "start": 6570,
+                "type": "url"
+              },
+              {
+                "content": "https://www.safaribooksonline.com/library/view/regular-expressions-cookbook/9780596802837/ch07s16.html",
+                "end": 6927,
+                "start": 6825,
+                "type": "url"
+              },
+              {
+                "content": "http://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses",
+                "end": 7121,
+                "start": 7028,
+                "type": "url"
+              },
+              { "content": "http://tools.ietf.org/html/rfc4122", "end": 8365, "start": 8331, "type": "url" },
+              { "content": "https://tools.ietf.org/html/rfc6901", "end": 8434, "start": 8399, "type": "url" },
+              {
+                "content": "https://tools.ietf.org/html/rfc3986#appendix-A",
+                "end": 8500,
+                "start": 8454,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/draft-luff-relative-json-pointer-00",
+                "end": 8623,
+                "start": 8561,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 10475,
+                "start": 10429,
+                "type": "url"
+              },
+              {
+                "content": "http://tools.ietf.org/html/rfc3339#section-5.6",
+                "end": 11057,
+                "start": 11011,
+                "type": "url"
+              },
+              {
+                "content": "https://tools.ietf.org/html/rfc1034#section-3.5",
+                "end": 11267,
+                "start": 11220,
+                "type": "url"
+              },
+              {
+                "content": "https://tools.ietf.org/html/rfc1123#section-2",
+                "end": 11318,
+                "start": 11273,
+                "type": "url"
+              },
+              {
+                "content": "http://jmrware.com/articles/2009/uri_regexp/URI_regex.html",
+                "end": 11488,
+                "start": 11430,
+                "type": "url"
+              }
+            ]
+          }
+        },
+        { "path": "package/lib/compile/index.js", "output": { "results": null } },
+        { "path": "package/lib/compile/resolve.js", "output": { "results": null } },
+        { "path": "package/lib/compile/rules.js", "output": { "results": null } },
+        { "path": "package/lib/compile/schema_obj.js", "output": { "results": null } },
+        {
+          "path": "package/lib/compile/ucs2length.js",
+          "output": {
+            "results": [
+              {
+                "content": "https://mathiasbynens.be/notes/javascript-encoding",
+                "end": 68,
+                "start": 18,
+                "type": "url"
+              },
+              { "content": "https://github.com/bestiejs/punycode.js", "end": 111, "start": 72, "type": "url" }
+            ]
+          }
+        },
+        { "path": "package/lib/compile/util.js", "output": { "results": null } },
+        { "path": "package/lib/dot/_limit.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/_limitItems.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/_limitLength.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/_limitProperties.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/allOf.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/anyOf.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/coerce.def", "output": { "results": null } },
+        { "path": "package/lib/dot/const.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/contains.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/custom.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/defaults.def", "output": { "results": null } },
+        { "path": "package/lib/dot/definitions.def", "output": { "results": null } },
+        { "path": "package/lib/dot/dependencies.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/enum.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/errors.def", "output": { "results": null } },
+        { "path": "package/lib/dot/format.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/items.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/missing.def", "output": { "results": null } },
+        { "path": "package/lib/dot/multipleOf.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/not.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/oneOf.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/pattern.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/properties.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/propertyNames.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/ref.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/required.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/uniqueItems.jst", "output": { "results": null } },
+        { "path": "package/lib/dot/validate.jst", "output": { "results": null } },
+        { "path": "package/lib/dotjs/README.md", "output": { "results": null } },
+        { "path": "package/lib/dotjs/_limit.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/_limitItems.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/_limitLength.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/_limitProperties.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/allOf.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/anyOf.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/const.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/contains.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/custom.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/dependencies.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/enum.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/format.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/items.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/multipleOf.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/not.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/oneOf.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/pattern.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/properties.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/propertyNames.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/ref.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/required.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/uniqueItems.js", "output": { "results": null } },
+        { "path": "package/lib/dotjs/validate.js", "output": { "results": null } },
+        {
+          "path": "package/lib/refs/json-schema-draft-04.json",
+          "output": {
+            "results": [
+              { "content": "http://json-schema.org/draft-04/schema#\"", "end": 53, "start": 13, "type": "url" },
+              { "content": "http://json-schema.org/draft-04/schema#\"", "end": 111, "start": 71, "type": "url" }
+            ]
+          }
+        },
+        {
+          "path": "package/lib/refs/json-schema-draft-06.json",
+          "output": {
+            "results": [
+              { "content": "http://json-schema.org/draft-06/schema#\"", "end": 58, "start": 18, "type": "url" },
+              { "content": "http://json-schema.org/draft-06/schema#\"", "end": 112, "start": 72, "type": "url" }
+            ]
+          }
+        },
+        {
+          "path": "package/lib/refs/json-schema-v5.json",
+          "output": {
+            "results": [
+              {
+                "content": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/json-schema-v5.json#\"",
+                "end": 100,
+                "start": 13,
+                "type": "url"
+              },
+              { "content": "http://json-schema.org/draft-04/schema#\"", "end": 158, "start": 118, "type": "url" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "monk": {
+    "version": "0.0.0",
+    "parameters": ["-k", "monk_knowledgebase"],
+    "output": {
+      "contentType": "text/plain",
+      "content": "found full match between \"package/LICENSE\" and \"MIT\" (rf_pk=311); matched: 61+1022\nWARNING: cannot re-encode 'package/README.md', going binary from now on\nWARNING: cannot re-encode 'package/dist/nodent.min.js', going binary from now on\nWARNING: cannot re-encode 'package/dist/regenerator.min.js', going binary from now on\nFATAL: can not open package/lib/.js\nfound full match between \"package/dist/ajv.bundle.js\" and \"MIT\" (rf_pk=311); matched: 205667+1071\nfound full match between \"package/dist/ajv.bundle.js\" and \"MIT\" (rf_pk=311); matched: 208222+1071\nfound full match between \"package/dist/ajv.bundle.js\" and \"MIT\" (rf_pk=311); matched: 211010+1071\nFATAL: can not open package/lib/refs/.json\n"
+    }
+  }
+}

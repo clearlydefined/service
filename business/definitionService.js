@@ -22,10 +22,10 @@ const {
   addArrayToSet,
   buildSourceUrl,
   isDeclaredLicense,
+  simplifyAttributions,
   updateSourceLocation
 } = require('../lib/utils')
 const minimatch = require('minimatch')
-const he = require('he')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
@@ -455,7 +455,7 @@ class DefinitionService {
     // accummulate all the licenses and attributions, and count anything that's missing
     for (let file of facetFiles) {
       file.license ? licenseExpressions.add(file.license) : unknownLicenses++
-      const statements = this._simplifyAttributions(file.attributions)
+      const statements = simplifyAttributions(file.attributions)
       setIfValue(file, 'attributions', statements)
       statements ? addArrayToSet(statements, attributions) : unknownParties++
       if (facet !== 'core') {
@@ -473,24 +473,10 @@ class DefinitionService {
       },
       files: facetFiles.length
     }
-    setIfValue(result, 'attribution.parties', setToArray(attributions))
+    setIfValue(result, 'attribution.parties', simplifyAttributions(setToArray(attributions)))
+    // TODO need a function to reduce/simplify sets of expressions
     setIfValue(result, 'discovered.expressions', setToArray(licenseExpressions))
     return result
-  }
-
-  _simplifyAttributions(attributions) {
-    if (!attributions || !attributions.length) return null
-    const set = attributions.reduce((result, attribution) => {
-      result.add(
-        he
-          .decode(attribution)
-          .replace(/(\\[nr]|[\n\r])/g, ' ')
-          .replace(/ +/g, ' ')
-          .trim()
-      )
-      return result
-    }, new Set())
-    return setToArray(set)
   }
 
   _ensureDescribed(definition) {
