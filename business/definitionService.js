@@ -488,6 +488,7 @@ class DefinitionService {
   }
 
   _ensureSourceLocation(coordinates, definition) {
+    console.log('_ensureSourceLocation')
     if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition

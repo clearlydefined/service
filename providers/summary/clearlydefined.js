@@ -80,6 +80,7 @@ class ClearlyDescribedSummarizer {
   }
 
   addUrls(result, data, coordinates) {
+    if (!data.sourceInfo) return
     const homePageUrl = buildHomepageUrl(coordinates)
     const componentUrl = buildComponentUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
