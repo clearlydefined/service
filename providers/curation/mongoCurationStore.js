@@ -5,7 +5,6 @@ const MongoClient = require('mongodb').MongoClient
 const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const throat = require('throat')
-const Curation = require('../../lib/curation')
 const logger = require('../logging/logger')
 
 class MongoCurationStore {
@@ -17,10 +16,7 @@ class MongoCurationStore {
   initialize() {
     return promiseRetry(async retry => {
       try {
-        this.client = await MongoClient.connect(
-          this.options.connectionString,
-          { useNewUrlParser: true }
-        )
+        this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
@@ -65,8 +61,18 @@ class MongoCurationStore {
    */
   updateContribution(pr, curations = null) {
     if (curations) {
-      const files = {}
-      curations.forEach(curation => (files[curation.path] = curation.data))
+      const files = curations.map(curation => {
+        return {
+          path: curation.path,
+          coordinates: curation.data.coordinates,
+          revisions: Object.keys(curation.data.revisions).map(revision => {
+            return {
+              revision,
+              data: curation.data.revisions[revision]
+            }
+          })
+        }
+      })
       return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
     }
     // TODO reconsider `upsert` here. Great for resiliency but will it result in undetected inconsistent data?
@@ -79,14 +85,20 @@ class MongoCurationStore {
    * @returns the array of Curations found
    */
   // TODO need to do something about paging
-  list(coordinates) {
+  async list(coordinates) {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
     if (!pattern) return []
-    return this.collection
+    const curations = await this.collection
       .find({ _id: new RegExp('^' + pattern) })
+      .project({ _id: 0 })
       .toArray()
-      .then(list => Curation.getAllCoordinates(list.map(entry => new Curation(entry, null, false))))
+      .then(this._formatCurations)
+    const contributions = await this.collection
+      .find(this._buildContributionQuery(coordinates))
+      .project({ _id: 0 })
+      .toArray()
+    return { curations, contributions }
   }
 
   _getCurationId(coordinates) {
@@ -94,6 +106,26 @@ class MongoCurationStore {
     return EntityCoordinates.fromObject(coordinates)
       .toString()
       .toLowerCase()
+  }
+
+  _buildContributionQuery(coordinates) {
+    const result = {}
+    if (coordinates.type) result['files.coordinates.type'] = coordinates.type
+    if (coordinates.provider) result['files.coordinates.provider'] = coordinates.provider
+    if (coordinates.namespace) result['files.coordinates.namespace'] = coordinates.namespace
+    if (coordinates.name) result['files.coordinates.name'] = coordinates.name
+    if (coordinates.revision) result['files.revisions.revision'] = coordinates.revision
+    return result
+  }
+
+  _formatCurations(curations) {
+    return curations.reduce((result, entry) => {
+      Object.keys(entry.revisions).forEach(revision => {
+        let coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
+        result[coordinates] = entry.revisions[revision]
+      })
+      return result
+    }, {})
   }
 }
 
