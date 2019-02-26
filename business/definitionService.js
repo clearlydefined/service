@@ -505,7 +505,7 @@ class DefinitionService {
   }
 
   _ensureUrls(coordinates, definition) {
-    if (get(definition, 'described.urls')) return updateSourceLocation(definition.described.urls)
+    //if (get(definition, 'described.urls')) return updateSourceLocation(definition.described.urls)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {

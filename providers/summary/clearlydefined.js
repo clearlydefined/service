@@ -8,6 +8,9 @@ const {
   setIfValue,
   extractLicenseFromLicenseUrl,
   buildSourceUrl,
+  buildComponentUrl,
+  buildDownloadUrl,
+  buildHomepageUrl,
   isDeclaredLicense,
   isLicenseFile,
   updateSourceLocation,
@@ -23,6 +26,7 @@ class ClearlyDescribedSummarizer {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
+    this.addUrls(result, data, coordinates)
     this.addSummaryInfo(result, data)
     this.addFiles(result, data)
     this.addAttachedFiles(result, data, coordinates)
@@ -73,6 +77,13 @@ class ClearlyDescribedSummarizer {
     updateSourceLocation(spec)
     spec.url = buildSourceUrl(spec)
     set(result, 'described.sourceLocation', spec)
+  }
+
+  addUrls(result, data, coordinates) {
+    const homePageUrl = buildHomepageUrl(coordinates)
+    const componentUrl = buildComponentUrl(coordinates)
+    const downloadUrl = buildDownloadUrl(coordinates)
+    set(result, 'described.urls', { homepage: homePageUrl, component: componentUrl, download: downloadUrl })
   }
 
   addFiles(result, data) {

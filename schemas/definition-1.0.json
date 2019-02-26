@@ -125,6 +125,7 @@
           }
         },
         "sourceLocation": { "$ref": "#/definitions/sourceLocation" },
+        "urls": { "$ref": "#/definitions/urls" },
         "projectWebsite": { "type": "string" },
         "issueTracker": { "type": "string" },
         "releaseDate": {
@@ -194,6 +195,24 @@
         },
         "path": {
           "type": "string"
+        }
+      }
+    },
+    "urls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "homepage": {
+          "type": "string",
+          "format": "uri"
+        },
+        "component": {
+          "type": "string",
+          "format": "uri"
+        },
+        "download": {
+          "type": "string",
+          "format": "uri"
         }
       }
     },
