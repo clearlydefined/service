@@ -21,6 +21,9 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
+  buildComponentUrl,
+  buildHomepageUrl,
+  buildDownloadUrl,
   isDeclaredLicense,
   simplifyAttributions,
   updateSourceLocation
@@ -275,6 +278,7 @@ class DefinitionService {
   _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
+    this._ensureUrls(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -493,6 +497,24 @@ class DefinitionService {
         if (!url) return
         this._ensureDescribed(definition)
         definition.described.sourceLocation = { ...coordinates, url }
+        break
+      }
+      default:
+        return
+    }
+  }
+
+  _ensureUrls(coordinates, definition) {
+    if (get(definition, 'described.urls')) return updateSourceLocation(definition.described.urls)
+    // For source components there may not be an explicit harvested source location (it is self-evident)
+    // Make it explicit in the definition
+    switch (coordinates.provider) {
+      case 'github': {
+        const homePageUrl = buildHomepageUrl(coordinates)
+        const componentUrl = buildComponentUrl(coordinates)
+        const downloadUrl = buildDownloadUrl(coordinates)
+        this._ensureDescribed(definition)
+        definition.described.urls = { homepage: homePageUrl, component: componentUrl, download: downloadUrl }
         break
       }
       default:
