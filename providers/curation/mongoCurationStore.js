@@ -64,7 +64,7 @@ class MongoCurationStore {
       const files = curations.map(curation => {
         return {
           path: curation.path,
-          coordinates: curation.data.coordinates,
+          coordinates: this._lowercaseCoordinates(curation.data.coordinates),
           revisions: Object.keys(curation.data.revisions).map(revision => {
             return {
               revision,
@@ -110,11 +110,11 @@ class MongoCurationStore {
 
   _buildContributionQuery(coordinates) {
     const result = {}
-    if (coordinates.type) result['files.coordinates.type'] = coordinates.type
-    if (coordinates.provider) result['files.coordinates.provider'] = coordinates.provider
-    if (coordinates.namespace) result['files.coordinates.namespace'] = coordinates.namespace
-    if (coordinates.name) result['files.coordinates.name'] = coordinates.name
-    if (coordinates.revision) result['files.revisions.revision'] = coordinates.revision
+    if (coordinates.type) result['files.coordinates.type'] = coordinates.type.toLowerCase()
+    if (coordinates.provider) result['files.coordinates.provider'] = coordinates.provider.toLowerCase()
+    if (coordinates.namespace) result['files.coordinates.namespace'] = coordinates.namespace.toLowerCase()
+    if (coordinates.name) result['files.coordinates.name'] = coordinates.name.toLowerCase()
+    if (coordinates.revision) result['files.revisions.revision'] = coordinates.revision.toLowerCase()
     return result
   }
 
@@ -126,6 +126,14 @@ class MongoCurationStore {
       })
       return result
     }, {})
+  }
+
+  _lowercaseCoordinates(input) {
+    return EntityCoordinates.fromString(
+      EntityCoordinates.fromObject(input)
+        .toString()
+        .toLowerCase()
+    )
   }
 }
 
