@@ -96,6 +96,7 @@ class MongoCurationStore {
       .then(this._formatCurations)
     const contributions = await this.collection
       .find(this._buildContributionQuery(coordinates))
+      .sort({ 'pr.number': -1 })
       .project({ _id: 0 })
       .toArray()
     return { curations, contributions }
