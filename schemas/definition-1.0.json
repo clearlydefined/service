@@ -202,11 +202,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "homepage": {
+        "registry": {
           "type": ["string", "null"],
           "format": "uri"
         },
-        "component": {
+        "version": {
           "type": ["string", "null"],
           "format": "uri"
         },

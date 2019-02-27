@@ -21,8 +21,8 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
-  buildComponentUrl,
-  buildHomepageUrl,
+  buildRegistryUrl,
+  buildVersionUrl,
   buildDownloadUrl,
   isDeclaredLicense,
   simplifyAttributions,
@@ -505,11 +505,11 @@ class DefinitionService {
   }
 
   async _ensureUrls(coordinates, definition) {
-    const homePageUrl = buildHomepageUrl(coordinates)
-    const componentUrl = buildComponentUrl(coordinates)
+    const registryUrl = buildRegistryUrl(coordinates)
+    const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = await buildDownloadUrl(coordinates)
     this._ensureDescribed(definition)
-    definition.described.urls = { homepage: homePageUrl, component: componentUrl, download: downloadUrl }
+    definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
 
   _getDefinitionCoordinates(coordinates) {
