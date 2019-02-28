@@ -80,9 +80,9 @@ class MongoCurationStore {
   }
 
   /**
-   * List all of the Curations whose coordinates match the given partial coordinates.
+   * List all of the Curations and Contributions whose coordinates match the given partial coordinates.
    * @param {EntityCoordinates} coordinates - partial coordinates to look for
-   * @returns the array of Curations found
+   * @returns the Curations and Contributions found
    */
   // TODO need to do something about paging
   async list(coordinates) {

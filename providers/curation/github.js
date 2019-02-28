@@ -379,12 +379,32 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   /**
-   * Given partial coordinates, return a list of full coordinates for which we have merged curations
+   * Given partial coordinates, return a list of Curations and Contributions
    * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
    * @returns {[EntityCoordinates]} - Array of coordinates describing the available curations
    */
   async list(coordinates) {
     return this.store.list(coordinates)
+  }
+
+  /**
+   * Return a list of Curations and Contributions for each coordinates provided
+   *
+   * @param {*} coordinatesList - an array of coordinate paths to list
+   * @returns A list of Curations and Contributions for each coordinates provided
+   */
+  async listAll(coordinatesList) {
+    const result = {}
+    const promises = coordinatesList.map(
+      throat(10, async coordinates => {
+        const data = await this.list(coordinates)
+        if (!data) return
+        const key = coordinates.toString()
+        result[key] = data
+      })
+    )
+    await Promise.all(promises)
+    return result
   }
 
   getCurationUrl(number) {
