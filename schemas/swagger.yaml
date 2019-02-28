@@ -56,6 +56,20 @@ paths:
       responses:
         200:
           description: Component revision curation.
+  /curations/:
+    post:
+      summary: Gets a batch of curations for a list of components
+      tags:
+        - curations
+      requestBody:
+        description: A list of coordinates
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/componentList'
+      responses:
+        200:
+          description: The curation data keyed by coordinates
   /curations:
     patch:
       summary: Patches the curation of a (set of) component revision.

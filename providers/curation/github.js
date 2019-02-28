@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
 const requestPromise = require('request-promise-native')
@@ -19,7 +19,7 @@ const logger = require('../logging/logger')
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options, store, endpoints, definition) {
+  constructor(options, store, endpoints, definition, cache) {
     this.logger = logger()
     this.options = options
     this.store = store
@@ -28,6 +28,7 @@ class GitHubCurationService {
     this.curationUpdateTime = null
     this.tempLocation = null
     this.github = Github.getClient(options)
+    this.cache = cache
     this.logger = logger()
   }
 
@@ -43,16 +44,19 @@ class GitHubCurationService {
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    */
   async syncAllContributions(client) {
-    let response = await client.pullRequests.getAll({
-      owner: this.options.owner,
-      repo: this.options.repo,
-      per_page: 100,
-      state: 'all'
-    })
-    this._processContributions(response.data)
-    while (this.github.hasNextPage(response)) {
-      response = await this.github.getNextPage(response)
+    const states = ['open', 'closed']
+    for (let state of states) {
+      let response = await client.pullRequests.getAll({
+        owner: this.options.owner,
+        repo: this.options.repo,
+        per_page: 100,
+        state
+      })
       this._processContributions(response.data)
+      while (this.github.hasNextPage(response)) {
+        response = await this.github.getNextPage(response)
+        this._processContributions(response.data)
+      }
     }
   }
 
@@ -93,6 +97,11 @@ class GitHubCurationService {
       base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
     }
     await this.store.updateContribution(data, curations)
+    await Promise.all(
+      uniq(flatten(curations.map(curation => curation.getCoordinates()))).map(
+        throat(10, async coordinates => this.cache.delete(this._getCacheKey(coordinates)))
+      )
+    )
     if (data.merged_at) await this._prMerged(curations)
   }
 
@@ -379,12 +388,37 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   /**
-   * Given partial coordinates, return a list of full coordinates for which we have merged curations
+   * Given partial coordinates, return a list of Curations and Contributions
    * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
    * @returns {[EntityCoordinates]} - Array of coordinates describing the available curations
    */
   async list(coordinates) {
-    return this.store.list(coordinates)
+    const cacheKey = this._getCacheKey(coordinates)
+    const existing = await this.cache.get(cacheKey)
+    if (existing) return existing
+    const data = await this.store.list(coordinates)
+    if (data) await this.cache.set(cacheKey, data, 60 * 60 * 24)
+    return data
+  }
+
+  /**
+   * Return a list of Curations and Contributions for each coordinates provided
+   *
+   * @param {*} coordinatesList - an array of coordinate paths to list
+   * @returns A list of Curations and Contributions for each coordinates provided
+   */
+  async listAll(coordinatesList) {
+    const result = {}
+    const promises = coordinatesList.map(
+      throat(10, async coordinates => {
+        const data = await this.list(coordinates)
+        if (!data) return
+        const key = coordinates.toString()
+        result[key] = data
+      })
+    )
+    await Promise.all(promises)
+    return result
   }
 
   getCurationUrl(number) {
@@ -447,7 +481,13 @@ ${this._formatDefinitions(patch.patches)}`
   isCurationFile(path) {
     return path.startsWith('curations/') && path.endsWith('.yaml')
   }
+
+  _getCacheKey(coordinates) {
+    return `cur_${EntityCoordinates.fromObject(coordinates)
+      .toString()
+      .toLowerCase()}`
+  }
 }
 
-module.exports = (options, store, endpoints, definition) =>
-  new GitHubCurationService(options, store, endpoints, definition)
+module.exports = (options, store, endpoints, definition, cache) =>
+  new GitHubCurationService(options, store, endpoints, definition, cache)
