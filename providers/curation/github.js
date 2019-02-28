@@ -44,16 +44,19 @@ class GitHubCurationService {
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    */
   async syncAllContributions(client) {
-    let response = await client.pullRequests.getAll({
-      owner: this.options.owner,
-      repo: this.options.repo,
-      per_page: 100,
-      state: 'all'
-    })
-    this._processContributions(response.data)
-    while (this.github.hasNextPage(response)) {
-      response = await this.github.getNextPage(response)
+    const states = ['open', 'closed']
+    for (let state of states) {
+      let response = await client.pullRequests.getAll({
+        owner: this.options.owner,
+        repo: this.options.repo,
+        per_page: 100,
+        state
+      })
       this._processContributions(response.data)
+      while (this.github.hasNextPage(response)) {
+        response = await this.github.getNextPage(response)
+        this._processContributions(response.data)
+      }
     }
   }
 
