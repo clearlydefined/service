@@ -74,6 +74,9 @@ describe('Curation service pr events', () => {
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const data = updateSpy.args[0][1].map(curation => curation.data)
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
+    const cacheDeleteSpy = service.cache.delete
+    expect(cacheDeleteSpy.calledOnce).to.be.true
+    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
   })
 
   it('handles update', async () => {
@@ -84,6 +87,9 @@ describe('Curation service pr events', () => {
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const data = updateSpy.args[0][1].map(curation => curation.data)
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
+    const cacheDeleteSpy = service.cache.delete
+    expect(cacheDeleteSpy.calledOnce).to.be.true
+    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
   })
 
   it('handles merge', async () => {
@@ -105,6 +111,10 @@ describe('Curation service pr events', () => {
     expect(invalidateSpy.calledOnce).to.be.true
     expect(invalidateSpy.args[0][0]).to.be.deep.equalInAnyOrder([{ ...complexCuration().coordinates, revision: '1.0' }])
 
+    const cacheDeleteSpy = service.cache.delete
+    expect(cacheDeleteSpy.calledOnce).to.be.true
+    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
+
     const computeSpy = service.definitionService.computeAndStore
     expect(computeSpy.calledOnce).to.be.true
     expect(computeSpy.args[0][0]).to.be.deep.equal({ ...complexCuration().coordinates, revision: '1.0' })
@@ -116,6 +126,9 @@ describe('Curation service pr events', () => {
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
+    const cacheDeleteSpy = service.cache.delete
+    expect(cacheDeleteSpy.calledOnce).to.be.true
+    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
   })
 
   it('handles list', async () => {
@@ -125,6 +138,12 @@ describe('Curation service pr events', () => {
     const listSpy = service.store.list
     expect(listSpy.calledOnce).to.be.true
     expect(list).to.be.deep.equalInAnyOrder([complexCuration()])
+    const cacheGetSpy = service.cache.get
+    expect(cacheGetSpy.calledOnce).to.be.true
+    expect(cacheGetSpy.args[0][0]).to.eq('cur_npm/npmjs/-')
+    const cacheSetSpy = service.cache.set
+    expect(cacheSetSpy.calledOnce).to.be.true
+    expect(cacheGetSpy.args[0][0]).to.eq('cur_npm/npmjs/-')
   })
 
   it('handles failure to compute one definition of multiple', async () => {
@@ -164,11 +183,17 @@ function createService(failsCompute = false) {
     invalidate: sinon.stub(),
     computeAndStore: sinon.stub().callsFake(() => (failsCompute ? Promise.reject('error') : Promise.resolve(null)))
   }
+  const cache = {
+    get: sinon.stub(),
+    set: sinon.stub(),
+    delete: sinon.stub()
+  }
   const service = Service(
     { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
     store,
     { website: 'http://localhost:3000' },
-    definitionService
+    definitionService,
+    cache
   )
   service.github = {
     pullRequests: {

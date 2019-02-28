@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const utils = require('../lib/utils')
 const Curation = require('../lib/curation')
+const EntityCoordinates = require('../lib/entityCoordinates')
 const { permissionsCheck } = require('../middleware/permissions')
 
 // Get a proposed patch for a specific revision of a component
@@ -51,6 +52,16 @@ async function listCurations(request, response) {
   const result = await curationService.list(coordinates)
   if (!result.contributions.length) return response.sendStatus(404)
   return response.status(200).send(result)
+}
+
+router.post('/', asyncMiddleware(listAllCurations))
+
+async function listAllCurations(request, response) {
+  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
+  if (coordinatesList.length > 1000)
+    return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  const result = await curationService.listAll(coordinatesList)
+  response.send(result)
 }
 
 router.patch('', asyncMiddleware(updateCurations))
