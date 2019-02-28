@@ -118,7 +118,6 @@ class GitHubCurationService {
     return Promise.all(
       coordinateList.map(
         throat(5, coordinates => {
-          this.cache.delete(this._getCacheKey(coordinates))
           this.definitionService
             .computeAndStore(coordinates)
             .catch(error => this.logger.info(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`))
