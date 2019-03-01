@@ -61,18 +61,21 @@ class MongoCurationStore {
    */
   updateContribution(pr, curations = null) {
     if (curations) {
-      const files = curations.map(curation => {
-        return {
-          path: curation.path,
-          coordinates: this._lowercaseCoordinates(curation.data.coordinates),
-          revisions: Object.keys(curation.data.revisions).map(revision => {
-            return {
-              revision,
-              data: curation.data.revisions[revision]
-            }
-          })
-        }
-      })
+      const files = curations
+        .map(curation => {
+          if (!curation.data) return null
+          return {
+            path: curation.path,
+            coordinates: this._lowercaseCoordinates(curation.data.coordinates),
+            revisions: Object.keys(curation.data.revisions).map(revision => {
+              return {
+                revision,
+                data: curation.data.revisions[revision]
+              }
+            })
+          }
+        })
+        .filter(x => x)
       return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
     }
     // TODO reconsider `upsert` here. Great for resiliency but will it result in undetected inconsistent data?
