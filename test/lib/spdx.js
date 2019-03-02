@@ -3,7 +3,6 @@
 
 const SPDX = require('../../lib/spdx')
 const { expect } = require('chai')
-const { some, isEqual } = require('lodash')
 
 describe('SPDX utility functions', () => {
   it('parses spdx expressions', () => {
@@ -172,14 +171,14 @@ describe('SPDX utility functions', () => {
   })
 
   it('should expand expressions', () => {
-    inputs = [
+    const data = [
       ['MIT', [['MIT']]],
       ['MIT AND GPL-3.0', [['GPL-3.0', 'MIT']]],
       ['MIT OR GPL-3.0', [['MIT'], ['GPL-3.0']]],
       ['MIT AND (GPL-3.0 OR BSD-3-Clause)', [['GPL-3.0', 'MIT'], ['BSD-3-Clause', 'MIT']]],
       ['(MIT OR GPL-3.0) AND ISC', [['ISC', 'MIT'], ['GPL-3.0', 'ISC']]]
     ]
-    inputs.forEach(input => {
+    data.forEach(input => {
       const results = SPDX.expand(input[0])
       input[1].forEach(expected => {
         expect(results).to.deep.include(expected)

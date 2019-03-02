@@ -1,7 +1,6 @@
 const { expect } = require('chai')
 const utils = require('../../lib/utils')
 const SPDX = require('../../lib/spdx')
-const { isEqual, some } = require('lodash')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -56,14 +55,14 @@ describe('Utils latest version', () => {
 
 describe('Utils merge Licenses', () => {
   it('should add new entries as needed', () => {
-    inputs = [
-      // ['MIT', null, 'MIT'],
-      // [null, 'MIT', 'MIT'],
-      // ['MIT AND GPL-3.0', 'GPL-3.0', 'MIT AND GPL-3.0'],
-      // ['MIT AND GPL-3.0', 'MIT', 'MIT AND GPL-3.0'],
-      ['MIT AND GPL-3.0', 'MIT AND BSD-3-Clause', 'MIT AND GPL-3.0 AND BSD-3-Clause'],
-      ['MIT OR GPL-3.0', 'GPL-3.0', 'MIT OR GPL-3.0'],
-      ['MIT OR GPL-3.0', 'MIT', 'MIT OR GPL-3.0']
+    const inputs = [
+      ['MIT', null, 'MIT'],
+      [null, 'MIT', 'MIT'],
+      ['MIT AND GPL-3.0', 'GPL-3.0', 'GPL-3.0 AND MIT'],
+      ['MIT AND GPL-3.0', 'MIT', 'GPL-3.0 AND MIT'],
+      ['MIT AND GPL-3.0', 'MIT AND BSD-3-Clause', 'BSD-3-Clause AND GPL-3.0 AND MIT'],
+      ['MIT OR GPL-3.0', 'GPL-3.0', 'GPL-3.0 OR MIT'],
+      ['MIT OR GPL-3.0', 'MIT', 'GPL-3.0 OR MIT']
     ]
     inputs.forEach(input => {
       const base = { licensed: { declared: input[0] } }

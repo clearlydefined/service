@@ -8,7 +8,6 @@ const DefinitionService = require('../../business/definitionService')
 const AggregatorService = require('../../business/aggregator')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
-const SPDX = require('../../lib/spdx')
 const Curation = require('../../lib/curation')
 const { set } = require('lodash')
 
