@@ -108,13 +108,13 @@ describe('SPDX utility functions', () => {
 
   it('satisfies spdx expressions', () => {
     const data = new Map([
-      // [['MIT', 'MIT'], true],
-      // [['mit', 'MIT'], true],
-      // [['MIT', 'mit'], true],
-      // [['MIT', 'BSD-3-Clause'], false],
-      // [['MIT OR Apache-2.0', 'MIT'], true],
-      // [['MIT AND Apache-2.0', 'MIT'], false],
-      // [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], true],
+      [['MIT', 'MIT'], true],
+      [['mit', 'MIT'], true],
+      [['MIT', 'mit'], true],
+      [['MIT', 'BSD-3-Clause'], false],
+      [['MIT OR Apache-2.0', 'MIT'], true],
+      [['MIT AND Apache-2.0', 'MIT'], false],
+      [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], true],
       [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], true],
       [['MIT AND NOASSERTION', 'MIT'], false],
       [['MIT OR NOASSERTION', 'MIT'], true],
@@ -126,16 +126,57 @@ describe('SPDX utility functions', () => {
     })
   })
 
+  it('OR merges spdx expressions', () => {
+    const data = new Map([
+      [['MIT', 'MIT'], 'MIT'],
+      [['MIT', 'BSD-3-Clause'], 'BSD-3-Clause OR MIT'],
+      [['MIT OR Apache-2.0', 'MIT'], 'Apache-2.0 OR MIT'],
+      [['MIT OR Apache-2.0', 'ISC OR GPL-3.0'], 'Apache-2.0 OR GPL-3.0 OR ISC OR MIT'],
+      [['MIT AND Apache-2.0', 'MIT'], 'MIT OR (Apache-2.0 AND MIT)'],
+      [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], 'Apache-2.0 AND MIT'],
+      [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], '(GPL-2.0 AND ISC) OR (ISC AND MIT)'],
+      [['MIT AND NOASSERTION', 'MIT'], 'MIT OR (MIT AND NOASSERTION)'],
+      [['MIT OR NOASSERTION', 'MIT'], 'MIT OR NOASSERTION'],
+      [['NOASSERTION OR JUNK', 'MIT'], 'MIT OR NOASSERTION']
+    ])
+
+    data.forEach((expected, input) => {
+      expect(SPDX.merge(input[0], input[1])).to.eq(expected)
+    })
+  })
+
+  it('AND merges spdx expressions', () => {
+    const data = new Map([
+      [['MIT', 'MIT'], 'MIT'],
+      [['MIT', 'BSD-3-Clause'], 'BSD-3-Clause AND MIT'],
+      [['MIT OR Apache-2.0', 'MIT'], 'MIT OR (Apache-2.0 AND MIT)'],
+      [
+        ['MIT OR Apache-2.0', 'ISC OR GPL-3.0'],
+        '(Apache-2.0 AND GPL-3.0) OR (Apache-2.0 AND ISC) OR (GPL-3.0 AND MIT) OR (ISC AND MIT)'
+      ],
+      [['MIT AND Apache-2.0', 'MIT'], 'Apache-2.0 AND MIT'],
+      [['MIT AND Apache-2.0', 'MIT AND Apache-2.0'], 'Apache-2.0 AND MIT'],
+      [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], '(GPL-2.0 AND ISC AND MIT) OR (ISC AND MIT)'],
+      [['MIT AND NOASSERTION', 'MIT'], 'MIT AND NOASSERTION'],
+      [['MIT OR NOASSERTION', 'MIT'], 'MIT OR (MIT AND NOASSERTION)'],
+      [['NOASSERTION OR JUNK', 'MIT'], 'MIT AND NOASSERTION']
+    ])
+
+    data.forEach((expected, input) => {
+      expect(SPDX.merge(input[0], input[1], 'AND')).to.eq(expected)
+    })
+  })
+
   it('should expand expressions', () => {
     inputs = [
       ['MIT', [['MIT']]],
-      ['MIT AND GPL-3.0', [['MIT', 'GPL-3.0']]],
+      ['MIT AND GPL-3.0', [['GPL-3.0', 'MIT']]],
       ['MIT OR GPL-3.0', [['MIT'], ['GPL-3.0']]],
-      ['MIT AND (GPL-3.0 OR BSD-3-Clause)', [['MIT', 'GPL-3.0'], ['MIT', 'BSD-3-Clause']]],
-      ['(MIT OR GPL-3.0) AND ISC', [['MIT', 'ISC'], ['GPL-3.0', 'ISC']]]
+      ['MIT AND (GPL-3.0 OR BSD-3-Clause)', [['GPL-3.0', 'MIT'], ['BSD-3-Clause', 'MIT']]],
+      ['(MIT OR GPL-3.0) AND ISC', [['ISC', 'MIT'], ['GPL-3.0', 'ISC']]]
     ]
     inputs.forEach(input => {
-      const results = SPDX.expandExpression(input[0])
+      const results = SPDX.expand(input[0])
       input[1].forEach(expected => {
         expect(results).to.deep.include(expected)
       })

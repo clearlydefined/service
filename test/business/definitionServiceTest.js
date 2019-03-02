@@ -275,7 +275,7 @@ describe('Aggregation service', () => {
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
-    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
+    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
   })
 
   it('handles multiple tools and multiple file data with extras ignored', async () => {
@@ -292,7 +292,7 @@ describe('Aggregation service', () => {
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(1)
-    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
+    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
   })
 
   it('handles multiple tools and multiple file data with extras included', async () => {
@@ -310,7 +310,7 @@ describe('Aggregation service', () => {
     const aggregated = service.process(summaries)
     expect(aggregated.files.length).to.eq(2)
     expect(aggregated.files[0].path).to.eq('foo.txt')
-    expect(SPDX.satisfies(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')).to.be.true
+    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
     expect(aggregated.files[1].path).to.eq('bar.txt')
     expect(aggregated.files[1].license).to.eq('GPL-2.0')
   })
