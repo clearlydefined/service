@@ -143,11 +143,11 @@ describe('Mixed summarization', () => {
     ])
   })
 
-  it('merges nomos over monk', () => {
+  it('merges nomos with monk', () => {
     const { coordinates, harvested } = setup([buildMonkFile('foo.txt', 'MIT'), buildNomosFile('foo.txt', 'GPL-3.0')])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt', license: 'GPL-3.0' }])
+    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt', license: 'GPL-3.0 AND MIT' }])
   })
 })
 
