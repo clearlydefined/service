@@ -21,18 +21,21 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
+  buildRegistryUrl,
+  buildVersionUrl,
+  buildDownloadUrl,
   isDeclaredLicense,
+  simplifyAttributions,
   updateSourceLocation
 } = require('../lib/utils')
 const minimatch = require('minimatch')
-const he = require('he')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 
-const currentSchema = '1.4.0'
+const currentSchema = '1.5.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
@@ -227,9 +230,9 @@ class DefinitionService {
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
-    this._ensureToolScores(coordinates, aggregatedDefinition)
+    await this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    this._finalizeDefinition(coordinates, definition)
+    await this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
@@ -258,9 +261,9 @@ class DefinitionService {
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
   // definition so that further curations can be done.
-  _ensureToolScores(coordinates, definition) {
+  async _ensureToolScores(coordinates, definition) {
     const rawDefinition = extend(true, {}, definition)
-    this._finalizeDefinition(coordinates, rawDefinition)
+    await this._finalizeDefinition(coordinates, rawDefinition)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
     set(definition, 'described.toolScore', describedScore)
     set(definition, 'licensed.toolScore', licensedScore)
@@ -272,9 +275,10 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  _finalizeDefinition(coordinates, definition) {
+  async _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
+    await this._ensureUrls(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -455,7 +459,7 @@ class DefinitionService {
     // accummulate all the licenses and attributions, and count anything that's missing
     for (let file of facetFiles) {
       file.license ? licenseExpressions.add(file.license) : unknownLicenses++
-      const statements = this._simplifyAttributions(file.attributions)
+      const statements = simplifyAttributions(file.attributions)
       setIfValue(file, 'attributions', statements)
       statements ? addArrayToSet(statements, attributions) : unknownParties++
       if (facet !== 'core') {
@@ -473,24 +477,10 @@ class DefinitionService {
       },
       files: facetFiles.length
     }
-    setIfValue(result, 'attribution.parties', setToArray(attributions))
+    setIfValue(result, 'attribution.parties', simplifyAttributions(setToArray(attributions)))
+    // TODO need a function to reduce/simplify sets of expressions
     setIfValue(result, 'discovered.expressions', setToArray(licenseExpressions))
     return result
-  }
-
-  _simplifyAttributions(attributions) {
-    if (!attributions || !attributions.length) return null
-    const set = attributions.reduce((result, attribution) => {
-      result.add(
-        he
-          .decode(attribution)
-          .replace(/(\\[nr]|[\n\r])/g, ' ')
-          .replace(/ +/g, ' ')
-          .trim()
-      )
-      return result
-    }, new Set())
-    return setToArray(set)
   }
 
   _ensureDescribed(definition) {
@@ -512,6 +502,14 @@ class DefinitionService {
       default:
         return
     }
+  }
+
+  async _ensureUrls(coordinates, definition) {
+    const registryUrl = buildRegistryUrl(coordinates)
+    const versionUrl = buildVersionUrl(coordinates)
+    const downloadUrl = await buildDownloadUrl(coordinates)
+    this._ensureDescribed(definition)
+    definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
 
   _getDefinitionCoordinates(coordinates) {

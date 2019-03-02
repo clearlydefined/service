@@ -3,9 +3,16 @@
 
 const { get, flatten, uniq } = require('lodash')
 const SPDX = require('../../lib/spdx')
-const { extractDate, setIfValue, addArrayToSet, setToArray } = require('../../lib/utils')
+const {
+  extractDate,
+  getLicenseLocations,
+  isLicenseFile,
+  setIfValue,
+  addArrayToSet,
+  setToArray
+} = require('../../lib/utils')
 const logger = require('../logging/logger')
-const scanodeMap = require('../../lib/scancodeMap')
+const scancodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -20,14 +27,15 @@ class ScanCodeSummarizer {
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested) {
-    if (!harvested || !harvested.content || !harvested.content.scancode_version)
-      throw new Error('Not valid ScanCode data')
+    const scancodeVersion =
+      get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
+    if (!scancodeVersion) throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
-    const files = this._getRootFiles(coordinates.type, harvested.content.files)
-    const declaredLicense = this._summarizePackageInfo(files) || this._summarizeFullLicenses(files)
+    const declaredLicense =
+      this._readDeclaredLicense(harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
     setIfValue(result, 'licensed.declared', declaredLicense)
-    result.files = this._summarizeFileInfo(harvested.content.files)
+    result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
     return result
   }
 
@@ -36,34 +44,63 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  // find and return the files that should be considered for as a license determinator for this summarization
-  _getRootFiles(type, files) {
-    // TODO allow files in / all the time
-    // TODO add maven meta-inf support
-    const root = type === 'npm' ? 'package/' : ''
-    return files.filter(file => file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1)
+  _readDeclaredLicense(harvested) {
+    const declared = get(harvested, 'content.summary.packages[0].declared_license')
+    return SPDX.normalize(declared)
   }
 
-  // Create a license expression from all of the actual license texts in the output
-  // TODO currently `is_license_text` is really "has full license text". As such it is not any more
-  // definitive a statemetent of the component's overall license than a file including an SPDX id.
-  // Leaving this in here for now but we need to work with the ScanCode folks to get a more
-  // explicit indication of when a file IS the license text. To approximate that, put the score
-  // bar up to 100
-  _summarizeFullLicenses(files) {
-    const fullLicenses = files.reduce((licenses, file) => {
-      if (file.licenses)
+  // find and return the files that should be considered for as a license determinator for this summarization
+  _getRootFiles(coordinates, files) {
+    const roots = getLicenseLocations(coordinates) || []
+    roots.push('') // for no prefix
+    return files.filter(file => {
+      for (let root of roots)
+        if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
+    })
+  }
+
+  _getDeclaredLicense(scancodeVersion, harvested, coordinates) {
+    const rootFile = this._getRootFiles(coordinates, harvested.content.files)
+    switch (scancodeVersion) {
+      case '2.2.1':
+        return this._getLicenseByPackageAssertion(rootFile)
+      case '2.9.2':
+      case '2.9.8':
+        return this._getLicenseByFileName(rootFile, coordinates)
+      case '3.0.0':
+      case '3.0.2':
+        return this._getLicenseByIsLicenseText(rootFile)
+      default:
+        return null
+    }
+  }
+
+  _getLicenseByIsLicenseText(files) {
+    const fullLicenses = files
+      .filter(file => file.is_license_text && file.licenses)
+      .reduce((licenses, file) => {
         file.licenses.forEach(license => {
-          if (license.score === 100 && license.matched_rule.is_license_text)
-            licenses.add(this._createExpressionFromLicense(license))
+          licenses.add(this._createExpressionFromLicense(license))
         })
-      return licenses
-    }, new Set())
+        return licenses
+      }, new Set())
+    return this._joinExpressions(fullLicenses)
+  }
+
+  _getLicenseByFileName(files, coordinates) {
+    const fullLicenses = files
+      .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
+      .reduce((licenses, file) => {
+        file.licenses.forEach(license => {
+          if (license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+        })
+        return licenses
+      }, new Set())
     return this._joinExpressions(fullLicenses)
   }
 
   // Create a license expression from all of the package info in the output
-  _summarizePackageInfo(files) {
+  _getLicenseByPackageAssertion(files) {
     for (let file of files) {
       const asserted = get(file, 'packages[0].asserted_licenses')
       // Find the first package file and treat it as the authority
@@ -80,7 +117,7 @@ class ScanCodeSummarizer {
     return null
   }
 
-  _summarizeFileInfo(files) {
+  _summarizeFileInfo(files, coordinates) {
     return files
       .map(file => {
         if (file.type !== 'file') return null
@@ -92,19 +129,14 @@ class ScanCodeSummarizer {
           licenses = new Set(fileLicense.filter(x => x.score >= 80).map(x => this._createExpressionFromLicense(x)))
         const licenseExpression = this._joinExpressions(licenses)
         setIfValue(result, 'license', licenseExpression)
-        // TODO see note above re: ScanCode's meaning of `is_license_text` (really has license text). Pump the
-        // match score bar to 100 to try and ensure this actually IS the license.
-        if (
-          file.licenses &&
-          file.licenses.some(license => get(license, 'matched_rule.is_license_text') && license.score >= 100)
-        ) {
+        if (this._getLicenseByIsLicenseText([file]) || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
           if (!result.natures.includes('license')) result.natures.push('license')
         }
         setIfValue(
           result,
           'attributions',
-          file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements))) : null
+          file.copyrights ? uniq(flatten(file.copyrights.map(c => c.statements || c.value))).filter(x => x) : null
         )
         setIfValue(result, 'hashes.sha1', file.sha1)
         return result
@@ -122,7 +154,7 @@ class ScanCodeSummarizer {
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
     if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scanodeMap.get(key) || key))
+    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scancodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
     if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
     return result

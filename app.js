@@ -33,8 +33,6 @@ function createApp(config) {
 
   const curationStore = config.curation.store()
   initializers.push(async () => curationStore.initialize())
-  const curationService = config.curation.service(null, curationStore, config.endpoints)
-  const curationsRoute = require('./routes/curations')(curationService)
 
   const definitionStore = config.definition.store()
   initializers.push(async () => definitionStore.initialize())
@@ -48,6 +46,8 @@ function createApp(config) {
   const cachingService = config.caching.service()
   initializers.push(async () => cachingService.initialize())
 
+  const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
     harvestService,
@@ -60,6 +60,8 @@ function createApp(config) {
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
+
+  const curationsRoute = require('./routes/curations')(curationService)
   const definitionsRoute = require('./routes/definitions')(definitionService)
 
   const suggestionService = require('./business/suggestionService')(definitionService)
@@ -98,7 +100,7 @@ function createApp(config) {
 
   const swaggerOptions = { swaggerUrl: `${config.endpoints.service}/schemas/swagger.yaml` }
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, swaggerOptions))
-  app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), webhookRoute)
+  app.use('/webhook', bodyParser.raw({ limit: '10mb', type: '*/*' }), webhookRoute)
 
   // OAuth app initialization; skip if not configured (middleware can cope)
   const auth = config.auth.service.route(null, config.endpoints)
