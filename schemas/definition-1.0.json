@@ -133,6 +133,7 @@
           "format": "date"
         },
         "hashes": { "$ref": "#/definitions/hashes" },
+        "embedded": { "$ref": "#/definitions/embedded" },
         "files": { "type": "number" },
         "tools": {
           "type": "array",
@@ -213,6 +214,18 @@
         "download": {
           "type": ["string", "null"],
           "format": "uri"
+        }
+      }
+    },
+    "embedded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["coordinates"],
+        "additionalProperties": false,
+        "properties": {
+          "coordinates": { "type": "string" },
+          "location": { "type": "string" }
         }
       }
     },

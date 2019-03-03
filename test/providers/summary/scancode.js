@@ -125,6 +125,15 @@ describe('ScancodeSummarizer fixtures', () => {
     })
   })
 
+  it('summarizes npm with embedded packages 3.0.2', () => {
+    const coordinates = { type: 'npm', provider: 'npmjs', name: 'glob', revision: '7.1.2' }
+    const harvestData = getHarvestData('3.0.2', 'npm-embedded')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.deepEqual(result.described.embedded, [
+      { coordinates: 'npm/npmjs/-/glob-embedded/0.0.1', location: 'package/node_modules/glob-embedded/package.json' }
+    ])
+  })
+
   it('summarizes commons-clause as NOASSERTION in 3.0.2', () => {
     const coordinates = {
       type: 'git',

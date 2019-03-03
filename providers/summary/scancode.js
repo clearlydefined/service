@@ -9,10 +9,12 @@ const {
   isLicenseFile,
   setIfValue,
   addArrayToSet,
-  setToArray
+  setToArray,
+  mapTypeToProvider
 } = require('../../lib/utils')
 const logger = require('../logging/logger')
 const scancodeMap = require('../../lib/scancodeMap')
+const EntitySpec = require('../../lib/entityCoordinates')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -42,6 +44,34 @@ class ScanCodeSummarizer {
   addDescribedInfo(result, harvested) {
     const releaseDate = harvested._metadata.releaseDate
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
+    this._summarizeEmbeddedInfo(result, harvested)
+  }
+
+  _summarizeEmbeddedInfo(result, harvested) {
+    const packages = get(harvested, 'content.summary.packages')
+    if (!packages) return
+    const embedded = []
+    packages.forEach(entry => {
+      if (this._isRootPackage(entry)) return
+      const provider = mapTypeToProvider(entry.type)
+      if (!provider) return
+      const coordinates = new EntitySpec(entry.type, provider, entry.namespace, entry.name, entry.version).toString()
+      const packageLocation = get(entry, 'files[0].path')
+      const location = packageLocation && entry.manifest_path ? packageLocation + '/' + entry.manifest_path : null
+      const packageEntry = { coordinates }
+      setIfValue(packageEntry, 'location', location)
+      embedded.push(packageEntry)
+    })
+    setIfValue(result, 'described.embedded', embedded)
+  }
+
+  _isRootPackage(entry) {
+    const handlers = {
+      npm: entry => get(entry, 'files[0].path') === 'package'
+    }
+    const handler = handlers[entry.type]
+    if (!handler) return false
+    return handler(entry)
   }
 
   _readDeclaredLicense(harvested) {
