@@ -230,9 +230,9 @@ class DefinitionService {
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
-    await this._ensureToolScores(coordinates, aggregatedDefinition)
+    await this._ensureToolScores(coordinates, aggregatedDefinition, raw)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    await this._finalizeDefinition(coordinates, definition)
+    await this._finalizeDefinition(coordinates, definition, raw)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
@@ -261,9 +261,9 @@ class DefinitionService {
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
   // definition so that further curations can be done.
-  async _ensureToolScores(coordinates, definition) {
+  async _ensureToolScores(coordinates, definition, raw) {
     const rawDefinition = extend(true, {}, definition)
-    await this._finalizeDefinition(coordinates, rawDefinition)
+    await this._finalizeDefinition(coordinates, rawDefinition, raw)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
     set(definition, 'described.toolScore', describedScore)
     set(definition, 'licensed.toolScore', licensedScore)
@@ -275,10 +275,10 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  async _finalizeDefinition(coordinates, definition) {
+  async _finalizeDefinition(coordinates, definition, raw) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    await this._ensureUrls(coordinates, definition)
+    await this._ensureUrls(coordinates, definition, raw)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -504,10 +504,10 @@ class DefinitionService {
     }
   }
 
-  async _ensureUrls(coordinates, definition) {
+  async _ensureUrls(coordinates, definition, raw) {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = await buildDownloadUrl(coordinates)
+    const downloadUrl = await buildDownloadUrl(coordinates, raw)
     this._ensureDescribed(definition)
     definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
