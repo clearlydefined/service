@@ -65,25 +65,27 @@ class FOSSologySummarizer {
     mergeDefinitions(result, { files })
   }
 
-  _summarizeCopyright(result, output) {
-    const content = get(output, 'copyright.output.content')
-    if (!content) return
-    const files = content
-      .map(entry => {
-        const { path, output } = entry
-        if (!output.results) return null
-        const attributions = uniq(
-          output.results
-            .filter(result => result.type === 'statement')
-            .map(result => result.content)
-            .filter(e => e)
-        )
-        const file = { path }
-        setIfValue(file, 'attributions', attributions)
-        return file
-      })
-      .filter(e => e)
-    mergeDefinitions(result, { files })
+  _summarizeCopyright(/*result, output*/) {
+    // see https://github.com/fossology/fossology/issues/1292
+    return
+    // const content = get(output, 'copyright.output.content')
+    // if (!content) return
+    // const files = content
+    //   .map(entry => {
+    //     const { path, output } = entry
+    //     if (!output.results) return null
+    //     const attributions = uniq(
+    //       output.results
+    //         .filter(result => result.type === 'statement')
+    //         .map(result => result.content)
+    //         .filter(e => e)
+    //     )
+    //     const file = { path }
+    //     setIfValue(file, 'attributions', attributions)
+    //     return file
+    //   })
+    //   .filter(e => e)
+    // mergeDefinitions(result, { files })
   }
 
   _declareLicense(coordinates, result) {

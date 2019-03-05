@@ -44,6 +44,17 @@ class MemoryStore {
       .map(key => this.curations[key])
   }
 
+  listAll(coordinatesList) {
+    const result = {}
+    coordinatesList.forEach(coordinates => {
+      const data = this.list(coordinates)
+      if (!data) return
+      const key = coordinates.toString()
+      result[key] = data
+    })
+    return result
+  }
+
   _getCurationId(coordinates) {
     if (!coordinates) return ''
     return EntityCoordinates.fromObject(coordinates)
