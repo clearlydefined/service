@@ -180,9 +180,6 @@ function createApp(config) {
     response.locals.message = error.message
     response.locals.error = request.app.get('env') === 'development' ? error : {}
     const status = typeof error.status === 'number' ? error.status : 500
-    const message =
-      typeof error.status === 'number' ? error.message : (error.status || 'Unknown') + '\n' + error.message
-
     // return the error
     response
       .status(status)
@@ -190,7 +187,7 @@ function createApp(config) {
       .send({
         error: {
           code: status.toString(),
-          message,
+          message: 'An error has occurred',
           innererror: serializeError(response.locals.error)
         }
       })
