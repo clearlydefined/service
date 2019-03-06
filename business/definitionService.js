@@ -227,9 +227,9 @@ class DefinitionService {
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
-    await this._ensureToolScores(coordinates, aggregatedDefinition, raw)
+    this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    await this._finalizeDefinition(coordinates, definition)
+    this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
@@ -258,9 +258,9 @@ class DefinitionService {
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
   // definition so that further curations can be done.
-  async _ensureToolScores(coordinates, definition, raw) {
+  _ensureToolScores(coordinates, definition) {
     const rawDefinition = extend(true, {}, definition)
-    await this._finalizeDefinition(coordinates, rawDefinition, raw)
+    this._finalizeDefinition(coordinates, rawDefinition)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
     set(definition, 'described.toolScore', describedScore)
     set(definition, 'licensed.toolScore', licensedScore)
@@ -272,7 +272,7 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  async _finalizeDefinition(coordinates, definition) {
+  _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
