@@ -135,6 +135,14 @@ describe('Mongo Curation store', () => {
     expect(service.collection.find().sort.args[0][0]).to.deep.eq({ 'pr.number': -1 })
     expect(result.curations).to.deep.eq({ 'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } } })
   })
+
+  it('handles list with no coordinates', async () => {
+    const service = createStore()
+    const result = await service.list(new EntityCoordinates())
+    expect(result).to.be.null
+
+    await expect(service.list()).to.eventually.be.rejectedWith('must specify coordinates to list')
+  })
 })
 
 function createStore() {

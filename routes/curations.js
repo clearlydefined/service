@@ -50,7 +50,7 @@ router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(listCuration
 async function listCurations(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.list(coordinates)
-  if (!result.contributions.length) return response.sendStatus(404)
+  if (!result || !result.contributions.length) return response.sendStatus(404)
   return response.status(200).send(result)
 }
 

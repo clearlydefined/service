@@ -89,7 +89,7 @@ class MongoCurationStore {
   async list(coordinates) {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
-    if (!pattern) return []
+    if (!pattern) return null
     const curations = await this.collection
       .find({ _id: new RegExp('^' + pattern) })
       .project({ _id: 0 })
