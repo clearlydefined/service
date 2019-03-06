@@ -7,6 +7,7 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const logger = require('../logging/logger')
 const { clone, get, range } = require('lodash')
 const base64 = require('base-64')
+const writeLock = require('../../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
 const sortOptions = {
   type: 'coordinates.type',
@@ -126,30 +127,36 @@ class MongoStore {
   async store(definition) {
     const pageSize = 1000
     definition._id = this._getId(definition.coordinates)
-    await this.collection.deleteMany({ '_mongo.partitionKey': definition._id })
-    const pages = Math.ceil((get(definition, 'files.length') || 1) / pageSize)
-    const result = await this.collection.insertMany(
-      range(pages).map(
-        index => {
-          if (index === 0) {
-            const definitionPage = clone(definition)
-            if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
-            return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
-          }
-          return {
-            _id: definition._id + `/${index}`,
-            _mongo: {
-              partitionKey: definition._id,
-              page: index + 1,
-              totalPages: pages
-            },
-            files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
-          }
-        },
-        { ordered: false }
+    while (writeLock.get(definition._id)) await new Promise(resolve => setTimeout(resolve, 500))
+    try {
+      writeLock.set(definition._id, true)
+      await this.collection.deleteMany({ '_mongo.partitionKey': definition._id })
+      const pages = Math.ceil((get(definition, 'files.length') || 1) / pageSize)
+      const result = await this.collection.insertMany(
+        range(pages).map(
+          index => {
+            if (index === 0) {
+              const definitionPage = clone(definition)
+              if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
+              return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
+            }
+            return {
+              _id: definition._id + `/${index}`,
+              _mongo: {
+                partitionKey: definition._id,
+                page: index + 1,
+                totalPages: pages
+              },
+              files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
+            }
+          },
+          { ordered: false }
+        )
       )
-    )
-    return result
+      return result
+    } finally {
+      writeLock.delete(definition._id)
+    }
   }
 
   async delete(coordinates) {
