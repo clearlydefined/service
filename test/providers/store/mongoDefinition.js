@@ -103,10 +103,10 @@ describe('Mongo Definition store', () => {
       [{}, { '_mongo.page': 1 }],
       [{ type: 'npm' }, { '_mongo.page': 1, 'coordinates.type': 'npm' }],
       [{ provider: 'npmjs' }, { '_mongo.page': 1, 'coordinates.provider': 'npmjs' }],
-      [{ name: 'package' }, { '_mongo.page': 1, 'coordinates.name': /package/i }],
+      [{ name: 'package' }, { '_mongo.page': 1, 'coordinates.name': 'package' }],
       [
         { namespace: '@owner', name: 'package' },
-        { '_mongo.page': 1, 'coordinates.name': /package/i, 'coordinates.namespace': /@owner/i }
+        { '_mongo.page': 1, 'coordinates.name': 'package', 'coordinates.namespace': '@owner' }
       ],
       [{ license: 'MIT' }, { '_mongo.page': 1, 'licensed.declared': 'MIT' }],
       [{ releasedAfter: '2018-01-01' }, { '_mongo.page': 1, 'described.releaseDate': { $gt: '2018-01-01' } }],
@@ -127,8 +127,8 @@ describe('Mongo Definition store', () => {
     const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
     const expected = {
       '_mongo.page': 1,
-      'coordinates.name': /package/i,
-      'coordinates.namespace': /@owner/i,
+      'coordinates.name': 'package',
+      'coordinates.namespace': '@owner',
       '_mongo.partitionKey': { $gt: 'npm/npmjs/-/verror/1.10.0' }
     }
     expect(store._buildQuery(parameters, continuationToken)).to.deep.equal(expected)
