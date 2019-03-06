@@ -127,6 +127,7 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -136,7 +137,6 @@ class ClearlyDescribedSummarizer {
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addCrateData(result, data, coordinates) {
@@ -159,6 +159,7 @@ class ClearlyDescribedSummarizer {
     if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
     else if (licenseUrl && licenseUrl.trim())
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
@@ -166,12 +167,12 @@ class ClearlyDescribedSummarizer {
       return { path: decodeURIComponent(file.fullName) }
     })
     mergeDefinitions(result, newDefinition)
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addNpmData(result, data, coordinates) {
     if (!data.registryData) return
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
     let homepage = manifest.homepage
@@ -187,7 +188,6 @@ class ClearlyDescribedSummarizer {
       manifest.license &&
       SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addPodData(result, data, coordinates) {

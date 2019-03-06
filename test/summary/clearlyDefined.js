@@ -59,7 +59,7 @@ describe('ClearlyDefined Maven summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
@@ -95,7 +95,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 
   it('includes files from manifest', () => {
@@ -148,7 +148,7 @@ describe('ClearlyDefined Source Archive summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
@@ -188,7 +188,7 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 
   it('handles only releaseDate', () => {
@@ -216,7 +216,7 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 
   it('handles object license', () => {
@@ -224,7 +224,7 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
@@ -284,7 +284,7 @@ describe('ClearlyDefined Gem summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
@@ -321,7 +321,7 @@ describe('ClearlyDefined Pypi summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
@@ -364,7 +364,7 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described).to.be.undefined
+    expect(summary.described.urls).not.to.be.undefined
   })
 })
 
