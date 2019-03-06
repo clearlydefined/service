@@ -21,9 +21,6 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
-  buildRegistryUrl,
-  buildVersionUrl,
-  buildDownloadUrl,
   isDeclaredLicense,
   simplifyAttributions,
   updateSourceLocation
@@ -232,7 +229,7 @@ class DefinitionService {
     aggregatedDefinition.coordinates = coordinates
     await this._ensureToolScores(coordinates, aggregatedDefinition, raw)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    await this._finalizeDefinition(coordinates, definition, raw)
+    await this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
@@ -275,10 +272,9 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  async _finalizeDefinition(coordinates, definition, raw) {
+  async _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    await this._ensureUrls(coordinates, definition, raw)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -502,14 +498,6 @@ class DefinitionService {
       default:
         return
     }
-  }
-
-  async _ensureUrls(coordinates, definition, raw) {
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = await buildDownloadUrl(coordinates, raw)
-    this._ensureDescribed(definition)
-    definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
 
   _getDefinitionCoordinates(coordinates) {
