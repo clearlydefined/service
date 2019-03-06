@@ -5,6 +5,7 @@ const MongoClient = require('mongodb').MongoClient
 const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const throat = require('throat')
+const { get } = require('lodash')
 const logger = require('../logging/logger')
 
 class MongoCurationStore {
@@ -60,8 +61,10 @@ class MongoCurationStore {
    * @param {[Curation]} curations? - The set of actual proposed changes.
    */
   updateContribution(pr, curations = null) {
-    if (curations) {
-      const files = curations.map(curation => {
+    if (!curations || !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions')))
+      return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
+    const files = curations
+      .map(curation => {
         return {
           path: curation.path,
           coordinates: this._lowercaseCoordinates(curation.data.coordinates),
@@ -73,10 +76,8 @@ class MongoCurationStore {
           })
         }
       })
-      return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
-    }
-    // TODO reconsider `upsert` here. Great for resiliency but will it result in undetected inconsistent data?
-    return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
+      .filter(x => x)
+    return this.collection.replaceOne({ _id: pr.number }, { _id: pr.number, pr, files }, { upsert: true })
   }
 
   /**
@@ -88,7 +89,7 @@ class MongoCurationStore {
   async list(coordinates) {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
-    if (!pattern) return []
+    if (!pattern) return null
     const curations = await this.collection
       .find({ _id: new RegExp('^' + pattern) })
       .project({ _id: 0 })
