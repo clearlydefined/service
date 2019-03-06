@@ -138,7 +138,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addCrateData(result, data, coordinates) {
@@ -149,7 +150,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addSourceArchiveData(result, data, coordinates) {
@@ -157,7 +159,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addNuGetData(result, data, coordinates) {
@@ -177,7 +180,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addNpmData(result, data, coordinates) {
@@ -201,7 +205,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addPodData(result, data, coordinates) {
@@ -216,9 +221,10 @@ class ClearlyDescribedSummarizer {
     const revision = get(data, 'registryData.sourceInfo.revision')
 
     const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = `${homepage}/tree/${revision}`
-    const downloadUrl = `${homepage}/archive/${revision}.zip`
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    const versionUrl = homepage && revision ? `${homepage}/tree/${revision}` : null
+    const downloadUrl = homepage && revision ? `${homepage}/archive/${revision}.zip` : null
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addGemData(result, data, coordinates) {
@@ -232,7 +238,8 @@ class ClearlyDescribedSummarizer {
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
     const downloadUrl = buildDownloadUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 
   addPyPiData(result, data, coordinates) {
@@ -245,7 +252,8 @@ class ClearlyDescribedSummarizer {
     })
     const registryUrl = buildRegistryUrl(coordinates)
     const versionUrl = buildVersionUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    if (get(result, 'described'))
+      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
   }
 }
 

@@ -330,6 +330,7 @@ function setupPypi(releaseDate, license, sourceInfo) {
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
+  setIfValue(harvested, 'registryData.releases', { '1.0': {} })
   if (sourceInfo) harvested.sourceInfo = createSourceLocation()
   return { coordinates, harvested }
 }
@@ -373,6 +374,7 @@ function setupCocoaPod(license, releaseDate, homepage) {
   setIfValue(harvested, 'registryData.license', license)
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData.homepage', homepage)
+  setIfValue(harvested, 'registryData.sourceInfo.revision', '1.0.0')
   return { coordinates, harvested }
 }
 
