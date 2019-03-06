@@ -12,6 +12,7 @@ const {
   isLicenseFile,
   updateSourceLocation,
   mergeDefinitions,
+  buildUrls,
   buildDownloadUrl,
   buildRegistryUrl,
   buildVersionUrl
@@ -135,11 +136,7 @@ class ClearlyDescribedSummarizer {
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addCrateData(result, data, coordinates) {
@@ -147,20 +144,12 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
     const license = get(data, 'registryData.license')
     if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addNuGetData(result, data, coordinates) {
@@ -177,11 +166,7 @@ class ClearlyDescribedSummarizer {
       return { path: decodeURIComponent(file.fullName) }
     })
     mergeDefinitions(result, newDefinition)
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addNpmData(result, data, coordinates) {
@@ -202,11 +187,7 @@ class ClearlyDescribedSummarizer {
       manifest.license &&
       SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addPodData(result, data, coordinates) {
@@ -220,11 +201,10 @@ class ClearlyDescribedSummarizer {
     const homepage = get(data, 'registryData.homepage')
     const revision = get(data, 'registryData.sourceInfo.revision')
 
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = homepage && revision ? `${homepage}/tree/${revision}` : null
-    const downloadUrl = homepage && revision ? `${homepage}/archive/${revision}.zip` : null
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    const registry = buildRegistryUrl(coordinates)
+    const version = homepage && revision ? `${homepage}/tree/${revision}` : null
+    const download = homepage && revision ? `${homepage}/archive/${revision}.zip` : null
+    setIfValue(result, 'described.urls', { registry, version, download })
   }
 
   addGemData(result, data, coordinates) {
@@ -235,25 +215,20 @@ class ClearlyDescribedSummarizer {
       const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = buildDownloadUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    setIfValue(result, 'described.urls', buildUrls(coordinates))
   }
 
   addPyPiData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data.declaredLicense)
     const releases = get(data, 'registryData.releases')
-    let downloadUrl
+    let download
     forEach(releases[coordinates.revision], revision => {
-      if (revision.filename.includes('tar.gz')) downloadUrl = revision.url
+      if (revision.filename.includes('tar.gz')) download = revision.url
     })
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    if (get(result, 'described'))
-      setIfValue(result, 'described.urls', { registry: registryUrl, version: versionUrl, download: downloadUrl })
+    const registry = buildRegistryUrl(coordinates)
+    const version = buildVersionUrl(coordinates)
+    setIfValue(result, 'described.urls', { registry, version, download })
   }
 }
 
