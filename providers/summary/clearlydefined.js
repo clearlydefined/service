@@ -13,7 +13,6 @@ const {
   updateSourceLocation,
   mergeDefinitions,
   buildUrls,
-  buildDownloadUrl,
   buildRegistryUrl,
   buildVersionUrl
 } = require('../../lib/utils')
