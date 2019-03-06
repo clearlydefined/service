@@ -330,7 +330,9 @@ function setupPypi(releaseDate, license, sourceInfo) {
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
-  setIfValue(harvested, 'registryData.releases', { '1.0': {} })
+  setIfValue(harvested, 'registryData.releases', {
+    '1.0': [{ filename: 'py-1.7.0.tar.gz', url: 'https://clearlydefined.com' }]
+  })
   if (sourceInfo) harvested.sourceInfo = createSourceLocation()
   return { coordinates, harvested }
 }

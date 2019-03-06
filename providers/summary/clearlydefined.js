@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq, cloneDeep, flatten, forEach } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep, flatten, find } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const {
   extractDate,
@@ -222,13 +222,12 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data.declaredLicense)
     const releases = get(data, 'registryData.releases')
-    let download
-    forEach(releases[coordinates.revision], revision => {
-      if (revision.filename.includes('tar.gz')) download = revision.url
-    })
+    // TODO: we are currently picking the first url that contains a tar.gz extension
+    // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
+    const revision = find(releases[coordinates.revision], revision => revision.filename.includes('tar.gz'))
     const registry = buildRegistryUrl(coordinates)
     const version = buildVersionUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry, version, download })
+    setIfValue(result, 'described.urls', { registry, version, download: revision.url })
   }
 }
 
