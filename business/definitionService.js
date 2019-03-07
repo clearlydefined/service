@@ -31,6 +31,7 @@ const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
+const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
 const currentSchema = '1.5.1'
 
@@ -181,18 +182,24 @@ class DefinitionService {
   }
 
   async computeAndStore(coordinates) {
-    const definition = await this.compute(coordinates)
-    // If no tools participated in the creation of the definition then don't bother storing.
-    // Note that curation is a tool so no tools really means there the definition is effectively empty.
-    const tools = get(definition, 'described.tools')
-    if (!tools || tools.length === 0) {
-      this.logger.info('definition not available', { coordinates: coordinates.toString() })
-      this.harvest(coordinates)
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    try {
+      computeLock.set(coordinates.toString(), true)
+      const definition = await this.compute(coordinates)
+      // If no tools participated in the creation of the definition then don't bother storing.
+      // Note that curation is a tool so no tools really means there the definition is effectively empty.
+      const tools = get(definition, 'described.tools')
+      if (!tools || tools.length === 0) {
+        this.logger.info('definition not available', { coordinates: coordinates.toString() })
+        this.harvest(coordinates)
+        return definition
+      }
+      this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
+      await this._store(definition)
       return definition
+    } finally {
+      computeLock.delete(coordinates.toString())
     }
-    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
-    await this._store(definition)
-    return definition
   }
 
   async harvest(coordinates) {

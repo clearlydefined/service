@@ -25,7 +25,7 @@ describe('Suggestion Service', () => {
     expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
       type: 'npm',
       provider: 'npmjs',
-      name: '^test$',
+      name: 'test',
       namespace: null,
       sort: 'releaseDate'
     })
@@ -50,7 +50,7 @@ describe('Suggestion Service', () => {
     expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
       type: 'npm',
       provider: 'npmjs',
-      name: '^test$',
+      name: 'test',
       namespace: null,
       sort: 'releaseDate'
     })
@@ -75,8 +75,8 @@ describe('Suggestion Service', () => {
     expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
       type: 'npm',
       provider: 'npmjs',
-      name: '^scope-test$',
-      namespace: '^@scope$',
+      name: 'scope-test',
+      namespace: '@scope',
       sort: 'releaseDate'
     })
   })
