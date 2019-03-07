@@ -73,6 +73,25 @@ describe('Mongo Curation store', () => {
     expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
   })
 
+  it('handles updateContribution for curation with partial data', async () => {
+    const service = createStore()
+    await service.updateContribution(pr, [
+      new Curation(),
+      new Curation({
+        coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' },
+        revisions: {
+          '1.0': {
+            described: { projectWebsite: 'http://foo.com' }
+          }
+        }
+      })
+    ])
+    expect(service.collection.updateOne.called).to.be.false
+    expect(service.collection.replaceOne.calledOnce).to.be.true
+    expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 12 })
+    expect(service.collection.replaceOne.args[0][1]).to.deep.eq({ _id: 12, pr, files })
+  })
+
   it('handles updateContribution for curation with data with no revisions', async () => {
     const service = createStore()
     await service.updateContribution(pr, [
