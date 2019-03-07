@@ -7,6 +7,7 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const logger = require('../logging/logger')
 const { clone, get, range } = require('lodash')
 const base64 = require('base-64')
+const uuid = require('uuid').v4
 
 const sortOptions = {
   type: 'coordinates.type',
@@ -61,13 +62,14 @@ class MongoStore {
   async get(coordinates) {
     const cursor = await this.collection.find(
       { '_mongo.partitionKey': this._getId(coordinates) },
-      { projection: { _id: 0, _mongo: 0 }, sort: { '_mongo.page': 1 } }
+      { projection: { _id: 0 }, sort: { '_mongo.page': 1 } }
     )
     let definition
     await cursor.forEach(page => {
       if (!definition) definition = page
-      else definition.files = definition.files.concat(page.files)
+      else if (page._mongo.slug === definition._mongo.slug) definition.files = definition.files.concat(page.files)
     })
+    if (definition) delete definition._mongo
     return definition
   }
 
@@ -126,24 +128,43 @@ class MongoStore {
   async store(definition) {
     const pageSize = 1000
     definition._id = this._getId(definition.coordinates)
-    await this.collection.deleteMany({ '_mongo.partitionKey': definition._id })
     const pages = Math.ceil((get(definition, 'files.length') || 1) / pageSize)
-    const result = await this.collection.insertMany(
+    const slug = uuid()
+    const result = await this.collection.bulkWrite(
       range(pages).map(
         index => {
           if (index === 0) {
             const definitionPage = clone(definition)
             if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
-            return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
+            return {
+              updateOne: {
+                filter: { _id: definition._id },
+                update: {
+                  $set: {
+                    ...definitionPage,
+                    _mongo: { partitionKey: definition._id, page: 1, totalPages: pages, slug }
+                  }
+                },
+                upsert: true
+              }
+            }
           }
           return {
-            _id: definition._id + `/${index}`,
-            _mongo: {
-              partitionKey: definition._id,
-              page: index + 1,
-              totalPages: pages
-            },
-            files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
+            updateOne: {
+              filter: { _id: definition._id + `/${slug}/${index}` },
+              update: {
+                $set: {
+                  _id: definition._id + `/${slug}/${index}`,
+                  _mongo: {
+                    partitionKey: definition._id,
+                    page: index + 1,
+                    totalPages: pages,
+                    slug
+                  },
+                  files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
+                }
+              }
+            }
           }
         },
         { ordered: false }
