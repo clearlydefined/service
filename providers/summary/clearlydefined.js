@@ -11,10 +11,7 @@ const {
   isDeclaredLicense,
   isLicenseFile,
   updateSourceLocation,
-  mergeDefinitions,
-  buildUrls,
-  buildRegistryUrl,
-  buildVersionUrl
+  mergeDefinitions
 } = require('../../lib/utils')
 
 class ClearlyDescribedSummarizer {
@@ -32,6 +29,9 @@ class ClearlyDescribedSummarizer {
     this.addInterestingFiles(result, data, coordinates)
     this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
+      case 'git':
+        this.addGitData(result, data, coordinates)
+        break
       case 'npm':
         this.addNpmData(result, data, coordinates)
         break
@@ -126,7 +126,19 @@ class ClearlyDescribedSummarizer {
 
   addMavenData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
+        coordinates.name
+      }-${coordinates.revision}.jar`
+    )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -143,12 +155,30 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
     const license = get(data, 'registryData.license')
     if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(result, 'described.urls.registry', `https://crates.io/crates/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://crates.io/api/v1/crates/${coordinates.name}/${coordinates.revision}/download`
+    )
   }
 
   addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
+        coordinates.name
+      }-${coordinates.revision}.jar`
+    )
   }
 
   addNuGetData(result, data, coordinates) {
@@ -158,7 +188,13 @@ class ClearlyDescribedSummarizer {
     if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
     else if (licenseUrl && licenseUrl.trim())
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(result, 'described.urls.registry', `https://nuget.org/packages/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://nuget.org/api/v2/package/${coordinates.name}/${coordinates.revision}`
+    )
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
@@ -171,7 +207,21 @@ class ClearlyDescribedSummarizer {
   addNpmData(result, data, coordinates) {
     if (!data.registryData) return
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://npmjs.com/package/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://registry.npmjs.com/${coordinates.name}/${coordinates.namespace ? coordinates.namespace : '-'}/${
+        coordinates.name
+      }-${coordinates.revision}.tgz`
+    )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
     let homepage = manifest.homepage
@@ -197,13 +247,19 @@ class ClearlyDescribedSummarizer {
       setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))
     }
 
-    const homepage = get(data, 'registryData.homepage')
-    const revision = get(data, 'registryData.sourceInfo.revision')
-
-    const registry = buildRegistryUrl(coordinates)
-    const version = homepage && revision ? `${homepage}/tree/${revision}` : null
-    const download = homepage && revision ? `${homepage}/archive/${revision}.zip` : null
-    setIfValue(result, 'described.urls', { registry, version, download })
+    setIfValue(result, 'described.urls.registry', `https://cocoapods.org/pods/${coordinates.name}`)
+    const httpSource = get(data, 'registryData.source.http')
+    const gitSource = get(data, 'registryData.source.git')
+    if (httpSource) {
+      setIfValue(result, 'described.urls.download', httpSource)
+    } else if (gitSource) {
+      const homepage = get(data, 'registryData.homepage')
+      const revision = get(data, 'registryData.sourceInfo.revision')
+      if (homepage && revision) {
+        setIfValue(result, 'described.urls.version', `${homepage}/tree/${revision}`)
+        setIfValue(result, 'described.urls.download', `${homepage}/archive/${revision}.zip`)
+      }
+    }
   }
 
   addGemData(result, data, coordinates) {
@@ -214,19 +270,45 @@ class ClearlyDescribedSummarizer {
       const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
-    setIfValue(result, 'described.urls', buildUrls(coordinates))
+    setIfValue(result, 'described.urls.registry', `https://rubygems.org/gems/${coordinates.name}`)
+    setIfValue(
+      result,
+      'described.urls.version',
+      `${get(result, 'described.urls.registry')}/versions/${coordinates.revision}`
+    )
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://rubygems.org/downloads/${coordinates.name}-${coordinates.revision}.gem`
+    )
   }
 
   addPyPiData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data.declaredLicense)
-    const releases = get(data, 'registryData.releases')
+    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     // TODO: we are currently picking the first url that contains a tar.gz extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
+    const releases = get(data, 'registryData.releases')
     const revision = find(releases[coordinates.revision], revision => revision.filename.includes('tar.gz'))
-    const registry = buildRegistryUrl(coordinates)
-    const version = buildVersionUrl(coordinates)
-    setIfValue(result, 'described.urls', { registry, version, download: revision.url })
+    setIfValue(result, 'described.urls.download', revision.url)
+  }
+
+  addGitData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.registry', `https://github.com/${coordinates.namespace}/${coordinates.name}`)
+    setIfValue(
+      result,
+      'described.urls.version',
+      `${get(result, 'described.urls.registry')}/tree/${coordinates.revision}`
+    )
+    setIfValue(
+      result,
+      'described.urls.download',
+      `${get(result, 'described.urls.registry')}/archive/${coordinates.revision}.zip`
+    )
   }
 }
 
