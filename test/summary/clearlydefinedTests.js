@@ -132,6 +132,12 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 
 describe('ClearlyDescribedSummarizer addNpmData', () => {
   const npmTestCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+  const expectedUrls = {
+    download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
+    registry: 'https://npmjs.com/package/test',
+    version: 'https://npmjs.com/package/test/v/1.0'
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest', () => {
     // prettier-ignore
     const data = {
@@ -149,25 +155,10 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       summarizer.addNpmData(result, { registryData: { manifest: { license: license } } }, npmTestCoordinates)
       if (data[license])
         assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-              registry: 'https://npmjs.com/package/test',
-              version: 'https://npmjs.com/package/test/v/1.0'
-            }
-          },
+          ...expectedResult,
           licensed: { declared: data[license] }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-              registry: 'https://npmjs.com/package/test',
-              version: 'https://npmjs.com/package/test/v/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     }
 
     // should work in the type field as well
@@ -176,25 +167,10 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
       if (data[license])
         assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-              registry: 'https://npmjs.com/package/test',
-              version: 'https://npmjs.com/package/test/v/1.0'
-            }
-          },
+          ...expectedResult,
           licensed: { declared: data[license] }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-              registry: 'https://npmjs.com/package/test',
-              version: 'https://npmjs.com/package/test/v/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -214,11 +190,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       assert.deepEqual(result, {
         described: {
           releaseDate: data[date],
-          urls: {
-            download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-            registry: 'https://npmjs.com/package/test',
-            version: 'https://npmjs.com/package/test/v/1.0'
-          }
+          urls: expectedUrls
         }
       })
     }
@@ -233,11 +205,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     )
     assert.deepEqual(result, {
       described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        },
+        urls: expectedUrls,
         projectWebsite: 'https://github.com/project/repo'
       }
     })
@@ -252,11 +220,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     )
     assert.deepEqual(result, {
       described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        },
+        urls: expectedUrls,
         issueTracker: 'https://github.com/project/repo/issues'
       }
     })
@@ -267,15 +231,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       { registryData: { manifest: { bugs: 'nothttps://github.com/project/repo/issues' } } },
       npmTestCoordinates
     )
-    assert.deepEqual(resul2, {
-      described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        }
-      }
-    })
+    assert.deepEqual(resul2, expectedResult)
   })
 
   it('should set issueTracker if it is url or email', () => {
@@ -291,11 +247,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     )
     assert.deepEqual(result, {
       described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        },
+        urls: expectedUrls,
         issueTracker: 'https://github.com/project/repo/issues'
       }
     })
@@ -308,11 +260,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     )
     assert.deepEqual(result2, {
       described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        },
+        urls: expectedUrls,
         issueTracker: 'bugs@project.com'
       }
     })
@@ -325,20 +273,22 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     summarizer.addNpmData(result, {}, npmTestCoordinates)
     assert.deepEqual(result, {})
     summarizer.addNpmData(result, { registryData: {} }, npmTestCoordinates)
-    assert.deepEqual(result, {
-      described: {
-        urls: {
-          download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
-          registry: 'https://npmjs.com/package/test',
-          version: 'https://npmjs.com/package/test/v/1.0'
-        }
-      }
-    })
+    assert.deepEqual(result, expectedResult)
   })
 })
 
 describe('ClearlyDescribedSummarizer addNuGetData', () => {
   const nugetTestCoordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
+  const expectedUrls = {
+    registry: 'https://nuget.org/packages/test',
+    version: 'https://nuget.org/packages/test/1.0',
+    download: 'https://nuget.org/api/v2/package/test/1.0'
+  }
+  const expectedResult = {
+    described: {
+      urls: expectedUrls
+    }
+  }
   it('should set declared license from manifest licenseExpression', () => {
     // prettier-ignore
     const data = {
@@ -357,25 +307,10 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
       summarizer.addNuGetData(result, { manifest: { licenseExpression } }, nugetTestCoordinates)
       if (data[licenseExpression])
         assert.deepEqual(result, {
-          described: {
-            urls: {
-              registry: 'https://nuget.org/packages/test',
-              version: 'https://nuget.org/packages/test/1.0',
-              download: 'https://nuget.org/api/v2/package/test/1.0'
-            }
-          },
+          ...expectedResult,
           licensed: { declared: data[licenseExpression] }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              registry: 'https://nuget.org/packages/test',
-              version: 'https://nuget.org/packages/test/1.0',
-              download: 'https://nuget.org/api/v2/package/test/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -395,30 +330,21 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
       summarizer.addNuGetData(result, { manifest: { licenseUrl } }, nugetTestCoordinates)
       if (data[licenseUrl])
         assert.deepEqual(result, {
-          described: {
-            urls: {
-              registry: 'https://nuget.org/packages/test',
-              version: 'https://nuget.org/packages/test/1.0',
-              download: 'https://nuget.org/api/v2/package/test/1.0'
-            }
-          },
+          ...expectedResult,
           licensed: { declared: data[licenseUrl] }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              registry: 'https://nuget.org/packages/test',
-              version: 'https://nuget.org/packages/test/1.0',
-              download: 'https://nuget.org/api/v2/package/test/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 })
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
+  const expectedUrls = {
+    download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
+    registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
+    version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT',
@@ -438,25 +364,10 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
       )
       if (data[url])
         assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
-              registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
-              version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
-            }
-          },
+          ...expectedResult,
           licensed: { declared: data[url] }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
-              registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
-              version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -480,24 +391,11 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
       if (expected)
         assert.deepEqual(result, {
           described: {
-            urls: {
-              download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
-              registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
-              version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
-            }
+            urls: expectedUrls
           },
           licensed: { declared: expected }
         })
-      else
-        assert.deepEqual(result, {
-          described: {
-            urls: {
-              download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
-              registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
-              version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
-            }
-          }
-        })
+      else assert.deepEqual(result, expectedResult)
     })
   })
 })
