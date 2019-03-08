@@ -64,6 +64,7 @@ class MongoCurationStore {
     if (!curations || !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions')))
       return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
     const files = curations
+      .filter(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))
       .map(curation => {
         return {
           path: curation.path,
@@ -89,7 +90,7 @@ class MongoCurationStore {
   async list(coordinates) {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
-    if (!pattern) return []
+    if (!pattern) return null
     const curations = await this.collection
       .find({ _id: new RegExp('^' + pattern) })
       .project({ _id: 0 })

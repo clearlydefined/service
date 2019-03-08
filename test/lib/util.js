@@ -1,5 +1,6 @@
 const { expect } = require('chai')
 const utils = require('../../lib/utils')
+const SPDX = require('../../lib/spdx')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -52,6 +53,25 @@ describe('Utils latest version', () => {
   })
 })
 
+describe('Utils merge Licenses', () => {
+  it('should add new entries as needed', () => {
+    const inputs = [
+      ['MIT', null, 'MIT'],
+      [null, 'MIT', 'MIT'],
+      ['MIT AND GPL-3.0', 'GPL-3.0', 'GPL-3.0 AND MIT'],
+      ['MIT AND GPL-3.0', 'MIT', 'GPL-3.0 AND MIT'],
+      ['MIT AND GPL-3.0', 'MIT AND BSD-3-Clause', 'BSD-3-Clause AND GPL-3.0 AND MIT'],
+      ['MIT OR GPL-3.0', 'GPL-3.0', 'GPL-3.0 OR MIT'],
+      ['MIT OR GPL-3.0', 'MIT', 'GPL-3.0 OR MIT']
+    ]
+    inputs.forEach(input => {
+      const base = { licensed: { declared: input[0] } }
+      utils.mergeDefinitions(base, { licensed: { declared: input[1] } })
+      expect(SPDX.satisfies(base.licensed.declared, input[2])).to.be.true
+    })
+  })
+})
+
 describe('Utils mergeDefinitions', () => {
   it('should add new entries as needed', () => {
     const base = { described: { releaseDate: '2018-6-3' } }
@@ -92,7 +112,7 @@ describe('Utils mergeDefinitions', () => {
 
   it('overrides NOASSERTION', () => {
     const base = {
-      licensed: { declared: '2018-6-3' },
+      licensed: { declared: 'NOASSERTION' },
       files: [{ path: '1.txt', license: 'NOASSERTION' }]
     }
     const newDefinition = { licensed: { declared: 'MIT' }, files: [{ path: '1.txt', license: 'GPL-3.0' }] }
@@ -129,8 +149,8 @@ describe('Utils mergeDefinitions', () => {
     }
     utils.mergeDefinitions(base, newDefinition)
     const file = base.files[0]
-    expect(file.license).to.eq('GPL-3.0')
     expect(file.attributions).to.have.members(['1', '2', '3'])
+    expect(file.license).to.eq('GPL-3.0 AND MIT')
     expect(file.facets).to.have.members(['core', 'dev'])
     expect(file.hashes.sha1).to.eq('1')
     expect(file.hashes.sha256).to.eq('257')

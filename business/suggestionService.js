@@ -35,8 +35,7 @@ class SuggestionService {
    */
   async _getRelatedDefinitions(coordinates) {
     const query = { ...coordinates.asRevisionless(), sort: 'releaseDate' }
-    query.name = `^${query.name}$` // exact name matches only
-    query.namespace = query.namespace ? `^${query.namespace}$` : null // exact namespace matches only
+    query.namespace = query.namespace ? query.namespace : null // explicitly exclude namespace
     const results = await this.definitionService.find(query)
     const definitions = results.data
     // If the related array only has one entry then return early

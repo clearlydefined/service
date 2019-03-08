@@ -73,6 +73,25 @@ describe('Mongo Curation store', () => {
     expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
   })
 
+  it('handles updateContribution for curation with partial data', async () => {
+    const service = createStore()
+    await service.updateContribution(pr, [
+      new Curation(),
+      new Curation({
+        coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' },
+        revisions: {
+          '1.0': {
+            described: { projectWebsite: 'http://foo.com' }
+          }
+        }
+      })
+    ])
+    expect(service.collection.updateOne.called).to.be.false
+    expect(service.collection.replaceOne.calledOnce).to.be.true
+    expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 12 })
+    expect(service.collection.replaceOne.args[0][1]).to.deep.eq({ _id: 12, pr, files })
+  })
+
   it('handles updateContribution for curation with data with no revisions', async () => {
     const service = createStore()
     await service.updateContribution(pr, [
@@ -134,6 +153,14 @@ describe('Mongo Curation store', () => {
     })
     expect(service.collection.find().sort.args[0][0]).to.deep.eq({ 'pr.number': -1 })
     expect(result.curations).to.deep.eq({ 'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } } })
+  })
+
+  it('handles list with no coordinates', async () => {
+    const service = createStore()
+    const result = await service.list(new EntityCoordinates())
+    expect(result).to.be.null
+
+    await expect(service.list()).to.eventually.be.rejectedWith('must specify coordinates to list')
   })
 })
 

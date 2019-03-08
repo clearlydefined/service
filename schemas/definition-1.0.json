@@ -9,6 +9,7 @@
   "properties": {
     "_meta": { "$ref": "#/definitions/_meta" },
     "coordinates": { "$ref": "#/definitions/coordinates" },
+    "scores": { "$ref": "#/definitions/finalScore" },
     "files": { "$ref": "#/definitions/files" },
     "described": { "$ref": "#/definitions/described" },
     "licensed": { "$ref": "#/definitions/licensed" }
@@ -50,6 +51,16 @@
         "revision": {
           "type": "string"
         }
+      }
+    },
+    "finalScore": {
+      "type": "object",
+      "description": "The total effective and tool scores for the definition",
+      "additionalProperties": false,
+      "required": ["effective", "tool"],
+      "properties": {
+        "effective": { "type": "number" },
+        "tool": { "type": "number" }
       }
     },
     "files": {

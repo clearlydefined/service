@@ -16,7 +16,9 @@ const sortOptions = {
   license: 'licensed.declared',
   releaseDate: 'described.releaseDate',
   licensedScore: 'licensed.score.total',
-  describedScore: 'described.score.total'
+  describedScore: 'described.score.total',
+  effectiveScore: 'scores.effective',
+  toolScore: 'scores.tool'
 }
 
 class MongoStore {
@@ -168,8 +170,8 @@ class MongoStore {
     const filter = { '_mongo.page': 1 } // only get page 1 of each definition
     if (parameters.type) filter['coordinates.type'] = parameters.type
     if (parameters.provider) filter['coordinates.provider'] = parameters.provider
-    if (parameters.namespace) filter['coordinates.namespace'] = new RegExp(parameters.namespace, 'i')
-    if (parameters.name) filter['coordinates.name'] = new RegExp(parameters.name, 'i')
+    if (parameters.namespace) filter['coordinates.namespace'] = parameters.namespace
+    if (parameters.name) filter['coordinates.name'] = parameters.name
     if (parameters.type === null) filter['coordinates.type'] = null
     if (parameters.provider === null) filter['coordinates.provider'] = null
     if (parameters.name === null) filter['coordinates.name'] = null
@@ -177,6 +179,10 @@ class MongoStore {
     if (parameters.license) filter['licensed.declared'] = parameters.license
     if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
     if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
+    if (parameters.minEffectiveScore) filter['scores.effective'] = { $gt: parseInt(parameters.minEffectiveScore) }
+    if (parameters.maxEffectiveScore) filter['scores.effective'] = { $lt: parseInt(parameters.maxEffectiveScore) }
+    if (parameters.minToolScore) filter['scores.tool'] = { $gt: parseInt(parameters.minToolScore) }
+    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: parseInt(parameters.maxToolScore) }
     if (parameters.minLicensedScore) filter['licensed.score.total'] = { $gt: parseInt(parameters.minLicensedScore) }
     if (parameters.maxLicensedScore) filter['licensed.score.total'] = { $lt: parseInt(parameters.maxLicensedScore) }
     if (parameters.minDescribedScore) filter['described.score.total'] = { $gt: parseInt(parameters.minDescribedScore) }

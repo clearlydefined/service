@@ -21,9 +21,6 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
-  buildRegistryUrl,
-  buildVersionUrl,
-  buildDownloadUrl,
   isDeclaredLicense,
   simplifyAttributions,
   updateSourceLocation
@@ -34,8 +31,9 @@ const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
 const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
+const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
-const currentSchema = '1.5.1'
+const currentSchema = '1.6.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
@@ -184,18 +182,24 @@ class DefinitionService {
   }
 
   async computeAndStore(coordinates) {
-    const definition = await this.compute(coordinates)
-    // If no tools participated in the creation of the definition then don't bother storing.
-    // Note that curation is a tool so no tools really means there the definition is effectively empty.
-    const tools = get(definition, 'described.tools')
-    if (!tools || tools.length === 0) {
-      this.logger.info('definition not available', { coordinates: coordinates.toString() })
-      this.harvest(coordinates)
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    try {
+      computeLock.set(coordinates.toString(), true)
+      const definition = await this.compute(coordinates)
+      // If no tools participated in the creation of the definition then don't bother storing.
+      // Note that curation is a tool so no tools really means there the definition is effectively empty.
+      const tools = get(definition, 'described.tools')
+      if (!tools || tools.length === 0) {
+        this.logger.info('definition not available', { coordinates: coordinates.toString() })
+        this.harvest(coordinates)
+        return definition
+      }
+      this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
+      await this._store(definition)
       return definition
+    } finally {
+      computeLock.delete(coordinates.toString())
     }
-    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
-    await this._store(definition)
-    return definition
   }
 
   async harvest(coordinates) {
@@ -230,10 +234,11 @@ class DefinitionService {
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
-    await this._ensureToolScores(coordinates, aggregatedDefinition)
+    this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    await this._finalizeDefinition(coordinates, definition)
+    this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
+    this._ensureFinalScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
@@ -261,9 +266,9 @@ class DefinitionService {
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
   // definition so that further curations can be done.
-  async _ensureToolScores(coordinates, definition) {
+  _ensureToolScores(coordinates, definition) {
     const rawDefinition = extend(true, {}, definition)
-    await this._finalizeDefinition(coordinates, rawDefinition)
+    this._finalizeDefinition(coordinates, rawDefinition)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
     set(definition, 'described.toolScore', describedScore)
     set(definition, 'licensed.toolScore', licensedScore)
@@ -275,10 +280,15 @@ class DefinitionService {
     set(definition, 'licensed.score', licensedScore)
   }
 
-  async _finalizeDefinition(coordinates, definition) {
+  _ensureFinalScores(definition) {
+    const { described, licensed } = definition
+    set(definition, 'scores.effective', Math.floor((described.score.total + licensed.score.total) / 2))
+    set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
+  }
+
+  _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    await this._ensureUrls(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -502,14 +512,6 @@ class DefinitionService {
       default:
         return
     }
-  }
-
-  async _ensureUrls(coordinates, definition) {
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = await buildDownloadUrl(coordinates)
-    this._ensureDescribed(definition)
-    definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
 
   _getDefinitionCoordinates(coordinates) {

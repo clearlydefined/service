@@ -127,9 +127,11 @@ describe('Github Curation Service', () => {
       ]
     }
 
-    expect(
+    await expect(
       gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
-    ).to.eventually.be.rejectedWith(Error)
+    ).to.eventually.be.rejectedWith(
+      'The contribution has failed because some of the supplied component definitions do not exist'
+    )
   })
 
   it('create a PR only if all of the definitions exist', async () => {
