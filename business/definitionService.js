@@ -241,6 +241,7 @@ class DefinitionService {
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
     await this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
+    this._ensureFinalScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
@@ -280,6 +281,12 @@ class DefinitionService {
     const { describedScore, licensedScore } = this._computeScores(definition)
     set(definition, 'described.score', describedScore)
     set(definition, 'licensed.score', licensedScore)
+  }
+
+  _ensureFinalScores(definition) {
+    const { described, licensed } = definition
+    set(definition, 'scores.curated', Math.floor((described.score.total + licensed.score.total) / 2))
+    set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
   }
 
   async _finalizeDefinition(coordinates, definition) {

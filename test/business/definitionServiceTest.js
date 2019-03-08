@@ -76,6 +76,8 @@ describe('Definition Service', () => {
     expect(definition.described.toolScore.total).to.eq(0)
     expect(definition.licensed.score.total).to.eq(85)
     expect(definition.licensed.toolScore.total).to.eq(0)
+    expect(definition.scores.curated).to.eq(57) // floor(85+30/2)
+    expect(definition.scores.tool).to.eq(0)
   })
 
   it('lists all coordinates found', async () => {
