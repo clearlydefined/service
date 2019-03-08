@@ -150,6 +150,7 @@ describe('Utils mergeDefinitions', () => {
     utils.mergeDefinitions(base, newDefinition)
     const file = base.files[0]
     expect(file.attributions).to.have.members(['1', '2', '3'])
+    expect(file.license).to.eq('GPL-3.0 AND MIT')
     expect(file.facets).to.have.members(['core', 'dev'])
     expect(file.hashes.sha1).to.eq('1')
     expect(file.hashes.sha256).to.eq('257')
