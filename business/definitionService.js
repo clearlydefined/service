@@ -21,9 +21,6 @@ const {
   setToArray,
   addArrayToSet,
   buildSourceUrl,
-  buildRegistryUrl,
-  buildVersionUrl,
-  buildDownloadUrl,
   isDeclaredLicense,
   simplifyAttributions,
   updateSourceLocation
@@ -237,9 +234,9 @@ class DefinitionService {
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
-    await this._ensureToolScores(coordinates, aggregatedDefinition)
+    this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    await this._finalizeDefinition(coordinates, definition)
+    this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)
     // protect against any element of the compute producing an invalid definition
@@ -269,9 +266,9 @@ class DefinitionService {
 
   // Compute and store the scored for the given definition but do it in a way that does not affect the
   // definition so that further curations can be done.
-  async _ensureToolScores(coordinates, definition) {
+  _ensureToolScores(coordinates, definition) {
     const rawDefinition = extend(true, {}, definition)
-    await this._finalizeDefinition(coordinates, rawDefinition)
+    this._finalizeDefinition(coordinates, rawDefinition)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
     set(definition, 'described.toolScore', describedScore)
     set(definition, 'licensed.toolScore', licensedScore)
@@ -289,10 +286,9 @@ class DefinitionService {
     set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
   }
 
-  async _finalizeDefinition(coordinates, definition) {
+  _finalizeDefinition(coordinates, definition) {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
-    await this._ensureUrls(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
@@ -516,14 +512,6 @@ class DefinitionService {
       default:
         return
     }
-  }
-
-  async _ensureUrls(coordinates, definition) {
-    const registryUrl = buildRegistryUrl(coordinates)
-    const versionUrl = buildVersionUrl(coordinates)
-    const downloadUrl = await buildDownloadUrl(coordinates)
-    this._ensureDescribed(definition)
-    definition.described.urls = { registry: registryUrl, version: versionUrl, download: downloadUrl }
   }
 
   _getDefinitionCoordinates(coordinates) {
