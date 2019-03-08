@@ -53,6 +53,16 @@
         }
       }
     },
+    "finalScore": {
+      "type": "object",
+      "description": "The total effective and tool scores for the definition",
+      "additionalProperties": false,
+      "required": ["effective", "tool"],
+      "properties": {
+        "effective": { "type": "number" },
+        "tool": { "type": "number" }
+      }
+    },
     "files": {
       "type": "array",
       "items": {
@@ -141,16 +151,6 @@
             "type": "string"
           }
         }
-      }
-    },
-    "finalScore": {
-      "type": "object",
-      "description": "The total scores for the definition",
-      "additionalProperties": false,
-      "required": ["curated", "tool"],
-      "properties": {
-        "curated": { "type": "number" },
-        "tool": { "type": "number" }
       }
     },
     "describedScore": {

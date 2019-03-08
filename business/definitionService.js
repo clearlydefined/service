@@ -285,7 +285,7 @@ class DefinitionService {
 
   _ensureFinalScores(definition) {
     const { described, licensed } = definition
-    set(definition, 'scores.curated', Math.floor((described.score.total + licensed.score.total) / 2))
+    set(definition, 'scores.effective', Math.floor((described.score.total + licensed.score.total) / 2))
     set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
   }
 

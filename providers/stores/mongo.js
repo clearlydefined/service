@@ -16,7 +16,9 @@ const sortOptions = {
   license: 'licensed.declared',
   releaseDate: 'described.releaseDate',
   licensedScore: 'licensed.score.total',
-  describedScore: 'described.score.total'
+  describedScore: 'described.score.total',
+  effectiveScore: 'scores.effective',
+  toolScore: 'scores.tool'
 }
 
 class MongoStore {
@@ -177,6 +179,10 @@ class MongoStore {
     if (parameters.license) filter['licensed.declared'] = parameters.license
     if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
     if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
+    if (parameters.minEffectiveScore) filter['scores.effective'] = { $gt: parseInt(parameters.minEffectiveScore) }
+    if (parameters.maxEffectiveScore) filter['scores.effective'] = { $lt: parseInt(parameters.maxEffectiveScore) }
+    if (parameters.minToolScore) filter['scores.tool'] = { $gt: parseInt(parameters.minToolScore) }
+    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: parseInt(parameters.maxToolScore) }
     if (parameters.minLicensedScore) filter['licensed.score.total'] = { $gt: parseInt(parameters.minLicensedScore) }
     if (parameters.maxLicensedScore) filter['licensed.score.total'] = { $lt: parseInt(parameters.maxLicensedScore) }
     if (parameters.minDescribedScore) filter['described.score.total'] = { $gt: parseInt(parameters.minDescribedScore) }

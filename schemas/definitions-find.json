@@ -47,6 +47,30 @@
         "type": "releasedBefore must be a string"
       }
     },
+    "minEffectiveScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "minEffectiveScore must be a number"
+      }
+    },
+    "maxEffectiveScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "maxEffectiveScore must be a number"
+      }
+    },
+    "minToolScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "minToolScore must be a number"
+      }
+    },
+    "maxToolScore": {
+      "type": "number",
+      "errorMessage": {
+        "type": "maxToolScore must be a number"
+      }
+    },
     "minLicensedScore": {
       "type": "number",
       "errorMessage": {
@@ -72,7 +96,18 @@
       }
     },
     "sort": {
-      "enum": ["type", "provider", "name", "namespace", "license", "releaseDate", "licensedScore", "describedScore"],
+      "enum": [
+        "type",
+        "provider",
+        "name",
+        "namespace",
+        "license",
+        "releaseDate",
+        "licensedScore",
+        "describedScore",
+        "effectiveScore",
+        "toolScore"
+      ],
       "type": "string",
       "errorMessage": {
         "type": "sort must be a string"
