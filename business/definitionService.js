@@ -33,7 +33,7 @@ const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
-const currentSchema = '1.5.1'
+const currentSchema = '1.6.0'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
