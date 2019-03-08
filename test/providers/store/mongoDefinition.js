@@ -114,7 +114,11 @@ describe('Mongo Definition store', () => {
       [{ minLicensedScore: 50 }, { '_mongo.page': 1, 'licensed.score.total': { $gt: 50 } }],
       [{ maxLicensedScore: 50 }, { '_mongo.page': 1, 'licensed.score.total': { $lt: 50 } }],
       [{ minDescribedScore: 50 }, { '_mongo.page': 1, 'described.score.total': { $gt: 50 } }],
-      [{ maxDescribedScore: 50 }, { '_mongo.page': 1, 'described.score.total': { $lt: 50 } }]
+      [{ maxDescribedScore: 50 }, { '_mongo.page': 1, 'described.score.total': { $lt: 50 } }],
+      [{ minEffectiveScore: 50 }, { '_mongo.page': 1, 'scores.effective': { $gt: 50 } }],
+      [{ maxEffectiveScore: 50 }, { '_mongo.page': 1, 'scores.effective': { $lt: 50 } }],
+      [{ minToolScore: 50 }, { '_mongo.page': 1, 'scores.tool': { $gt: 50 } }],
+      [{ maxToolScore: 50 }, { '_mongo.page': 1, 'scores.tool': { $lt: 50 } }]
     ])
     data.forEach((expected, input) => {
       expect(store._buildQuery(input)).to.deep.equal(expected)
@@ -145,7 +149,9 @@ describe('Mongo Definition store', () => {
       [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1 }],
       [{ sort: 'releaseDate' }, { 'described.releaseDate': 1 }],
       [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1 }],
-      [{ sort: 'describedScore' }, { 'described.score.total': 1 }]
+      [{ sort: 'describedScore' }, { 'described.score.total': 1 }],
+      [{ sort: 'effectiveScore' }, { 'scores.effective': 1 }],
+      [{ sort: 'toolScore' }, { 'scores.tool': 1 }]
     ])
     data.forEach((expected, input) => {
       expect(store._buildSort(input)).to.deep.equal(expected)
