@@ -88,44 +88,56 @@ describe('ClearlyDescribedSummarizer add files', () => {
 })
 
 describe('ClearlyDescribedSummarizer addCrateData', () => {
+  const crateTestCoordinates = EntityCoordinates.fromString('crate/cratesio/-/test/1.0')
   it('declares license from registryData', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { license: 'MIT' } })
+    summarizer.addCrateData(result, { registryData: { license: 'MIT' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
   it('declares dual license from registryData', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { license: 'MIT/Apache-2.0' } })
+    summarizer.addCrateData(result, { registryData: { license: 'MIT/Apache-2.0' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
   })
 
   it('normalizes to spdx only', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { license: 'Garbage' } })
+    summarizer.addCrateData(result, { registryData: { license: 'Garbage' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
   it('normalizes to spdx only with slashes', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } })
+    summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
   it('decribes projectWebsite from manifest', () => {
     let result = {}
-    summarizer.addCrateData(result, { manifest: { homepage: 'https://github.com/owner/repo' } })
+    summarizer.addCrateData(result, { manifest: { homepage: 'https://github.com/owner/repo' } }, crateTestCoordinates)
     assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
   })
 
   it('decribes releaseDate from registryData', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { created_at: '2018-06-01T21:41:57.990052+00:00' } })
+    summarizer.addCrateData(
+      result,
+      { registryData: { created_at: '2018-06-01T21:41:57.990052+00:00' } },
+      crateTestCoordinates
+    )
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
 })
 
 describe('ClearlyDescribedSummarizer addNpmData', () => {
+  const npmTestCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+  const expectedUrls = {
+    download: 'https://registry.npmjs.com/test/-/test-1.0.tgz',
+    registry: 'https://npmjs.com/package/test',
+    version: 'https://npmjs.com/package/test/v/1.0'
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest', () => {
     // prettier-ignore
     const data = {
@@ -140,17 +152,25 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
 
     for (let license of Object.keys(data)) {
       let result = {}
-      summarizer.addNpmData(result, { registryData: { manifest: { license: license } } })
-      if (data[license]) assert.deepEqual(result, { licensed: { declared: data[license] } })
-      else assert.deepEqual(result, {})
+      summarizer.addNpmData(result, { registryData: { manifest: { license: license } } }, npmTestCoordinates)
+      if (data[license])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[license] }
+        })
+      else assert.deepEqual(result, expectedResult)
     }
 
     // should work in the type field as well
     for (let license of Object.keys(data)) {
       let result = {}
-      summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } })
-      if (data[license]) assert.deepEqual(result, { licensed: { declared: data[license] } })
-      else assert.deepEqual(result, {})
+      summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
+      if (data[license])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[license] }
+        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -166,51 +186,109 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
     for (let date of Object.keys(data)) {
       let result = {}
-      summarizer.addNpmData(result, { registryData: { releaseDate: date } })
-      assert.deepEqual(result, { described: { releaseDate: data[date] } })
+      summarizer.addNpmData(result, { registryData: { releaseDate: date } }, npmTestCoordinates)
+      assert.deepEqual(result, {
+        described: {
+          releaseDate: data[date],
+          urls: expectedUrls
+        }
+      })
     }
   })
 
   it('should set projectWebsite', () => {
     let result = {}
-    summarizer.addNpmData(result, { registryData: { manifest: { homepage: 'https://github.com/project/repo' } } })
-    assert.deepEqual(result, { described: { projectWebsite: 'https://github.com/project/repo' } })
+    summarizer.addNpmData(
+      result,
+      { registryData: { manifest: { homepage: 'https://github.com/project/repo' } } },
+      npmTestCoordinates
+    )
+    assert.deepEqual(result, {
+      described: {
+        urls: expectedUrls,
+        projectWebsite: 'https://github.com/project/repo'
+      }
+    })
   })
 
   it('should set issueTracker if it is http', () => {
     let result = {}
-    summarizer.addNpmData(result, { registryData: { manifest: { bugs: 'https://github.com/project/repo/issues' } } })
-    assert.deepEqual(result, { described: { issueTracker: 'https://github.com/project/repo/issues' } })
+    summarizer.addNpmData(
+      result,
+      { registryData: { manifest: { bugs: 'https://github.com/project/repo/issues' } } },
+      npmTestCoordinates
+    )
+    assert.deepEqual(result, {
+      described: {
+        urls: expectedUrls,
+        issueTracker: 'https://github.com/project/repo/issues'
+      }
+    })
 
     let resul2 = {}
-    summarizer.addNpmData(resul2, { registryData: { manifest: { bugs: 'nothttps://github.com/project/repo/issues' } } })
-    assert.deepEqual(resul2, {})
+    summarizer.addNpmData(
+      resul2,
+      { registryData: { manifest: { bugs: 'nothttps://github.com/project/repo/issues' } } },
+      npmTestCoordinates
+    )
+    assert.deepEqual(resul2, expectedResult)
   })
 
   it('should set issueTracker if it is url or email', () => {
     let result = {}
-    summarizer.addNpmData(result, {
-      registryData: { manifest: { bugs: { url: 'https://github.com/project/repo/issues', email: 'bugs@project.com' } } }
+    summarizer.addNpmData(
+      result,
+      {
+        registryData: {
+          manifest: { bugs: { url: 'https://github.com/project/repo/issues', email: 'bugs@project.com' } }
+        }
+      },
+      npmTestCoordinates
+    )
+    assert.deepEqual(result, {
+      described: {
+        urls: expectedUrls,
+        issueTracker: 'https://github.com/project/repo/issues'
+      }
     })
-    assert.deepEqual(result, { described: { issueTracker: 'https://github.com/project/repo/issues' } })
 
     let result2 = {}
-    summarizer.addNpmData(result2, { registryData: { manifest: { bugs: { email: 'bugs@project.com' } } } })
-    assert.deepEqual(result2, { described: { issueTracker: 'bugs@project.com' } })
+    summarizer.addNpmData(
+      result2,
+      { registryData: { manifest: { bugs: { email: 'bugs@project.com' } } } },
+      npmTestCoordinates
+    )
+    assert.deepEqual(result2, {
+      described: {
+        urls: expectedUrls,
+        issueTracker: 'bugs@project.com'
+      }
+    })
   })
 
   it('should not set issueTracker if it is not http', () => {})
 
   it('should return if no registry data', () => {
     let result = {}
-    summarizer.addNpmData(result, {})
+    summarizer.addNpmData(result, {}, npmTestCoordinates)
     assert.deepEqual(result, {})
-    summarizer.addNpmData(result, { registryData: {} })
-    assert.deepEqual(result, {})
+    summarizer.addNpmData(result, { registryData: {} }, npmTestCoordinates)
+    assert.deepEqual(result, expectedResult)
   })
 })
 
 describe('ClearlyDescribedSummarizer addNuGetData', () => {
+  const nugetTestCoordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
+  const expectedUrls = {
+    registry: 'https://nuget.org/packages/test',
+    version: 'https://nuget.org/packages/test/1.0',
+    download: 'https://nuget.org/api/v2/package/test/1.0'
+  }
+  const expectedResult = {
+    described: {
+      urls: expectedUrls
+    }
+  }
   it('should set declared license from manifest licenseExpression', () => {
     // prettier-ignore
     const data = {
@@ -226,9 +304,13 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
 
     for (let licenseExpression of Object.keys(data)) {
       let result = {}
-      summarizer.addNuGetData(result, { manifest: { licenseExpression } })
-      if (data[licenseExpression]) assert.deepEqual(result, { licensed: { declared: data[licenseExpression] } })
-      else assert.deepEqual(result, {})
+      summarizer.addNuGetData(result, { manifest: { licenseExpression } }, nugetTestCoordinates)
+      if (data[licenseExpression])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[licenseExpression] }
+        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -245,14 +327,24 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
 
     for (let licenseUrl of Object.keys(data)) {
       let result = {}
-      summarizer.addNuGetData(result, { manifest: { licenseUrl } })
-      if (data[licenseUrl]) assert.deepEqual(result, { licensed: { declared: data[licenseUrl] } })
-      else assert.deepEqual(result, {})
+      summarizer.addNuGetData(result, { manifest: { licenseUrl } }, nugetTestCoordinates)
+      if (data[licenseUrl])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[licenseUrl] }
+        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 })
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
+  const expectedUrls = {
+    download: 'http://central.maven.org/maven2/org/io.clearlydefined/test/1.0/test-1.0.jar',
+    registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
+    version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT',
@@ -265,9 +357,17 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 
     for (let url of Object.keys(data)) {
       let result = {}
-      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } })
-      if (data[url]) assert.deepEqual(result, { licensed: { declared: data[url] } })
-      else assert.deepEqual(result, {})
+      summarizer.addMavenData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinates
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[url] }
+        })
+      else assert.deepEqual(result, expectedResult)
     }
   })
 
@@ -287,9 +387,15 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 
     data.forEach((expected, licenses) => {
       let result = {}
-      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } })
-      if (expected) assert.deepEqual(result, { licensed: { declared: expected } })
-      else assert.deepEqual(result, {})
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinates)
+      if (expected)
+        assert.deepEqual(result, {
+          described: {
+            urls: expectedUrls
+          },
+          licensed: { declared: expected }
+        })
+      else assert.deepEqual(result, expectedResult)
     })
   })
 })

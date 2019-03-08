@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, set, isArray, uniq, cloneDeep, flatten } = require('lodash')
+const { get, set, isArray, uniq, cloneDeep, flatten, find } = require('lodash')
 const SPDX = require('../../lib/spdx')
 const {
   extractDate,
@@ -29,29 +29,32 @@ class ClearlyDescribedSummarizer {
     this.addInterestingFiles(result, data, coordinates)
     this.addLicenseFromFiles(result, data, coordinates)
     switch (coordinates.type) {
+      case 'git':
+        this.addGitData(result, data, coordinates)
+        break
       case 'npm':
-        this.addNpmData(result, data)
+        this.addNpmData(result, data, coordinates)
         break
       case 'crate':
-        this.addCrateData(result, data)
+        this.addCrateData(result, data, coordinates)
         break
       case 'maven':
-        this.addMavenData(result, data)
+        this.addMavenData(result, data, coordinates)
         break
       case 'sourcearchive':
-        this.addSourceArchiveData(result, data)
+        this.addSourceArchiveData(result, data, coordinates)
         break
       case 'nuget':
-        this.addNuGetData(result, data)
+        this.addNuGetData(result, data, coordinates)
         break
       case 'gem':
-        this.addGemData(result, data)
+        this.addGemData(result, data, coordinates)
         break
       case 'pod':
-        this.addPodData(result, data)
+        this.addPodData(result, data, coordinates)
         break
       case 'pypi':
-        this.addPyPiData(result, data)
+        this.addPyPiData(result, data, coordinates)
         break
       default:
     }
@@ -121,8 +124,21 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
-  addMavenData(result, data) {
+  addMavenData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
+        coordinates.name
+      }-${coordinates.revision}.jar`
+    )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -134,24 +150,51 @@ class ClearlyDescribedSummarizer {
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
 
-  addCrateData(result, data) {
+  addCrateData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
     const license = get(data, 'registryData.license')
     if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
+    setIfValue(result, 'described.urls.registry', `https://crates.io/crates/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://crates.io/api/v1/crates/${coordinates.name}/${coordinates.revision}/download`
+    )
   }
 
-  addSourceArchiveData(result, data) {
+  addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
+        coordinates.name
+      }-${coordinates.revision}.jar`
+    )
   }
 
-  addNuGetData(result, data) {
+  addNuGetData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const licenseExpression = SPDX.normalize(get(data, 'manifest.licenseExpression'))
     const licenseUrl = get(data, 'manifest.licenseUrl')
     if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
     else if (licenseUrl && licenseUrl.trim())
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
+    setIfValue(result, 'described.urls.registry', `https://nuget.org/packages/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://nuget.org/api/v2/package/${coordinates.name}/${coordinates.revision}`
+    )
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
@@ -161,9 +204,24 @@ class ClearlyDescribedSummarizer {
     mergeDefinitions(result, newDefinition)
   }
 
-  addNpmData(result, data) {
+  addNpmData(result, data, coordinates) {
     if (!data.registryData) return
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://npmjs.com/package/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }`
+    )
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://registry.npmjs.com/${coordinates.name}/${coordinates.namespace ? coordinates.namespace : '-'}/${
+        coordinates.name
+      }-${coordinates.revision}.tgz`
+    )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
     let homepage = manifest.homepage
@@ -181,16 +239,30 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', license)
   }
 
-  addPodData(result, data) {
+  addPodData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.homepage'))
     const license = get(data, 'registryData.license')
     if (license) {
       setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))
     }
+
+    setIfValue(result, 'described.urls.registry', `https://cocoapods.org/pods/${coordinates.name}`)
+    const httpSource = get(data, 'registryData.source.http')
+    const gitSource = get(data, 'registryData.source.git')
+    if (httpSource) {
+      setIfValue(result, 'described.urls.download', httpSource)
+    } else if (gitSource) {
+      const homepage = get(data, 'registryData.homepage')
+      const revision = get(data, 'registryData.sourceInfo.revision')
+      if (homepage && revision) {
+        setIfValue(result, 'described.urls.version', `${homepage}/tree/${revision}`)
+        setIfValue(result, 'described.urls.download', `${homepage}/archive/${revision}.zip`)
+      }
+    }
   }
 
-  addGemData(result, data) {
+  addGemData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const license = SPDX.normalize(get(data, 'registryData.license'))
     if (license) set(result, 'licensed.declared', license)
@@ -198,11 +270,45 @@ class ClearlyDescribedSummarizer {
       const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
+    setIfValue(result, 'described.urls.registry', `https://rubygems.org/gems/${coordinates.name}`)
+    setIfValue(
+      result,
+      'described.urls.version',
+      `${get(result, 'described.urls.registry')}/versions/${coordinates.revision}`
+    )
+    setIfValue(
+      result,
+      'described.urls.download',
+      `https://rubygems.org/downloads/${coordinates.name}-${coordinates.revision}.gem`
+    )
   }
 
-  addPyPiData(result, data) {
+  addPyPiData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data.declaredLicense)
+    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
+    // TODO: we are currently picking the first url that contains a tar.gz extension
+    // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
+    const releases = get(data, 'registryData.releases')
+    const revision = find(releases[coordinates.revision], revision => revision.filename.includes('tar.gz'))
+    setIfValue(result, 'described.urls.download', revision.url)
+  }
+
+  addGitData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.registry', `https://github.com/${coordinates.namespace}/${coordinates.name}`)
+    setIfValue(
+      result,
+      'described.urls.version',
+      `${get(result, 'described.urls.registry')}/tree/${coordinates.revision}`
+    )
+    setIfValue(
+      result,
+      'described.urls.download',
+      `${get(result, 'described.urls.registry')}/archive/${coordinates.revision}.zip`
+    )
   }
 }
 
