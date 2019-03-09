@@ -293,7 +293,7 @@ class ClearlyDescribedSummarizer {
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
     const releases = get(data, 'registryData.releases')
     const revision = find(releases[coordinates.revision], revision => revision.filename.includes('tar.gz'))
-    setIfValue(result, 'described.urls.download', revision.url)
+    if (revision) setIfValue(result, 'described.urls.download', revision.url)
   }
 
   addGitData(result, data, coordinates) {
