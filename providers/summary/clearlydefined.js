@@ -289,10 +289,13 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
-    // TODO: we are currently picking the first url that contains a tar.gz extension
+    // TODO: we are currently picking the first url that contains a tar.gz or zip extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
     const releases = get(data, 'registryData.releases')
-    const revision = find(releases[coordinates.revision], revision => revision.filename.includes('tar.gz'))
+    const revision = find(
+      releases[coordinates.revision],
+      revision => revision.filename.includes('tar.gz') || revision.filename.includes('zip')
+    )
     if (revision) setIfValue(result, 'described.urls.download', revision.url)
   }
 
