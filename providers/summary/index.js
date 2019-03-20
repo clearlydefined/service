@@ -5,6 +5,7 @@ module.exports = {
   licensee: require('./licensee'),
   scancode: require('./scancode'),
   fossology: require('./fossology'),
+  docker: require('./docker'),
   clearlydefined: require('./clearlydefined'),
   cdsource: require('./cdsource')
 }
