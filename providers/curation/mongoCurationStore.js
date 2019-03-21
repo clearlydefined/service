@@ -54,6 +54,15 @@ class MongoCurationStore {
   }
 
   /**
+   * Retrieve the curation by coordinates
+   * @param {EntityCoordinates} coordinates
+   * @returns the Curations found if any
+   */
+  getCuration(coordinates) {
+    return this.collection.findOne({ _id: this._getCurationId(coordinates.asRevisionless()) })
+  }
+
+  /**
    * Update the contribution entry for the given PR and record the associated curations -- the
    * actual file content in the PR. If the curations are not provided, just the PR data is updated,
    * any existing curation data is preserved.

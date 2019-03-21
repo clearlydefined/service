@@ -287,17 +287,13 @@ ${this._formatDefinitions(patch.patches)}`
    */
   async _getCurations(coordinates, pr = null) {
     // Check to see if there is content for the given coordinates
-    const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
-    const branch = await this._getBranchAndSha(pr)
-    const branchName = branch.sha || branch.ref
-    const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branchName}/${path}`
-    const content = await requestPromise({ url, method: 'HEAD', resolveWithFullResponse: true, simple: false })
-    if (content.statusCode !== 200) return null
+    const curation = await this.store.getCuration(coordinates)
+    if (!get(curation, `revisions['${coordinates.revision}']`)) return null
     // If there is content, go and get it. This is a little wasteful (two calls) but
     // a) the vast majority of coordinates will not have any curation
     // b) we need the sha of the curation to form part of the final definition tool chain
     // At some point in the future we can look at caching and etags etc
+    const branch = await this._getBranchAndSha(pr)
     return this._getFullContent(coordinates, branch.ref)
   }
 

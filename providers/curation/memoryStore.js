@@ -25,6 +25,10 @@ class MemoryStore {
     return this.contributions[prNumber]
   }
 
+  getCuration(coordinates) {
+    return this.curations[this._getCurationId(coordinates)]
+  }
+
   updateContribution(pr, curations = null) {
     if (curations) {
       const files = {}
