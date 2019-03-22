@@ -286,26 +286,20 @@ ${this._formatDefinitions(patch.patches)}`
    * indicating the sha of the commit for the curations if that info is available.
    */
   async _getCurations(coordinates, pr = null) {
-    try {
-      const path = this._getCurationPath(coordinates)
-      const { owner, repo } = this.options
-      const smartGit = geit(`https://github.com/${owner}/${repo}.git`)
-      const tree = await smartGit.tree(pr ? `refs/pull/${pr}/head` : this.options.branch)
-      const treePath = flatMap(path.split('/'), (current, i, original) =>
-        original.length - 1 != i ? [current, 'children'] : current
-      )
-      const blob = get(tree, treePath)
-      if (!blob) return null
-      const data = await smartGit.blob(blob.object)
-      const content = yaml.safeLoad(data.toString())
-      // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-      Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
-      return content
-    } catch (error) {
-      // TODO: This isn't very safe how it is because any failure will return an empty object,
-      // ideally we only do this if the .yaml file doesn't exist.
-      return null
-    }
+    const path = this._getCurationPath(coordinates)
+    const { owner, repo } = this.options
+    const smartGit = geit(`https://github.com/${owner}/${repo}.git`)
+    const tree = await smartGit.tree(pr ? `refs/pull/${pr}/head` : this.options.branch)
+    const treePath = flatMap(path.split('/'), (current, i, original) =>
+      original.length - 1 != i ? [current, 'children'] : current
+    )
+    const blob = get(tree, treePath)
+    if (!blob) return null
+    const data = await smartGit.blob(blob.object)
+    const content = yaml.safeLoad(data.toString())
+    // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
+    Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
+    return content
   }
 
   /**
