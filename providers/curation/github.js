@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap } = require('lodash')
 const base64 = require('base-64')
 const moment = require('moment')
-const requestPromise = require('request-promise-native')
+const geit = require('geit')
 const yaml = require('js-yaml')
 const throat = require('throat')
 const Github = require('../../lib/github')
@@ -286,42 +286,26 @@ ${this._formatDefinitions(patch.patches)}`
    * indicating the sha of the commit for the curations if that info is available.
    */
   async _getCurations(coordinates, pr = null) {
-    // Check to see if there is content for the given coordinates
-    const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
-    const branch = await this._getBranchAndSha(pr)
-    const branchName = branch.sha || branch.ref
-    const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branchName}/${path}`
-    const content = await requestPromise({ url, method: 'HEAD', resolveWithFullResponse: true, simple: false })
-    if (content.statusCode !== 200) return null
-    // If there is content, go and get it. This is a little wasteful (two calls) but
-    // a) the vast majority of coordinates will not have any curation
-    // b) we need the sha of the curation to form part of the final definition tool chain
-    // At some point in the future we can look at caching and etags etc
-    return this._getFullContent(coordinates, branch.ref)
-  }
-
-  async _getFullContent(coordinates, ref) {
-    const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
     try {
-      const contentResponse = await this.github.repos.getContent({ owner, repo, ref, path })
-      const content = yaml.safeLoad(base64.decode(contentResponse.data.content))
+      const path = this._getCurationPath(coordinates)
+      const { owner, repo } = this.options
+      const smartGit = geit(`https://github.com/${owner}/${repo}.git`)
+      const tree = await smartGit.tree(pr ? `refs/pull/${pr}/head` : this.options.branch)
+      const treePath = flatMap(path.split('/'), (current, i, original) =>
+        original.length - 1 != i ? [current, 'children'] : current
+      )
+      const blob = get(tree, treePath)
+      if (!blob) return null
+      const data = await smartGit.blob(blob.object)
+      const content = yaml.safeLoad(data.toString())
       // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
-      Object.defineProperty(content, '_origin', { value: { sha: contentResponse.data.sha }, enumerable: false })
+      Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
       return content
     } catch (error) {
       // TODO: This isn't very safe how it is because any failure will return an empty object,
       // ideally we only do this if the .yaml file doesn't exist.
       return null
     }
-  }
-
-  async _getBranchAndSha(number) {
-    if (!number) return { ref: this.options.branch }
-    const { owner, repo } = this.options
-    const result = await this.github.pullRequests.get({ owner, repo, number })
-    return { ref: result.data.head.ref, sha: result.data.head.sha }
   }
 
   /**
