@@ -61,6 +61,13 @@ describe('Nomos summarizer', () => {
   })
 })
 
+it('does not apply See-file license detection', () => {
+  const { coordinates, harvested } = setup([buildNomosFile('foo.txt', 'See-file')])
+  const summary = Summarizer().summarize(coordinates, harvested)
+  validate(summary)
+  expect(summary.files).to.deep.eq([{ path: 'foo.txt' }])
+})
+
 describe('Monk summarizer', () => {
   it('gets all the per file license info', () => {
     const { coordinates, harvested } = setup([buildMonkFile('foo.txt', 'MIT'), buildMonkFile('bar.txt', 'GPL-3.0')])
