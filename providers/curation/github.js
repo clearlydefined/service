@@ -288,8 +288,8 @@ ${this._formatDefinitions(patch.patches)}`
   async _getCurations(coordinates, pr = null) {
     const path = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
-    const smartGit = geit(`https://github.com/${owner}/${repo}.git`)
-    const tree = await smartGit.tree(pr ? `refs/pull/${pr}/head` : this.options.branch)
+    const smartGit = geit(`https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.git`)
+    const tree = await smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
     const treePath = flatMap(path.split('/'), (current, i, original) =>
       original.length - 1 != i ? [current, 'children'] : current
     )
