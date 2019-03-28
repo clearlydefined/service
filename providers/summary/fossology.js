@@ -5,6 +5,8 @@ const { mergeDefinitions, setIfValue, isLicenseFile } = require('../../lib/utils
 const SPDX = require('../../lib/spdx')
 const { get, uniq } = require('lodash')
 
+const noOpLicenseIds = new Set(['No_license_found', 'See-file'])
+
 class FOSSologySummarizer {
   constructor(options) {
     this.options = options
@@ -40,7 +42,7 @@ class FOSSologySummarizer {
         const match = /^File (.*?) contains license\(s\) (.*?)$/.exec(file)
         if (!match) return null
         const [, path, rawLicense] = match
-        const license = rawLicense !== 'No_license_found' ? SPDX.normalize(rawLicense) : null
+        const license = noOpLicenseIds.has(rawLicense) ? null : SPDX.normalize(rawLicense)
         if (path && license) return { path, license }
         if (path) return { path }
       })
