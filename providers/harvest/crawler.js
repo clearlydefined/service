@@ -16,13 +16,13 @@ class CrawlingHarvester {
     }
     const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
       return {
-        type: entry.tool,
+        type: entry.tool || 'component',
         url: `cd:/${entry.coordinates}`,
         policy: entry.policy
       }
     })
     return requestPromise({
-      url: `${this.options.url}/requests`,
+      url: `${this.options.url}/requests/later`,
       method: 'POST',
       body,
       headers,

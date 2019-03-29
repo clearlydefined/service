@@ -38,9 +38,8 @@ const currentSchema = '1.6.0'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
+  constructor(harvestStore, summary, aggregator, curation, store, search, cache) {
     this.harvestStore = harvestStore
-    this.harvestService = harvestService
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
@@ -191,7 +190,6 @@ class DefinitionService {
       const tools = get(definition, 'described.tools')
       if (!tools || tools.length === 0) {
         this.logger.info('definition not available', { coordinates: coordinates.toString() })
-        this.harvest(coordinates)
         return definition
       }
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
@@ -199,17 +197,6 @@ class DefinitionService {
       return definition
     } finally {
       computeLock.delete(coordinates.toString())
-    }
-  }
-
-  async harvest(coordinates) {
-    try {
-      await this.harvestService.harvest({ tool: 'component', coordinates })
-    } catch (error) {
-      this.logger.info('failed to harvest from definition service', {
-        crawlerError: error,
-        coordinates: coordinates.toString()
-      })
     }
   }
 
@@ -525,5 +512,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)
+module.exports = (harvestStore, summary, aggregator, curation, store, search, cache) =>
+  new DefinitionService(harvestStore, summary, aggregator, curation, store, search, cache)
