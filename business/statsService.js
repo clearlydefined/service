@@ -51,9 +51,8 @@ class StatsService {
     return result['@odata.count']
   }
 
-  async _getType(type) {
-    const result = await this.definitionService.average({ type }, ['licensed.score.total', 'described.score.total'])
-    return result
+  async _getType() {
+    return 0
   }
 
   _getCacheKey(stat) {

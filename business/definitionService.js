@@ -155,10 +155,6 @@ class DefinitionService {
     return this.definitionStore.find(query, query.continuationToken)
   }
 
-  average(query, fields) {
-    return this.definitionStore.average(query, fields)
-  }
-
   /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
