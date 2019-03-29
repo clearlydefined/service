@@ -5,6 +5,7 @@ const throat = require('throat')
 const {
   get,
   set,
+  sortedUniq,
   omit,
   remove,
   pullAllWith,
