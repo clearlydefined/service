@@ -18,7 +18,8 @@ async function getDefinition(request, response) {
   const pr = request.params.pr
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
-  const result = await definitionService.get(coordinates, pr, force)
+  const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
+  const result = await definitionService.get(coordinates, pr, force, expand)
   response.status(200).send(result)
 }
 
@@ -68,7 +69,8 @@ async function listDefinitions(request, response) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
-  const result = await definitionService.getAll(coordinatesList, force)
+  const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
+  const result = await definitionService.getAll(coordinatesList, force, expand)
   response.send(result)
 }
 
