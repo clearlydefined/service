@@ -53,21 +53,13 @@ const defaultCurations = {
   'npm/npmjs/-/test': complexCuration()
 }
 
-let Service
 describe('Curation service pr events', () => {
-  beforeEach(function() {
-    const requestStub = () => {
-      return Promise.resolve({ statusCode: 200 })
-    }
-    Service = proxyquire('../../../providers/curation/github', { 'request-promise-native': requestStub })
-  })
-
   afterEach(function() {
     sandbox.restore()
   })
 
   it('handles open', async () => {
-    const service = createService()
+    const service = createService({})
     await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -80,7 +72,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles update', async () => {
-    const service = createService()
+    const service = createService({})
     await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -93,7 +85,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles merge', async () => {
-    const service = createService()
+    const service = createService({})
     await service.updateContribution(prs[12])
 
     const updateSpy = service.store.updateContribution
@@ -121,7 +113,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles close', async () => {
-    const service = createService()
+    const service = createService({})
     await service.updateContribution(prs[12])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -132,7 +124,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles list', async () => {
-    const service = createService()
+    const service = createService({})
     service.store.curations = defaultCurations
     const list = await service.list(EntityCoordinates.fromString('npm/npmjs'))
     const listSpy = service.store.list
@@ -147,7 +139,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles failure to compute one definition of multiple', async () => {
-    const service = createService()
+    const service = createService({})
     await service.updateContribution(prs[13])
 
     const updateSpy = service.store.updateContribution
@@ -172,9 +164,92 @@ describe('Curation service pr events', () => {
     expect(computeSpy.calledTwice).to.be.true
     expect(computeSpy.args[0][0]).to.be.deep.equal({ ...complexCuration('foo').coordinates, revision: '1.0' })
   })
+
+  it('gets null curation if blob does not exist', async () => {
+    const service = createService({
+      geitStubOverride: () => {
+        return {
+          tree: ref => {
+            expect(ref).to.eq('branch')
+            return Promise.resolve()
+          },
+          blob: () => Promise.resolve(new Buffer())
+        }
+      }
+    })
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
+    const content = await service._getCurations(coordinates)
+    expect(content).to.be.null
+  })
+
+  it('getCuration should access tree with children', async () => {
+    const theYaml = `coordinates:
+  name: test
+  provider: npmjs
+  type: npm
+revisions:
+  thisisasha:
+    licensed:
+      declared: MIT
+`
+    const service = createService({
+      geitStubOverride: () => {
+        return {
+          tree: ref => {
+            expect(ref).to.eq('branch')
+            return Promise.resolve({
+              curations: {
+                children: {
+                  npm: {
+                    children: { npmjs: { children: { '-': { children: { 'test.yaml': { object: 'thisisasha' } } } } } }
+                  }
+                }
+              }
+            })
+          },
+          blob: ref => {
+            expect(ref).to.eq('thisisasha')
+            return Promise.resolve(new Buffer(theYaml))
+          }
+        }
+      }
+    })
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
+    const content = await service._getCurations(coordinates)
+    expect(content).to.deep.eq({
+      coordinates: {
+        type: 'npm',
+        name: 'test',
+        provider: 'npmjs'
+      },
+      revisions: {
+        thisisasha: {
+          licensed: { declared: 'MIT' }
+        }
+      }
+    })
+    expect(content._origin.sha).to.eq('thisisasha')
+  })
+
+  it('getCurations should use pr ref', async () => {
+    const service = createService({
+      geitStubOverride: () => {
+        return {
+          tree: ref => {
+            expect(ref).to.eq('refs/pull/123/head')
+            return Promise.resolve()
+          },
+          blob: () => Promise.resolve(new Buffer())
+        }
+      }
+    })
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
+    const content = await service._getCurations(coordinates, 123)
+    expect(content).to.be.null
+  })
 })
 
-function createService(failsCompute = false) {
+function createService({ failsCompute = false, geitStubOverride = null }) {
   const store = CurationStore({})
   sinon.spy(store, 'updateContribution')
   sinon.spy(store, 'updateCurations')
@@ -188,8 +263,16 @@ function createService(failsCompute = false) {
     set: sinon.stub(),
     delete: sinon.stub()
   }
-  const service = Service(
-    { owner: 'foobar', repo: 'foobar', branch: 'foobar', token: 'foobar' },
+  const geitStub =
+    geitStubOverride ||
+    (() => {
+      return {
+        tree: () => Promise.resolve(),
+        blob: () => Promise.resolve(new Buffer())
+      }
+    })
+  const service = proxyquire('../../../providers/curation/github', { geit: geitStub })(
+    { owner: 'owner', repo: 'repo', branch: 'branch', token: 'token' },
     store,
     { website: 'http://localhost:3000' },
     definitionService,
