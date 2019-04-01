@@ -50,7 +50,6 @@ function createApp(config) {
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
-    harvestService,
     summaryService,
     aggregatorService,
     curationService,

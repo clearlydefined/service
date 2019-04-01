@@ -96,35 +96,6 @@ class MongoStore {
     return { data, continuationToken }
   }
 
-  /**
-   * Query and perform an aggregate average on the defintions
-   *
-   * @param {object} query - The filters for the request
-   * @param {string[]} fields - The fields to average
-   * @returns The result of the aggregation
-   */
-  async average(query, fields) {
-    const filter = this._buildQuery(query)
-    const groups = fields.reduce((result, field) => {
-      result[`avg_${field}`] = { $avg: `$${field}` }
-      return result
-    }, {})
-    const data = await this.collection
-      .aggregate([
-        { $match: filter },
-        {
-          $group: {
-            ...groups,
-            _id: null,
-            totalcount: { $sum: 1 }
-          }
-        }
-      ])
-      .project({ _id: 0 })
-      .toArray()
-    return data[0]
-  }
-
   async store(definition) {
     const pageSize = 1000
     definition._id = this._getId(definition.coordinates)

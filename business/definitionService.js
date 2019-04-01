@@ -6,6 +6,7 @@ const {
   get,
   set,
   sortedUniq,
+  omit,
   remove,
   pullAllWith,
   isEqual,
@@ -33,14 +34,13 @@ const SPDX = require('../lib/spdx')
 const parse = require('spdx-expression-parse')
 const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
-const currentSchema = '1.6.0'
+const currentSchema = '1.6.1'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
+  constructor(harvestStore, summary, aggregator, curation, store, search, cache) {
     this.harvestStore = harvestStore
-    this.harvestService = harvestService
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
@@ -60,7 +60,7 @@ class DefinitionService {
    * @param {bool} force - whether or not to force re-computation of the requested definition
    * @returns {Definition} The fully rendered definition
    */
-  async get(coordinates, pr = null, force = false) {
+  async get(coordinates, pr = null, force = false, expand = null) {
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
@@ -71,7 +71,7 @@ class DefinitionService {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = await this.computeAndStore(coordinates)
-    return this._cast(result)
+    return this._trimDefinition(this._cast(result), expand)
   }
 
   async _cacheExistingAside(coordinates, force) {
@@ -82,6 +82,11 @@ class DefinitionService {
     const stored = await this.definitionStore.get(coordinates)
     if (stored) await this.cache.set(cacheKey, stored)
     return stored
+  }
+
+  _trimDefinition(definition, expand) {
+    if (expand === '-files') return omit(definition, 'files')
+    return definition
   }
 
   // ensure the definition is a properly classed object
@@ -98,11 +103,11 @@ class DefinitionService {
    * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the definitions that are available
    */
-  async getAll(coordinatesList, force = false) {
+  async getAll(coordinatesList, force = false, expand = null) {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force)
+        const definition = await this.get(coordinates, null, force, expand)
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
@@ -155,10 +160,6 @@ class DefinitionService {
     return this.definitionStore.find(query, query.continuationToken)
   }
 
-  average(query, fields) {
-    return this.definitionStore.average(query, fields)
-  }
-
   /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
@@ -191,7 +192,6 @@ class DefinitionService {
       const tools = get(definition, 'described.tools')
       if (!tools || tools.length === 0) {
         this.logger.info('definition not available', { coordinates: coordinates.toString() })
-        this.harvest(coordinates)
         return definition
       }
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
@@ -199,17 +199,6 @@ class DefinitionService {
       return definition
     } finally {
       computeLock.delete(coordinates.toString())
-    }
-  }
-
-  async harvest(coordinates) {
-    try {
-      await this.harvestService.harvest({ tool: 'component', coordinates })
-    } catch (error) {
-      this.logger.info('failed to harvest from definition service', {
-        crawlerError: error,
-        coordinates: coordinates.toString()
-      })
     }
   }
 
@@ -525,5 +514,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)
+module.exports = (harvestStore, summary, aggregator, curation, store, search, cache) =>
+  new DefinitionService(harvestStore, summary, aggregator, curation, store, search, cache)
