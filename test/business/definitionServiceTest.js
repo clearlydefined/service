@@ -49,6 +49,14 @@ describe('Definition Service', () => {
     expect(service.definitionStore.store.calledOnce).to.be.true
     expect(service.search.store.calledOnce).to.be.true
   })
+  
+  it('trims files from definitions', async () => {
+    const { service, coordinates } = setup(createDefinition(null, [{ path: 'path/to/file' }], ['foo']))
+    const definition = await service.get(coordinates, null, null, '-files')
+    expect(definition.files).to.be.undefined
+    const fullDefinition = await service.get(coordinates)
+    expect(fullDefinition.files).to.deep.eq([{ path: 'path/to/file' }])
+  })
 
   it('logs new definitions with empty tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, []))
