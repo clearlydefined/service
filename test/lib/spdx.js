@@ -121,7 +121,8 @@ describe('SPDX utility functions', () => {
       [['MIT AND ISC', '(MIT OR GPL-2.0) AND ISC'], true],
       [['MIT AND NOASSERTION', 'MIT'], false],
       [['MIT OR NOASSERTION', 'MIT'], true],
-      [['NOASSERTION OR JUNK', 'MIT'], false]
+      [['NOASSERTION OR JUNK', 'MIT'], false],
+      [['NOASSERTION', 'LGPL-2.1+'], false]
     ])
 
     data.forEach((expected, input) => {
