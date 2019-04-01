@@ -51,8 +51,32 @@ class StatsService {
     return result['@odata.count']
   }
 
-  async _getType() {
-    return 0
+  async _getType(type) {
+    const response = await this.searchService.query({
+      count: true,
+      filter: `type eq '${type}'`,
+      facets: [
+        'describedScore,values:10|20|30|40|50|60|70|80|90|100',
+        'licensedScore,values:10|20|30|40|50|60|70|80|90|100'
+      ],
+      top: 0
+    })
+    const totalCount = response['@odata.count']
+    const describedScoreMedian = this._getMedian(response['@search.facets'].describedScore, totalCount)
+    const licensedScoreMedian = this._getMedian(response['@search.facets'].licensedScore, totalCount)
+    return { totalCount, describedScoreMedian, licensedScoreMedian }
+  }
+
+  _getMedian(frequencyTable, totalCount) {
+    if (totalCount === 0) return 0
+    const cutoff = (totalCount + 1) / 2
+    let marker = 0
+    let median = 0
+    for (let i = 0; marker < cutoff && i < frequencyTable.length; i++) {
+      marker += frequencyTable[i].count
+      median = frequencyTable[i].to || frequencyTable[i].from
+    }
+    return median
   }
 
   _getCacheKey(stat) {
