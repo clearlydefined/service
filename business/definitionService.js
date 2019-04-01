@@ -6,6 +6,7 @@ const {
   get,
   set,
   sortedUniq,
+  omit,
   remove,
   pullAllWith,
   isEqual,
@@ -60,7 +61,7 @@ class DefinitionService {
    * @param {bool} force - whether or not to force re-computation of the requested definition
    * @returns {Definition} The fully rendered definition
    */
-  async get(coordinates, pr = null, force = false) {
+  async get(coordinates, pr = null, force = false, expand = null) {
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
@@ -71,7 +72,7 @@ class DefinitionService {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = await this.computeAndStore(coordinates)
-    return this._cast(result)
+    return this._trimDefinition(this._cast(result), expand)
   }
 
   async _cacheExistingAside(coordinates, force) {
@@ -82,6 +83,11 @@ class DefinitionService {
     const stored = await this.definitionStore.get(coordinates)
     if (stored) await this.cache.set(cacheKey, stored)
     return stored
+  }
+
+  _trimDefinition(definition, expand) {
+    if (expand === '-files') return omit(definition, 'files')
+    return definition
   }
 
   // ensure the definition is a properly classed object
@@ -98,11 +104,11 @@ class DefinitionService {
    * @param {bool} force - whether or not to force re-computation of the requested definitions
    * @returns A list of all components that have definitions and the definitions that are available
    */
-  async getAll(coordinatesList, force = false) {
+  async getAll(coordinatesList, force = false, expand = null) {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force)
+        const definition = await this.get(coordinates, null, force, expand)
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
