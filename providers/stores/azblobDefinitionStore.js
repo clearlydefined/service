@@ -26,7 +26,7 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
 
   store(definition) {
     const blobName = this._toStoragePathFromCoordinates(definition.coordinates) + '.json'
-    return promisify(this.blobService.createBlockBlobFromText)(
+    return promisify(this.blobService.createBlockBlobFromText).bind(this.blobService)(
       this.containerName,
       blobName,
       JSON.stringify(definition),
@@ -41,7 +41,7 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
   async delete(coordinates) {
     const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
     try {
-      await promisify(this.blobService.deleteBlob)(this.containerName, blobName)
+      await promisify(this.blobService.deleteBlob).bind(this.blobService)(this.containerName, blobName)
     } catch (error) {
       if (error.code !== 'BlobNotFound') throw error
     }

@@ -9,10 +9,22 @@ const providers = require('../providers')
  * of the providers module (e.g., search or store). The `spec` is the name of a module (e.g.,
  * file, memory, mongo) and an optional object path within that module that leads to the
  * desired factory.
+ * Dispatch to multiple with + (e.g. spec=dispatch+mongo+azblob)
  * @param {*} spec - indicator of the module and factory to load
  * @param {*} namespace - an optional place to look for built in factories
  */
+
 function loadFactory(spec, namespace) {
+  const names = spec.split('+')
+  const factory = loadOne(names[0], namespace)
+  const factories = names.slice(1).map(name => loadOne(name, namespace))
+  if (factories.length) {
+    return () => factory({ factories })
+  }
+  return factory
+}
+
+function loadOne(spec, namespace) {
   const [requirePath, objectPath] = spec.split('|')
   const getPath = (namespace ? namespace + '.' : '') + requirePath
   let target = get(providers, getPath)

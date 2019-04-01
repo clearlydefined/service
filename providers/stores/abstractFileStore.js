@@ -94,10 +94,6 @@ class AbstractFileStore {
     })
   }
 
-  async average() {
-    throw new Error('average() is unsupported')
-  }
-
   _isValidPath(entry) {
     return AbstractFileStore.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
