@@ -47,9 +47,9 @@ describe('Definition Service', () => {
     const { service, coordinates } = setup(createDefinition(null, null, ['foo']))
     await service.get(coordinates)
     expect(service.definitionStore.store.calledOnce).to.be.true
-    expect(service.search.store.calledOnce).to.be.true
+    expect(service.search.store.notCalled).to.be.true
   })
-  
+
   it('trims files from definitions', async () => {
     const { service, coordinates } = setup(createDefinition(null, [{ path: 'path/to/file' }], ['foo']))
     const definition = await service.get(coordinates, null, null, '-files')
