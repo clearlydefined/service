@@ -6,7 +6,6 @@ const router = require('express').Router()
 const minimatch = require('minimatch')
 const utils = require('../lib/utils')
 const bodyParser = require('body-parser')
-const { permissionsCheck } = require('../middleware/permissions')
 const validator = require('../schemas/validator')
 
 // Gets a given harvested file
@@ -88,10 +87,11 @@ async function list(request, response) {
 }
 
 // Post a (set of) component to be harvested
-router.post('/', permissionsCheck('harvest'), bodyParser.json(), asyncMiddleware(queue))
+router.post('/', bodyParser.json(), asyncMiddleware(queue))
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
+  if (requests.length > 1000) return response.status(400).send(`Too many coordinates: ${requests.length}`)
   if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
   await harvestService.harvest(request.body)
   response.sendStatus(201)

@@ -7,7 +7,7 @@
   "version": "0.0.2",
   "definitions": {
     "request": {
-      "required": ["tool", "coordinates"],
+      "required": ["coordinates"],
       "additionalProperties": false,
       "properties": {
         "tool": {
