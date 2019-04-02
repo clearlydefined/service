@@ -55,10 +55,7 @@ class StatsService {
     const response = await this.searchService.query({
       count: true,
       filter: `type eq '${type}'`,
-      facets: [
-        'describedScore,values:10|20|30|40|50|60|70|80|90|100',
-        'licensedScore,values:10|20|30|40|50|60|70|80|90|100'
-      ],
+      facets: ['describedScore,interval:1', 'licensedScore,interval:1'],
       top: 0
     })
     const totalCount = response['@odata.count']
@@ -69,12 +66,12 @@ class StatsService {
 
   _getMedian(frequencyTable, totalCount) {
     if (totalCount === 0) return 0
-    const cutoff = (totalCount + 1) / 2
+    const cutoff = Math.ceil(totalCount / 2)
     let marker = 0
     let median = 0
     for (let i = 0; marker < cutoff && i < frequencyTable.length; i++) {
       marker += frequencyTable[i].count
-      median = frequencyTable[i].to || frequencyTable[i].from
+      median = frequencyTable[i].value
     }
     return median
   }
