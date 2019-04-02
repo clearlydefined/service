@@ -142,8 +142,11 @@ class ClearlyDescribedSummarizer {
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
-    const licenseSummaries = flatten(projectSummaryLicenses.map(x => x.license))
-    const licenseUrls = uniq(flatten(licenseSummaries.map(license => license.url)))
+    const licenseSummaries = flatten(projectSummaryLicenses.map(x => x.license)).filter(x => x)
+    const licenseUrls = uniq([
+      ...flatten(licenseSummaries.map(license => license.url)),
+      ...flatten(projectSummaryLicenses.map(x => x.url))
+    ]).filter(x => x)
     const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
