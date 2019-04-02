@@ -45,6 +45,16 @@ describe('ClearlyDefined Maven summarizer', () => {
     expect(summary.described.releaseDate).to.eq('2018-03-06')
   })
 
+  it('handles projectSummaryLicenses with just url', () => {
+    const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true, {
+      licenses: [{ url: 'https://opensource.org/licenses/MIT' }]
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+  })
+
   it('handles data with source location', () => {
     const { coordinates, harvested } = setupMaven('2018-03-06T11:38:10.284Z', true)
     const summary = Summarizer().summarize(coordinates, harvested)
