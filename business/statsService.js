@@ -34,7 +34,7 @@ class StatsService {
 
   _getStatLookup() {
     return {
-      totalcount: this._getTotalCount,
+      total: () => this._getType('total'),
       crate: () => this._getType('crate'),
       gem: () => this._getType('gem'),
       git: () => this._getType('git'),
@@ -46,13 +46,42 @@ class StatsService {
     }
   }
 
-  async _getTotalCount() {
-    const result = await this.searchService.query({ count: true, top: 0 })
-    return result['@odata.count']
+  async _getType(type) {
+    const response = await this.searchService.query({
+      count: true,
+      filter: type === 'total' ? null : `type eq '${type}'`,
+      facets: ['describedScore,interval:1', 'licensedScore,interval:1', 'declaredLicense'],
+      top: 0
+    })
+    const totalCount = response['@odata.count']
+    const describedScoreMedian = this._getMedian(response['@search.facets'].describedScore, totalCount)
+    const licensedScoreMedian = this._getMedian(response['@search.facets'].licensedScore, totalCount)
+    const declaredLicenseBreakdown = this._getFacet(response['@search.facets'].declaredLicense, totalCount)
+    return { totalCount, describedScoreMedian, licensedScoreMedian, declaredLicenseBreakdown }
   }
 
-  async _getType() {
-    return 0
+  _getMedian(frequencyTable, totalCount) {
+    if (totalCount === 0) return 0
+    const cutoff = Math.ceil(totalCount / 2)
+    let marker = 0
+    let median = 0
+    for (let i = 0; marker < cutoff && i < frequencyTable.length; i++) {
+      marker += frequencyTable[i].count
+      median = frequencyTable[i].value
+    }
+    return median
+  }
+
+  _getFacet(frequencyTable, totalCount) {
+    const otherSum = frequencyTable.reduce((result, current) => {
+      result -= current.count
+      return result
+    }, totalCount)
+    frequencyTable.push({
+      count: otherSum,
+      value: 'Other'
+    })
+    return frequencyTable
   }
 
   _getCacheKey(stat) {

@@ -204,7 +204,6 @@ class DefinitionService {
 
   async _store(definition) {
     await this.definitionStore.store(definition)
-    await this.search.store(definition)
     await this.cache.set(this._getCacheKey(definition.coordinates), definition)
   }
 
@@ -411,7 +410,7 @@ class DefinitionService {
           try {
             const definition = await this.get(coordinates, null, recompute)
             if (recompute) return Promise.resolve(null)
-            return this.search.store(definition)
+            if (this.search.store) return this.search.store(definition)
           } catch (error) {
             this.logger.info('failed to reload in definition service', {
               error,

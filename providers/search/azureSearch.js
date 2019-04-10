@@ -2,19 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
-const { get } = require('lodash')
-const base64 = require('base-64')
 const AbstractSearch = require('./abstractSearch')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2017-11-11'
-const coordinatesIndexName = 'coordinates'
+const definitionsIndexName = 'definitions'
+const definitionsDataSourceName = 'definitionsdatasource'
+const definitionsIndexerName = 'definitionsindexer'
 
 class AzureSearch extends AbstractSearch {
   async initialize() {
     super.initialize()
-    if (!(await this._hasIndex(coordinatesIndexName))) return this._createIndex(this._buildCoordinatesIndex())
+    if (!(await this._hasIndex(definitionsIndexName))) await this._createIndex(this._buildDefinitionsIndex())
+    if (!(await this._hasDataSource(definitionsDataSourceName))) await this._createDataSource(this._buildDataSource())
+    if (!(await this._hasIndexer(definitionsIndexerName))) await this._createIndexer(this._buildIndexer())
   }
 
   /**
@@ -23,7 +24,7 @@ class AzureSearch extends AbstractSearch {
    * @returns {String[]} The list of suggested coordinates found
    */
   async suggestCoordinates(pattern) {
-    const baseUrl = this._buildUrl(`indexes/${coordinatesIndexName}/docs/suggest`)
+    const baseUrl = this._buildUrl(`indexes/${definitionsIndexName}/docs/suggest`)
     const url = `${baseUrl}&search=${pattern}&suggesterName=suggester&$select=coordinates&$top=50`
     const searchResult = await requestPromise({
       method: 'GET',
@@ -36,23 +37,6 @@ class AzureSearch extends AbstractSearch {
   }
 
   /**
-   * Index the given definition in the search system
-   * @param {Definition or Definition[]} definitions - the definition(s) to index
-   */
-  store(definitions) {
-    const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
-    return requestPromise({
-      method: 'POST',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
-      headers: this._getHeaders(),
-      body: { value: entries },
-      withCredentials: false,
-      json: true
-    })
-    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
-  }
-
-  /**
    * Query the search index. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#request-body
    * @param {object} body - the request body to send to search
    * @returns {String[]} The search response. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#response
@@ -60,50 +44,12 @@ class AzureSearch extends AbstractSearch {
   async query(body) {
     return requestPromise({
       method: 'POST',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/search`),
+      url: this._buildUrl(`indexes/${definitionsIndexName}/docs/search`),
       headers: this._getHeaders(),
       withCredentials: false,
       json: true,
       body
     })
-  }
-
-  _getEntries(definitions) {
-    return definitions.map(definition => {
-      const coordinatesString = EntityCoordinates.fromObject(definition.coordinates).toString()
-      const date = get(definition, 'described.releaseDate')
-      // TODO temporary hack to deal with bad data in dev blobs
-      const releaseDate = date === '%cI' ? null : date
-      return {
-        '@search.action': 'upload',
-        key: base64.encode(coordinatesString),
-        coordinates: coordinatesString,
-        releaseDate,
-        declaredLicense: get(definition, 'licensed.declared'),
-        discoveredLicenses: this._getLicenses(definition),
-        attributionParties: this._getAttributions(definition)
-      }
-    })
-  }
-
-  /**
-   * Deletely the identified definition from the search system
-   * @param {EntityCoordinates} coordinates - the coordinates of the definition to delete
-   */
-  delete(coordinates) {
-    return requestPromise({
-      method: 'POST',
-      url: this._buildUrl(`indexes/${coordinatesIndexName}/docs/index`),
-      headers: this._getHeaders(),
-      body: { value: [{ '@search.action': 'delete', key: this._getKey(coordinates) }] },
-      withCredentials: false,
-      json: true
-    })
-    // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
-  }
-
-  _getKey(coordinates) {
-    return base64.encode(coordinates.toString())
   }
 
   _buildUrl(endpoint) {
@@ -118,16 +64,254 @@ class AzureSearch extends AbstractSearch {
     }
   }
 
-  _buildCoordinatesIndex() {
+  _buildDefinitionsIndex() {
     return {
-      name: coordinatesIndexName,
+      name: definitionsIndexName,
       fields: [
-        { name: 'key', type: 'Edm.String', key: true },
-        { name: 'coordinates', type: 'Edm.String' },
-        { name: 'declaredLicense', type: 'Edm.String' },
-        { name: 'discoveredLicenses', type: 'Collection(Edm.String)' },
-        { name: 'attributionParties', type: 'Collection(Edm.String)' },
-        { name: 'releaseDate', type: 'Edm.DateTimeOffset' }
+        {
+          name: 'id',
+          type: 'Edm.String',
+          key: true,
+          searchable: false,
+          filterable: false,
+          retrievable: true,
+          sortable: true,
+          facetable: false
+        },
+        {
+          name: 'coordinates',
+          type: 'Edm.String',
+          searchable: false,
+          filterable: false,
+          retrievable: true,
+          sortable: true,
+          facetable: false
+        },
+        {
+          name: 'type',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'provider',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'namespace',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'name',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'revision',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'effectiveScore',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'toolScore',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'describedScore',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'describedScoreDate',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'describedScoreSource',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScore',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScoreDeclared',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScoreDiscovered',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScoreConsistency',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScoreSpdx',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'licensedScoreTexts',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'sourceLocation',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'fileCount',
+          type: 'Edm.Int32',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'releaseDate',
+          type: 'Edm.DateTimeOffset',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'projectWebsite',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'issueTracker',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'tools',
+          type: 'Collection(Edm.String)',
+          searchable: false,
+          filterable: true,
+          retrievable: true,
+          sortable: false,
+          facetable: true
+        },
+        {
+          name: 'declaredLicense',
+          type: 'Edm.String',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: true,
+          facetable: true
+        },
+        {
+          name: 'discoveredLicenses',
+          type: 'Collection(Edm.String)',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: false,
+          facetable: true
+        },
+        {
+          name: 'copyrights',
+          type: 'Collection(Edm.String)',
+          searchable: true,
+          filterable: true,
+          retrievable: true,
+          sortable: false,
+          facetable: true
+        }
       ],
       suggesters: [
         {
@@ -162,6 +346,104 @@ class AzureSearch extends AbstractSearch {
       json: true
     })
     return index.statusCode === 200
+  }
+
+  _buildDataSource() {
+    return {
+      name: definitionsDataSourceName,
+      type: 'azureblob',
+      credentials: {
+        connectionString: this.options.dataSourceConnectionString
+      },
+      container: { name: this.options.dataSourceContainerName }
+    }
+  }
+
+  _createDataSource(body) {
+    return requestPromise({
+      method: 'POST',
+      url: this._buildUrl('datasources'),
+      headers: this._getHeaders(),
+      body,
+      withCredentials: false,
+      json: true
+    })
+  }
+
+  async _hasDataSource(name) {
+    const dataSource = await requestPromise({
+      method: 'GET',
+      url: this._buildUrl(`datasources/${name}`),
+      headers: this._getHeaders(),
+      withCredentials: false,
+      simple: false,
+      resolveWithFullResponse: true,
+      json: true
+    })
+    return dataSource.statusCode === 200
+  }
+
+  _buildIndexer() {
+    return {
+      name: definitionsIndexerName,
+      dataSourceName: definitionsDataSourceName,
+      targetIndexName: definitionsIndexName,
+      schedule: { interval: 'PT1H' },
+      parameters: { configuration: { parsingMode: 'json' } },
+      fieldMappings: [
+        { sourceFieldName: 'id', targetFieldName: 'id', mappingFunction: { name: 'base64Encode' } },
+        { sourceFieldName: 'id', targetFieldName: 'coordinates' },
+        { sourceFieldName: '/coordinates/type', targetFieldName: 'type' },
+        { sourceFieldName: '/coordinates/provider', targetFieldName: 'provider' },
+        { sourceFieldName: '/coordinates/namespace', targetFieldName: 'namespace' },
+        { sourceFieldName: '/coordinates/name', targetFieldName: 'name' },
+        { sourceFieldName: '/coordinates/revision', targetFieldName: 'revision' },
+        { sourceFieldName: '/scores/effective', targetFieldName: 'effectiveScore' },
+        { sourceFieldName: '/scores/tool', targetFieldName: 'toolScore' },
+        { sourceFieldName: '/described/score/total', targetFieldName: 'describedScore' },
+        { sourceFieldName: '/described/score/date', targetFieldName: 'describedScoreDate' },
+        { sourceFieldName: '/described/score/source', targetFieldName: 'describedScoreSource' },
+        { sourceFieldName: '/licensed/score/total', targetFieldName: 'licensedScore' },
+        { sourceFieldName: '/licensed/score/declared', targetFieldName: 'licensedScoreDeclared' },
+        { sourceFieldName: '/licensed/score/discovered', targetFieldName: 'licensedScoreDiscovered' },
+        { sourceFieldName: '/licensed/score/consistency', targetFieldName: 'licensedScoreConsistency' },
+        { sourceFieldName: '/licensed/score/spdx', targetFieldName: 'licensedScoreSpdx' },
+        { sourceFieldName: '/licensed/score/texts', targetFieldName: 'licensedScoreTexts' },
+        { sourceFieldName: '/described/sourceLocation/url', targetFieldName: 'sourceLocation' },
+        { sourceFieldName: '/described/files', targetFieldName: 'fileCount' },
+        { sourceFieldName: '/described/releaseDate', targetFieldName: 'releaseDate' },
+        { sourceFieldName: '/described/projectWebsite', targetFieldName: 'projectWebsite' },
+        { sourceFieldName: '/described/issueTracker', targetFieldName: 'issueTracker' },
+        { sourceFieldName: '/described/tools', targetFieldName: 'tools' },
+        { sourceFieldName: '/licensed/declared', targetFieldName: 'declaredLicense' },
+        { sourceFieldName: '/licensed/facets/core/discovered/expressions', targetFieldName: 'discoveredLicenses' },
+        { sourceFieldName: '/licensed/facets/core/attribution/parties', targetFieldName: 'copyrights' }
+      ]
+    }
+  }
+
+  _createIndexer(body) {
+    return requestPromise({
+      method: 'POST',
+      url: this._buildUrl('indexers'),
+      headers: this._getHeaders(),
+      body,
+      withCredentials: false,
+      json: true
+    })
+  }
+
+  async _hasIndexer(name) {
+    const indexer = await requestPromise({
+      method: 'GET',
+      url: this._buildUrl(`indexers/${name}`),
+      headers: this._getHeaders(),
+      withCredentials: false,
+      simple: false,
+      resolveWithFullResponse: true,
+      json: true
+    })
+    return indexer.statusCode === 200
   }
 }
 
