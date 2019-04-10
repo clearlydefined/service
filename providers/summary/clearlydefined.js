@@ -221,9 +221,9 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${coordinates.name}/${coordinates.namespace ? coordinates.namespace : '-'}/${
-        coordinates.name
-      }-${coordinates.revision}.tgz`
+      `https://registry.npmjs.com/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
