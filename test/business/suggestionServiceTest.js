@@ -26,11 +26,34 @@ describe('Suggestion Service', () => {
       type: 'npm',
       provider: 'npmjs',
       name: 'test',
-      namespace: null,
-      sort: 'releaseDate'
+      namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
     expect(declared).to.equalInAnyOrder([
+      { value: 'MIT', version: '10-3.0' },
+      { value: 'MIT', version: '10-5.0' },
+      { value: 'GPL', version: '102.0' }
+    ])
+  })
+
+  it('sorts suggestion by releaseDate', async () => {
+    const now = moment()
+    const definition = createDefinition(testCoordinates, now, null, files)
+    const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
+    const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
+    const after = createModifiedDefinition(testCoordinates, now, 2, 'GPL', files, attributions)
+    const others = [after, before2, before1]
+    const service = setup(definition, others)
+    const suggestions = await service.get(testCoordinates)
+    expect(suggestions).to.not.be.null
+    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+      type: 'npm',
+      provider: 'npmjs',
+      name: 'test',
+      namespace: null
+    })
+    const declared = get(suggestions, 'licensed.declared')
+    expect(declared).to.deep.eq([
       { value: 'MIT', version: '10-3.0' },
       { value: 'MIT', version: '10-5.0' },
       { value: 'GPL', version: '102.0' }
@@ -51,8 +74,7 @@ describe('Suggestion Service', () => {
       type: 'npm',
       provider: 'npmjs',
       name: 'test',
-      namespace: null,
-      sort: 'releaseDate'
+      namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
     expect(declared).to.be.undefined
@@ -76,8 +98,7 @@ describe('Suggestion Service', () => {
       type: 'npm',
       provider: 'npmjs',
       name: 'scope-test',
-      namespace: '@scope',
-      sort: 'releaseDate'
+      namespace: '@scope'
     })
   })
 })
