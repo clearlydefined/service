@@ -148,7 +148,11 @@ class DefinitionService {
     )
     const foundDefinitions = flatten(await Promise.all(concat(promises)))
     // Filter only the revisions matching the found definitions
-    return intersectionWith(coordinatesList, foundDefinitions, (a, b) => a.toString().toLowerCase() === b)
+    return intersectionWith(
+      coordinatesList,
+      foundDefinitions,
+      (a, b) => a && b && a.toString().toLowerCase() === b.toString().toLowerCase()
+    )
   }
 
   /**
