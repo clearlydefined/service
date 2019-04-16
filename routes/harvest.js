@@ -93,7 +93,7 @@ async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
   if (requests.length > 1000) return response.status(400).send(`Too many coordinates: ${requests.length}`)
   if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
-  await harvestService.harvest(request.body)
+  await harvestService.harvest(request.body, request.query.turbo)
   response.sendStatus(201)
 }
 

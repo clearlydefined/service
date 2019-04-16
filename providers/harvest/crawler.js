@@ -10,7 +10,7 @@ class CrawlingHarvester {
     this.options = options
   }
 
-  async harvest(spec) {
+  async harvest(spec, turbo) {
     const headers = {
       'X-token': this.options.authToken
     }
@@ -21,8 +21,9 @@ class CrawlingHarvester {
         policy: entry.policy
       }
     })
+    const url = turbo ? `${this.options.url}/requests` : `${this.options.url}/requests/later`
     return requestPromise({
-      url: `${this.options.url}/requests/later`,
+      url,
       method: 'POST',
       body,
       headers,
