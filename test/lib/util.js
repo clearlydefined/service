@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 const utils = require('../../lib/utils')
-const SPDX = require('../../lib/spdx')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
