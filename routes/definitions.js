@@ -23,6 +23,15 @@ async function getDefinition(request, response) {
   response.status(200).send(result)
 }
 
+function project_tag(dataPoint) {
+  if (dataPoint.coordinates) {
+    let coords = dataPoint.coordinates
+    let spec = coords.type + coords.provider + coords.name + coords.revision
+    return spec.split('').reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0)
+  }
+  return null
+}
+
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
 router.get('', asyncMiddleware(getDefinitions))
@@ -37,6 +46,9 @@ async function getDefinitions(request, response) {
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
   const result = await definitionService.find(request.query)
+  if (Array.isArray(result.data)) {
+    response.set('Cache-Tag', result.data.map(project_tag).join())
+  }
   response.send(result)
 }
 
