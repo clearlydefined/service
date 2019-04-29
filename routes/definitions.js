@@ -88,8 +88,11 @@ async function listDefinitions(request, response) {
 
 let definitionService
 
-function setup(definition) {
+function setup(definition, testFlag = false) {
   definitionService = definition
+  if (testFlag) {
+    router._getDefinition = getDefinition
+  }
   return router
 }
 module.exports = setup
