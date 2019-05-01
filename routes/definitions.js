@@ -38,11 +38,8 @@ async function getDefinition(request, response) {
   const result = await definitionService.get(coordinates, pr, force, expand)
   if (Array.isArray(result.data) && result.data.length === 1) {
     response.set('cache-tag', tagFromCoordinates(result.data[0].coordinates))
-    console.log({ cacheTag: response.header('cache-tag') })
   }
-  console.log({ cacheTag: response.header('cache-tag') })
   response.status(200).send(result)
-  console.log({ cacheTag: response.header('cache-tag') })
 }
 
 function project_tag(dataPoint) {
