@@ -13,21 +13,41 @@ const validator = require('../schemas/validator')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
 
+function stringHash(src) {
+  var hash = 0, i, chr
+  if (src.length === 0) return hash
+  for (i = 0; i < src.length; i++) {
+    chr = src.charCodeAt(i)
+    hash = ((hash << 5) - hash) + chr
+    hash |= 0
+  }
+  return hash
+}
+
+function tagFromCoordinates(coordinates) {
+  let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
+  return stringHash(hashBase)
+}
+
 async function getDefinition(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request)
   const pr = request.params.pr
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-  const force = request.hostname.includes('localhost') ? request.query.force || false : false
+  const force = (request.hostname && request.hostname.includes('localhost')) ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.get(coordinates, pr, force, expand)
+  if (Array.isArray(result.data) && result.data.length === 1) {
+    response.set('cache-tag', tagFromCoordinates(result.data[0].coordinates))
+    console.log({ cacheTag: response.header('cache-tag') })
+  }
+  console.log({ cacheTag: response.header('cache-tag') })
   response.status(200).send(result)
+  console.log({ cacheTag: response.header('cache-tag') })
 }
 
 function project_tag(dataPoint) {
   if (dataPoint.coordinates) {
-    let coords = dataPoint.coordinates
-    let spec = coords.type + coords.provider + coords.name + coords.revision
-    return spec.split('').reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0)
+    return tagFromCoordinates(dataPoint.coordinates)
   }
   return null
 }
@@ -47,7 +67,7 @@ async function getDefinitions(request, response) {
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
   const result = await definitionService.find(request.query)
   if (Array.isArray(result.data)) {
-    response.set('Cache-Tag', result.data.map(project_tag).join())
+    response.set('cache-tag', result.data.map(project_tag).join())
   }
   response.send(result)
 }
@@ -80,7 +100,7 @@ async function listDefinitions(request, response) {
   if (coordinatesList.length > 1000)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-  const force = request.hostname.includes('localhost') ? request.query.force || false : false
+  const force = (request.hostname && request.hostname.includes('localhost')) ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.getAll(coordinatesList, force, expand)
   response.send(result)
