@@ -34,6 +34,7 @@ class Cdn {
   }
 
   uninitialize() {
+    this.flushPending()
     clearInterval(this._timeout)
   }
 
