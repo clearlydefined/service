@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const config = require('painless-config')
-const cdn = require('cdn')
+const cdn = require('./cdn')
 
 function serviceFactory(options) {
   const realOptions = options || {
@@ -10,6 +10,7 @@ function serviceFactory(options) {
     apiEmail: config.get('CDN_AUTH_EMAIL'),
     apiKey: config.get('CDN_AUTH_KEY')
   }
+  console.log({ fn: 'serviceFactory', module: 'cdnConfig', options })
   return cdn(realOptions)
 }
 

@@ -23,6 +23,9 @@ module.exports = {
     redis: require('../providers/caching/redisConfig'),
     memory: require('../providers/caching/memory')
   },
+  cdn: {
+    cf: require('../providers/caching/cdnConfig')
+  },
   auth: {
     github: require('../middleware/githubConfig')
   },

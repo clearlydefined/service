@@ -46,6 +46,9 @@ function createApp(config) {
   const cachingService = config.caching.service()
   initializers.push(async () => cachingService.initialize())
 
+  const cdnService = config.cdn.service()
+  initializers.push(async () => cdnService.initialize())
+
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
 
   const definitionService = require('./business/definitionService')(
@@ -55,7 +58,8 @@ function createApp(config) {
     curationService,
     definitionStore,
     searchService,
-    cachingService
+    cachingService,
+    cdnService
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService

@@ -64,6 +64,9 @@ module.exports = {
   caching: {
     service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching')
   },
+  cdn: {
+    service: loadFactory('cf', 'cdn')
+  },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',
     website: config.get('WEBSITE_ENDPOINT') || 'http://localhost:3000'
