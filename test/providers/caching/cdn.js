@@ -14,19 +14,20 @@ describe('flush CDN tagged items', () => {
   cdnService.doRequest = requestOptions => {
     lastOptions = requestOptions
     requestCount++
+    return Promise.resolve()
   }
   cdnService.initialize()
 
   it('will ignore malformed tags', () => {
-    cdnService.queue('not valid')
-    cdnService.queue('')
-    cdnService.queue(' ')
+    cdnService.invalidate('not valid')
+    cdnService.invalidate('')
+    cdnService.invalidate(' ')
     assert.equal(Object.keys(cdnService._queue).length, 0)
   })
   it('passing the watermark, will flush once', async () => {
     requestCount = 0
     for (let idx = 101; idx <= 130; idx++) {
-      cdnService.queue(idx)
+      cdnService.invalidate(idx)
     }
     assert.equal(requestCount, 1, 'should call once')
     let bodyObject = JSON.parse(lastOptions.body)

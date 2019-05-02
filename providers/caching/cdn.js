@@ -19,7 +19,7 @@ class Cdn {
       this.doRequest = requestPromise
     }
     else {
-      this.doRequest = () => {}
+      this.doRequest = Promise.resolve()
     }
     this.intervalMs = options.intervalMs || defaultIntervalMs
   }
@@ -33,11 +33,11 @@ class Cdn {
     clearInterval(this._timeout)
   }
 
-  flushPending() {
+  async flushPending() {
     if (this._queue) {
       for (let keys = Object.keys(this._queue); keys.length > 0; keys = keys.slice(waterMark)) {
         let keyBlock = keys.slice(0, waterMark)
-        this.doRequest({
+        await this.doRequest({
           url: this.options.flushByTagUrl,
           method: 'POST',
           body: JSON.stringify({ tags: keyBlock }),
@@ -53,12 +53,12 @@ class Cdn {
     }
   }
 
-  queue(tag) {
+  async invalidate(tag) {
     tag = tag.toString()
     if (isValidTag(tag)) {
       this._queue[tag] = true
       if (Object.keys(this._queue).length >= waterMark) {
-        this.flushPending()
+        await this.flushPending()
       }
     }
   }

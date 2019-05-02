@@ -342,6 +342,7 @@ function setup(definition, coordinateSpec, curation) {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
+  const cdn = { invalidate: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
@@ -349,7 +350,7 @@ function setup(definition, coordinateSpec, curation) {
   const harvestStore = { getAll: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, summary, aggregator, curator, store, search, cache)
+  const service = DefinitionService(harvestStore, summary, aggregator, curator, store, search, cache, cdn)
   service.logger = { info: sinon.stub() }
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }

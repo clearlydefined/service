@@ -13,22 +13,6 @@ const validator = require('../schemas/validator')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
 
-function stringHash(src) {
-  var hash = 0, i, chr
-  if (src.length === 0) return hash
-  for (i = 0; i < src.length; i++) {
-    chr = src.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr
-    hash |= 0
-  }
-  return hash
-}
-
-function tagFromCoordinates(coordinates) {
-  let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
-  return stringHash(hashBase)
-}
-
 async function getDefinition(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request)
   const pr = request.params.pr
@@ -37,14 +21,14 @@ async function getDefinition(request, response) {
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.get(coordinates, pr, force, expand)
   if (Array.isArray(result.data) && result.data.length === 1) {
-    response.set('cache-tag', tagFromCoordinates(result.data[0].coordinates))
+    response.set('cache-tag', definitionService.tagFromCoordinates(result.data[0].coordinates))
   }
   response.status(200).send(result)
 }
 
 function project_tag(dataPoint) {
   if (dataPoint.coordinates) {
-    return tagFromCoordinates(dataPoint.coordinates)
+    return definitionService.tagFromCoordinates(dataPoint.coordinates)
   }
   return null
 }
