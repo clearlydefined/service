@@ -10,7 +10,6 @@ function serviceFactory(options) {
     apiEmail: config.get('CDN_AUTH_EMAIL'),
     apiKey: config.get('CDN_AUTH_KEY')
   }
-  console.log({ fn: 'serviceFactory', module: 'cdnConfig', options })
   return cdn(realOptions)
 }
 
