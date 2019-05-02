@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const requestPromise = require('request-promise-native')
-const waterMark = 30
 const defaultIntervalMs = 60000 * 5
 
 function isValidTag(tag) {
@@ -35,8 +34,8 @@ class Cdn {
 
   async flushPending() {
     if (this._queue) {
-      for (let keys = Object.keys(this._queue); keys.length > 0; keys = keys.slice(waterMark)) {
-        let keyBlock = keys.slice(0, waterMark)
+      for (let keys = Object.keys(this._queue); keys.length > 0; keys = keys.slice(this.options.watermark)) {
+        let keyBlock = keys.slice(0, this.options.watermark)
         await this.doRequest({
           url: this.options.flushByTagUrl,
           method: 'POST',
@@ -57,7 +56,7 @@ class Cdn {
     tag = tag.toString()
     if (isValidTag(tag)) {
       this._queue[tag] = true
-      if (Object.keys(this._queue).length >= waterMark) {
+      if (Object.keys(this._queue).length >= this.options.watermark) {
         await this.flushPending()
       }
     }

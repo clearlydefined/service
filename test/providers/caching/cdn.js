@@ -10,7 +10,7 @@ const testIntervalMs = 200
 describe('flush CDN tagged items', () => {
   let lastOptions = {}
   let requestCount = 0
-  let cdnService = cdn({ intervalMs: testIntervalMs })
+  let cdnService = cdn({ intervalMs: testIntervalMs, watermark: 30 })
   cdnService.doRequest = requestOptions => {
     lastOptions = requestOptions
     requestCount++
