@@ -21,10 +21,7 @@ async function getDefinition(request, response) {
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.get(coordinates, pr, force, expand)
   if (Array.isArray(result.data) && result.data.length > 0) {
-    response.set('cache-tag',
-      result.data.map(item => definitionService.tagFromCoordinates(item.coordinates))
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .join(','))
+    response.set('cache-tag', definitionService.tagFromCoordinates(result.data))
   }
   response.status(200).send(result)
 }

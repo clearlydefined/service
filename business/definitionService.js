@@ -256,8 +256,17 @@ class DefinitionService {
    * @param {Coordinates} coordinates - individual or array of coordinates to obtain a hash for
    */
   tagFromCoordinates(coordinates) {
-    let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
-    return stringHash(hashBase)
+    let result
+    if (Array.isArray(coordinates)) {
+      return coordinates.map(item => this.tagFromCoordinates(item.coordinates))
+        .filter((v, i, a) => v && a.indexOf(v) === i)
+        .join(',')
+    }
+    else if (coordinates) {
+      let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
+      result = stringHash(hashBase).toString()
+    }
+    return result
   }
 
   _getCasedCoordinates(raw, coordinates) {
