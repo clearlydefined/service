@@ -80,6 +80,17 @@ describe('Suggestion Service', () => {
       sort: 'releaseDate'
     })
   })
+
+  it('will include \'discovered\' licenses for declared license suggestions', async () => {
+    const sample_definition = require('./evidence/issue-453-sample-1.json')
+    const service = setup(sample_definition, [])
+    const suggestions = await service.get(testCoordinates)
+    expect(suggestions).to.not.be.null
+    const declared = get(suggestions, 'licensed.declared')
+    expect(declared).to.contain(
+      { value: 'GPL', version: '2.0' }
+    )
+  })
 })
 
 const attributions = ['test', 'test2', 'test3']
@@ -106,7 +117,7 @@ function createDefinition(coordinates, releaseDate, license, files) {
 }
 
 function setup(definition, others) {
-  const definitionService = { find: () => {} }
+  const definitionService = { find: () => { } }
   sinon.stub(definitionService, 'find').resolves({ data: [...others, definition] })
   return SuggestionService(definitionService)
 }
