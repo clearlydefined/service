@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+const logger = require('../logging/logger')
 const requestPromise = require('request-promise-native')
 const defaultIntervalMs = 60000 * 5
 
@@ -36,16 +37,20 @@ class Cdn {
     if (this._queue) {
       for (let keys = Object.keys(this._queue); keys.length > 0; keys = keys.slice(this.options.watermark)) {
         let keyBlock = keys.slice(0, this.options.watermark)
-        await this.doRequest({
-          url: this.options.flushByTagUrl,
-          method: 'POST',
-          body: JSON.stringify({ tags: keyBlock }),
-          headers: {
-            'X-Auth-Email': this.options.apiEmail,
-            'X-Auth-Key': this.options.apiKey
-          },
-          json: true
-        })
+        try {
+          await this.doRequest({
+            url: this.options.flushByTagUrl,
+            method: 'POST',
+            body: JSON.stringify({ tags: keyBlock }),
+            headers: {
+              'X-Auth-Email': this.options.apiEmail,
+              'X-Auth-Key': this.options.apiKey
+            },
+            json: true
+          })
+        } catch (error) {
+          logger().info(`Unable to remove CDN items; post to ${this.options.flushByTagUrl} resulted in error.`, { error })
+        }
       }
       this._queue = {}
       this._timeout.refresh()
