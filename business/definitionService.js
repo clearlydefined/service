@@ -38,17 +38,6 @@ const currentSchema = '1.6.1'
 
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
-function stringHash(src) {
-  var hash = 0, i, chr
-  if (src.length === 0) return hash
-  for (i = 0; i < src.length; i++) {
-    chr = src.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr
-    hash |= 0
-  }
-  return hash
-}
-
 class DefinitionService {
   constructor(harvestStore, summary, aggregator, curation, store, search, cache, cdn) {
     this.harvestStore = harvestStore
@@ -59,6 +48,7 @@ class DefinitionService {
     this.search = search
     this.cache = cache
     this.cdn = cdn
+    this.tagFromCoordinates = this.cdn ? this.cdn.tagFromCoordinates : () => ''
     this.logger = logger()
   }
 
@@ -189,7 +179,7 @@ class DefinitionService {
         throat(10, async coordinates => {
           await this.definitionStore.delete(coordinates)
           await this.cache.delete(this._getCacheKey(coordinates))
-          await this.cdn.invalidate(this.tagFromCoordinates(coordinates))
+          await this.cdn.invalidate(this.cdn.tagFromCoordinates(coordinates))
         })
       )
     )
@@ -248,25 +238,6 @@ class DefinitionService {
     this._ensureNoNulls(definition)
     this._validate(definition)
     return definition
-  }
-
-  /**
-   * Obtains an int32 hash representing the passed-in coordinates.
-   *
-   * @param {Coordinates} coordinates - individual or array of coordinates to obtain a hash for
-   */
-  tagFromCoordinates(coordinates) {
-    let result
-    if (Array.isArray(coordinates)) {
-      return coordinates.map(item => this.tagFromCoordinates(item.coordinates))
-        .filter((v, i, a) => v && a.indexOf(v) === i)
-        .join(',')
-    }
-    else if (coordinates) {
-      let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
-      result = stringHash(hashBase).toString()
-    }
-    return result
   }
 
   _getCasedCoordinates(raw, coordinates) {

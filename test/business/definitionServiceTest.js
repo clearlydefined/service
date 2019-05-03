@@ -342,7 +342,7 @@ function setup(definition, coordinateSpec, curation) {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
-  const cdn = { invalidate: sinon.stub() }
+  const cdn = { invalidate: sinon.stub(), tagFromCoordinates: () => 12345 }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))

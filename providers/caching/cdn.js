@@ -11,6 +11,17 @@ function isValidTag(tag) {
     tag.indexOf(' ') === -1
 }
 
+function stringHash(src) {
+  var hash = 0, i, chr
+  if (src.length === 0) return hash
+  for (i = 0; i < src.length; i++) {
+    chr = src.charCodeAt(i)
+    hash = ((hash << 5) - hash) + chr
+    hash |= 0
+  }
+  return hash
+}
+
 class Cdn {
   constructor(options) {
     this.options = options
@@ -66,6 +77,27 @@ class Cdn {
       }
     }
   }
+
+  /**
+   * Obtains an int32 hash representing the passed-in coordinates.
+   *
+   * @param {Coordinates} coordinates - individual or array of coordinates to obtain a hash for
+   */
+  tagFromCoordinates(coordinates) {
+    let result
+    if (Array.isArray(coordinates)) {
+      return coordinates.map(item => this.tagFromCoordinates(item.coordinates))
+        .filter((v, i, a) => v && a.indexOf(v) === i)
+        .join(',')
+    }
+    else if (coordinates) {
+      let hashBase = [coordinates.type, coordinates.name, coordinates.revision].join('|')
+      result = stringHash(hashBase).toString()
+    }
+    return result
+  }
+
+
 }
 
 module.exports = options => new Cdn(options)

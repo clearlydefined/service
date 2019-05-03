@@ -28,7 +28,7 @@ async function getDefinition(request, response) {
 
 function project_tag(dataPoint) {
   if (dataPoint.coordinates) {
-    return definitionService.tagFromCoordinates(dataPoint.coordinates)
+    return definitionService.cdn.tagFromCoordinates(dataPoint.coordinates)
   }
   return null
 }
