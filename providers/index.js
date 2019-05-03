@@ -24,7 +24,7 @@ module.exports = {
     memory: require('../providers/caching/memory')
   },
   cdn: {
-    cf: require('../providers/caching/cdnConfig')
+    cloudflare: require('../providers/caching/cdnConfig')
   },
   auth: {
     github: require('../middleware/githubConfig')
