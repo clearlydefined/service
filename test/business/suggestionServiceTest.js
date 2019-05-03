@@ -46,7 +46,7 @@ describe('Suggestion Service', () => {
     const others = [before1, before2, after]
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
-    expect(suggestions).to.not.be.null
+    expect(suggestions).to.be.null
     expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
       type: 'npm',
       provider: 'npmjs',
@@ -54,11 +54,9 @@ describe('Suggestion Service', () => {
       namespace: null,
       sort: 'releaseDate'
     })
-    const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.be.undefined
   })
 
-  it('returns no suggestions if there are no related definitions', async () => {
+  it('returns no suggestions if there are no related definitions AND no discoveries', async () => {
     const now = moment()
     const definition = createDefinition(testCoordinates, now, null, files)
     const service = setup(definition, [])
@@ -82,14 +80,15 @@ describe('Suggestion Service', () => {
   })
 
   it('will include \'discovered\' licenses for declared license suggestions', async () => {
+    const t2 = EntityCoordinates.fromString('gem/rubygems/-/autobuild/1.6.2.b8')
     const sample_definition = require('./evidence/issue-453-sample-1.json')
     const service = setup(sample_definition, [])
-    const suggestions = await service.get(testCoordinates)
+    const suggestions = await service.get(t2)
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.contain(
+    expect(declared).to.equalInAnyOrder([
       { value: 'GPL', version: '2.0' }
-    )
+    ])
   })
 })
 
