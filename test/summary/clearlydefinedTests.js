@@ -182,17 +182,18 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       // is something we will/do see and if so, what we should do about it. Some fallback processing?
       // It's a bit bogus that moment is throwing this to the console with no way to turn off.
       '2018-01-08': '2018-01-08',
-      'JUNK': 'Invalid date' // Is this right behavior?
+      'JUNK': null
     }
     for (let date of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { releaseDate: date } }, npmTestCoordinates)
-      assert.deepEqual(result, {
+      const expected = {
         described: {
-          releaseDate: data[date],
           urls: expectedUrls
         }
-      })
+      }
+      if (data[date] !== null) expected.described.releaseDate = data[date]
+      assert.deepEqual(result, expected)
     }
   })
 
