@@ -56,7 +56,13 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
     )
     const contents = list.then(files => {
       return Promise.all(
-        files.entries.map(file => {
+        files.entries.filter(file => {
+          return file.name.length === name.length || // either an exact match, or
+            file.name.length > name.length && ( // a longer string
+              file.name[name.length] === '/' || // where the next character starts extra tool indications
+              file.name.substr(name.length) === '.json' // or is the end, identifying a json file extension
+            )
+        }).map(file => {
           return new Promise((resolve, reject) =>
             this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
           ).then(result => {
