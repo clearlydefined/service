@@ -197,7 +197,7 @@ class DefinitionService {
       const tools = get(definition, 'described.tools')
       if (!tools || tools.length === 0) {
         this.logger.info('definition not available', { coordinates: coordinates.toString() })
-        this.harvest(coordinates) // fire and forget
+        this._harvest(coordinates) // fire and forget
         return definition
       }
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
@@ -208,7 +208,7 @@ class DefinitionService {
     }
   }
 
-  async harvest(coordinates) {
+  async _harvest(coordinates) {
     try {
       await this.harvestService.harvest({ tool: 'component', coordinates }, true)
     } catch (error) {
