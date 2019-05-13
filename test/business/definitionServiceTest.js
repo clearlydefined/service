@@ -58,18 +58,22 @@ describe('Definition Service', () => {
     expect(fullDefinition.files).to.deep.eq([{ path: 'path/to/file' }])
   })
 
-  it('logs new definitions with empty tools', async () => {
+  it('logs and harvest new definitions with empty tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, []))
     await service.get(coordinates)
     expect(service.logger.info.calledOnce).to.be.true
     expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
+    expect(service._harvest.calledOnce).to.be.true
+    expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
   })
 
-  it('logs new definitions with undefined tools', async () => {
+  it('logs and harvests new definitions with undefined tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, undefined))
     await service.get(coordinates)
     expect(service.logger.info.calledOnce).to.be.true
     expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
+    expect(service._harvest.calledOnce).to.be.true
+    expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
   })
 
   it('higher score than tool score with a curation', async () => {
@@ -347,10 +351,12 @@ function setup(definition, coordinateSpec, curation) {
     apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestService = { harvest: () => sinon.stub() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, summary, aggregator, curator, store, search, cache)
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
   service.logger = { info: sinon.stub() }
+  service._harvest = sinon.stub()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service }
 }
