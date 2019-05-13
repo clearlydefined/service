@@ -194,8 +194,8 @@ class DefinitionService {
       // If no tools participated in the creation of the definition then don't bother storing.
       // Note that curation is a tool so no tools really means there the definition is effectively empty.
       const tools = get(definition, 'described.tools')
-      const toolScoreTotal = get(definition, 'described.toolScore.total')
-      if ((!toolScoreTotal || toolScoreTotal <= 0) && (!tools || tools.length === 0)) {
+      const toolScore = get(definition, 'described.toolScore')
+      if (!toolScore && (!tools || tools.length === 0)) {
         this.logger.info('definition not available', { coordinates: coordinates.toString() })
         return definition
       }
