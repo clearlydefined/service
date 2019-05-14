@@ -27,6 +27,7 @@ module.exports = {
     github: require('../middleware/githubConfig')
   },
   curation: {
+    queue: { azure: require('../providers/curation/azureQueueConfig') },
     service: { github: require('../providers/curation/githubConfig') },
     store: {
       memory: require('../providers/curation/memoryStore'),

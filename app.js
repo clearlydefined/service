@@ -48,6 +48,9 @@ function createApp(config) {
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
 
+  const curationQueue = config.curation.queue()
+  initializers.push(async () => curationQueue.initialize())
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
     harvestService,
@@ -165,6 +168,8 @@ function createApp(config) {
         callback(error)
       }
     )
+    // kick off the queue processors
+    require('./providers/curation/process')(curationQueue, curationService, logger)
   }
 
   // error handler

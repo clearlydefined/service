@@ -42,6 +42,7 @@ module.exports = {
     logger: loadFactory(config.get('LOGGING_PROVIDER') || 'winston', 'logging')
   },
   curation: {
+    queue: loadFactory(config.get('CURATION_QUEUE_PROVIDER') || 'azure', 'curation.queue'), // todo: change default to memory queue
     service: loadFactory(config.get('CURATION_PROVIDER') || 'github', 'curation.service'),
     store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
   },
