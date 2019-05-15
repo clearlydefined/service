@@ -35,6 +35,7 @@ module.exports = {
     }
   },
   harvest: {
+    queue: { azure: require('../providers/harvest/azureQueueConfig') }, // todo: add memory queue
     service: {
       crawler: require('../providers/harvest/crawlerConfig'),
       crawlerQueue: require('../providers/harvest/crawlerQueueConfig')

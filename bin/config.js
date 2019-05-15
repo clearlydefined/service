@@ -47,6 +47,7 @@ module.exports = {
     store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
   },
   harvest: {
+    queue: loadFactory(config.get('HARVEST_QUEUE_PROVIDER') || 'azure', 'harvest.queue'), // todo: change default to memory queue
     service: loadFactory(config.get('HARVESTER_PROVIDER') || 'crawler', 'harvest.service'),
     store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store')
   },
