@@ -28,7 +28,7 @@ function setup(_queue, _definitionService, _logger) {
   queue = _queue
   definitionService = _definitionService
   logger = _logger
-  work()
+  return work()
 }
 
 module.exports = setup

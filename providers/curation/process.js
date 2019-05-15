@@ -39,7 +39,7 @@ function setup(_queue, _curationService, _logger) {
   queue = _queue
   curationService = _curationService
   logger = _logger
-  work()
+  return work()
 }
 
 module.exports = setup
