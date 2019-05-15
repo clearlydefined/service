@@ -41,7 +41,7 @@ class AzureStorageQueue {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
     if (!message) return null
     if (message.dequeueCount <= 5) return { original: message, data: JSON.parse(base64.decode(message.messageText)) }
-    await this.delete(message)
+    await this.delete({ original: message })
     return this.dequeue()
   }
 
