@@ -20,15 +20,13 @@ async function getDefinition(request, response) {
   const force = (request.hostname && request.hostname.includes('localhost')) ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.get(coordinates, pr, force, expand)
-  if (Array.isArray(result.data) && result.data.length > 0) {
-    response.set('cache-tag', definitionService.tagFromCoordinates(result.data))
-  }
+  response.set('cache-tag', definitionService.tagFromCoordinates(result))
   response.status(200).send(result)
 }
 
 function projectTag(dataPoint) {
   if (dataPoint.coordinates) {
-    return definitionService.cdn.tagFromCoordinates(dataPoint.coordinates)
+    return definitionService.tagFromCoordinates(dataPoint.coordinates)
   }
   return null
 }
