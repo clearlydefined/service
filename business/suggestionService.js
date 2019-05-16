@@ -32,9 +32,8 @@ class SuggestionService {
       let discoveredExpressions = get(definitions.original, 'licensed.facets.core.discovered.expressions')
       if (Array.isArray(discoveredExpressions)) {
         let appendDeclared = discoveredExpressions
-          .map(exp => { return { exp, cutAt: exp.indexOf('-') } })
-          .filter(marked => marked.cutAt > 0)
-          .map(marked => { return { value: marked.exp.substr(0, marked.cutAt), version: marked.exp.substr(marked.cutAt + 1) } })
+          .filter(isDeclaredLicense)
+          .map(value => { return { value, version: get(definitions.original, 'coordinates.revision') } })
         let suggestedSoFar = get(suggestion, 'licensed.declared') || []
         hasSuggested |= setIfValue(suggestion, 'licensed.declared', appendDeclared
           .concat(suggestedSoFar)
