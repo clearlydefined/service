@@ -311,3 +311,24 @@ describe('Utils isLicenseFile', () => {
     expect(utils.isLicenseFile()).to.be.false
   })
 })
+
+describe('Utils extractDate', () => {
+  it('should extract date from timestamps', () => {
+    const inputs = {
+      '2014-11-21T00:06:54.027559+00:00': '2014-11-21',
+      '2014-11-21': '2014-11-21',
+      '11-21-2014': '2014-11-21',
+      '21-11-2014': null,
+      '21-garbage': null,
+      '1900-01-01:T00:00:00': null,
+      '9999-01-01:T00:00:00': null,
+      '1900-01-01': null,
+      '9999-01-01': null
+    }
+
+    for (const timestamp of Object.getOwnPropertyNames(inputs)) {
+      const date = utils.extractDate(timestamp)
+      expect(date).to.equal(inputs[timestamp])
+    }
+  })
+})

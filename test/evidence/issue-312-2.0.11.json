@@ -1,0 +1,154 @@
+{
+  "licensed": {
+    "declared": "MIT",
+    "toolScore": {
+      "total": 79,
+      "declared": 30,
+      "discovered": 4,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 6,
+          "parties": [
+            "Copyright (c) 2013-2018 GitHub Inc."
+          ]
+        },
+        "discovered": {
+          "unknown": 4,
+          "expressions": [
+            "MIT"
+          ]
+        },
+        "files": 7
+      }
+    },
+    "score": {
+      "total": 79,
+      "declared": 30,
+      "discovered": 4,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "files": [
+    {
+      "path": "package/electron.d.ts",
+      "hashes": {
+        "sha1": "87d7c75b4e295fa0442c9d6836a2c855a0676b13",
+        "sha256": "80c89e7028a4db7fd028050bac19bd90bdef336b7dc56eeb9d105ca83450689f"
+      }
+    },
+    {
+      "path": "package/install.js",
+      "hashes": {
+        "sha1": "2f7be95f9c5d13880cb65b0b75a30b673aa8a3a5",
+        "sha256": "c831a441450551c13c176df1704c67fbb3f203019a2dac18d9c0ef7a5940a7df"
+      }
+    },
+    {
+      "path": "package/LICENSE",
+      "license": "MIT",
+      "attributions": [
+        "Copyright (c) 2013-2018 GitHub Inc."
+      ],
+      "hashes": {
+        "sha1": "b5ca5c2af11a235f8d6477bee87f9f5dbec496e1",
+        "sha256": "fa441a7ca6c25057936b32dec6083cc61078003c3907b4f32feabb5ccdb15371"
+      },
+      "natures": [
+        "license"
+      ],
+      "token": "fa441a7ca6c25057936b32dec6083cc61078003c3907b4f32feabb5ccdb15371"
+    },
+    {
+      "path": "package/index.js",
+      "hashes": {
+        "sha1": "cb6180bb532a20f9e0f2f69a22ef9656ea36d766",
+        "sha256": "a3df394efba92d23d86913ba936eeb97973f006a78a33209210bcee0cb6ccbe5"
+      }
+    },
+    {
+      "path": "package/package.json",
+      "license": "MIT",
+      "hashes": {
+        "sha1": "53d4d5b5b5a9c57a0a440488a5f6e2020412f30c",
+        "sha256": "27f3040e0db075379fc8a44fbf1f19f2a70f6c8eca1f2cdefb37ac1013c78cab"
+      },
+      "token": "27f3040e0db075379fc8a44fbf1f19f2a70f6c8eca1f2cdefb37ac1013c78cab"
+    },
+    {
+      "path": "package/README.md",
+      "license": "MIT",
+      "hashes": {
+        "sha1": "c2ea974c38901ad85cb5d31b09a31a0fd2749339",
+        "sha256": "273ce18c47829ff60365acd1df9cf85bb7c4c9cc30b7a3db1c4fd43640f8b20f"
+      }
+    },
+    {
+      "path": "package/cli.js",
+      "hashes": {
+        "sha1": "1d1fce9c07fbc8803fb5a73506f184bb19a1699c",
+        "sha256": "2b750edb68552de803304ae98fad8b9df90cbb7ae6ec449afc50c138450f17de"
+      }
+    }
+  ],
+  "described": {
+    "releaseDate": "2019-03-08",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "electron",
+      "name": "electron",
+      "revision": "7a5cb9f47b2c339023cf1fbf6e5761f7296bb7f4",
+      "url": "https://github.com/electron/electron/tree/7a5cb9f47b2c339023cf1fbf6e5761f7296bb7f4"
+    },
+    "urls": {
+      "registry": "https://npmjs.com/package/electron",
+      "version": "https://npmjs.com/package/electron/v/2.0.11",
+      "download": "https://registry.npmjs.com/electron/-/electron-2.0.11.tgz"
+    },
+    "projectWebsite": "https://github.com/electron/electron#readme",
+    "issueTracker": "https://github.com/electron/electron/issues",
+    "hashes": {
+      "sha1": "52f1b248c3cc013b5a870094de3b6ba5de313a0f",
+      "sha256": "187a3c4afb6b1f68c8f208c7d93273a6c82e0a85be839dc4eb30cd9b4c19c3ce"
+    },
+    "files": 7,
+    "tools": [
+      "clearlydefined/1.3.4",
+      "licensee/9.12.1",
+      "scancode/3.2.2",
+      "fossology/3.6.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "coordinates": {
+    "type": "npm",
+    "provider": "npmjs",
+    "name": "electron",
+    "revision": "2.0.11"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2019-05-12T11:02:55.724Z"
+  },
+  "scores": {
+    "effective": 89,
+    "tool": 89
+  },
+  "_id": "npm/npmjs/-/electron/2.0.11"
+}
