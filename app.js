@@ -51,6 +51,12 @@ function createApp(config) {
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
 
+  const curationQueue = config.curation.queue()
+  initializers.push(async () => curationQueue.initialize())
+
+  const harvestQueue = config.harvest.queue()
+  initializers.push(async () => harvestQueue.initialize())
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
     harvestService,
@@ -161,6 +167,11 @@ function createApp(config) {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
         logger.info('Service initialized', { buildNumber: process.env.BUILD_NUMBER })
+
+        // kick off the queue processors
+        require('./providers/curation/process')(curationQueue, curationService, logger)
+        require('./providers/harvest/process')(harvestQueue, definitionService, logger)
+
         // Signal system is up and ok (no error)
         callback()
       },
