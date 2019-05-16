@@ -42,10 +42,12 @@ module.exports = {
     logger: loadFactory(config.get('LOGGING_PROVIDER') || 'winston', 'logging')
   },
   curation: {
+    queue: loadFactory(config.get('CURATION_QUEUE_PROVIDER') || 'memory', 'curation.queue'),
     service: loadFactory(config.get('CURATION_PROVIDER') || 'github', 'curation.service'),
     store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
   },
   harvest: {
+    queue: loadFactory(config.get('HARVEST_QUEUE_PROVIDER') || 'memory', 'harvest.queue'),
     service: loadFactory(config.get('HARVESTER_PROVIDER') || 'crawler', 'harvest.service'),
     store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store')
   },
