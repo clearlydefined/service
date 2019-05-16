@@ -151,7 +151,7 @@ class GitHubCurationService {
     return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
   }
 
-  async _writePatch(serviceGithub, info, patch, branch) {
+  async _writePatch(userGithub, serviceGithub, info, patch, branch) {
     const { owner, repo } = this.options
     const coordinates = EntityCoordinates.fromObject(patch.coordinates)
     const currentContent = await this._getCurations(coordinates)
@@ -167,6 +167,13 @@ class GitHubCurationService {
       message,
       content,
       branch
+    }
+
+    if (userGithub) {
+      const user = await userGithub.users.get()
+      const name = get(user, 'data.name')
+      const email = get(user, 'data.email')
+      if (name && email) fileBody.committer = { name, email }
     }
 
     // Github requires name/email to set committer
@@ -210,7 +217,7 @@ class GitHubCurationService {
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
     await Promise.all(
       // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
-      patch.patches.map(throat(1, component => this._writePatch(serviceGithub, info, component, prBranch)))
+      patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, component, prBranch)))
     )
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
