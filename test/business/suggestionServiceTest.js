@@ -87,7 +87,7 @@ describe('Suggestion Service', () => {
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
     expect(declared).to.equalInAnyOrder([
-      { value: 'GPL', version: '2.0' }
+      { value: 'GPL-2.0', version: '1.6.2.b8' }
     ])
   })
 })
