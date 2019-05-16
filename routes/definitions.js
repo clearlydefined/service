@@ -26,7 +26,7 @@ async function getDefinition(request, response) {
   response.status(200).send(result)
 }
 
-function project_tag(dataPoint) {
+function projectTag(dataPoint) {
   if (dataPoint.coordinates) {
     return definitionService.cdn.tagFromCoordinates(dataPoint.coordinates)
   }
@@ -48,7 +48,7 @@ async function getDefinitions(request, response) {
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
   const result = await definitionService.find(request.query)
   if (Array.isArray(result.data)) {
-    response.set('cache-tag', result.data.map(project_tag).join())
+    response.set('cache-tag', result.data.map(projectTag.filter(t => t)).join())
   }
   response.send(result)
 }
