@@ -11,7 +11,7 @@ describe('Harvest queue processing', () => {
     const { queue, definitionService, logger } = setup({
       _metadata: { links: { self: { href: 'urn:gem:rubygems:-:0mq:revision:0.5.2:tool:clearlydefined:1.3.3' } } }
     })
-    await process(queue, definitionService, logger)
+    await process(queue, definitionService, logger, true)
 
     expect(definitionService.computeAndStore.calledOnce).to.be.true
     expect(definitionService.computeAndStore.getCall(0).args[0]).to.deep.eq({
@@ -29,7 +29,7 @@ describe('Harvest queue processing', () => {
 
   it('handles bogus message', async () => {
     const { queue, definitionService, logger } = setup({ junk: 'here' })
-    await process(queue, definitionService, logger)
+    await process(queue, definitionService, logger, true)
 
     expect(definitionService.computeAndStore.calledOnce).to.be.false
     expect(logger.info.calledOnce).to.be.false

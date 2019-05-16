@@ -9,7 +9,7 @@ const sinon = require('sinon')
 describe('Curation queue processing', () => {
   it('handles opened message', async () => {
     const { queue, curationService, logger } = setup({ action: 'opened' })
-    await process(queue, curationService, logger)
+    await process(queue, curationService, logger, true)
 
     expect(curationService.getContributedCurations.calledOnce).to.be.true
     expect(curationService.validateContributions.calledOnce).to.be.true
@@ -21,7 +21,7 @@ describe('Curation queue processing', () => {
 
   it('handles synchronize message', async () => {
     const { queue, curationService, logger } = setup({ action: 'synchronize' })
-    await process(queue, curationService, logger)
+    await process(queue, curationService, logger, true)
 
     expect(curationService.getContributedCurations.calledOnce).to.be.true
     expect(curationService.validateContributions.calledOnce).to.be.true
@@ -33,7 +33,7 @@ describe('Curation queue processing', () => {
 
   it('handles closed message', async () => {
     const { queue, curationService, logger } = setup({ action: 'closed' })
-    await process(queue, curationService, logger)
+    await process(queue, curationService, logger, true)
 
     expect(curationService.getContributedCurations.calledOnce).to.be.false
     expect(curationService.validateContributions.calledOnce).to.be.false
@@ -45,7 +45,7 @@ describe('Curation queue processing', () => {
 
   it('skips processing for random messages', async () => {
     const { queue, curationService, logger } = setup({ action: 'rando' })
-    await process(queue, curationService, logger)
+    await process(queue, curationService, logger, true)
 
     expect(curationService.getContributedCurations.calledOnce).to.be.false
     expect(curationService.validateContributions.calledOnce).to.be.false

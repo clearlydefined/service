@@ -4,7 +4,7 @@
 const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
-async function work() {
+async function work(once) {
   try {
     let message = await queue.dequeue()
     const urn = get(message, 'data._metadata.links.self.href')
@@ -16,7 +16,7 @@ async function work() {
   } catch (error) {
     logger.error(error)
   } finally {
-    setTimeout(work, 250)
+    if (!once) setTimeout(work, 250)
   }
 }
 
@@ -24,11 +24,11 @@ let queue
 let definitionService
 let logger
 
-function setup(_queue, _definitionService, _logger) {
+function setup(_queue, _definitionService, _logger, once = false) {
   queue = _queue
   definitionService = _definitionService
   logger = _logger
-  return work()
+  return work(once)
 }
 
 module.exports = setup

@@ -3,7 +3,7 @@
 
 const { get } = require('lodash')
 
-async function work() {
+async function work(once) {
   try {
     let message = await queue.dequeue()
     if (!get(message, 'data.pull_request') || !get(message, 'data.action')) return
@@ -27,7 +27,7 @@ async function work() {
   } catch (error) {
     logger.error(error)
   } finally {
-    setTimeout(work, 30000)
+    if (!once) setTimeout(work, 30000, once)
   }
 }
 
@@ -35,11 +35,11 @@ let queue
 let curationService
 let logger
 
-function setup(_queue, _curationService, _logger) {
+function setup(_queue, _curationService, _logger, once = false) {
   queue = _queue
   curationService = _curationService
   logger = _logger
-  return work()
+  return work(once)
 }
 
 module.exports = setup
