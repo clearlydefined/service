@@ -6,6 +6,7 @@ coordinates:
 revisions:
   4.17.4:
     described:
-      issueTracker: "https://foobar.com/baz/1"
+      urls:
+        issueTracker: "https://foobar.com/baz/1"
     licensed:
       declaredlicense: "MIT"

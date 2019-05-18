@@ -155,7 +155,7 @@ class ClearlyDescribedSummarizer {
 
   addCrateData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
-    setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
+    setIfValue(result, 'described.urls.projectWebsite', get(data, 'manifest.homepage'))
     const license = get(data, 'registryData.license')
     if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
     setIfValue(result, 'described.urls.registry', `https://crates.io/crates/${coordinates.name}`)
@@ -229,12 +229,12 @@ class ClearlyDescribedSummarizer {
     if (!manifest) return
     let homepage = manifest.homepage
     if (homepage && isArray(homepage)) homepage = homepage[0]
-    setIfValue(result, 'described.projectWebsite', homepage)
+    setIfValue(result, 'described.urls.projectWebsite', homepage)
     const bugs = manifest.bugs
     if (bugs) {
       if (typeof bugs === 'string') {
-        if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
-      } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
+        if (bugs.startsWith('http')) setIfValue(result, 'described.urls.issueTracker', bugs)
+      } else setIfValue(result, 'described.urls.issueTracker', bugs.url || bugs.email)
     }
     const license =
       manifest.license &&
@@ -244,7 +244,7 @@ class ClearlyDescribedSummarizer {
 
   addPodData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.homepage'))
+    setIfValue(result, 'described.urls.projectWebsite', get(data, 'registryData.homepage'))
     const license = get(data, 'registryData.license')
     if (license) {
       setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))

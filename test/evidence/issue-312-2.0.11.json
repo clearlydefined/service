@@ -110,9 +110,9 @@
     "urls": {
       "registry": "https://npmjs.com/package/electron",
       "version": "https://npmjs.com/package/electron/v/2.0.11",
-      "download": "https://registry.npmjs.com/electron/-/electron-2.0.11.tgz"
+      "download": "https://registry.npmjs.com/electron/-/electron-2.0.11.tgz",
+      "projectWebsite": "https://github.com/electron/electron#readme"
     },
-    "projectWebsite": "https://github.com/electron/electron#readme",
     "issueTracker": "https://github.com/electron/electron/issues",
     "hashes": {
       "sha1": "52f1b248c3cc013b5a870094de3b6ba5de313a0f",

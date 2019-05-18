@@ -99,6 +99,9 @@ describe('Curations', () => {
   it('should identify valid curations (all fields)', () => {
     const content = getFixture('curation-valid.1.yaml')
     const curation = new Curation(content)
+    if (!curation.isValid) {
+      console.warn(curation.errors)
+    }
     expect(curation.isValid).to.be.true
     expect(curation.errors.length).to.not.be.ok
   })

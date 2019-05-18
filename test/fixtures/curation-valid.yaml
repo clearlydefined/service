@@ -12,7 +12,8 @@ revisions:
           - "bar"
         doc:
           - "js"
-      issueTracker: "https://foobar.com/baz/1"
+      urls:
+        issueTracker: "https://foobar.com/baz/1"
     licensed:
       declared: "MIT"
   4.17.5:

@@ -58,7 +58,7 @@ class NoticeService {
           version: get(definition, 'coordinates.revision'),
           license: get(definition, 'licensed.declared'),
           copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
-          website: get(definition, 'described.projectWebsite') || '',
+          website: get(definition, 'described.urls.projectWebsite') || '',
           text: await this._getPackageText(definition)
         }
       })

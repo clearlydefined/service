@@ -18,7 +18,7 @@ const curation = new Curation({
   coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' },
   revisions: {
     '1.0': {
-      described: { projectWebsite: 'http://foo.com' }
+      described: { urls: {projectWebsite: 'http://foo.com'} }
     }
   }
 })
@@ -35,7 +35,8 @@ const files = [
       {
         data: {
           described: {
-            projectWebsite: 'http://foo.com'
+            urls:
+            {projectWebsite: 'http://foo.com'}
           }
         },
         revision: '1.0'
@@ -81,7 +82,7 @@ describe('Mongo Curation store', () => {
         coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' },
         revisions: {
           '1.0': {
-            described: { projectWebsite: 'http://foo.com' }
+            described: { urls:{projectWebsite: 'http://foo.com'} }
           }
         }
       })
@@ -112,7 +113,7 @@ describe('Mongo Curation store', () => {
       new Curation({
         revisions: {
           '1.0': {
-            described: { projectWebsite: 'http://foo.com' }
+            described: { urls:{projectWebsite: 'http://foo.com'} }
           }
         }
       })
@@ -152,7 +153,7 @@ describe('Mongo Curation store', () => {
       'files.revisions.revision': '1.0'
     })
     expect(service.collection.find().sort.args[0][0]).to.deep.eq({ 'pr.number': -1 })
-    expect(result.curations).to.deep.eq({ 'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } } })
+    expect(result.curations).to.deep.eq({ 'npm/npmjs/-/foo/1.0': { described: { urls: {projectWebsite: 'http://foo.com'} } } })
   })
 
   it('handles list with no coordinates', async () => {

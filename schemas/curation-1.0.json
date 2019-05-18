@@ -68,17 +68,8 @@
         "sourceLocation": {
           "$ref": "#/definitions/sourceLocation"
         },
-        "projectWebsite": {
-          "type": "string",
-          "errorMessage": {
-            "type": "Project website must be a string"
-          }
-        },
-        "issueTracker": {
-          "type": "string",
-          "errorMessage": {
-            "type": "Issue tracker must be a string"
-          }
+        "urls": {
+          "$ref": "#/definitions/urls"
         },
         "releaseDate": {
           "type": "string",
@@ -91,7 +82,7 @@
       },
       "errorMessage": {
         "type": "Described must be an object",
-        "additionalProperties": "Described object can only contain facets, sourceLocation, projectWebsite, issueTracker, and releaseDate"
+        "additionalProperties": "Described object can only contain facets, sourceLocation, urls, and releaseDate"
       }
     },
     "globList": {
@@ -155,6 +146,32 @@
         "type": "Source location must be an object",
         "required": "Source location object requires type, provider, revision, and url",
         "additionalProperties": "Source location object can only contain type, provider, revision, and url"
+      }
+    },
+    "urls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "registry": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "version": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "download": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "issueTracker": { 
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "projectWebsite": {
+          "type": ["string", "null"],
+          "format": "uri"
+        }
       }
     },
     "files": {

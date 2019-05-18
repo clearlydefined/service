@@ -59,7 +59,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
     const base = { coordinates: definitionCoordinates }
     await service.apply(null, null, base)
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    expect(base.described.urls.projectWebsite).to.eq('http://foo.com')
   })
 
   it('merges complex curation on simple base', async () => {
@@ -68,7 +68,7 @@ describe('Github Curation Service', () => {
     const base = extend(true, {}, simpleHarvested)
     await service.apply(null, null, base)
     expect(base.described.releaseDate).to.eq('2018-10-19')
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    expect(base.described.urls.projectWebsite).to.eq('http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
     expect(!!file1).to.be.true
     expect(file1.license).to.eq('MIT')
@@ -83,7 +83,7 @@ describe('Github Curation Service', () => {
     const base = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
     expect(base.described.releaseDate).to.eq('2018-08-09')
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    expect(base.described.urls.projectWebsite).to.eq('http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
     expect(!!file1).to.be.true
     expect(file1.token).to.eq('1 token')
@@ -97,7 +97,7 @@ describe('Github Curation Service', () => {
     sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
     const base = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    expect(base.described.urls.projectWebsite).to.eq('http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
     expect(!!file1).to.be.true
     expect(file1.license).to.eq('MIT')
@@ -172,7 +172,9 @@ const simpleCuration = {
   coordinates: curationCoordinates,
   revisions: {
     '1.0': {
-      described: { projectWebsite: 'http://foo.com' }
+      described: {
+        urls:
+         {projectWebsite: 'http://foo.com'} }
     }
   }
 }
@@ -181,7 +183,8 @@ const complexCuration = {
   coordinates: curationCoordinates,
   revisions: {
     '1.0': {
-      described: { releaseDate: '2018-10-19', projectWebsite: 'http://foo.com' },
+      described: { releaseDate: '2018-10-19', 
+        urls: {projectWebsite: 'http://foo.com'} },
       files: [{ path: '1.txt', license: 'MIT' }, { path: '2.txt', license: 'GPL' }]
     }
   }

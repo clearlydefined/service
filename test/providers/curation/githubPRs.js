@@ -17,7 +17,7 @@ function complexCuration(name = 'foo') {
     coordinates: { ...curationCoordinates, name },
     revisions: {
       '1.0': {
-        described: { releaseDate: '2018-10-19', projectWebsite: `http://${name}.com` },
+        described: { releaseDate: '2018-10-19', urls: {projectWebsite: `http://${name}.com`} },
         files: [{ path: `${name}.1.txt`, license: 'MIT' }, { path: `${name}.2.txt`, license: 'GPL' }]
       }
     }

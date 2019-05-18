@@ -116,7 +116,7 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   it('decribes projectWebsite from manifest', () => {
     let result = {}
     summarizer.addCrateData(result, { manifest: { homepage: 'https://github.com/owner/repo' } }, crateTestCoordinates)
-    assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
+    assert.strictEqual(result.described.urls.projectWebsite, 'https://github.com/owner/repo')
   })
 
   it('decribes releaseDate from registryData', () => {
@@ -204,12 +204,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       { registryData: { manifest: { homepage: 'https://github.com/project/repo' } } },
       npmTestCoordinates
     )
-    assert.deepEqual(result, {
-      described: {
-        urls: expectedUrls,
-        projectWebsite: 'https://github.com/project/repo'
-      }
-    })
+    assert.strictEqual(result.described.urls.projectWebsite, 'https://github.com/project/repo')
   })
 
   it('should set issueTracker if it is http', () => {
@@ -219,12 +214,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       { registryData: { manifest: { bugs: 'https://github.com/project/repo/issues' } } },
       npmTestCoordinates
     )
-    assert.deepEqual(result, {
-      described: {
-        urls: expectedUrls,
-        issueTracker: 'https://github.com/project/repo/issues'
-      }
-    })
+    assert.strictEqual(result.described.urls.issueTracker, 'https://github.com/project/repo/issues')
 
     let resul2 = {}
     summarizer.addNpmData(
@@ -246,12 +236,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       },
       npmTestCoordinates
     )
-    assert.deepEqual(result, {
-      described: {
-        urls: expectedUrls,
-        issueTracker: 'https://github.com/project/repo/issues'
-      }
-    })
+    assert.strictEqual(result.described.urls.issueTracker, 'https://github.com/project/repo/issues')
 
     let result2 = {}
     summarizer.addNpmData(
@@ -259,12 +244,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       { registryData: { manifest: { bugs: { email: 'bugs@project.com' } } } },
       npmTestCoordinates
     )
-    assert.deepEqual(result2, {
-      described: {
-        urls: expectedUrls,
-        issueTracker: 'bugs@project.com'
-      }
-    })
+    assert.strictEqual(result2.described.urls.issueTracker, 'bugs@project.com')
   })
 
   it('should not set issueTracker if it is not http', () => {})

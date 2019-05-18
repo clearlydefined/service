@@ -137,8 +137,6 @@
         },
         "sourceLocation": { "$ref": "#/definitions/sourceLocation" },
         "urls": { "$ref": "#/definitions/urls" },
-        "projectWebsite": { "type": "string" },
-        "issueTracker": { "type": "string" },
         "releaseDate": {
           "type": "string",
           "format": "date"
@@ -224,7 +222,16 @@
         "download": {
           "type": ["string", "null"],
           "format": "uri"
+        },
+        "issueTracker": { 
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "projectWebsite": { 
+          "type": ["string", "null"],
+          "format": "uri"
         }
+
       }
     },
     "licensed": {

@@ -180,8 +180,8 @@ describe('ClearlyDefined NPM summarizer', () => {
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.described.urls.issueTracker).to.eq('http://bugs')
+    expect(summary.described.urls.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles data with source location', () => {
@@ -207,8 +207,8 @@ describe('ClearlyDefined NPM summarizer', () => {
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.be.undefined
-    expect(summary.described.projectWebsite).to.be.undefined
+    expect(summary.described.urls.issueTracker).to.be.undefined
+    expect(summary.described.urls.projectWebsite).to.be.undefined
   })
 
   it('handles string issueTracker', () => {
@@ -217,8 +217,8 @@ describe('ClearlyDefined NPM summarizer', () => {
     validate(summary)
     expect(summary.licensed).to.be.undefined
     expect(summary.described.releaseDate).to.be.undefined
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.be.undefined
+    expect(summary.described.urls.issueTracker).to.eq('http://bugs')
+    expect(summary.described.urls.projectWebsite).to.be.undefined
   })
 
   it('handles non url string issueTracker', () => {
@@ -354,7 +354,7 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.projectWebsite).to.eq('https://clearlydefined.com')
+    expect(summary.described.urls.projectWebsite).to.eq('https://clearlydefined.com')
   })
 
   it('handles license type', () => {
