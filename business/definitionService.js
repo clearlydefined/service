@@ -59,6 +59,7 @@ class DefinitionService {
    * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
    * curation or an actual curation object.
    * @param {bool} force - whether or not to force re-computation of the requested definition
+   * @param {string} expand - hints for parts to include/exclude; e.g. "-files"
    * @returns {Definition} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
