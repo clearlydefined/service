@@ -37,7 +37,8 @@ class StatusService {
       requestcount: this._requestCount,
       definitionavailability: this._definitionAvailability,
       processedperday: this._processedPerDay,
-      recentlycrawled: this._recentlyCrawled
+      recentlycrawled: this._recentlyCrawled,
+      crawlbreakdown: this._crawlbreakdown
     }
   }
 
@@ -106,6 +107,28 @@ class StatusService {
     )
     return data.tables[0].rows.map(row => {
       return { coordinates: row[0], timestamp: row[1] }
+    })
+  }
+
+  async _crawlbreakdown() {
+    const data = await requestPromise(
+      this._crawlerQuery(`
+      traces
+      | where timestamp > ago(90d)
+      | where customDimensions.outcome == 'Processed'
+      | summarize count() by when=bin(timestamp, 1d), type=tostring(customDimensions.type)
+      | order by when desc, type desc`)
+    )
+    const grouped = data.tables[0].rows.reduce((result, row) => {
+      let date = row[0]
+      let type = row[1]
+      let count = row[2]
+      result[date] = result[date] || {}
+      result[date][type] = count
+      return result
+    }, {})
+    return Object.keys(grouped).map(date => {
+      return { ...grouped[date], date }
     })
   }
 
