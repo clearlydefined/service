@@ -113,11 +113,12 @@ class StatusService {
   async _crawlbreakdown() {
     const data = await requestPromise(
       this._crawlerQuery(`
-      traces
-      | where timestamp > ago(90d)
-      | where customDimensions.outcome == 'Processed'
-      | summarize count() by when=bin(timestamp, 1d), type=tostring(customDimensions.type)
-      | order by when desc, type desc`)
+      traces      
+      | where customDimensions.outcome == 'Processed'  
+      | where timestamp > ago(90d) 
+      | parse customDimensions.root with "component@cd:/" type "/" specTrail 
+      | summarize count() by when=bin(timestamp, 1d), type 
+      | order by when asc, type`)
     )
     const grouped = data.tables[0].rows.reduce((result, row) => {
       let date = row[0]
