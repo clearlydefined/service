@@ -10,19 +10,20 @@ class CrawlingHarvester {
     this.options = options
   }
 
-  async harvest(spec) {
+  async harvest(spec, turbo) {
     const headers = {
       'X-token': this.options.authToken
     }
     const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
       return {
         type: entry.tool || 'component',
-        url: `cd:/${entry.coordinates}`,
+        url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
         policy: entry.policy
       }
     })
+    const url = turbo ? `${this.options.url}/requests` : `${this.options.url}/requests/later`
     return requestPromise({
-      url: `${this.options.url}/requests/later`,
+      url,
       method: 'POST',
       body,
       headers,

@@ -108,6 +108,22 @@ describe('Github Curation Service', () => {
     expect(file2.token).to.eq('2 token')
   })
 
+  it('overrides file licenses when curated', async () => {
+    const service = createService()
+    sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
+    const base = extend(true, {}, complexHarvestedWithLicenses)
+    await service.apply(null, null, base)
+    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    const file1 = find(base.files, file => file.path === '1.txt')
+    expect(!!file1).to.be.true
+    expect(file1.license).to.eq('MIT')
+    expect(file1.token).to.eq('1 token')
+    const file2 = find(base.files, file => file.path === '2.txt')
+    expect(!!file2).to.be.true
+    expect(file2.license).to.eq('GPL')
+    expect(file2.token).to.eq('2 token')
+  })
+
   it('fails if definition exists', async () => {
     const { service } = setup()
     const gitHubService = createService(service)
@@ -231,6 +247,12 @@ const complexHarvested = {
   coordinates: definitionCoordinates,
   described: { releaseDate: '2018-08-09' },
   files: [{ path: '2.txt', token: '2 token' }, { path: '1.txt', token: '1 token' }]
+}
+
+const complexHarvestedWithLicenses = {
+  coordinates: definitionCoordinates,
+  described: { releaseDate: '2018-08-09' },
+  files: [{ path: '2.txt', token: '2 token', license: 'NOASSERT' }, { path: '1.txt', token: '1 token', license: 'GPL-3.0' }]
 }
 
 function createCuration(curation = simpleCuration) {

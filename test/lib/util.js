@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 const utils = require('../../lib/utils')
-const SPDX = require('../../lib/spdx')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -39,6 +38,9 @@ describe('Utils latest version', () => {
       'https://www.gnu.org/licenses/gpl-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gPL-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gpl-2.0': 'GPL-2.0',
+      'http://json.org/license.html': 'JSON',
+      'http://www.json.org/license.html': 'JSON',
+      'https://json.org/license.html': 'JSON',
       'https://opensource.org/licenses/JUNK': null,
       'https://www.gnu.org/licenses/JUNK': null,
       'https://github.com/owner/repo/blob/master/LICENSE': null,
@@ -61,13 +63,15 @@ describe('Utils merge Licenses', () => {
       ['MIT AND GPL-3.0', 'GPL-3.0', 'GPL-3.0 AND MIT'],
       ['MIT AND GPL-3.0', 'MIT', 'GPL-3.0 AND MIT'],
       ['MIT AND GPL-3.0', 'MIT AND BSD-3-Clause', 'BSD-3-Clause AND GPL-3.0 AND MIT'],
-      ['MIT OR GPL-3.0', 'GPL-3.0', 'GPL-3.0 OR MIT'],
-      ['MIT OR GPL-3.0', 'MIT', 'GPL-3.0 OR MIT']
+      ['MIT OR GPL-3.0', 'GPL-3.0', 'GPL-3.0 OR (GPL-3.0 AND MIT)'],
+      ['MIT OR GPL-3.0', 'MIT', 'MIT OR (GPL-3.0 AND MIT)'],
+      ['MIT OR Apache-2.0', 'MIT AND Apache-2.0', 'Apache-2.0 AND MIT'],
+      ['MIT AND Apache-2.0', 'MIT OR Apache-2.0', 'Apache-2.0 AND MIT']
     ]
     inputs.forEach(input => {
       const base = { licensed: { declared: input[0] } }
       utils.mergeDefinitions(base, { licensed: { declared: input[1] } })
-      expect(SPDX.satisfies(base.licensed.declared, input[2])).to.be.true
+      expect(base.licensed.declared).to.eq(input[2])
     })
   })
 })
@@ -308,5 +312,26 @@ describe('Utils isLicenseFile', () => {
 
   it('should handle falsy input', () => {
     expect(utils.isLicenseFile()).to.be.false
+  })
+})
+
+describe('Utils extractDate', () => {
+  it('should extract date from timestamps', () => {
+    const inputs = {
+      '2014-11-21T00:06:54.027559+00:00': '2014-11-21',
+      '2014-11-21': '2014-11-21',
+      '11-21-2014': '2014-11-21',
+      '21-11-2014': null,
+      '21-garbage': null,
+      '1900-01-01:T00:00:00': null,
+      '9999-01-01:T00:00:00': null,
+      '1900-01-01': null,
+      '9999-01-01': null
+    }
+
+    for (const timestamp of Object.getOwnPropertyNames(inputs)) {
+      const date = utils.extractDate(timestamp)
+      expect(date).to.equal(inputs[timestamp])
+    }
   })
 })

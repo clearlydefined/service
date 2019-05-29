@@ -27,6 +27,10 @@ module.exports = {
     github: require('../middleware/githubConfig')
   },
   curation: {
+    queue: {
+      azure: require('../providers/curation/azureQueueConfig'),
+      memory: require('../providers/queueing/memoryQueue')
+    },
     service: { github: require('../providers/curation/githubConfig') },
     store: {
       memory: require('../providers/curation/memoryStore'),
@@ -34,7 +38,14 @@ module.exports = {
     }
   },
   harvest: {
-    service: { crawler: require('../providers/harvest/crawlerConfig') },
+    queue: {
+      azure: require('../providers/harvest/azureQueueConfig'),
+      memory: require('../providers/queueing/memoryQueue')
+    },
+    service: {
+      crawler: require('../providers/harvest/crawlerConfig'),
+      crawlerQueue: require('../providers/harvest/crawlerQueueConfig')
+    },
     store: {
       azure: require('../providers/stores/azblobConfig').harvest,
       file: require('../providers/stores/fileConfig').harvest

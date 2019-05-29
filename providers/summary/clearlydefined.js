@@ -132,10 +132,11 @@ class ClearlyDescribedSummarizer {
       `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
+      `http://central.maven.org/maven2/org/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${
         coordinates.name
       }-${coordinates.revision}.jar`
     )
@@ -221,9 +222,9 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${coordinates.name}/${coordinates.namespace ? coordinates.namespace : '-'}/${
-        coordinates.name
-      }-${coordinates.revision}.tgz`
+      `https://registry.npmjs.com/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return

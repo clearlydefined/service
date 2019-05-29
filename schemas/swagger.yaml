@@ -309,6 +309,11 @@ paths:
         - $ref: '#/components/parameters/namespace'
         - $ref: '#/components/parameters/name'
         - $ref: '#/components/parameters/revision'
+        - in: query
+          name: expand
+          schema:
+            type: string
+          description: Fields to explicitly include or exclude. E.g. "-files" excludes files.
       responses:
         200:
           description: Component definition.

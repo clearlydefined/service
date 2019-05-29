@@ -144,17 +144,20 @@ describe('Mongo Definition store', () => {
       [{}, { '_mongo.partitionKey': 1 }],
       [{ sort: 'type' }, { 'coordinates.type': 1 }],
       [{ sort: 'provider' }, { 'coordinates.provider': 1 }],
-      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1 }],
-      [{ sort: 'namespace' }, { 'coordinates.namespace': 1 }],
+      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1 }],
+      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1 }],
       [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1 }],
       [{ sort: 'releaseDate' }, { 'described.releaseDate': 1 }],
       [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1 }],
       [{ sort: 'describedScore' }, { 'described.score.total': 1 }],
       [{ sort: 'effectiveScore' }, { 'scores.effective': 1 }],
-      [{ sort: 'toolScore' }, { 'scores.tool': 1 }]
+      [{ sort: 'toolScore' }, { 'scores.tool': 1 }],
+      [{ sort: 'revision' }, { 'coordinates.revision': 1 }]
     ])
     data.forEach((expected, input) => {
-      expect(store._buildSort(input)).to.deep.equal(expected)
+      const result = store._buildSort(input)
+      expect(result).to.deep.equal(expected)
+      expect(Object.keys(result)).to.have.ordered.members(Object.keys(expected))
     })
   })
 
