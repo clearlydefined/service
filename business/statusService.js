@@ -114,19 +114,21 @@ class StatusService {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
+      | where timestamp > ago(90d) 
       | where customDimensions.outcome == 'Processed'  
       | where strlen(customDimensions.crawlerHost) > 0
-      | where timestamp > ago(90d) 
-      | parse customDimensions.root with "component@cd:/" type "/" specTrail 
-      | summarize count() by when=bin(timestamp, 1d), type 
+      | parse message with "Processed " tool "@cd:/" type "/" specTrail 
+      | summarize count() by when=bin(timestamp, 1d), tool, type
       | order by when asc, type`)
     )
     const grouped = data.tables[0].rows.reduce((result, row) => {
       let date = row[0]
-      let type = row[1]
-      let count = row[2]
+      let tool = row[1]
+      let type = row[2]
+      let count = row[3]
       result[date] = result[date] || {}
-      result[date][type] = count
+      result[date][tool] = result[date][tool] || {}
+      result[date][tool][type] = count
       return result
     }, {})
     return Object.keys(grouped).map(date => {
