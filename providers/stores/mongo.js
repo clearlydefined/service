@@ -81,7 +81,7 @@ class MongoStore {
    * @returns The data and continuationToken if there is more results
    */
   async find(query, continuationToken = '') {
-    const pageSize = 50 // no option for page size, just next tokens
+    const pageSize = 100 // no option for page size, just next tokens
     const filter = this._buildQuery(query, continuationToken)
     const sort = this._buildSort(query)
     const cursor = await this.collection.find(filter, {
