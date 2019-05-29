@@ -113,8 +113,9 @@ class StatusService {
   async _crawlbreakdown() {
     const data = await requestPromise(
       this._crawlerQuery(`
-      traces      
+      traces
       | where customDimensions.outcome == 'Processed'  
+      | where strlen(customDimensions.crawlerHost) > 0
       | where timestamp > ago(90d) 
       | parse customDimensions.root with "component@cd:/" type "/" specTrail 
       | summarize count() by when=bin(timestamp, 1d), type 
