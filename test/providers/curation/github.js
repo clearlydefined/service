@@ -183,6 +183,12 @@ describe('Github Curation Service', () => {
         }
       ]
     }
+
+    const formatDefinitions = gitHubService._formatDefinitions(contributionPatch.patches)
+    expect(formatDefinitions).to.be.deep.equal([
+      '- [test 1.0](https://clearlydefined.io/definitions/npm/npmjs/-/test/1.0)'
+    ])
+
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
   })
@@ -262,7 +268,10 @@ const complexHarvestedWithLicenses = {
   coordinates: definitionCoordinates,
   described: { releaseDate: '2018-08-09' },
   licensed: { declared: 'MIT' },
-  files: [{ path: '2.txt', token: '2 token', license: 'NOASSERT' }, { path: '1.txt', token: '1 token', license: 'GPL-3.0' }]
+  files: [
+    { path: '2.txt', token: '2 token', license: 'NOASSERT' },
+    { path: '1.txt', token: '1 token', license: 'GPL-3.0' }
+  ]
 }
 
 function createCuration(curation = simpleCuration) {
