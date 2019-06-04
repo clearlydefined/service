@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get, flatten, uniq } = require('lodash')
-const SPDX = require('../../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const {
   extractDate,
   getLicenseLocations,

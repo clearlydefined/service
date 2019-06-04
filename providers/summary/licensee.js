@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { setIfValue, isDeclaredLicense, isLicenseFile } = require('../../lib/utils')
-const SPDX = require('../../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const { get, uniq } = require('lodash')
 
 class LicenseeSummarizer {
