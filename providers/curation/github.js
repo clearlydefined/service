@@ -221,6 +221,7 @@ class GitHubCurationService {
     )
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
+
     const description = `
 **Type:** ${Type}
 
@@ -256,7 +257,14 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   _formatDefinitions(definitions) {
-    return definitions.map(def => `- ${def.coordinates.name} ${Object.keys(def.revisions)[0]}`)
+    return definitions.map(
+      def =>
+        `- [${def.coordinates.name} ${
+          Object.keys(def.revisions)[0]
+        }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${
+          Object.keys(def.revisions)[0]
+        })`
+    )
   }
 
   /**
