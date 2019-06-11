@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap } = require('lodash')
-const base64 = require('base-64')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
