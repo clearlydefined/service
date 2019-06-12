@@ -411,13 +411,13 @@ components:
             properties:
               tool:
                 type: string
-              path:
+              coordinates:
                 type: string
             example:
               - tool: package
-                path: npm/npmjs/-/redie/0.3.0
+                coordinates: npm/npmjs/-/redie/0.3.0
               - tool: source
-                path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+                coordinates: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
     definitionList:
       description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
       content:
