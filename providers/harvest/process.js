@@ -6,17 +6,19 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 
 async function work(once) {
   try {
-    let message = await queue.dequeue()
-    const urn = get(message, 'data._metadata.links.self.href')
-    if (!urn) return
-    const coordinates = EntityCoordinates.fromUrn(urn)
-    await definitionService.computeAndStore(coordinates)
-    logger.info(`Handled Crawler update event for ${urn}`)
-    await queue.delete(message)
+    for (let i = 0; i < 10; i++) {
+      let message = await queue.dequeue()
+      const urn = get(message, 'data._metadata.links.self.href')
+      if (!urn) return
+      const coordinates = EntityCoordinates.fromUrn(urn)
+      await definitionService.computeAndStore(coordinates)
+      logger.info(`Handled Crawler update event for ${urn}`)
+      await queue.delete(message)
+    }
   } catch (error) {
     logger.error(error)
   } finally {
-    if (!once) setTimeout(work, 250)
+    if (!once) setTimeout(work, 500)
   }
 }
 
