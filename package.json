@@ -5,7 +5,9 @@
   "scripts": {
     "test": "nyc mocha \"test/**/*.js\" && eslint .",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "repository": {
@@ -65,7 +67,8 @@
     "tmp": "0.0.33",
     "vso-node-api": "^6.2.8-preview",
     "winston": "^2.3.0",
-    "winston-azure-application-insights": "^1.5.0"
+    "winston-azure-application-insights": "^1.5.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
@@ -78,5 +81,6 @@
     "nyc": "^13.2.0",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
-  }
+  },
+  "snyk": true
 }

@@ -1,0 +1,36 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - deep-equal-in-any-order > sort-any > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - '@octokit/rest > lodash':
+        patched: '2019-07-03T23:39:02.507Z'
+    - eslint > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - eslint > table > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - mongoose > async > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - request-promise-native > request-promise-core > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - tiny-attribution-generator > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - eslint > inquirer > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - tiny-attribution-generator > handlebars > async > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - nyc > istanbul-lib-instrument > @babel/types > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - nyc > istanbul-reports > handlebars > async > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - nyc > istanbul-lib-instrument > @babel/traverse > @babel/generator > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - nyc > istanbul-lib-instrument > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
+    - nyc > istanbul-lib-instrument > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-03T23:39:02.507Z'
