@@ -53,6 +53,5 @@ function createRequest(entries) {
     method: 'POST',
     url: '/',
     body: entries
-    // body: JSON.stringify(entries)
   })
 }
