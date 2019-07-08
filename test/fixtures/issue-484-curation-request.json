@@ -1,0 +1,25 @@
+{
+  "contributionInfo": {
+    "summary": "test change url",
+    "details": "ttt",
+    "resolution": "ttt",
+    "type": "incorrect",
+    "removeDefinitions": false
+  },
+  "patches": [
+    {
+      "coordinates": {
+        "type": "npm",
+        "provider": "npmjs",
+        "name": "npmlog"
+      },
+      "revisions": {
+        "4.1.2": {
+          "described": {
+            "projectWebsite": "https://github.com/npm/npmlog"
+          }
+        }
+      }
+    }
+  ]
+}
