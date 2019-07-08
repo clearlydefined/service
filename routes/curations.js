@@ -92,8 +92,9 @@ async function syncAllContributions(request, response) {
 
 let curationService
 
-function setup(service) {
+function setup(service, testFlag = false) {
   curationService = service
+  if (testFlag) router._updateCurations = updateCurations
   return router
 }
 
