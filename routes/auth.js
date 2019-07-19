@@ -54,7 +54,7 @@ router.get('/github/start', passportOrPat(), (req, res) => {
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
   const token = req.user.githubAccessToken
-  const { publicEmails, permissions } = await getPermissions(token, options.org)
+  const { publicEmails, permissions } = await getUserDetails(token, options.org)
   const username = req.user.username
 
   const result = JSON.stringify({ type: 'github-token', token, permissions, username, publicEmails })
@@ -79,7 +79,7 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
  * @param {string} org - org name to filter teams
  * @returns {Promise<Array<string>>} - list of permission names
  */
-async function getPermissions(token, org) {
+async function getUserDetails(token, org) {
   const options = { headers: { 'user-agent': 'clearlydefined.io' } }
   const client = new GitHubApi(options)
   token && client.authenticate({ type: 'token', token })
@@ -127,7 +127,6 @@ function usePassport() {
 }
 
 function getStrategy() {
-  console.log('getStrategy')
   return new GitHubStrategy(
     {
       clientID: options.clientId,
