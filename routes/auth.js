@@ -54,10 +54,10 @@ router.get('/github/start', passportOrPat(), (req, res) => {
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
   const token = req.user.githubAccessToken
-  const permissions = await getPermissions(token, options.org)
+  const { publicEmails, permissions } = await getUserDetails(token, options.org)
   const username = req.user.username
-  const result = JSON.stringify({ type: 'github-token', token, permissions, username })
 
+  const result = JSON.stringify({ type: 'github-token', token, permissions, username, publicEmails })
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
   let origin = endpoints.website
@@ -79,17 +79,22 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
  * @param {string} org - org name to filter teams
  * @returns {Promise<Array<string>>} - list of permission names
  */
-async function getPermissions(token, org) {
+async function getUserDetails(token, org) {
   const options = { headers: { 'user-agent': 'clearlydefined.io' } }
   const client = new GitHubApi(options)
   token && client.authenticate({ type: 'token', token })
+
   try {
+    const emails = await client.users.getEmails()
+    const publicEmails = emails.data.find(email => email.visibility === 'public')
     const response = await client.users.getTeams()
-    return response.data
+    const permissions = response.data
       .filter(entry => entry.organization.login === org)
       .map(entry => entry.name)
       .map(findPermissions)
       .filter(e => e)
+
+    return { publicEmails, permissions }
   } catch (error) {
     if (error.code === 404)
       console.error(
@@ -128,7 +133,7 @@ function getStrategy() {
       clientSecret: options.clientSecret,
       // this needs to match the callback url on the oauth app on github
       callbackURL: `${endpoints.service}/auth/github/finalize`,
-      scope: ['public_repo', 'read:user', 'read:org']
+      scope: ['public_repo', 'read:user', 'read:org', 'user', 'user:email']
     },
     (access, refresh, profile, done) =>
       // this only lives for one request; see the 'finalize' endpoint
