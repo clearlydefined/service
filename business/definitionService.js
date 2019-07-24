@@ -30,7 +30,7 @@ const minimatch = require('minimatch')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
-const SPDX = require('../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const parse = require('spdx-expression-parse')
 const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 

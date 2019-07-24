@@ -5,10 +5,12 @@ const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
 async function work(once) {
+  let isQueueEmpty = true
   try {
     let message = await queue.dequeue()
     const urn = get(message, 'data._metadata.links.self.href')
     if (!urn) return
+    isQueueEmpty = false
     const coordinates = EntityCoordinates.fromUrn(urn)
     await definitionService.computeAndStore(coordinates)
     logger.info(`Handled Crawler update event for ${urn}`)
@@ -16,7 +18,9 @@ async function work(once) {
   } catch (error) {
     logger.error(error)
   } finally {
-    if (!once) setTimeout(work, 250)
+    if (!once) {
+      setTimeout(work, isQueueEmpty ? 10000 : 0)
+    }
   }
 }
 

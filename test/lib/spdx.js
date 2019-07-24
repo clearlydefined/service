@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const SPDX = require('../../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const { expect } = require('chai')
 
 describe('SPDX utility functions', () => {

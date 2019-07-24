@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { mergeDefinitions, setIfValue, isLicenseFile } = require('../../lib/utils')
-const SPDX = require('../../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const { get, uniq } = require('lodash')
 
 const noOpLicenseIds = new Set(['No_license_found', 'See-file', 'See-URL'])

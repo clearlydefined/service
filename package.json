@@ -13,6 +13,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
+    "@clearlydefined/spdx": "^0.1.0",
     "@octokit/rest": "^14.0.9",
     "ajv": "^6.5.2",
     "ajv-errors": "^1.0.0",
@@ -74,7 +75,7 @@
     "mocha": "^5.0.3",
     "node-mocks-http": "^1.6.7",
     "nodemon": "^1.18.2",
-    "nyc": "^13.1.0",
+    "nyc": "^13.2.0",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
   }
