@@ -71,11 +71,13 @@ async function updateCurations(request, response) {
   const userGithub = request.app.locals.user.github.client
   const info = request.app.locals.user.github.info
   let curationErrors = []
+  let patchesInError = []
   request.body.patches.forEach(entry => {
     const curation = new Curation(entry)
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
+    patchesInError.push(entry)
   })
-  if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors })
+  if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors, patchesInError })
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
   response.status(200).send({
     prNumber: result.data.number,
