@@ -89,7 +89,7 @@ let definitionService
 function setup(definition, forTest) {
   definitionService = definition
   return forTest
-    ? router
-    : { listDefinitions, getDefinitions, previewCuration }
+    ? { listDefinitions, getDefinitions, previewCuration }
+    : router
 }
 module.exports = setup

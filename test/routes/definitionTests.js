@@ -10,7 +10,7 @@ describe('Definition route', () => {
     find: async () => Promise.resolve([])
   }
   beforeEach(() => {
-    definitions = setup(mockService)
+    definitions = setup(mockService, true)
   })
   it('should ignore casing for finding, but patch casing to match request', async () => {
     let request = {
