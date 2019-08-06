@@ -48,17 +48,16 @@ async function reload(request, response) {
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
-router.post(
-  '/:type/:provider/:namespace/:name/:revision',
-  asyncMiddleware(async (request, response) => {
-    if (!request.query.preview)
-      return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
-    const result = await definitionService.compute(coordinates, request.body)
-    response.status(200).send(result)
-  })
-)
+async function previewCuration(request, response) {
+  if (!request.query.preview)
+    return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
+  if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
+  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const result = await definitionService.compute(coordinates, request.body)
+  response.status(200).send(result)
+}
+
+router.post('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(previewCuration))
 
 // POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
