@@ -48,16 +48,17 @@ async function reload(request, response) {
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
+async function previewCuration(request, response) {
+  if (!request.query.preview)
+    return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
+  if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
+  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const result = await definitionService.compute(coordinates, request.body)
+  response.status(200).send(result)
+}
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
-  asyncMiddleware(async (request, response) => {
-    if (!request.query.preview)
-      return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
-    const result = await definitionService.compute(coordinates, request.body)
-    response.status(200).send(result)
-  })
+  asyncMiddleware(previewCuration)
 )
 
 // POST a request to create a resource that is the list of definitions available for
@@ -71,13 +72,24 @@ async function listDefinitions(request, response) {
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.getAll(coordinatesList, force, expand)
-  response.send(result)
+  // enforce request casing on keys as per issue #589
+  const requestLowered = request.body.map(k => k.toLowerCase())
+  const casingEnforced = Object.keys(result).reduce(
+    (total, resultKey) => {
+      const idx = requestLowered.indexOf(resultKey.toLowerCase())
+      const key = idx >= 0 ? request.body[idx] : resultKey
+      total[key] = result[resultKey]
+      return total
+    }, {})
+  response.send(casingEnforced)
 }
 
 let definitionService
 
-function setup(definition) {
+function setup(definition, forTest) {
   definitionService = definition
-  return router
+  return forTest
+    ? { listDefinitions, getDefinitions, previewCuration }
+    : router
 }
 module.exports = setup
