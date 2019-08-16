@@ -62,14 +62,14 @@ router.get(
       const answer = await github.search.repos({
         q: `${repo || ''}+user:${login}+in:name+fork:true`,
         sort: 'stars',
-        per_page: 1000
+        per_page: 100
       })
       const result = answer.data.items.map(item => {
         return { id: item.full_name }
       })
       return response.status(200).send(result)
     }
-    const answer = await github.search.users({ q: `${login}+repos:>0`, sort: 'repositories', per_page: 1000 })
+    const answer = await github.search.users({ q: `${login}+repos:>0`, sort: 'repositories', per_page: 100 })
     const result = answer.data.items.map(item => {
       return { id: item.login }
     })
