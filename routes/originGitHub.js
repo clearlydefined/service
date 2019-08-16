@@ -69,7 +69,7 @@ router.get(
       })
       return response.status(200).send(result)
     }
-    const answer = await github.search.users({ q: `${login}+repos:>0`, sort: 'repositories', per_page: 30 })
+    const answer = await github.search.users({ q: `${login}+repos:>0`, sort: 'repositories', per_page: 100 })
     const result = answer.data.items.map(item => {
       return { id: item.login }
     })
