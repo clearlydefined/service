@@ -136,6 +136,7 @@ function createApp(config) {
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/nuget', require('./routes/originNuget')())
+  app.use('/origins/composer', require('./routes/originComposer')())
   app.use('/origins/pypi', require('./routes/originPyPi')())
   app.use('/origins/rubygems', require('./routes/originRubyGems')())
   app.use('/harvest', harvestRoute)
