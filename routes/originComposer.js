@@ -13,7 +13,7 @@ router.get(
     const url = `https://packagist.org/packages/${name}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.package.versions
-    return response.status(200).send(result)
+    return response.status(200).send(uniq(result))
   })
 )
 
