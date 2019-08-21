@@ -385,8 +385,6 @@ describe('ClearlyDefined PHP summarizer', () => {
     const { coordinates, harvested } = setupComposer('2018-03-06T11:38:10.284Z', 'MIT', 'http://homepage')
     const summary = Summarizer().summarize(coordinates, harvested)
 
-    console.log('summary:')
-    console.log(summary)
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.described.releaseDate).to.eq('2018-03-06')

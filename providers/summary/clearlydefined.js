@@ -262,7 +262,16 @@ class ClearlyDescribedSummarizer {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
 
-    const license =
+    let license = manifest.license
+
+    // We could have singular licenses such as 'MIT' or licenses in an array ['MIT, BSD']
+    // Process licenses as such; if it comes in as
+    if (Array.isArray(license)) {
+      const licenses = SPDX.normalize((license || []).join(' OR '))
+      setIfValue(result, 'licensed.declared', licenses)
+    }
+
+    license =
       manifest.license &&
       SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)
