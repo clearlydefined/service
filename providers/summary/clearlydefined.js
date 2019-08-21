@@ -252,22 +252,20 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.registry', `https://packagist.org/packages/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${coordinates.revision}`)
 
+    const homepage = get(data, 'registryData.manifest.homepage')
+    setIfValue(result, 'described.projectWebsite', homepage)
+
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
-    let homepage = manifest.homepage
-    setIfValue(result, 'described.projectWebsite', get(data, homepage))
 
     if (manifest.dist && manifest.dist.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
 
-    const license = manifest.license
-
-    if (license && license.length == 1) setIfValue(result, 'licensed.declared', license[0])
-    else {
-      const licenses = SPDX.normalize((get(data, license) || []).join(' OR '))
-      setIfValue(result, 'licensed.declared', licenses)
-    }
+    const license =
+      manifest.license &&
+      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+    setIfValue(result, 'licensed.declared', license)
   }
 
   addPodData(result, data, coordinates) {
