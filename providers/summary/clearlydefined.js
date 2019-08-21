@@ -264,8 +264,8 @@ class ClearlyDescribedSummarizer {
 
     let license = manifest.license
 
-    // We could have singular licenses such as 'MIT' or licenses in an array ['MIT, BSD']
-    // Process licenses as such; if it comes in as
+    // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
+    // Process licenses depending on whether they are strings or array of strings
     if (Array.isArray(license)) {
       const licenses = SPDX.normalize((license || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)

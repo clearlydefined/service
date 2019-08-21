@@ -139,6 +139,13 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
+  it('declares license from registryData that is a singular license in an array', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: ['MIT'] } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
   it('declares dual license from registryData', () => {
     let result = {}
     summarizer.addComposerData(
