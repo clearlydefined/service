@@ -9,21 +9,25 @@ const { uniq } = require('lodash')
 router.get(
   '/:namespace?/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const { name } = request.params
-    const url = `https://packagist.org/packages/${name}.json`
+    const { namespace, name } = request.params
+    const fullName = namespace ? `${namespace}/${name}` : name
+    const url = `https://packagist.org/packages/${fullName}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.package.versions
+    const result = Object.getOwnPropertyNames(answer.package.versions).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
   })
 )
 
 router.get(
-  '/:name',
+  '/:namespace/:name',
   asyncMiddleware(async (request, response) => {
-    const { name } = request.params
-    const url = `https://packagist.org/packages/${name}.json`
+    const { namespace, name } = request.params
+    const fullName = namespace ? `${namespace}/${name}` : name
+    const url = `https://packagist.org/packages/${fullName}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.package
+    const result = answer.package.versions.map(entry => {
+      return { id: entry.id }
+    })
     return response.status(200).send(result)
   })
 )
