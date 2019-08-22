@@ -249,32 +249,24 @@ class ClearlyDescribedSummarizer {
   addComposerData(result, data, coordinates) {
     if (!data.registryData) return
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
-    setIfValue(result, 'described.urls.registry', `https://packagist.org/packages/${coordinates.name}`)
-    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${coordinates.revision}`)
-
-    const homepage = get(data, 'registryData.manifest.homepage')
-    setIfValue(result, 'described.projectWebsite', homepage)
-
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://packagist.org/packages/${coordinates.namespace + '/' + coordinates.name}`
+    )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
-
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${manifest.version}`)
+    setIfValue(result, 'described.projectWebsite', manifest.homepage)
     if (manifest.dist && manifest.dist.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
-
-    let license = manifest.license
-
     // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
     // Process licenses depending on whether they are strings or array of strings
-    if (Array.isArray(license)) {
-      const licenses = SPDX.normalize((license || []).join(' OR '))
+    if (Array.isArray(manifest.license)) {
+      const licenses = SPDX.normalize((manifest.license || []).join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
-
-    license =
-      manifest.license &&
-      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
-    setIfValue(result, 'licensed.declared', license)
   }
 
   addPodData(result, data, coordinates) {
@@ -326,7 +318,6 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', data.declaredLicense)
     setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
-    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     // TODO: we are currently picking the first url that contains a tar.gz or zip extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
     const releases = get(data, 'registryData.releases')
