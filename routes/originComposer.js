@@ -19,14 +19,14 @@ router.get(
 )
 
 router.get(
-  '/:namespace/:name',
+  '/:namespace/:name?',
   asyncMiddleware(async (request, response) => {
     const { namespace, name } = request.params
-    const fullName = namespace ? `${namespace}/${name}` : name
-    const url = `https://packagist.org/packages/${fullName}.json`
+    const searchTerm = name ? `${namespace}/${name}` : namespace
+    const url = `https://packagist.org/search.json?q=${searchTerm}&per_page=100`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.package.versions.map(entry => {
-      return { id: entry.id }
+    const result = answer.results.map(entry => {
+      return { id: entry.name }
     })
     return response.status(200).send(result)
   })
