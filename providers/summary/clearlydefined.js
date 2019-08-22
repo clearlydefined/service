@@ -47,6 +47,9 @@ class ClearlyDescribedSummarizer {
       case 'nuget':
         this.addNuGetData(result, data, coordinates)
         break
+      case 'composer':
+        this.addComposerData(result, data, coordinates)
+        break
       case 'gem':
         this.addGemData(result, data, coordinates)
         break
@@ -238,6 +241,37 @@ class ClearlyDescribedSummarizer {
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
     const license =
+      manifest.license &&
+      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
+    setIfValue(result, 'licensed.declared', license)
+  }
+
+  addComposerData(result, data, coordinates) {
+    if (!data.registryData) return
+    setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
+    setIfValue(result, 'described.urls.registry', `https://packagist.org/packages/${coordinates.name}`)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${coordinates.revision}`)
+
+    const homepage = get(data, 'registryData.manifest.homepage')
+    setIfValue(result, 'described.projectWebsite', homepage)
+
+    const manifest = get(data, 'registryData.manifest')
+    if (!manifest) return
+
+    if (manifest.dist && manifest.dist.url) {
+      setIfValue(result, 'described.urls.download', manifest.dist.url)
+    }
+
+    let license = manifest.license
+
+    // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
+    // Process licenses depending on whether they are strings or array of strings
+    if (Array.isArray(license)) {
+      const licenses = SPDX.normalize((license || []).join(' OR '))
+      setIfValue(result, 'licensed.declared', licenses)
+    }
+
+    license =
       manifest.license &&
       SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
     setIfValue(result, 'licensed.declared', license)

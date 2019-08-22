@@ -130,6 +130,79 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addComposerData', () => {
+  const composerTestCoordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
+  it('declares license from registryData', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: 'MIT' } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
+  it('declares license from registryData that is a singular license in an array', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: ['MIT'] } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
+  it('declares dual license from registryData', () => {
+    let result = {}
+    summarizer.addComposerData(
+      result,
+      { registryData: { manifest: { license: ['MIT', 'Apache-2.0'] } } },
+      composerTestCoordinates
+    )
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
+  })
+
+  it('normalizes to spdx only', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: 'Garbage' } } }, composerTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
+  })
+
+  it('normalizes to spdx only with slashes', () => {
+    let result = {}
+    summarizer.addComposerData(
+      result,
+      { registryData: { manifest: { license: 'Garbage/Junk' } } },
+      composerTestCoordinates
+    )
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
+  })
+
+  it('normalizes to spdx only with slashes', () => {
+    let result = {}
+    summarizer.addComposerData(
+      result,
+      { registryData: { manifest: { license: ['Garbage', 'Junk'] } } },
+      composerTestCoordinates
+    )
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
+  })
+
+  it('decribes projectWebsite from manifest', () => {
+    let result = {}
+    summarizer.addComposerData(
+      result,
+      { registryData: { manifest: { homepage: 'https://github.com/owner/repo' } } },
+      composerTestCoordinates
+    )
+    assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
+  })
+
+  it('decribes releaseDate from registryData', () => {
+    let result = {}
+    summarizer.addComposerData(
+      result,
+      { registryData: { releaseDate: '2018-06-01T21:41:57.990052+00:00' } },
+      composerTestCoordinates
+    )
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
+})
+
 describe('ClearlyDescribedSummarizer addNpmData', () => {
   const npmTestCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
   const expectedUrls = {
