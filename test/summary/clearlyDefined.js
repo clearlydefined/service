@@ -380,9 +380,9 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
   })
 })
 
-describe('ClearlyDefined PHP summarizer', () => {
+describe('ClearlyDefined PHP composer summarizer', () => {
   it('handles with all the data', () => {
-    const { coordinates, harvested } = setupComposer('2018-03-06T11:38:10.284Z', 'MIT', 'http://homepage')
+    const { coordinates, harvested } = setupComposer('2018-03-06T11:38:10.284Z', 'v1.0.0', ['MIT'], 'http://homepage')
     const summary = Summarizer().summarize(coordinates, harvested)
 
     validate(summary)
@@ -408,23 +408,16 @@ describe('ClearlyDefined PHP summarizer', () => {
     expect(summary.described.issueTracker).to.be.undefined
     expect(summary.described.projectWebsite).to.be.undefined
   })
-
-  it('handles object license', () => {
-    const { coordinates, harvested } = setupComposer(null, { type: 'MIT' })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.urls).not.to.be.undefined
-  })
 })
 
-function setupComposer(releaseDate, license, homepage) {
+function setupComposer(releaseDate, version, license, homepage) {
   const registryData = {}
   setIfValue(registryData, 'releaseDate', releaseDate)
+  setIfValue(registryData, 'manifest.version', version)
   setIfValue(registryData, 'manifest.license', license)
   setIfValue(registryData, 'manifest.homepage', homepage)
   const harvested = { registryData }
-  const coordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
+  const coordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0.0')
 
   return { coordinates, harvested }
 }

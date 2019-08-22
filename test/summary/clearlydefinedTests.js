@@ -132,12 +132,6 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 
 describe('ClearlyDescribedSummarizer addComposerData', () => {
   const composerTestCoordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
-  it('declares license from registryData', () => {
-    let result = {}
-    summarizer.addComposerData(result, { registryData: { manifest: { license: 'MIT' } } }, composerTestCoordinates)
-
-    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
-  })
 
   it('declares license from registryData that is a singular license in an array', () => {
     let result = {}
@@ -158,7 +152,11 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
 
   it('normalizes to spdx only', () => {
     let result = {}
-    summarizer.addComposerData(result, { registryData: { manifest: { license: 'Garbage' } } }, composerTestCoordinates)
+    summarizer.addComposerData(
+      result,
+      { registryData: { manifest: { license: ['Garbage'] } } },
+      composerTestCoordinates
+    )
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
@@ -166,7 +164,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
     let result = {}
     summarizer.addComposerData(
       result,
-      { registryData: { manifest: { license: 'Garbage/Junk' } } },
+      { registryData: { manifest: { license: ['Garbage/Junk'] } } },
       composerTestCoordinates
     )
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
