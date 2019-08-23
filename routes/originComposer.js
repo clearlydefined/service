@@ -13,7 +13,11 @@ router.get(
     const fullName = namespace ? `${namespace}/${name}` : name
     const url = `https://packagist.org/packages/${fullName}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = Object.getOwnPropertyNames(answer.package.versions).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
+    const result = Object.getOwnPropertyNames(answer.package.versions)
+      .map(version =>
+        version.startsWith('v') && version[1] >= '0' && version[1] <= '9' ? version.substring(1) : version
+      )
+      .sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
   })
 )
