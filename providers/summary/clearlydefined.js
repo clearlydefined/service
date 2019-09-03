@@ -140,7 +140,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.download',
       `http://central.maven.org/maven2/org/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
+      coordinates.name
       }-${coordinates.revision}.jar`
     )
     const projectSummaryLicenses =
@@ -183,7 +183,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.download',
       `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
+      coordinates.name
       }-${coordinates.revision}.jar`
     )
   }
@@ -205,9 +205,7 @@ class ClearlyDescribedSummarizer {
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
-    newDefinition.files = packageEntries.map(file => {
-      return { path: decodeURIComponent(file.fullName) }
-    })
+    newDefinition.files = packageEntries.map(file => file.fullName)
     mergeDefinitions(result, newDefinition)
   }
 
@@ -218,7 +216,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.registry',
       `https://npmjs.com/package/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
       }`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
@@ -226,7 +224,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.download',
       `https://registry.npmjs.com/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
       }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
