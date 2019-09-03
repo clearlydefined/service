@@ -205,7 +205,7 @@ class ClearlyDescribedSummarizer {
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
-    newDefinition.files = packageEntries.map(file => file.fullName)
+    newDefinition.files = packageEntries.map(file => { return { path: file.fullName } })
     mergeDefinitions(result, newDefinition)
   }
 
