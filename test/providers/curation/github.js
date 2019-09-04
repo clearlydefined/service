@@ -52,6 +52,8 @@ describe('Github Curation Service', () => {
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
+    const logger = require('../../../providers/logging/logger')()
+    expect(logger.error.calledOnce).to.be.true
   })
 
   it('merges simple changes', async () => {
@@ -219,6 +221,9 @@ const complexCuration = {
 }
 
 function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
+  require('../../../providers/logging/logger')({
+    error: sinon.stub()
+  })
   const service = GitHubCurationService(
     {
       owner: 'foobar',

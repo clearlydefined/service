@@ -136,6 +136,7 @@ class GitHubCurationService {
     if (invalidCurations.length) {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
+      this.logger.error(description, invalidCurations)
     }
     return this._postCommitStatus(sha, number, state, description)
   }

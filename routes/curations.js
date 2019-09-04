@@ -77,7 +77,11 @@ async function updateCurations(request, response) {
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
     patchesInError.push(entry)
   })
-  if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors, patchesInError })
+  if (curationErrors.length > 0) {
+    const errorData = { errors: curationErrors, patchesInError }
+    logger.error('intended curations are invalid', errorData)
+    return response.status(400).send(errorData)
+  }
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
   response.status(200).send({
     prNumber: result.data.number,
@@ -93,9 +97,11 @@ async function syncAllContributions(request, response) {
 }
 
 let curationService
+let logger
 
-function setup(service) {
+function setup(service, appLogger) {
   curationService = service
+  logger = appLogger || require('../providers/logging/logger')()
   return router
 }
 
