@@ -136,6 +136,7 @@ class GitHubCurationService {
     if (invalidCurations.length) {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
+      this.logger.error(description, invalidCurations)
     }
     return this._postCommitStatus(sha, number, state, description)
   }
@@ -259,9 +260,9 @@ ${this._formatDefinitions(patch.patches)}`
     return definitions.map(
       def =>
         `- [${def.coordinates.name} ${
-          Object.keys(def.revisions)[0]
+        Object.keys(def.revisions)[0]
         }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${
-          Object.keys(def.revisions)[0]
+        Object.keys(def.revisions)[0]
         })`
     )
   }
