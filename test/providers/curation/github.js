@@ -219,6 +219,9 @@ const complexCuration = {
 }
 
 function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
+  require('../../../providers/logging/logger')({
+    error: sinon.stub()
+  })
   const service = GitHubCurationService(
     {
       owner: 'foobar',
