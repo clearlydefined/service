@@ -471,3 +471,11 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     })
   })
 })
+
+describe('ClearlyDescribedSummarizer addDebData', () => {
+  // TODO
+})
+
+describe('ClearlyDescribedSummarizer addDebSrcData', () => {
+  // TODO
+})

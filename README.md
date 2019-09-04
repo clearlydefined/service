@@ -226,6 +226,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - pod
 - composer
 - rubygem
+- deb
 
 ## Provider Registry
 
@@ -236,6 +237,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - npmjs.org
 - nuget.org
 - packagist.org
+- ftp.debian.org
 
 ## Tool Name Registry
 

@@ -380,6 +380,16 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
   })
 })
 
+function setupCocoaPod(license, releaseDate, homepage) {
+  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
+  const harvested = {}
+  setIfValue(harvested, 'registryData.license', license)
+  setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'registryData.homepage', homepage)
+  setIfValue(harvested, 'registryData.sourceInfo.revision', '1.0.0')
+  return { coordinates, harvested }
+}
+
 describe('ClearlyDefined PHP composer summarizer', () => {
   it('handles with all the data', () => {
     const { coordinates, harvested } = setupComposer('2018-03-06T11:38:10.284Z', 'v1.0.0', ['MIT'], 'http://homepage')
@@ -422,15 +432,13 @@ function setupComposer(releaseDate, version, license, homepage) {
   return { coordinates, harvested }
 }
 
-function setupCocoaPod(license, releaseDate, homepage) {
-  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
-  const harvested = {}
-  setIfValue(harvested, 'registryData.license', license)
-  setIfValue(harvested, 'releaseDate', releaseDate)
-  setIfValue(harvested, 'registryData.homepage', homepage)
-  setIfValue(harvested, 'registryData.sourceInfo.revision', '1.0.0')
-  return { coordinates, harvested }
-}
+describe('ClearlyDefined Debian summarizer', () => {
+  // TODO
+})
+
+describe('ClearlyDefined Debian source summarizer', () => {
+  // TODO
+})
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
