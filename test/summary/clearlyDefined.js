@@ -432,13 +432,147 @@ function setupComposer(releaseDate, version, license, homepage) {
   return { coordinates, harvested }
 }
 
+const debianRegistryData = [
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17-1.dsc',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17.orig.tar.xz',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17-1_i386.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'i386',
+    Binary: '0ad',
+    'Binary-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17-1_amd64.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'amd64',
+    Binary: '0ad',
+    'Binary-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad_0.0.17-1_armhf.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'armhf',
+    Binary: '0ad',
+    'Binary-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad-dbg_0.0.17-1_i386.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'i386',
+    Binary: '0ad-dbg',
+    'Binary-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad-dbg_0.0.17-1_amd64.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'amd64',
+    Binary: '0ad-dbg',
+    'Binary-Version': '0.0.17-1'
+  },
+  {
+    Path: './pool/main/0/0ad/0ad-dbg_0.0.17-1_armhf.deb',
+    Source: '0ad',
+    'Source-Version': '0.0.17-1',
+    Architecture: 'armhf',
+    Binary: '0ad-dbg',
+    'Binary-Version': '0.0.17-1'
+  }
+]
+
 describe('ClearlyDefined Debian summarizer', () => {
-  // TODO
+  it('handles with all the data', () => {
+    const { coordinates, harvested } = setupDebian({
+      isSrc: false,
+      releaseDate: '2018-03-06T11:38:10.284Z',
+      registryData: debianRegistryData
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.urls.registry).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.version).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
+  })
+
+  it('handles no data', () => {
+    const { coordinates, harvested } = setupDebian({ isSrc: false })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described).to.be.undefined
+  })
+
+  it('handles only releaseDate', () => {
+    const { coordinates, harvested } = setupDebian({ isSrc: false, releaseDate: '2018-03-06T11:38:10.284Z' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.urls).to.be.undefined
+  })
 })
 
 describe('ClearlyDefined Debian source summarizer', () => {
-  // TODO
+  it('handles with all the data', () => {
+    const { coordinates, harvested } = setupDebian({
+      isSrc: true,
+      releaseDate: '2018-03-06T11:38:10.284Z',
+      registryData: debianRegistryData
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.urls.registry).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.version).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17.orig.tar.xz')
+  })
+
+  it('handles no data', () => {
+    const { coordinates, harvested } = setupDebian({ isSrc: true })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described).to.be.undefined
+  })
+
+  it('handles only releaseDate', () => {
+    const { coordinates, harvested } = setupDebian({ isSrc: true, releaseDate: '2018-03-06T11:38:10.284Z' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.undefined
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.urls).to.be.undefined
+  })
 })
+
+function setupDebian({ isSrc, releaseDate, registryData }) {
+  const coordinates = isSrc
+    ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')
+    : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')
+  const harvested = {}
+  setIfValue(harvested, 'releaseDate', releaseDate)
+  setIfValue(harvested, 'registryData', registryData)
+  return { coordinates, harvested }
+}
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates

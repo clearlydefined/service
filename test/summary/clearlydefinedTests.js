@@ -473,9 +473,19 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 })
 
 describe('ClearlyDescribedSummarizer addDebData', () => {
-  // TODO
+  const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
+  it('decribes releaseDate from data', () => {
+    let result = {}
+    summarizer.addDebData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debTestCoordinates)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
 })
 
 describe('ClearlyDescribedSummarizer addDebSrcData', () => {
-  // TODO
+  const debsrcTestCoordinates = EntityCoordinates.fromString('debsrc/debian/-/test/1.0')
+  it('decribes releaseDate from data', () => {
+    let result = {}
+    summarizer.addDebSrcData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debsrcTestCoordinates)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
 })
