@@ -503,14 +503,22 @@ describe('ClearlyDefined Debian summarizer', () => {
     const { coordinates, harvested } = setupDebian({
       isSrc: false,
       releaseDate: '2018-03-06T11:38:10.284Z',
-      registryData: debianRegistryData
+      registryData: debianRegistryData,
+      sourceInfo: {
+        type: 'debsrc',
+        provider: 'debian',
+        name: 'test',
+        revision: '1.0.0'
+      }
     })
     const summary = Summarizer().summarize(coordinates, harvested)
+    const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
     validate(summary)
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls.registry).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
-    expect(summary.described.urls.version).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.registry).to.eq(registryUrl)
+    expect(summary.described.urls.version).to.eq(registryUrl)
     expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
+    expect(summary.described.sourceLocation.url).to.eq(registryUrl)
   })
 
   it('handles no data', () => {
@@ -539,11 +547,13 @@ describe('ClearlyDefined Debian source summarizer', () => {
       registryData: debianRegistryData
     })
     const summary = Summarizer().summarize(coordinates, harvested)
+    const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
     validate(summary)
     expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls.registry).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
-    expect(summary.described.urls.version).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad')
+    expect(summary.described.urls.registry).to.eq(registryUrl)
+    expect(summary.described.urls.version).to.eq(registryUrl)
     expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17.orig.tar.xz')
+    expect(summary.described.sourceLocation.url).to.eq(registryUrl)
   })
 
   it('handles no data', () => {
@@ -564,13 +574,14 @@ describe('ClearlyDefined Debian source summarizer', () => {
   })
 })
 
-function setupDebian({ isSrc, releaseDate, registryData }) {
+function setupDebian({ isSrc, releaseDate, registryData, sourceInfo }) {
   const coordinates = isSrc
     ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')
     : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData', registryData)
+  setIfValue(harvested, 'sourceInfo', sourceInfo)
   return { coordinates, harvested }
 }
 
