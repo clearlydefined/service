@@ -16,10 +16,21 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "crate", "git", "maven", "composer", "nuget", "gem", "pod", "pypi", "sourcearchive"]
+      "enum": ["npm", "crate", "git", "maven", "composer", "nuget", "gem", "pod", "pypi", "sourcearchive", "deb"]
     },
     "provider": {
-      "enum": ["npmjs", "cocoapods", "cratesio", "github", "packagist", "mavencentral", "nuget", "rubygems", "pypi"]
+      "enum": [
+        "npmjs",
+        "cocoapods",
+        "cratesio",
+        "github",
+        "packagist",
+        "mavencentral",
+        "nuget",
+        "rubygems",
+        "pypi",
+        "debian"
+      ]
     },
     "_meta": {
       "type": "object",

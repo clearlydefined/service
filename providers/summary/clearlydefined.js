@@ -59,6 +59,12 @@ class ClearlyDescribedSummarizer {
       case 'pypi':
         this.addPyPiData(result, data, coordinates)
         break
+      case 'deb':
+        this.addDebData(result, data, coordinates)
+        break
+      case 'debsrc':
+        this.addDebSrcData(result, data, coordinates)
+        break
       default:
     }
     return result
@@ -139,9 +145,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
-      }-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/org/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
@@ -182,9 +186,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
-      }-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
@@ -205,7 +207,9 @@ class ClearlyDescribedSummarizer {
     const packageEntries = get(data, 'manifest.packageEntries')
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
-    newDefinition.files = packageEntries.map(file => { return { path: file.fullName } })
+    newDefinition.files = packageEntries.map(file => {
+      return { path: file.fullName }
+    })
     mergeDefinitions(result, newDefinition)
   }
 
@@ -339,6 +343,43 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `${get(result, 'described.urls.registry')}/archive/${coordinates.revision}.zip`
     )
+  }
+
+  addDebData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    if (!data.registryData) return
+    setIfValue(result, 'described.urls.registry', this.getDebianRegistryUrl(data.registryData))
+    setIfValue(result, 'described.urls.version', this.getDebianRegistryUrl(data.registryData))
+    const architecture = coordinates.revision.split('_')[1]
+    const downloadUrl = new URL(
+      'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Architecture === architecture).Path
+    ).href
+    setIfValue(result, 'described.urls.download', downloadUrl)
+  }
+
+  addDebSrcData(result, data) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    if (!data.registryData) return
+    setIfValue(result, 'described.urls.registry', this.getDebianRegistryUrl(data.registryData))
+    setIfValue(result, 'described.urls.version', this.getDebianRegistryUrl(data.registryData))
+    const downloadUrl = new URL(
+      'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Path.includes('.orig.tar.')).Path
+    ).href
+    // There is also patches URL which is related to sources but it's not part of the schema
+    setIfValue(result, 'described.urls.download', downloadUrl)
+  }
+
+  getDebianRegistryUrl(registryData) {
+    const registryPath = registryData[0].Path
+    if (registryPath) {
+      // Example: ./pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz -> http://ftp.debian.org/debian/pool/main/0/0ad
+      const pathName = registryPath
+        .split('/')
+        .slice(1, 5)
+        .join('/')
+      return 'http://ftp.debian.org/debian/' + pathName
+    }
+    return null
   }
 }
 

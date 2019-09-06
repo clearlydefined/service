@@ -139,6 +139,7 @@ function createApp(config) {
   app.use('/origins/composer', require('./routes/originComposer')())
   app.use('/origins/pypi', require('./routes/originPyPi')())
   app.use('/origins/rubygems', require('./routes/originRubyGems')())
+  app.use('/origins/deb', require('./routes/originDeb')())
   app.use('/harvest', harvestRoute)
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
