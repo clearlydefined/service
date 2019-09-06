@@ -348,8 +348,14 @@ class ClearlyDescribedSummarizer {
   addDebData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     if (!data.registryData) return
-    setIfValue(result, 'described.urls.registry', this.getDebianRegistryUrl(data.registryData))
-    setIfValue(result, 'described.urls.version', this.getDebianRegistryUrl(data.registryData))
+    const registryUrl = this.getDebianRegistryUrl(data.registryData)
+    if (registryUrl) {
+      set(result, 'described.urls.registry', registryUrl)
+      set(result, 'described.urls.version', registryUrl)
+      if (result.described.sourceLocation) {
+        result.described.sourceLocation.url = registryUrl
+      }
+    }
     const architecture = coordinates.revision.split('_')[1]
     const downloadUrl = new URL(
       'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Architecture === architecture).Path
@@ -357,11 +363,15 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.download', downloadUrl)
   }
 
-  addDebSrcData(result, data) {
+  addDebSrcData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     if (!data.registryData) return
-    setIfValue(result, 'described.urls.registry', this.getDebianRegistryUrl(data.registryData))
-    setIfValue(result, 'described.urls.version', this.getDebianRegistryUrl(data.registryData))
+    const registryUrl = this.getDebianRegistryUrl(data.registryData)
+    if (registryUrl) {
+      set(result, 'described.urls.registry', registryUrl)
+      set(result, 'described.urls.version', registryUrl)
+      result.described.sourceLocation = { ...coordinates, url: registryUrl }
+    }
     const downloadUrl = new URL(
       'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Path.includes('.orig.tar.')).Path
     ).href
