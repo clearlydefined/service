@@ -22,7 +22,20 @@
   "definitions": {
     "type": {
       "type": "string",
-      "enum": ["npm", "crate", "git", "maven", "nuget", "gem", "composer", "pod", "pypi", "sourcearchive", "deb"],
+      "enum": [
+        "npm",
+        "crate",
+        "git",
+        "maven",
+        "nuget",
+        "gem",
+        "composer",
+        "pod",
+        "pypi",
+        "sourcearchive",
+        "deb",
+        "debsrc"
+      ],
       "errorMessage": {
         "enum": "Package type must be supported by ClearlyDefined",
         "type": "Package type must be a string"

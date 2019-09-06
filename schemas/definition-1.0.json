@@ -16,7 +16,20 @@
   },
   "definitions": {
     "type": {
-      "enum": ["npm", "crate", "git", "maven", "composer", "nuget", "gem", "pod", "pypi", "sourcearchive", "deb"]
+      "enum": [
+        "npm",
+        "crate",
+        "git",
+        "maven",
+        "composer",
+        "nuget",
+        "gem",
+        "pod",
+        "pypi",
+        "sourcearchive",
+        "deb",
+        "debsrc"
+      ]
     },
     "provider": {
       "enum": [
