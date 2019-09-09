@@ -372,14 +372,19 @@ paths:
       tags:
         - notices
       requestBody:
-        $ref: '#/components/requestBodies/noticeFile'
+        content:
+          application/json:
+            schema:
+                $ref: /schemas/notice-request.json
       responses:
         200:
           description: Status request has been accepted.
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/noticeFile'
+                $ref: '#/components/schemas/noticeFile'
+        400:
+          description: Invalid notice request body.
 
 tags:
   - name: definitions
@@ -400,6 +405,32 @@ components:
       example:
         - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
         - npm/npmjs/-/redie/0.3.0
+
+    noticeFile:
+      type: object
+      properties:
+        content:
+          type: string
+        summary:
+          properties:
+            total:
+              type: number
+            warnings:
+              type: object
+              properties:
+                noDefinition:
+                  type: array
+                  items:
+                    type: string
+                noLicense:
+                  type: array
+                  items:
+                    type: string
+                noCopyright:
+                  type: array
+                  items:
+                    type: string
+
   requestBodies:
     harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
@@ -471,30 +502,6 @@ components:
                   - 1
                 scancode:
                   - 2.2.1
-
-  responses:
-    noticeFile:
-      content:
-        type: string
-      summary:
-        properties:
-          total:
-            type: number
-          warnings:
-            type: object
-            properties:
-              noDefinition:
-                type: array
-                items:
-                  type: string
-              noLicense:
-                type: array
-                items:
-                  type: string
-              noCopyright:
-                type: array
-                items:
-                  type: string
 
   parameters:
     type:
