@@ -80,7 +80,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: /schemas/curations-1.0.json
+              type: object
+              properties:
+                contributionInfo:
+                  type: object
+                  properties:
+                    summary:
+                      type: string
+                    details:
+                      type: string
+                    resolution:
+                      type: string
+                    type:
+                      type: string
+                    removedDefinitions:
+                      type: boolean
+                patches:
+                  $ref: /schemas/curation-1.0.json
       responses:
         200:
           description: A summary of the curation (PR) created
