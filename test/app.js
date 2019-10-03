@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const config = require('../bin/config')
+process.env['CURATION_GITHUB_TOKEN'] = '123'
 const app = require('../app')(config)
 const init = require('express-init')
 
