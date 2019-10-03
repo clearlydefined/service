@@ -3,29 +3,17 @@
 
 const config = require('../bin/config')
 process.env['CURATION_GITHUB_TOKEN'] = '123'
-const app = require('../app')(config)
 const init = require('express-init')
-
-/**
- * Normalize a port into a number, string, or false.
- */
-function normalizePort(val) {
-  const port = parseInt(val, 10)
-  // named pipe
-  if (isNaN(port)) return val
-  // port number
-  if (port >= 0) return port
-  return false
-}
+const Application = require('../app')
 
 describe('Application', () => {
-  it('should initialize', async () => {
-    const port = normalizePort(process.env.PORT || '4000')
-    app.set('port', port)
-    await init(app, error => {
+  it('should initialize', (done) => {
+    const app = Application(config)
+    init(app, error => {
       if (error) {
-        throw new Error(error)
+        done(error)
       }
+      done()
     })
-  })
+  }).timeout(5000)
 })
