@@ -14,6 +14,7 @@
         "tdd",
         "--timeout",
         "999999",
+        "--exit",
         "--colors",
         "${workspaceFolder}/test/**/*.js"
       ],
