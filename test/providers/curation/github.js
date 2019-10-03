@@ -42,6 +42,9 @@ describe('Github Curation Service', () => {
   })
 
   it('validates invalid PR change', async () => {
+    require('../../../providers/logging/logger')({
+      error: sinon.stub()
+    })
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
     sinon.stub(service, 'getContributedCurations').callsFake(() => {
@@ -52,8 +55,6 @@ describe('Github Curation Service', () => {
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
-    const logger = require('../../../providers/logging/logger')()
-    expect(logger.error.calledOnce).to.be.true
   })
 
   it('merges simple changes', async () => {
