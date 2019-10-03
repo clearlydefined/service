@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
-    "test": "nyc mocha \"test/**/*.js\" && eslint .",
+    "test": "nyc mocha --exit \"test/**/*.js\" && eslint .",
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
