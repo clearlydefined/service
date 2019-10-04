@@ -412,7 +412,7 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
-    download: 'http://central.maven.org/maven2/org/io/clearlydefined/test/1.0/test-1.0.jar',
+    download: 'http://central.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
     registry: 'https://mvnrepository.com/artifact/io.clearlydefined/test',
     version: 'https://mvnrepository.com/artifact/io.clearlydefined/test/1.0'
   }
