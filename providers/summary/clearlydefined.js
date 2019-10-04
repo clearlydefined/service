@@ -178,16 +178,17 @@ class ClearlyDescribedSummarizer {
 
   addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.registry',
-      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
