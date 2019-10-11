@@ -509,7 +509,8 @@ describe('ClearlyDefined Debian summarizer', () => {
         provider: 'debian',
         name: 'test',
         revision: '1.0.0'
-      }
+      },
+      declaredLicenses: ['GPL-2.0+', '(CPL-1.0 OR MIT)', '(BSD-3-clause OR GPL-3.0 AND LGPL-2.1+)', 'public-domain']
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
@@ -519,6 +520,7 @@ describe('ClearlyDefined Debian summarizer', () => {
     expect(summary.described.urls.version).to.eq(registryUrl)
     expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
     expect(summary.described.sourceLocation.url).to.eq(registryUrl)
+    expect(summary.licensed.declared).to.eq('GPL-2.0+ AND (CPL-1.0 OR MIT) AND (BSD-3-Clause OR GPL-3.0 AND LGPL-2.1+) AND NOASSERTION')
   })
 
   it('handles no data', () => {
@@ -544,7 +546,8 @@ describe('ClearlyDefined Debian source summarizer', () => {
     const { coordinates, harvested } = setupDebian({
       isSrc: true,
       releaseDate: '2018-03-06T11:38:10.284Z',
-      registryData: debianRegistryData
+      registryData: debianRegistryData,
+      declaredLicenses: ['MPL-1.1', '(MIT OR Artistic-1.0 AND Artistic-2.0)']
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
@@ -554,6 +557,7 @@ describe('ClearlyDefined Debian source summarizer', () => {
     expect(summary.described.urls.version).to.eq(registryUrl)
     expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17.orig.tar.xz')
     expect(summary.described.sourceLocation.url).to.eq(registryUrl)
+    expect(summary.licensed.declared).to.eq('MPL-1.1 AND (MIT OR Artistic-1.0 AND Artistic-2.0)')
   })
 
   it('handles no data', () => {
@@ -574,7 +578,7 @@ describe('ClearlyDefined Debian source summarizer', () => {
   })
 })
 
-function setupDebian({ isSrc, releaseDate, registryData, sourceInfo }) {
+function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLicenses }) {
   const coordinates = isSrc
     ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')
     : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')
@@ -582,6 +586,8 @@ function setupDebian({ isSrc, releaseDate, registryData, sourceInfo }) {
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData', registryData)
   setIfValue(harvested, 'sourceInfo', sourceInfo)
+  setIfValue(harvested, 'sourceInfo', sourceInfo)
+  setIfValue(harvested, 'declaredLicenses', declaredLicenses)
   return { coordinates, harvested }
 }
 

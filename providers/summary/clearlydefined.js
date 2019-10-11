@@ -219,17 +219,13 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `https://npmjs.com/package/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
-      }`
+      `https://npmjs.com/package/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
-      }/-/${coordinates.name}-${coordinates.revision}.tgz`
+      `https://registry.npmjs.com/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
@@ -361,6 +357,8 @@ class ClearlyDescribedSummarizer {
       'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Architecture === architecture).Path
     ).href
     setIfValue(result, 'described.urls.download', downloadUrl)
+    const license = uniq(data.declaredLicenses || []).join(' AND ')
+    setIfValue(result, 'licensed.declared', SPDX.normalize(license))
   }
 
   addDebSrcData(result, data, coordinates) {
@@ -377,6 +375,8 @@ class ClearlyDescribedSummarizer {
     ).href
     // There is also patches URL which is related to sources but it's not part of the schema
     setIfValue(result, 'described.urls.download', downloadUrl)
+    const license = uniq(data.declaredLicenses || []).join(' AND ')
+    setIfValue(result, 'licensed.declared', SPDX.normalize(license))
   }
 
   getDebianRegistryUrl(registryData) {
