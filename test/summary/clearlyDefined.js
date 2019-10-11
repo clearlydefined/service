@@ -586,7 +586,6 @@ function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLic
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData', registryData)
   setIfValue(harvested, 'sourceInfo', sourceInfo)
-  setIfValue(harvested, 'sourceInfo', sourceInfo)
   setIfValue(harvested, 'declaredLicenses', declaredLicenses)
   return { coordinates, harvested }
 }
