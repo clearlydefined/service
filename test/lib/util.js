@@ -49,7 +49,7 @@ describe('Utils latest version', () => {
       'https://tldrlegal.com/license/mit-license': 'MIT',
       'https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)': 'Apache-2.0',
       'https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)': 'GPL-3.0',
-      'https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt': 'MIT'
+      'https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt': 'Apache-2.0'
     }
 
     for (const licenseUrl of Object.getOwnPropertyNames(inputs)) {
