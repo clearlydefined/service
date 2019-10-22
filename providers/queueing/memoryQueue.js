@@ -11,7 +11,7 @@ class MemoryQueue {
     this.messageId = 0
   }
 
-  async initialize() {}
+  async initialize() { }
 
   /**
    * Add a message to the queue. Any encoding/stringifying is up to the caller
@@ -37,6 +37,11 @@ class MemoryQueue {
     if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: JSON.parse(message.messageText) })
     await this.delete({ original: message })
     return this.dequeue()
+  }
+
+  /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
+  async dequeueMultiple() {
+    return [await this.dequeue()]
   }
 
   /**

@@ -7,14 +7,16 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 async function work(once) {
   let isQueueEmpty = true
   try {
-    let message = await queue.dequeue()
-    const urn = get(message, 'data._metadata.links.self.href')
-    if (!urn) return
-    isQueueEmpty = false
-    const coordinates = EntityCoordinates.fromUrn(urn)
-    await definitionService.computeAndStore(coordinates)
-    logger.info(`Handled Crawler update event for ${urn}`)
-    await queue.delete(message)
+    const messages = await queue.dequeueMultiple()
+    if (messages && messages.length > 0) isQueueEmpty = false
+    for (const message of messages) {
+      const urn = get(message, 'data._metadata.links.self.href')
+      if (!urn) continue
+      const coordinates = EntityCoordinates.fromUrn(urn)
+      await definitionService.computeAndStore(coordinates)
+      logger.info(`Handled Crawler update event for ${urn}`)
+      await queue.delete(message)
+    }
   } catch (error) {
     logger.error(error)
   } finally {

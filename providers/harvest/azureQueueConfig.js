@@ -7,7 +7,11 @@ const AzureStorageQueue = require('../queueing/azureStorageQueue')
 function azure(options) {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
-    queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests'
+    queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests',
+    dequeueOptions: {
+      numOfMessages: 32,
+      visibilityTimeout: 10 * 60, // 10 min. The default value is 30 seconds.
+    }
   }
   return new AzureStorageQueue(realOptions)
 }

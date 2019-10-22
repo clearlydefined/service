@@ -45,6 +45,20 @@ class AzureStorageQueue {
     return this.dequeue()
   }
 
+  /** Similar to dequeue() but returns multiple messages to improve performance */
+  async dequeueMultiple() {
+    const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(this.options.queueName, this.options.dequeueOptions)
+    if (!messages || messages.length === 0) return []
+    for (const i in messages) {
+      if (messages[i].dequeueCount <= 5) {
+        messages[i] = { original: messages[i], data: JSON.parse(Buffer.from(messages[i].messageText, 'base64').toString('utf8')) }
+      } else {
+        await this.delete({ original: messages[i] })
+      }
+    }
+    return messages
+  }
+
   /**
    * Delete a recently DQ'd message from the queue
    * pass dequeue().original as the message to delete
