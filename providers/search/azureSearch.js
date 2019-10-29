@@ -5,7 +5,7 @@ const requestPromise = require('request-promise-native')
 const AbstractSearch = require('./abstractSearch')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
-const apiVersion = '2017-11-11'
+const apiVersion = '2019-05-06'
 const definitionsIndexName = 'definitions'
 const definitionsDataSourceName = 'definitionsdatasource'
 const definitionsIndexerName = 'definitionsindexer'
@@ -307,10 +307,10 @@ class AzureSearch extends AbstractSearch {
           name: 'copyrights',
           type: 'Collection(Edm.String)',
           searchable: true,
-          filterable: true,
+          filterable: false,
           retrievable: true,
           sortable: false,
-          facetable: true
+          facetable: false
         }
       ],
       suggesters: [
@@ -389,7 +389,7 @@ class AzureSearch extends AbstractSearch {
       dataSourceName: definitionsDataSourceName,
       targetIndexName: definitionsIndexName,
       schedule: { interval: 'PT1H' },
-      parameters: { configuration: { parsingMode: 'json' } },
+      parameters: { configuration: { parsingMode: 'json', indexStorageMetadataOnlyForOversizedDocuments: true } },
       fieldMappings: [
         { sourceFieldName: 'id', targetFieldName: 'id', mappingFunction: { name: 'base64Encode' } },
         { sourceFieldName: 'id', targetFieldName: 'coordinates' },

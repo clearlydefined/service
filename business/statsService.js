@@ -44,7 +44,8 @@ class StatsService {
       pod: () => this._getType('pod'),
       composer: () => this._getType('composer'),
       pypi: () => this._getType('pypi'),
-      deb: () => this._getType('deb')
+      deb: () => this._getType('deb'),
+      debsrc: () => this._getType('debsrc'),
     }
   }
 

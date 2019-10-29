@@ -38,7 +38,8 @@ class StatusService {
       definitionavailability: this._definitionAvailability,
       processedperday: this._processedPerDay,
       recentlycrawled: this._recentlyCrawled,
-      crawlbreakdown: this._crawlbreakdown
+      crawlbreakdown: this._crawlbreakdown,
+      toolsranperday: this._toolsranperday
     }
   }
 
@@ -129,6 +130,30 @@ class StatusService {
       result[date] = result[date] || {}
       result[date][tool] = result[date][tool] || {}
       result[date][tool][type] = count
+      return result
+    }, {})
+    return Object.keys(grouped).map(date => {
+      return { ...grouped[date], date }
+    })
+  }
+
+  async _toolsranperday() {
+    const data = await requestPromise(
+      this._crawlerQuery(`
+      traces
+      | where timestamp > ago(90d) 
+      | where customDimensions.outcome == 'Processed'  
+      | where strlen(customDimensions.crawlerHost) > 0
+      | parse message with "Processed " tool "@cd:/" type "/" specTrail 
+      | summarize count() by when=bin(timestamp, 1d), tool
+      | order by when asc, tool`)
+    )
+    const grouped = data.tables[0].rows.reduce((result, row) => {
+      let date = row[0]
+      let tool = row[1]
+      let count = row[2]
+      result[date] = result[date] || {}
+      result[date][tool] = count
       return result
     }, {})
     return Object.keys(grouped).map(date => {
