@@ -134,19 +134,18 @@ class ClearlyDescribedSummarizer {
   }
 
   addMavenData(result, data, coordinates) {
-    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
-
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(
       result,
       'described.urls.registry',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/org/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
@@ -178,17 +177,16 @@ class ClearlyDescribedSummarizer {
 
   addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.registry',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
