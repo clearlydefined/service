@@ -212,7 +212,7 @@ class ClearlyDescribedSummarizer {
     newDefinition.files = packageEntries.map(file => {
       return { path: file.fullName }
     })
-    mergeDefinitions(result, newDefinition)
+    mergeDefinitions(result, newDefinition, get(result, 'licensed.declared') === 'OTHER')
   }
 
   addNpmData(result, data, coordinates) {
@@ -221,13 +221,17 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `https://npmjs.com/package/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}`
+      `https://npmjs.com/package/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}/-/${coordinates.name}-${coordinates.revision}.tgz`
+      `https://registry.npmjs.com/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return

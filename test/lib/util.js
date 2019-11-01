@@ -78,6 +78,31 @@ describe('Utils latest version', () => {
       'http://www.gnu.org/licenses/lgpl-2.1': 'LGPL-2.1',
       'http://www.gnu.org/licenses/old-licenses/gpl-2.0.html': 'GPL-2.0',
       'http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html': 'GPL-2.0',
+      // EULA licenses should be defined as OTHER
+      'http://aka.ms/devservicesagreement': 'OTHER',
+      'https://aka.ms/netcoregaeula': 'OTHER',
+      'https://aka.ms/pexunj': 'OTHER',
+      'https://applitools.com/eula/sdk': 'OTHER',
+      'https://company.aspose.com/legal/eula': 'OTHER',
+      'http://www.componentone.com/SuperPages/DevToolsEULA/': 'OTHER',
+      'https://www.devexpress.com/support/eulas/': 'OTHER',
+      'https://www.devexpress.com/Support/EULAs/NetComponents.xml': 'OTHER',
+      'http://dlhsoft.com/LicenseAgreements/JavaScriptComponentEULA.rtf': 'OTHER',
+      'http://DlhSoft.com/LicenseAgreements/ComponentEULA.rtf': 'OTHER',
+      'https://www.essentialobjects.com/Products/WebBrowser/EULA.aspx': 'OTHER',
+      'http://www.essentialobjects.com/Products/Pdf/EULA.aspx': 'OTHER',
+      'https://www.essentialobjects.com/EULA.aspx': 'OTHER',
+      'http://go.microsoft.com/fwlink/?LinkId=329770': 'OTHER',
+      'https://kusto.blob.core.windows.net/kusto-nuget/EULA-agreement.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/aspnetwebpages_eula.rtf': 'OTHER',
+      'https://www.microsoft.com/en-us/web/webpi/eula/net_library_eula_ENU.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/signalr_rtw.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/net_library_eula_CHS.htm': 'OTHER',
+      'http://pdfium.patagames.com/faq/eula/': 'OTHER',
+      'https://specflow.org/plus/eula/': 'OTHER',
+      'http://www.streamcoders.com/products/msneteula.html': 'OTHER',
+      'http://workflowenginenet.com/EULA': 'OTHER'
     }
 
     for (const licenseUrl of Object.getOwnPropertyNames(inputs)) {
