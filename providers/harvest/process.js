@@ -9,14 +9,17 @@ async function work(once) {
   try {
     const messages = await queue.dequeueMultiple()
     if (messages && messages.length > 0) isQueueEmpty = false
-    for (const message of messages) {
-      const urn = get(message, 'data._metadata.links.self.href')
-      if (!urn) continue
-      const coordinates = EntityCoordinates.fromUrn(urn)
-      await definitionService.computeAndStore(coordinates)
-      logger.info(`Handled Crawler update event for ${urn}`)
-      await queue.delete(message)
-    }
+    await Promise.all(
+      messages.map(message => {
+        const urn = get(message, 'data._metadata.links.self.href')
+        if (!urn) return
+        const coordinates = EntityCoordinates.fromUrn(urn)
+        return definitionService
+          .computeAndStore(coordinates)
+          .then(queue.delete(message))
+          .then(async () => logger.info(`Handled Crawler update event for ${urn}`))
+      })
+    )
   } catch (error) {
     logger.error(error)
   } finally {
