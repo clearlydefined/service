@@ -10,15 +10,7 @@ async function work(once) {
     const messages = await queue.dequeueMultiple()
     if (messages && messages.length > 0) isQueueEmpty = false
     await Promise.all(
-      messages.map(message => {
-        const urn = get(message, 'data._metadata.links.self.href')
-        if (!urn) return
-        const coordinates = EntityCoordinates.fromUrn(urn)
-        return definitionService
-          .computeAndStore(coordinates)
-          .then(queue.delete(message))
-          .then(async () => logger.info(`Handled Crawler update event for ${urn}`))
-      })
+      messages.map(message => processMessage(message))
     )
   } catch (error) {
     logger.error(error)
@@ -27,6 +19,15 @@ async function work(once) {
       setTimeout(work, isQueueEmpty ? 10000 : 0)
     }
   }
+}
+
+async function processMessage(message) {
+  const urn = get(message, 'data._metadata.links.self.href')
+  if (!urn) return
+  const coordinates = EntityCoordinates.fromUrn(urn)
+  await definitionService.computeAndStore(coordinates)
+  await queue.delete(message)
+  logger.info(`Handled Crawler update event for ${urn}`)
 }
 
 let queue
