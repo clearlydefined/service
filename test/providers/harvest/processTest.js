@@ -41,7 +41,7 @@ function setup(data) {
   const queue = memoryQueue()
   queue.queue(JSON.stringify(data))
   const definitionService = {
-    computeAndStore: sinon.stub()
+    computeAndStore: sinon.stub().returns({})
   }
   const logger = {
     info: sinon.stub(),

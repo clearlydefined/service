@@ -11,16 +11,15 @@ class MemoryQueue {
     this.messageId = 0
   }
 
-  async initialize() { }
+  async initialize() {}
 
   /**
    * Add a message to the queue. Any encoding/stringifying is up to the caller
    *
    * @param {string} message
    */
-  queue(message) {
+  async queue(message) {
     this.data.push({ messageText: message, dequeueCount: 0, messageId: ++this.messageId })
-    return Promise.resolve()
   }
 
   /**
@@ -50,13 +49,12 @@ class MemoryQueue {
    *
    * @param {object} message
    */
-  delete(message) {
+  async delete(message) {
     const newData = []
     for (let i = 0; i < this.data.length; i++) {
       if (this.data[i].messageId !== message.original.messageId) newData.push(this.data[i])
     }
     this.data = newData
-    return Promise.resolve()
   }
 }
 
