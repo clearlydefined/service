@@ -96,7 +96,9 @@ paths:
                     removedDefinitions:
                       type: boolean
                 patches:
-                  $ref: /schemas/curation-1.0.json
+                  type: array
+                  items:
+                    $ref: /schemas/curations-1.0.json
       responses:
         200:
           description: A summary of the curation (PR) created
@@ -408,7 +410,7 @@ tags:
   - name: curations
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest
-    description: Harvest component metadata - ClearlyDefined developers will be intereted in these
+    description: Harvest component metadata - ClearlyDefined developers will be interested in these
   - name: attachments
     description: Definition attachments - Raw content of attachments for harvested component data
 
