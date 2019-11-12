@@ -177,7 +177,7 @@ describe('Github Curation Service', () => {
         details: 'test',
         resolution: 'test',
         type: 'missing',
-        removeDefinitions: false
+        removedDefinitions: false
       },
       patches: [
         {
