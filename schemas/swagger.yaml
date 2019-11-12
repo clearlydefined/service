@@ -96,7 +96,9 @@ paths:
                     removedDefinitions:
                       type: boolean
                 patches:
-                  $ref: /schemas/curation-1.0.json
+                  type: array
+                  items:
+                    $ref: /schemas/curation-1.0.json
       responses:
         200:
           description: A summary of the curation (PR) created
