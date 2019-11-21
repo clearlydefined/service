@@ -87,7 +87,7 @@ async function list(request, response) {
 }
 
 // Post a (set of) component to be harvested
-router.post('/', bodyParser.json(), asyncMiddleware(queue))
+router.post('/', bodyParser.json({ limit: '1mb' }), asyncMiddleware(queue))
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
