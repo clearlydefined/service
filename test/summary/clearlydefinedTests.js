@@ -164,30 +164,6 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
   })
 
-  it('declares legacy licenses from registryData that is a singular license as a string', () => {
-    let result = {}
-    summarizer.addComposerData(result, { registryData: { manifest: { licenses: 'MIT' } } }, composerTestCoordinates)
-
-    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
-  })
-
-  it('declares legacy licenses from registryData that is a singular license in an array', () => {
-    let result = {}
-    summarizer.addComposerData(result, { registryData: { manifest: { licenses: ['MIT'] } } }, composerTestCoordinates)
-
-    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
-  })
-
-  it('declares legacy licenses with dual license from registryData', () => {
-    let result = {}
-    summarizer.addComposerData(
-      result,
-      { registryData: { manifest: { licenses: ['MIT', 'Apache-2.0'] } } },
-      composerTestCoordinates
-    )
-    assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
-  })
-
   it('normalizes to spdx only', () => {
     let result = {}
     summarizer.addComposerData(
