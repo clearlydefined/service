@@ -52,10 +52,10 @@ describe('Github Curation Service', () => {
     })
     const curations = await service.getContributedCurations(42, 'testBranch')
     service.logger = { // intercept and verify invalid contribution
-      error: function(description, invalidCurations) {
+      error: function(description /* , invalidCurations */) {
         expect(description).to.be.eq('Invalid curations: ')
       }
-    };
+    }
     await service.validateContributions('42', 'testBranch', curations)
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
