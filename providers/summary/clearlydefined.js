@@ -246,7 +246,7 @@ class ClearlyDescribedSummarizer {
     }
     // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
     // Process licenses depending on whether they are strings or array of strings
-    var expression = null  // license expression (as input to SPDX.normalize)
+    let expression = null  // license expression (as input to SPDX.normalize)
     if (typeof manifest.license === 'string') {
       expression = manifest.license
     } else if (Array.isArray(manifest.license)) {
@@ -283,7 +283,7 @@ class ClearlyDescribedSummarizer {
     }
     // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
     // Process licenses depending on whether they are strings or array of strings
-    var expression = null  // license expression (as input to SPDX.normalize)
+    let expression = null  // license expression (as input to SPDX.normalize)
     if (typeof manifest.license === 'string') {
       expression = manifest.license
     } else if (Array.isArray(manifest.license)) {
