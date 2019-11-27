@@ -257,6 +257,25 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
         })
       else assert.deepEqual(result, expectedResult)
     }
+
+    // should work with legacy licenses
+    for (let license of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { manifest: { licenses: license } } }, npmTestCoordinates)
+      if (data[license]) {
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[license] }
+        })
+      }
+      else assert.deepEqual(result, expectedResult)
+    }
+
+    // should work with license as an array
+    const licenseArray = ['MIT', 'Apache-2.0']
+    let result = {}
+    summarizer.addNpmData(result, { registryData: { manifest: { licenses: licenseArray } } }, npmTestCoordinates)
+    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT OR Apache-2.0'}})
   })
 
   it('should set release date', () => {
