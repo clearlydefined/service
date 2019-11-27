@@ -133,6 +133,20 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 describe('ClearlyDescribedSummarizer addComposerData', () => {
   const composerTestCoordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
 
+  it('does not declare license when manifest is silent on the license', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+  })
+
+  it('declares license from registryData that is a singular license as a string', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: 'MIT' } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
   it('declares license from registryData that is a singular license in an array', () => {
     let result = {}
     summarizer.addComposerData(result, { registryData: { manifest: { license: ['MIT'] } } }, composerTestCoordinates)
