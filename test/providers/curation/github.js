@@ -52,7 +52,7 @@ describe('Github Curation Service', () => {
     })
     const curations = await service.getContributedCurations(42, 'testBranch')
     service.logger = { // intercept and verify invalid contribution
-      error: function(description /* , invalidCurations */) {
+      error: (description) => {
         expect(description).to.be.eq('Invalid curations: ')
       }
     }
