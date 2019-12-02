@@ -133,6 +133,20 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 describe('ClearlyDescribedSummarizer addComposerData', () => {
   const composerTestCoordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
 
+  it('does not declare license when manifest is silent on the license', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), undefined)
+  })
+
+  it('declares license from registryData that is a singular license as a string', () => {
+    let result = {}
+    summarizer.addComposerData(result, { registryData: { manifest: { license: 'MIT' } } }, composerTestCoordinates)
+
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
   it('declares license from registryData that is a singular license in an array', () => {
     let result = {}
     summarizer.addComposerData(result, { registryData: { manifest: { license: ['MIT'] } } }, composerTestCoordinates)
@@ -243,6 +257,25 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
         })
       else assert.deepEqual(result, expectedResult)
     }
+
+    // should work with legacy licenses
+    for (let license of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { manifest: { licenses: license } } }, npmTestCoordinates)
+      if (data[license]) {
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[license] }
+        })
+      }
+      else assert.deepEqual(result, expectedResult)
+    }
+
+    // should work with license as an array
+    const licenseArray = ['MIT', 'Apache-2.0']
+    let result = {}
+    summarizer.addNpmData(result, { registryData: { manifest: { licenses: licenseArray } } }, npmTestCoordinates)
+    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
   })
 
   it('should set release date', () => {
