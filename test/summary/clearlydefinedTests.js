@@ -275,7 +275,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     const licenseArray = ['MIT', 'Apache-2.0']
     let result = {}
     summarizer.addNpmData(result, { registryData: { manifest: { licenses: licenseArray } } }, npmTestCoordinates)
-    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT OR Apache-2.0'}})
+    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
   })
 
   it('should set release date', () => {

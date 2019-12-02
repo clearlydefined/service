@@ -197,14 +197,14 @@ describe('ClearlyDefined NPM summarizer', () => {
     expect(summary.described.projectWebsite).to.eq('http://homepage')
   })
 
-  it('handles with all the data and a disjunctive license array', () => {
+  it('handles with all the data and a license array', () => {
     const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', ['MIT', 'Apache-2.0'], 'http://homepage', {
       url: 'http://bugs',
       email: 'bugs@test.com'
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT OR Apache-2.0')
+    expect(summary.licensed.declared).to.eq('MIT AND Apache-2.0')
     expect(summary.described.releaseDate).to.eq('2018-03-06')
     expect(summary.described.issueTracker).to.eq('http://bugs')
     expect(summary.described.projectWebsite).to.eq('http://homepage')
