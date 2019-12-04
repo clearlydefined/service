@@ -171,19 +171,6 @@ function setupSourceArchive(releaseDate, sourceInfo) {
 }
 
 describe('ClearlyDefined NPM summarizer', () => {
-  it('handles with all the data', () => {
-    const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', ['MIT'], 'http://homepage', {
-      url: 'http://bugs',
-      email: 'bugs@test.com'
-    })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
-  })
-
   it('handles with all the data and a single license string', () => {
     const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', 'MIT', 'http://homepage', {
       url: 'http://bugs',
@@ -197,7 +184,20 @@ describe('ClearlyDefined NPM summarizer', () => {
     expect(summary.described.projectWebsite).to.eq('http://homepage')
   })
 
-  it('handles with all the data and a license array', () => {
+  it('handles with all the data and a license array of one string', () => {
+    const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', ['MIT'], 'http://homepage', {
+      url: 'http://bugs',
+      email: 'bugs@test.com'
+    })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described.issueTracker).to.eq('http://bugs')
+    expect(summary.described.projectWebsite).to.eq('http://homepage')
+  })
+
+  it('handles with all the data and a license array of strings', () => {
     const { coordinates, harvested } = setupNpm('2018-03-06T11:38:10.284Z', ['MIT', 'Apache-2.0'], 'http://homepage', {
       url: 'http://bugs',
       email: 'bugs@test.com'
@@ -208,6 +208,22 @@ describe('ClearlyDefined NPM summarizer', () => {
     expect(summary.described.releaseDate).to.eq('2018-03-06')
     expect(summary.described.issueTracker).to.eq('http://bugs')
     expect(summary.described.projectWebsite).to.eq('http://homepage')
+  })
+
+  it('handles a license as an object', () => {
+    const { coordinates, harvested } = setupNpm(null, { type: 'MIT' })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.described.urls).not.to.be.undefined
+  })
+
+  it('handles a license as an object with an array of strings ', () => {
+    const { coordinates, harvested } = setupNpm(null, { type: ['MIT', 'Apache-2.0'] })
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT AND Apache-2.0')
+    expect(summary.described.urls).not.to.be.undefined
   })
 
   it('handles data with source location', () => {
@@ -252,14 +268,6 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
-  })
-
-  it('handles object license', () => {
-    const { coordinates, harvested } = setupNpm(null, { type: 'MIT' })
-    const summary = Summarizer().summarize(coordinates, harvested)
-    validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
     expect(summary.described.urls).not.to.be.undefined
   })
 })

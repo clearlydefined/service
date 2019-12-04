@@ -245,19 +245,39 @@ class ClearlyDescribedSummarizer {
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
     // Combine multiple licenses with AND (as it is more restrictive than OR)
+    const relation = ' AND '
     let expression = null  // license expression (as input to SPDX.normalize)
     if (typeof manifest.license === 'string') {
-      expression = manifest.license
+      expression = manifest.license // #1
     } else if (Array.isArray(manifest.license)) {
-      expression = manifest.license.join(' AND ')
+      expression = manifest.license.join(relation) // #2
     } else if (manifest.license && (typeof manifest.license.type === 'string')) {
-      expression = manifest.license.type // handle sub-property 'type'
+      expression = manifest.license.type // #3 handle sub-property 'type'
     } else if (manifest.license && (Array.isArray(manifest.license.type))) {
-      expression = manifest.license.type.join(' AND ')
+      expression = manifest.license.type.join(relation) // #4
     } else if (typeof manifest.licenses === 'string') {
-      expression = manifest.licenses // handle legacy NPM 'licenses' key
+      expression = manifest.licenses // #5 handle legacy NPM 'licenses' key
+    } else if (manifest.licenses && (typeof manifest.licenses.type === 'string')) {
+      expression = manifest.licenses.type // #6 handle sub-property 'type'
     } else if (Array.isArray(manifest.licenses)) {
-      expression = manifest.licenses.join(' AND ')
+      // could be an array of strings OR  {type, url} objects
+      const joinLicense = (exp, license) => {
+        if (typeof license === 'string') { // #7
+          if (exp) {
+            exp += relation + license
+          } else {
+            exp = license
+          }
+        } else { // #8 assume it is a {type, url} object
+          if (exp) {
+            exp += relation + license.type
+          } else {
+            exp = license.type
+          }
+        }
+        return exp
+      }
+      expression = manifest.licenses.reduce(joinLicense, null)
     }
     if (expression) {
       const licenses = SPDX.normalize(expression)
