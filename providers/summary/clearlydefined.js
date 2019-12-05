@@ -215,6 +215,33 @@ class ClearlyDescribedSummarizer {
     mergeDefinitions(result, newDefinition, get(result, 'licensed.declared') === 'OTHER')
   }
 
+  parseLicenseExpression(manifest, relation) {
+    const combineLicenses = (exp, license) => {
+      if (exp) {
+        return exp + ' ' + relation + ' ' + stringObjectArray(license)
+      }
+      return stringObjectArray(license)
+    }
+    const stringObjectArray = value => {
+      if (typeof value === 'string') {
+        return value
+      } else if (Array.isArray(value)) {
+        return value.reduce(combineLicenses, null)
+      } else if (typeof value.type == 'string') {
+        return value.type
+      } else if (Array.isArray(value.type)) {
+        return value.type.reduce(combineLicenses, null)
+      }
+      return null
+    }
+    if (manifest.license) {
+      return stringObjectArray(manifest.license)
+    } else if (manifest.licenses) {
+      return stringObjectArray(manifest.licenses)
+    }
+    return null
+  }
+
   addNpmData(result, data, coordinates) {
     if (!data.registryData) return
     setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
@@ -244,45 +271,9 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    // Combine multiple licenses with AND (as it is more restrictive than OR)
-    const relation = ' AND '
-    let expression = null  // license expression (as input to SPDX.normalize)
-    if (typeof manifest.license === 'string') {
-      expression = manifest.license // #1
-    } else if (Array.isArray(manifest.license)) {
-      expression = manifest.license.join(relation) // #2
-    } else if (manifest.license && (typeof manifest.license.type === 'string')) {
-      expression = manifest.license.type // #3 handle sub-property 'type'
-    } else if (manifest.license && (Array.isArray(manifest.license.type))) {
-      expression = manifest.license.type.join(relation) // #4
-    } else if (typeof manifest.licenses === 'string') {
-      expression = manifest.licenses // #5 handle legacy NPM 'licenses' key
-    } else if (manifest.licenses && (typeof manifest.licenses.type === 'string')) {
-      expression = manifest.licenses.type // #6 handle sub-property 'type'
-    } else if (Array.isArray(manifest.licenses)) {
-      // could be an array of strings OR  {type, url} objects
-      const joinLicense = (exp, license) => {
-        if (typeof license === 'string') { // #7
-          if (exp) {
-            exp += relation + license
-          } else {
-            exp = license
-          }
-        } else { // #8 assume it is a {type, url} object
-          if (exp) {
-            exp += relation + license.type
-          } else {
-            exp = license.type
-          }
-        }
-        return exp
-      }
-      expression = manifest.licenses.reduce(joinLicense, null)
-    }
-    if (expression) {
-      const licenses = SPDX.normalize(expression)
-      setIfValue(result, 'licensed.declared', licenses)
-    }
+    const expression = this.parseLicenseExpression(manifest, 'AND')
+    if (!expression) return
+    setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
   addComposerData(result, data, coordinates) {
@@ -300,22 +291,9 @@ class ClearlyDescribedSummarizer {
     if (manifest.dist && manifest.dist.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
-    // We could have singular licenses such as 'MIT' or licenses in an array ['MIT', 'BSD']
-    // Process licenses depending on whether they are strings or array of strings
-    let expression = null  // license expression (as input to SPDX.normalize)
-    if (typeof manifest.license === 'string') {
-      expression = manifest.license
-    } else if (Array.isArray(manifest.license)) {
-      expression = manifest.license.join(' OR ')
-    } else if (typeof manifest.licenses === 'string') {
-      expression = manifest.licenses // handle legacy NPM 'licenses' key
-    } else if (Array.isArray(manifest.licenses)) {
-      expression = manifest.licenses.join(' OR ')
-    }
-    if (expression) {
-      const licenses = SPDX.normalize(expression)
-      setIfValue(result, 'licensed.declared', licenses)
-    }
+    const expression = this.parseLicenseExpression(manifest, 'OR')
+    if (!expression) return
+    setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
   addPodData(result, data, coordinates) {

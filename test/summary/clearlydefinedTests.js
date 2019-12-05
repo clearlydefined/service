@@ -235,7 +235,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       ' ': null
     }
 
-    // #1 single license string
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: license } } }, npmTestCoordinates)
@@ -247,7 +246,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // #3 license as an object
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
@@ -259,7 +257,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // #5 should work with legacy licenses key, single string
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { licenses: license } } }, npmTestCoordinates)
@@ -272,7 +269,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // #6 should work with legacy licenses key, license as an object
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { licenses: { type: license } } } }, npmTestCoordinates)
@@ -285,29 +281,24 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // #2 license array of one string
     const licenseArray = ['MIT']
     let result = {}
     summarizer.addNpmData(result, { registryData: { manifest: { license: licenseArray } } }, npmTestCoordinates)
     assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT'}})
 
-    // #2 license array of strings
     const licenseArray2 = ['MIT', 'Apache-2.0']
     let result2 = {}
     summarizer.addNpmData(result2, { registryData: { manifest: { license: licenseArray2 } } }, npmTestCoordinates)
     assert.deepEqual(result2, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
 
-    // #4 license as an object with an array of strings
     let result3 = {}
     summarizer.addNpmData(result3, { registryData: { manifest: { license: { type: licenseArray2 } } } }, npmTestCoordinates)
     assert.deepEqual(result3, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
 
-    // #7 legacy licenses array of strings
     let result4 = {}
     summarizer.addNpmData(result4, { registryData: { manifest: { licenses: licenseArray2 } } }, npmTestCoordinates)
     assert.deepEqual(result4, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
 
-    // #8 legacy licenses as an array of objects
     const licenseArray3 = [ { type: 'MIT'} , { type: 'Apache-2.0'} ]
     let result5 = {}
     summarizer.addNpmData(result5, { registryData: { manifest: { licenses: licenseArray3 } } }, npmTestCoordinates)
