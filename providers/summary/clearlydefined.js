@@ -215,15 +215,18 @@ class ClearlyDescribedSummarizer {
     mergeDefinitions(result, newDefinition, get(result, 'licensed.declared') === 'OTHER')
   }
 
-  parseLicenseExpression(manifest, relation) {
+  parseLicenseExpression(manifest, packageType) {
     const combineLicenses = (exp, license) => {
       if (exp) {
-        return exp + ' ' + relation + ' ' + stringObjectArray(license)
+        return exp + ' ' + (packageType==='npm'?'AND':'OR') + ' ' +
+          stringObjectArray(license)
       }
       return stringObjectArray(license)
     }
     const stringObjectArray = value => {
-      if (typeof value === 'string') {
+      if (!value) {
+        return null
+      } else if (typeof value === 'string') {
         return value
       } else if (Array.isArray(value)) {
         return value.reduce(combineLicenses, null)
@@ -234,12 +237,8 @@ class ClearlyDescribedSummarizer {
       }
       return null
     }
-    if (manifest.license) {
-      return stringObjectArray(manifest.license)
-    } else if (manifest.licenses) {
-      return stringObjectArray(manifest.licenses)
-    }
-    return null
+    return stringObjectArray(manifest.license) ||
+      (packageType==='npm' && stringObjectArray(manifest.licenses))
   }
 
   addNpmData(result, data, coordinates) {
@@ -271,7 +270,7 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    const expression = this.parseLicenseExpression(manifest, 'AND')
+    const expression = this.parseLicenseExpression(manifest, 'npm')
     if (!expression) return
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
@@ -291,7 +290,7 @@ class ClearlyDescribedSummarizer {
     if (manifest.dist && manifest.dist.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
-    const expression = this.parseLicenseExpression(manifest, 'OR')
+    const expression = this.parseLicenseExpression(manifest, 'composer')
     if (!expression) return
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
