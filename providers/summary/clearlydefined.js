@@ -218,7 +218,7 @@ class ClearlyDescribedSummarizer {
   parseLicenseExpression(manifest, packageType) {
     const combineLicenses = (exp, license) => {
       if (exp) {
-        return exp + ' ' + (packageType==='npm'?'AND':'OR') + ' ' +
+        return exp + ' ' + (packageType === 'npm'?'AND':'OR') + ' ' +
           stringObjectArray(license)
       }
       return stringObjectArray(license)
@@ -238,7 +238,7 @@ class ClearlyDescribedSummarizer {
       return null
     }
     return stringObjectArray(manifest.license) ||
-      (packageType==='npm' && stringObjectArray(manifest.licenses))
+      (packageType === 'npm' && stringObjectArray(manifest.licenses))
   }
 
   addNpmData(result, data, coordinates) {
