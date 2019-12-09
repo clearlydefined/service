@@ -246,7 +246,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // should work in the type field as well
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
@@ -258,7 +257,6 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // should work with legacy licenses
     for (let license of Object.keys(data)) {
       let result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { licenses: license } } }, npmTestCoordinates)
@@ -271,11 +269,40 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       else assert.deepEqual(result, expectedResult)
     }
 
-    // should work with license as an array
-    const licenseArray = ['MIT', 'Apache-2.0']
+    for (let license of Object.keys(data)) {
+      let result = {}
+      summarizer.addNpmData(result, { registryData: { manifest: { licenses: { type: license } } } }, npmTestCoordinates)
+      if (data[license]) {
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[license] }
+        })
+      }
+      else assert.deepEqual(result, expectedResult)
+    }
+
+    const licenseArray = ['MIT']
     let result = {}
-    summarizer.addNpmData(result, { registryData: { manifest: { licenses: licenseArray } } }, npmTestCoordinates)
-    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+    summarizer.addNpmData(result, { registryData: { manifest: { license: licenseArray } } }, npmTestCoordinates)
+    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT'}})
+
+    const licenseArray2 = ['MIT', 'Apache-2.0']
+    let result2 = {}
+    summarizer.addNpmData(result2, { registryData: { manifest: { license: licenseArray2 } } }, npmTestCoordinates)
+    assert.deepEqual(result2, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+
+    let result3 = {}
+    summarizer.addNpmData(result3, { registryData: { manifest: { license: { type: licenseArray2 } } } }, npmTestCoordinates)
+    assert.deepEqual(result3, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+
+    let result4 = {}
+    summarizer.addNpmData(result4, { registryData: { manifest: { licenses: licenseArray2 } } }, npmTestCoordinates)
+    assert.deepEqual(result4, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+
+    const licenseArray3 = [ { type: 'MIT'} , { type: 'Apache-2.0'} ]
+    let result5 = {}
+    summarizer.addNpmData(result5, { registryData: { manifest: { licenses: licenseArray3 } } }, npmTestCoordinates)
+    assert.deepEqual(result5, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
   })
 
   it('should set release date', () => {
