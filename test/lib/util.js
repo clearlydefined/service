@@ -53,6 +53,7 @@ describe('Utils latest version', () => {
       'https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)': 'GPL-3.0',
       'https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt': 'Apache-2.0',
       'https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt': 'Apache-2.0',
+      'https://raw.githubusercontent.com/NuGet/NuGet.Client/dev/LICENSE.txt': 'Apache-2.0',
       'https://github.com/DefinitelyTyped/NugetAutomation/blob/master/LICENSE.MIT': 'MIT',
       'http://aws.amazon.com/apache2.0/': 'Apache-2.0',
       'http://www.github.com/fsharp/Fake/blob/master/License.txt,7727': 'Apache-2.0 AND MS-PL',
