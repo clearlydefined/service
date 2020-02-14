@@ -218,8 +218,7 @@ class ClearlyDescribedSummarizer {
   parseLicenseExpression(manifest, packageType) {
     const combineLicenses = (exp, license) => {
       if (exp) {
-        return exp + ' ' + (packageType === 'npm' ? 'AND' : 'OR') + ' ' +
-          stringObjectArray(license)
+        return exp + ' ' + (packageType === 'npm' ? 'AND' : 'OR') + ' ' + stringObjectArray(license)
       }
       return stringObjectArray(license)
     }
@@ -237,8 +236,7 @@ class ClearlyDescribedSummarizer {
       }
       return null
     }
-    return stringObjectArray(manifest.license) ||
-      (packageType === 'npm' && stringObjectArray(manifest.licenses))
+    return stringObjectArray(manifest.license) || (packageType === 'npm' && stringObjectArray(manifest.licenses))
   }
 
   addNpmData(result, data, coordinates) {
@@ -247,13 +245,17 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `https://npmjs.com/package/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}`
+      `https://npmjs.com/package/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name}/-/${coordinates.name}-${coordinates.revision}.tgz`
+      `https://registry.npmjs.com/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
     if (!manifest) return
@@ -343,11 +345,12 @@ class ClearlyDescribedSummarizer {
     // TODO: we are currently picking the first url that contains a tar.gz or zip extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
     const releases = get(data, 'registryData.releases')
-    const revision = find(
-      releases[coordinates.revision],
-      revision => revision.filename.includes('tar.gz') || revision.filename.includes('zip')
-    )
-    if (revision) setIfValue(result, 'described.urls.download', revision.url)
+    if (releases) {
+      const revision = find(releases[coordinates.revision], revision =>
+        revision.filename ? revision.filename.includes('tar.gz') || revision.filename.includes('zip') : false
+      )
+      if (revision) setIfValue(result, 'described.urls.download', revision.url)
+    }
   }
 
   addGitData(result, data, coordinates) {
