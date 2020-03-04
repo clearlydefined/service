@@ -534,6 +534,7 @@ components:
           - git
           - crate
           - pypi
+          - nuget
     provider:
       name: provider
       in: path
@@ -546,6 +547,7 @@ components:
           - github
           - cratesio
           - pypi
+          - nuget
     namespace:
       name: namespace
       in: path
