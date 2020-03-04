@@ -540,6 +540,7 @@ components:
           - composer
           - gem
           - pod
+          - deb
     provider:
       name: provider
       in: path
@@ -557,6 +558,7 @@ components:
           - packagist
           - rubygems
           - cocoapods
+          - debian
     namespace:
       name: namespace
       in: path
