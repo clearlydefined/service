@@ -538,6 +538,7 @@ components:
           - maven
           - sourcearchive
           - composer
+          - gem
     provider:
       name: provider
       in: path
@@ -553,6 +554,7 @@ components:
           - nuget
           - mavencentral
           - packagist
+          - rubygems
     namespace:
       name: namespace
       in: path
