@@ -541,6 +541,7 @@ components:
           - gem
           - pod
           - deb
+          - debsrc
     provider:
       name: provider
       in: path
