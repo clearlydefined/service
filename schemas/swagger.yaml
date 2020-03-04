@@ -530,18 +530,18 @@ components:
       schema:
         type: string
         enum:
-          - npm
-          - git
-          - crate
-          - pypi
-          - nuget
-          - maven
-          - sourcearchive
           - composer
-          - gem
-          - pod
+          - crate
           - deb
           - debsrc
+          - gem
+          - git
+          - maven
+          - npm
+          - nuget
+          - pod
+          - pypi
+          - sourcearchive
     provider:
       name: provider
       in: path
@@ -550,16 +550,16 @@ components:
       schema:
         type: string
         enum:
-          - npmjs
-          - github
-          - cratesio
-          - pypi
-          - nuget
-          - mavencentral
-          - packagist
-          - rubygems
           - cocoapods
+          - cratesio
           - debian
+          - github
+          - mavencentral
+          - npmjs
+          - nuget
+          - packagist
+          - pypi
+          - rubygems
     namespace:
       name: namespace
       in: path
