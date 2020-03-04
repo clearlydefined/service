@@ -535,6 +535,7 @@ components:
           - crate
           - pypi
           - nuget
+          - sourcearchive
     provider:
       name: provider
       in: path
@@ -548,6 +549,7 @@ components:
           - cratesio
           - pypi
           - nuget
+          - mavencentral
     namespace:
       name: namespace
       in: path
