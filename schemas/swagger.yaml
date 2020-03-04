@@ -533,6 +533,7 @@ components:
           - npm
           - git
           - crate
+          - pypi
     provider:
       name: provider
       in: path
@@ -544,6 +545,7 @@ components:
           - npmjs
           - github
           - cratesio
+          - pypi
     namespace:
       name: namespace
       in: path
