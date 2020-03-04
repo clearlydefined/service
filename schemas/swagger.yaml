@@ -532,6 +532,7 @@ components:
         enum:
           - npm
           - git
+          - crate
     provider:
       name: provider
       in: path
@@ -542,6 +543,7 @@ components:
         enum:
           - npmjs
           - github
+          - cratesio
     namespace:
       name: namespace
       in: path
