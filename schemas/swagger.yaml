@@ -535,6 +535,7 @@ components:
           - crate
           - pypi
           - nuget
+          - maven
           - sourcearchive
     provider:
       name: provider
