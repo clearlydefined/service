@@ -539,6 +539,7 @@ components:
           - sourcearchive
           - composer
           - gem
+          - pod
     provider:
       name: provider
       in: path
@@ -555,6 +556,7 @@ components:
           - mavencentral
           - packagist
           - rubygems
+          - cocoapods
     namespace:
       name: namespace
       in: path
