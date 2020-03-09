@@ -26,12 +26,27 @@ const middleware = asyncMiddleware(async (req, res, next) => {
   const serviceClient = await setupServiceClient(req, serviceToken)
   const userToken = authHeader ? authHeader.split(' ')[1] : null
   const userClient = await setupUserClient(req, userToken)
-  const infoCacheKey = userClient
-    ? await getCacheKey('github.user', userToken)
-    : await getCacheKey('github.user', serviceToken)
-  await setupInfo(req, infoCacheKey, userClient || serviceClient)
-  const teamCacheKey = userClient ? await getCacheKey('github.team', userToken) : null
-  await setupTeams(req, teamCacheKey, userClient)
+
+  req.app.locals.user.github.getInfo = async () => {
+    if (!req.app.locals.user.github._info) {
+      const infoCacheKey = userClient
+        ? await getCacheKey('github.user', userToken)
+        : await getCacheKey('github.user', serviceToken)
+      await setupInfo(req, infoCacheKey, userClient || serviceClient)
+    }
+
+    return req.app.locals.user.github._info
+  }
+
+  req.app.locals.user.github.getTeams = async () => {
+    if (!req.app.locals.user.github._teams) {
+      const teamCacheKey = userClient ? await getCacheKey('github.team', userToken) : null
+      await setupTeams(req, teamCacheKey, userClient)
+    }
+
+    return req.app.locals.user.github._teams
+  }
+
   next()
 })
 
@@ -63,7 +78,7 @@ async function setupInfo(req, cacheKey, client) {
     info = { name: info.data.name, login: info.data.login, email: info.data.email }
     await cache.set(cacheKey, info)
   }
-  req.app.locals.user.github.info = info
+  req.app.locals.user.github._info = info
 }
 
 // get the user's teams (from GitHub or the cache) and attach them to the request
@@ -76,7 +91,7 @@ async function setupTeams(req, cacheKey, client) {
     teams = await getTeams(client, options.org)
     await cache.set(cacheKey, teams)
   }
-  req.app.locals.user.github.teams = teams
+  req.app.locals.user.github._teams = teams
 }
 
 /**
@@ -93,7 +108,7 @@ async function getTeams(client, org) {
     if (err.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
-          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
     } else if (err.code === 401 && err.message === 'Bad credentials') {
       // the token was bad. trickle up the problem so the user can fix
