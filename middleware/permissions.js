@@ -13,10 +13,12 @@ function permissionsCheck(permission) {
     const requiredTeams = permissions[permission]
     const intersection = requiredTeams.filter(t => (userTeams || []).includes(t))
     if (requiredTeams.length !== 0 && intersection.length == 0) {
-      return response.status(401).send(`No permission to '${permission}' (needs team membership)`)
+      const error = new Error(`No permission to '${permission}' (needs team membership)`)
+      error.status = 401
+      next(error)
+    } else {
+      next()
     }
-
-    next()
   })
 }
 
