@@ -82,8 +82,19 @@ class DefinitionService {
     const cached = await this.cache.get(cacheKey)
     if (cached) return cached
     const stored = await this.definitionStore.get(coordinates)
-    if (stored) await this.cache.set(cacheKey, stored)
+    if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
+  }
+
+  async _setDefinitionInCache(cacheKey, itemToStore) {
+    // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
+    if (itemToStore.files && itemToStore.files.length > 1000) {
+      this.logger.info('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
+      return
+    }
+
+    // TTL for two days, in seconds
+    await this.cache.set(cacheKey, itemToStore, 60 * 60 * 24 * 2)
   }
 
   _trimDefinition(definition, expand) {
@@ -222,7 +233,7 @@ class DefinitionService {
 
   async _store(definition) {
     await this.definitionStore.store(definition)
-    await this.cache.set(this._getCacheKey(definition.coordinates), definition)
+    await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
   }
 
   /**
