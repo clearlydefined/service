@@ -3,9 +3,6 @@
 
 const requestPromise = require('request-promise-native')
 const AbstractSearch = require('./abstractSearch')
-const {
-  truncateText
-} = require('../../lib/utils')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2019-05-06'
@@ -28,7 +25,7 @@ class AzureSearch extends AbstractSearch {
    */
   async suggestCoordinates(pattern) {
     const baseUrl = this._buildUrl(`indexes/${definitionsIndexName}/docs/suggest`)
-    const validPattern = truncateText(pattern, 100, '')
+    const validPattern = pattern.substring(0, 100)
     const url = `${baseUrl}&search=${validPattern}&suggesterName=suggester&$select=coordinates&$top=50`
     const searchResult = await requestPromise({
       method: 'GET',
