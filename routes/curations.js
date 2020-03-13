@@ -92,7 +92,12 @@ async function updateCurations(request, response) {
 router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))
 
 async function syncAllContributions(request, response) {
-  await curationService.syncAllContributions(request.app.locals.user.github.client)
+  const userGithub = request.app.locals.user.github.client
+  if (!userGithub) {
+    return response.status(400).send('Invalid Github user')
+  }
+
+  await curationService.syncAllContributions(userGithub)
   response.send({ status: 'OK' })
 }
 
