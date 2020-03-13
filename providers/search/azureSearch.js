@@ -25,7 +25,8 @@ class AzureSearch extends AbstractSearch {
    */
   async suggestCoordinates(pattern) {
     const baseUrl = this._buildUrl(`indexes/${definitionsIndexName}/docs/suggest`)
-    const url = `${baseUrl}&search=${pattern}&suggesterName=suggester&$select=coordinates&$top=50`
+    const validPattern = pattern.substring(0, 100)
+    const url = `${baseUrl}&search=${validPattern}&suggesterName=suggester&$select=coordinates&$top=50`
     const searchResult = await requestPromise({
       method: 'GET',
       url,
