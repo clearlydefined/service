@@ -46,6 +46,7 @@
     "pako": "^1.0.8",
     "passport": "^0.4.0",
     "passport-github": "^1.1.0",
+    "patch-package": "^6.2.1",
     "promise-retry": "^1.1.1",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
@@ -75,7 +76,6 @@
     "node-mocks-http": "^1.6.7",
     "nodemon": "^1.18.2",
     "nyc": "^14.1.1",
-    "patch-package": "^6.2.1",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
   }
