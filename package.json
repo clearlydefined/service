@@ -5,7 +5,8 @@
   "scripts": {
     "test": "nyc mocha --exit \"test/**/*.js\" && eslint .",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "postinstall": "patch-package"
   },
   "license": "MIT",
   "repository": {
@@ -59,7 +60,7 @@
     "spdx-satisfies": "github:clearlydefined/spdx-satisfies.js#parse-override",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
-    "tiny-attribution-generator": "0.0.5",
+    "tiny-attribution-generator": "0.1.2",
     "tmp": "0.0.33",
     "vso-node-api": "^6.2.8-preview",
     "winston": "^2.3.0",
@@ -74,6 +75,7 @@
     "node-mocks-http": "^1.6.7",
     "nodemon": "^1.18.2",
     "nyc": "^14.1.1",
+    "patch-package": "^6.2.1",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
   }
