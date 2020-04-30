@@ -6,7 +6,9 @@
     "test": "nyc mocha --exit \"test/**/*.js\" && eslint .",
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "repository": {
@@ -65,7 +67,8 @@
     "tmp": "0.0.33",
     "vso-node-api": "^6.2.8-preview",
     "winston": "^2.3.0",
-    "winston-azure-application-insights": "^1.5.0"
+    "winston-azure-application-insights": "^1.5.0",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
@@ -78,5 +81,6 @@
     "nyc": "^14.1.1",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
-  }
+  },
+  "snyk": true
 }
