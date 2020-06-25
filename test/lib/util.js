@@ -82,7 +82,6 @@ describe('Utils latest version', () => {
       'http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html': 'GPL-2.0',
       // EULA licenses should be defined as OTHER
       'http://aka.ms/devservicesagreement': 'OTHER',
-      'https://aka.ms/netcoregaeula': 'OTHER',
       'https://aka.ms/pexunj': 'OTHER',
       'https://applitools.com/eula/sdk': 'OTHER',
       'https://company.aspose.com/legal/eula': 'OTHER',
