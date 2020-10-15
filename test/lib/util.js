@@ -262,14 +262,21 @@ describe('Copyright simplification', () => {
 
 describe('Utils isLicenseFile', () => {
   it('should detect root level license files', () => {
-    const inputs = ['LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML']
+    const inputs = [
+      'LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML',
+      'COPYING', 'copying', 'copying.txt', 'COPYING.md', 'copying.html'
+    ]
+
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.true
     }
   })
 
   it('should not detect nested license files without coordinates', () => {
-    const inputs = ['package/LICENSE', 'licenses/license']
+    const inputs = [
+      'package/LICENSE', 'licenses/license',
+      'package/COPYING', 'licenses/copying'
+    ]
 
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.false
@@ -282,7 +289,12 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML'
+      'package/LICENSE.HTML',
+      'package/COPYING',
+      'package/copying',
+      'package/Copying.txt',
+      'package/COPYING.md',
+      'package/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.true
@@ -295,7 +307,12 @@ describe('Utils isLicenseFile', () => {
       'meta-inf/license',
       'meta-inf/License.txt',
       'meta-inf/LICENSE.md',
-      'meta-inf/LICENSE.HTML'
+      'meta-inf/LICENSE.HTML',
+      'meta-inf/COPYING',
+      'meta-inf/copying',
+      'meta-inf/Copying.txt',
+      'meta-inf/COPYING.md',
+      'meta-inf/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.true
@@ -308,7 +325,12 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/license',
       'redis-3.1/License.txt',
       'redis-3.1/LICENSE.md',
-      'redis-3.1/LICENSE.HTML'
+      'redis-3.1/LICENSE.HTML',
+      'redis-3.1/COPYING',
+      'redis-3.1/copying',
+      'redis-3.1/Copying.txt',
+      'redis-3.1/COPYING.md',
+      'redis-3.1/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be.true
@@ -321,7 +343,12 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML'
+      'package/LICENSE.HTML',
+      'package/COPYING',
+      'package/copying',
+      'package/Copying.txt',
+      'package/COPYING.md',
+      'package/COPYING.HTML',
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'nuget' }), `input: ${input}`).to.be.false
@@ -334,7 +361,12 @@ describe('Utils isLicenseFile', () => {
       'package/deeper/license',
       'deeper/package/License.txt',
       '.package/LICENSE.md',
-      'package2/LICENSE.HTML'
+      'package2/LICENSE.HTML',
+      'foobar/COPYING',
+      'package/deeper/copying',
+      'deeper/package/Copying.txt',
+      '.package/COPYING.md',
+      'package2/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.false
@@ -347,7 +379,12 @@ describe('Utils isLicenseFile', () => {
       'package/deeper/license',
       'deeper/package/License.txt',
       '.package/LICENSE.md',
-      'package2/LICENSE.HTML'
+      'package2/LICENSE.HTML',
+      'foobar/COPYING',
+      'package/deeper/copying',
+      'deeper/package/Copying.txt',
+      '.package/COPYING.md',
+      'package2/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.false
@@ -360,7 +397,12 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/nested/LICENSE',
       'redis-3.2/LICENSE',
       'other-3.1/LICENSE',
-      'package/LICENSE'
+      'package/LICENSE',
+      'special/COPYING',
+      'redis-3.1/nested/COPYING',
+      'redis-3.2/COPYING',
+      'other-3.1/COPYING',
+      'package/COPYING'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be
