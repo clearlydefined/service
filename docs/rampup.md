@@ -27,8 +27,6 @@ These are suggested steps / tips to get familiar with the codebase:
 ### Dev-like
 Better to use a copy of the real dev environment, can change queue names to be your own, same with blob storage.
 * (Haven’t used storage emulator yet because not using Windows.)
-
-0. To get config from dev, use “Resource explorer” on the app service, then go to config -> appsettings. Then can cut and paste
 0. Check bin/config.js for defaults
 0. Usually, add your name to:
     * "HARVEST_AZBLOB_CONTAINER_NAME": "develop-jlm-local",                                                                                                                                                     
