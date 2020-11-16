@@ -394,7 +394,8 @@ describe('FOSSologySummarizer fixtures', () => {
         }
         //{ path: 'CONTRIBUTING.md' },
         //{ path: 'gemfiles/Gemfile.test-unit.2.0.1' }
-      ]
+      ],
+      licensed: { declared: 'MIT' }
     })
   })
 
