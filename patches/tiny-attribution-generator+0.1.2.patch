@@ -1,0 +1,16 @@
+diff --git a/node_modules/tiny-attribution-generator/lib/outputs/json/index.js b/node_modules/tiny-attribution-generator/lib/outputs/json/index.js
+index 57d6ed1..71ee353 100644
+--- a/node_modules/tiny-attribution-generator/lib/outputs/json/index.js
++++ b/node_modules/tiny-attribution-generator/lib/outputs/json/index.js
+@@ -9,7 +9,10 @@ class JsonRenderer {
+     constructor() { }
+     render(buckets) {
+         return {
+-            packages: buckets.map(x => x.packages).reduce((a, b) => {
++            packages: buckets.map(x => x.packages.map(y => {
++                y.text = y.text == '' ? x.text : y.text;
++                return y;
++            })).reduce((a, b) => {
+                 return a.concat(b);
+             }, []),
+         };

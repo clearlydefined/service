@@ -80,7 +80,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: /schemas/curations-1.0.json
+              type: object
+              properties:
+                contributionInfo:
+                  type: object
+                  properties:
+                    summary:
+                      type: string
+                    details:
+                      type: string
+                    resolution:
+                      type: string
+                    type:
+                      type: string
+                    removedDefinitions:
+                      type: boolean
+                patches:
+                  type: array
+                  items:
+                    $ref: /schemas/curations-1.0.json
       responses:
         200:
           description: A summary of the curation (PR) created
@@ -309,6 +327,11 @@ paths:
         - $ref: '#/components/parameters/namespace'
         - $ref: '#/components/parameters/name'
         - $ref: '#/components/parameters/revision'
+        - in: query
+          name: expand
+          schema:
+            type: string
+          description: Fields to explicitly include or exclude. E.g. "-files" excludes files.
       responses:
         200:
           description: Component definition.
@@ -367,14 +390,19 @@ paths:
       tags:
         - notices
       requestBody:
-        $ref: '#/components/requestBodies/noticeFile'
+        content:
+          application/json:
+            schema:
+                $ref: /schemas/notice-request.json
       responses:
         200:
           description: Status request has been accepted.
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/noticeFile'
+                $ref: '#/components/schemas/noticeFile'
+        400:
+          description: Invalid notice request body.
 
 tags:
   - name: definitions
@@ -382,7 +410,7 @@ tags:
   - name: curations
     description: Curate component metadata - ClearlyDefined developers will be interested in these
   - name: harvest
-    description: Harvest component metadata - ClearlyDefined developers will be intereted in these
+    description: Harvest component metadata - ClearlyDefined developers will be interested in these
   - name: attachments
     description: Definition attachments - Raw content of attachments for harvested component data
 
@@ -395,6 +423,32 @@ components:
       example:
         - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
         - npm/npmjs/-/redie/0.3.0
+
+    noticeFile:
+      type: object
+      properties:
+        content:
+          type: string
+        summary:
+          properties:
+            total:
+              type: number
+            warnings:
+              type: object
+              properties:
+                noDefinition:
+                  type: array
+                  items:
+                    type: string
+                noLicense:
+                  type: array
+                  items:
+                    type: string
+                noCopyright:
+                  type: array
+                  items:
+                    type: string
+
   requestBodies:
     harvestRequest:
       description: A request to harvest a component. One of harvest.json#definitions/requests or harvest.json#definitions/request
@@ -406,13 +460,13 @@ components:
             properties:
               tool:
                 type: string
-              path:
+              coordinates:
                 type: string
             example:
               - tool: package
-                path: npm/npmjs/-/redie/0.3.0
+                coordinates: npm/npmjs/-/redie/0.3.0
               - tool: source
-                path: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
+                coordinates: git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
     definitionList:
       description: A list of component definitions that are available (see definition.json#definitions/componentDefinitionList)
       content:
@@ -467,30 +521,6 @@ components:
                 scancode:
                   - 2.2.1
 
-  responses:
-    noticeFile:
-      content:
-        type: string
-      summary:
-        properties:
-          total:
-            type: number
-          warnings:
-            type: object
-            properties:
-              noDefinition:
-                type: array
-                items:
-                  type: string
-              noLicense:
-                type: array
-                items:
-                  type: string
-              noCopyright:
-                type: array
-                items:
-                  type: string
-
   parameters:
     type:
       name: type
@@ -500,8 +530,18 @@ components:
       schema:
         type: string
         enum:
-          - npm
+          - composer
+          - crate
+          - deb
+          - debsrc
+          - gem
           - git
+          - maven
+          - npm
+          - nuget
+          - pod
+          - pypi
+          - sourcearchive
     provider:
       name: provider
       in: path
@@ -510,8 +550,16 @@ components:
       schema:
         type: string
         enum:
-          - npmjs
+          - cocoapods
+          - cratesio
+          - debian
           - github
+          - mavencentral
+          - npmjs
+          - nuget
+          - packagist
+          - pypi
+          - rubygems
     namespace:
       name: namespace
       in: path

@@ -48,8 +48,15 @@ function createApp(config) {
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
 
+  const curationQueue = config.curation.queue()
+  initializers.push(async () => curationQueue.initialize())
+
+  const harvestQueue = config.harvest.queue()
+  initializers.push(async () => harvestQueue.initialize())
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
+    harvestService,
     summaryService,
     aggregatorService,
     curationService,
@@ -60,7 +67,7 @@ function createApp(config) {
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
 
-  const curationsRoute = require('./routes/curations')(curationService)
+  const curationsRoute = require('./routes/curations')(curationService, logger)
   const definitionsRoute = require('./routes/definitions')(definitionService)
 
   const suggestionService = require('./business/suggestionService')(definitionService)
@@ -129,8 +136,10 @@ function createApp(config) {
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/nuget', require('./routes/originNuget')())
+  app.use('/origins/composer', require('./routes/originComposer')())
   app.use('/origins/pypi', require('./routes/originPyPi')())
   app.use('/origins/rubygems', require('./routes/originRubyGems')())
+  app.use('/origins/deb', require('./routes/originDeb')())
   app.use('/harvest', harvestRoute)
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
@@ -156,6 +165,11 @@ function createApp(config) {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
         logger.info('Service initialized', { buildNumber: process.env.BUILD_NUMBER })
+
+        // kick off the queue processors
+        require('./providers/curation/process')(curationQueue, curationService, logger)
+        require('./providers/harvest/process')(harvestQueue, definitionService, logger)
+
         // Signal system is up and ok (no error)
         callback()
       },

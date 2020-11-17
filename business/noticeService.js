@@ -87,7 +87,15 @@ class NoticeService {
     if (!definition.files) return ''
     const texts = await Promise.all(
       definition.files
-        .filter(file => file.token && file.natures && file.natures.includes('license'))
+        .filter(file =>
+          file.token
+          && file.natures
+          && file.natures.includes('license')
+          && file.path
+          && (
+            file.path.indexOf('/') === -1
+            || (definition.coordinates.type === 'npm' && file.path.startsWith('package/'))
+          ))
         .map(file => this.attachmentStore.get(file.token))
     )
     return texts.join('\n\n')

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get, set, isArray, uniq, cloneDeep, flatten, find } = require('lodash')
-const SPDX = require('../../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const {
   extractDate,
   setIfValue,
@@ -47,6 +47,9 @@ class ClearlyDescribedSummarizer {
       case 'nuget':
         this.addNuGetData(result, data, coordinates)
         break
+      case 'composer':
+        this.addComposerData(result, data, coordinates)
+        break
       case 'gem':
         this.addGemData(result, data, coordinates)
         break
@@ -55,6 +58,12 @@ class ClearlyDescribedSummarizer {
         break
       case 'pypi':
         this.addPyPiData(result, data, coordinates)
+        break
+      case 'deb':
+        this.addDebData(result, data, coordinates)
+        break
+      case 'debsrc':
+        this.addDebSrcData(result, data, coordinates)
         break
       default:
     }
@@ -125,19 +134,19 @@ class ClearlyDescribedSummarizer {
   }
 
   addMavenData(result, data, coordinates) {
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
+
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(
       result,
       'described.urls.registry',
-      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
-      }-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
@@ -169,18 +178,17 @@ class ClearlyDescribedSummarizer {
 
   addSourceArchiveData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.registry',
-      `https://mvnrepository.com/artifact/${coordinates.namespace}/${coordinates.name}`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/org/${coordinates.namespace}/${coordinates.name}/${coordinates.revision}/${
-        coordinates.name
-      }-${coordinates.revision}.jar`
+      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
@@ -202,9 +210,33 @@ class ClearlyDescribedSummarizer {
     if (!packageEntries) return
     const newDefinition = cloneDeep(result)
     newDefinition.files = packageEntries.map(file => {
-      return { path: decodeURIComponent(file.fullName) }
+      return { path: file.fullName }
     })
-    mergeDefinitions(result, newDefinition)
+    mergeDefinitions(result, newDefinition, get(result, 'licensed.declared') === 'OTHER')
+  }
+
+  parseLicenseExpression(manifest, packageType) {
+    const combineLicenses = (exp, license) => {
+      if (exp) {
+        return exp + ' ' + (packageType === 'npm' ? 'AND' : 'OR') + ' ' + stringObjectArray(license)
+      }
+      return stringObjectArray(license)
+    }
+    const stringObjectArray = value => {
+      if (!value) {
+        return null
+      } else if (typeof value === 'string') {
+        return value
+      } else if (Array.isArray(value)) {
+        return value.reduce(combineLicenses, null)
+      } else if (typeof value.type == 'string') {
+        return value.type
+      } else if (Array.isArray(value.type)) {
+        return value.type.reduce(combineLicenses, null)
+      }
+      return null
+    }
+    return stringObjectArray(manifest.license) || (packageType === 'npm' && stringObjectArray(manifest.licenses))
   }
 
   addNpmData(result, data, coordinates) {
@@ -236,10 +268,29 @@ class ClearlyDescribedSummarizer {
         if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
       } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
     }
-    const license =
-      manifest.license &&
-      SPDX.normalize(typeof manifest.license === 'string' ? manifest.license : manifest.license.type)
-    setIfValue(result, 'licensed.declared', license)
+    const expression = this.parseLicenseExpression(manifest, 'npm')
+    if (!expression) return
+    setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
+  }
+
+  addComposerData(result, data, coordinates) {
+    if (!data.registryData) return
+    setIfValue(result, 'described.releaseDate', extractDate(data.registryData.releaseDate))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      `https://packagist.org/packages/${coordinates.namespace + '/' + coordinates.name}`
+    )
+    const manifest = get(data, 'registryData.manifest')
+    if (!manifest) return
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${manifest.version}`)
+    setIfValue(result, 'described.projectWebsite', manifest.homepage)
+    if (manifest.dist && manifest.dist.url) {
+      setIfValue(result, 'described.urls.download', manifest.dist.url)
+    }
+    const expression = this.parseLicenseExpression(manifest, 'composer')
+    if (!expression) return
+    setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
   addPodData(result, data, coordinates) {
@@ -291,15 +342,15 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', data.declaredLicense)
     setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
-    setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     // TODO: we are currently picking the first url that contains a tar.gz or zip extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
     const releases = get(data, 'registryData.releases')
-    const revision = find(
-      releases[coordinates.revision],
-      revision => revision.filename.includes('tar.gz') || revision.filename.includes('zip')
-    )
-    if (revision) setIfValue(result, 'described.urls.download', revision.url)
+    if (releases) {
+      const revision = find(releases[coordinates.revision], revision =>
+        revision.filename ? revision.filename.includes('tar.gz') || revision.filename.includes('zip') : false
+      )
+      if (revision) setIfValue(result, 'described.urls.download', revision.url)
+    }
   }
 
   addGitData(result, data, coordinates) {
@@ -315,6 +366,57 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `${get(result, 'described.urls.registry')}/archive/${coordinates.revision}.zip`
     )
+  }
+
+  addDebData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    if (!data.registryData) return
+    const registryUrl = this.getDebianRegistryUrl(data.registryData)
+    if (registryUrl) {
+      set(result, 'described.urls.registry', registryUrl)
+      set(result, 'described.urls.version', registryUrl)
+      if (result.described.sourceLocation) {
+        result.described.sourceLocation.url = registryUrl
+      }
+    }
+    const architecture = coordinates.revision.split('_')[1]
+    const downloadUrl = new URL(
+      'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Architecture === architecture).Path
+    ).href
+    setIfValue(result, 'described.urls.download', downloadUrl)
+    const license = uniq(data.declaredLicenses || []).join(' AND ')
+    setIfValue(result, 'licensed.declared', SPDX.normalize(license))
+  }
+
+  addDebSrcData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    if (!data.registryData) return
+    const registryUrl = this.getDebianRegistryUrl(data.registryData)
+    if (registryUrl) {
+      set(result, 'described.urls.registry', registryUrl)
+      set(result, 'described.urls.version', registryUrl)
+      result.described.sourceLocation = { ...coordinates, url: registryUrl }
+    }
+    const downloadUrl = new URL(
+      'http://ftp.debian.org/debian/' + data.registryData.find(entry => entry.Path.includes('.orig.tar.')).Path
+    ).href
+    // There is also patches URL which is related to sources but it's not part of the schema
+    setIfValue(result, 'described.urls.download', downloadUrl)
+    const license = uniq(data.declaredLicenses || []).join(' AND ')
+    setIfValue(result, 'licensed.declared', SPDX.normalize(license))
+  }
+
+  getDebianRegistryUrl(registryData) {
+    const registryPath = registryData[0].Path
+    if (registryPath) {
+      // Example: ./pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz -> http://ftp.debian.org/debian/pool/main/0/0ad
+      const pathName = registryPath
+        .split('/')
+        .slice(1, 5)
+        .join('/')
+      return 'http://ftp.debian.org/debian/' + pathName
+    }
+    return null
   }
 }
 

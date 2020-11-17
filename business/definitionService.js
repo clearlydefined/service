@@ -30,7 +30,7 @@ const minimatch = require('minimatch')
 const extend = require('extend')
 const logger = require('../providers/logging/logger')
 const validator = require('../schemas/validator')
-const SPDX = require('../lib/spdx')
+const SPDX = require('@clearlydefined/spdx')
 const parse = require('spdx-expression-parse')
 const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
 
@@ -39,8 +39,9 @@ const currentSchema = '1.6.1'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, summary, aggregator, curation, store, search, cache) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
     this.harvestStore = harvestStore
+    this.harvestService = harvestService
     this.summaryService = summary
     this.aggregationService = aggregator
     this.curationService = curation
@@ -58,6 +59,7 @@ class DefinitionService {
    * @param {(number | string | Summary)} [curationSpec] - A PR number (string or number) for a proposed
    * curation or an actual curation object.
    * @param {bool} force - whether or not to force re-computation of the requested definition
+   * @param {string} expand - hints for parts to include/exclude; e.g. "-files"
    * @returns {Definition} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
@@ -80,8 +82,19 @@ class DefinitionService {
     const cached = await this.cache.get(cacheKey)
     if (cached) return cached
     const stored = await this.definitionStore.get(coordinates)
-    if (stored) await this.cache.set(cacheKey, stored)
+    if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
+  }
+
+  async _setDefinitionInCache(cacheKey, itemToStore) {
+    // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
+    if (itemToStore.files && itemToStore.files.length > 1000) {
+      this.logger.info('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
+      return
+    }
+
+    // TTL for two days, in seconds
+    await this.cache.set(cacheKey, itemToStore, 60 * 60 * 24 * 2)
   }
 
   _trimDefinition(definition, expand) {
@@ -197,6 +210,7 @@ class DefinitionService {
       const toolScore = get(definition, 'described.toolScore')
       if (!toolScore && (!tools || tools.length === 0)) {
         this.logger.info('definition not available', { coordinates: coordinates.toString() })
+        this._harvest(coordinates) // fire and forget
         return definition
       }
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
@@ -207,9 +221,20 @@ class DefinitionService {
     }
   }
 
+  async _harvest(coordinates) {
+    try {
+      await this.harvestService.harvest({ tool: 'component', coordinates }, true)
+    } catch (error) {
+      this.logger.info('failed to harvest from definition service', {
+        crawlerError: error,
+        coordinates: coordinates.toString()
+      })
+    }
+  }
+
   async _store(definition) {
     await this.definitionStore.store(definition)
-    await this.cache.set(this._getCacheKey(definition.coordinates), definition)
+    await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
   }
 
   /**
@@ -518,5 +543,5 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvestStore, summary, aggregator, curation, store, search, cache) =>
-  new DefinitionService(harvestStore, summary, aggregator, curation, store, search, cache)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
+  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)

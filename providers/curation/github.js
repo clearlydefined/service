@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap } = require('lodash')
-const base64 = require('base-64')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -137,6 +136,7 @@ class GitHubCurationService {
     if (invalidCurations.length) {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
+      this.logger.error(description, invalidCurations)
     }
     return this._postCommitStatus(sha, number, state, description)
   }
@@ -157,7 +157,7 @@ class GitHubCurationService {
     const currentContent = await this._getCurations(coordinates)
     const newContent = patch.revisions
     const updatedContent = this._updateContent(coordinates, currentContent, newContent)
-    const content = base64.encode(updatedContent)
+    const content = Buffer.from(updatedContent).toString('base64')
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
     const fileBody = {
@@ -221,6 +221,7 @@ class GitHubCurationService {
     )
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
+
     const description = `
 **Type:** ${Type}
 
@@ -256,7 +257,14 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   _formatDefinitions(definitions) {
-    return definitions.map(def => `- ${def.coordinates.name} ${Object.keys(def.revisions)[0]}`)
+    return definitions.map(
+      def =>
+        `- [${def.coordinates.name} ${
+          Object.keys(def.revisions)[0]
+        }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${
+          Object.keys(def.revisions)[0]
+        })`
+    )
   }
 
   /**
@@ -348,7 +356,7 @@ ${this._formatDefinitions(patch.patches)}`
     const { owner, repo } = this.options
     try {
       const response = await this.github.repos.getContent({ owner, repo, ref, path })
-      return base64.decode(response.data.content)
+      return Buffer.from(response.data.content, 'base64').toString('utf8')
     } catch (error) {
       this.logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}`)
     }

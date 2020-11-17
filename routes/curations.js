@@ -69,13 +69,19 @@ router.patch('', asyncMiddleware(updateCurations))
 async function updateCurations(request, response) {
   const serviceGithub = request.app.locals.service.github.client
   const userGithub = request.app.locals.user.github.client
-  const info = request.app.locals.user.github.info
+  const info = await request.app.locals.user.github.getInfo()
   let curationErrors = []
+  let patchesInError = []
   request.body.patches.forEach(entry => {
     const curation = new Curation(entry)
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
+    patchesInError.push(entry)
   })
-  if (curationErrors.length > 0) return response.status(400).send({ errors: curationErrors })
+  if (curationErrors.length > 0) {
+    const errorData = { errors: curationErrors, patchesInError }
+    logger.error('intended curations are invalid', errorData)
+    return response.status(400).send(errorData)
+  }
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
   response.status(200).send({
     prNumber: result.data.number,
@@ -86,14 +92,21 @@ async function updateCurations(request, response) {
 router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))
 
 async function syncAllContributions(request, response) {
-  await curationService.syncAllContributions(request.app.locals.user.github.client)
+  const userGithub = request.app.locals.user.github.client
+  if (!userGithub) {
+    return response.status(400).send('Invalid Github user')
+  }
+
+  await curationService.syncAllContributions(userGithub)
   response.send({ status: 'OK' })
 }
 
 let curationService
+let logger
 
-function setup(service) {
+function setup(service, appLogger) {
   curationService = service
+  logger = appLogger || require('../providers/logging/logger')()
   return router
 }
 

@@ -9,7 +9,15 @@
       "request": "launch",
       "name": "Mocha Tests",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "args": ["-u", "tdd", "--timeout", "999999", "--colors", "${workspaceFolder}/test/**/*.js"],
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--exit",
+        "--colors",
+        "${workspaceFolder}/test/**/*.js"
+      ],
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
@@ -17,8 +25,13 @@
       "request": "launch",
       "name": "CD service",
       "program": "${workspaceFolder}/bin/www",
-      "env": { "BUILD_NUMBER": "0" },
-      "skipFiles": ["<node_internals>/**/*.js"],
+      "env": {
+        "BUILD_NUMBER": "0",
+        "SERVICE_ENDPOINT": "http://localhost:4000"
+      },
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ],
       "showAsyncStacks": true
     }
   ]

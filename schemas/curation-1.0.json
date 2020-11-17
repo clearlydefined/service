@@ -22,7 +22,20 @@
   "definitions": {
     "type": {
       "type": "string",
-      "enum": ["npm", "crate", "git", "maven", "nuget", "gem", "pod", "pypi", "sourcearchive"],
+      "enum": [
+        "npm",
+        "crate",
+        "git",
+        "maven",
+        "nuget",
+        "gem",
+        "composer",
+        "pod",
+        "pypi",
+        "sourcearchive",
+        "deb",
+        "debsrc"
+      ],
       "errorMessage": {
         "enum": "Package type must be supported by ClearlyDefined",
         "type": "Package type must be a string"
@@ -30,7 +43,18 @@
     },
     "provider": {
       "type": "string",
-      "enum": ["npmjs", "cocoapods", "cratesio", "github", "mavencentral", "nuget", "rubygems", "pypi"],
+      "enum": [
+        "npmjs",
+        "cocoapods",
+        "cratesio",
+        "github",
+        "mavencentral",
+        "packagist",
+        "nuget",
+        "rubygems",
+        "pypi",
+        "debian"
+      ],
       "errorMessage": {
         "enum": "Provider type must be supported by ClearlyDefined",
         "type": "Provider type must be a string"

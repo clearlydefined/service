@@ -34,15 +34,76 @@ describe('Utils latest version', () => {
       'http://www.opensource.org/licenses/mit-license.php': 'MIT',
       'https://opensource.org/licenses/MIT': 'MIT',
       'https://opensource.org/licenses/mit': 'MIT',
+      'http://opensource.org/licenses/BSD-3-Clause': 'BSD-3-Clause',
       'https://licenses.nuget.org/MIT': 'MIT',
+      'https://licenses.nuget.org/BSD-3-Clause': 'BSD-3-Clause',
       'https://www.gnu.org/licenses/gpl-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gPL-3.0.html': 'GPL-3.0',
       'https://www.gnu.org/licenses/gpl-2.0': 'GPL-2.0',
+      'http://json.org/license.html': 'JSON',
+      'http://www.json.org/license.html': 'JSON',
+      'https://json.org/license.html': 'JSON',
       'https://opensource.org/licenses/JUNK': null,
       'https://www.gnu.org/licenses/JUNK': null,
       'https://github.com/owner/repo/blob/master/LICENSE': null,
       'https://raw.github.com/owner/repo/develop/LICENSE': null,
-      'http://aka.ms/windowsazureapache2': null
+      'http://aka.ms/windowsazureapache2': null,
+      'https://tldrlegal.com/license/mit-license': 'MIT',
+      'https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)': 'Apache-2.0',
+      'https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)': 'GPL-3.0',
+      'https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt': 'Apache-2.0',
+      'https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt': 'Apache-2.0',
+      'https://raw.githubusercontent.com/NuGet/NuGet.Client/dev/LICENSE.txt': 'Apache-2.0',
+      'https://github.com/DefinitelyTyped/NugetAutomation/blob/master/LICENSE.MIT': 'MIT',
+      'http://aws.amazon.com/apache2.0/': 'Apache-2.0',
+      'http://www.github.com/fsharp/Fake/blob/master/License.txt,7727': 'Apache-2.0 AND MS-PL',
+      'https://github.com/MassTransit/MassTransit/blob/master/LICENSE': 'Apache-2.0',
+      'http://opensource.org/licenses/ms-pl.html': 'MS-PL',
+      'http://www.opensource.org/licenses/MS-pl': 'MS-PL',
+      'http://www.opensource.org/licenses/ms-pl.html': 'MS-PL',
+      'https://github.com/fluffynuts/PeanutButter/blob/master/LICENSE': 'BSD-3-Clause',
+      'https://github.com/aspnetboilerplate/aspnetboilerplate/blob/master/LICENSE': 'MIT',
+      'https://raw.githubusercontent.com/Microsoft/dotnet/master/LICENSE': 'MIT',
+      'https://github.com/dotnet/corefx/blob/master/LICENSE.TXT': 'MIT',
+      'https://github.com/dotnet/docfx/blob/dev/LICENSE': 'MIT',
+      'https://github.com/dotnetcore/Util/blob/master/LICENSE.txt': 'MIT',
+      'https://github.com/rsuter/NJsonSchema/blob/master/LICENSE.md': 'MIT',
+      'https://raw.githubusercontent.com/rebus-org/Rebus/master/LICENSE.md': 'MIT',
+      'http://www.gnu.org/licenses/lgpl-3.0.html': 'LGPL-3.0',
+      'http://www.gnu.org/licenses/lgpl.html': 'LGPL-3.0',
+      'https://www.gnu.org/licenses/lgpl.html#content': 'LGPL-3.0',
+      'http://www.gnu.org/licenses/lgpl.txt': 'LGPL-3.0',
+      'http://www.gnu.org/licenses/lgpl-3.0.en.html': 'LGPL-3.0',
+      'http://opensource.org/licenses/EPL-1.0': 'EPL-1.0',
+      'http://www.opensource.org/licenses/bsd-license.php': 'BSD-2-Clause',
+      'http://www.opensource.org/licenses/gpl-3.0.html': 'GPL-3.0',
+      'http://www.gnu.org/licenses/lgpl-2.1': 'LGPL-2.1',
+      'http://www.gnu.org/licenses/old-licenses/gpl-2.0.html': 'GPL-2.0',
+      'http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html': 'GPL-2.0',
+      // EULA licenses should be defined as OTHER
+      'http://aka.ms/devservicesagreement': 'OTHER',
+      'https://aka.ms/pexunj': 'OTHER',
+      'https://applitools.com/eula/sdk': 'OTHER',
+      'https://company.aspose.com/legal/eula': 'OTHER',
+      'http://www.componentone.com/SuperPages/DevToolsEULA/': 'OTHER',
+      'https://www.devexpress.com/support/eulas/': 'OTHER',
+      'https://www.devexpress.com/Support/EULAs/NetComponents.xml': 'OTHER',
+      'http://dlhsoft.com/LicenseAgreements/JavaScriptComponentEULA.rtf': 'OTHER',
+      'http://DlhSoft.com/LicenseAgreements/ComponentEULA.rtf': 'OTHER',
+      'https://www.essentialobjects.com/Products/WebBrowser/EULA.aspx': 'OTHER',
+      'http://www.essentialobjects.com/Products/Pdf/EULA.aspx': 'OTHER',
+      'https://www.essentialobjects.com/EULA.aspx': 'OTHER',
+      'http://go.microsoft.com/fwlink/?LinkId=329770': 'OTHER',
+      'https://kusto.blob.core.windows.net/kusto-nuget/EULA-agreement.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/aspnetwebpages_eula.rtf': 'OTHER',
+      'https://www.microsoft.com/en-us/web/webpi/eula/net_library_eula_ENU.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/signalr_rtw.htm': 'OTHER',
+      'http://www.microsoft.com/web/webpi/eula/net_library_eula_CHS.htm': 'OTHER',
+      'http://pdfium.patagames.com/faq/eula/': 'OTHER',
+      'https://specflow.org/plus/eula/': 'OTHER',
+      'http://www.streamcoders.com/products/msneteula.html': 'OTHER',
+      'http://workflowenginenet.com/EULA': 'OTHER'
     }
 
     for (const licenseUrl of Object.getOwnPropertyNames(inputs)) {
@@ -201,14 +262,21 @@ describe('Copyright simplification', () => {
 
 describe('Utils isLicenseFile', () => {
   it('should detect root level license files', () => {
-    const inputs = ['LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML']
+    const inputs = [
+      'LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML',
+      'COPYING', 'copying', 'copying.txt', 'COPYING.md', 'copying.html'
+    ]
+
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.true
     }
   })
 
   it('should not detect nested license files without coordinates', () => {
-    const inputs = ['package/LICENSE', 'licenses/license']
+    const inputs = [
+      'package/LICENSE', 'licenses/license',
+      'package/COPYING', 'licenses/copying'
+    ]
 
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.false
@@ -221,7 +289,12 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML'
+      'package/LICENSE.HTML',
+      'package/COPYING',
+      'package/copying',
+      'package/Copying.txt',
+      'package/COPYING.md',
+      'package/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.true
@@ -234,7 +307,12 @@ describe('Utils isLicenseFile', () => {
       'meta-inf/license',
       'meta-inf/License.txt',
       'meta-inf/LICENSE.md',
-      'meta-inf/LICENSE.HTML'
+      'meta-inf/LICENSE.HTML',
+      'meta-inf/COPYING',
+      'meta-inf/copying',
+      'meta-inf/Copying.txt',
+      'meta-inf/COPYING.md',
+      'meta-inf/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.true
@@ -247,7 +325,12 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/license',
       'redis-3.1/License.txt',
       'redis-3.1/LICENSE.md',
-      'redis-3.1/LICENSE.HTML'
+      'redis-3.1/LICENSE.HTML',
+      'redis-3.1/COPYING',
+      'redis-3.1/copying',
+      'redis-3.1/Copying.txt',
+      'redis-3.1/COPYING.md',
+      'redis-3.1/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be.true
@@ -260,7 +343,12 @@ describe('Utils isLicenseFile', () => {
       'package/license',
       'package/License.txt',
       'package/LICENSE.md',
-      'package/LICENSE.HTML'
+      'package/LICENSE.HTML',
+      'package/COPYING',
+      'package/copying',
+      'package/Copying.txt',
+      'package/COPYING.md',
+      'package/COPYING.HTML',
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'nuget' }), `input: ${input}`).to.be.false
@@ -273,7 +361,12 @@ describe('Utils isLicenseFile', () => {
       'package/deeper/license',
       'deeper/package/License.txt',
       '.package/LICENSE.md',
-      'package2/LICENSE.HTML'
+      'package2/LICENSE.HTML',
+      'foobar/COPYING',
+      'package/deeper/copying',
+      'deeper/package/Copying.txt',
+      '.package/COPYING.md',
+      'package2/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.false
@@ -286,7 +379,12 @@ describe('Utils isLicenseFile', () => {
       'package/deeper/license',
       'deeper/package/License.txt',
       '.package/LICENSE.md',
-      'package2/LICENSE.HTML'
+      'package2/LICENSE.HTML',
+      'foobar/COPYING',
+      'package/deeper/copying',
+      'deeper/package/Copying.txt',
+      '.package/COPYING.md',
+      'package2/COPYING.HTML'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.false
@@ -299,7 +397,12 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/nested/LICENSE',
       'redis-3.2/LICENSE',
       'other-3.1/LICENSE',
-      'package/LICENSE'
+      'package/LICENSE',
+      'special/COPYING',
+      'redis-3.1/nested/COPYING',
+      'redis-3.2/COPYING',
+      'other-3.1/COPYING',
+      'package/COPYING'
     ]
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be

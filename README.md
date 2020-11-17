@@ -27,6 +27,13 @@ You may want to get the sample data. Clone the [Havested-data](https://github.co
 
 TBD
 
+# Configuration
+
+Configuration properties can be found at:
+
+* [service/full.env.json](https://github.com/clearlydefined/service/blob/master/full.env.json)
+* [service/bin/config.js](https://github.com/clearlydefined/service/blob/master/bin/config.js)
+
 # Contributing
 
 This project welcomes contributions and suggestions, and we've documented the details in the [contribution policy](CONTRIBUTING.md).
@@ -224,7 +231,9 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - npm
 - nuget
 - pod
+- composer
 - rubygem
+- deb
 
 ## Provider Registry
 
@@ -234,6 +243,8 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - crates.io
 - npmjs.org
 - nuget.org
+- packagist.org
+- ftp.debian.org
 
 ## Tool Name Registry
 

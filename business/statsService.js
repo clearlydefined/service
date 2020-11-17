@@ -42,7 +42,10 @@ class StatsService {
       npm: () => this._getType('npm'),
       nuget: () => this._getType('nuget'),
       pod: () => this._getType('pod'),
-      pypi: () => this._getType('pypi')
+      composer: () => this._getType('composer'),
+      pypi: () => this._getType('pypi'),
+      deb: () => this._getType('deb'),
+      debsrc: () => this._getType('debsrc'),
     }
   }
 

@@ -120,6 +120,13 @@
         "type": "sortDesc must be a bool"
       }
     },
+    "matchCasing": {
+      "type": "boolean",
+      "description": "Whether to post-process results to match the request case. Defaults to true.",
+      "errorMessage": {
+        "type": "matchCasing must be a bool"
+      }
+    },
     "continuationToken": {
       "type": "string",
       "errorMessage": {

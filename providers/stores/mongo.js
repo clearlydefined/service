@@ -9,16 +9,17 @@ const { clone, get, range } = require('lodash')
 const base64 = require('base-64')
 
 const sortOptions = {
-  type: 'coordinates.type',
-  provider: 'coordinates.provider',
-  name: 'coordinates.name',
-  namespace: 'coordinates.namespace',
-  license: 'licensed.declared',
-  releaseDate: 'described.releaseDate',
-  licensedScore: 'licensed.score.total',
-  describedScore: 'described.score.total',
-  effectiveScore: 'scores.effective',
-  toolScore: 'scores.tool'
+  type: ['coordinates.type'],
+  provider: ['coordinates.provider'],
+  name: ['coordinates.name', 'coordinates.revision'],
+  namespace: ['coordinates.namespace', 'coordinates.name', 'coordinates.revision'],
+  revision: ['coordinates.revision'],
+  license: ['licensed.declared'],
+  releaseDate: ['described.releaseDate'],
+  licensedScore: ['licensed.score.total'],
+  describedScore: ['described.score.total'],
+  effectiveScore: ['scores.effective'],
+  toolScore: ['scores.tool']
 }
 
 class MongoStore {
@@ -80,7 +81,7 @@ class MongoStore {
    * @returns The data and continuationToken if there is more results
    */
   async find(query, continuationToken = '') {
-    const pageSize = 50 // no option for page size, just next tokens
+    const pageSize = 100 // no option for page size, just next tokens
     const filter = this._buildQuery(query, continuationToken)
     const sort = this._buildSort(query)
     const cursor = await this.collection.find(filter, {
@@ -163,8 +164,10 @@ class MongoStore {
   }
 
   _buildSort(parameters) {
-    const sort = sortOptions[parameters.sort] || '_mongo.partitionKey'
-    return { [sort]: parameters.sortDesc ? -1 : 1 }
+    const sort = sortOptions[parameters.sort] || ['_mongo.partitionKey']
+    let clause = {}
+    sort.forEach(item => clause[item] = parameters.sortDesc ? -1 : 1)
+    return clause
   }
 
   _getContinuationToken(pageSize, data) {
