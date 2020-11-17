@@ -27,18 +27,21 @@ These are suggested steps / tips to get familiar with the codebase:
 ### Dev-like
 Better to use a copy of the real dev environment, can change queue names to be your own, same with blob storage.
 * (Haven’t used storage emulator yet because not using Windows.)
-
-0. To get config from dev, use “Resource explorer” on the app service, then go to config -> appsettings. Then can cut and paste
-0. Check bin/config.js for defaults
-0. Usually, add your name to:
-    * "HARVEST_AZBLOB_CONTAINER_NAME": "develop-jlm-local",                                                                                                                                                     
-    * "HARVEST_QUEUE_PREFIX": "cdcrawlerdev-jlm-local",   
+0. Rather than using [minimal.env.json](/minimal.env.json), use [full.env.json](/full.env.json) as your env file in your parent directory
+0. Add your name to:
+    * "HARVEST_AZBLOB_CONTAINER_NAME": "develop-jlm-local",
 0. Comment/remove:
-    * "Remove_APPINSIGHTS_INSTRUMENTATIONKEY": "1234",                                                                                                                       
-   So no appinsights logging
+    * "APPINSIGHTS_INSTRUMENTATIONKEY"
 0. Maybe remove:
-    * "remove_CURATION_QUEUE_PROVIDER": "azure",                                                                                                                                                             
+    * "CURATION_QUEUE_PROVIDER"
    So we don’t pull any curations off queue
+0. Add in the same values you would have were you using [minimal.env.json](/minimal.env.json) (you can learn more about those values [here](https://docs.clearlydefined.io/contributing-code)). These include:
+   * "FILE_STORE_LOCATION"
+   * "CURATION_GITHUB_REPO"
+   * "CURATION_GITHUB_TOKEN"
+   * "CRAWLER_GITHUGB_TOKEN"
+   * "SCANCODE_HOME"
+0. Any other environmental variable values you might need can be found in the Clearly Defined subsciption in Azure Portal under App Services -> clearlydefined-api-dev -> Settings -> Configuration
 0. Consider all the vars and what you need for testing what you will test. 
 
 ## Misc info
