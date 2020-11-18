@@ -16,7 +16,7 @@
   "dependencies": {
     "@clearlydefined/spdx": "^0.1.0",
     "@octokit/rest": "^14.0.9",
-    "ajv": "^6.5.2",
+    "ajv": "^6.12.3",
     "ajv-errors": "^1.0.0",
     "applicationinsights": "^1.5.0",
     "azure-storage": "^2.10.2",
