@@ -69,7 +69,7 @@ router.patch('', asyncMiddleware(updateCurations))
 async function updateCurations(request, response) {
   const serviceGithub = request.app.locals.service.github.client
   const userGithub = request.app.locals.user.github.client
-  const info = request.app.locals.user.github.info
+  const info = await request.app.locals.user.github.getInfo()
   let curationErrors = []
   let patchesInError = []
   request.body.patches.forEach(entry => {
@@ -92,7 +92,12 @@ async function updateCurations(request, response) {
 router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))
 
 async function syncAllContributions(request, response) {
-  await curationService.syncAllContributions(request.app.locals.user.github.client)
+  const userGithub = request.app.locals.user.github.client
+  if (!userGithub) {
+    return response.status(400).send('Invalid Github user')
+  }
+
+  await curationService.syncAllContributions(userGithub)
   response.send({ status: 'OK' })
 }
 

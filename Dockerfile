@@ -18,7 +18,8 @@ ENV APPDIR=/opt/service
 ARG BUILD_NUMBER=0
 ENV BUILD_NUMBER=$BUILD_NUMBER
 
-COPY package*.json /tmp/
+COPY patches /tmp/patches
+COPY .npmrc package*.json /tmp/
 RUN cd /tmp && npm install --production
 RUN mkdir -p "${APPDIR}" && cp -a /tmp/node_modules "${APPDIR}"
 
