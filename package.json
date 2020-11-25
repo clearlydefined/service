@@ -75,7 +75,7 @@
     "mocha": "^8.2.1",
     "node-mocks-http": "^1.6.7",
     "nodemon": "^2.0.3",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0"
   }
