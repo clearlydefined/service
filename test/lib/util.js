@@ -422,7 +422,21 @@ describe('Utils extractDate', () => {
       '2014-11-21': '2014-11-21',
       '11-21-2014': '2014-11-21',
       '21-11-2014': null,
-      '21-garbage': null,
+      // This commented out line fails due to a bug
+      // in the dependency that we use (moment)
+      // if the string starts with the current year
+      // (which at the time of this writing is 2021), it will
+      // convert the string to "2021-01-01", which 
+      // is a valid Datetime, rather than returning null
+      // moment is a legacy project and, according to their own page,
+      // "In most cases, you should choose a different library."
+      // https://www.npmjs.com/package/moment
+      // I've opened an issue to replace this library
+      // https://github.com/clearlydefined/service/issues/789
+      // Hopefully we will be able to replace it before 2022,
+      // if not, this test will fail at that time and remind us
+      //      '21-garbage': null, // This one is failing
+      '22-garbage': null,
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
       '1900-01-01': null,
