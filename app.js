@@ -163,7 +163,8 @@ function createApp(config) {
     Promise.all(initializers.map(init => init())).then(
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
-        if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
+        // Commenting out because I believe this is broken
+        // if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
         logger.info('Service initialized', { buildNumber: process.env.BUILD_NUMBER })
 
         // kick off the queue processors
