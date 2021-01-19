@@ -14,6 +14,14 @@ production data.
 
 If you do want to run the service locally, follow these steps.
 
+## Fastest Set Up
+
+The quickest way to get a fully functional local ClearlyDefined set up (including the crawler) is to use the [Dockerized ClearlyDefined environment setup](https://github.com/clearlydefined/docker_dev_env_experiment). This runs all services locally and does not require access to the ClearlyDefined Azure account.
+
+## Alternative Set Up
+
+Some parts of this set up may require access to the ClearlyDefined Azure Account.
+
 1. Clone this repo
 1. Copy the `minimal.env.json` file to the **parent** directory of the repo and rename it to `env.json` and set any property values you need. See below for simple, local setup and the [Configuration](#configuration) section for more details. If this repo is colocated with the other ClearlyDefined repos, you can share the `env.json` file. Just merge the templates. Any colliding properties names are meant to be shared.
 1. On a command line, `cd` to the repo dir and run `npm install`
