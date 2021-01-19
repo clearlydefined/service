@@ -16,7 +16,7 @@ If you do want to run the service locally, follow these steps.
 
 ## Fastest Set Up
 
-The quickest way to get a fully functional local ClearlyDefined set up (including the crawler) is to use the [Dockerized ClearlyDefined environment setup](https://github.com/clearlydefined/docker_dev_env_experiment). This runs all services locally and does not require access to the ClearlyDefined Azure account.
+The quickest way to get a fully functional local ClearlyDefined set up (including the service) is to use the [Dockerized ClearlyDefined environment setup](https://github.com/clearlydefined/docker_dev_env_experiment). This runs all services locally and does not require access to the ClearlyDefined Azure account.
 
 ## Alternative Set Up
 
