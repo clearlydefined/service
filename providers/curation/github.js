@@ -277,7 +277,7 @@ ${this._formatDefinitions(patch.patches)}`
    * @returns {Object} The requested curation and corresponding revision identifier (e.g., commit sha) if relevant
    */
   async get(coordinates, curation = null) {
-    if (!coordinates.revision) throw new Error(`Unable to queue up a curation for coordinates ${coordinates.toString()}. Are the coordinates missing a revision?`)
+    if (!coordinates.revision) throw new Error(`Coordinates ${coordinates.toString()} appear to be malformed. Are they missing a revision?`)
     if (curation && typeof curation !== 'number' && typeof curation !== 'string') return curation
     const all = await this._getCurations(coordinates, curation)
     if (!all || !all.revisions) return null
@@ -335,7 +335,11 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async apply(coordinates, curationSpec, definition) {
-    const curation = await this.get(coordinates, curationSpec)
+    try {
+      const curation = await this.get(coordinates, curationSpec)
+    } catch (err) {
+      console.log("Error when queuing up curation: ", err.message)
+    }
     const result = Curation.apply(definition, curation)
     this._ensureCurationInfo(result, curation)
     return result
