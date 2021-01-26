@@ -73,8 +73,14 @@ class DefinitionService {
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
-    } else result = await this.computeAndStore(coordinates)
-    return this._trimDefinition(this._cast(result), expand)
+    } else {
+      try {
+        result = await this.computeAndStore(coordinates)
+        return this._trimDefinition(this._cast(result), expand)
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
   }
 
   async _cacheExistingAside(coordinates, force) {
