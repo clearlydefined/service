@@ -63,6 +63,7 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
+    console.log('firing definitionService#get')
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
@@ -200,6 +201,7 @@ class DefinitionService {
   }
 
   async computeAndStore(coordinates) {
+    console.log('firing definitionService#computeAndStore')
     while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
     try {
       computeLock.set(coordinates.toString(), true)
@@ -215,6 +217,8 @@ class DefinitionService {
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
       await this._store(definition)
       return definition
+    } catch (err) {
+      throw new Error(err.message)
     } finally {
       computeLock.delete(coordinates.toString())
     }
@@ -246,13 +250,20 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
+    console.log('firing definitionService#compute')
     const raw = await this.harvestStore.getAll(coordinates)
     coordinates = this._getCasedCoordinates(raw, coordinates)
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
-    const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+
+    try {
+      const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    } catch (err) {
+      throw new Error(`${err.message}`)
+    }
+
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)

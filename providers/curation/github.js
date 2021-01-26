@@ -338,7 +338,7 @@ ${this._formatDefinitions(patch.patches)}`
     try {
       const curation = await this.get(coordinates, curationSpec)
     } catch (err) {
-      console.log("Error when queuing up curation: ", err.message)
+      throw new Error(`${err.message}`)
     }
     const result = Curation.apply(definition, curation)
     this._ensureCurationInfo(result, curation)

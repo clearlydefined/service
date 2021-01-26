@@ -70,7 +70,9 @@ async function listDefinitions(request, response) {
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
+
   const result = await definitionService.getAll(coordinatesList, force, expand)
+
   const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
   if (matchCasing) {
     // enforce request casing on keys as per issue #589
