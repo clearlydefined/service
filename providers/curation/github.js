@@ -259,10 +259,8 @@ ${this._formatDefinitions(patch.patches)}`
   _formatDefinitions(definitions) {
     return definitions.map(
       def =>
-        `- [${def.coordinates.name} ${
-          Object.keys(def.revisions)[0]
-        }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${
-          Object.keys(def.revisions)[0]
+        `- [${def.coordinates.name} ${Object.keys(def.revisions)[0]
+        }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${Object.keys(def.revisions)[0]
         })`
     )
   }
@@ -279,7 +277,7 @@ ${this._formatDefinitions(patch.patches)}`
    * @returns {Object} The requested curation and corresponding revision identifier (e.g., commit sha) if relevant
    */
   async get(coordinates, curation = null) {
-    if (!coordinates.revision) throw new Error('Coordinates must include a revision')
+    if (!coordinates.revision) throw new Error(`Coordinates ${coordinates.toString()} appear to be malformed. Are they missing a namespace or revision?`)
     if (curation && typeof curation !== 'number' && typeof curation !== 'string') return curation
     const all = await this._getCurations(coordinates, curation)
     if (!all || !all.revisions) return null
@@ -337,10 +335,14 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async apply(coordinates, curationSpec, definition) {
-    const curation = await this.get(coordinates, curationSpec)
-    const result = Curation.apply(definition, curation)
-    this._ensureCurationInfo(result, curation)
-    return result
+    try {
+      const curation = await this.get(coordinates, curationSpec)
+      const result = Curation.apply(definition, curation)
+      this._ensureCurationInfo(result, curation)
+      return result
+    } catch (err) {
+      throw new Error(err.message)
+    }
   }
 
   _ensureCurationInfo(definition, curation) {
