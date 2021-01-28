@@ -335,14 +335,10 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async apply(coordinates, curationSpec, definition) {
-    try {
-      const curation = await this.get(coordinates, curationSpec)
-      const result = Curation.apply(definition, curation)
-      this._ensureCurationInfo(result, curation)
-      return result
-    } catch (err) {
-      throw new Error(err.message)
-    }
+    const curation = await this.get(coordinates, curationSpec)
+    const result = Curation.apply(definition, curation)
+    this._ensureCurationInfo(result, curation)
+    return result
   }
 
   _ensureCurationInfo(definition, curation) {
