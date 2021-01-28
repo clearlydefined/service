@@ -63,7 +63,7 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
-    console.log('firing definitionService#get')
+    console.log("==================")
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
@@ -74,13 +74,9 @@ class DefinitionService {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else {
-      try {
-        result = await this.computeAndStore(coordinates)
-        return this._trimDefinition(this._cast(result), expand)
-      } catch (err) {
-        console.log(err.message)
-      }
+      result = await this.computeAndStore(coordinates)
     }
+    return this._trimDefinition(this._cast(result), expand)
   }
 
   async _cacheExistingAside(coordinates, force) {
@@ -223,8 +219,8 @@ class DefinitionService {
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
       await this._store(definition)
       return definition
-    } catch (err) {
-      throw new Error(err.message)
+      //  } catch (err) {
+      //    throw new Error(err.message)
     } finally {
       computeLock.delete(coordinates.toString())
     }
@@ -267,7 +263,7 @@ class DefinitionService {
     try {
       const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
     } catch (err) {
-      throw new Error(`${err.message}`)
+      throw new Error(`one ${err.message}`)
     }
 
     this._finalizeDefinition(coordinates, definition)
