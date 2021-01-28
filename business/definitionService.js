@@ -72,7 +72,13 @@ class DefinitionService {
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
-    } else result = await this.computeAndStore(coordinates)
+    } else {
+      try {
+        result = await this.computeAndStore(coordinates)
+      } catch (err) {
+        throw new Error(err.message)
+      }
+    }
     return this._trimDefinition(this._cast(result), expand)
   }
 
@@ -120,10 +126,15 @@ class DefinitionService {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const definition = await this.get(coordinates, null, force, expand)
-        if (!definition) return
-        const key = definition.coordinates.toString()
-        result[key] = definition
+        try {
+          const definition = await this.get(coordinates, null, force, expand)
+          if (!definition) return
+          const key = definition.coordinates.toString()
+          result[key] = definition
+        } catch (err) {
+          const key = coordinates.toString()
+          result[key] = err.message
+        }
       })
     )
     await Promise.all(promises)
@@ -215,6 +226,8 @@ class DefinitionService {
       this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
       await this._store(definition)
       return definition
+    } catch (err) {
+      throw new Error(err.message)
     } finally {
       computeLock.delete(coordinates.toString())
     }
@@ -252,7 +265,12 @@ class DefinitionService {
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
-    const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+
+    try {
+      const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    } catch (err) {
+      throw new Error(`${err.message}`)
+    }
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)
