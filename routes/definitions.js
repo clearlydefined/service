@@ -92,24 +92,6 @@ async function listDefinitions(request, response) {
   } catch (err) {
     response.send(`An error occured when trying to fetch coordinates for one of the components: ${err.message}`)
   }
-  const result = await definitionService.getAll(coordinatesList, force, expand)
-  const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
-  if (matchCasing) {
-    // enforce request casing on keys as per issue #589
-    const requestLowered = request.body.map(k => k.toLowerCase())
-    const casingEnforced = Object
-      .keys(result)
-      .reduce((total, resultKey) => {
-        const idx = requestLowered.indexOf(resultKey.toLowerCase())
-        const key = idx >= 0 ? request.body[idx] : resultKey
-        total[key] = result[resultKey]
-        return total
-      }, {})
-    response.send(casingEnforced)
-  }
-  else {
-    response.send(result)
-  }
 }
 
 let definitionService
