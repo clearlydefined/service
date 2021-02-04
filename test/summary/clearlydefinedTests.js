@@ -135,7 +135,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
 
   it('does not declare license when manifest is silent on the license', () => {
     let result = {}
-    summarizer.addComposerData(result, { registryData: { manifest: { } } }, composerTestCoordinates)
+    summarizer.addComposerData(result, { registryData: { manifest: {} } }, composerTestCoordinates)
 
     assert.strictEqual(get(result, 'licensed.declared'), undefined)
   })
@@ -284,25 +284,25 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     const licenseArray = ['MIT']
     let result = {}
     summarizer.addNpmData(result, { registryData: { manifest: { license: licenseArray } } }, npmTestCoordinates)
-    assert.deepEqual(result, {...expectedResult, licensed: { declared: 'MIT'}})
+    assert.deepEqual(result, { ...expectedResult, licensed: { declared: 'MIT' } })
 
     const licenseArray2 = ['MIT', 'Apache-2.0']
     let result2 = {}
     summarizer.addNpmData(result2, { registryData: { manifest: { license: licenseArray2 } } }, npmTestCoordinates)
-    assert.deepEqual(result2, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+    assert.deepEqual(result2, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
 
     let result3 = {}
     summarizer.addNpmData(result3, { registryData: { manifest: { license: { type: licenseArray2 } } } }, npmTestCoordinates)
-    assert.deepEqual(result3, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+    assert.deepEqual(result3, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
 
     let result4 = {}
     summarizer.addNpmData(result4, { registryData: { manifest: { licenses: licenseArray2 } } }, npmTestCoordinates)
-    assert.deepEqual(result4, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+    assert.deepEqual(result4, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
 
-    const licenseArray3 = [ { type: 'MIT'} , { type: 'Apache-2.0'} ]
+    const licenseArray3 = [{ type: 'MIT' }, { type: 'Apache-2.0' }]
     let result5 = {}
     summarizer.addNpmData(result5, { registryData: { manifest: { licenses: licenseArray3 } } }, npmTestCoordinates)
-    assert.deepEqual(result5, {...expectedResult, licensed: { declared: 'MIT AND Apache-2.0'}})
+    assert.deepEqual(result5, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
   })
 
   it('should set release date', () => {
@@ -398,7 +398,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     })
   })
 
-  it('should not set issueTracker if it is not http', () => {})
+  it('should not set issueTracker if it is not http', () => { })
 
   it('should return if no registry data', () => {
     let result = {}
@@ -472,9 +472,9 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
-    download: 'http://central.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
-    registry: 'http://central.maven.org/maven2/io/clearlydefined/test',
-    version: 'http://central.maven.org/maven2/io/clearlydefined/test/1.0'
+    download: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test/1.0/test-1.0.jar',
+    registry: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test',
+    version: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test/1.0',
   }
   const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
