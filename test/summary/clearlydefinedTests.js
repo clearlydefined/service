@@ -472,9 +472,9 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
-    download: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test/1.0/test-1.0.jar',
-    registry: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test',
-    version: 'https://search.maven.org/remotecontent?filepath=com/io/clearlydefined/test/1.0',
+    download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
+    registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
+    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0',
   }
   const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
