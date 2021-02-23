@@ -99,7 +99,7 @@ async function getUserDetails(token, org) {
     if (error.code === 404)
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
-          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
     else if (error.code === 401 && error.message === 'Bad credentials')
       // the token was bad. trickle up the problem so the user can fix
@@ -133,7 +133,7 @@ function getStrategy() {
       clientSecret: options.clientSecret,
       // this needs to match the callback url on the oauth app on github
       callbackURL: `${endpoints.service}/auth/github/finalize`,
-      scope: ['public_repo', 'read:user', 'read:org', 'user', 'user:email']
+      scope: ['public_repo', 'read:user', 'read:org', 'user:email']
     },
     (access, refresh, profile, done) =>
       // this only lives for one request; see the 'finalize' endpoint
