@@ -14,9 +14,6 @@ describe('Definition route', () => {
     const router = createRoutes(definitionService)
     await router._getDefinition(request, response)
     expect(response.statusCode).to.be.eq(200)
-    //    const getDefinitionSpy = definitionService.get
-    //    console.log(getDefinitionSpy.args)
-    //    console.log(getDefinitionSpy.args[0])
     expect(definitionService.get.calledOnce).to.be.true
   })
 
