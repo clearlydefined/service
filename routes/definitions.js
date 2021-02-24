@@ -100,9 +100,7 @@ let definitionService
 function setup(definition, testFlag = false) {
   definitionService = definition
 
-  test = testFlag
-
-  if (test) {
+  if (testFlag) {
     router._getDefinition = getDefinition
   }
   return router

@@ -1,7 +1,6 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { ExponentialRetryPolicyFilter } = require('azure-storage')
 const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
@@ -33,7 +32,7 @@ describe('Definition route', () => {
   })
 })
 
-function createGetRequest(coordinates) {
+function createGetRequest() {
   return httpMocks.createRequest({
     method: 'GET',
     url: 'definitions/crate/cratesio/-/syn/1.0.14',
@@ -47,7 +46,7 @@ function createGetRequest(coordinates) {
   })
 }
 
-function createGetForceComputeRequest(coordinates) {
+function createGetForceComputeRequest() {
   return httpMocks.createRequest({
     method: 'GET',
     url: 'definitions/crate/cratesio/-/syn/1.0.14',
