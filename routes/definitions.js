@@ -16,8 +16,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 async function getDefinition(request, response) {
   const coordinates = utils.toEntityCoordinatesFromRequest(request)
   const pr = request.params.pr
-  // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-  const force = request.hostname.includes('localhost') ? request.query.force || false : false
+  const force = request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   const result = await definitionService.get(coordinates, pr, force, expand)
   response.status(200).send(result)
@@ -96,8 +95,13 @@ async function listDefinitions(request, response) {
 
 let definitionService
 
-function setup(definition) {
+function setup(definition, testFlag = false) {
   definitionService = definition
+
+  if (testFlag) {
+    router._getDefinition = getDefinition
+  }
   return router
 }
+
 module.exports = setup
