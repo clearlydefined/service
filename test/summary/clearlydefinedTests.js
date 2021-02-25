@@ -543,11 +543,6 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
   it('should set the correct urls', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT',
-      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
-      'See license': null,
-      NOASSERTION: null,
-      '': null,
-      ' ': null
     }
 
     for (let url of Object.keys(data)) {
@@ -564,8 +559,6 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
       else assert.deepEqual(result, expectedResult)
     }
   })
-
-
 })
 
 describe('ClearlyDescribedSummarizer addDebData', () => {
