@@ -532,6 +532,35 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
+  const expectedUrls = {
+    download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
+    registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
+    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0',
+  }
+
+  const expectedResult = { described: { urls: expectedUrls } }
+  it('should set the correct urls', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addSourceArchiveData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinates
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+})
+
 describe('ClearlyDescribedSummarizer addDebData', () => {
   const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
   it('decribes releaseDate from data', () => {

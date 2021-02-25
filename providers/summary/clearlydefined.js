@@ -182,13 +182,13 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `http://central.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
