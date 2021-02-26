@@ -470,7 +470,7 @@ ${multiversionDescription}`
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const data = this.list(coordinates)
+        const data = await this.list(coordinates)
         if (!data) return
         const key = coordinates.toString()
         result[key] = data
