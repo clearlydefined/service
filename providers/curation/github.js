@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -141,6 +141,46 @@ class GitHubCurationService {
     return this._postCommitStatus(sha, number, state, description)
   }
 
+  _getRevisionsFromCurations(curations) {
+    let revisions = []
+
+    Object.keys(curations.curations).forEach(coordinate => {
+      const coordinateObject = EntityCoordinates.fromString(coordinate)
+      revisions.push(coordinateObject.revision)
+    })
+
+    curations.contributions.forEach(contribution => {
+      contribution.files.forEach(file => {
+        const fileRevisions = get(file, 'revisions', {}).map(revision => revision.revision)
+        revisions = union(revisions, fileRevisions)
+      })
+    })
+
+    return revisions
+  }
+
+  async _calculateMultiversionCurations(component) {
+    const currentRevisions = component.revisions
+    const version = first(Object.keys(currentRevisions))
+    const license = get(currentRevisions, [version, 'licensed', 'declared'])
+    const newCoordinates = EntityCoordinates.fromObject(component.coordinates).asRevisionless()
+
+    const { matchingVersions, matchingReason } = {
+      'matchingVersions': ['2.6.1', '1.1.3'],
+      'matchingReason': 'hash'
+    } // TODO: insert matching logic here
+    const curations = await this.list(newCoordinates)
+    const existingRevisions = this._getRevisionsFromCurations(curations)
+    const uncuratedMatchingVersions = matchingVersions.filter(version => existingRevisions.indexOf(version) == -1)
+
+    const revisions = {}
+    uncuratedMatchingVersions.forEach(version => { revisions[version] = { 'licensed': { 'declared': license } } })
+    return {
+      revisions: revisions,
+      reason: matchingReason
+    }
+  }
+
   _updateContent(coordinates, currentContent, newContent) {
     const newCoordinates = EntityCoordinates.fromObject(coordinates).asRevisionless()
     const result = {
@@ -186,6 +226,11 @@ class GitHubCurationService {
     return serviceGithub.repos.createFile(fileBody)
   }
 
+  // return true if patch.skipmvc is false and patch has 1 component and 1 revision
+  _isEligibleForMultiversionCuration(patch) {
+    return !patch.skipmvc && patch.patches.length == 1 && Object.keys(patch.patches[0].revisions).length == 1
+  }
+
   // Return an array of valid patches that exist
   // and a list of definitions that do not exist in the store
   async _validateDefinitionsExist(patches) {
@@ -215,10 +260,27 @@ class GitHubCurationService {
     const sha = masterBranch.data.commit.sha
     const prBranch = await this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
-    await Promise.all(
-      // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
-      patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, component, prBranch)))
-    )
+
+    let multiversionDescription = ''
+    if (this._isEligibleForMultiversionCuration(patch)) {
+      const component = first(patch.patches)
+      const currentRevisions = get(component, 'revisions')
+      const version = first(Object.keys(currentRevisions))
+
+      const { revisions, reason } = await this._calculateMultiversionCurations(component)
+      component.revisions = merge(currentRevisions, revisions)
+      await this._writePatch(userGithub, serviceGithub, info, component, prBranch)
+
+      multiversionDescription = `
+Automatically added versions that match submitted version ${version}.
+${this._formatAdditionalRevisions(component.revisions, reason)}`
+    } else {
+      await Promise.all(
+        // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
+        patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, component, prBranch)))
+      )
+    }
+
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
 
@@ -235,7 +297,9 @@ ${details}
 ${resolution}
 
 **Affected definitions**:
-${this._formatDefinitions(patch.patches)}`
+${this._formatDefinitions(patch.patches)}
+
+${multiversionDescription}`
 
     const result = await (userGithub || serviceGithub).pullRequests.create({
       owner,
@@ -263,6 +327,10 @@ ${this._formatDefinitions(patch.patches)}`
         }](https://clearlydefined.io/definitions/${EntityCoordinates.fromObject(def.coordinates)}/${Object.keys(def.revisions)[0]
         })`
     )
+  }
+
+  _formatAdditionalRevisions(revisions, hash) {
+    return Object.keys(revisions).map(revision => `\n${revision}, ${revisions[revision].licensed.declared}, ${hash}`)
   }
 
   /**
@@ -402,7 +470,7 @@ ${this._formatDefinitions(patch.patches)}`
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        const data = await this.list(coordinates)
+        const data = this.list(coordinates)
         if (!data) return
         const key = coordinates.toString()
         result[key] = data
