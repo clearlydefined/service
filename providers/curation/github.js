@@ -264,16 +264,16 @@ class GitHubCurationService {
     let multiversionDescription = ''
     if (this._isEligibleForMultiversionCuration(patch)) {
       const component = first(patch.patches)
-      const currentRevisions = get(component, 'revisions')
-      const version = first(Object.keys(currentRevisions))
+      const allExistingRevisions = get(component, 'revisions')
+      const revision = first(Object.keys(allExistingRevisions))
 
       const { revisions, reason } = await this._calculateMultiversionCurations(component)
-      component.revisions = merge(currentRevisions, revisions)
+      component.revisions = merge(allExistingRevisions, revisions)
       await this._writePatch(userGithub, serviceGithub, info, component, prBranch)
 
-      multiversionDescription = `
-Automatically added versions that match submitted version ${version}.
-${this._formatAdditionalRevisions(component.revisions, reason)}`
+      if (Object.keys(revisions)) {
+        multiversionDescription = `Automatically added versions that match submitted version ${revision}.${this._formatAdditionalRevisions(component.revisions, reason)}`
+      }
     } else {
       await Promise.all(
         // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
@@ -329,8 +329,8 @@ ${multiversionDescription}`
     )
   }
 
-  _formatAdditionalRevisions(revisions, hash) {
-    return Object.keys(revisions).map(revision => `\n${revision}, ${revisions[revision].licensed.declared}, ${hash}`)
+  _formatAdditionalRevisions(revisions, reason) {
+    return Object.keys(revisions).map(revision => `\n${revision}, ${revisions[revision].licensed.declared}, ${reason}`)
   }
 
   /**
