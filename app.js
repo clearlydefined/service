@@ -46,7 +46,7 @@ function createApp(config) {
   const cachingService = config.caching.service()
   initializers.push(async () => cachingService.initialize())
 
-  const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService)
+  const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 
   const curationQueue = config.curation.queue()
   initializers.push(async () => curationQueue.initialize())

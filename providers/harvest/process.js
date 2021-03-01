@@ -25,7 +25,7 @@ async function processMessage(message) {
   const urn = get(message, 'data._metadata.links.self.href')
   if (!urn) return
   const coordinates = EntityCoordinates.fromUrn(urn)
-  await definitionService.computeAndStore(coordinates)
+  await definitionService.computeStoreAndCurate(coordinates)
   await queue.delete(message)
   logger.info(`Handled Crawler update event for ${urn}`)
 }
