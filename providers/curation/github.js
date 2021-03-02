@@ -12,13 +12,15 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
 const logger = require('../logging/logger')
+const semver = require('semver')
+const { LicenseMatcher } = require('../../lib/licenseMatcher')
 
 // Responsible for managing curation patches in a store
 //
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  constructor(options, store, endpoints, definition, cache, harvestStore) {
+  constructor(options, store, endpoints, definition, cache, harvestStore, licenseMatcher) {
     this.logger = logger()
     this.options = options
     this.store = store
@@ -30,6 +32,7 @@ class GitHubCurationService {
     this.cache = cache
     this.logger = logger()
     this.harvestStore = harvestStore
+    this.licenseMatcher = licenseMatcher || new LicenseMatcher()
   }
 
   get tmpOptions() {
@@ -150,7 +153,12 @@ class GitHubCurationService {
       revisions.push(coordinateObject.revision)
     })
 
+    // MT_TODO: Why do we store closed but not merged PRs ??
+    // If we have to save those PR, change the query to only get open contribution and merged curation
     curations.contributions.forEach(contribution => {
+      if (contribution.pr.closed_at && !contribution.pr.merge_at) {
+        return
+      }
       contribution.files.forEach(file => {
         const fileRevisions = get(file, 'revisions', {}).map(revision => revision.revision)
         revisions = union(revisions, fileRevisions)
@@ -260,8 +268,7 @@ class GitHubCurationService {
 
   async autoCurate(definition) {
     try {
-      const tools = get(definition, 'described.tools');
-      if (!tools.some(tool => tool.startsWith('clearlydefined'))) {
+      if (!this._canBeAutoCurated(definition)) {
         return
       }
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
@@ -274,20 +281,28 @@ class GitHubCurationService {
       }
       // TODO: Only need to get the clearlydefined tool harvest data. Other tools' harvest data is not necessary.
       const harvest = await this.harvestStore.getAll(definition.coordinates)
-
-      // TODO: order from the latest to the oldest revision.
-      for (const [coordinateStr, curation] of Object.entries(curationAndContributions.curations)) {
+      const orderedCoordinates = Object.keys(curationAndContributions.curations || {}).sort((a, b) => {
+        const aRevision = EntityCoordinates.fromString(a).revision
+        const bRevision = EntityCoordinates.fromString(b).revision
+        if (semver.valid(aRevision) && semver.valid(bRevision)) {
+          return semver.rcompare(aRevision, bRevision)
+        }
+        return 0
+      })
+      for (const coordinateStr of orderedCoordinates) {
+        const curation = curationAndContributions.curations[coordinateStr]
         const declaredLicense = get(curation, 'licensed.declared')
         if (!declaredLicense) {
           continue
         }
-        const coordinatesWithDifferentRevision = EntityCoordinates.fromString(coordinateStr)
-        const definitionWithDifferentRevision = await this.definitionService.getStored(coordinatesWithDifferentRevision)
-        if (!definitionWithDifferentRevision) {
+        const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
+        const otherDefinition = await this.definitionService.getStored(otherCoordinates)
+        if (!otherDefinition) {
           continue
         }
-        const harvestWithDifferentRevision = await this.harvestStore.getAll(coordinatesWithDifferentRevision)
-        if (this._isLicenseMatching(definition, harvest, definitionWithDifferentRevision, harvestWithDifferentRevision)) {
+        const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
+        const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
+        if (result.isMatching) {
           const info = await this._getUserInfo(this.github);
           // TODO: what is the detail of the PR overview.
           const patch = {
@@ -295,7 +310,7 @@ class GitHubCurationService {
               type: `missing`,
               summary: definition.coordinates.toString(),
               details: `Add ${declaredLicense} license`,
-              resolution: `Auto curation reason based on the matching logic.`,
+              resolution: result.reason,
             },
             patches: [{
               coordinates: revisionLessCoordinates,
@@ -304,8 +319,8 @@ class GitHubCurationService {
               }
             }]
           };
-          const result = await this._addOrUpdate(null, this.github, info, patch)
-          return result;
+          const contribution = await this._addOrUpdate(null, this.github, info, patch)
+          this.logger.info(`Auto curate success for ${definition.coordinates.toString()}. The contribution id is ${contribution.data.number}`)
         }
       }
     } catch (err) {
@@ -314,14 +329,20 @@ class GitHubCurationService {
     }
   }
 
-  _hasExistingCurations(coordinates, curationAndContributions) {
-    const revisions = this._getRevisionsFromCurations(curationAndContributions)
-    return revisions.includes(coordinates.revision)
+  _canBeAutoCurated(definition) {
+    const tools = get(definition, 'described.tools')
+    return tools.some(tool => tool.startsWith('clearlydefined'))
   }
 
-  // TODO: Add matching logic here.
+  _hasExistingCurations(definition, curationAndContributions) {
+    // MT_TODO: somehow my curation PR is open but it's not stored.
+    const revisions = this._getRevisionsFromCurations(curationAndContributions)
+    return revisions.includes(definition.coordinates.revision)
+  }
+
   _isLicenseMatching(definition, harvest, targetDefinition, targetHarvest) {
-    return true;
+    return isLicenseMatchingByDefinition(definition, targetDefinition)
+      || isLicenseMatchingByHarvest(harvest, targetHarvest);
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {

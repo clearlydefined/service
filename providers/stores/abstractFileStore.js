@@ -13,7 +13,7 @@ class AbstractFileStore {
     this.options = options
   }
 
-  async initialize() {}
+  async initialize() { }
 
   /**
    * Visit all of the files associated with the given coordinates.
