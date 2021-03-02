@@ -153,12 +153,7 @@ class GitHubCurationService {
       revisions.push(coordinateObject.revision)
     })
 
-    // MT_TODO: Why do we store closed but not merged PRs ??
-    // If we have to save those PR, change the query to only get open contribution and merged curation
     curations.contributions.forEach(contribution => {
-      if (contribution.pr.closed_at && !contribution.pr.merge_at) {
-        return
-      }
       contribution.files.forEach(file => {
         const fileRevisions = get(file, 'revisions', {}).map(revision => revision.revision)
         revisions = union(revisions, fileRevisions)
@@ -338,11 +333,6 @@ class GitHubCurationService {
     // MT_TODO: somehow my curation PR is open but it's not stored.
     const revisions = this._getRevisionsFromCurations(curationAndContributions)
     return revisions.includes(definition.coordinates.revision)
-  }
-
-  _isLicenseMatching(definition, harvest, targetDefinition, targetHarvest) {
-    return isLicenseMatchingByDefinition(definition, targetDefinition)
-      || isLicenseMatchingByHarvest(harvest, targetHarvest);
   }
 
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
@@ -643,5 +633,5 @@ class GitHubCurationService {
   }
 }
 
-module.exports = (options, store, endpoints, definition, cache, harvestService) =>
-  new GitHubCurationService(options, store, endpoints, definition, cache, harvestService)
+module.exports = (options, store, endpoints, definition, cache, harvestService, licenseMatcher) =>
+  new GitHubCurationService(options, store, endpoints, definition, cache, harvestService, licenseMatcher)
