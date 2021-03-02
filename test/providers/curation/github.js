@@ -177,6 +177,7 @@ describe('Github Curation Service', () => {
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
     const contributionPatch = {
+      skipmvc: true,
       contributionInfo: {
         summary: 'test',
         details: 'test',
