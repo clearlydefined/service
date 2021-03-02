@@ -263,17 +263,12 @@ class GitHubCurationService {
 
   async autoCurate(definition) {
     try {
-      if (!this._canBeAutoCurated(definition)) {
+      if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         return
       }
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
       const curationAndContributions = await this.list(revisionLessCoordinates)
-      if (this._hasExistingCurations(definition, curationAndContributions)) {
-        return
-      }
-      if (curationAndContributions.curations && Object.keys(curationAndContributions.curations).length === 0) {
-        return
-      }
+
       // TODO: Only need to get the clearlydefined tool harvest data. Other tools' harvest data is not necessary.
       const harvest = await this.harvestStore.getAll(definition.coordinates)
       const orderedCoordinates = Object.keys(curationAndContributions.curations || {}).sort((a, b) => {
@@ -284,25 +279,28 @@ class GitHubCurationService {
         }
         return 0
       })
+
       for (const coordinateStr of orderedCoordinates) {
         const curation = curationAndContributions.curations[coordinateStr]
         const declaredLicense = get(curation, 'licensed.declared')
         if (!declaredLicense) {
           continue
         }
+
         const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         if (!otherDefinition) {
           continue
         }
+
         const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
         const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
         if (result.isMatching) {
-          const info = await this._getUserInfo(this.github);
+          const info = await this._getUserInfo(this.github)
           // TODO: what is the detail of the PR overview.
           const patch = {
             contributionInfo: {
-              type: `missing`,
+              type: 'missing',
               summary: definition.coordinates.toString(),
               details: `Add ${declaredLicense} license`,
               resolution: result.reason,
@@ -313,20 +311,23 @@ class GitHubCurationService {
                 [definition.coordinates.revision]: curation
               }
             }]
-          };
+          }
+
           const contribution = await this._addOrUpdate(null, this.github, info, patch)
           this.logger.info(`Auto curate success for ${definition.coordinates.toString()}. The contribution id is ${contribution.data.number}`)
         }
       }
     } catch (err) {
       this.logger.error('Auto curate failed', err)
-      throw err;
+      throw err
     }
   }
 
-  _canBeAutoCurated(definition) {
+  _canBeAutoCurated(definition, curationAndContributions) {
     const tools = get(definition, 'described.tools')
-    return tools.some(tool => tool.startsWith('clearlydefined'))
+    const hasClearlyDefinedInTools = tools.some(tool => tool.startsWith('clearlydefined'))
+    const hasNoCurations = curationAndContributions.curations && Object.keys(curationAndContributions.curations).length === 0
+    return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && !hasNoCurations
   }
 
   _hasExistingCurations(definition, curationAndContributions) {
@@ -339,6 +340,7 @@ class GitHubCurationService {
     const { missing } = await this._validateDefinitionsExist(patch.patches)
     if (missing.length > 0)
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
+
     if (this._isEligibleForMultiversionCuration(patch)) {
       const component = first(patch.patches)
       const allExistingRevisions = get(component, 'revisions')
