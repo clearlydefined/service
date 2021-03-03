@@ -145,6 +145,27 @@ class GitHubCurationService {
     return this._postCommitStatus(sha, number, state, description)
   }
 
+  async _getMatchingLicenseVersions(coordinates, otherCoordinatesList) {
+    const definition = await this.definitionService.getStored(coordinates)
+    const harvest = await this.harvestStore.getAll(coordinates)
+    const matches = []
+
+    await Promise.all(otherCoordinatesList.map(async (otherCoordinates) => {
+      const otherDefinition = await this.definitionService.getStored(otherCoordinates)
+      const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
+      const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
+
+      if (result.isMatching) {
+        matches.push({
+          version: otherCoordinates.revision,
+          reason: result.reason
+        })
+      }
+    }))
+
+    return matches
+  }
+
   _getRevisionsFromCurations(curations) {
     let revisions = []
 
@@ -163,26 +184,23 @@ class GitHubCurationService {
     return revisions
   }
 
-  async _calculateMultiversionCurations(component) {
-    const currentRevisions = component.revisions
-    const version = first(Object.keys(currentRevisions))
-    const license = get(currentRevisions, [version, 'licensed', 'declared'])
-    const newCoordinates = EntityCoordinates.fromObject(component.coordinates).asRevisionless()
+  async _calculateMultiversionCurations(component, revision) {
+    const componentCoordsWithRevision = { ...component.coordinates, revision }
+    const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
+    const revisionlessCoords = coordinates.asRevisionless()
 
-    const { matchingVersions, matchingReason } = {
-      'matchingVersions': ['2.6.1', '1.1.3'],
-      'matchingReason': 'hash'
-    } // TODO: insert matching logic here
-    const curations = await this.list(newCoordinates)
+    const coordinatesList = await this.definitionService.list(revisionlessCoords)
+    const filteredCoordinatesList = coordinatesList
+      .map(stringCoords => EntityCoordinates.fromString(stringCoords))
+      .filter(coords => coordinates.name === coords.name)
+      .filter(coords => coordinates.revision !== coords.revision)
+
+    const matchingVersionsAndReasons = await this._getMatchingLicenseVersions(coordinates, filteredCoordinatesList)
+    const curations = await this.list(revisionlessCoords)
     const existingRevisions = this._getRevisionsFromCurations(curations)
-    const uncuratedMatchingVersions = matchingVersions.filter(version => existingRevisions.indexOf(version) == -1)
 
-    const revisions = {}
-    uncuratedMatchingVersions.forEach(version => { revisions[version] = { 'licensed': { 'declared': license } } })
-    return {
-      revisions: revisions,
-      reason: matchingReason
-    }
+    const uncuratedMatchingVersions = matchingVersionsAndReasons.filter(versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1)
+    return uncuratedMatchingVersions
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -345,10 +363,14 @@ class GitHubCurationService {
       const component = first(patch.patches)
       const allExistingRevisions = get(component, 'revisions')
       const revision = first(Object.keys(allExistingRevisions))
-      const { revisions, reason } = await this._calculateMultiversionCurations(component)
-      component.revisions = merge(allExistingRevisions, revisions)
-      if (Object.keys(revisions)) {
-        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatAdditionalRevisions(component.revisions, reason)}`
+      const result = await this._calculateMultiversionCurations(component, revision)
+
+      if (result.length >= 0) {
+        const license = get(allExistingRevisions, [revision, 'licensed', 'declared'])
+        const revisions = {}
+        result.forEach(versionAndRevision => { revisions[versionAndRevision.version] = { 'licensed': { 'declared': license } } })
+        component.revisions = merge(allExistingRevisions, revisions)
+        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatMultiversionCuratedRevisions(result, license)}`
       }
     }
 
@@ -390,21 +412,21 @@ class GitHubCurationService {
     const { type, details, summary, resolution, additional } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     return `
-    **Type:** ${Type}
+**Type:** ${Type}
 
-    **Summary:**
-    ${summary}
+**Summary:**
+${summary}
 
-    **Details:**
-    ${details}
+**Details:**
+${details}
 
-    **Resolution:**
-    ${resolution}
+**Resolution:**
+${resolution}
 
-    **Affected definitions**:
-    ${this._formatDefinitions(patch.patches)}
+**Affected definitions**:
+${this._formatDefinitions(patch.patches)}
 
-    ${additional}`
+${additional}`
   }
 
   _formatDefinitions(definitions) {
@@ -416,8 +438,8 @@ class GitHubCurationService {
     )
   }
 
-  _formatAdditionalRevisions(revisions, reason) {
-    return Object.keys(revisions).map(revision => `\n${revision}, ${revisions[revision].licensed.declared}, ${reason}`)
+  _formatMultiversionCuratedRevisions(mvcResults, license) {
+    return mvcResults.map(versionAndReason => `\n${versionAndReason.version}, ${license}, ${versionAndReason.reason}`)
   }
 
   /**
