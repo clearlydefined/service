@@ -14,6 +14,7 @@ const { find } = require('lodash')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -200,6 +201,81 @@ describe('Github Curation Service', () => {
 
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
+  })
+
+  it('create a PR with multiversion curation if eligible', async () => {
+    const component = {
+      coordinates: curationCoordinates,
+      revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
+    }
+
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removedDefinitions: false
+      },
+      patches: [
+        component
+      ]
+    }
+
+    const { service } = setup()
+    sinon
+      .stub(service, 'listAll')
+      .callsFake(() => [
+        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+      ])
+    sinon.stub(service, 'list').callsFake(() => [
+      'npm/npmjs/-/test/1.0',
+      'npm/npmjs/-/test/1.1',
+      'npm/npmjs/-/test/1.2',
+      'npm/npmjs/-/test/1.3'
+    ])
+
+    const gitHubService = createService(service)
+    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+    sinon.stub(gitHubService, 'list').callsFake(() => {
+      return {
+        curations: { 'npm/npmjs/-/test/1.1': {} },
+        contributions: [{ files: [{ revisions: [{ revision: '1.2' }] }] }]
+      }
+    })
+
+    // DS_TODO: Update to handle new matching result
+    const calculateMatchingVersionsSpy = sinon
+      .stub(gitHubService, '_getMatchingLicenseVersions')
+      .callsFake(() => Promise.resolve([
+        { version: '1.1', reason: 'hash' },
+        { version: '1.2', reason: 'hash' },
+        { version: '1.3', reason: 'hash' },
+      ]))
+
+    // DS_TODO: Update to handle new matching result
+    const expectedMvcResults = [{ version: '1.3', reason: 'hash' }]
+    const expectedMvcDescription = ['\n1.3, hash']
+    const mvcDescriptions = gitHubService._formatMultiversionCuratedRevisions(expectedMvcResults)
+    expect(mvcDescriptions).to.be.deep.equal(expectedMvcDescription)
+
+    // Check if the flow was correct
+    const calculateMvcSpy = sinon.spy(gitHubService, '_calculateMultiversionCurations')
+    const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
+
+    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    expect(result).to.be.deep.equal({ data: { number: 143 } })
+
+    assert(calculateMatchingVersionsSpy.calledWith(
+      EntityCoordinates.fromObject(definitionCoordinates),
+      [
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.3')
+      ]))
+    assert(calculateMvcSpy.calledWith(component))
+    // DS_TODO: Update to handle new matching result
+    assert(formatRevisionsSpy.calledWith([{ version: '1.3', reason: 'hash' }]))
   })
 })
 

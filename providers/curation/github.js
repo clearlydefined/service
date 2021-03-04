@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, groupBy } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -153,12 +153,17 @@ class GitHubCurationService {
     await Promise.all(otherCoordinatesList.map(async (otherCoordinates) => {
       const otherDefinition = await this.definitionService.getStored(otherCoordinates)
       const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
-      const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
+      const result = this.licenseMatcher.process(
+        { definition, harvest },
+        { definition: otherDefinition, harvest: otherHarvest }
+      )
 
       if (result.isMatching) {
         matches.push({
           version: otherCoordinates.revision,
           reason: result.reason
+          // DS_TODO: update to handle new matching results
+          // reason: result.match.map(reason => reason.propPath)
         })
       }
     }))
@@ -184,7 +189,9 @@ class GitHubCurationService {
     return revisions
   }
 
-  async _calculateMultiversionCurations(component, revision) {
+  async _calculateMultiversionCurations(component) {
+    const curationRevisions = get(component, 'revisions')
+    const revision = first(Object.keys(curationRevisions))
     const componentCoordsWithRevision = { ...component.coordinates, revision }
     const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
     const revisionlessCoords = coordinates.asRevisionless()
@@ -361,16 +368,17 @@ class GitHubCurationService {
 
     if (this._isEligibleForMultiversionCuration(patch)) {
       const component = first(patch.patches)
-      const allExistingRevisions = get(component, 'revisions')
-      const revision = first(Object.keys(allExistingRevisions))
-      const result = await this._calculateMultiversionCurations(component, revision)
+      const result = await this._calculateMultiversionCurations(component)
 
       if (result.length >= 0) {
-        const license = get(allExistingRevisions, [revision, 'licensed', 'declared'])
-        const revisions = {}
-        result.forEach(versionAndRevision => { revisions[versionAndRevision.version] = { 'licensed': { 'declared': license } } })
-        component.revisions = merge(allExistingRevisions, revisions)
-        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatMultiversionCuratedRevisions(result, license)}`
+        const curationRevisions = get(component, 'revisions')
+        const revision = first(Object.keys(curationRevisions))
+        const license = get(curationRevisions, [revision, 'licensed', 'declared'])
+
+        const newRevisions = {}
+        result.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
+        component.revisions = merge(curationRevisions, newRevisions)
+        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatMultiversionCuratedRevisions(result)}`
       }
     }
 
@@ -438,8 +446,15 @@ ${additional}`
     )
   }
 
-  _formatMultiversionCuratedRevisions(mvcResults, license) {
-    return mvcResults.map(versionAndReason => `\n${versionAndReason.version}, ${license}, ${versionAndReason.reason}`)
+  _formatMultiversionCuratedRevisions(mvcResults) {
+    // DS_TODO: Update to handle new results
+    // { version, reason: [propPath, propPath]}
+    // const resultsGroupedByProperties = groupBy(mvcResults, result => result.reason.sort().join(', ')) // { 'reason': [versions] }
+    // const output = Object.entries(resultsGroupedByProperties).map((property, versions) =>
+    //   `\nThese versions share the same ${property}: ${versions.join(', ')}`
+    // )
+    // return output
+    return mvcResults.map(versionAndReason => `\n${versionAndReason.version}, ${versionAndReason.reason}`)
   }
 
   /**
