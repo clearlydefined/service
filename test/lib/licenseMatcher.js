@@ -235,7 +235,8 @@ describe('licenseMatcher.js', () => {
                     "licenses": licenses
                   }
                 }
-              }
+              },
+              "1.3.1": {}
             }
           }
         }
@@ -358,8 +359,8 @@ describe('licenseMatcher.js', () => {
             "clearlydefined": {
               "1.4.2": {
                 "manifest": {
-                  "licenseUrl": `${licenseUrl}`,
-                  "licenseExpression": `${license}`
+                  "licenseUrl": licenseUrl,
+                  "licenseExpression": license
                 }
               }
             }
@@ -383,7 +384,7 @@ describe('licenseMatcher.js', () => {
         expect(result.mismatch).to.have.lengthOf(0)
       })
 
-      it('Should NOT match when harvest manifest.licenseExpression are NOT deep equal', () => {
+      it('Should return mismatch array includes harvest manifest.licenseExpression when they are NOT deep equal', () => {
         const targetLicense = 'Apache-2.0'
         const source = generateNugetDefinitionAndHarvest('1.4.0', sourceLicense)
         const target = generateNugetDefinitionAndHarvest('1.4.6', targetLicense)
@@ -396,8 +397,7 @@ describe('licenseMatcher.js', () => {
         }])
       })
 
-      it('Should NOT match when harvest manifest.licenseUrl are NOT deep equal', () => {
-
+      it('Should return mismatch array includes harvest manifest.licenseUrl when they are NOT deep equal', () => {
         const targetLicenseUrl = 'https://licenses.nuget.org/Apache-2.0'
         const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, sourceLicenseUrl)
         const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, targetLicenseUrl)
@@ -408,6 +408,14 @@ describe('licenseMatcher.js', () => {
           source: sourceLicenseUrl,
           target: targetLicenseUrl
         }])
+      })
+
+      it('Should return empty match and mismatch array when harvest manifest.licenseExpression and manifest.licenseUrl are both undefined/null', () => {
+        const source = generateNugetDefinitionAndHarvest('0.2.86')
+        const target = generateNugetDefinitionAndHarvest('0.2.49')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
       })
     })
 
@@ -490,7 +498,7 @@ describe('licenseMatcher.js', () => {
         }
       }
 
-      it('Should match when harvest registryData.manifest.license are deep equal', () => {
+      it('Should return match array includes harvest registryData.manifest.license when they are deep equal', () => {
         const source = generateComposerDefinitionAndHarvest('3.2.9', sourceLicenses)
         const target = generateComposerDefinitionAndHarvest('3.1.9', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
@@ -502,7 +510,7 @@ describe('licenseMatcher.js', () => {
         expect(result.mismatch).to.have.lengthOf(0)
       })
 
-      it('Should NOT match when harvest registryData.manifest.license are NOT deep equal', () => {
+      it('Should return mismatch array includes harvest registryData.manifest.license when they are NOT deep equal', () => {
         const targetLicenses = [
           "GPL-2.0"
         ]
@@ -521,6 +529,266 @@ describe('licenseMatcher.js', () => {
       it('Should return empty match and mismatch array when harvest registryData.manifest.licenses are both undefined/null', () => {
         const source = generateComposerDefinitionAndHarvest('3.2.9')
         const target = generateComposerDefinitionAndHarvest('3.1.9')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+    })
+
+    describe('Match gem package', () => {
+      const sourceLicenses = [
+        "Ruby"
+      ]
+      function generateGemDefinitionAndHarvest(revision, licenses) {
+        return {
+          definition: {
+            coordinates: EntityCoordinates.fromString(`gem/rubygems/-/reline/${revision}`)
+          },
+          harvest: {
+            "clearlydefined": {
+              "1.3.3": {
+                "registryData": {
+                  "licenses": licenses
+                }
+              }
+            }
+          }
+        }
+      }
+
+      it('Should return match array includes harvest registryData.licenses when they are deep equal', () => {
+        const source = generateGemDefinitionAndHarvest('0.2.1', sourceLicenses)
+        const target = generateGemDefinitionAndHarvest('0.1.1', sourceLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'registryData.licenses',
+          value: sourceLicenses
+        })
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+
+      it('Should return mismatch array includes harvest registryData.licenses when they are NOT deep equal', () => {
+        const targetLicenses = [
+          "Ruby License"
+        ]
+        const source = generateGemDefinitionAndHarvest('0.2.1', sourceLicenses)
+        const target = generateGemDefinitionAndHarvest('0.1.1', targetLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'registryData.licenses',
+          source: sourceLicenses,
+          target: targetLicenses
+        })
+      })
+
+      it('Should return empty match and mismatch array when harvest manifest.manifest.license are both undefined/null', () => {
+        const source = generateGemDefinitionAndHarvest('0.2.1')
+        const target = generateGemDefinitionAndHarvest('0.1.1')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+    })
+
+    describe('Match pypi package', () => {
+      const sourceLicenseInfo = 'BSD'
+      const sourceDeclaredLicense = 'BSD-2-Clause'
+      function generatePypiDefinitionAndHarvest(revision, licenseInfo, declaredLicense) {
+        return {
+          definition: {
+            coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)
+          },
+          harvest: {
+            "clearlydefined": {
+              "1.3.1": {
+                "registryData": {
+                  "info": {
+                    "license": licenseInfo
+                  }
+                },
+                "declaredLicense": declaredLicense
+              }
+            }
+          }
+        }
+      }
+
+      it('Should return match array includes both harvest declaredLicense and registryData.info.license when both are the same', () => {
+        const source = generatePypiDefinitionAndHarvest('2021.1.0', sourceLicenseInfo, sourceDeclaredLicense)
+        const target = generatePypiDefinitionAndHarvest('1.25.3', sourceLicenseInfo, sourceDeclaredLicense)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(2).and.have.deep.members([{
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'registryData.info.license',
+          value: sourceLicenseInfo
+        }, {
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicense',
+          value: sourceDeclaredLicense
+        }])
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+
+      it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
+        const targetDeclaredLicense = 'BSD-3-Clause'
+        const source = generatePypiDefinitionAndHarvest('2021.1.0', undefined, sourceDeclaredLicense)
+        const target = generatePypiDefinitionAndHarvest('1.25.3', undefined, targetDeclaredLicense)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicense',
+          source: sourceDeclaredLicense,
+          target: targetDeclaredLicense
+        }])
+      })
+
+      it('Should return mismatch array includes harvest registryData.info.license when they are NOT deep equal', () => {
+        const targetLicenseInfo = 'Apache-2.0'
+        const source = generatePypiDefinitionAndHarvest('2021.1.0', sourceLicenseInfo)
+        const target = generatePypiDefinitionAndHarvest('1.25.3', targetLicenseInfo)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'registryData.info.license',
+          source: sourceLicenseInfo,
+          target: targetLicenseInfo
+        }])
+      })
+
+      it('Should return empty match and mismatch array when harvest declaredLicense and registryData.info.license are both undefined/null', () => {
+        const source = generatePypiDefinitionAndHarvest('2021.1.0')
+        const target = generatePypiDefinitionAndHarvest('1.25.3')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+    })
+
+    describe('Match deb package', () => {
+      const sourceLicenses = [
+        "AGPL-3",
+        "MIT",
+        "BSD-3-clause",
+        "(GPL-3 OR AGPL-3)",
+        "PSF-2",
+        "GPL-3"
+      ]
+      function generateDebDefinitionAndHarvest(revision, licenses) {
+        return {
+          definition: {
+            coordinates: EntityCoordinates.fromString(`deb/debian/-/kopano-contacts/${revision}`)
+          },
+          harvest: {
+            "clearlydefined": {
+              "1.2.1": {
+                "declaredLicenses": licenses
+              }
+            }
+          }
+        }
+      }
+
+      it('Should return match array includes harvest declaredLicenses when they are deep equal', () => {
+        const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x', sourceLicenses)
+        const target = generateDebDefinitionAndHarvest('8.7.0-4_i386', sourceLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicenses',
+          value: sourceLicenses
+        })
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+
+      it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
+        const targetLicenses = [
+          "MIT",
+          "BSD-3-clause",
+          "(GPL-3 OR AGPL-3)",
+          "PSF-2",
+          "GPL-3"
+        ]
+        const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x', sourceLicenses)
+        const target = generateDebDefinitionAndHarvest('8.7.0-3_amd64', targetLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicenses',
+          source: sourceLicenses,
+          target: targetLicenses
+        })
+      })
+
+      it('Should return empty match and mismatch array when harvest declaredLicense are both undefined/null', () => {
+        const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x')
+        const target = generateDebDefinitionAndHarvest('8.7.0-3_amd64')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+    })
+
+    describe('Match debsrc package', () => {
+      const sourceLicenses = [
+        "GPL-3.0+",
+        "MIT",
+        "GPL-2.0+",
+        "AGPL-3.0",
+        "BSD-3-clause"
+      ]
+      function generateDebDefinitionAndHarvest(revision, licenses) {
+        return {
+          definition: {
+            coordinates: EntityCoordinates.fromString(`debsrc/debian/-/lava/${revision}`)
+          },
+          harvest: {
+            "clearlydefined": {
+              "1.3.1": {
+                "declaredLicenses": licenses
+              }
+            }
+          }
+        }
+      }
+
+      it('Should return match array includes harvest declaredLicenses when they are deep equal', () => {
+        const source = generateDebDefinitionAndHarvest('2019.10-1', sourceLicenses)
+        const target = generateDebDefinitionAndHarvest('2019.10-2', sourceLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicenses',
+          value: sourceLicenses
+        })
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+
+      it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
+        const targetLicenses = [
+          "MIT",
+          "GPL-2.0+",
+          "AGPL-3.0",
+          "BSD-3-clause"
+        ]
+        const source = generateDebDefinitionAndHarvest('2019.10-1', sourceLicenses)
+        const target = generateDebDefinitionAndHarvest('2019.10-2', targetLicenses)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+          policy: harvestLicenseMatchPolicy.name,
+          propPath: 'declaredLicenses',
+          source: sourceLicenses,
+          target: targetLicenses
+        })
+      })
+
+      it('Should return empty match and mismatch array when harvest declaredLicense are both undefined/null', () => {
+        const source = generateDebDefinitionAndHarvest('2019.10-1')
+        const target = generateDebDefinitionAndHarvest('2019.10-2')
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(0)
