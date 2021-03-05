@@ -80,6 +80,7 @@ describe('licenseMatcher.js', () => {
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
+        file: 'package/LICENSE',
         propPath: 'hashes.sha1',
         value: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26'
       })
@@ -112,12 +113,12 @@ describe('licenseMatcher.js', () => {
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
+        file: 'foo-1.0.0/LICENSE',
         propPath: 'hashes.sha256',
         value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
       })
       expect(result.mismatch).to.have.lengthOf(0)
     })
-
 
     it('Should return match array includes the same token', () => {
       const coordinates = { type: 'maven' }
@@ -141,6 +142,7 @@ describe('licenseMatcher.js', () => {
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
+        file: 'meta-inf/LICENSE',
         propPath: 'token',
         value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
       })
@@ -196,10 +198,53 @@ describe('licenseMatcher.js', () => {
       expect(result.match).to.have.lengthOf(0)
       expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
+        file: 'license.md',
         propPath: 'hashes.sha1',
         source: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26',
         target: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26-Diff'
       })
+    })
+
+    it(`Should return match array when all license file matched`, () => {
+      const coordinates = { type: 'maven' }
+      const sourceDefinition = {
+        "files": [{
+          "path": "meta-inf/LICENSE",
+          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        },
+        {
+          "path": "LICENSE",
+          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        }]
+      }
+
+      const targetDefinition = {
+        "files": [{
+          "path": "LICENSE",
+          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        }, {
+          "path": "meta-inf/LICENSE",
+          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        }]
+      }
+
+      const result = definitionLicenseMatchPolicy.compare(
+        { definition: { ...sourceDefinition, coordinates } },
+        { definition: { ...targetDefinition, coordinates } }
+      )
+
+      expect(result.match).to.have.lengthOf(2).and.have.deep.members([{
+        policy: definitionLicenseMatchPolicy.name,
+        file: 'meta-inf/LICENSE',
+        propPath: 'token',
+        value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d',
+      }, {
+        policy: definitionLicenseMatchPolicy.name,
+        file: 'LICENSE',
+        propPath: 'token',
+        value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
+      }])
+      expect(result.mismatch).to.have.lengthOf(0)
     })
   })
 
