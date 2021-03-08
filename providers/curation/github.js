@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, groupBy } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -161,9 +161,13 @@ class GitHubCurationService {
       if (result.isMatching) {
         matches.push({
           version: otherCoordinates.revision,
-          reason: result.reason
-          // DS_TODO: update to handle new matching results
-          // reason: result.match.map(reason => reason.propPath)
+          matchingProperties: result.match.map(reason => {
+            if (reason.file) {
+              return { file: reason.file }
+            } else {
+              return { propPath: reason.propPath, value: reason.value }
+            }
+          })
         })
       }
     }))
@@ -366,7 +370,7 @@ class GitHubCurationService {
     if (missing.length > 0)
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
 
-    if (this._isEligibleForMultiversionCuration(patch)) {
+    if (this._isEligibleForMultiversionCuration(patch) && this.options.multiversionCurationFeatureFlag) {
       const component = first(patch.patches)
       const result = await this._calculateMultiversionCurations(component)
 
@@ -378,7 +382,7 @@ class GitHubCurationService {
         const newRevisions = {}
         result.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
         component.revisions = merge(curationRevisions, newRevisions)
-        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatMultiversionCuratedRevisions(result)}`
+        patch.contributionInfo.additional = this._formatMultiversionCuratedRevisions(result)
       }
     }
 
@@ -447,14 +451,38 @@ ${additional}`
   }
 
   _formatMultiversionCuratedRevisions(mvcResults) {
-    // DS_TODO: Update to handle new results
-    // { version, reason: [propPath, propPath]}
-    // const resultsGroupedByProperties = groupBy(mvcResults, result => result.reason.sort().join(', ')) // { 'reason': [versions] }
-    // const output = Object.entries(resultsGroupedByProperties).map((property, versions) =>
-    //   `\nThese versions share the same ${property}: ${versions.join(', ')}`
-    // )
-    // return output
-    return mvcResults.map(versionAndReason => `\n${versionAndReason.version}, ${versionAndReason.reason}`)
+    let output = '**Automatically added versions:**\n'
+    mvcResults
+      .map(result => result.version)
+      .sort()
+      .forEach(version => output += `- ${version}\n`)
+
+    const matchingLicenses = []
+    const matchingMetadata = {}
+    mvcResults.forEach(result => {
+      result.matchingProperties.forEach(match => {
+        if (match.file) {
+          if (matchingLicenses.indexOf(match.file) == -1) {
+            matchingLicenses.push(match.file)
+          }
+        } else {
+          matchingMetadata[match.propPath] = match.value
+        }
+      })
+    })
+
+    if (matchingLicenses.length > 0) {
+      output += `\nMatching license file(s): ${matchingLicenses.join(', ')}`
+    }
+
+    if (Object.keys(matchingMetadata).length > 0) {
+      const metadataText = Object.keys(matchingMetadata).length == 1
+        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+      output += `\nMatching metadata: ${metadataText}`
+    }
+
+    return output
   }
 
   /**
