@@ -203,8 +203,7 @@ class GitHubCurationService {
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
       .map(stringCoords => EntityCoordinates.fromString(stringCoords))
-      .filter(coords => coordinates.name === coords.name)
-      .filter(coords => coordinates.revision !== coords.revision)
+      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
 
     const matchingVersionsAndReasons = await this._getMatchingLicenseVersions(coordinates, filteredCoordinatesList)
     const curations = await this.list(revisionlessCoords)
@@ -292,11 +291,12 @@ class GitHubCurationService {
 
   async autoCurate(definition) {
     try {
+      const revisionLessCoordinates = definition.coordinates.asRevisionless()
+      const curationAndContributions = await this.list(revisionLessCoordinates)
+
       if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         return
       }
-      const revisionLessCoordinates = definition.coordinates.asRevisionless()
-      const curationAndContributions = await this.list(revisionLessCoordinates)
 
       // TODO: Only need to get the clearlydefined tool harvest data. Other tools' harvest data is not necessary.
       const harvest = await this.harvestStore.getAll(definition.coordinates)
