@@ -372,9 +372,12 @@ class GitHubCurationService {
 
     if (this._isEligibleForMultiversionCuration(patch) && this.options.multiversionCurationFeatureFlag) {
       const component = first(patch.patches)
-      const result = await this._calculateMultiversionCurations(component)
+      this.logger.info(`Identified an eligible component for multiversion curation: ${component.coordinates}`)
 
+      const result = await this._calculateMultiversionCurations(component)
       if (result.length >= 0) {
+        this.logger.info(`Curated ${result.length} additional versions for ${component.coordinates}`)
+
         const curationRevisions = get(component, 'revisions')
         const revision = first(Object.keys(curationRevisions))
         const license = get(curationRevisions, [revision, 'licensed', 'declared'])
