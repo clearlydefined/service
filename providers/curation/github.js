@@ -454,7 +454,12 @@ ${additional}`
     let output = '**Automatically added versions:**\n'
     mvcResults
       .map(result => result.version)
-      .sort()
+      .sort((a, b) => {
+        if (semver.valid(a) && semver.valid(b)) {
+          return semver.compare(a, b)
+        }
+        return 0
+      })
       .forEach(version => output += `- ${version}\n`)
 
     const matchingLicenses = []
