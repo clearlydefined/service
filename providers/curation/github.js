@@ -264,9 +264,9 @@ class GitHubCurationService {
     return { name, email, login }
   }
 
-  // return true if patch.skipmvc is false and patch has 1 component and 1 revision
+  // return true if patch.skipMultiversionSearch is false and patch has 1 component and 1 revision
   _isEligibleForMultiversionCuration(patch) {
-    return !patch.skipmvc && patch.patches.length == 1 && Object.keys(patch.patches[0].revisions).length == 1
+    return !patch.skipMultiversionSearch && patch.patches.length == 1 && Object.keys(patch.patches[0].revisions).length == 1
   }
 
   // Return an array of valid patches that exist
@@ -453,9 +453,9 @@ ${additional}`
     )
   }
 
-  _formatMultiversionCuratedRevisions(mvcResults) {
+  _formatMultiversionCuratedRevisions(multiversionSearchResults) {
     let output = '**Automatically added versions:**\n'
-    mvcResults
+    multiversionSearchResults
       .map(result => result.version)
       .sort((a, b) => {
         if (semver.valid(a) && semver.valid(b)) {
@@ -467,7 +467,7 @@ ${additional}`
 
     const matchingLicenses = []
     const matchingMetadata = {}
-    mvcResults.forEach(result => {
+    multiversionSearchResults.forEach(result => {
       result.matchingProperties.forEach(match => {
         if (match.file) {
           if (matchingLicenses.indexOf(match.file) == -1) {

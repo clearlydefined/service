@@ -178,7 +178,7 @@ describe('Github Curation Service', () => {
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
     const contributionPatch = {
-      skipmvc: true,
+      skipMultiversionSearch: true,
       contributionInfo: {
         summary: 'test',
         details: 'test',
@@ -245,7 +245,7 @@ describe('Github Curation Service', () => {
       }
     })
 
-    const expectedMvcResults = [
+    const expectedResults = [
       { version: '1.1', matchingProperties: [{ file: 'LICENSE.txt' }] },
       {
         version: '1.2', matchingProperties: [{
@@ -253,9 +253,9 @@ describe('Github Curation Service', () => {
           value: 'LICENSE METADATA'
         }]
       }]
-    const expectedMvcDescription = '**Automatically added versions:**\n- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
-    const mvcDescriptions = gitHubService._formatMultiversionCuratedRevisions(expectedMvcResults)
-    expect(mvcDescriptions).to.be.deep.equal(expectedMvcDescription)
+    const expectedDescription = '**Automatically added versions:**\n- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
+    const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
+    expect(description).to.be.deep.equal(expectedDescription)
 
     // Check if the flow was correct
     const calculateMatchingVersionsSpy = sinon.spy(gitHubService, '_getMatchingLicenseVersions')
@@ -274,7 +274,7 @@ describe('Github Curation Service', () => {
         EntityCoordinates.fromString('npm/npmjs/-/test/1.4'),
       ]))
     assert(calculateMvcSpy.calledWith(component))
-    assert(formatRevisionsSpy.calledWith(expectedMvcResults))
+    assert(formatRevisionsSpy.calledWith(expectedResults))
   })
 })
 

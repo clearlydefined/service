@@ -15,10 +15,10 @@
     "revisions": {
       "$ref": "#/definitions/revisions"
     },
-    "skipmvc": {
+    "skipMultiversionSearch": {
       "type": "boolean",
       "errorMessage": {
-        "type": "SkipMVC type must be a boolean"
+        "type": "skipMultiversionSearch type must be a boolean"
       }
     }
   },
