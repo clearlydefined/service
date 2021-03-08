@@ -13,8 +13,8 @@ describe('Harvest queue processing', () => {
     })
     await process(queue, definitionService, logger, true)
 
-    expect(definitionService.computeAndStore.calledOnce).to.be.true
-    expect(definitionService.computeAndStore.getCall(0).args[0]).to.deep.eq({
+    expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+    expect(definitionService.computeStoreAndCurate.getCall(0).args[0]).to.deep.eq({
       type: 'gem',
       provider: 'rubygems',
       name: '0mq',
@@ -31,7 +31,7 @@ describe('Harvest queue processing', () => {
     const { queue, definitionService, logger } = setup({ junk: 'here' })
     await process(queue, definitionService, logger, true)
 
-    expect(definitionService.computeAndStore.calledOnce).to.be.false
+    expect(definitionService.computeStoreAndCurate.calledOnce).to.be.false
     expect(logger.info.calledOnce).to.be.false
     expect(queue.data.length).to.eq(1)
   })
@@ -41,7 +41,7 @@ function setup(data) {
   const queue = memoryQueue()
   queue.queue(JSON.stringify(data))
   const definitionService = {
-    computeAndStore: sinon.stub().returns({})
+    computeStoreAndCurate: sinon.stub().returns({})
   }
   const logger = {
     info: sinon.stub(),

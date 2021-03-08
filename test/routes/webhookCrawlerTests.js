@@ -15,8 +15,8 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.computeAndStore.calledOnce).to.be.true
-    expect(service.computeAndStore.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.computeStoreAndCurate.calledOnce).to.be.true
+    expect(service.computeStoreAndCurate.getCall(0).args[0].name).to.be.eq('test')
   })
 
   it('handles missing self', () => {
@@ -27,7 +27,7 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.computeAndStore.calledOnce).to.be.false
+    expect(service.computeStoreAndCurate.calledOnce).to.be.false
     expect(logger.info.calledOnce).to.be.true
     expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
   })
@@ -40,7 +40,7 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'different', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(service.computeAndStore.calledOnce).to.be.false
+    expect(service.computeStoreAndCurate.calledOnce).to.be.false
     expect(logger.info.calledOnce).to.be.true
     expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
   })
@@ -52,7 +52,7 @@ function createLogger() {
 
 function createDefinitionService() {
   return {
-    computeAndStore: sinon.stub()
+    computeStoreAndCurate: sinon.stub()
   }
 }
 

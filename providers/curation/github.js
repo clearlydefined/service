@@ -145,6 +145,36 @@ class GitHubCurationService {
     return this._postCommitStatus(sha, number, state, description)
   }
 
+  async _getMatchingLicenseVersions(coordinates, otherCoordinatesList) {
+    const definition = await this.definitionService.getStored(coordinates)
+    const harvest = await this.harvestStore.getAll(coordinates)
+    const matches = []
+
+    await Promise.all(otherCoordinatesList.map(async (otherCoordinates) => {
+      const otherDefinition = await this.definitionService.getStored(otherCoordinates)
+      const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
+      const result = this.licenseMatcher.process(
+        { definition, harvest },
+        { definition: otherDefinition, harvest: otherHarvest }
+      )
+
+      if (result.isMatching) {
+        matches.push({
+          version: otherCoordinates.revision,
+          matchingProperties: result.match.map(reason => {
+            if (reason.file) {
+              return { file: reason.file }
+            } else {
+              return { propPath: reason.propPath, value: reason.value }
+            }
+          })
+        })
+      }
+    }))
+
+    return matches
+  }
+
   _getRevisionsFromCurations(curations) {
     let revisions = []
 
@@ -164,25 +194,24 @@ class GitHubCurationService {
   }
 
   async _calculateMultiversionCurations(component) {
-    const currentRevisions = component.revisions
-    const version = first(Object.keys(currentRevisions))
-    const license = get(currentRevisions, [version, 'licensed', 'declared'])
-    const newCoordinates = EntityCoordinates.fromObject(component.coordinates).asRevisionless()
+    const curationRevisions = get(component, 'revisions')
+    const revision = first(Object.keys(curationRevisions))
+    const componentCoordsWithRevision = { ...component.coordinates, revision }
+    const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
+    const revisionlessCoords = coordinates.asRevisionless()
 
-    const { matchingVersions, matchingReason } = {
-      'matchingVersions': ['2.6.1', '1.1.3'],
-      'matchingReason': 'hash'
-    } // TODO: insert matching logic here
-    const curations = await this.list(newCoordinates)
+    const coordinatesList = await this.definitionService.list(revisionlessCoords)
+    const filteredCoordinatesList = coordinatesList
+      .map(stringCoords => EntityCoordinates.fromString(stringCoords))
+      .filter(coords => coordinates.name === coords.name)
+      .filter(coords => coordinates.revision !== coords.revision)
+
+    const matchingVersionsAndReasons = await this._getMatchingLicenseVersions(coordinates, filteredCoordinatesList)
+    const curations = await this.list(revisionlessCoords)
     const existingRevisions = this._getRevisionsFromCurations(curations)
-    const uncuratedMatchingVersions = matchingVersions.filter(version => existingRevisions.indexOf(version) == -1)
 
-    const revisions = {}
-    uncuratedMatchingVersions.forEach(version => { revisions[version] = { 'licensed': { 'declared': license } } })
-    return {
-      revisions: revisions,
-      reason: matchingReason
-    }
+    const uncuratedMatchingVersions = matchingVersionsAndReasons.filter(versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1)
+    return uncuratedMatchingVersions
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -263,17 +292,12 @@ class GitHubCurationService {
 
   async autoCurate(definition) {
     try {
-      if (!this._canBeAutoCurated(definition)) {
+      if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         return
       }
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
       const curationAndContributions = await this.list(revisionLessCoordinates)
-      if (this._hasExistingCurations(definition, curationAndContributions)) {
-        return
-      }
-      if (curationAndContributions.curations && Object.keys(curationAndContributions.curations).length === 0) {
-        return
-      }
+
       // TODO: Only need to get the clearlydefined tool harvest data. Other tools' harvest data is not necessary.
       const harvest = await this.harvestStore.getAll(definition.coordinates)
       const orderedCoordinates = Object.keys(curationAndContributions.curations || {}).sort((a, b) => {
@@ -284,25 +308,28 @@ class GitHubCurationService {
         }
         return 0
       })
+
       for (const coordinateStr of orderedCoordinates) {
         const curation = curationAndContributions.curations[coordinateStr]
         const declaredLicense = get(curation, 'licensed.declared')
         if (!declaredLicense) {
           continue
         }
+
         const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         if (!otherDefinition) {
           continue
         }
+
         const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
         const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
         if (result.isMatching) {
-          const info = await this._getUserInfo(this.github);
+          const info = await this._getUserInfo(this.github)
           // TODO: what is the detail of the PR overview.
           const patch = {
             contributionInfo: {
-              type: `missing`,
+              type: 'missing',
               summary: definition.coordinates.toString(),
               details: `Add ${declaredLicense} license`,
               resolution: result.reason,
@@ -313,20 +340,23 @@ class GitHubCurationService {
                 [definition.coordinates.revision]: curation
               }
             }]
-          };
+          }
+
           const contribution = await this._addOrUpdate(null, this.github, info, patch)
           this.logger.info(`Auto curate success for ${definition.coordinates.toString()}. The contribution id is ${contribution.data.number}`)
         }
       }
     } catch (err) {
       this.logger.error('Auto curate failed', err)
-      throw err;
+      throw err
     }
   }
 
-  _canBeAutoCurated(definition) {
+  _canBeAutoCurated(definition, curationAndContributions) {
     const tools = get(definition, 'described.tools')
-    return tools.some(tool => tool.startsWith('clearlydefined'))
+    const hasClearlyDefinedInTools = tools.some(tool => tool.startsWith('clearlydefined'))
+    const hasNoCurations = curationAndContributions.curations && Object.keys(curationAndContributions.curations).length === 0
+    return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && !hasNoCurations
   }
 
   _hasExistingCurations(definition, curationAndContributions) {
@@ -339,14 +369,20 @@ class GitHubCurationService {
     const { missing } = await this._validateDefinitionsExist(patch.patches)
     if (missing.length > 0)
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
-    if (this._isEligibleForMultiversionCuration(patch)) {
+
+    if (this._isEligibleForMultiversionCuration(patch) && this.options.multiversionCurationFeatureFlag) {
       const component = first(patch.patches)
-      const allExistingRevisions = get(component, 'revisions')
-      const revision = first(Object.keys(allExistingRevisions))
-      const { revisions, reason } = await this._calculateMultiversionCurations(component)
-      component.revisions = merge(allExistingRevisions, revisions)
-      if (Object.keys(revisions)) {
-        patch.contributionInfo.additional = `Automatically added versions that match submitted version ${revision}.${this._formatAdditionalRevisions(component.revisions, reason)}`
+      const result = await this._calculateMultiversionCurations(component)
+
+      if (result.length >= 0) {
+        const curationRevisions = get(component, 'revisions')
+        const revision = first(Object.keys(curationRevisions))
+        const license = get(curationRevisions, [revision, 'licensed', 'declared'])
+
+        const newRevisions = {}
+        result.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
+        component.revisions = merge(curationRevisions, newRevisions)
+        patch.contributionInfo.additional = this._formatMultiversionCuratedRevisions(result)
       }
     }
 
@@ -388,21 +424,21 @@ class GitHubCurationService {
     const { type, details, summary, resolution, additional } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     return `
-    **Type:** ${Type}
+**Type:** ${Type}
 
-    **Summary:**
-    ${summary}
+**Summary:**
+${summary}
 
-    **Details:**
-    ${details}
+**Details:**
+${details}
 
-    **Resolution:**
-    ${resolution}
+**Resolution:**
+${resolution}
 
-    **Affected definitions**:
-    ${this._formatDefinitions(patch.patches)}
+**Affected definitions**:
+${this._formatDefinitions(patch.patches)}
 
-    ${additional}`
+${additional}`
   }
 
   _formatDefinitions(definitions) {
@@ -414,8 +450,39 @@ class GitHubCurationService {
     )
   }
 
-  _formatAdditionalRevisions(revisions, reason) {
-    return Object.keys(revisions).map(revision => `\n${revision}, ${revisions[revision].licensed.declared}, ${reason}`)
+  _formatMultiversionCuratedRevisions(mvcResults) {
+    let output = '**Automatically added versions:**\n'
+    mvcResults
+      .map(result => result.version)
+      .sort()
+      .forEach(version => output += `- ${version}\n`)
+
+    const matchingLicenses = []
+    const matchingMetadata = {}
+    mvcResults.forEach(result => {
+      result.matchingProperties.forEach(match => {
+        if (match.file) {
+          if (matchingLicenses.indexOf(match.file) == -1) {
+            matchingLicenses.push(match.file)
+          }
+        } else {
+          matchingMetadata[match.propPath] = match.value
+        }
+      })
+    })
+
+    if (matchingLicenses.length > 0) {
+      output += `\nMatching license file(s): ${matchingLicenses.join(', ')}`
+    }
+
+    if (Object.keys(matchingMetadata).length > 0) {
+      const metadataText = Object.keys(matchingMetadata).length == 1
+        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+      output += `\nMatching metadata: ${metadataText}`
+    }
+
+    return output
   }
 
   /**
