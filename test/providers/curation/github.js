@@ -310,10 +310,6 @@ describe('Github Curation Service', () => {
       })
     })
 
-    afterEach(() => {
-
-    })
-
     it('Should auto curate if licenses match', async () => {
       curationsAndContributions = {
         curations: {
