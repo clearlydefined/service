@@ -349,7 +349,7 @@ function setup(definition, coordinateSpec, curation) {
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation)),
-    autoCurate: (_coordinates) => { }
+    autoCurate: () => { return }
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
   const harvestService = { harvest: () => sinon.stub() }

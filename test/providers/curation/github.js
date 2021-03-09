@@ -25,7 +25,7 @@ describe('Github Curation Service', () => {
     const result = await service.getContributedCurations(1, 42)
     const coords = { ...simpleCuration.coordinates }
     const resultCoords = result.map(change => change.data.coordinates)
-    expect(resultCoords).to.be.deep.equalInAnyOrder([coords])
+    expect(resultCoords).to.be.deep.includes.members([coords])
     expect(result[0].data.revisions['1.0']).to.be.deep.equal(simpleCuration.revisions['1.0'])
   })
 
@@ -276,6 +276,77 @@ describe('Github Curation Service', () => {
     assert(calculateMvcSpy.calledWith(component))
     assert(formatRevisionsSpy.calledWith(expectedResults))
   })
+
+  describe('autoCurate()', () => {
+    let gitHubService
+    let matcherResult
+    let curationsAndContributions
+    const sourceDefinition = {
+      coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/4.0.0'),
+      described: { tools: ['clearlydefined'] }
+    }
+
+    beforeEach(() => {
+      const { service } = setup()
+      sinon.stub(service, 'getStored').resolves({
+        coordinates: EntityCoordinates.fromString('npm/npmjs/-express/5.0.0')
+      })
+      const licenseMatcher = {
+        process: sinon.stub().callsFake(() => matcherResult)
+      }
+      const store = {
+        list: sinon.stub().callsFake(() => curationsAndContributions)
+      }
+      const harvestStore = {
+        getAll: sinon.stub().resolves({})
+      }
+      gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
+      // TODO: Should not stub private functions and private properties
+      sinon.stub(gitHubService, 'github').value({
+        users: { get: sinon.stub() },
+      })
+      sinon.stub(gitHubService, '_addOrUpdate').resolves({
+        data: { number: 1 }
+      })
+    })
+
+    afterEach(() => {
+
+    })
+
+    it('Should auto curate if licenses match', async () => {
+      curationsAndContributions = {
+        curations: {
+          'npm/npmjs/-/express/5.0.0': {
+            licensed: { declared: 'MIT' }
+          }
+        },
+        contributions: [{ files: [{ revisions: [{ revision: '5.0.0' }] }] }]
+      }
+      matcherResult = {
+        isMatching: true,
+        match: []
+      }
+      await gitHubService.autoCurate(sourceDefinition)
+      expect(gitHubService._addOrUpdate.calledOnce).to.be.true
+    })
+
+    it('Should not auto curate if licenses do not match', async () => {
+      curationsAndContributions = {
+        curations: {
+          'npm/npmjs/-/express/5.0.0': {
+            licensed: { declared: 'MIT' }
+          }
+        },
+        contributions: [{ files: [{ revisions: [{ revision: '5.0.0' }] }] }]
+      }
+      matcherResult = {
+        isMatching: false
+      }
+      await gitHubService.autoCurate(sourceDefinition)
+      expect(gitHubService._addOrUpdate.called).to.be.false
+    })
+  })
 })
 
 const info = 'test'
@@ -302,9 +373,14 @@ const complexCuration = {
   }
 }
 
-function createService(definitionService = null, licenseMatcher = null, harvestStore = null, endpoints = { website: 'http://localhost:3000' }) {
+function createService(definitionService = null, licenseMatcher = null, harvestStore = null, endpoints = { website: 'http://localhost:3000' }, store = CurationStore({})) {
+  const mockCache = {
+    get: sinon.stub().resolves(undefined),
+    set: sinon.stub(),
+  }
   require('../../../providers/logging/logger')({
-    error: sinon.stub()
+    error: sinon.stub(),
+    info: sinon.stub()
   })
   const service = GitHubCurationService(
     {
@@ -313,10 +389,10 @@ function createService(definitionService = null, licenseMatcher = null, harvestS
       token: 'foobar',
       multiversionCurationFeatureFlag: true
     },
-    CurationStore({}),
+    store,
     endpoints,
     definitionService,
-    null,
+    mockCache,
     harvestStore,
     licenseMatcher
   )

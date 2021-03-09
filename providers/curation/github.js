@@ -291,10 +291,15 @@ class GitHubCurationService {
 
   async autoCurate(definition) {
     try {
+      if (!this.options.multiversionCurationFeatureFlag) {
+        return
+      }
+
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
       const curationAndContributions = await this.list(revisionLessCoordinates)
 
       if (!this._canBeAutoCurated(definition, curationAndContributions)) {
+        this.logger.info('GitHubCurationService.autoCurate.notApplicable', { coordinates: definition.coordinates.toString() })
         return
       }
 
@@ -312,13 +317,19 @@ class GitHubCurationService {
       for (const coordinateStr of orderedCoordinates) {
         const curation = curationAndContributions.curations[coordinateStr]
         const declaredLicense = get(curation, 'licensed.declared')
+        const logProps = {
+          source: definition.coordinates.toString(),
+          target: coordinateStr
+        }
         if (!declaredLicense) {
+          this.logger.info('GitHubCurationService.autoCurate.declaredLicenseEmpty', { ...logProps, curation })
           continue
         }
 
         const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         if (!otherDefinition) {
+          this.logger.info('GitHubCurationService.autoCurate.declaredLicenseEmpty', logProps)
           continue
         }
 
@@ -326,13 +337,13 @@ class GitHubCurationService {
         const result = this.licenseMatcher.process({ definition, harvest }, { definition: otherDefinition, harvest: otherHarvest })
         if (result.isMatching) {
           const info = await this._getUserInfo(this.github)
-          // TODO: what is the detail of the PR overview.
+          const resolution = `Auto-generated curation. Newly harvested version ${definition.coordinates.revision} matches existing version ${otherCoordinates.revision}. ${this._generateMatchingDescription(result.match)}`
           const patch = {
             contributionInfo: {
               type: 'missing',
               summary: definition.coordinates.toString(),
               details: `Add ${declaredLicense} license`,
-              resolution: result.reason,
+              resolution,
             },
             patches: [{
               coordinates: revisionLessCoordinates,
@@ -343,11 +354,17 @@ class GitHubCurationService {
           }
 
           const contribution = await this._addOrUpdate(null, this.github, info, patch)
-          this.logger.info(`Auto curate success for ${definition.coordinates.toString()}. The contribution id is ${contribution.data.number}`)
+          this.logger.info('GitHubCurationService.autoCurate.match', {
+            ...logProps, pr: contribution.data.number, match: result.match
+          })
+        } else {
+          this.logger.info('GitHubCurationService.autoCurate.mismatch', {
+            ...logProps, mismatch: result.mismatch
+          })
         }
       }
     } catch (err) {
-      this.logger.error('Auto curate failed', err)
+      this.logger.error('GitHubCurationService.autoCurate.failed', err)
       throw err
     }
   }
@@ -355,12 +372,11 @@ class GitHubCurationService {
   _canBeAutoCurated(definition, curationAndContributions) {
     const tools = get(definition, 'described.tools')
     const hasClearlyDefinedInTools = tools.some(tool => tool.startsWith('clearlydefined'))
-    const hasNoCurations = curationAndContributions.curations && Object.keys(curationAndContributions.curations).length === 0
-    return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && !hasNoCurations
+    const hasCurations = curationAndContributions.curations && Object.keys(curationAndContributions.curations).length !== 0
+    return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && hasCurations
   }
 
   _hasExistingCurations(definition, curationAndContributions) {
-    // MT_TODO: somehow my curation PR is open but it's not stored.
     const revisions = this._getRevisionsFromCurations(curationAndContributions)
     return revisions.includes(definition.coordinates.revision)
   }
@@ -441,7 +457,7 @@ ${resolution}
 **Affected definitions**:
 ${this._formatDefinitions(patch.patches)}
 
-${additional}`
+${additional || ''}`
   }
 
   _formatDefinitions(definitions) {
@@ -464,19 +480,24 @@ ${additional}`
         return 0
       })
       .forEach(version => output += `- ${version}\n`)
+    const allMatchingProps = union(...multiversionSearchResults.map(m => m.matchingProperties))
+    output += this._generateMatchingDescription(allMatchingProps)
 
+    return output
+  }
+
+  _generateMatchingDescription(matchingResults) {
+    let output = ''
     const matchingLicenses = []
     const matchingMetadata = {}
-    multiversionSearchResults.forEach(result => {
-      result.matchingProperties.forEach(match => {
-        if (match.file) {
-          if (matchingLicenses.indexOf(match.file) == -1) {
-            matchingLicenses.push(match.file)
-          }
-        } else {
-          matchingMetadata[match.propPath] = match.value
+    matchingResults.forEach(match => {
+      if (match.file) {
+        if (matchingLicenses.indexOf(match.file) == -1) {
+          matchingLicenses.push(match.file)
         }
-      })
+      } else {
+        matchingMetadata[match.propPath] = match.value
+      }
     })
 
     if (matchingLicenses.length > 0) {
@@ -489,7 +510,6 @@ ${additional}`
         : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: '${matchingMetadata[metadataProp]}'`)
       output += `\nMatching metadata: ${metadataText}`
     }
-
     return output
   }
 

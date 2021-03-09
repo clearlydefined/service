@@ -57,19 +57,19 @@ describe('licenseMatcher.js', () => {
     it('Should return match array includes the same hashes.sha1', () => {
       const coordinates = { type: 'npm' }
       const sourceDefinition = {
-        "files": [{
-          "path": "package/LICENSE",
-          "hashes": {
-            "sha1": "dbf8c7e394791d3de9a9fff305d8ee7b59196f26",
+        'files': [{
+          'path': 'package/LICENSE',
+          'hashes': {
+            'sha1': 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26',
           }
         }]
       }
 
       const targetDefinition = {
-        "files": [{
-          "path": "package/LICENSE",
-          "hashes": {
-            "sha1": "dbf8c7e394791d3de9a9fff305d8ee7b59196f26",
+        'files': [{
+          'path': 'package/LICENSE',
+          'hashes': {
+            'sha1': 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26',
           }
         }]
       }
@@ -90,19 +90,19 @@ describe('licenseMatcher.js', () => {
     it('Should return match array includes the same hashes.sha256', () => {
       const coordinates = { type: 'pypi', name: 'foo', revision: '1.0.0' }
       const sourceDefinition = {
-        "files": [{
-          "path": "foo-1.0.0/LICENSE",
-          "hashes": {
-            "sha256": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d",
+        'files': [{
+          'path': 'foo-1.0.0/LICENSE',
+          'hashes': {
+            'sha256': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d',
           }
         }]
       }
 
       const targetDefinition = {
-        "files": [{
-          "path": "foo-1.0.0/LICENSE",
-          "hashes": {
-            "sha256": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d",
+        'files': [{
+          'path': 'foo-1.0.0/LICENSE',
+          'hashes': {
+            'sha256': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d',
           }
         }]
       }
@@ -123,16 +123,16 @@ describe('licenseMatcher.js', () => {
     it('Should return match array includes the same token', () => {
       const coordinates = { type: 'maven' }
       const sourceDefinition = {
-        "files": [{
-          "path": "meta-inf/LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'files': [{
+          'path': 'meta-inf/LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
       const targetDefinition = {
-        "files": [{
-          "path": "meta-inf/LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'files': [{
+          'path': 'meta-inf/LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
@@ -151,16 +151,16 @@ describe('licenseMatcher.js', () => {
 
     it('Should return empty match and mismatch array when no license files found', () => {
       const sourceDefinition = {
-        "path": "NOT-A-License-File",
-        "files": [{
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'path': 'NOT-A-License-File',
+        'files': [{
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
       const targetDefinition = {
-        "path": "NOT-A-License-File",
-        "files": [{
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'path': 'NOT-A-License-File',
+        'files': [{
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
@@ -172,21 +172,21 @@ describe('licenseMatcher.js', () => {
       expect(result.mismatch).to.have.lengthOf(0)
     })
 
-    it(`Should return mismatch array when file license hashes.sha1 are different`, () => {
+    it('Should return mismatch array when file license hashes.sha1 are different', () => {
       const sourceDefinition = {
-        "files": [{
-          "path": "license.md",
-          "hashes": {
-            "sha1": "dbf8c7e394791d3de9a9fff305d8ee7b59196f26",
+        'files': [{
+          'path': 'license.md',
+          'hashes': {
+            'sha1': 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26',
           }
         }]
       }
 
       const targetDefinition = {
-        "files": [{
-          "path": "license.md",
-          "hashes": {
-            "sha1": "dbf8c7e394791d3de9a9fff305d8ee7b59196f26-Diff",
+        'files': [{
+          'path': 'license.md',
+          'hashes': {
+            'sha1': 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26-Diff',
           }
         }]
       }
@@ -205,26 +205,26 @@ describe('licenseMatcher.js', () => {
       })
     })
 
-    it(`Should return match array when all license file matched`, () => {
+    it('Should return match array when all license file matched', () => {
       const coordinates = { type: 'maven' }
       const sourceDefinition = {
-        "files": [{
-          "path": "meta-inf/LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'files': [{
+          'path': 'meta-inf/LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         },
         {
-          "path": "LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+          'path': 'LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
       const targetDefinition = {
-        "files": [{
-          "path": "LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+        'files': [{
+          'path': 'LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }, {
-          "path": "meta-inf/LICENSE",
-          "token": "d9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d"
+          'path': 'meta-inf/LICENSE',
+          'token': 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
         }]
       }
 
@@ -251,17 +251,17 @@ describe('licenseMatcher.js', () => {
   // Even though some matching props are the same for different package type.
   // However, the value of the props are various. Therefore, it's better to test based on type
   describe('HarvestLicenseMatchPolicy compare()', () => {
-    const harvestLicenseMatchPolicy = new HarvestLicenseMatchPolicy();
+    const harvestLicenseMatchPolicy = new HarvestLicenseMatchPolicy()
     describe('Match maven package', () => {
       const sourceLicenses = [
         {
-          "license": [
+          'license': [
             {
-              "name": [
-                "The Apache License, Version 2.0"
+              'name': [
+                'The Apache License, Version 2.0'
               ],
-              "url": [
-                "http://www.apache.org/licenses/LICENSE-2.0.txt"
+              'url': [
+                'http://www.apache.org/licenses/LICENSE-2.0.txt'
               ]
             }
           ]
@@ -273,15 +273,15 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`maven/mavencentral/io.opentelemetry/opentelemetry-sdk-common/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.5.0": {
-                "manifest": {
-                  "summary": {
-                    "licenses": licenses
+            'clearlydefined': {
+              '1.5.0': {
+                'manifest': {
+                  'summary': {
+                    'licenses': licenses
                   }
                 }
               },
-              "1.3.1": {}
+              '1.3.1': {}
             }
           }
         }
@@ -302,13 +302,13 @@ describe('licenseMatcher.js', () => {
       it('Should return mismatch array includes harvest manifest.summary.licenses when they are NOT deep equal', () => {
         const targetLicenses = [
           {
-            "license": [
+            'license': [
               {
-                "name": [
-                  "MIT"
+                'name': [
+                  'MIT'
                 ],
-                "url": [
-                  "https://opensource.org/licenses/MIT"
+                'url': [
+                  'https://opensource.org/licenses/MIT'
                 ]
               }
             ]
@@ -344,10 +344,10 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`crate/cratesio/-/libc/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.2.0": {
-                "registryData": {
-                  "license": license
+            'clearlydefined': {
+              '1.2.0': {
+                'registryData': {
+                  'license': license
                 }
               }
             }
@@ -401,11 +401,11 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`nuget/nuget/-/Microsoft.Identity.Web.MicrosoftGraph/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.4.2": {
-                "manifest": {
-                  "licenseUrl": licenseUrl,
-                  "licenseExpression": license
+            'clearlydefined': {
+              '1.4.2': {
+                'manifest': {
+                  'licenseUrl': licenseUrl,
+                  'licenseExpression': license
                 }
               }
             }
@@ -472,11 +472,11 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`npm/npmjs/-/mongoose/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.1.2": {
-                "registryData": {
-                  "manifest": {
-                    "license": license
+            'clearlydefined': {
+              '1.1.2': {
+                'registryData': {
+                  'manifest': {
+                    'license': license
                   }
                 }
               }
@@ -498,7 +498,7 @@ describe('licenseMatcher.js', () => {
       })
 
       it('Should return mismatch array includes harvest registryData.manifest.license when they are NOT deep equal', () => {
-        const targetLicense = "Apache-2.0"
+        const targetLicense = 'Apache-2.0'
         const source = generateNpmDefinitionAndHarvest('5.2.5', sourceLicense)
         const target = generateNpmDefinitionAndHarvest('4.2.7', targetLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
@@ -522,7 +522,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match composer package', () => {
       const sourceLicenses = [
-        "GPL-2.0+"
+        'GPL-2.0+'
       ]
       function generateComposerDefinitionAndHarvest(revision, licenses) {
         return {
@@ -530,11 +530,11 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`composer/packagist/codeinwp/themeisle-sdk/$${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.2.0": {
-                "registryData": {
-                  "manifest": {
-                    "license": licenses
+            'clearlydefined': {
+              '1.2.0': {
+                'registryData': {
+                  'manifest': {
+                    'license': licenses
                   }
                 }
               }
@@ -557,7 +557,7 @@ describe('licenseMatcher.js', () => {
 
       it('Should return mismatch array includes harvest registryData.manifest.license when they are NOT deep equal', () => {
         const targetLicenses = [
-          "GPL-2.0"
+          'GPL-2.0'
         ]
         const source = generateComposerDefinitionAndHarvest('3.2.9', sourceLicenses)
         const target = generateComposerDefinitionAndHarvest('3.1.9', targetLicenses)
@@ -582,7 +582,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match gem package', () => {
       const sourceLicenses = [
-        "Ruby"
+        'Ruby'
       ]
       function generateGemDefinitionAndHarvest(revision, licenses) {
         return {
@@ -590,10 +590,10 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`gem/rubygems/-/reline/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.3.3": {
-                "registryData": {
-                  "licenses": licenses
+            'clearlydefined': {
+              '1.3.3': {
+                'registryData': {
+                  'licenses': licenses
                 }
               }
             }
@@ -615,7 +615,7 @@ describe('licenseMatcher.js', () => {
 
       it('Should return mismatch array includes harvest registryData.licenses when they are NOT deep equal', () => {
         const targetLicenses = [
-          "Ruby License"
+          'Ruby License'
         ]
         const source = generateGemDefinitionAndHarvest('0.2.1', sourceLicenses)
         const target = generateGemDefinitionAndHarvest('0.1.1', targetLicenses)
@@ -647,14 +647,14 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.3.1": {
-                "registryData": {
-                  "info": {
-                    "license": licenseInfo
+            'clearlydefined': {
+              '1.3.1': {
+                'registryData': {
+                  'info': {
+                    'license': licenseInfo
                   }
                 },
-                "declaredLicense": declaredLicense
+                'declaredLicense': declaredLicense
               }
             }
           }
@@ -714,12 +714,12 @@ describe('licenseMatcher.js', () => {
 
     describe('Match deb package', () => {
       const sourceLicenses = [
-        "AGPL-3",
-        "MIT",
-        "BSD-3-clause",
-        "(GPL-3 OR AGPL-3)",
-        "PSF-2",
-        "GPL-3"
+        'AGPL-3',
+        'MIT',
+        'BSD-3-clause',
+        '(GPL-3 OR AGPL-3)',
+        'PSF-2',
+        'GPL-3'
       ]
       function generateDebDefinitionAndHarvest(revision, licenses) {
         return {
@@ -727,9 +727,9 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`deb/debian/-/kopano-contacts/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.2.1": {
-                "declaredLicenses": licenses
+            'clearlydefined': {
+              '1.2.1': {
+                'declaredLicenses': licenses
               }
             }
           }
@@ -750,11 +750,11 @@ describe('licenseMatcher.js', () => {
 
       it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
         const targetLicenses = [
-          "MIT",
-          "BSD-3-clause",
-          "(GPL-3 OR AGPL-3)",
-          "PSF-2",
-          "GPL-3"
+          'MIT',
+          'BSD-3-clause',
+          '(GPL-3 OR AGPL-3)',
+          'PSF-2',
+          'GPL-3'
         ]
         const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('8.7.0-3_amd64', targetLicenses)
@@ -779,11 +779,11 @@ describe('licenseMatcher.js', () => {
 
     describe('Match debsrc package', () => {
       const sourceLicenses = [
-        "GPL-3.0+",
-        "MIT",
-        "GPL-2.0+",
-        "AGPL-3.0",
-        "BSD-3-clause"
+        'GPL-3.0+',
+        'MIT',
+        'GPL-2.0+',
+        'AGPL-3.0',
+        'BSD-3-clause'
       ]
       function generateDebDefinitionAndHarvest(revision, licenses) {
         return {
@@ -791,9 +791,9 @@ describe('licenseMatcher.js', () => {
             coordinates: EntityCoordinates.fromString(`debsrc/debian/-/lava/${revision}`)
           },
           harvest: {
-            "clearlydefined": {
-              "1.3.1": {
-                "declaredLicenses": licenses
+            'clearlydefined': {
+              '1.3.1': {
+                'declaredLicenses': licenses
               }
             }
           }
@@ -814,10 +814,10 @@ describe('licenseMatcher.js', () => {
 
       it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
         const targetLicenses = [
-          "MIT",
-          "GPL-2.0+",
-          "AGPL-3.0",
-          "BSD-3-clause"
+          'MIT',
+          'GPL-2.0+',
+          'AGPL-3.0',
+          'BSD-3-clause'
         ]
         const source = generateDebDefinitionAndHarvest('2019.10-1', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('2019.10-2', targetLicenses)
