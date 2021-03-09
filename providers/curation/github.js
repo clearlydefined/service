@@ -329,7 +329,7 @@ class GitHubCurationService {
         const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         if (!otherDefinition) {
-          this.logger.info('GitHubCurationService.autoCurate.declaredLicenseEmpty', logProps)
+          this.logger.info('GitHubCurationService.autoCurate.otherDefinitionEmpty', logProps)
           continue
         }
 
