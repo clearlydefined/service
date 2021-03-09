@@ -388,11 +388,14 @@ class GitHubCurationService {
 
     if (this._isEligibleForMultiversionCuration(patch) && this.options.multiversionCurationFeatureFlag) {
       const component = first(patch.patches)
-      this.logger.info(`Identified an eligible component for multiversion curation: ${component.coordinates}`)
+      this.logger.info('eligible component for multiversion curation', { coordinates: EntityCoordinates.fromObject(component.coordinates).toString() })
 
       const result = await this._calculateMultiversionCurations(component)
-      if (result.length >= 0) {
-        this.logger.info(`Curated ${result.length} additional versions for ${component.coordinates}`)
+      if (result.length > 0) {
+        this.logger.info('found additional versions to curate', {
+          coordinates: EntityCoordinates.fromObject(component.coordinates).toString(),
+          additionalRevisionCount: result.length
+        })
 
         const curationRevisions = get(component, 'revisions')
         const revision = first(Object.keys(curationRevisions))
