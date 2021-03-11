@@ -439,7 +439,23 @@ class GitHubCurationService {
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
+    await this._cleanCache(patch.patches)
     return result
+  }
+
+  async _cleanCache(patches) {
+    patches.forEach(async component => {
+      const revisionlessCoords = EntityCoordinates.fromObject(component.coordinates)
+      const revisionlessCacheKey = this._getCacheKey(revisionlessCoords)
+      await this.cache.delete(revisionlessCacheKey)
+
+      Object.keys(component.revisions).forEach(async revision => {
+        const componentCoordsWithRevision = { ...component.coordinates, revision }
+        const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
+        const cacheKey = this._getCacheKey(coordinates)
+        await this.cache.delete(cacheKey)
+      })
+    })
   }
 
   _generateContributionDescription(patch) {
