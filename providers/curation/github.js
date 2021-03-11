@@ -206,7 +206,7 @@ class GitHubCurationService {
       .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
 
     const matchingVersionsAndReasons = await this._getMatchingLicenseVersions(coordinates, filteredCoordinatesList)
-    const curations = await this.list(revisionlessCoords, true)
+    const curations = await this.list(revisionlessCoords)
     const existingRevisions = this._getRevisionsFromCurations(curations)
 
     const uncuratedMatchingVersions = matchingVersionsAndReasons.filter(versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1)
@@ -296,7 +296,7 @@ class GitHubCurationService {
       }
 
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
-      const curationAndContributions = await this.list(revisionLessCoordinates, true)
+      const curationAndContributions = await this.list(revisionLessCoordinates)
 
       if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         this.logger.info('GitHubCurationService.autoCurate.notApplicable', { coordinates: definition.coordinates.toString() })
@@ -650,14 +650,10 @@ ${additional || ''}`
    * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
    * @returns {[EntityCoordinates]} - Array of coordinates describing the available curations
    */
-  async list(coordinates, skipCache = false) {
+  async list(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
-
-    if (!skipCache) {
-      const existing = await this.cache.get(cacheKey)
-      if (existing) return existing
-    }
-
+    const existing = await this.cache.get(cacheKey)
+    if (existing) return existing
     const data = await this.store.list(coordinates)
     if (data) await this.cache.set(cacheKey, data, 60 * 60 * 24)
     return data
