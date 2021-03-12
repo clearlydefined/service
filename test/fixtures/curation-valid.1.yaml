@@ -17,7 +17,7 @@ revisions:
           - "attribution3"
           - "attribution4"
       - path: "/foo/bar"
-        license: "Apache-2.0"
+        license: "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)"
         attributions:
           - "attribution3"
     described:
