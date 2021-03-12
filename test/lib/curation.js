@@ -89,6 +89,20 @@ describe('Curations', () => {
     expect(curation.errors[0].error.message).to.equal('Licensed object can only contain declared')
   })
 
+  it('should identify invalid declared licenses (not SPDX license)', () => {
+    const content = getFixture('curation-invalid.10.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error).to.equal('4.17.4 licensed.declared with value "asdf" is not SPDX compliant')
+  })
+
+  it('should identify invalid file licenses (not SPDX valid)', () => {
+    const content = getFixture('curation-invalid.11.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.false
+    expect(curation.errors[0].error).to.equal('/foo in 4.17.4 files with value "mit and apache-2.0" is not SPDX compliant')
+  })
+
   it('should identify valid curations', () => {
     const content = getFixture('curation-valid.yaml')
     const curation = new Curation(content)

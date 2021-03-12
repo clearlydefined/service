@@ -1,0 +1,9 @@
+coordinates:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    licensed:
+      declared: "asdf"
