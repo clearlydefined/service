@@ -2,40 +2,40 @@ coordinates:
   name: lodash
   provider: npmjs
   type: npm
-  namespace: '-'
+  namespace: "-"
 revisions:
   4.17.4:
     files:
-      - path: '/foo'
-        license: 'MIT'
+      - path: "/foo"
+        license: "MIT"
         attributions:
-          - 'attribution1'
-          - 'attribution2'
-      - path: '/bar'
-        license: 'GPL'
+          - "attribution1"
+          - "attribution2"
+      - path: "/bar"
+        license: "GPL-2.0-only"
         attributions:
-          - 'attribution3'
-          - 'attribution4'
-      - path: '/foo/bar'
-        license: 'Apache-2.0'
+          - "attribution3"
+          - "attribution4"
+      - path: "/foo/bar"
+        license: "Apache-2.0"
         attributions:
-          - 'attribution3'
+          - "attribution3"
     described:
       sourceLocation:
-        type: 'git'
-        provider: 'github'
-        namespace: 'clearlydefined'
-        name: 'testrepo'
-        revision: 'ba6ed320e350f8b2eae4eb9683302ddac0ddf66f'
-        url: 'https://github.com/clearlydefined/testrepo'
-      projectWebsite: 'www.foo.bar.com'
-      issueTracker: 'www.issueTracker.org'
-      releaseDate: '2018-01-18'
+        type: "git"
+        provider: "github"
+        namespace: "clearlydefined"
+        name: "testrepo"
+        revision: "ba6ed320e350f8b2eae4eb9683302ddac0ddf66f"
+        url: "https://github.com/clearlydefined/testrepo"
+      projectWebsite: "www.foo.bar.com"
+      issueTracker: "www.issueTracker.org"
+      releaseDate: "2018-01-18"
       facets:
         tests:
-          - 'foo'
-          - 'bar'
+          - "foo"
+          - "bar"
         doc:
-          - 'foo'
+          - "foo"
     licensed:
-      declared: 'MIT'
+      declared: "MIT"
