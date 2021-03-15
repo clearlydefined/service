@@ -370,7 +370,7 @@ class GitHubCurationService {
   }
 
   _canBeAutoCurated(definition, curationAndContributions) {
-    const tools = get(definition, 'described.tools')
+    const tools = get(definition, 'described.tools') || []
     const hasClearlyDefinedInTools = tools.some(tool => tool.startsWith('clearlydefined'))
     const hasCurations = curationAndContributions.curations && Object.keys(curationAndContributions.curations).length !== 0
     return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && hasCurations
