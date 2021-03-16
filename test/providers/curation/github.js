@@ -14,6 +14,7 @@ const { find } = require('lodash')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('Github Curation Service', () => {
   it('invalidates coordinates when handling merge', async () => {
@@ -24,7 +25,7 @@ describe('Github Curation Service', () => {
     const result = await service.getContributedCurations(1, 42)
     const coords = { ...simpleCuration.coordinates }
     const resultCoords = result.map(change => change.data.coordinates)
-    expect(resultCoords).to.be.deep.equalInAnyOrder([coords])
+    expect(resultCoords).to.be.deep.includes.members([coords])
     expect(result[0].data.revisions['1.0']).to.be.deep.equal(simpleCuration.revisions['1.0'])
   })
 
@@ -177,6 +178,7 @@ describe('Github Curation Service', () => {
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
     const contributionPatch = {
+      skipMultiversionSearch: true,
       contributionInfo: {
         summary: 'test',
         details: 'test',
@@ -199,6 +201,147 @@ describe('Github Curation Service', () => {
 
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
+  })
+
+  it('create a PR with multiversion curation if eligible', async () => {
+    const component = {
+      coordinates: curationCoordinates,
+      revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
+    }
+
+    const contributionPatch = {
+      contributionInfo: {
+        summary: 'test',
+        details: 'test',
+        resolution: 'test',
+        type: 'missing',
+        removedDefinitions: false
+      },
+      patches: [
+        component
+      ]
+    }
+
+    const { service, licenseMatcher, harvestStore } = setup()
+    sinon
+      .stub(service, 'listAll')
+      .callsFake(() => [EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })])
+    sinon.stub(service, 'list').callsFake(() => [
+      'npm/npmjs/-/test/1.0', // curated revision
+      'npm/npmjs/-/test/1.1', // license match on file
+      'npm/npmjs/-/test/1.2', // license match on metadata
+      'npm/npmjs/-/test/1.3', // license match on metadata, but already curated
+      'npm/npmjs/-/test/1.4' // no license match, already curated
+    ])
+    sinon.stub(service, 'getStored').callsFake(() => Promise.resolve())
+
+
+    const gitHubService = createService(service, licenseMatcher, harvestStore)
+    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+    sinon.stub(gitHubService, 'list').callsFake(() => {
+      return {
+        curations: { 'npm/npmjs/-/test/1.3': {} },
+        contributions: [{ files: [{ revisions: [{ revision: '1.4' }] }] }]
+      }
+    })
+
+    const expectedResults = [
+      { version: '1.1', matchingProperties: [{ file: 'LICENSE.txt' }] },
+      {
+        version: '1.2', matchingProperties: [{
+          propPath: 'registryData.manifest.license',
+          value: 'LICENSE METADATA'
+        }]
+      }]
+    const expectedDescription = '**Automatically added versions:**\n- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
+    const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
+    expect(description).to.be.deep.equal(expectedDescription)
+
+    // Check if the flow was correct
+    const calculateMatchingVersionsSpy = sinon.spy(gitHubService, '_getMatchingLicenseVersions')
+    const calculateMvcSpy = sinon.spy(gitHubService, '_calculateMultiversionCurations')
+    const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
+
+    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
+    expect(result).to.be.deep.equal({ data: { number: 143 } })
+
+    assert(calculateMatchingVersionsSpy.calledWith(
+      EntityCoordinates.fromObject(definitionCoordinates),
+      [
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.3'),
+        EntityCoordinates.fromString('npm/npmjs/-/test/1.4'),
+      ]))
+    assert(calculateMvcSpy.calledWith(component))
+    assert(formatRevisionsSpy.calledWith(expectedResults))
+  })
+
+  describe('autoCurate()', () => {
+    let gitHubService
+    let matcherResult
+    let curationsAndContributions
+    const sourceDefinition = {
+      coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/4.0.0'),
+      described: { tools: ['clearlydefined'] }
+    }
+
+    beforeEach(() => {
+      const { service } = setup()
+      sinon.stub(service, 'getStored').resolves({
+        coordinates: EntityCoordinates.fromString('npm/npmjs/-express/5.0.0')
+      })
+      const licenseMatcher = {
+        process: sinon.stub().callsFake(() => matcherResult)
+      }
+      const store = {
+        list: sinon.stub().callsFake(() => curationsAndContributions)
+      }
+      const harvestStore = {
+        getAll: sinon.stub().resolves({})
+      }
+      gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
+      // TODO: Should not stub private functions and private properties
+      sinon.stub(gitHubService, 'github').value({
+        users: { get: sinon.stub() },
+      })
+      sinon.stub(gitHubService, '_addOrUpdate').resolves({
+        data: { number: 1 }
+      })
+    })
+
+    it('Should auto curate if licenses match', async () => {
+      curationsAndContributions = {
+        curations: {
+          'npm/npmjs/-/express/5.0.0': {
+            licensed: { declared: 'MIT' }
+          }
+        },
+        contributions: [{ files: [{ revisions: [{ revision: '5.0.0' }] }] }]
+      }
+      matcherResult = {
+        isMatching: true,
+        match: []
+      }
+      await gitHubService.autoCurate(sourceDefinition)
+      expect(gitHubService._addOrUpdate.calledOnce).to.be.true
+    })
+
+    it('Should not auto curate if licenses do not match', async () => {
+      curationsAndContributions = {
+        curations: {
+          'npm/npmjs/-/express/5.0.0': {
+            licensed: { declared: 'MIT' }
+          }
+        },
+        contributions: [{ files: [{ revisions: [{ revision: '5.0.0' }] }] }]
+      }
+      matcherResult = {
+        isMatching: false
+      }
+      await gitHubService.autoCurate(sourceDefinition)
+      expect(gitHubService._addOrUpdate.called).to.be.false
+    })
   })
 })
 
@@ -226,19 +369,28 @@ const complexCuration = {
   }
 }
 
-function createService(definitionService = null, endpoints = { website: 'http://localhost:3000' }) {
+function createService(definitionService = null, licenseMatcher = null, harvestStore = null, endpoints = { website: 'http://localhost:3000' }, store = CurationStore({})) {
+  const mockCache = {
+    get: sinon.stub().resolves(undefined),
+    set: sinon.stub(),
+  }
   require('../../../providers/logging/logger')({
-    error: sinon.stub()
+    error: sinon.stub(),
+    info: sinon.stub()
   })
   const service = GitHubCurationService(
     {
       owner: 'foobar',
       branch: 'foobar',
-      token: 'foobar'
+      token: 'foobar',
+      multiversionCurationFeatureFlag: true
     },
-    CurationStore({}),
+    store,
     endpoints,
-    definitionService
+    definitionService,
+    mockCache,
+    harvestStore,
+    licenseMatcher
   )
   service.github = {
     repos: {
@@ -313,5 +465,24 @@ function setup(definition, coordinateSpec, curation) {
   const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
-  return { coordinates, service }
+
+  const processStub = sinon.stub()
+  const licenseFileMatch = {
+    policy: 'file match',
+    file: 'LICENSE.txt',
+    propPath: 'sha256',
+    value: 'some hash'
+  }
+  const licenseMetadataMatch = {
+    policy: 'metadata match',
+    propPath: 'registryData.manifest.license',
+    value: 'LICENSE METADATA'
+  }
+  processStub.onFirstCall().returns({ isMatching: true, match: [licenseFileMatch] })
+  processStub.onSecondCall().returns({ isMatching: true, match: [licenseMetadataMatch] })
+  processStub.onThirdCall().returns({ isMatching: true, match: [licenseFileMatch, licenseMetadataMatch] })
+  processStub.returns({ isMatching: false })
+  const licenseMatcher = { process: processStub }
+
+  return { coordinates, service, licenseMatcher, harvestStore }
 }

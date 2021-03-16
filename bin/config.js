@@ -75,7 +75,7 @@ module.exports = {
     max: parseInt(config.get('RATE_LIMIT_MAX')) || 0
   },
   webhook: {
-    githubSecret: config.get('WEBHOOK_GITHUB_SECRET'),
+    githubSecret: config.get('WEBHOOK_GITHUB_SECRET') || 'secret',
     crawlerSecret: config.get('WEBHOOK_CRAWLER_SECRET') || 'secret'
   },
   search: {

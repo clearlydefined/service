@@ -72,18 +72,27 @@ class DefinitionService {
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
-    } else result = await this.computeAndStore(coordinates)
+    } else result = force ? await this.computeAndStore() : await this.computeStoreAndCurate(coordinates)
     return this._trimDefinition(this._cast(result), expand)
   }
 
-  async _cacheExistingAside(coordinates, force) {
-    if (force) return null
+  /**
+   * Get directly from cache or store without any side effect, like compute
+   * @param {} coordinates
+   * @returns { Definition } The definition in store.
+   */
+  async getStored(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
     const cached = await this.cache.get(cacheKey)
     if (cached) return cached
     const stored = await this.definitionStore.get(coordinates)
     if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
+  }
+
+  async _cacheExistingAside(coordinates, force) {
+    if (force) return null
+    return await this.getStored(coordinates)
   }
 
   async _setDefinitionInCache(cacheKey, itemToStore) {
@@ -199,25 +208,42 @@ class DefinitionService {
     if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
   }
 
-  async computeAndStore(coordinates) {
-    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+  async computeStoreAndCurate(coordinates) {
+    // one coordinate a time through this method so no duplicate auto curation will be created.
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
     try {
       computeLock.set(coordinates.toString(), true)
-      const definition = await this.compute(coordinates)
-      // If no tools participated in the creation of the definition then don't bother storing.
-      // Note that curation is a tool so no tools really means there the definition is effectively empty.
-      const tools = get(definition, 'described.tools')
-      if (!tools || tools.length === 0) {
-        this.logger.info('definition not available', { coordinates: coordinates.toString() })
-        this._harvest(coordinates) // fire and forget
-        return definition
-      }
-      this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
-      await this._store(definition)
+      const definition = await this._computeAndStore(coordinates)
+      await this.curationService.autoCurate(definition)
       return definition
     } finally {
       computeLock.delete(coordinates.toString())
     }
+  }
+
+  async computeAndStore(coordinates) {
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    try {
+      computeLock.set(coordinates.toString(), true)
+      return await this._computeAndStore(coordinates)
+    } finally {
+      computeLock.delete(coordinates.toString())
+    }
+  }
+
+  async _computeAndStore(coordinates) {
+    const definition = await this.compute(coordinates)
+    // If no tools participated in the creation of the definition then don't bother storing.
+    // Note that curation is a tool so no tools really means there the definition is effectively empty.
+    const tools = get(definition, 'described.tools')
+    if (!tools || tools.length === 0) {
+      this.logger.info('definition not available', { coordinates: coordinates.toString() })
+      this._harvest(coordinates) // fire and forget
+      return definition
+    }
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
+    await this._store(definition)
+    return definition
   }
 
   async _harvest(coordinates) {

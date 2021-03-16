@@ -2,7 +2,10 @@
   "$id": "https://api.clearlydefined.io/schemas/curations-1.0.json#",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "curation",
-  "required": ["coordinates", "revisions"],
+  "required": [
+    "coordinates",
+    "revisions"
+  ],
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -11,6 +14,12 @@
     },
     "revisions": {
       "$ref": "#/definitions/revisions"
+    },
+    "skipMultiversionSearch": {
+      "type": "boolean",
+      "errorMessage": {
+        "type": "skipMultiversionSearch type must be a boolean"
+      }
     }
   },
   "errorMessage": {
@@ -60,7 +69,11 @@
       }
     },
     "coordinates": {
-      "required": ["type", "provider", "name"],
+      "required": [
+        "type",
+        "provider",
+        "name"
+      ],
       "properties": {
         "type": {
           "$ref": "#/definitions/type"
@@ -69,7 +82,10 @@
           "$ref": "#/definitions/provider"
         },
         "namespace": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "errorMessage": {
             "type": "Namespace must be a string or null"
           }

@@ -33,6 +33,17 @@
         "<node_internals>/**/*.js"
       ],
       "showAsyncStacks": true
+    },
+    {
+      "name": "Run Test (current file)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector"
     }
   ]
 }
