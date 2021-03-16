@@ -340,7 +340,7 @@ class GitHubCurationService {
           const resolution = `Auto-generated curation. Newly harvested version ${definition.coordinates.revision} matches existing version ${otherCoordinates.revision}. ${this._generateMatchingDescription(result.match)}`
           const patch = {
             contributionInfo: {
-              type: 'missing',
+              type: 'auto',
               summary: definition.coordinates.toString(),
               details: `Add ${declaredLicense} license`,
               resolution,
@@ -357,6 +357,7 @@ class GitHubCurationService {
           this.logger.info('GitHubCurationService.autoCurate.match', {
             ...logProps, pr: contribution.data.number, match: result.match
           })
+          return
         } else {
           this.logger.info('GitHubCurationService.autoCurate.mismatch', {
             ...logProps, mismatch: result.mismatch

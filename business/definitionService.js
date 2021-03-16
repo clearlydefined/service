@@ -209,30 +209,41 @@ class DefinitionService {
   }
 
   async computeStoreAndCurate(coordinates) {
-    const definition = await this.computeAndStore(coordinates)
-    await this.curationService.autoCurate(definition)
-    return definition
+    // one coordinate a time through this method so no duplicate auto curation will be created.
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
+    try {
+      computeLock.set(coordinates.toString(), true)
+      const definition = await this._computeAndStore(coordinates)
+      await this.curationService.autoCurate(definition)
+      return definition
+    } finally {
+      computeLock.delete(coordinates.toString())
+    }
   }
 
   async computeAndStore(coordinates) {
     while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
     try {
       computeLock.set(coordinates.toString(), true)
-      const definition = await this.compute(coordinates)
-      // If no tools participated in the creation of the definition then don't bother storing.
-      // Note that curation is a tool so no tools really means there the definition is effectively empty.
-      const tools = get(definition, 'described.tools')
-      if (!tools || tools.length === 0) {
-        this.logger.info('definition not available', { coordinates: coordinates.toString() })
-        this._harvest(coordinates) // fire and forget
-        return definition
-      }
-      this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
-      await this._store(definition)
-      return definition
+      return await this._computeAndStore(coordinates)
     } finally {
       computeLock.delete(coordinates.toString())
     }
+  }
+
+  async _computeAndStore(coordinates) {
+    const definition = await this.compute(coordinates)
+    // If no tools participated in the creation of the definition then don't bother storing.
+    // Note that curation is a tool so no tools really means there the definition is effectively empty.
+    const tools = get(definition, 'described.tools')
+    if (!tools || tools.length === 0) {
+      this.logger.info('definition not available', { coordinates: coordinates.toString() })
+      this._harvest(coordinates) // fire and forget
+      return definition
+    }
+    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
+    await this._store(definition)
+    return definition
   }
 
   async _harvest(coordinates) {
