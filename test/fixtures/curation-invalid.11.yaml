@@ -1,0 +1,10 @@
+coordinates:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    files:
+      - path: "/foo"
+        license: "mit and apache-2.0"
