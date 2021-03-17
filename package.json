@@ -14,7 +14,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@clearlydefined/spdx": "^0.1.0",
+    "@clearlydefined/spdx": "^0.1.2",
     "@octokit/rest": "^14.0.9",
     "ajv": "^6.12.3",
     "ajv-errors": "^1.0.0",
