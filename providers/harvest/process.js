@@ -3,6 +3,7 @@
 
 const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const { parseUrn } = require('../../lib/utils')
 
 async function work(once) {
   let isQueueEmpty = true
@@ -25,7 +26,12 @@ async function processMessage(message) {
   const urn = get(message, 'data._metadata.links.self.href')
   if (!urn) return
   const coordinates = EntityCoordinates.fromUrn(urn)
-  await definitionService.computeStoreAndCurate(coordinates)
+  const { tool } = parseUrn(urn)
+  if (tool === 'clearlydefined') {
+    await definitionService.computeStoreAndCurate(coordinates)
+  } else {
+    await definitionService.computeAndStore(coordinates)
+  }
   await queue.delete(message)
   logger.info(`Handled Crawler update event for ${urn}`)
 }
