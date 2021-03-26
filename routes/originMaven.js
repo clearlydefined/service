@@ -6,6 +6,8 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// maven.org API documentation https://search.maven.org/classic/#api
+
 // Get versions
 router.get(
   '/:group/:artifact/revisions',

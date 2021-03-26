@@ -10,6 +10,7 @@ function getClient(request) {
   return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
 }
 
+// GitHub API documentation: https://docs.github.com/en/rest
 router.get(
   '/:login/:repo/revisions',
   asyncMiddleware(async (request, response) => {

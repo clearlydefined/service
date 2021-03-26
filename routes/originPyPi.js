@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// PyPi API documentation: https://warehouse.pypa.io/api-reference/json.html
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {

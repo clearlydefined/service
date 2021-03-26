@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// RubyGems API documentation: https://guides.rubygems.org/rubygems-org-api-v2/
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {

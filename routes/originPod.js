@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// trunk.cocoapods.org API documentation: https://github.com/CocoaPods/trunk.cocoapods.org-api-doc
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
@@ -24,9 +25,7 @@ router.get(
       appID: 'WBHHAMHYNM',
       apiKey: '4f7544ca8701f9bf2a4e55daff1b09e9'
     }
-    const url = `https://${algolia.appID}-dsn.algolia.net/1/indexes/cocoapods/query?x-algolia-application-id=${
-      algolia.appID
-    }&x-algolia-api-key=${algolia.apiKey}`
+    const url = `https://${algolia.appID}-dsn.algolia.net/1/indexes/cocoapods/query?x-algolia-application-id=${algolia.appID}&x-algolia-api-key=${algolia.apiKey}`
     const answer = await requestPromise({
       url,
       method: 'POST',
