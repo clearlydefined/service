@@ -292,7 +292,7 @@ describe('licenseMatcher.js', () => {
         const target = generateMavenDefinitionAndHarvest('2.0.0', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.summary.licenses',
           value: sourceLicenses
         })
@@ -319,7 +319,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.summary.licenses',
           source: sourceLicenses,
           target: targetLicenses
@@ -361,7 +361,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
 
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.license',
           value: sourceLicense
         })
@@ -376,7 +376,7 @@ describe('licenseMatcher.js', () => {
 
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.license',
           source: sourceLicense,
           target: targetLicense
@@ -418,11 +418,11 @@ describe('licenseMatcher.js', () => {
         const target = generateNugetDefinitionAndHarvest('1.4.6', sourceLicense, sourceLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(2).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.licenseExpression',
           value: sourceLicense
         }, {
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.licenseUrl',
           value: sourceLicenseUrl
         }])
@@ -435,7 +435,7 @@ describe('licenseMatcher.js', () => {
         const target = generateNugetDefinitionAndHarvest('1.4.6', targetLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.licenseExpression',
           source: sourceLicense,
           target: targetLicense
@@ -448,7 +448,7 @@ describe('licenseMatcher.js', () => {
         const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, targetLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'manifest.licenseUrl',
           source: sourceLicenseUrl,
           target: targetLicenseUrl
@@ -458,6 +458,15 @@ describe('licenseMatcher.js', () => {
       it('Should return empty match and mismatch array when harvest manifest.licenseExpression and manifest.licenseUrl are both undefined/null', () => {
         const source = generateNugetDefinitionAndHarvest('0.2.86')
         const target = generateNugetDefinitionAndHarvest('0.2.49')
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
+
+      it('Should return empty match and mismatch when manifest.licenseExpression is empty and manifest.licenseUrl including github.com', () => {
+        const githubLicenseUrl = `https://github.com/Sustainsys/Saml2/blob/master/LICENSE`
+        const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, githubLicenseUrl)
+        const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, githubLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(0)
@@ -490,7 +499,7 @@ describe('licenseMatcher.js', () => {
         const target = generateNpmDefinitionAndHarvest('4.2.7', sourceLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.manifest.license',
           value: sourceLicense
         })
@@ -504,7 +513,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.manifest.license',
           source: sourceLicense,
           target: targetLicense
@@ -548,7 +557,7 @@ describe('licenseMatcher.js', () => {
         const target = generateComposerDefinitionAndHarvest('3.1.9', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.manifest.license',
           value: sourceLicenses
         })
@@ -564,7 +573,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.manifest.license',
           source: sourceLicenses,
           target: targetLicenses
@@ -606,7 +615,7 @@ describe('licenseMatcher.js', () => {
         const target = generateGemDefinitionAndHarvest('0.1.1', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.licenses',
           value: sourceLicenses
         })
@@ -622,7 +631,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.licenses',
           source: sourceLicenses,
           target: targetLicenses
@@ -666,11 +675,11 @@ describe('licenseMatcher.js', () => {
         const target = generatePypiDefinitionAndHarvest('1.25.3', sourceLicenseInfo, sourceDeclaredLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(2).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.info.license',
           value: sourceLicenseInfo
         }, {
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicense',
           value: sourceDeclaredLicense
         }])
@@ -683,7 +692,7 @@ describe('licenseMatcher.js', () => {
         const target = generatePypiDefinitionAndHarvest('1.25.3', undefined, targetDeclaredLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicense',
           source: sourceDeclaredLicense,
           target: targetDeclaredLicense
@@ -696,7 +705,7 @@ describe('licenseMatcher.js', () => {
         const target = generatePypiDefinitionAndHarvest('1.25.3', targetLicenseInfo)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.mismatch).to.have.lengthOf(1).and.have.deep.members([{
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'registryData.info.license',
           source: sourceLicenseInfo,
           target: targetLicenseInfo
@@ -741,7 +750,7 @@ describe('licenseMatcher.js', () => {
         const target = generateDebDefinitionAndHarvest('8.7.0-4_i386', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicenses',
           value: sourceLicenses
         })
@@ -761,7 +770,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicenses',
           source: sourceLicenses,
           target: targetLicenses
@@ -805,7 +814,7 @@ describe('licenseMatcher.js', () => {
         const target = generateDebDefinitionAndHarvest('2019.10-2', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicenses',
           value: sourceLicenses
         })
@@ -824,7 +833,7 @@ describe('licenseMatcher.js', () => {
         const result = harvestLicenseMatchPolicy.compare(source, target)
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
-          policy: harvestLicenseMatchPolicy.name,
+          policy: `harvest`,
           propPath: 'declaredLicenses',
           source: sourceLicenses,
           target: targetLicenses
