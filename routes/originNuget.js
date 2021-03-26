@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// Nuget API documentation: https://docs.microsoft.com/en-us/nuget/api/overview
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {

@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// crates.io API https://github.com/rust-lang/crates.io/blob/03666dd7e35d5985504087f7bf0553fa16380fac/src/router.rs
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {

@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// NPM API documentation: https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#:~:text=NPM%20Registry%20API%201%20Overview%202%20Schema.%20All,Authentication%20required.%20...%2010%20Search%20More%20items...%20
 router.get(
   '/:namespace?/:name/revisions',
   asyncMiddleware(async (request, response) => {
