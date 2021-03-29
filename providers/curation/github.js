@@ -418,7 +418,7 @@ class GitHubCurationService {
         type: 'auto',
         summary: curatedCoordinates.toString(),
         details: `Add ${get(curationRevisions, [revision, 'licensed', 'declared'])} license`,
-        resolution: `Automatically added versions base on ${pr.html_url}\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`,
+        resolution: `Automatically added versions based on ${pr.html_url}\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`,
       }
       return this._addCurationWithMatchingRevisions(curatedCoordinates, curationRevisions[revision], info, matchingRevisionAndReason)
     } catch (err) {
