@@ -6,6 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
+// Packagist API Documentation https://packagist.org/apidoc
 router.get(
   '/:namespace?/:name/revisions',
   asyncMiddleware(async (request, response) => {

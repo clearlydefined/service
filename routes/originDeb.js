@@ -6,7 +6,7 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
 
-// APIs documentation: https://sources.debian.org/doc/api/
+// Debian API documentation: https://sources.debian.org/doc/api/
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
