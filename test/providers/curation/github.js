@@ -203,78 +203,88 @@ describe('Github Curation Service', () => {
     expect(result).to.be.deep.equal({ data: { number: 143 } })
   })
 
-  it('create a PR with multiversion curation if eligible', async () => {
-    const component = {
-      coordinates: curationCoordinates,
-      revisions: { '1.0': { licensed: { declared: 'Apache-1.0' } } }
-    }
+  describe('addByMergedCuration()', () => {
+    let pr
 
-    const contributionPatch = {
-      contributionInfo: {
-        summary: 'test',
-        details: 'test',
-        resolution: 'test',
-        type: 'missing',
-        removedDefinitions: false
-      },
-      patches: [
-        component
-      ]
-    }
-
-    const { service, licenseMatcher, harvestStore } = setup()
-    sinon
-      .stub(service, 'listAll')
-      .callsFake(() => [EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })])
-    sinon.stub(service, 'list').callsFake(() => [
-      'npm/npmjs/-/test/1.0', // curated revision
-      'npm/npmjs/-/test/1.1', // license match on file
-      'npm/npmjs/-/test/1.2', // license match on metadata
-      'npm/npmjs/-/test/1.3', // license match on metadata, but already curated
-      'npm/npmjs/-/test/1.4' // no license match, already curated
-    ])
-    sinon.stub(service, 'getStored').callsFake(() => Promise.resolve())
-
-
-    const gitHubService = createService(service, licenseMatcher, harvestStore)
-    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
-    sinon.stub(gitHubService, 'list').callsFake(() => {
-      return {
-        curations: { 'npm/npmjs/-/test/1.3': {} },
-        contributions: [{ files: [{ revisions: [{ revision: '1.4' }] }] }]
+    beforeEach(() => {
+      pr = {
+        number: 1,
+        head: { ref: 'curation_branch', sha: '2' },
+        base: { ref: 'master', sha: '1' },
+        files: [{ filename: 'curations/npm/npmjs/-/test.yaml' }],
+        merged_at: '2018-11-13T02:44:34Z'
       }
     })
 
-    const expectedResults = [
-      { version: '1.1', matchingProperties: [{ file: 'LICENSE.txt' }] },
-      {
-        version: '1.2', matchingProperties: [{
-          propPath: 'registryData.manifest.license',
-          value: 'LICENSE METADATA'
+    it('should not create curation if pr is not merged', async () => {
+      pr.merged_at = null
+      const gitHubService = createService()
+      const result = await gitHubService.addByMergedCuration(pr)
+      expect(result).to.be.undefined
+    })
+
+    it('create a PR with multiversion curation if eligible', async () => {
+      const curatedCoordinates = { ...curationCoordinates, revision: '1.0' }
+      const component = {
+        coordinates: curationCoordinates,
+        revisions: { [curatedCoordinates.revision]: { licensed: { declared: 'Apache-1.0' } } }
+      }
+
+      const { service, licenseMatcher, harvestStore } = setup()
+      sinon
+        .stub(service, 'listAll')
+        .callsFake(() => [EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })])
+      sinon.stub(service, 'list').callsFake(() => [
+        'npm/npmjs/-/test/1.0', // curated revision
+        'npm/npmjs/-/test/1.1', // license match on file
+        'npm/npmjs/-/test/1.2', // license match on metadata
+        'npm/npmjs/-/test/1.3', // license match on metadata, but already curated
+        'npm/npmjs/-/test/1.4' // no license match, already curated
+      ])
+      sinon.stub(service, 'getStored').callsFake(() => Promise.resolve())
+
+
+      const gitHubService = createService(service, licenseMatcher, harvestStore)
+      sinon.stub(gitHubService, '_getPatchesFromMergedPullRequest').resolves([component])
+      sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+      sinon.stub(gitHubService, 'list').callsFake(() => {
+        return {
+          curations: { 'npm/npmjs/-/test/1.3': {} },
+          contributions: [{ files: [{ revisions: [{ revision: '1.4' }] }] }]
+        }
+      })
+
+      const expectedResults = [
+        { version: '1.1', matchingProperties: [{ file: 'LICENSE.txt' }] },
+        {
+          version: '1.2', matchingProperties: [{
+            propPath: 'registryData.manifest.license',
+            value: 'LICENSE METADATA'
+          }]
         }]
-      }]
-    const expectedDescription = '**Automatically added versions:**\n- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
-    const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
-    expect(description).to.be.deep.equal(expectedDescription)
+      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
+      const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
+      expect(description).to.be.deep.equal(expectedDescription)
 
-    // Check if the flow was correct
-    const calculateMatchingVersionsSpy = sinon.spy(gitHubService, '_getMatchingLicenseVersions')
-    const calculateMvcSpy = sinon.spy(gitHubService, '_calculateMultiversionCurations')
-    const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
+      // Check if the flow was correct
+      const startMatchingSpy = sinon.spy(gitHubService, '_startMatching')
+      const calculateMatchingRevisionAndReasonSpy = sinon.spy(gitHubService, '_calculateMatchingRevisionAndReason')
+      const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
 
-    const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
-    expect(result).to.be.deep.equal({ data: { number: 143 } })
+      const result = await gitHubService.addByMergedCuration(pr)
+      expect(result).to.be.deep.equal({ data: { number: 143 } })
 
-    assert(calculateMatchingVersionsSpy.calledWith(
-      EntityCoordinates.fromObject(definitionCoordinates),
-      [
-        EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
-        EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
-        EntityCoordinates.fromString('npm/npmjs/-/test/1.3'),
-        EntityCoordinates.fromString('npm/npmjs/-/test/1.4'),
-      ]))
-    assert(calculateMvcSpy.calledWith(component))
-    assert(formatRevisionsSpy.calledWith(expectedResults))
+      assert(startMatchingSpy.calledWith(
+        EntityCoordinates.fromObject(definitionCoordinates),
+        [
+          EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
+          EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
+          EntityCoordinates.fromString('npm/npmjs/-/test/1.3'),
+          EntityCoordinates.fromString('npm/npmjs/-/test/1.4'),
+        ]))
+      assert(calculateMatchingRevisionAndReasonSpy.calledWith(curatedCoordinates))
+      assert(formatRevisionsSpy.calledWith(expectedResults))
+    })
   })
 
   describe('autoCurate()', () => {
@@ -412,8 +422,8 @@ function createService(definitionService = null, licenseMatcher = null, harvestS
             number: 143
           }
         })
-
-    }
+    },
+    users: { get: () => ({ name: 'clearlydefined-bot' }) }
   }
   return service
 }

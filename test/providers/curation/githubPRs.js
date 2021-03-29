@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
 const CurationStore = require('../../../providers/curation/memoryStore')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
@@ -10,6 +12,7 @@ const yaml = require('js-yaml')
 const base64 = require('base-64')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 
+const { expect } = chai
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 
 function complexCuration(name = 'foo') {
@@ -54,7 +57,7 @@ const defaultCurations = {
 }
 
 describe('Curation service pr events', () => {
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore()
   })
 
@@ -67,9 +70,10 @@ describe('Curation service pr events', () => {
     const data = updateSpy.args[0][1].map(curation => curation.data)
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
-    expect(cacheDeleteSpy.calledOnce).to.be.true
-    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
-  })
+    expect(cacheDeleteSpy.calledTwice).to.be.true
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
+      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
+  }).timeout(8000) // First time loading proxyquire('../../../providers/curation/github') is very slow.
 
   it('handles update', async () => {
     const service = createService({})
@@ -80,8 +84,9 @@ describe('Curation service pr events', () => {
     const data = updateSpy.args[0][1].map(curation => curation.data)
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
-    expect(cacheDeleteSpy.calledOnce).to.be.true
-    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
+    expect(cacheDeleteSpy.calledTwice).to.be.true
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
+      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
   })
 
   it('handles merge', async () => {
@@ -104,8 +109,9 @@ describe('Curation service pr events', () => {
     expect(invalidateSpy.args[0][0]).to.be.deep.equalInAnyOrder([{ ...complexCuration().coordinates, revision: '1.0' }])
 
     const cacheDeleteSpy = service.cache.delete
-    expect(cacheDeleteSpy.calledOnce).to.be.true
-    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
+    expect(cacheDeleteSpy.calledTwice).to.be.true
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
+      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
 
     const computeSpy = service.definitionService.computeAndStore
     expect(computeSpy.calledOnce).to.be.true
@@ -119,8 +125,9 @@ describe('Curation service pr events', () => {
     expect(updateSpy.calledOnce).to.be.true
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const cacheDeleteSpy = service.cache.delete
-    expect(cacheDeleteSpy.calledOnce).to.be.true
-    expect(cacheDeleteSpy.args[0][0]).to.eq('cur_npm/npmjs/-/foo/1.0')
+    expect(cacheDeleteSpy.calledTwice).to.be.true
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
+      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
   })
 
   it('handles list', async () => {
