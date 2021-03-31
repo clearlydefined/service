@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith, uniqBy } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -778,6 +778,57 @@ ${this._formatDefinitions(patch.patches)}`
       }]
     }
     return this._addOrUpdate(null, this.github, userInfo, patch)
+  }
+
+  async reprocessMergedCurations(coordinatesList) {
+    const uniqueCoordinatesList = uniqBy(coordinatesList, ['type', 'provider', 'namespace', 'name'])
+    const results = []
+    for (const coordinates of uniqueCoordinatesList) {
+      const result = { coordinates: coordinates.toString() }
+      try {
+        this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationStart', { coordinate: coordinates.toString() })
+        result.contributions = await this._reprocessMergedCuration(coordinates)
+        this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationSuccess', { coordinate: coordinates.toString() })
+      } catch (err) {
+        result.error = err.message
+        this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationFailed', { err, coordinate: coordinates.toString() })
+      }
+      results.push(result)
+    }
+    return results
+  }
+
+  async _reprocessMergedCuration(coordinates) {
+    const contributions = []
+    coordinates = coordinates.asRevisionless()
+    const { curations } = await this.list(coordinates)
+    if (!curations || Object.keys(curations).length === 0) return
+    const processedRevisions = new Set()
+    for (const [curatedCoordinatesStr, curation] of Object.entries(curations)) {
+      const curatedCoordinates = EntityCoordinates.fromString(curatedCoordinatesStr)
+      let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
+      matchingRevisionAndReason = matchingRevisionAndReason.filter(r => !processedRevisions.has(r.version))
+      if (matchingRevisionAndReason.length === 0) {
+        return
+      }
+      this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessSingleRevisionStart', {
+        coordinate: curatedCoordinates.toString(),
+        additionalRevisionCount: matchingRevisionAndReason.length
+      })
+      const info = {
+        type: 'auto',
+        summary: `Reprocess merged curation for ${EntityCoordinates.fromObject(curatedCoordinates).toString()}`,
+        details: `Curated ${get(curation, ['licensed.declared'])} license`,
+        resolution: `Automatically added versions based on merged curation:\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`,
+      }
+      const contribution = await this._addCurationWithMatchingRevisions(curatedCoordinates, curation, info, matchingRevisionAndReason)
+      matchingRevisionAndReason.forEach(r => processedRevisions.add(r.version))
+      contributions.push({
+        coordinates: curatedCoordinates.toString(),
+        contribution: contribution.data.html_url
+      })
+    }
+    return contributions
   }
 }
 
