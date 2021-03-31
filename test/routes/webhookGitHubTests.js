@@ -73,6 +73,8 @@ describe('Webhook Route for GitHub calls', () => {
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.validateContributions.calledOnce).to.be.false
+    expect(service.addByMergedCuration.calledOnce).to.be.true
+    expect(service.addByMergedCuration.calledBefore(service.updateContribution))
     expect(service.updateContribution.calledOnce).to.be.true
     expect(logger.info.calledOnce).to.be.true
     expect(logger.error.notCalled).to.be.true
@@ -115,7 +117,8 @@ function createCurationService() {
   return {
     getContributedCurations: sinon.stub(),
     updateContribution: sinon.stub(),
-    validateContributions: sinon.stub()
+    validateContributions: sinon.stub(),
+    addByMergedCuration: sinon.stub()
   }
 }
 

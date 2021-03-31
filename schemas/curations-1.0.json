@@ -14,12 +14,6 @@
     },
     "revisions": {
       "$ref": "#/definitions/revisions"
-    },
-    "skipMultiversionSearch": {
-      "type": "boolean",
-      "errorMessage": {
-        "type": "skipMultiversionSearch type must be a boolean"
-      }
     }
   },
   "errorMessage": {

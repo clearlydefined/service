@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -100,8 +100,11 @@ class GitHubCurationService {
       base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
     }
     await this.store.updateContribution(data, curations)
+    let toBeCleaned = flatten(curations.map(curation => curation.getCoordinates()))
+    // Should also delete revision less coordinate curation cache
+    toBeCleaned = uniqWith(toBeCleaned.concat(toBeCleaned.map(c => c.asRevisionless())), isEqual)
     await Promise.all(
-      uniq(flatten(curations.map(curation => curation.getCoordinates()))).map(
+      toBeCleaned.map(
         throat(10, async coordinates => this.cache.delete(this._getCacheKey(coordinates)))
       )
     )
@@ -145,7 +148,7 @@ class GitHubCurationService {
     return this._postCommitStatus(sha, number, state, description)
   }
 
-  async _getMatchingLicenseVersions(coordinates, otherCoordinatesList) {
+  async _startMatching(coordinates, otherCoordinatesList) {
     const definition = await this.definitionService.getStored(coordinates)
     const harvest = await this.harvestStore.getAll(coordinates)
     const matches = []
@@ -193,24 +196,19 @@ class GitHubCurationService {
     return revisions
   }
 
-  async _calculateMultiversionCurations(component) {
-    const curationRevisions = get(component, 'revisions')
-    const revision = first(Object.keys(curationRevisions))
-    const componentCoordsWithRevision = { ...component.coordinates, revision }
-    const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
+  async _calculateMatchingRevisionAndReason(coordinates) {
     const revisionlessCoords = coordinates.asRevisionless()
-
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
       .map(stringCoords => EntityCoordinates.fromString(stringCoords))
       .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
 
-    const matchingVersionsAndReasons = await this._getMatchingLicenseVersions(coordinates, filteredCoordinatesList)
+    const matchingRevisionsAndReasons = await this._startMatching(coordinates, filteredCoordinatesList)
     const curations = await this.list(revisionlessCoords)
     const existingRevisions = this._getRevisionsFromCurations(curations)
 
-    const uncuratedMatchingVersions = matchingVersionsAndReasons.filter(versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1)
-    return uncuratedMatchingVersions
+    const uncuratedMatchingRevisions = matchingRevisionsAndReasons.filter(versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1)
+    return uncuratedMatchingRevisions
   }
 
   _updateContent(coordinates, currentContent, newContent) {
@@ -264,9 +262,8 @@ class GitHubCurationService {
     return { name, email, login }
   }
 
-  // return true if patch.skipMultiversionSearch is false and patch has 1 component and 1 revision
-  _isEligibleForMultiversionCuration(patch) {
-    return !patch.skipMultiversionSearch && patch.patches.length == 1 && Object.keys(patch.patches[0].revisions).length == 1
+  _isEligibleForMultiversionCuration(patches) {
+    return patches.length == 1 && Object.keys(patches[0].revisions).length == 1
   }
 
   // Return an array of valid patches that exist
@@ -386,30 +383,63 @@ class GitHubCurationService {
     const { missing } = await this._validateDefinitionsExist(patch.patches)
     if (missing.length > 0)
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
+    return this._addOrUpdate(userGithub, serviceGithub, info, patch)
+  }
 
-    if (this._isEligibleForMultiversionCuration(patch) && this.options.multiversionCurationFeatureFlag) {
-      const component = first(patch.patches)
-      this.logger.info('eligible component for multiversion curation', { coordinates: EntityCoordinates.fromObject(component.coordinates).toString() })
+  async addByMergedCuration(pr) {
+    try {
+      if (!this.options.multiversionCurationFeatureFlag || !pr.merged_at) {
+        return
+      }
+      const patches = await this._getPatchesFromMergedPullRequest(pr)
 
-      const result = await this._calculateMultiversionCurations(component)
-      if (result.length > 0) {
-        this.logger.info('found additional versions to curate', {
-          coordinates: EntityCoordinates.fromObject(component.coordinates).toString(),
-          additionalRevisionCount: result.length
-        })
+      const component = first(patches)
+      const curationRevisions = get(component, 'revisions')
+      const revision = first(Object.keys(curationRevisions))
+      const curatedCoordinates = EntityCoordinates.fromObject({ ...component.coordinates, revision })
 
-        const curationRevisions = get(component, 'revisions')
-        const revision = first(Object.keys(curationRevisions))
-        const license = get(curationRevisions, [revision, 'licensed', 'declared'])
+      const { missing } = await this._validateDefinitionsExist(patches)
+      if (missing.length > 0) {
+        throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
+      }
+      if (!this._isEligibleForMultiversionCuration(patches)) {
+        return
+      }
+      this.logger.info('eligible component for multiversion curation', { coordinates: curatedCoordinates.toString() })
+      const matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
+      if (matchingRevisionAndReason.length === 0) {
+        return
+      }
+      this.logger.info('found additional versions to curate', {
+        coordinates: curatedCoordinates.toString(),
+        additionalRevisionCount: matchingRevisionAndReason.length
+      })
+      const info = {
+        type: 'auto',
+        summary: curatedCoordinates.toString(),
+        details: `Add ${get(curationRevisions, [revision, 'licensed', 'declared'])} license`,
+        resolution: `Automatically added versions based on ${pr.html_url}\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`,
+      }
+      return this._addCurationWithMatchingRevisions(curatedCoordinates, curationRevisions[revision], info, matchingRevisionAndReason)
+    } catch (err) {
+      this.logger.error('GitHubCurationService.addByMergedCuration.addFailed', { error: err, pr: pr.html_url })
+    }
+  }
 
-        const newRevisions = {}
-        result.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
-        component.revisions = merge(curationRevisions, newRevisions)
-        patch.contributionInfo.additional = this._formatMultiversionCuratedRevisions(result)
+  async _getPatchesFromMergedPullRequest(pr) {
+    const curations = await this.getContributedCurations(pr.number, pr.head.sha)
+    const preCurations = await this.getContributedCurations(pr.number, pr.base.sha)
+    for (const curation of curations) {
+      const preCuration = preCurations.find(x => x.path === curation.path)
+      for (const revision of Object.keys(curation.data.revisions)) {
+        const current = get(curation, ['data', 'revisions', revision])
+        const previous = get(preCuration, ['data', 'revisions', revision])
+        if (current == undefined || isEqual(current, previous)) {
+          unset(curation, ['data', 'revisions', revision])
+        }
       }
     }
-
-    return this._addOrUpdate(userGithub, serviceGithub, info, patch)
+    return curations.map(c => c.data)
   }
 
   async _addOrUpdate(userGithub, serviceGithub, info, patch) {
@@ -440,27 +470,11 @@ class GitHubCurationService {
       body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
     }
     await serviceGithub.issues.createComment(comment)
-    await this._cleanCache(patch.patches)
     return result
   }
 
-  async _cleanCache(patches) {
-    patches.forEach(async component => {
-      const revisionlessCoords = EntityCoordinates.fromObject(component.coordinates)
-      const revisionlessCacheKey = this._getCacheKey(revisionlessCoords)
-      await this.cache.delete(revisionlessCacheKey)
-
-      Object.keys(component.revisions).forEach(async revision => {
-        const componentCoordsWithRevision = { ...component.coordinates, revision }
-        const coordinates = EntityCoordinates.fromObject(componentCoordsWithRevision)
-        const cacheKey = this._getCacheKey(coordinates)
-        await this.cache.delete(cacheKey)
-      })
-    })
-  }
-
   _generateContributionDescription(patch) {
-    const { type, details, summary, resolution, additional } = patch.contributionInfo
+    const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     return `
 **Type:** ${Type}
@@ -475,9 +489,7 @@ ${details}
 ${resolution}
 
 **Affected definitions**:
-${this._formatDefinitions(patch.patches)}
-
-${additional || ''}`
+${this._formatDefinitions(patch.patches)}`
   }
 
   _formatDefinitions(definitions) {
@@ -490,7 +502,7 @@ ${additional || ''}`
   }
 
   _formatMultiversionCuratedRevisions(multiversionSearchResults) {
-    let output = '**Automatically added versions:**\n'
+    let output = ''
     multiversionSearchResults
       .map(result => result.version)
       .sort((a, b) => {
@@ -592,14 +604,16 @@ ${additional || ''}`
   async getContributedCurations(number, sha) {
     const prFiles = await this._getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
-    return Promise.all(
+    const result = await Promise.all(
       curationFilenames.map(
         throat(10, async path => {
           const content = await this._getContent(sha, path)
+          if (!content) return
           return new Curation(content, path)
         })
       )
     )
+    return result.filter(i => i)
   }
 
   async apply(coordinates, curationSpec, definition) {
@@ -624,7 +638,11 @@ ${additional || ''}`
       const response = await this.github.repos.getContent({ owner, repo, ref, path })
       return Buffer.from(response.data.content, 'base64').toString('utf8')
     } catch (error) {
-      this.logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}`)
+      if (error.code === 404) {
+        this.logger.info(`The ${owner}/${repo}/${ref}/${path} file is not found.`)
+      } else {
+        this.logger.info(`Failed to get content for ${owner}/${repo}/${ref}/${path}.`)
+      }
     }
   }
 
@@ -745,6 +763,21 @@ ${additional || ''}`
     return `cur_${EntityCoordinates.fromObject(coordinates)
       .toString()
       .toLowerCase()}`
+  }
+
+  async _addCurationWithMatchingRevisions(coordinates, curation, info, matchingRevisionAndReason) {
+    const license = get(curation, 'licensed.declared')
+    const newRevisions = {}
+    matchingRevisionAndReason.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
+    const userInfo = await this._getUserInfo(this.github)
+    const patch = {
+      contributionInfo: info,
+      patches: [{
+        coordinates: coordinates.asRevisionless(),
+        revisions: newRevisions
+      }]
+    }
+    return this._addOrUpdate(null, this.github, userInfo, patch)
   }
 }
 
