@@ -37,6 +37,8 @@ describe('Curation queue processing', () => {
 
     expect(curationService.getContributedCurations.calledOnce).to.be.false
     expect(curationService.validateContributions.calledOnce).to.be.false
+    expect(curationService.addByMergedCuration.calledOnce).to.be.true
+    expect(curationService.addByMergedCuration.calledBefore(curationService.updateContribution))
     expect(curationService.updateContribution.calledOnce).to.be.true
     expect(logger.info.calledOnce).to.be.true
     expect(logger.info.getCall(0).args[0]).to.eq('Handled GitHub event "closed" for PR#1')
@@ -77,7 +79,8 @@ function setup({ action, merged }) {
   const curationService = {
     getContributedCurations: sinon.stub(),
     validateContributions: sinon.stub(),
-    updateContribution: sinon.stub()
+    updateContribution: sinon.stub(),
+    addByMergedCuration: sinon.stub()
   }
   const logger = {
     info: sinon.stub(),

@@ -18,6 +18,7 @@ async function work(once) {
         break
       }
       case 'closed': {
+        await curationService.addByMergedCuration(pr)
         await curationService.updateContribution(pr)
         break
       }
