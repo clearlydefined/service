@@ -555,6 +555,7 @@ components:
           - debian
           - github
           - mavencentral
+          - mavengoogle
           - npmjs
           - nuget
           - packagist

@@ -39,6 +39,7 @@
         "github",
         "packagist",
         "mavencentral",
+        "mavengoogle",
         "nuget",
         "rubygems",
         "pypi",
