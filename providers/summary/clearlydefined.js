@@ -135,17 +135,19 @@ class ClearlyDescribedSummarizer {
 
   getMavenUrls(coordinates) {
     var urls = { download: "", registry: "" }
-    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
     switch (coordinates.provider) {
       case 'mavencentral':
+        const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
         urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
         urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
         break
 
+      //For Google's Maven Repo, the artifacts do not always have the same format and sometimes are missing. We are simply providing link for the package info and let the user
+      //decide on what to download
       case 'mavengoogle':
-        urls.registry = `https://maven.google.com/web/index.html#${coordinates.namespace}:${coordinates.name}`
-        urls.download = `https://dl.google.com/android/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.aar`
+        urls.registry = `https://maven.google.com/web/index.html#${coordinates.namespace}:${coordinates.name}:${coordinates.revision}`
+        urls.download = `https://maven.google.com/web/index.html#${coordinates.namespace}:${coordinates.name}:${coordinates.revision}`
         break
 
       default:
