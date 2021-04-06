@@ -815,7 +815,8 @@ ${this._formatDefinitions(patch.patches)}`
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
       matchingRevisionAndReason = matchingRevisionAndReason.filter(r => !processedRevisions.has(r.version))
       if (matchingRevisionAndReason.length === 0) {
-        return
+        contributions.push({ coordinates: curatedCoordinates.toString() })
+        continue
       }
       this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessSingleRevisionStart', {
         coordinate: curatedCoordinates.toString(),
@@ -831,7 +832,7 @@ ${this._formatDefinitions(patch.patches)}`
       matchingRevisionAndReason.forEach(r => processedRevisions.add(r.version))
       contributions.push({
         coordinates: curatedCoordinates.toString(),
-        contribution: contribution.data.html_url
+        contribution: get(contribution, 'data.html_url')
       })
     }
     return contributions
