@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith, uniqBy } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -767,6 +767,9 @@ ${this._formatDefinitions(patch.patches)}`
 
   async _addCurationWithMatchingRevisions(coordinates, curation, info, matchingRevisionAndReason) {
     const license = get(curation, 'licensed.declared')
+    if (!license) {
+      return
+    }
     const newRevisions = {}
     matchingRevisionAndReason.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
     const userInfo = await this._getUserInfo(this.github)
@@ -781,7 +784,10 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async reprocessMergedCurations(coordinatesList) {
-    const uniqueCoordinatesList = uniqBy(coordinatesList, ['type', 'provider', 'namespace', 'name'])
+    const uniqueCoordinatesList = uniqWith(
+      coordinatesList,
+      (a, b) => a.type === b.type && a.provider === b.provider && a.namespace === b.namespace && a.name === b.name
+    )
     const results = []
     for (const coordinates of uniqueCoordinatesList) {
       const result = { coordinates: coordinates.toString() }
@@ -809,7 +815,8 @@ ${this._formatDefinitions(patch.patches)}`
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
       matchingRevisionAndReason = matchingRevisionAndReason.filter(r => !processedRevisions.has(r.version))
       if (matchingRevisionAndReason.length === 0) {
-        return
+        contributions.push({ coordinates: curatedCoordinates.toString() })
+        continue
       }
       this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessSingleRevisionStart', {
         coordinate: curatedCoordinates.toString(),
@@ -825,7 +832,7 @@ ${this._formatDefinitions(patch.patches)}`
       matchingRevisionAndReason.forEach(r => processedRevisions.add(r.version))
       contributions.push({
         coordinates: curatedCoordinates.toString(),
-        contribution: contribution.data.html_url
+        contribution: get(contribution, 'data.html_url')
       })
     }
     return contributions
