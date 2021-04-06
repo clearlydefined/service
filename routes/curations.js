@@ -101,6 +101,14 @@ async function syncAllContributions(request, response) {
   response.send({ status: 'OK' })
 }
 
+router.post('/reprocess', permissionsCheck('curate'), asyncMiddleware(reprocessMergedCurations))
+
+async function reprocessMergedCurations(request, respond) {
+  const coordinatesArray = request.body.map(EntityCoordinates.fromString)
+  const result = await curationService.reprocessMergedCurations(coordinatesArray)
+  respond.status(200).send(result)
+}
+
 let curationService
 let logger
 
