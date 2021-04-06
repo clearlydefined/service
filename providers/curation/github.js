@@ -767,6 +767,9 @@ ${this._formatDefinitions(patch.patches)}`
 
   async _addCurationWithMatchingRevisions(coordinates, curation, info, matchingRevisionAndReason) {
     const license = get(curation, 'licensed.declared')
+    if (!license) {
+      return
+    }
     const newRevisions = {}
     matchingRevisionAndReason.forEach(versionAndReason => { newRevisions[versionAndReason.version] = { 'licensed': { 'declared': license } } })
     const userInfo = await this._getUserInfo(this.github)
