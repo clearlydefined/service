@@ -50,7 +50,7 @@
       "request": "attach",
       "name": "Docker: Attach to Node",
       "remoteRoot": "/opt/service",
-      "port": 9229
+      "port": 9230
     }
   ]
 }
