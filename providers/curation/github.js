@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith, uniqBy } = require('lodash')
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = require('lodash')
 const moment = require('moment')
 const geit = require('geit')
 const yaml = require('js-yaml')
@@ -781,7 +781,10 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async reprocessMergedCurations(coordinatesList) {
-    const uniqueCoordinatesList = uniqBy(coordinatesList, ['type', 'provider', 'namespace', 'name'])
+    const uniqueCoordinatesList = uniqWith(
+      coordinatesList,
+      (a, b) => a.type === b.type && a.provider === b.provider && a.namespace === b.namespace && a.name === b.name
+    )
     const results = []
     for (const coordinates of uniqueCoordinatesList) {
       const result = { coordinates: coordinates.toString() }
