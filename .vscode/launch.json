@@ -44,6 +44,13 @@
       ],
       "cwd": "${workspaceRoot}",
       "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Docker: Attach to Node",
+      "remoteRoot": "/opt/service",
+      "port": 9230
     }
   ]
 }
