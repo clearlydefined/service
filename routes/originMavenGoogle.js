@@ -4,6 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
+const { promisify } = require('util')
 const parseString = promisify(require('xml2js').parseString)
 const { uniq } = require('lodash')
 

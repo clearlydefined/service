@@ -134,15 +134,10 @@ class ClearlyDescribedSummarizer {
   }
 
   getMavenUrls(coordinates) {
-    var urls = { download: "", registry: "" }
+    var urls = { download: '', registry: '' }
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
     switch (coordinates.provider) {
-      case 'mavencentral':
-        const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
-        urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
-        urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
-        break
-
       //For Google's Maven Repo, the artifacts do not always have the same format and sometimes are missing. We are simply providing link for the package info and let the user
       //decide on what to download
       case 'mavengoogle':
@@ -151,6 +146,8 @@ class ClearlyDescribedSummarizer {
         break
 
       default:
+        urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     }
 
     return urls
@@ -200,20 +197,19 @@ class ClearlyDescribedSummarizer {
   }
 
   addSourceArchiveData(result, data, coordinates) {
-    const urls = this.getMavenUrls(coordinates)
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
       result,
       'described.urls.registry',
-      urls.registry
+      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      urls.download
+      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
   }
 
