@@ -21,10 +21,16 @@ router.get(
       const result = answer.response.docs.map(item => item.v)
       return response.status(200).send(uniq(result))
     } catch (error) {
-      if (error.code === 404) return response.status(200).send([])
-      // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
-      return response.status(200).send([])
+      return response.status(error.code).send('Unable to find requested package name or revision')
     }
+  })
+)
+
+// Search
+router.get(
+  '/:group/:artifact?',
+  asyncMiddleware(async (request, response) => {
+    return response.status(404).send('Search not supported. Please specify package name and revision')
   })
 )
 
