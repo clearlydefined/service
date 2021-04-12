@@ -6,7 +6,8 @@ const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { promisify } = require('util')
 const parseString = promisify(require('xml2js').parseString)
-const { uniq } = require('lodash')
+
+//Example URL to request XML file with group ID "android.arch.navigation": https://dl.google.com/android/maven2/android/arch/navigation/group-index.xml
 
 // Get versions
 router.get(
@@ -15,13 +16,14 @@ router.get(
     try {
       const { group, artifact } = request.params
       const groupFullPath = `${group.replace(/\./g, '/')}`
-      const url = `https://dl.google.com/android/maven2/"${groupFullPath}"/"${artifact}"/group-index.xml`
+      const url = `https://dl.google.com/android/maven2/${groupFullPath}/group-index.xml`
       const answerXml = await requestPromise({ url, method: 'GET', json: false })
-      const answer = await parseString(answerXml)
-      const result = answer.response.docs.map(item => item.v)
-      return response.status(200).send(uniq(result))
+      const answerJson = await parseString(answerXml)
+      const result = JSON.parse(JSON.stringify(answerJson))
+      const revisions = JSON.stringify(result[`${group}`][`${artifact}`][0]["$"]["versions"])
+      return response.status(200).send(JSON.parse(revisions).split(","))
     } catch (error) {
-      return response.status(error.code).send('Unable to find requested package name or revision')
+      return response.status(404).send('No revisions found')
     }
   })
 )
@@ -30,7 +32,7 @@ router.get(
 router.get(
   '/:group/:artifact?',
   asyncMiddleware(async (request, response) => {
-    return response.status(404).send('Search not supported. Please specify package name and revision')
+    return response.status(404).send('Search not supported. Please specify group and artifact IDs.')
   })
 )
 
