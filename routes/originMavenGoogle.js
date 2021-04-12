@@ -20,8 +20,8 @@ router.get(
       const answerXml = await requestPromise({ url, method: 'GET', json: false })
       const answerJson = await parseString(answerXml)
       const result = JSON.parse(JSON.stringify(answerJson))
-      const revisions = JSON.stringify(result[`${group}`][`${artifact}`][0]["$"]["versions"])
-      return response.status(200).send(JSON.parse(revisions).split(","))
+      const revisions = JSON.stringify(result[`${group}`][`${artifact}`][0]['$']['versions'])
+      return response.status(200).send(JSON.parse(revisions).split(','))
     } catch (error) {
       return response.status(404).send('No revisions found')
     }
