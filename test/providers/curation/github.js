@@ -225,7 +225,7 @@ describe('Github Curation Service', () => {
       const licenseMetadataMatch = {
         policy: 'metadata match',
         propPath: 'registryData.manifest.license',
-        value: 'LICENSE METADATA'
+        value: ['LICENSE METADATA']
       }
       processStub.onFirstCall().returns({ isMatching: true, match: [licenseFileMatch] })
       processStub.onSecondCall().returns({ isMatching: true, match: [licenseMetadataMatch] })
@@ -276,10 +276,10 @@ describe('Github Curation Service', () => {
         {
           version: '1.2', matchingProperties: [{
             propPath: 'registryData.manifest.license',
-            value: 'LICENSE METADATA'
+            value: ['LICENSE METADATA']
           }]
         }]
-      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
+      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: ["LICENSE METADATA"]'
       const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
       expect(description).to.be.deep.equal(expectedDescription)
 
