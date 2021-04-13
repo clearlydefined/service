@@ -201,7 +201,7 @@ class GitHubCurationService {
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
       .map(stringCoords => EntityCoordinates.fromString(stringCoords))
-      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
+      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision && coords.revision !== 'undefined')
 
     const matchingRevisionsAndReasons = await this._startMatching(coordinates, filteredCoordinatesList)
     const curations = await this.list(revisionlessCoords)
