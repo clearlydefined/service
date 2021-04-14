@@ -201,7 +201,7 @@ class GitHubCurationService {
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
       .map(stringCoords => EntityCoordinates.fromString(stringCoords))
-      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
+      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision && coords.revision !== 'undefined')
 
     const matchingRevisionsAndReasons = await this._startMatching(coordinates, filteredCoordinatesList)
     const curations = await this.list(revisionlessCoords)
@@ -538,8 +538,8 @@ ${this._formatDefinitions(patch.patches)}`
 
     if (Object.keys(matchingMetadata).length > 0) {
       const metadataText = Object.keys(matchingMetadata).length == 1
-        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: '${matchingMetadata[metadataProp]}'`)
-        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`)
+        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`)
       output += `\nMatching metadata: ${metadataText}`
     }
     return output
