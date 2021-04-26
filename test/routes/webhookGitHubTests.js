@@ -107,6 +107,26 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.info.calledOnce).to.be.true
     expect(logger.error.notCalled).to.be.true
   })
+
+  it('validates the curation when a PR is opened', async () => {
+    const request = createRequest('opened')
+    const response = httpMocks.createResponse()
+    const logger = createLogger()
+    const service = createCurationService()
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    await router._handlePost(request, response)
+    expect(service.validateContributions.calledOnce).to.be.true
+  })
+
+  it('validates the curation when a PR is reopened', async () => {
+    const request = createRequest('reopened')
+    const response = httpMocks.createResponse()
+    const logger = createLogger()
+    const service = createCurationService()
+    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    await router._handlePost(request, response)
+    expect(service.validateContributions.calledOnce).to.be.true
+  })
 })
 
 function createLogger() {
