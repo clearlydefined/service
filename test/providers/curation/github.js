@@ -11,6 +11,7 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+const { invalid } = require('moment')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -54,7 +55,7 @@ describe('Github Curation Service', () => {
     const curations = await service.getContributedCurations(42, 'testBranch')
     service.logger = { // intercept and verify invalid contribution
       error: (description) => {
-        expect(description).to.be.eq('Invalid curations: ')
+        expect(description).to.be.eq('Invalid curations: curations/sdfdsf/npmjs/test.yaml')
       }
     }
     await service.validateContributions('42', 'testBranch', curations)
@@ -539,13 +540,16 @@ function createCuration(curation = simpleCuration) {
 }
 
 function createInvalidCuration() {
-  return new Curation({
+  invalidCuration = new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
       name: 'test'
     }
   })
+
+  invalidCuration.path = 'curations/sdfdsf/npmjs/test.yaml'
+  return invalidCuration
 }
 
 function setup(definition, coordinateSpec, curation) {
