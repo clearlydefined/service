@@ -11,7 +11,6 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
-const { invalid } = require('moment')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -49,9 +48,12 @@ describe('Github Curation Service', () => {
     })
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
+    sinon.stub(service, '_postErrorsComment').returns(Promise.resolve())
+    let invalid_curation = createInvalidCuration()
     sinon.stub(service, 'getContributedCurations').callsFake(() => {
-      return [createInvalidCuration()]
+      return [invalid_curation]
     })
+
     const curations = await service.getContributedCurations(42, 'testBranch')
     service.logger = { // intercept and verify invalid contribution
       error: (description) => {
@@ -62,6 +64,8 @@ describe('Github Curation Service', () => {
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
+    expect(service._postErrorsComment.calledOnce).to.be.true
+    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq('We discovered some errors in this curation when validating it:\n\nThis is an error')
   })
 
   it('merges simple changes', async () => {
@@ -540,7 +544,7 @@ function createCuration(curation = simpleCuration) {
 }
 
 function createInvalidCuration() {
-  invalidCuration = new Curation({
+  let invalidCuration = new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
@@ -549,6 +553,12 @@ function createInvalidCuration() {
   })
 
   invalidCuration.path = 'curations/sdfdsf/npmjs/test.yaml'
+  invalidCuration.errors = [
+    {
+      message: 'Invalid license in curation',
+      error: 'This is an error'
+    }
+  ]
   return invalidCuration
 }
 

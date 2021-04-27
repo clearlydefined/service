@@ -143,14 +143,14 @@ class GitHubCurationService {
     if (invalidCurations.length) {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
-      this.logger.error(description, invalidCurations)
 
-      let error_string = 'We discovered some errors in this curation when validating it:\n'
+      let error_string = 'We discovered some errors in this curation when validating it:\n\n'
 
       for (const invalid_curation of invalidCurations) {
-        error_string += invalid_curation.errors.map(e => e.error.message).join('\n')
+        for (const err of invalid_curation.errors) {
+          error_string += err.error
+        }
       }
-
       await this._postErrorsComment(number, error_string)
     }
     return this._postCommitStatus(sha, number, state, description)
