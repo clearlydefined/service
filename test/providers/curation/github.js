@@ -49,9 +49,8 @@ describe('Github Curation Service', () => {
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
     sinon.stub(service, '_postErrorsComment').returns(Promise.resolve())
-    let invalid_curation = createInvalidCuration()
     sinon.stub(service, 'getContributedCurations').callsFake(() => {
-      return [invalid_curation]
+      return [createInvalidCuration()]
     })
 
     const curations = await service.getContributedCurations(42, 'testBranch')
