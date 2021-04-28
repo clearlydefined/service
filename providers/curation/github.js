@@ -149,7 +149,7 @@ class GitHubCurationService {
 
       for (const invalid_curation of invalidCurations) {
         for (const err of invalid_curation.errors) {
-          error_string += err.error
+          error_string += `${err.error}\n`
         }
       }
       await this._postErrorsComment(number, error_string)

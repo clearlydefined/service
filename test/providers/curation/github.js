@@ -64,7 +64,7 @@ describe('Github Curation Service', () => {
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
     expect(service._postErrorsComment.calledOnce).to.be.true
-    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq('We discovered some errors in this curation when validating it:\n\nThis is an error')
+    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq('We discovered some errors in this curation when validating it:\n\nThis is an error\n')
   })
 
   it('merges simple changes', async () => {
