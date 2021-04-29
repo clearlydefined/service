@@ -133,20 +133,40 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
-  addMavenData(result, data, coordinates) {
+  getMavenUrls(coordinates) {
+    var urls = { download: '', registry: '' }
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
+
+    switch (coordinates.provider) {
+      //For Google's Maven Repo, the artifacts do not always have the same format and sometimes are missing. We are simply providing link for the package info and let the user
+      //decide on what to download
+      case 'mavengoogle':
+        urls.registry = `https://maven.google.com/web/index.html#${coordinates.namespace}:${coordinates.name}:${coordinates.revision}`
+        urls.download = `https://maven.google.com/web/index.html#${coordinates.namespace}:${coordinates.name}:${coordinates.revision}`
+        break
+
+      default:
+        urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+    }
+
+    return urls
+  }
+
+  addMavenData(result, data, coordinates) {
+    const urls = this.getMavenUrls(coordinates)
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(
       result,
       'described.urls.registry',
-      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
+      urls.registry
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+      urls.download
     )
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
@@ -177,6 +197,7 @@ class ClearlyDescribedSummarizer {
   }
 
   addSourceArchiveData(result, data, coordinates) {
+
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(

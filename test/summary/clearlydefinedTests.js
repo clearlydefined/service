@@ -532,6 +532,70 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addMavenData', () => {
+  
+  const testCoordinatesMavenGoogle = EntityCoordinates.fromString('maven/mavenGoogle/io.clearlydefined/test/1.0')
+  const expectedUrls = {
+    download: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
+    registry: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
+    version: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0/1.0',
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
+  it('should set declared license from manifest licenseUrl', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://www.apache.org/licenses/LICENSE-2.0': 'Apache-2.0',
+      'See license': null,
+      NOASSERTION: null,
+      '': null,
+      ' ': null
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addMavenData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinatesMavenGoogle
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+          licensed: { declared: data[url] }
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+
+  it('should set declared license from manifest license name', () => {
+    const data = new Map([
+      [[{ license: { name: 'MIT' } }], 'MIT'],
+      [[{ license: { name: 'MIT License' } }], 'MIT'],
+      [[{ license: { name: 'Apache-2.0' } }], 'Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Apache-2.0' } }], 'MIT OR Apache-2.0'],
+      [[{ license: { name: 'MIT' } }, { license: { name: 'Garbage' } }], 'MIT OR NOASSERTION'],
+      [[{ license: { name: 'My favorite license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'See license' } }], 'NOASSERTION'],
+      [[{ license: { name: 'NOASSERTION' } }], 'NOASSERTION'],
+      [[{ license: { name: '' } }], null],
+      [[{ license: { name: ' ' } }], null]
+    ])
+
+    data.forEach((expected, licenses) => {
+      let result = {}
+      summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinatesMavenGoogle)
+      if (expected)
+        assert.deepEqual(result, {
+          described: {
+            urls: expectedUrls
+          },
+          licensed: { declared: expected }
+        })
+      else assert.deepEqual(result, expectedResult)
+    })
+  })
+})
+
 describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
   const expectedUrls = {
     download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',

@@ -246,6 +246,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 ## Provider Registry
 
 - central.maven.org
+- maven.google
 - github.com
 - cocoapods.org
 - crates.io
