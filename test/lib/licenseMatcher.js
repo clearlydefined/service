@@ -471,6 +471,15 @@ describe('licenseMatcher.js', () => {
         expect(result.match).to.have.lengthOf(0)
         expect(result.mismatch).to.have.lengthOf(0)
       })
+
+      it('Should return empty match and mismatch when manifest.licenseExpression is empty and manifest.licenseUrl including aka.ms/deprecateLicenseUrl', () => {
+        const deprecatedLicenseUrl = 'https://aka.ms/deprecateLicenseUrl'
+        const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, deprecatedLicenseUrl)
+        const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, deprecatedLicenseUrl)
+        const result = harvestLicenseMatchPolicy.compare(source, target)
+        expect(result.match).to.have.lengthOf(0)
+        expect(result.mismatch).to.have.lengthOf(0)
+      })
     })
 
     describe('Match npm package', () => {

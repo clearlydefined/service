@@ -29,6 +29,7 @@ async function handleGitHubCall(request, response) {
   try {
     switch (body.action) {
       case 'opened':
+      case 'reopened':
       case 'synchronize': {
         const curations = await curationService.getContributedCurations(pr.number, pr.head.sha)
         await curationService.validateContributions(pr.number, pr.head.sha, curations)

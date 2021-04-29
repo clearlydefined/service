@@ -48,19 +48,23 @@ describe('Github Curation Service', () => {
     })
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
+    sinon.stub(service, '_postErrorsComment').returns(Promise.resolve())
     sinon.stub(service, 'getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
+
     const curations = await service.getContributedCurations(42, 'testBranch')
     service.logger = { // intercept and verify invalid contribution
       error: (description) => {
-        expect(description).to.be.eq('Invalid curations: ')
+        expect(description).to.be.eq('Invalid curations: curations/sdfdsf/npmjs/test.yaml')
       }
     }
     await service.validateContributions('42', 'testBranch', curations)
     expect(service._postCommitStatus.calledTwice).to.be.true
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
+    expect(service._postErrorsComment.calledOnce).to.be.true
+    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq('We discovered some errors in this curation when validating it:\n\nThis is an error\n')
   })
 
   it('merges simple changes', async () => {
@@ -225,7 +229,7 @@ describe('Github Curation Service', () => {
       const licenseMetadataMatch = {
         policy: 'metadata match',
         propPath: 'registryData.manifest.license',
-        value: 'LICENSE METADATA'
+        value: ['LICENSE METADATA']
       }
       processStub.onFirstCall().returns({ isMatching: true, match: [licenseFileMatch] })
       processStub.onSecondCall().returns({ isMatching: true, match: [licenseMetadataMatch] })
@@ -276,10 +280,10 @@ describe('Github Curation Service', () => {
         {
           version: '1.2', matchingProperties: [{
             propPath: 'registryData.manifest.license',
-            value: 'LICENSE METADATA'
+            value: ['LICENSE METADATA']
           }]
         }]
-      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: \'LICENSE METADATA\''
+      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: ["LICENSE METADATA"]'
       const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
       expect(description).to.be.deep.equal(expectedDescription)
 
@@ -539,13 +543,22 @@ function createCuration(curation = simpleCuration) {
 }
 
 function createInvalidCuration() {
-  return new Curation({
+  let invalidCuration = new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',
       name: 'test'
     }
   })
+
+  invalidCuration.path = 'curations/sdfdsf/npmjs/test.yaml'
+  invalidCuration.errors = [
+    {
+      message: 'Invalid license in curation',
+      error: 'This is an error'
+    }
+  ]
+  return invalidCuration
 }
 
 function setup(definition, coordinateSpec, curation) {

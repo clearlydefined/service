@@ -144,6 +144,15 @@ class GitHubCurationService {
       state = 'error'
       description = `Invalid curations: ${invalidCurations.map(x => x.path).join(', ')}`
       this.logger.error(description, invalidCurations)
+
+      let error_string = 'We discovered some errors in this curation when validating it:\n\n'
+
+      for (const invalid_curation of invalidCurations) {
+        for (const err of invalid_curation.errors) {
+          error_string += `${err.error}\n`
+        }
+      }
+      await this._postErrorsComment(number, error_string)
     }
     return this._postCommitStatus(sha, number, state, description)
   }
@@ -201,7 +210,7 @@ class GitHubCurationService {
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
       .map(stringCoords => EntityCoordinates.fromString(stringCoords))
-      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision)
+      .filter(coords => coordinates.name === coords.name && coordinates.revision !== coords.revision && coords.revision !== 'undefined')
 
     const matchingRevisionsAndReasons = await this._startMatching(coordinates, filteredCoordinatesList)
     const curations = await this.list(revisionlessCoords)
@@ -538,8 +547,8 @@ ${this._formatDefinitions(patch.patches)}`
 
     if (Object.keys(matchingMetadata).length > 0) {
       const metadataText = Object.keys(matchingMetadata).length == 1
-        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: '${matchingMetadata[metadataProp]}'`)
-        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: '${matchingMetadata[metadataProp]}'`)
+        ? Object.keys(matchingMetadata).map(metadataProp => `${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`)
+        : Object.keys(matchingMetadata).map(metadataProp => `\n- ${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`)
       output += `\nMatching metadata: ${metadataText}`
     }
     return output
@@ -661,6 +670,20 @@ ${this._formatDefinitions(patch.patches)}`
       })
     } catch (error) {
       this.logger.info(`Failed to create status for PR #${number}`)
+    }
+  }
+
+  async _postErrorsComment(number, body) {
+    const { owner, repo } = this.options
+    try {
+      return this.github.issues.createComment({
+        owner,
+        repo,
+        number,
+        body
+      })
+    } catch (error) {
+      this.logger.info(`Failed to comment on PR #${number}: ${error}`)
     }
   }
 
