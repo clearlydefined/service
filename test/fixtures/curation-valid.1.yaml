@@ -20,6 +20,11 @@ revisions:
         license: "MIT AND (LGPL-2.1-or-later OR BSD-3-Clause)"
         attributions:
           - "attribution3"
+      - path: "/foo/snoopy"
+        license: "PSF-2.0"
+        attributions:
+          - "attribution3"
+ 
     described:
       sourceLocation:
         type: "git"
