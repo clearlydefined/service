@@ -1,0 +1,46 @@
+coordinates:
+  name: lodash
+  provider: npmjs
+  type: npm
+  namespace: "-"
+revisions:
+  4.17.4:
+    files:
+      - path: "/foo"
+        license: "MIT"
+        attributions:
+          - "attribution1"
+          - "attribution2"
+      - path: "/bar"
+        license: "GPL-2.0-only"
+        attributions:
+          - "attribution3"
+          - "attribution4"
+      - path: "/foo/bar"
+        license: "MPL-1.1 OR LGPL-2.1-only OR GPL-2.0-only"
+        attributions:
+          - "attribution3"
+      - path: "/foo/snoopy"
+        license: "PSF-2.0"
+        attributions:
+          - "attribution3"
+ 
+    described:
+      sourceLocation:
+        type: "git"
+        provider: "github"
+        namespace: "clearlydefined"
+        name: "testrepo"
+        revision: "ba6ed320e350f8b2eae4eb9683302ddac0ddf66f"
+        url: "https://github.com/clearlydefined/testrepo"
+      projectWebsite: "www.foo.bar.com"
+      issueTracker: "www.issueTracker.org"
+      releaseDate: "2018-01-18"
+      facets:
+        tests:
+          - "foo"
+          - "bar"
+        doc:
+          - "foo"
+    licensed:
+      declared: "MIT"
