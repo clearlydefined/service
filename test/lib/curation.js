@@ -117,6 +117,13 @@ describe('Curations', () => {
     expect(curation.errors.length).to.not.be.ok
   })
 
+  it('should identify valid curations2', () => {
+    const content = getFixture('curation-valid.2.yaml')
+    const curation = new Curation(content)
+    expect(curation.isValid).to.be.true
+    expect(curation.errors.length).to.not.be.ok
+  })
+
   it('should also accept yaml data objects', () => {
     const data = yaml.safeLoad('foo: bar')
     const curation = new Curation(data)
