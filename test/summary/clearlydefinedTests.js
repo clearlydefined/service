@@ -533,7 +533,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 })
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
-  
+
   const testCoordinatesMavenGoogle = EntityCoordinates.fromString('maven/mavenGoogle/io.clearlydefined/test/1.0')
   const expectedUrls = {
     download: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
@@ -641,4 +641,75 @@ describe('ClearlyDescribedSummarizer addDebSrcData', () => {
     summarizer.addDebSrcData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debsrcTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
+})
+
+describe('ClearlyDescribedSummarizer addGitData', () => {
+  const testCoordinatesGit = EntityCoordinates.fromString('git/github/test_namespace/test/71eee1980b')
+
+  const expectedUrls = {
+    download: 'https://github.com/test_namespace/test/archive/71eee1980b.zip',
+    registry: 'https://github.com/test_namespace/test',
+    version: 'https://github.com/test_namespace/test/tree/71eee1980b'
+  }
+  const expectedResult = { described: { urls: expectedUrls } }
+
+  it('should set the correct urls', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addGitData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinatesGit
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+
+  it('describes releaseDate from data', () => {
+    let result = {}
+    summarizer.addGitData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGit)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
+})
+
+describe('ClearlyDescribedSummarizer addGitData', () => {
+  const testCoordinatesGitLab = EntityCoordinates.fromString('git/gitlab/test_namespace/test/71eee1980b')
+
+  const expectedUrls = {
+    download: 'https://gitlab.com/test_namespace/test/-/archive/71eee1980b/test-71eee1980b.zip',
+    registry: 'https://gitlab.com/test_namespace/test',
+    version: 'https://gitlab.com/test_namespace/test/-/tree/71eee1980b'
+  }
+
+  const expectedResult = { described: { urls: expectedUrls } }
+
+  it('should set the correct urls', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addGitData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinatesGitLab
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+
+
 })

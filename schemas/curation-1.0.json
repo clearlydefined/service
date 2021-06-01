@@ -48,6 +48,7 @@
         "cocoapods",
         "cratesio",
         "github",
+        "gitlab",
         "mavencentral",
         "mavengoogle",
         "packagist",
@@ -133,7 +134,12 @@
     },
     "sourceLocation": {
       "type": "object",
-      "required": ["type", "provider", "name", "revision"],
+      "required": [
+        "type",
+        "provider",
+        "name",
+        "revision"
+      ],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -186,7 +192,9 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["path"],
+        "required": [
+          "path"
+        ],
         "additionalProperties": false,
         "properties": {
           "path": {

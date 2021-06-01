@@ -372,18 +372,39 @@ class ClearlyDescribedSummarizer {
     }
   }
 
+  getGitUrls(coordinates) {
+    var urls = { download: '', registry: '', version: '' }
+
+    switch (coordinates.provider) {
+      case 'gitlab':
+        urls.registry = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}`
+        urls.download = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}/-/archive/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.zip`
+        urls.version = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}/-/tree/${coordinates.revision}`
+        break
+
+      default:
+        urls.registry = `https://github.com/${coordinates.namespace}/${coordinates.name}`
+        urls.download = `https://github.com/${coordinates.namespace}/${coordinates.name}/archive/${coordinates.revision}.zip`
+        urls.version = `https://github.com/${coordinates.namespace}/${coordinates.name}/tree/${coordinates.revision}`
+    }
+
+    return urls
+  }
+
   addGitData(result, data, coordinates) {
+    const urls = this.getGitUrls(coordinates)
+
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.urls.registry', `https://github.com/${coordinates.namespace}/${coordinates.name}`)
+    setIfValue(result, 'described.urls.registry', urls.registry)
     setIfValue(
       result,
       'described.urls.version',
-      `${get(result, 'described.urls.registry')}/tree/${coordinates.revision}`
+      urls.version
     )
     setIfValue(
       result,
       'described.urls.download',
-      `${get(result, 'described.urls.registry')}/archive/${coordinates.revision}.zip`
+      urls.download
     )
   }
 

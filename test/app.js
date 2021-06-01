@@ -3,6 +3,7 @@
 
 const proxyquire = require('proxyquire')
 process.env['CURATION_GITHUB_TOKEN'] = '123'
+process.env['GITLAB_TOKEN'] = 'abc'
 const init = require('express-init')
 const Application = require('../app')
 const config = proxyquire('../bin/config', {

@@ -554,6 +554,7 @@ components:
           - cratesio
           - debian
           - github
+          - gitlab
           - mavencentral
           - mavengoogle
           - npmjs
