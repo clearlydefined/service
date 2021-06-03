@@ -221,11 +221,11 @@ class GitHubCurationService {
   }
 
   async _filterRevisionWithScannedDeclaredLicense(coordinates, curation, matchingRevisionAndReason) {
-    const filtered = [];
+    const filtered = []
     for (const revisionAndReason of matchingRevisionAndReason) {
-      const { version } = revisionAndReason;
-      const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version });
-      const matchingDefinition = await this.definitionService.getStored(matchingCoordinates);
+      const { version } = revisionAndReason
+      const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version })
+      const matchingDefinition = await this.definitionService.getStored(matchingCoordinates)
       if (get(matchingDefinition, 'licensed.declared')) {
         if (get(matchingDefinition, 'licensed.declared') !== get(curation, 'licensed.declared')) {
           this.logger.info('GitHubCurationService._filterRevisionWithScannedDeclaredLicense.ScannedLicenseNotEqualToCuratedLicense', {
@@ -239,7 +239,7 @@ class GitHubCurationService {
         filtered.push(revisionAndReason)
       }
     }
-    return filtered;
+    return filtered
   }
 
   _updateContent(coordinates, currentContent, newContent) {
