@@ -105,6 +105,11 @@ router.post('/reprocess', permissionsCheck('curate'), asyncMiddleware(reprocessM
 
 async function reprocessMergedCurations(request, respond) {
   const coordinatesArray = request.body.map(EntityCoordinates.fromString)
+  // Reprocess consume a lot of resource. Limit the size of the reprocess request.
+  const reprocessThreshold = 100
+  if (coordinatesArray.length >= reprocessThreshold) {
+    return respond.status(403).send({ message: `Reprocess coordinates number exceed ${reprocessThreshold} threshold.` })
+  }
   const result = await curationService.reprocessMergedCurations(coordinatesArray)
   respond.status(200).send(result)
 }
