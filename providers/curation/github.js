@@ -220,23 +220,24 @@ class GitHubCurationService {
     return uncuratedMatchingRevisions
   }
 
-  async _filterRevisionWithScannedDeclaredLicense(coordinates, curation, matchingRevisionAndReason) {
+  async _filterRevisionWithDeclaredLicense(coordinates, curation, matchingRevisionAndReason) {
     const filtered = []
     for (const revisionAndReason of matchingRevisionAndReason) {
       const { version } = revisionAndReason
       const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version })
       const matchingDefinition = await this.definitionService.getStored(matchingCoordinates)
-      if (get(matchingDefinition, 'licensed.declared')) {
-        if (get(matchingDefinition, 'licensed.declared') !== get(curation, 'licensed.declared')) {
-          this.logger.info('GitHubCurationService._filterRevisionWithScannedDeclaredLicense.ScannedLicenseNotEqualToCuratedLicense', {
+      const existingDeclaredLicense = get(matchingDefinition, 'licensed.declared')
+      if (!existingDeclaredLicense || existingDeclaredLicense === 'NOASSERTION') {
+        filtered.push(revisionAndReason)
+      } else {
+        if (existingDeclaredLicense !== get(curation, 'licensed.declared')) {
+          this.logger.info('GitHubCurationService._filterRevisionWithDeclaredLicense.ExistingLicenseNotEqualToCuratedLicense', {
             coordinates: coordinates.toString(),
             revisionAndReason,
             curation,
-            scannedLicense: get(matchingDefinition, 'licensed.declared')
+            existingLicense: existingDeclaredLicense
           })
         }
-      } else {
-        filtered.push(revisionAndReason)
       }
     }
     return filtered
@@ -438,7 +439,7 @@ class GitHubCurationService {
       }
       this.logger.info('eligible component for multiversion curation', { coordinates: curatedCoordinates.toString() })
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
-      matchingRevisionAndReason = await this._filterRevisionWithScannedDeclaredLicense(curatedCoordinates, get(curationRevisions, [revision]), matchingRevisionAndReason)
+      matchingRevisionAndReason = await this._filterRevisionWithDeclaredLicense(curatedCoordinates, get(curationRevisions, [revision]), matchingRevisionAndReason)
       if (matchingRevisionAndReason.length === 0) {
         return
       }
@@ -860,7 +861,7 @@ ${this._formatDefinitions(patch.patches)}`
       const curatedCoordinates = EntityCoordinates.fromString(curatedCoordinatesStr)
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
       matchingRevisionAndReason = matchingRevisionAndReason.filter(r => !processedRevisions.has(r.version))
-      matchingRevisionAndReason = await this._filterRevisionWithScannedDeclaredLicense(curatedCoordinates, curation, matchingRevisionAndReason)
+      matchingRevisionAndReason = await this._filterRevisionWithDeclaredLicense(curatedCoordinates, curation, matchingRevisionAndReason)
       if (matchingRevisionAndReason.length === 0) {
         contributions.push({ coordinates: curatedCoordinates.toString() })
         continue
