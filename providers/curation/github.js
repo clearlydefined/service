@@ -226,7 +226,8 @@ class GitHubCurationService {
       const { version } = revisionAndReason
       const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version })
       const matchingDefinition = await this.definitionService.getStored(matchingCoordinates)
-      if (get(matchingDefinition, 'licensed.declared')) {
+      const existingDeclaredLicense = get(matchingDefinition, 'licensed.declared');
+      if (existingDeclaredLicense && existingDeclaredLicense !== 'NOASSERTION') {
         if (get(matchingDefinition, 'licensed.declared') !== get(curation, 'licensed.declared')) {
           this.logger.info('GitHubCurationService._filterRevisionWithScannedDeclaredLicense.ScannedLicenseNotEqualToCuratedLicense', {
             coordinates: coordinates.toString(),
