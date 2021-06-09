@@ -533,7 +533,6 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 })
 
 describe('ClearlyDescribedSummarizer addMavenData', () => {
-
   const testCoordinatesMavenGoogle = EntityCoordinates.fromString('maven/mavenGoogle/io.clearlydefined/test/1.0')
   const expectedUrls = {
     download: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
@@ -710,6 +709,4 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
       else assert.deepEqual(result, expectedResult)
     }
   })
-
-
 })

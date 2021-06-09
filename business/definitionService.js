@@ -544,7 +544,6 @@ class DefinitionService {
     if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
-
     switch (coordinates.provider) {
       case 'gitlab':
       case 'github': {
