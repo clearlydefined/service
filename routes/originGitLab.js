@@ -19,11 +19,11 @@ router.get(
       const { namespace, project } = request.params
 
       const project_info = await gitlab.Projects.search(project)
-      let project_match = getExactProjectMatch(namespace, project, project_info)
+      const project_match = getExactProjectMatch(namespace, project, project_info)
 
       const tags = await gitlab.Tags.all(project_match.id)
 
-      let unsorted = tags.map(tag => {
+      const unsorted = tags.map(tag => {
         return ({
           tag: tag.name,
           sha: tag.commit.id
@@ -108,7 +108,7 @@ async function getUserProjects(username) {
 
   const user_projects = await gitlab.Users.projects(user_response[0].id)
 
-  let user_project_names = user_projects.map(project => {
+  const user_project_names = user_projects.map(project => {
     return (
       project.name
     )
