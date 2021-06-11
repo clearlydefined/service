@@ -545,6 +545,7 @@ class DefinitionService {
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.provider) {
+      case 'gitlab':
       case 'github': {
         const url = buildSourceUrl(coordinates)
         if (!url) return

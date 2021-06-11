@@ -3,16 +3,30 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "definition",
   "version": "0.0.2",
-  "required": ["coordinates"],
+  "required": [
+    "coordinates"
+  ],
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "_meta": { "$ref": "#/definitions/_meta" },
-    "coordinates": { "$ref": "#/definitions/coordinates" },
-    "scores": { "$ref": "#/definitions/finalScore" },
-    "files": { "$ref": "#/definitions/files" },
-    "described": { "$ref": "#/definitions/described" },
-    "licensed": { "$ref": "#/definitions/licensed" }
+    "_meta": {
+      "$ref": "#/definitions/_meta"
+    },
+    "coordinates": {
+      "$ref": "#/definitions/coordinates"
+    },
+    "scores": {
+      "$ref": "#/definitions/finalScore"
+    },
+    "files": {
+      "$ref": "#/definitions/files"
+    },
+    "described": {
+      "$ref": "#/definitions/described"
+    },
+    "licensed": {
+      "$ref": "#/definitions/licensed"
+    }
   },
   "definitions": {
     "type": {
@@ -37,6 +51,7 @@
         "cocoapods",
         "cratesio",
         "github",
+        "gitlab",
         "packagist",
         "mavencentral",
         "mavengoogle",
@@ -48,7 +63,10 @@
     },
     "_meta": {
       "type": "object",
-      "required": ["updated", "schemaVersion"],
+      "required": [
+        "updated",
+        "schemaVersion"
+      ],
       "additionalProperties": false,
       "properties": {
         "updated": {
@@ -62,13 +80,25 @@
     },
     "coordinates": {
       "type": "object",
-      "required": ["type", "provider", "name", "revision"],
+      "required": [
+        "type",
+        "provider",
+        "name",
+        "revision"
+      ],
       "additionalProperties": false,
       "properties": {
-        "type": { "$ref": "#/definitions/type" },
-        "provider": { "$ref": "#/definitions/provider" },
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "provider": {
+          "$ref": "#/definitions/provider"
+        },
         "namespace": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "name": {
           "type": "string"
@@ -82,17 +112,26 @@
       "type": "object",
       "description": "The total effective and tool scores for the definition",
       "additionalProperties": false,
-      "required": ["effective", "tool"],
+      "required": [
+        "effective",
+        "tool"
+      ],
       "properties": {
-        "effective": { "type": "number" },
-        "tool": { "type": "number" }
+        "effective": {
+          "type": "number"
+        },
+        "tool": {
+          "type": "number"
+        }
       }
     },
     "files": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["path"],
+        "required": [
+          "path"
+        ],
         "additionalProperties": false,
         "properties": {
           "path": {
@@ -117,7 +156,9 @@
               "type": "string"
             }
           },
-          "hashes": { "$ref": "#/definitions/hashes" },
+          "hashes": {
+            "$ref": "#/definitions/hashes"
+          },
           "token": {
             "type": "string",
             "description": "An opaque token representing the content of this file. This value can be presented to the system's API to get the content if stored by the system"
@@ -126,7 +167,10 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["license", "notice"]
+              "enum": [
+                "license",
+                "notice"
+              ]
             },
             "description": "The natures of this file entry. Will only be set if there is a token and the file is archived by ClearlyDefined. `license` implies that the file itself includes one or more licenses. `notice` identifies a file containing additional licensing related content."
           }
@@ -137,39 +181,73 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "gitSha": { "type": "string" },
-        "sha1": { "type": "string" },
-        "sha256": { "type": "string" },
-        "md5": { "type": "string" }
+        "gitSha": {
+          "type": "string"
+        },
+        "sha1": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "md5": {
+          "type": "string"
+        }
       }
     },
     "described": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "score": { "$ref": "#/definitions/describedScore" },
-        "toolScore": { "$ref": "#/definitions/describedScore" },
+        "score": {
+          "$ref": "#/definitions/describedScore"
+        },
+        "toolScore": {
+          "$ref": "#/definitions/describedScore"
+        },
         "facets": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "data": { "$ref": "#/definitions/globList" },
-            "dev": { "$ref": "#/definitions/globList" },
-            "doc": { "$ref": "#/definitions/globList" },
-            "examples": { "$ref": "#/definitions/globList" },
-            "tests": { "$ref": "#/definitions/globList" }
+            "data": {
+              "$ref": "#/definitions/globList"
+            },
+            "dev": {
+              "$ref": "#/definitions/globList"
+            },
+            "doc": {
+              "$ref": "#/definitions/globList"
+            },
+            "examples": {
+              "$ref": "#/definitions/globList"
+            },
+            "tests": {
+              "$ref": "#/definitions/globList"
+            }
           }
         },
-        "sourceLocation": { "$ref": "#/definitions/sourceLocation" },
-        "urls": { "$ref": "#/definitions/urls" },
-        "projectWebsite": { "type": "string" },
-        "issueTracker": { "type": "string" },
+        "sourceLocation": {
+          "$ref": "#/definitions/sourceLocation"
+        },
+        "urls": {
+          "$ref": "#/definitions/urls"
+        },
+        "projectWebsite": {
+          "type": "string"
+        },
+        "issueTracker": {
+          "type": "string"
+        },
         "releaseDate": {
           "type": "string",
           "format": "date"
         },
-        "hashes": { "$ref": "#/definitions/hashes" },
-        "files": { "type": "number" },
+        "hashes": {
+          "$ref": "#/definitions/hashes"
+        },
+        "files": {
+          "type": "number"
+        },
         "tools": {
           "type": "array",
           "items": {
@@ -182,25 +260,54 @@
       "type": "object",
       "description": "The score for the `described` portion of a definition",
       "additionalProperties": false,
-      "required": ["total", "date", "source"],
+      "required": [
+        "total",
+        "date",
+        "source"
+      ],
       "properties": {
-        "total": { "type": "number" },
-        "date": { "type": "number" },
-        "source": { "type": "number" }
+        "total": {
+          "type": "number"
+        },
+        "date": {
+          "type": "number"
+        },
+        "source": {
+          "type": "number"
+        }
       }
     },
     "licensedScore": {
       "type": "object",
       "description": "The score for the `licensed` portion of a definition",
       "additionalProperties": false,
-      "required": ["total", "declared", "discovered", "consistency", "spdx", "texts"],
+      "required": [
+        "total",
+        "declared",
+        "discovered",
+        "consistency",
+        "spdx",
+        "texts"
+      ],
       "properties": {
-        "total": { "type": "number" },
-        "declared": { "type": "number" },
-        "discovered": { "type": "number" },
-        "consistency": { "type": "number" },
-        "spdx": { "type": "number" },
-        "texts": { "type": "number" }
+        "total": {
+          "type": "number"
+        },
+        "declared": {
+          "type": "number"
+        },
+        "discovered": {
+          "type": "number"
+        },
+        "consistency": {
+          "type": "number"
+        },
+        "spdx": {
+          "type": "number"
+        },
+        "texts": {
+          "type": "number"
+        }
       }
     },
     "globList": {
@@ -212,10 +319,19 @@
     "sourceLocation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "provider", "name", "revision"],
+      "required": [
+        "type",
+        "provider",
+        "name",
+        "revision"
+      ],
       "properties": {
-        "type": { "$ref": "#/definitions/type" },
-        "provider": { "$ref": "#/definitions/provider" },
+        "type": {
+          "$ref": "#/definitions/type"
+        },
+        "provider": {
+          "$ref": "#/definitions/provider"
+        },
         "namespace": {
           "type": "string"
         },
@@ -239,15 +355,24 @@
       "additionalProperties": false,
       "properties": {
         "registry": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         },
         "version": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         },
         "download": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         }
       }
@@ -256,22 +381,42 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "score": { "$ref": "#/definitions/licensedScore" },
-        "toolScore": { "$ref": "#/definitions/licensedScore" },
-        "declared": { "$ref": "#/definitions/declared" },
-        "facets": { "$ref": "#/definitions/facets" }
+        "score": {
+          "$ref": "#/definitions/licensedScore"
+        },
+        "toolScore": {
+          "$ref": "#/definitions/licensedScore"
+        },
+        "declared": {
+          "$ref": "#/definitions/declared"
+        },
+        "facets": {
+          "$ref": "#/definitions/facets"
+        }
       }
     },
     "facets": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "core": { "$ref": "#/definitions/facet" },
-        "data": { "$ref": "#/definitions/facet" },
-        "dev": { "$ref": "#/definitions/facet" },
-        "doc": { "$ref": "#/definitions/facet" },
-        "examples": { "$ref": "#/definitions/facet" },
-        "tests": { "$ref": "#/definitions/facet" }
+        "core": {
+          "$ref": "#/definitions/facet"
+        },
+        "data": {
+          "$ref": "#/definitions/facet"
+        },
+        "dev": {
+          "$ref": "#/definitions/facet"
+        },
+        "doc": {
+          "$ref": "#/definitions/facet"
+        },
+        "examples": {
+          "$ref": "#/definitions/facet"
+        },
+        "tests": {
+          "$ref": "#/definitions/facet"
+        }
       }
     },
     "facet": {
@@ -281,8 +426,12 @@
         "files": {
           "type": "number"
         },
-        "attribution": { "$ref": "#/definitions/attribution" },
-        "discovered": { "$ref": "#/definitions/discovered" }
+        "attribution": {
+          "$ref": "#/definitions/attribution"
+        },
+        "discovered": {
+          "$ref": "#/definitions/discovered"
+        }
       }
     },
     "attribution": {

@@ -248,6 +248,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - central.maven.org
 - maven.google
 - github.com
+- gitlab.com
 - cocoapods.org
 - crates.io
 - npmjs.org
