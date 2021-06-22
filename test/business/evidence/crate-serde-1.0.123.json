@@ -1,0 +1,3352 @@
+{
+  "clearlydefined": {
+    "1.2.0": {
+      "_metadata": {
+        "type": "crate",
+        "url": "cd:/crate/cratesio/-/serde/1.0.123",
+        "fetchedAt": "2021-01-29T16:36:42.919Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:clearlydefined:1.2.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:clearlydefined",
+            "type": "collection"
+          },
+          "licensee": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:licensee",
+            "type": "collection"
+          },
+          "scancode": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:scancode",
+            "type": "collection"
+          },
+          "source": {
+            "href": "urn:git:github:serde-rs:serde:revision:3d6c4149b177e9cadfb948ebc6d1e55b33861792",
+            "type": "resource"
+          }
+        },
+        "schemaVersion": "1.2.0",
+        "toolVersion": "1.0.0"
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "token": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ],
+      "summaryInfo": {
+        "k": 501,
+        "count": 27,
+        "hashes": {
+          "sha1": "968b745d5ea557515eed94f918bc2365d7ac9d7c",
+          "sha256": "92d5161132722baa40d802cc70b15262b98258453e85e5d1d365c757c73869ae"
+        }
+      },
+      "files": [
+        {
+          "path": ".cargo_vcs_info.json",
+          "hashes": {
+            "sha1": "598e56ffb4b722e24ff813b9f86655ee4e7368af",
+            "sha256": "166f2bfc626ae4b78a1400ff91c0a1c5cadd969a9fa63f2bf606add8e4322b85"
+          }
+        },
+        {
+          "path": "Cargo.toml",
+          "hashes": {
+            "sha1": "5c2b91a3aec04b5dd9ed7f305b3f571455b4259c",
+            "sha256": "6c9c8ff479865fac1f930e0d937d496089a862b18b3b48b2294f73527ee03633"
+          }
+        },
+        {
+          "path": "Cargo.toml.orig",
+          "hashes": {
+            "sha1": "b0fbe29be72e1f95eefa22d417fee2ec4f15331e",
+            "sha256": "92a24b67baf0ccf468a6d172975fcb78ba96916042a9d3dd0e505ac046094b69"
+          }
+        },
+        {
+          "path": "LICENSE-APACHE",
+          "hashes": {
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+          }
+        },
+        {
+          "path": "LICENSE-MIT",
+          "hashes": {
+            "sha1": "ce3a2603094e799f42ce99c40941544dfcc5c4a5",
+            "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+          }
+        },
+        {
+          "path": "README.md",
+          "hashes": {
+            "sha1": "df577d0370d9349360247b1a7ee7bb06b6e925ea",
+            "sha256": "5cf9d2158d70048a2916360ad59d9079f6233c6f68781a7a792e70f8b772d8ce"
+          }
+        },
+        {
+          "path": "build.rs",
+          "hashes": {
+            "sha1": "5b18cbfe592282076a4957488930d50fddc93b30",
+            "sha256": "acb97ae670fac691f1137cd72305971de597e10306ec977334fca5468b90d482"
+          }
+        },
+        {
+          "path": "crates-io.md",
+          "hashes": {
+            "sha1": "40ca313f755628a0e54d86c0ff82b51a33096f5d",
+            "sha256": "25ed421fe25d0f6f74c4b78674144bef2843a5f78bf552d0a8ec633be69d282b"
+          }
+        },
+        {
+          "path": "src/de/ignored_any.rs",
+          "hashes": {
+            "sha1": "3e4c14aa8d8527a42e1e8dc3104d84ae4cee4ed0",
+            "sha256": "c69d6071191c2075372218442e9e73991335c6b4be18736a7a789f04bb305525"
+          }
+        },
+        {
+          "path": "src/de/impls.rs",
+          "hashes": {
+            "sha1": "2a5bce6f8c22fa8baaa1d09b8e6fc3641629d7a6",
+            "sha256": "7e510f972d5f64837946fdbbd20a655c5f86f1bec6f11473c7226773de703c9d"
+          }
+        },
+        {
+          "path": "src/de/mod.rs",
+          "hashes": {
+            "sha1": "f60feed73d82247779f6c854dfab6da91493f91f",
+            "sha256": "4db241ed202d418c85fdcee34b70a807269514f8678a3997d52ced96aef85b95"
+          }
+        },
+        {
+          "path": "src/de/seed.rs",
+          "hashes": {
+            "sha1": "da542a0d31c10ed59ecd23c65cf9fb8a7a1ff728",
+            "sha256": "e8cf0233afe0af5b8fb9e4c94f301c92729c5ba417280af9e2201b732e374a72"
+          }
+        },
+        {
+          "path": "src/de/utf8.rs",
+          "hashes": {
+            "sha1": "a751f40d78f33755537d481915fa682825687bd4",
+            "sha256": "f17524ee0af98ec3abcfd7d0b812fbd1033263bd8e2ce2f57c1e1999ce153558"
+          }
+        },
+        {
+          "path": "src/de/value.rs",
+          "hashes": {
+            "sha1": "1f9188dc54bd5442f7002be2cbd721c5d568f5e9",
+            "sha256": "82d530d0bc50cba75a095c819b4269d58229a7384043f7f6e674891cc6dae7bb"
+          }
+        },
+        {
+          "path": "src/integer128.rs",
+          "hashes": {
+            "sha1": "57f6216ec2b3912ac18fddfd5f5ab99f197aa5c4",
+            "sha256": "12f6ce6a513c1c293398db38cf1d3ea7c0c5a6717152621bcba61f49abc7b5b1"
+          }
+        },
+        {
+          "path": "src/lib.rs",
+          "hashes": {
+            "sha1": "597aff1885023f230d8298cb2ebdb874884a2385",
+            "sha256": "ea5d73407f121e76ef88c0429ac0a4ccb6404759d7617feafe9f83c9f3e7f36e"
+          }
+        },
+        {
+          "path": "src/macros.rs",
+          "hashes": {
+            "sha1": "0b7d14e30c68261a106c3e7b55cc520c0ee638a8",
+            "sha256": "3d695a51f0a07f9f719dcb5620012c21a1b084c06a6283349cabf574ceba8123"
+          }
+        },
+        {
+          "path": "src/private/de.rs",
+          "hashes": {
+            "sha1": "e495677229c9cd0fdc952e2b242ad9da3b4e5eb5",
+            "sha256": "8bbb2af37030ddd41d20cc09642680c3c1daf97dca1845e911f33e06323c64c0"
+          }
+        },
+        {
+          "path": "src/private/doc.rs",
+          "hashes": {
+            "sha1": "d71e4c92100ff7cf4ad5d60bf9d1a891609252ab",
+            "sha256": "e9801a43c3088fccd5f1fac76416698f948e65b647024aa9da17d673e1e8c217"
+          }
+        },
+        {
+          "path": "src/private/mod.rs",
+          "hashes": {
+            "sha1": "57a5944a2d4bf5b8b18298cb0236de07d2ed1255",
+            "sha256": "67cf4471f6bfd390f0e591a96603b3c434ba2912d8392e3520ec7578b9b42ab3"
+          }
+        },
+        {
+          "path": "src/private/ser.rs",
+          "hashes": {
+            "sha1": "59a95c19b4022ee1e5985ec78396f130623a48e5",
+            "sha256": "3a90dfb5c17e81bf1d959fed60a9477713498e9d0934463627c98709132f066e"
+          }
+        },
+        {
+          "path": "src/private/size_hint.rs",
+          "hashes": {
+            "sha1": "c8e315d616e690dafaeb90799b6a7668fd8d8bc6",
+            "sha256": "605521227e9ba3100fbb9d5ea7fd5853385097c35015ce6908bd5f1ea20d59ad"
+          }
+        },
+        {
+          "path": "src/ser/fmt.rs",
+          "hashes": {
+            "sha1": "384b453b24db9404ef94527677a5d531f66e17f4",
+            "sha256": "7827ed07fd8897e6324f75625ba0c926a4c4e7ec2914cd067391ce54d942ac7b"
+          }
+        },
+        {
+          "path": "src/ser/impls.rs",
+          "hashes": {
+            "sha1": "2d336b0ba735e04bc3694d15b7dbe134d88205d2",
+            "sha256": "496b7ba45529e569ffdf5d755c6df99c1321fddc89b9f64f5cc58e24052caefc"
+          }
+        },
+        {
+          "path": "src/ser/impossible.rs",
+          "hashes": {
+            "sha1": "50a0fb487bcae7b4260d503f0f6b87a552bc4486",
+            "sha256": "db17913522c1c27389c5a085113911353b9813c1b116518681362e7c8b692c3a"
+          }
+        },
+        {
+          "path": "src/ser/mod.rs",
+          "hashes": {
+            "sha1": "e6d85f319683df0aa137377d88aaea4a79f26a67",
+            "sha256": "2ad1f3a41a23d8413affe4f6ab261c7c888ba924c7aada030332d178d7872c98"
+          }
+        },
+        {
+          "path": "src/std_error.rs",
+          "hashes": {
+            "sha1": "d9cbedc053165a06a20d922612c80f493be90c63",
+            "sha256": "3aac687856c035517fae44ed2906dd4a1e3184bae4bf613adcdeb73f74126c57"
+          }
+        }
+      ],
+      "manifest": {
+        "id": "serde",
+        "name": "serde",
+        "updated_at": "2021-01-25T21:44:12.137298+00:00",
+        "versions": [
+          331767,
+          331369,
+          330972,
+          329177,
+          326110,
+          312296,
+          293950,
+          282474,
+          271456,
+          254679,
+          254044,
+          252312,
+          246881,
+          239581,
+          239560,
+          239539,
+          239190,
+          227557,
+          222448,
+          196666,
+          192011,
+          185512,
+          176433,
+          174777,
+          169951,
+          165828,
+          163551,
+          163530,
+          163315,
+          158762,
+          157964,
+          153883,
+          148904,
+          143032,
+          136515,
+          134063,
+          131792,
+          131387,
+          128970,
+          124929,
+          124370,
+          121941,
+          121344,
+          112600,
+          108387,
+          107452,
+          107194,
+          106477,
+          105274,
+          105095,
+          104994,
+          104714,
+          102798,
+          98987,
+          98381,
+          98173,
+          98016,
+          95252,
+          95083,
+          94732,
+          94573,
+          94279,
+          94247,
+          94157,
+          93640,
+          93502,
+          93389,
+          93321,
+          92524,
+          92451,
+          92219,
+          92111,
+          91900,
+          91781,
+          91765,
+          91754,
+          91688,
+          91650,
+          91189,
+          91090,
+          90044,
+          89843,
+          89650,
+          89580,
+          89317,
+          88972,
+          87282,
+          86577,
+          86245,
+          85939,
+          84991,
+          84617,
+          84593,
+          84464,
+          83988,
+          83920,
+          75967,
+          75649,
+          75346,
+          73760,
+          72753,
+          72731,
+          71461,
+          71138,
+          70551,
+          70126,
+          69858,
+          69089,
+          65588,
+          64913,
+          64909,
+          64467,
+          60822,
+          59405,
+          58325,
+          54218,
+          53794,
+          53565,
+          53302,
+          52979,
+          52929,
+          51535,
+          51127,
+          50790,
+          51126,
+          50524,
+          49588,
+          48856,
+          47109,
+          46591,
+          46261,
+          46038,
+          45106,
+          44406,
+          44024,
+          43807,
+          43637,
+          43599,
+          43329,
+          43318,
+          43304,
+          43171,
+          42968,
+          42394,
+          42863,
+          42059,
+          40411,
+          39818,
+          38347,
+          38113,
+          37118,
+          36469,
+          36343,
+          36273,
+          35932,
+          35429,
+          35097,
+          34843,
+          34413,
+          33310,
+          33161,
+          32970,
+          32850,
+          32248,
+          32069,
+          32001,
+          31618,
+          30852,
+          30643,
+          30335,
+          30311,
+          30770,
+          29783,
+          29631,
+          29528,
+          29103,
+          28472,
+          28379,
+          28223,
+          28002,
+          27920,
+          26955,
+          26577,
+          23031,
+          22773,
+          22586,
+          22363,
+          22293,
+          21214,
+          20958,
+          19789,
+          19124,
+          16846,
+          15358,
+          15304,
+          14755,
+          14442,
+          14255,
+          13253,
+          12279,
+          11493,
+          10471,
+          9752,
+          9492,
+          8748,
+          7654,
+          6133,
+          6130,
+          857
+        ],
+        "keywords": [
+          "serialization",
+          "no_std",
+          "serde"
+        ],
+        "categories": [
+          "encoding"
+        ],
+        "badges": [],
+        "created_at": "2014-12-05T20:20:39.487502+00:00",
+        "downloads": 36048260,
+        "recent_downloads": 5503544,
+        "max_version": "1.0.123",
+        "newest_version": "1.0.123",
+        "max_stable_version": "1.0.123",
+        "description": "A generic serialization/deserialization framework",
+        "homepage": "https://serde.rs",
+        "documentation": "https://docs.serde.rs/serde/",
+        "repository": "https://github.com/serde-rs/serde",
+        "links": {
+          "version_downloads": "/api/v1/crates/serde/downloads",
+          "versions": null,
+          "owners": "/api/v1/crates/serde/owners",
+          "owner_team": "/api/v1/crates/serde/owner_team",
+          "owner_user": "/api/v1/crates/serde/owner_user",
+          "reverse_dependencies": "/api/v1/crates/serde/reverse_dependencies"
+        },
+        "exact_match": false
+      },
+      "registryData": {
+        "id": 331767,
+        "crate": "serde",
+        "num": "1.0.123",
+        "dl_path": "/api/v1/crates/serde/1.0.123/download",
+        "readme_path": "/api/v1/crates/serde/1.0.123/readme",
+        "updated_at": "2021-01-25T21:44:12.137298+00:00",
+        "created_at": "2021-01-25T21:44:12.137298+00:00",
+        "downloads": 156946,
+        "features": {
+          "alloc": [],
+          "default": [
+            "std"
+          ],
+          "derive": [
+            "serde_derive"
+          ],
+          "rc": [],
+          "std": [],
+          "unstable": []
+        },
+        "yanked": false,
+        "license": "MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/serde/1.0.123/dependencies",
+          "version_downloads": "/api/v1/crates/serde/1.0.123/downloads",
+          "authors": "/api/v1/crates/serde/1.0.123/authors"
+        },
+        "crate_size": 74379,
+        "published_by": {
+          "id": 3618,
+          "login": "dtolnay",
+          "name": "David Tolnay",
+          "avatar": "https://avatars2.githubusercontent.com/u/1940490?v=4",
+          "url": "https://github.com/dtolnay"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 3618,
+              "login": "dtolnay",
+              "name": "David Tolnay",
+              "avatar": "https://avatars2.githubusercontent.com/u/1940490?v=4",
+              "url": "https://github.com/dtolnay"
+            },
+            "time": "2021-01-25T21:44:12.137298+00:00"
+          }
+        ]
+      },
+      "sourceInfo": {
+        "type": "git",
+        "provider": "github",
+        "namespace": "serde-rs",
+        "name": "serde",
+        "revision": "3d6c4149b177e9cadfb948ebc6d1e55b33861792",
+        "url": null,
+        "path": null
+      }
+    }
+  },
+  "licensee": {
+    "9.13.0": {
+      "_metadata": {
+        "type": "licensee",
+        "url": "cd:/crate/cratesio/-/serde/1.0.123",
+        "fetchedAt": "2021-01-29T16:36:43.887Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:licensee:9.13.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:licensee",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "9.13.0",
+        "toolVersion": "9.11.0",
+        "processedAt": "2021-01-29T16:36:48.060Z"
+      },
+      "licensee": {
+        "version": "9.11.0",
+        "parameters": [
+          "--json",
+          "--no-readme"
+        ],
+        "output": {
+          "contentType": "application/json",
+          "content": {
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "spdx_id": "Apache-2.0",
+                "meta": {
+                  "title": "Apache License 2.0",
+                  "source": "https://spdx.org/licenses/Apache-2.0.html",
+                  "description": "A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file.",
+                  "using": [
+                    {
+                      "Kubernetes": "https://github.com/kubernetes/kubernetes/blob/master/LICENSE"
+                    },
+                    {
+                      "PDF.js": "https://github.com/mozilla/pdf.js/blob/master/LICENSE"
+                    },
+                    {
+                      "Swift": "https://github.com/apple/swift/blob/master/LICENSE.txt"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": "The Apache Foundation recommends taking the additional step of adding a boilerplate notice to the header of each source file. You can find the notice at the very end of the license in the appendix."
+                },
+                "url": "http://choosealicense.com/licenses/apache-2.0/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "patent-use",
+                      "label": "Patent use",
+                      "description": "This license provides an express grant of patent rights from contributors."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    },
+                    {
+                      "tag": "document-changes",
+                      "label": "State changes",
+                      "description": "Changes made to the code must be documented."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "trademark-use",
+                      "label": "Trademark use",
+                      "description": "This license explicitly states that it does NOT grant trademark rights, even though licenses without such a statement probably do not grant any implicit trademark rights."
+                    },
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "mit",
+                "spdx_id": "MIT",
+                "meta": {
+                  "title": "MIT License",
+                  "source": "https://spdx.org/licenses/MIT.html",
+                  "description": "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file. Replace [year] with the current year and [fullname] with the name (or names) of the copyright holders.",
+                  "using": [
+                    {
+                      "Babel": "https://github.com/babel/babel/blob/master/LICENSE"
+                    },
+                    {
+                      ".NET Core": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT"
+                    },
+                    {
+                      "Rails": "https://github.com/rails/rails/blob/master/MIT-LICENSE"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/mit/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [
+                  {
+                    "name": "year",
+                    "description": "The current year"
+                  },
+                  {
+                    "name": "fullname",
+                    "description": "The full name or username of the repository owner"
+                  }
+                ],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "other",
+                "spdx_id": "NOASSERTION",
+                "meta": {
+                  "title": null,
+                  "source": null,
+                  "description": null,
+                  "how": null,
+                  "using": null,
+                  "featured": false,
+                  "hidden": true,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/other/",
+                "rules": {
+                  "permissions": [],
+                  "conditions": [],
+                  "limitations": []
+                },
+                "fields": [],
+                "other": true,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              }
+            ],
+            "matched_files": [
+              {
+                "filename": "LICENSE-APACHE",
+                "content": "                              Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n",
+                "content_hash": "ab3901051663cb8ee5dea9ebdff406ad136910e3",
+                "content_normalized": "terms and conditions for use, reproduction, and distribution - definitions. \"license\" shall mean the terms and conditions for use, reproduction, and distribution as defined by sections 1 through 9 of this document. \"licensor\" shall mean the copyright holder or entity authorized by the copyright holder that is granting the license. \"legal entity\" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. for the purposes of this definition, \"control\" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity. \"you\" (or \"your\") shall mean an individual or legal entity exercising permissions granted by this license. \"source\" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files. \"object\" form shall mean any form resulting from mechanical transformation or translation of a source form, including but not limited to compiled object code, generated documentation, and conversions to other media types. \"work\" shall mean the work of authorship, whether in source or object form, made available under the license, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the appendix below). \"derivative works\" shall mean any work, whether in source or object form, that is based on (or derived from) the work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. for the purposes of this license, derivative works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the work and derivative works thereof. \"contribution\" shall mean any work of authorship, including the original version of the work and any modifications or additions to that work or derivative works thereof, that is intentionally submitted to licensor for inclusion in the work by the copyright holder or by an individual or legal entity authorized to submit on behalf of the copyright holder. for the purposes of this definition, \"submitted\" means any form of electronic, verbal, or written communication sent to the licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the licensor for the purpose of discussing and improving the work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright holder as \"not a contribution.\" \"contributor\" shall mean licensor and any individual or legal entity on behalf of whom a contribution has been received by licensor and subsequently incorporated within the work. - grant of copyright license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the work and such derivative works in source or object form. - grant of patent license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the work, where such license applies only to those patent claims licensable by such contributor that are necessarily infringed by their contribution(s) alone or by combination of their contribution(s) with the work to which such contribution(s) was submitted. if you institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the work or a contribution incorporated within the work constitutes direct or contributory patent infringement, then any patent licenses granted to you under this license for that work shall terminate as of the date such litigation is filed. - redistribution. you may reproduce and distribute copies of the work or derivative works thereof in any medium, with or without modifications, and in source or object form, provided that you meet the following conditions: * you must give any other recipients of the work or derivative works a copy of this license; and * you must cause any modified files to carry prominent notices stating that you changed the files; and * you must retain, in the source form of any derivative works that you distribute, all copyright, patent, trademark, and attribution notices from the source form of the work, excluding those notices that do not pertain to any part of the derivative works; and * if the work includes a \"notice\" text file as part of its distribution, then any derivative works that you distribute must include a readable copy of the attribution notices contained within such notice file, excluding those notices that do not pertain to any part of the derivative works, in at least one of the following places: within a notice text file distributed as part of the derivative works; within the source form or documentation, if provided along with the derivative works; or, within a display generated by the derivative works, if and wherever such third-party notices normally appear. the contents of the notice file are for informational purposes only and do not modify the license. you may add your own attribution notices within derivative works that you distribute, alongside or as an addendum to the notice text from the work, provided that such additional attribution notices cannot be construed as modifying the license. you may add your own copyright statement to your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of your modifications, or for any such derivative works as a whole, provided your use, reproduction, and distribution of the work otherwise complies with the conditions stated in this license. - submission of contributions. unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you to the licensor shall be under the terms and conditions of this license, without any additional terms or conditions. notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with licensor regarding such contributions. - trademarks. this license does not grant permission to use the trade names, trademarks, service marks, or product names of the licensor, except as required for reasonable and customary use in describing the origin of the work and reproducing the content of the notice file. - disclaimer of warranty. unless required by applicable law or agreed to in writing, licensor provides the work (and each contributor provides its contributions) on an \"as is\" basis, without warranties or conditions of any kind, either express or implied, including, without limitation, any warranties or conditions of title, non-infringement, merchantability, or fitness for a particular purpose. you are solely responsible for determining the appropriateness of using or redistributing the work and assume any risks associated with your exercise of permissions under this license. - limitation of liability. in no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any contributor be liable to you for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this license or out of the use or inability to use the work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such contributor has been advised of the possibility of such damages. - accepting warranty or additional liability. while redistributing the work or derivative works thereof, you may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this license. however, in accepting such obligations, you may act only on your own behalf and on your sole responsibility, not on behalf of any other contributor, and only if you agree to indemnify, defend, and hold each contributor harmless for any liability incurred by, or claims asserted against, such contributor by reason of your accepting any such warranty or additional liability.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "Apache-2.0"
+              },
+              {
+                "filename": "LICENSE-MIT",
+                "content": "Permission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE.\n",
+                "content_hash": "d64f3bb4282a97b37454b5bb96a8a264a3363dc3",
+                "content_normalized": "permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"software\"), to deal in the software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions: the above copyright notice and this permission notice shall be included in all copies or substantial portions of the software. the software is provided \"as is\", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. in no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "MIT"
+              },
+              {
+                "filename": "Cargo.toml",
+                "content": "# THIS FILE IS AUTOMATICALLY GENERATED BY CARGO\n#\n# When uploading crates to the registry Cargo will automatically\n# \"normalize\" Cargo.toml files for maximal compatibility\n# with all versions of Cargo and also rewrite `path` dependencies\n# to registry (e.g., crates.io) dependencies\n#\n# If you believe there's an error in this file please file an\n# issue against the rust-lang/cargo repository. If you're\n# editing this file be aware that the upstream Cargo.toml\n# will likely look very different (and much more reasonable)\n\n[package]\nname = \"serde\"\nversion = \"1.0.123\"\nauthors = [\"Erick Tryzelaar <erick.tryzelaar@gmail.com>\", \"David Tolnay <dtolnay@gmail.com>\"]\nbuild = \"build.rs\"\ninclude = [\"build.rs\", \"src/**/*.rs\", \"crates-io.md\", \"README.md\", \"LICENSE-APACHE\", \"LICENSE-MIT\"]\ndescription = \"A generic serialization/deserialization framework\"\nhomepage = \"https://serde.rs\"\ndocumentation = \"https://docs.serde.rs/serde/\"\nreadme = \"crates-io.md\"\nkeywords = [\"serde\", \"serialization\", \"no_std\"]\ncategories = [\"encoding\"]\nlicense = \"MIT OR Apache-2.0\"\nrepository = \"https://github.com/serde-rs/serde\"\n[package.metadata.docs.rs]\ntargets = [\"x86_64-unknown-linux-gnu\"]\n\n[package.metadata.playground]\nfeatures = [\"derive\", \"rc\"]\n[dependencies.serde_derive]\nversion = \"=1.0.123\"\noptional = true\n[dev-dependencies.serde_derive]\nversion = \"1.0\"\n\n[features]\nalloc = []\ndefault = [\"std\"]\nderive = [\"serde_derive\"]\nrc = []\nstd = []\nunstable = []\n",
+                "content_hash": null,
+                "content_normalized": null,
+                "matcher": {
+                  "name": "cargo",
+                  "confidence": 90
+                },
+                "matched_license": "NOASSERTION"
+              }
+            ]
+          }
+        }
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "token": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        },
+        {
+          "path": "Cargo.toml",
+          "token": "6c9c8ff479865fac1f930e0d937d496089a862b18b3b48b2294f73527ee03633"
+        }
+      ]
+    }
+  },
+  "scancode": {
+    "3.2.2": {
+      "_metadata": {
+        "type": "scancode",
+        "url": "cd:/crate/cratesio/-/serde/1.0.123",
+        "fetchedAt": "2021-01-29T16:36:44.063Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:scancode:3.2.2",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:serde:revision:1.0.123:tool:scancode",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "3.2.2",
+        "toolVersion": "3.0.2",
+        "contentType": "application/json",
+        "releaseDate": "2021-01-25T21:44:12.137298+00:00",
+        "processedAt": "2021-01-29T16:37:24.202Z"
+      },
+      "content": {
+        "headers": [
+          {
+            "tool_name": "scancode-toolkit",
+            "tool_version": "3.0.2",
+            "options": {
+              "input": "/tmp/cd-2TnKdb/crate/serde-1.0.123",
+              "--classify": true,
+              "--copyright": true,
+              "--email": true,
+              "--generated": true,
+              "--info": true,
+              "--is-license-text": true,
+              "--json-pp": "/tmp/cd-eMyoYe",
+              "--license": true,
+              "--license-clarity-score": true,
+              "--license-diag": true,
+              "--license-text": true,
+              "--package": true,
+              "--processes": "2",
+              "--strip-root": true,
+              "--summary": true,
+              "--summary-key-files": true,
+              "--timeout": "1000.0",
+              "--url": true
+            },
+            "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+            "start_timestamp": "2021-01-29T163647.469266",
+            "end_timestamp": "2021-01-29T163722.187276",
+            "message": null,
+            "errors": [],
+            "extra_data": {
+              "files_count": 27
+            }
+          }
+        ],
+        "summary": {
+          "license_expressions": [
+            {
+              "value": null,
+              "count": 22
+            },
+            {
+              "value": "mit",
+              "count": 7
+            },
+            {
+              "value": "apache-2.0",
+              "count": 5
+            },
+            {
+              "value": "free-unknown",
+              "count": 1
+            },
+            {
+              "value": "unknown",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 26
+            },
+            {
+              "value": "(c), None Ok",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 26
+            },
+            {
+              "value": "None Ok",
+              "count": 1
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 25
+            },
+            {
+              "value": "Erick Tryzelaar <erick.tryzelaar@gmail.com> , David Tolnay <dtolnay@gmail.com>",
+              "count": 2
+            }
+          ],
+          "programming_language": [
+            {
+              "value": "Rust",
+              "count": 20
+            },
+            {
+              "value": null,
+              "count": 5
+            },
+            {
+              "value": "Objective-C",
+              "count": 2
+            }
+          ],
+          "packages": []
+        },
+        "license_clarity_score": {
+          "score": 30,
+          "has_declared_license_in_key_files": true,
+          "file_level_license_and_copyright_coverage": 0,
+          "has_consistent_key_and_file_level_licenses": false,
+          "is_using_only_spdx_licenses": false,
+          "has_full_text_for_all_licenses": false
+        },
+        "summary_of_key_files": {
+          "license_expressions": [
+            {
+              "value": "apache-2.0",
+              "count": 3
+            },
+            {
+              "value": "mit",
+              "count": 3
+            },
+            {
+              "value": "free-unknown",
+              "count": 1
+            },
+            {
+              "value": "unknown",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 3
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 3
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 3
+            }
+          ],
+          "programming_language": [
+            {
+              "value": null,
+              "count": 2
+            },
+            {
+              "value": "Objective-C",
+              "count": 1
+            }
+          ]
+        },
+        "files": [
+          {
+            "path": ".cargo_vcs_info.json",
+            "type": "file",
+            "name": ".cargo_vcs_info.json",
+            "base_name": ".cargo_vcs_info",
+            "extension": ".json",
+            "size": 74,
+            "date": "1970-01-01",
+            "sha1": "598e56ffb4b722e24ff813b9f86655ee4e7368af",
+            "md5": "083eacd827e2620c5b5c3fa4fa158dcb",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "build.rs",
+            "type": "file",
+            "name": "build.rs",
+            "base_name": "build",
+            "extension": ".rs",
+            "size": 4678,
+            "date": "1970-01-01",
+            "sha1": "5b18cbfe592282076a4957488930d50fddc93b30",
+            "md5": "393605f5ce28bda3579318243ce3f922",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://doc.rust-lang.org/core/ops/enum.Bound.html",
+                "start_line": 19,
+                "end_line": 19
+              },
+              {
+                "url": "https://doc.rust-lang.org/stable/core/cmp/struct.Reverse.html",
+                "start_line": 27,
+                "end_line": 27
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/ffi/struct.CString.html#method.into_boxed_c_str",
+                "start_line": 33,
+                "end_line": 33
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/path/struct.PathBuf.html#method.into_boxed_path",
+                "start_line": 34,
+                "end_line": 34
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/rc/struct.Rc.html#impl-From",
+                "start_line": 41,
+                "end_line": 41
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/sync/struct.Arc.html#impl-From",
+                "start_line": 42,
+                "end_line": 42
+              },
+              {
+                "url": "https://blog.rust-lang.org/2018/03/29/Rust-1.25.html#library-stabilizations",
+                "start_line": 48,
+                "end_line": 48
+              },
+              {
+                "url": "https://blog.rust-lang.org/2018/05/10/Rust-1.26.html",
+                "start_line": 54,
+                "end_line": 54
+              },
+              {
+                "url": "https://github.com/rust-lang/rust/pull/50758",
+                "start_line": 63,
+                "end_line": 63
+              },
+              {
+                "url": "https://blog.rust-lang.org/2018/08/02/Rust-1.28.html#library-stabilizations",
+                "start_line": 69,
+                "end_line": 69
+              },
+              {
+                "url": "https://blog.rust-lang.org/2019/04/11/Rust-1.34.0.html#tryfrom-and-tryinto",
+                "start_line": 80,
+                "end_line": 80
+              },
+              {
+                "url": "https://blog.rust-lang.org/2019/04/11/Rust-1.34.0.html#library-stabilizations",
+                "start_line": 81,
+                "end_line": 81
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml",
+            "type": "file",
+            "name": "Cargo.toml",
+            "base_name": "Cargo",
+            "extension": ".toml",
+            "size": 1439,
+            "date": "1970-01-01",
+            "sha1": "5c2b91a3aec04b5dd9ed7f305b3f571455b4259c",
+            "md5": "91b441e762175c57ce20e5de15bf66cb",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 18,
+                "end_line": 18,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "LICENSE-MIT\"]"
+              },
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 25,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "license = \"MIT"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 25,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0\""
+              }
+            ],
+            "license_expressions": [
+              "mit",
+              "mit",
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "Erick Tryzelaar <erick.tryzelaar@gmail.com> , David Tolnay <dtolnay@gmail.com>",
+                "start_line": 16,
+                "end_line": 18
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "erick.tryzelaar@gmail.com",
+                "start_line": 16,
+                "end_line": 16
+              },
+              {
+                "email": "dtolnay@gmail.com",
+                "start_line": 16,
+                "end_line": 16
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://serde.rs/",
+                "start_line": 20,
+                "end_line": 20
+              },
+              {
+                "url": "https://docs.serde.rs/serde/",
+                "start_line": 21,
+                "end_line": 21
+              },
+              {
+                "url": "https://github.com/serde-rs/serde",
+                "start_line": 26,
+                "end_line": 26
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml.orig",
+            "type": "file",
+            "name": "Cargo.toml.orig",
+            "base_name": "Cargo.toml",
+            "extension": ".orig",
+            "size": 1947,
+            "date": "1970-01-01",
+            "sha1": "b0fbe29be72e1f95eefa22d417fee2ec4f15331e",
+            "md5": "c1af9dab2c494c127f2c17d9e358d76b",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 5,
+                "end_line": 5,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "license = \"MIT"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 5,
+                "end_line": 5,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0\""
+              },
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 13,
+                "end_line": 13,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "LICENSE-MIT\"]"
+              }
+            ],
+            "license_expressions": [
+              "mit",
+              "apache-2.0",
+              "mit"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "Erick Tryzelaar <erick.tryzelaar@gmail.com> , David Tolnay <dtolnay@gmail.com>",
+                "start_line": 4,
+                "end_line": 6
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "erick.tryzelaar@gmail.com",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "email": "dtolnay@gmail.com",
+                "start_line": 4,
+                "end_line": 4
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://serde.rs/",
+                "start_line": 7,
+                "end_line": 7
+              },
+              {
+                "url": "https://github.com/serde-rs/serde",
+                "start_line": 8,
+                "end_line": 8
+              },
+              {
+                "url": "https://docs.serde.rs/serde/",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://github.com/serde-rs/serde/issues/812",
+                "start_line": 44,
+                "end_line": 44
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "crates-io.md",
+            "type": "file",
+            "name": "crates-io.md",
+            "base_name": "crates-io",
+            "extension": ".md",
+            "size": 2332,
+            "date": "1970-01-01",
+            "sha1": "40ca313f755628a0e54d86c0ff82b51a33096f5d",
+            "md5": "fe5b3b7614b026ceeeab748a82263dcc",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Objective-C",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://serde.rs/#data-formats",
+                "start_line": 10,
+                "end_line": 10
+              },
+              {
+                "url": "https://serde.rs/derive.html",
+                "start_line": 11,
+                "end_line": 11
+              },
+              {
+                "url": "https://serde.rs/examples.html",
+                "start_line": 12,
+                "end_line": 12
+              },
+              {
+                "url": "https://docs.serde.rs/serde",
+                "start_line": 13,
+                "end_line": 13
+              },
+              {
+                "url": "https://github.com/serde-rs/serde/releases",
+                "start_line": 14,
+                "end_line": 14
+              },
+              {
+                "url": "https://discord.com/channels/273534239310479360/274215136414400513",
+                "start_line": 56,
+                "end_line": 56
+              },
+              {
+                "url": "https://discord.com/channels/273534239310479360/273541522815713281",
+                "start_line": 57,
+                "end_line": 57
+              },
+              {
+                "url": "https://discord.com/channels/442252698964721669/443150878111694848",
+                "start_line": 58,
+                "end_line": 58
+              },
+              {
+                "url": "https://rust-lang.zulipchat.com/#narrow/stream/122651-general",
+                "start_line": 59,
+                "end_line": 59
+              },
+              {
+                "url": "https://stackoverflow.com/questions/tagged/rust",
+                "start_line": 60,
+                "end_line": 60
+              },
+              {
+                "url": "https://www.reddit.com/r/rust",
+                "start_line": 61,
+                "end_line": 61
+              },
+              {
+                "url": "https://users.rust-lang.org/",
+                "start_line": 62,
+                "end_line": 62
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-APACHE",
+            "type": "file",
+            "name": "LICENSE-APACHE",
+            "base_name": "LICENSE-APACHE",
+            "extension": "",
+            "size": 10847,
+            "date": "1970-01-01",
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "md5": "1836efb2eb779966696f473ee8540542",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "score": 100,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 1,
+                "end_line": 201,
+                "matched_rule": {
+                  "identifier": "apache-2.0.LICENSE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "1-hash",
+                  "rule_length": 1608,
+                  "matched_length": 1608,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License."
+              }
+            ],
+            "license_expressions": [
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://www.apache.org/licenses/",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "start_line": 195,
+                "end_line": 195
+              }
+            ],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": true,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-MIT",
+            "type": "file",
+            "name": "LICENSE-MIT",
+            "base_name": "LICENSE-MIT",
+            "extension": "",
+            "size": 1023,
+            "date": "1970-01-01",
+            "sha1": "ce3a2603094e799f42ce99c40941544dfcc5c4a5",
+            "md5": "b377b220f43d747efdec40d69fcaa69d",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 100,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 1,
+                "end_line": 23,
+                "matched_rule": {
+                  "identifier": "mit.LICENSE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "1-hash",
+                  "rule_length": 163,
+                  "matched_length": 163,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Permission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE."
+              }
+            ],
+            "license_expressions": [
+              "mit"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "README.md",
+            "type": "file",
+            "name": "README.md",
+            "base_name": "README",
+            "extension": ".md",
+            "size": 4138,
+            "date": "1970-01-01",
+            "sha1": "df577d0370d9349360247b1a7ee7bb06b6e925ea",
+            "md5": "86492bf4a203c6471ec593e4f9217191",
+            "mime_type": "text/html",
+            "file_type": "HTML document, ASCII text",
+            "programming_language": "Objective-C",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "unknown",
+                "score": 11,
+                "name": "Unknown license detected but not recognized",
+                "short_name": "unknown",
+                "category": "Unstated License",
+                "is_exception": false,
+                "owner": "Unspecified",
+                "homepage_url": "",
+                "text_url": "",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:unknown",
+                "spdx_license_key": "",
+                "spdx_url": "",
+                "start_line": 101,
+                "end_line": 101,
+                "matched_rule": {
+                  "identifier": "unknown_28.RULE",
+                  "license_expression": "unknown",
+                  "licenses": [
+                    "unknown"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 11
+                },
+                "matched_text": "Licensed under"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 27,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 101,
+                "end_line": 102,
+                "matched_rule": {
+                  "identifier": "apache-2.0_48.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "Apache License, Version\n2.0</"
+              },
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 102,
+                "end_line": 102,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "LICENSE-MIT\">"
+              },
+              {
+                "key": "mit",
+                "score": 80,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 102,
+                "end_line": 102,
+                "matched_rule": {
+                  "identifier": "mit_14.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 80
+                },
+                "matched_text": "MIT license</"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 109,
+                "end_line": 109,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0"
+              },
+              {
+                "key": "free-unknown",
+                "score": 11,
+                "name": "Free unknown license detected but not recognized",
+                "short_name": "Free unknown",
+                "category": "Unstated License",
+                "is_exception": false,
+                "owner": "Unspecified",
+                "homepage_url": "",
+                "text_url": "",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:free-unknown",
+                "spdx_license_key": "",
+                "spdx_url": "",
+                "start_line": 110,
+                "end_line": 110,
+                "matched_rule": {
+                  "identifier": "free-unknown_31.RULE",
+                  "license_expression": "free-unknown",
+                  "licenses": [
+                    "free-unknown"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 11
+                },
+                "matched_text": "dual licensed"
+              }
+            ],
+            "license_expressions": [
+              "unknown",
+              "apache-2.0",
+              "mit",
+              "mit",
+              "apache-2.0",
+              "free-unknown"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://img.shields.io/github/workflow/status/serde-rs/serde/CI/master",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "https://github.com/serde-rs/serde/actions?query=branch:master",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "url": "https://img.shields.io/crates/v/serde.svg",
+                "start_line": 5,
+                "end_line": 5
+              },
+              {
+                "url": "https://crates.io/crates/serde",
+                "start_line": 6,
+                "end_line": 6
+              },
+              {
+                "url": "https://img.shields.io/badge/serde-rustc_1.13+-lightgray.svg",
+                "start_line": 7,
+                "end_line": 7
+              },
+              {
+                "url": "https://img.shields.io/badge/serde_derive-rustc_1.31+-lightgray.svg",
+                "start_line": 8,
+                "end_line": 8
+              },
+              {
+                "url": "https://blog.rust-lang.org/2016/11/10/Rust-1.13.html",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html",
+                "start_line": 10,
+                "end_line": 10
+              },
+              {
+                "url": "https://serde.rs/",
+                "start_line": 18,
+                "end_line": 18
+              },
+              {
+                "url": "https://serde.rs/#data-formats",
+                "start_line": 19,
+                "end_line": 19
+              },
+              {
+                "url": "https://serde.rs/derive.html",
+                "start_line": 20,
+                "end_line": 20
+              },
+              {
+                "url": "https://serde.rs/examples.html",
+                "start_line": 21,
+                "end_line": 21
+              },
+              {
+                "url": "https://docs.serde.rs/serde",
+                "start_line": 22,
+                "end_line": 22
+              },
+              {
+                "url": "https://github.com/serde-rs/serde/releases",
+                "start_line": 23,
+                "end_line": 23
+              },
+              {
+                "url": "https://play.rust-lang.org/?edition=2018&gist=72755f28f99afc95e01d63174b28c1f5",
+                "start_line": 30,
+                "end_line": 30
+              },
+              {
+                "url": "https://discord.com/channels/273534239310479360/274215136414400513",
+                "start_line": 88,
+                "end_line": 88
+              },
+              {
+                "url": "https://discord.com/channels/273534239310479360/273541522815713281",
+                "start_line": 89,
+                "end_line": 89
+              },
+              {
+                "url": "https://discord.com/channels/442252698964721669/443150878111694848",
+                "start_line": 90,
+                "end_line": 90
+              },
+              {
+                "url": "https://rust-lang.zulipchat.com/#narrow/stream/122651-general",
+                "start_line": 91,
+                "end_line": 91
+              },
+              {
+                "url": "https://stackoverflow.com/questions/tagged/rust",
+                "start_line": 92,
+                "end_line": 92
+              },
+              {
+                "url": "https://www.reddit.com/r/rust",
+                "start_line": 93,
+                "end_line": 93
+              },
+              {
+                "url": "https://users.rust-lang.org/",
+                "start_line": 94,
+                "end_line": 94
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": true,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src",
+            "type": "directory",
+            "name": "src",
+            "base_name": "src",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 19,
+            "dirs_count": 3,
+            "size_count": 466155,
+            "scan_errors": []
+          },
+          {
+            "path": "src/integer128.rs",
+            "type": "file",
+            "name": "integer128.rs",
+            "base_name": "integer128",
+            "extension": ".rs",
+            "size": 2318,
+            "date": "1970-01-01",
+            "sha1": "57f6216ec2b3912ac18fddfd5f5ab99f197aa5c4",
+            "md5": "52aa88d16d1ec9fde4fb4bfbe1285246",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/lib.rs",
+            "type": "file",
+            "name": "lib.rs",
+            "base_name": "lib",
+            "extension": ".rs",
+            "size": 11141,
+            "date": "1970-01-01",
+            "sha1": "597aff1885023f230d8298cb2ebdb874884a2385",
+            "md5": "e07f6d8e913252255a6dfe2f4f284c34",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/",
+                "start_line": 12,
+                "end_line": 12
+              },
+              {
+                "url": "https://github.com/serde-rs/json",
+                "start_line": 61,
+                "end_line": 61
+              },
+              {
+                "url": "https://github.com/servo/bincode",
+                "start_line": 62,
+                "end_line": 62
+              },
+              {
+                "url": "https://github.com/pyfisch/cbor",
+                "start_line": 63,
+                "end_line": 63
+              },
+              {
+                "url": "https://github.com/dtolnay/serde-yaml",
+                "start_line": 64,
+                "end_line": 64
+              },
+              {
+                "url": "https://github.com/3Hren/msgpack-rust",
+                "start_line": 65,
+                "end_line": 65
+              },
+              {
+                "url": "https://github.com/alexcrichton/toml-rs",
+                "start_line": 66,
+                "end_line": 66
+              },
+              {
+                "url": "https://github.com/birkenfeld/serde-pickle",
+                "start_line": 67,
+                "end_line": 67
+              },
+              {
+                "url": "https://github.com/ron-rs/ron",
+                "start_line": 68,
+                "end_line": 68
+              },
+              {
+                "url": "https://github.com/zonyitoo/bson-rs",
+                "start_line": 69,
+                "end_line": 69
+              },
+              {
+                "url": "https://github.com/flavray/avro-rs",
+                "start_line": 70,
+                "end_line": 70
+              },
+              {
+                "url": "https://github.com/callum-oakley/json5-rs",
+                "start_line": 71,
+                "end_line": 71
+              },
+              {
+                "url": "https://github.com/jamesmunns/postcard",
+                "start_line": 72,
+                "end_line": 72
+              },
+              {
+                "url": "https://docs.rs/serde_qs",
+                "start_line": 73,
+                "end_line": 73
+              },
+              {
+                "url": "https://github.com/softprops/envy",
+                "start_line": 74,
+                "end_line": 74
+              },
+              {
+                "url": "https://github.com/softprops/envy-store",
+                "start_line": 75,
+                "end_line": 75
+              },
+              {
+                "url": "http://doc.crates.io/manifest.html",
+                "start_line": 76,
+                "end_line": 76
+              },
+              {
+                "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html",
+                "start_line": 77,
+                "end_line": 77
+              },
+              {
+                "url": "https://github.com/rotty/lexpr-rs",
+                "start_line": 78,
+                "end_line": 78
+              },
+              {
+                "url": "https://docs.rs/zvariant",
+                "start_line": 79,
+                "end_line": 79
+              },
+              {
+                "url": "https://github.com/google/flatbuffers/tree/master/rust/flexbuffers",
+                "start_line": 80,
+                "end_line": 80
+              },
+              {
+                "url": "https://docs.rs/serde_dynamo",
+                "start_line": 81,
+                "end_line": 81
+              },
+              {
+                "url": "https://docs.rs/rusoto_dynamodb",
+                "start_line": 82,
+                "end_line": 82
+              },
+              {
+                "url": "https://docs.rs/serde/1.0.123",
+                "start_line": 87,
+                "end_line": 87
+              },
+              {
+                "url": "https://github.com/serde-rs/serde/issues/812",
+                "start_line": 93,
+                "end_line": 93
+              },
+              {
+                "url": "https://github.com/rust-lang/rust-clippy/issues/5704",
+                "start_line": 102,
+                "end_line": 102
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/macros.rs",
+            "type": "file",
+            "name": "macros.rs",
+            "base_name": "macros",
+            "extension": ".rs",
+            "size": 8360,
+            "date": "1970-01-01",
+            "sha1": "0b7d14e30c68261a106c3e7b55cc520c0ee638a8",
+            "md5": "7c8146539b28581c5cae0d67b440fe0c",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/std_error.rs",
+            "type": "file",
+            "name": "std_error.rs",
+            "base_name": "std_error",
+            "extension": ".rs",
+            "size": 1340,
+            "date": "1970-01-01",
+            "sha1": "d9cbedc053165a06a20d922612c80f493be90c63",
+            "md5": "c4ec7a8e860af9bcfe82af4a3068dc4d",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de",
+            "type": "directory",
+            "name": "de",
+            "base_name": "de",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 6,
+            "dirs_count": 0,
+            "size_count": 211398,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/ignored_any.rs",
+            "type": "file",
+            "name": "ignored_any.rs",
+            "base_name": "ignored_any",
+            "extension": ".rs",
+            "size": 6234,
+            "date": "1970-01-01",
+            "sha1": "3e4c14aa8d8527a42e1e8dc3104d84ae4cee4ed0",
+            "md5": "324976cfb80caf388e72574375853fb2",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/impls.rs",
+            "type": "file",
+            "name": "impls.rs",
+            "base_name": "impls",
+            "extension": ".rs",
+            "size": 80627,
+            "date": "1970-01-01",
+            "sha1": "2a5bce6f8c22fa8baaa1d09b8e6fc3641629d7a6",
+            "md5": "16784359bcd2eaceab2c4b5af5bbed5c",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [
+              {
+                "value": "None Ok",
+                "start_line": 345,
+                "end_line": 346
+              }
+            ],
+            "copyrights": [
+              {
+                "value": "(c), None Ok",
+                "start_line": 345,
+                "end_line": 346
+              }
+            ],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/feature-flags.html#-features-rc",
+                "start_line": 1700,
+                "end_line": 1700
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/mod.rs",
+            "type": "file",
+            "name": "mod.rs",
+            "base_name": "mod",
+            "extension": ".rs",
+            "size": 79708,
+            "date": "1970-01-01",
+            "sha1": "f60feed73d82247779f6c854dfab6da91493f91f",
+            "md5": "44d8e662f7413c8f89c8580f6a9efbe4",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/impl-deserialize.html",
+                "start_line": 103,
+                "end_line": 103
+              },
+              {
+                "url": "https://docs.rs/linked-hash-map/*/linked_hash_map/struct.LinkedHashMap.html",
+                "start_line": 106,
+                "end_line": 106
+              },
+              {
+                "url": "https://github.com/servo/bincode",
+                "start_line": 107,
+                "end_line": 107
+              },
+              {
+                "url": "https://crates.io/crates/linked-hash-map",
+                "start_line": 108,
+                "end_line": 108
+              },
+              {
+                "url": "https://crates.io/crates/serde_derive",
+                "start_line": 109,
+                "end_line": 109
+              },
+              {
+                "url": "https://github.com/serde-rs/json",
+                "start_line": 110,
+                "end_line": 110
+              },
+              {
+                "url": "https://github.com/dtolnay/serde-yaml",
+                "start_line": 111,
+                "end_line": 111
+              },
+              {
+                "url": "https://serde.rs/derive.html",
+                "start_line": 112,
+                "end_line": 112
+              },
+              {
+                "url": "https://serde.rs/#data-formats",
+                "start_line": 113,
+                "end_line": 113
+              },
+              {
+                "url": "https://serde.rs/data-format.html",
+                "start_line": 157,
+                "end_line": 157
+              },
+              {
+                "url": "https://docs.serde.rs/serde/de/index.html",
+                "start_line": 519,
+                "end_line": 519
+              },
+              {
+                "url": "https://serde.rs/lifetimes.html",
+                "start_line": 529,
+                "end_line": 529
+              },
+              {
+                "url": "https://serde.rs/data-model.html",
+                "start_line": 883,
+                "end_line": 883
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/seed.rs",
+            "type": "file",
+            "name": "seed.rs",
+            "base_name": "seed",
+            "extension": ".rs",
+            "size": 556,
+            "date": "1970-01-01",
+            "sha1": "da542a0d31c10ed59ecd23c65cf9fb8a7a1ff728",
+            "md5": "5906b89b8aafd99233d864f146a9f904",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/utf8.rs",
+            "type": "file",
+            "name": "utf8.rs",
+            "base_name": "utf8",
+            "extension": ".rs",
+            "size": 1224,
+            "date": "1970-01-01",
+            "sha1": "a751f40d78f33755537d481915fa682825687bd4",
+            "md5": "49381b6cb3f3358f1707ce730b58d484",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/de/value.rs",
+            "type": "file",
+            "name": "value.rs",
+            "base_name": "value",
+            "extension": ".rs",
+            "size": 43049,
+            "date": "1970-01-01",
+            "sha1": "1f9188dc54bd5442f7002be2cbd721c5d568f5e9",
+            "md5": "b109f30c4e219c3c0b4e6796b3507a20",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private",
+            "type": "directory",
+            "name": "private",
+            "base_name": "private",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 5,
+            "dirs_count": 0,
+            "size_count": 133764,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private/de.rs",
+            "type": "file",
+            "name": "de.rs",
+            "base_name": "de",
+            "extension": ".rs",
+            "size": 88734,
+            "date": "1970-01-01",
+            "sha1": "e495677229c9cd0fdc952e2b242ad9da3b4e5eb5",
+            "md5": "189ce10b1e68d928d4510d89e68ace99",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/serde-rs/serde/issues/741",
+                "start_line": 204,
+                "end_line": 204
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private/doc.rs",
+            "type": "file",
+            "name": "doc.rs",
+            "base_name": "doc",
+            "extension": ".rs",
+            "size": 4874,
+            "date": "1970-01-01",
+            "sha1": "d71e4c92100ff7cf4ad5d60bf9d1a891609252ab",
+            "md5": "9f01643589cf35cca392a36ef2dabf27",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private/mod.rs",
+            "type": "file",
+            "name": "mod.rs",
+            "base_name": "mod",
+            "extension": ".rs",
+            "size": 1468,
+            "date": "1970-01-01",
+            "sha1": "57a5944a2d4bf5b8b18298cb0236de07d2ed1255",
+            "md5": "b7f26b6f5d66455dbd2b1dfdea5bacdc",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/rust-lang/rust/issues/67295",
+                "start_line": 8,
+                "end_line": 8
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private/ser.rs",
+            "type": "file",
+            "name": "ser.rs",
+            "base_name": "ser",
+            "extension": ".rs",
+            "size": 38252,
+            "date": "1970-01-01",
+            "sha1": "59a95c19b4022ee1e5985ec78396f130623a48e5",
+            "md5": "d40b06e5dbe42895c5590f2b5b7759de",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/private/size_hint.rs",
+            "type": "file",
+            "name": "size_hint.rs",
+            "base_name": "size_hint",
+            "extension": ".rs",
+            "size": 436,
+            "date": "1970-01-01",
+            "sha1": "c8e315d616e690dafaeb90799b6a7668fd8d8bc6",
+            "md5": "da90ba3e22c7f1fc2a6b8141c108dadd",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ser",
+            "type": "directory",
+            "name": "ser",
+            "base_name": "ser",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 4,
+            "dirs_count": 0,
+            "size_count": 97834,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ser/fmt.rs",
+            "type": "file",
+            "name": "fmt.rs",
+            "base_name": "fmt",
+            "extension": ".rs",
+            "size": 4195,
+            "date": "1970-01-01",
+            "sha1": "384b453b24db9404ef94527677a5d531f66e17f4",
+            "md5": "0fdac4cb7703c2a9fdf4a8245f8af03d",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ser/impls.rs",
+            "type": "file",
+            "name": "impls.rs",
+            "base_name": "impls",
+            "extension": ".rs",
+            "size": 24881,
+            "date": "1970-01-01",
+            "sha1": "2d336b0ba735e04bc3694d15b7dbe134d88205d2",
+            "md5": "ac570c5cfdbc8545bb4cc874925f7e7a",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/feature-flags.html#-features-rc",
+                "start_line": 411,
+                "end_line": 411
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ser/impossible.rs",
+            "type": "file",
+            "name": "impossible.rs",
+            "base_name": "impossible",
+            "extension": ".rs",
+            "size": 5273,
+            "date": "1970-01-01",
+            "sha1": "50a0fb487bcae7b4260d503f0f6b87a552bc4486",
+            "md5": "65a92de43aa7d9da975d4ff2f40771cc",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ser/mod.rs",
+            "type": "file",
+            "name": "mod.rs",
+            "base_name": "mod",
+            "extension": ".rs",
+            "size": 63485,
+            "date": "1970-01-01",
+            "sha1": "e6d85f319683df0aa137377d88aaea4a79f26a67",
+            "md5": "62b41c5350223072d8b5eec654e29183",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/impl-serialize.html",
+                "start_line": 98,
+                "end_line": 98
+              },
+              {
+                "url": "https://docs.rs/linked-hash-map/*/linked_hash_map/struct.LinkedHashMap.html",
+                "start_line": 99,
+                "end_line": 99
+              },
+              {
+                "url": "https://github.com/servo/bincode",
+                "start_line": 102,
+                "end_line": 102
+              },
+              {
+                "url": "https://crates.io/crates/linked-hash-map",
+                "start_line": 103,
+                "end_line": 103
+              },
+              {
+                "url": "https://crates.io/crates/serde_derive",
+                "start_line": 104,
+                "end_line": 104
+              },
+              {
+                "url": "https://github.com/serde-rs/json",
+                "start_line": 105,
+                "end_line": 105
+              },
+              {
+                "url": "https://github.com/dtolnay/serde-yaml",
+                "start_line": 106,
+                "end_line": 106
+              },
+              {
+                "url": "https://serde.rs/derive.html",
+                "start_line": 107,
+                "end_line": 107
+              },
+              {
+                "url": "https://serde.rs/#data-formats",
+                "start_line": 108,
+                "end_line": 108
+              },
+              {
+                "url": "https://serde.rs/data-format.html",
+                "start_line": 138,
+                "end_line": 138
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/path/struct.Path.html",
+                "start_line": 173,
+                "end_line": 173
+              },
+              {
+                "url": "https://docs.serde.rs/serde/ser/index.html",
+                "start_line": 215,
+                "end_line": 215
+              },
+              {
+                "url": "https://serde.rs/data-model.html",
+                "start_line": 323,
+                "end_line": 323
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/io/trait.Write.html",
+                "start_line": 339,
+                "end_line": 339
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/option/enum.Option.html#variant.None",
+                "start_line": 769,
+                "end_line": 769
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some",
+                "start_line": 802,
+                "end_line": 802
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/string/struct.String.html",
+                "start_line": 1356,
+                "end_line": 1356
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          }
+        ]
+      }
+    }
+  }
+}

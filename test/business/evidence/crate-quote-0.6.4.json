@@ -1,0 +1,2319 @@
+{
+  "clearlydefined": {
+    "1.2.0": {
+      "_metadata": {
+        "type": "crate",
+        "url": "cd:/crate/cratesio/-/quote/0.6.4",
+        "fetchedAt": "2019-03-12T20:16:24.968Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:clearlydefined:1.2.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:clearlydefined",
+            "type": "collection"
+          },
+          "licensee": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:licensee",
+            "type": "collection"
+          },
+          "fossology": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:fossology",
+            "type": "collection"
+          },
+          "scancode": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:scancode",
+            "type": "collection"
+          },
+          "source": {
+            "href": "urn:git:github:dtolnay:quote:revision:0642d0efa7416da39b55fb67b64639db25a84288",
+            "type": "resource"
+          }
+        },
+        "schemaVersion": "1.2.0",
+        "toolVersion": "1.0.0"
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "token": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5"
+        }
+      ],
+      "summaryInfo": {
+        "k": 61,
+        "count": 9,
+        "hashes": {
+          "sha1": "d796ccf841b0cb6280b52cdc5c92fe88c6433828",
+          "sha256": "b71f9f575d55555aa9c06188be9d4e2bfc83ed02537948ac0d520c24d0419f1a"
+        }
+      },
+      "files": [
+        {
+          "path": "Cargo.toml",
+          "hashes": {
+            "sha1": "aa1aa2b801f0210b0b79f4d4dfe7a717a005dfb8",
+            "sha256": "a02686a992d472d3cc92326977fb38432dd6ccdcc65189c52fdef6f34ddb5338"
+          }
+        },
+        {
+          "path": "Cargo.toml.orig",
+          "hashes": {
+            "sha1": "0fb532d4e9329c097bee636e72c3c7bf0fbc322f",
+            "sha256": "40412e9fe124fb756963330536b3e3c4189ce31438282d92c4f395336127dcee"
+          }
+        },
+        {
+          "path": "LICENSE-APACHE",
+          "hashes": {
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+          }
+        },
+        {
+          "path": "LICENSE-MIT",
+          "hashes": {
+            "sha1": "9a2b6b4ad55ec42cf19fc686c74668d3a6303ae7",
+            "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5"
+          }
+        },
+        {
+          "path": "README.md",
+          "hashes": {
+            "sha1": "1423e115c1e0353c62b4e9c8efc4f8180f911178",
+            "sha256": "61dc7827fb2e29185f0d73594db326bfdbec8393ca7a48429b259711d42e80f9"
+          }
+        },
+        {
+          "path": "src/ext.rs",
+          "hashes": {
+            "sha1": "5caeb8b25737f6a43fd3a78b97cafa6890266aba",
+            "sha256": "2e2f71fca8c8580eeed138da42d93dc21fc48d7a8da973ae6d3b616da6a3b0e3"
+          }
+        },
+        {
+          "path": "src/lib.rs",
+          "hashes": {
+            "sha1": "ce8f375964eaa14cec0e6255f0be1752913d871b",
+            "sha256": "391e133920eefc7d5ec4d2208e83f073f23601a932f3f2e36dbf317d9edafafa"
+          }
+        },
+        {
+          "path": "src/to_tokens.rs",
+          "hashes": {
+            "sha1": "f8605b297ea0270a0d2f37037f2434cc221af0c8",
+            "sha256": "10dc32fbe69798408ee1f49ec25770b90eeb6b069552f50cd4e03228b8e85847"
+          }
+        },
+        {
+          "path": "tests/test.rs",
+          "hashes": {
+            "sha1": "23ed488bbc53132e9c7df99e6b74371065d10a1b",
+            "sha256": "90fe0e9a704e628339fe9298f0cb8307e94ebadfe28fffd7b2fc2d94203bc342"
+          }
+        }
+      ],
+      "manifest": {
+        "id": "quote",
+        "name": "quote",
+        "updated_at": "2019-01-20T02:55:01.528634+00:00",
+        "versions": [
+          129093,
+          116896,
+          114976,
+          104920,
+          104918,
+          103619,
+          102399,
+          100822,
+          94579,
+          93669,
+          93621,
+          93609,
+          89818,
+          87127,
+          87126,
+          76815,
+          76799,
+          76779,
+          47123,
+          46487,
+          45869,
+          42741,
+          42675,
+          38562,
+          38480,
+          38422,
+          38421,
+          38419,
+          36663,
+          36601,
+          35513,
+          35512,
+          35511,
+          35427,
+          35405,
+          35377,
+          35119,
+          35095,
+          35015,
+          34770,
+          34363,
+          33834,
+          33819,
+          33112,
+          33026
+        ],
+        "keywords": [
+          "syn"
+        ],
+        "categories": [
+          "development-tools::procedural-macro-helpers"
+        ],
+        "badges": [
+          {
+            "badge_type": "travis-ci",
+            "attributes": {
+              "branch": null,
+              "repository": "dtolnay/quote"
+            }
+          }
+        ],
+        "created_at": "2016-09-03T05:42:05.484129+00:00",
+        "downloads": 7537476,
+        "recent_downloads": 1765042,
+        "max_version": "0.6.11",
+        "description": "Quasi-quoting macro quote!(...)",
+        "homepage": null,
+        "documentation": "https://docs.rs/quote/",
+        "repository": "https://github.com/dtolnay/quote",
+        "links": {
+          "version_downloads": "/api/v1/crates/quote/downloads",
+          "versions": null,
+          "owners": "/api/v1/crates/quote/owners",
+          "owner_team": "/api/v1/crates/quote/owner_team",
+          "owner_user": "/api/v1/crates/quote/owner_user",
+          "reverse_dependencies": "/api/v1/crates/quote/reverse_dependencies"
+        },
+        "exact_match": false
+      },
+      "registryData": {
+        "id": 100822,
+        "crate": "quote",
+        "num": "0.6.4",
+        "dl_path": "/api/v1/crates/quote/0.6.4/download",
+        "readme_path": "/api/v1/crates/quote/0.6.4/readme",
+        "updated_at": "2018-07-22T18:07:39.239122+00:00",
+        "created_at": "2018-07-22T18:07:39.239122+00:00",
+        "downloads": 124870,
+        "features": {
+          "default": [
+            "proc-macro"
+          ],
+          "proc-macro": [
+            "proc-macro2/proc-macro"
+          ]
+        },
+        "yanked": false,
+        "license": "MIT/Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/quote/0.6.4/dependencies",
+          "version_downloads": "/api/v1/crates/quote/0.6.4/downloads",
+          "authors": "/api/v1/crates/quote/0.6.4/authors"
+        },
+        "crate_size": null,
+        "published_by": null
+      },
+      "sourceInfo": {
+        "type": "git",
+        "provider": "github",
+        "namespace": "dtolnay",
+        "name": "quote",
+        "revision": "0642d0efa7416da39b55fb67b64639db25a84288",
+        "url": null,
+        "path": null
+      }
+    }
+  },
+  "fossology": {
+    "3.6.0": {
+      "_metadata": {
+        "type": "fossology",
+        "url": "cd:/crate/cratesio/-/quote/0.6.4/tool/licensee",
+        "fetchedAt": "2019-03-13T03:42:02.887Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:fossology:3.6.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:licensee",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "3.6.0",
+        "toolVersion": "3.4.0",
+        "processedAt": "2019-03-13T03:42:06.434Z"
+      },
+      "nomos": {
+        "version": "3.4.0",
+        "parameters": "",
+        "output": {
+          "contentType": "text/plain",
+          "content": "File LICENSE-MIT contains license(s) MIT\nFile Cargo.toml contains license(s) MIT\nFile README.md contains license(s) Apache-2.0,MIT\nFile src/lib.rs contains license(s) No_license_found\nFile tests/test.rs contains license(s) No_license_found\nFile Cargo.toml.orig contains license(s) MIT\nFile LICENSE-APACHE contains license(s) Apache-2.0\nFile src/ext.rs contains license(s) No_license_found\nFile src/to_tokens.rs contains license(s) No_license_found\n"
+        }
+      },
+      "copyright": {
+        "version": "0.0.0",
+        "parameters": [
+          "-J"
+        ],
+        "output": {
+          "contentType": "application/json",
+          "content": [
+            {
+              "path": "Cargo.toml",
+              "output": {
+                "results": [
+                  {
+                    "content": "https://docs.rs/quote/\"",
+                    "end": 805,
+                    "start": 782,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/quote\"",
+                    "end": 920,
+                    "start": 887,
+                    "type": "url"
+                  },
+                  {
+                    "content": "dtolnay@gmail.com",
+                    "end": 610,
+                    "start": 593,
+                    "type": "email"
+                  },
+                  {
+                    "content": "authors",
+                    "end": 574,
+                    "start": 567,
+                    "type": "author"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "Cargo.toml.orig",
+              "output": {
+                "results": [
+                  {
+                    "content": "https://github.com/dtolnay/quote\"",
+                    "end": 291,
+                    "start": 258,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/quote/\"",
+                    "end": 332,
+                    "start": 309,
+                    "type": "url"
+                  },
+                  {
+                    "content": "dtolnay@gmail.com",
+                    "end": 165,
+                    "start": 148,
+                    "type": "email"
+                  },
+                  {
+                    "content": "authors",
+                    "end": 129,
+                    "start": 122,
+                    "type": "author"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "LICENSE-APACHE",
+              "output": {
+                "results": [
+                  {
+                    "content": "copyright owner or by an individual or Legal Entity authorized to submit on behalf of",
+                    "end": 2580,
+                    "start": 2492,
+                    "type": "statement"
+                  },
+                  {
+                    "content": "(c) You must retain, in the Source form of any Derivative Works",
+                    "end": 5261,
+                    "start": 5198,
+                    "type": "statement"
+                  },
+                  {
+                    "content": "copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and",
+                    "end": 5487,
+                    "start": 5294,
+                    "type": "statement"
+                  },
+                  {
+                    "content": "Copyright [yyyy] [name of copyright owner]",
+                    "end": 10324,
+                    "start": 10282,
+                    "type": "statement"
+                  },
+                  {
+                    "content": "http://www.apache.org/licenses/",
+                    "end": 147,
+                    "start": 116,
+                    "type": "url"
+                  },
+                  {
+                    "content": "http://www.apache.org/licenses/LICENSE-2.0",
+                    "end": 10539,
+                    "start": 10497,
+                    "type": "url"
+                  },
+                  {
+                    "content": "authorized by",
+                    "end": 442,
+                    "start": 429,
+                    "type": "author"
+                  },
+                  {
+                    "content": "authorship, whether in Source or",
+                    "end": 1567,
+                    "start": 1535,
+                    "type": "author"
+                  },
+                  {
+                    "content": "authorship.",
+                    "end": 2025,
+                    "start": 2014,
+                    "type": "author"
+                  },
+                  {
+                    "content": "authorship, including",
+                    "end": 2295,
+                    "start": 2274,
+                    "type": "author"
+                  },
+                  {
+                    "content": "authorized to submit on behalf of",
+                    "end": 2580,
+                    "start": 2547,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor hereby grants to You a perpetual",
+                    "end": 3482,
+                    "start": 3438,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor hereby grants to You a perpetual",
+                    "end": 3878,
+                    "start": 3834,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor that are necessarily infringed by their",
+                    "end": 4220,
+                    "start": 4169,
+                    "type": "author"
+                  },
+                  {
+                    "content": "contributory patent infringement, then any patent licenses",
+                    "end": 4622,
+                    "start": 4564,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor provides its Contributions",
+                    "end": 7841,
+                    "start": 7803,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor be",
+                    "end": 8554,
+                    "start": 8540,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor has been advised of the possibility of such damages.",
+                    "end": 9018,
+                    "start": 8951,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor harmless for any liability",
+                    "end": 9558,
+                    "start": 9520,
+                    "type": "author"
+                  },
+                  {
+                    "content": "Contributor by reason",
+                    "end": 9629,
+                    "start": 9608,
+                    "type": "author"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "LICENSE-MIT",
+              "output": {
+                "results": [
+                  {
+                    "content": "Copyright (c) 2016 The Rust Project Developers",
+                    "end": 46,
+                    "start": 0,
+                    "type": "statement"
+                  },
+                  {
+                    "content": "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY",
+                    "end": 880,
+                    "start": 834,
+                    "type": "author"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "README.md",
+              "output": {
+                "results": [
+                  {
+                    "content": "https://api.travis-ci.org/dtolnay/quote.svg?branch=master)](https://travis-ci.org/dtolnay/quote)",
+                    "end": 152,
+                    "start": 56,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://img.shields.io/crates/v/quote.svg)](https://crates.io/crates/quote)",
+                    "end": 247,
+                    "start": 172,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/quote/)",
+                    "end": 346,
+                    "start": 271,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/quote/0.6/quote/macro.quote.html",
+                    "end": 523,
+                    "start": 475,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/quote/releases)",
+                    "end": 1690,
+                    "start": 1648,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.TokenStream.html",
+                    "end": 2228,
+                    "start": 2161,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/quote/0.6/quote/trait.ToTokens.html",
+                    "end": 2533,
+                    "start": 2482,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/syn",
+                    "end": 2573,
+                    "start": 2543,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html#method.call_site",
+                    "end": 4201,
+                    "start": 4124,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/quote/0.6/quote/macro.quote_spanned.html",
+                    "end": 4362,
+                    "start": 4306,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/quote/issues/7",
+                    "end": 4615,
+                    "start": 4574,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/quote/issues/8",
+                    "end": 4663,
+                    "start": 4622,
+                    "type": "url"
+                  },
+                  {
+                    "content": "http://www.apache.org/licenses/LICENSE-2.0)",
+                    "end": 5200,
+                    "start": 5157,
+                    "type": "url"
+                  },
+                  {
+                    "content": "http://opensource.org/licenses/MIT)",
+                    "end": 5282,
+                    "start": 5247,
+                    "type": "url"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "src/ext.rs",
+              "output": {
+                "results": null
+              }
+            },
+            {
+              "path": "src/lib.rs",
+              "output": {
+                "results": [
+                  {
+                    "content": "https://serde.rs/",
+                    "end": 1982,
+                    "start": 1965,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/quote/0.6.4\")]",
+                    "end": 3377,
+                    "start": 3347,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.TokenStream.html",
+                    "end": 4237,
+                    "start": 4170,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://github.com/dtolnay/syn",
+                    "end": 4742,
+                    "start": 4712,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html#method.call_site",
+                    "end": 5715,
+                    "start": 5638,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html",
+                    "end": 7430,
+                    "start": 7370,
+                    "type": "url"
+                  },
+                  {
+                    "content": "https://doc.rust-lang.org/std/marker/trait.Sync.html",
+                    "end": 8894,
+                    "start": 8842,
+                    "type": "url"
+                  }
+                ]
+              }
+            },
+            {
+              "path": "src/to_tokens.rs",
+              "output": {
+                "results": null
+              }
+            },
+            {
+              "path": "tests/test.rs",
+              "output": {
+                "results": null
+              }
+            }
+          ]
+        }
+      },
+      "monk": {
+        "version": "0.0.0",
+        "parameters": [
+          "-k",
+          "monk_knowledgebase"
+        ],
+        "output": {
+          "contentType": "text/plain",
+          "content": "found full match between \"LICENSE-MIT\" and \"MIT\" (rf_pk=311); matched: 48+1022\nWARNING: cannot re-encode 'src/lib.rs', going binary from now on\nfound diff match between \"LICENSE-APACHE\" and \"Apache-2.0\" (rf_pk=213); rank 99; diffs: {t[30+4937] M0 s[0+4717], t[4972+3] M+ s[4721], t[4976+101] M0 s[4721+94], t[5082+3] M+ s[4820], t[5086+107] M0 s[4820+100], t[5198+3] M+ s[4925], t[5202+285] M0 s[4925+257], t[5492+3] M+ s[5187], t[5496+4277] M0 s[5187+4058], t[9774+5] MR s[9246+4], t[9784+1062] M0 s[9254+1089]}\n"
+        }
+      }
+    }
+  },
+  "licensee": {
+    "9.12.1": {
+      "_metadata": {
+        "type": "licensee",
+        "url": "cd:/crate/cratesio/-/quote/0.6.4",
+        "fetchedAt": "2019-03-13T03:42:02.578Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:licensee:9.12.1",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:licensee",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "9.12.1",
+        "toolVersion": "9.10.1",
+        "processedAt": "2019-03-13T03:42:04.951Z"
+      },
+      "licensee": {
+        "version": "9.10.1",
+        "parameters": [
+          "--json",
+          "--no-readme"
+        ],
+        "output": {
+          "contentType": "application/json",
+          "content": {
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "spdx_id": "Apache-2.0",
+                "meta": {
+                  "title": "Apache License 2.0",
+                  "source": "https://spdx.org/licenses/Apache-2.0.html",
+                  "description": "A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file.",
+                  "using": [
+                    {
+                      "Kubernetes": "https://github.com/kubernetes/kubernetes/blob/master/LICENSE"
+                    },
+                    {
+                      "PDF.js": "https://github.com/mozilla/pdf.js/blob/master/LICENSE"
+                    },
+                    {
+                      "Swift": "https://github.com/apple/swift/blob/master/LICENSE.txt"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": "The Apache Foundation recommends taking the additional step of adding a boilerplate notice to the header of each source file. You can find the notice at the very end of the license in the appendix."
+                },
+                "url": "http://choosealicense.com/licenses/apache-2.0/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "patent-use",
+                      "label": "Patent use",
+                      "description": "This license provides an express grant of patent rights from contributors."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    },
+                    {
+                      "tag": "document-changes",
+                      "label": "State changes",
+                      "description": "Changes made to the code must be documented."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "trademark-use",
+                      "label": "Trademark use",
+                      "description": "This license explicitly states that it does NOT grant trademark rights, even though licenses without such a statement probably do not grant any implicit trademark rights."
+                    },
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "mit",
+                "spdx_id": "MIT",
+                "meta": {
+                  "title": "MIT License",
+                  "source": "https://spdx.org/licenses/MIT.html",
+                  "description": "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file. Replace [year] with the current year and [fullname] with the name (or names) of the copyright holders.",
+                  "using": [
+                    {
+                      "Babel": "https://github.com/babel/babel/blob/master/LICENSE"
+                    },
+                    {
+                      ".NET Core": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT"
+                    },
+                    {
+                      "Rails": "https://github.com/rails/rails/blob/master/MIT-LICENSE"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/mit/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [
+                  {
+                    "name": "year",
+                    "description": "The current year"
+                  },
+                  {
+                    "name": "fullname",
+                    "description": "The full name or username of the repository owner"
+                  }
+                ],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "other",
+                "spdx_id": "NOASSERTION",
+                "meta": {
+                  "title": null,
+                  "source": null,
+                  "description": null,
+                  "how": null,
+                  "using": null,
+                  "featured": false,
+                  "hidden": true,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/other/",
+                "rules": {
+                  "permissions": [],
+                  "conditions": [],
+                  "limitations": []
+                },
+                "fields": [],
+                "other": true,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              }
+            ],
+            "matched_files": [
+              {
+                "filename": "LICENSE-APACHE",
+                "content": "                              Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n",
+                "content_hash": "38af80cfcd81261023ea4c45f5335800a5a4cc97",
+                "content_normalized": "https://www.apache.org/licenses/ terms and conditions for use, reproduction, and distribution - definitions. \"license\" shall mean the terms and conditions for use, reproduction, and distribution as defined by sections 1 through 9 of this document. \"licensor\" shall mean the copyright owner or entity authorized by the copyright owner that is granting the license. \"legal entity\" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. for the purposes of this definition, \"control\" means i the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or ii ownership of fifty percent 50% or more of the outstanding shares, or iii beneficial ownership of such entity. \"you\" or \"your\" shall mean an individual or legal entity exercising permissions granted by this license. \"source\" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files. \"object\" form shall mean any form resulting from mechanical transformation or translation of a source form, including but not limited to compiled object code, generated documentation, and conversions to other media types. \"work\" shall mean the work of authorship, whether in source or object form, made available under the license, as indicated by a copyright notice that is included in or attached to the work an example is provided in the appendix below . \"derivative works\" shall mean any work, whether in source or object form, that is based on or derived from the work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. for the purposes of this license, derivative works shall not include works that remain separable from, or merely link or bind by name to the interfaces of, the work and derivative works thereof. \"contribution\" shall mean any work of authorship, including the original version of the work and any modifications or additions to that work or derivative works thereof, that is intentionally submitted to licensor for inclusion in the work by the copyright owner or by an individual or legal entity authorized to submit on behalf of the copyright owner. for the purposes of this definition, \"submitted\" means any form of electronic, verbal, or written communication sent to the licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the licensor for the purpose of discussing and improving the work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as \"not a contribution.\" \"contributor\" shall mean licensor and any individual or legal entity on behalf of whom a contribution has been received by licensor and subsequently incorporated within the work. - grant of copyright license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the work and such derivative works in source or object form. - grant of patent license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable except as stated in this section patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the work, where such license applies only to those patent claims licensable by such contributor that are necessarily infringed by their contribution s alone or by combination of their contribution s with the work to which such contribution s was submitted. if you institute patent litigation against any entity including a cross-claim or counterclaim in a lawsuit alleging that the work or a contribution incorporated within the work constitutes direct or contributory patent infringement, then any patent licenses granted to you under this license for that work shall terminate as of the date such litigation is filed. - redistribution. you may reproduce and distribute copies of the work or derivative works thereof in any medium, with or without modifications, and in source or object form, provided that you meet the following conditions: a you must give any other recipients of the work or derivative works a copy of this license; and b you must cause any modified files to carry prominent notices stating that you changed the files; and c you must retain, in the source form of any derivative works that you distribute, all copyright, patent, trademark, and attribution notices from the source form of the work, excluding those notices that do not pertain to any part of the derivative works; and d if the work includes a \"notice\" text file as part of its distribution, then any derivative works that you distribute must include a readable copy of the attribution notices contained within such notice file, excluding those notices that do not pertain to any part of the derivative works, in at least one of the following places: within a notice text file distributed as part of the derivative works; within the source form or documentation, if provided along with the derivative works; or, within a display generated by the derivative works, if and wherever such third-party notices normally appear. the contents of the notice file are for informational purposes only and do not modify the license. you may add your own attribution notices within derivative works that you distribute, alongside or as an addendum to the notice text from the work, provided that such additional attribution notices cannot be construed as modifying the license. you may add your own copyright statement to your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of your modifications, or for any such derivative works as a whole, provided your use, reproduction, and distribution of the work otherwise complies with the conditions stated in this license. - submission of contributions. unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you to the licensor shall be under the terms and conditions of this license, without any additional terms or conditions. notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with licensor regarding such contributions. - trademarks. this license does not grant permission to use the trade names, trademarks, service marks, or product names of the licensor, except as required for reasonable and customary use in describing the origin of the work and reproducing the content of the notice file. - disclaimer of warranty. unless required by applicable law or agreed to in writing, licensor provides the work and each contributor provides its contributions on an \"as is\" basis, without warranties or conditions of any kind, either express or implied, including, without limitation, any warranties or conditions of title, non-infringement, merchantability, or fitness for a particular purpose. you are solely responsible for determining the appropriateness of using or redistributing the work and assume any risks associated with your exercise of permissions under this license. - limitation of liability. in no event and under no legal theory, whether in tort including negligence , contract, or otherwise, unless required by applicable law such as deliberate and grossly negligent acts or agreed to in writing, shall any contributor be liable to you for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this license or out of the use or inability to use the work including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses , even if such contributor has been advised of the possibility of such damages. - accepting warranty or additional liability. while redistributing the work or derivative works thereof, you may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this license. however, in accepting such obligations, you may act only on your own behalf and on your sole responsibility, not on behalf of any other contributor, and only if you agree to indemnify, defend, and hold each contributor harmless for any liability incurred by, or claims asserted against, such contributor by reason of your accepting any such warranty or additional liability.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "Apache-2.0"
+              },
+              {
+                "filename": "LICENSE-MIT",
+                "content": "Copyright (c) 2016 The Rust Project Developers\n\nPermission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE.\n",
+                "content_hash": "46cdc03462b9af57968df67b450cc4372ac41f53",
+                "content_normalized": "permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files the \"software\" , to deal in the software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions: the above copyright notice and this permission notice shall be included in all copies or substantial portions of the software. the software is provided \"as is\", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. in no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "MIT"
+              },
+              {
+                "filename": "Cargo.toml",
+                "content": "# THIS FILE IS AUTOMATICALLY GENERATED BY CARGO\n#\n# When uploading crates to the registry Cargo will automatically\n# \"normalize\" Cargo.toml files for maximal compatibility\n# with all versions of Cargo and also rewrite `path` dependencies\n# to registry (e.g. crates.io) dependencies\n#\n# If you believe there's an error in this file please file an\n# issue against the rust-lang/cargo repository. If you're\n# editing this file be aware that the upstream Cargo.toml\n# will likely look very different (and much more reasonable)\n\n[package]\nname = \"quote\"\nversion = \"0.6.4\"\nauthors = [\"David Tolnay <dtolnay@gmail.com>\"]\ninclude = [\"Cargo.toml\", \"src/**/*.rs\", \"tests/**/*.rs\", \"README.md\", \"LICENSE-APACHE\", \"LICENSE-MIT\"]\ndescription = \"Quasi-quoting macro quote!(...)\"\ndocumentation = \"https://docs.rs/quote/\"\nreadme = \"README.md\"\nkeywords = [\"syn\"]\nlicense = \"MIT/Apache-2.0\"\nrepository = \"https://github.com/dtolnay/quote\"\n[dependencies.proc-macro2]\nversion = \"0.4.4\"\ndefault-features = false\n\n[features]\ndefault = [\"proc-macro\"]\nproc-macro = [\"proc-macro2/proc-macro\"]\n",
+                "content_hash": null,
+                "content_normalized": null,
+                "matcher": {
+                  "name": "cargo",
+                  "confidence": 90
+                },
+                "matched_license": "NOASSERTION"
+              }
+            ]
+          }
+        }
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "token": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5"
+        },
+        {
+          "path": "Cargo.toml",
+          "token": "a02686a992d472d3cc92326977fb38432dd6ccdcc65189c52fdef6f34ddb5338"
+        }
+      ]
+    }
+  },
+  "scancode": {
+    "3.2.2": {
+      "_metadata": {
+        "type": "scancode",
+        "url": "cd:/crate/cratesio/-/quote/0.6.4/tool/fossology",
+        "fetchedAt": "2019-03-13T03:42:02.252Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:scancode:3.2.2",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:quote:revision:0.6.4:tool:fossology",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "3.2.2",
+        "toolVersion": "3.0.2",
+        "contentType": "application/json",
+        "releaseDate": "2018-07-22T18:07:39.239122+00:00",
+        "processedAt": "2019-03-13T03:42:24.509Z"
+      },
+      "content": {
+        "headers": [
+          {
+            "tool_name": "scancode-toolkit",
+            "tool_version": "3.0.2",
+            "options": {
+              "input": "/tmp/cd-HlmEDw/crate/quote-0.6.4",
+              "--classify": true,
+              "--copyright": true,
+              "--email": true,
+              "--generated": true,
+              "--info": true,
+              "--is-license-text": true,
+              "--json-pp": "/tmp/cd-fAdUuK",
+              "--license": true,
+              "--license-clarity-score": true,
+              "--license-diag": true,
+              "--license-text": true,
+              "--package": true,
+              "--processes": "2",
+              "--strip-root": true,
+              "--summary": true,
+              "--summary-key-files": true,
+              "--timeout": "1000.0",
+              "--url": true
+            },
+            "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+            "start_timestamp": "2019-03-13T034204.876857",
+            "end_timestamp": "2019-03-13T034223.180733",
+            "message": null,
+            "errors": [],
+            "extra_data": {
+              "files_count": 9
+            }
+          }
+        ],
+        "summary": {
+          "license_expressions": [
+            {
+              "value": "mit",
+              "count": 6
+            },
+            {
+              "value": null,
+              "count": 4
+            },
+            {
+              "value": "apache-2.0",
+              "count": 4
+            },
+            {
+              "value": "apache-2.0 OR mit",
+              "count": 2
+            },
+            {
+              "value": "free-unknown",
+              "count": 1
+            },
+            {
+              "value": "unknown",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 8
+            },
+            {
+              "value": "Copyright (c) The Rust Project",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 8
+            },
+            {
+              "value": "The Rust Project",
+              "count": 1
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 7
+            },
+            {
+              "value": "David Tolnay <dtolnay@gmail.com>",
+              "count": 2
+            }
+          ],
+          "programming_language": [
+            {
+              "value": null,
+              "count": 4
+            },
+            {
+              "value": "Rust",
+              "count": 4
+            },
+            {
+              "value": "Objective-C",
+              "count": 1
+            }
+          ],
+          "packages": []
+        },
+        "license_clarity_score": {
+          "score": 30,
+          "has_declared_license_in_key_files": true,
+          "file_level_license_and_copyright_coverage": 0,
+          "has_consistent_key_and_file_level_licenses": false,
+          "is_using_only_spdx_licenses": false,
+          "has_full_text_for_all_licenses": false
+        },
+        "summary_of_key_files": {
+          "license_expressions": [
+            {
+              "value": "apache-2.0",
+              "count": 4
+            },
+            {
+              "value": "mit",
+              "count": 4
+            },
+            {
+              "value": "free-unknown",
+              "count": 1
+            },
+            {
+              "value": "unknown",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 2
+            },
+            {
+              "value": "Copyright (c) The Rust Project",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 2
+            },
+            {
+              "value": "The Rust Project",
+              "count": 1
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 3
+            }
+          ],
+          "programming_language": [
+            {
+              "value": null,
+              "count": 2
+            },
+            {
+              "value": "Objective-C",
+              "count": 1
+            }
+          ]
+        },
+        "files": [
+          {
+            "path": "Cargo.toml",
+            "type": "file",
+            "name": "Cargo.toml",
+            "base_name": "Cargo",
+            "extension": ".toml",
+            "size": 1068,
+            "date": "1970-01-01",
+            "sha1": "aa1aa2b801f0210b0b79f4d4dfe7a717a005dfb8",
+            "md5": "b36e076979cc697d7f5f8602e7bf48f8",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 17,
+                "end_line": 17,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "LICENSE-MIT\"]"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 27,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 22,
+                "end_line": 22,
+                "matched_rule": {
+                  "identifier": "apache-2.0_or_mit4.RULE",
+                  "license_expression": "apache-2.0 OR mit",
+                  "licenses": [
+                    "apache-2.0",
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "license = \"MIT/Apache-2.0\""
+              },
+              {
+                "key": "mit",
+                "score": 27,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 22,
+                "end_line": 22,
+                "matched_rule": {
+                  "identifier": "apache-2.0_or_mit4.RULE",
+                  "license_expression": "apache-2.0 OR mit",
+                  "licenses": [
+                    "apache-2.0",
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "license = \"MIT/Apache-2.0\""
+              }
+            ],
+            "license_expressions": [
+              "mit",
+              "apache-2.0 OR mit"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "David Tolnay <dtolnay@gmail.com>",
+                "start_line": 16,
+                "end_line": 18
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "dtolnay@gmail.com",
+                "start_line": 16,
+                "end_line": 16
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://docs.rs/quote/",
+                "start_line": 19,
+                "end_line": 19
+              },
+              {
+                "url": "https://github.com/dtolnay/quote",
+                "start_line": 23,
+                "end_line": 23
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml.orig",
+            "type": "file",
+            "name": "Cargo.toml.orig",
+            "base_name": "Cargo.toml",
+            "extension": ".orig",
+            "size": 747,
+            "date": "2018-07-22",
+            "sha1": "0fb532d4e9329c097bee636e72c3c7bf0fbc322f",
+            "md5": "f14b8708a62f2dcc66a940044c3712fb",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "score": 27,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 5,
+                "end_line": 5,
+                "matched_rule": {
+                  "identifier": "apache-2.0_or_mit4.RULE",
+                  "license_expression": "apache-2.0 OR mit",
+                  "licenses": [
+                    "apache-2.0",
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "license = \"MIT/Apache-2.0\""
+              },
+              {
+                "key": "mit",
+                "score": 27,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 5,
+                "end_line": 5,
+                "matched_rule": {
+                  "identifier": "apache-2.0_or_mit4.RULE",
+                  "license_expression": "apache-2.0 OR mit",
+                  "licenses": [
+                    "apache-2.0",
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "license = \"MIT/Apache-2.0\""
+              },
+              {
+                "key": "mit",
+                "score": 99,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 11,
+                "end_line": 11,
+                "matched_rule": {
+                  "identifier": "mit_34.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": true,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 99
+                },
+                "matched_text": "LICENSE-MIT\"]"
+              }
+            ],
+            "license_expressions": [
+              "apache-2.0 OR mit",
+              "mit"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "David Tolnay <dtolnay@gmail.com>",
+                "start_line": 4,
+                "end_line": 6
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "dtolnay@gmail.com",
+                "start_line": 4,
+                "end_line": 4
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://github.com/dtolnay/quote",
+                "start_line": 7,
+                "end_line": 7
+              },
+              {
+                "url": "https://docs.rs/quote/",
+                "start_line": 8,
+                "end_line": 8
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-APACHE",
+            "type": "file",
+            "name": "LICENSE-APACHE",
+            "base_name": "LICENSE-APACHE",
+            "extension": "",
+            "size": 10847,
+            "date": "2016-09-03",
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "md5": "1836efb2eb779966696f473ee8540542",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "score": 100,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 1,
+                "end_line": 201,
+                "matched_rule": {
+                  "identifier": "apache-2.0.LICENSE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "1-hash",
+                  "rule_length": 1608,
+                  "matched_length": 1608,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License."
+              }
+            ],
+            "license_expressions": [
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://www.apache.org/licenses/",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "start_line": 195,
+                "end_line": 195
+              }
+            ],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": true,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-MIT",
+            "type": "file",
+            "name": "LICENSE-MIT",
+            "base_name": "LICENSE-MIT",
+            "extension": "",
+            "size": 1071,
+            "date": "2016-09-03",
+            "sha1": "9a2b6b4ad55ec42cf19fc686c74668d3a6303ae7",
+            "md5": "0b29d505d9225d1f0815cbdcf602b901",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 100,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 3,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "mit.LICENSE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 163,
+                  "matched_length": 163,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Permission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE."
+              }
+            ],
+            "license_expressions": [
+              "mit"
+            ],
+            "holders": [
+              {
+                "value": "The Rust Project",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "copyrights": [
+              {
+                "value": "Copyright (c) 2016 The Rust Project",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "README.md",
+            "type": "file",
+            "name": "README.md",
+            "base_name": "README",
+            "extension": ".md",
+            "size": 5550,
+            "date": "2018-05-21",
+            "sha1": "1423e115c1e0353c62b4e9c8efc4f8180f911178",
+            "md5": "eab0f1246db3df7544065b7c577ba38f",
+            "mime_type": "text/x-c",
+            "file_type": "C source, UTF-8 Unicode text",
+            "programming_language": "Objective-C",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "unknown",
+                "score": 11,
+                "name": "Unknown license detected but not recognized",
+                "short_name": "unknown",
+                "category": "Unstated License",
+                "is_exception": false,
+                "owner": "Unspecified",
+                "homepage_url": "",
+                "text_url": "",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:unknown",
+                "spdx_license_key": "",
+                "spdx_url": "",
+                "start_line": 136,
+                "end_line": 136,
+                "matched_rule": {
+                  "identifier": "unknown_28.RULE",
+                  "license_expression": "unknown",
+                  "licenses": [
+                    "unknown"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 11
+                },
+                "matched_text": "Licensed under"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 27,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 138,
+                "end_line": 138,
+                "matched_rule": {
+                  "identifier": "apache-2.0_48.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "Apache License, Version 2.0 (["
+              },
+              {
+                "key": "apache-2.0",
+                "score": 44,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 138,
+                "end_line": 138,
+                "matched_rule": {
+                  "identifier": "apache-2.0_25.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 8,
+                  "matched_length": 8,
+                  "match_coverage": 100,
+                  "rule_relevance": 44
+                },
+                "matched_text": "http://www.apache.org/licenses/LICENSE-2.0)"
+              },
+              {
+                "key": "mit",
+                "score": 80,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 139,
+                "end_line": 139,
+                "matched_rule": {
+                  "identifier": "mit_14.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 80
+                },
+                "matched_text": "MIT license (["
+              },
+              {
+                "key": "mit",
+                "score": 22,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 139,
+                "end_line": 139,
+                "matched_rule": {
+                  "identifier": "mit_154.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 4,
+                  "matched_length": 4,
+                  "match_coverage": 100,
+                  "rule_relevance": 22
+                },
+                "matched_text": "LICENSE-MIT](LICENSE-MIT)"
+              },
+              {
+                "key": "mit",
+                "score": 27,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 139,
+                "end_line": 139,
+                "matched_rule": {
+                  "identifier": "mit_82.RULE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 5,
+                  "matched_length": 5,
+                  "match_coverage": 100,
+                  "rule_relevance": 27
+                },
+                "matched_text": "http://opensource.org/licenses/MIT)"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 146,
+                "end_line": 146,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0"
+              },
+              {
+                "key": "free-unknown",
+                "score": 11,
+                "name": "Free unknown license detected but not recognized",
+                "short_name": "Free unknown",
+                "category": "Unstated License",
+                "is_exception": false,
+                "owner": "Unspecified",
+                "homepage_url": "",
+                "text_url": "",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:free-unknown",
+                "spdx_license_key": "",
+                "spdx_url": "",
+                "start_line": 147,
+                "end_line": 147,
+                "matched_rule": {
+                  "identifier": "free-unknown_31.RULE",
+                  "license_expression": "free-unknown",
+                  "licenses": [
+                    "free-unknown"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 2,
+                  "matched_length": 2,
+                  "match_coverage": 100,
+                  "rule_relevance": 11
+                },
+                "matched_text": "dual licensed"
+              }
+            ],
+            "license_expressions": [
+              "unknown",
+              "apache-2.0",
+              "apache-2.0",
+              "mit",
+              "mit",
+              "mit",
+              "apache-2.0",
+              "free-unknown"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://api.travis-ci.org/dtolnay/quote.svg?branch=master",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "url": "https://travis-ci.org/dtolnay/quote",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "url": "https://img.shields.io/crates/v/quote.svg",
+                "start_line": 5,
+                "end_line": 5
+              },
+              {
+                "url": "https://crates.io/crates/quote",
+                "start_line": 5,
+                "end_line": 5
+              },
+              {
+                "url": "https://img.shields.io/badge/api-rustdoc-blue.svg",
+                "start_line": 6,
+                "end_line": 6
+              },
+              {
+                "url": "https://docs.rs/quote",
+                "start_line": 6,
+                "end_line": 6
+              },
+              {
+                "url": "https://docs.rs/quote/0.6/quote/macro.quote.html",
+                "start_line": 11,
+                "end_line": 11
+              },
+              {
+                "url": "https://github.com/dtolnay/quote/releases",
+                "start_line": 34,
+                "end_line": 34
+              },
+              {
+                "url": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.TokenStream.html",
+                "start_line": 54,
+                "end_line": 54
+              },
+              {
+                "url": "https://docs.rs/quote/0.6/quote/trait.ToTokens.html",
+                "start_line": 60,
+                "end_line": 60
+              },
+              {
+                "url": "https://github.com/dtolnay/syn",
+                "start_line": 61,
+                "end_line": 61
+              },
+              {
+                "url": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html#method.call_site",
+                "start_line": 109,
+                "end_line": 109
+              },
+              {
+                "url": "https://docs.rs/quote/0.6/quote/macro.quote_spanned.html",
+                "start_line": 114,
+                "end_line": 114
+              },
+              {
+                "url": "https://github.com/dtolnay/quote/issues/7",
+                "start_line": 123,
+                "end_line": 123
+              },
+              {
+                "url": "https://github.com/dtolnay/quote/issues/8",
+                "start_line": 124,
+                "end_line": 124
+              },
+              {
+                "url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "start_line": 138,
+                "end_line": 138
+              },
+              {
+                "url": "http://opensource.org/licenses/MIT",
+                "start_line": 139,
+                "end_line": 139
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": true,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src",
+            "type": "directory",
+            "name": "src",
+            "base_name": "src",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 3,
+            "dirs_count": 0,
+            "size_count": 24279,
+            "scan_errors": []
+          },
+          {
+            "path": "src/ext.rs",
+            "type": "file",
+            "name": "ext.rs",
+            "base_name": "ext",
+            "extension": ".rs",
+            "size": 2856,
+            "date": "2018-05-17",
+            "sha1": "5caeb8b25737f6a43fd3a78b97cafa6890266aba",
+            "md5": "36673057a94e6e23bc45a001a2f18ea0",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/lib.rs",
+            "type": "file",
+            "name": "lib.rs",
+            "base_name": "lib",
+            "extension": ".rs",
+            "size": 16583,
+            "date": "2018-07-22",
+            "sha1": "ce8f375964eaa14cec0e6255f0be1752913d871b",
+            "md5": "047d504385ca7043c15fcc9f8c20b1be",
+            "mime_type": "text/x-c",
+            "file_type": "C source, UTF-8 Unicode text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://serde.rs/",
+                "start_line": 48,
+                "end_line": 48
+              },
+              {
+                "url": "https://docs.rs/quote/0.6.4",
+                "start_line": 95,
+                "end_line": 95
+              },
+              {
+                "url": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.TokenStream.html",
+                "start_line": 129,
+                "end_line": 129
+              },
+              {
+                "url": "https://github.com/dtolnay/syn",
+                "start_line": 141,
+                "end_line": 141
+              },
+              {
+                "url": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html#method.call_site",
+                "start_line": 160,
+                "end_line": 160
+              },
+              {
+                "url": "https://docs.rs/proc-macro2/0.4/proc_macro2/struct.Span.html",
+                "start_line": 220,
+                "end_line": 220
+              },
+              {
+                "url": "https://doc.rust-lang.org/std/marker/trait.Sync.html",
+                "start_line": 264,
+                "end_line": 264
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/to_tokens.rs",
+            "type": "file",
+            "name": "to_tokens.rs",
+            "base_name": "to_tokens",
+            "extension": ".rs",
+            "size": 4840,
+            "date": "2018-06-03",
+            "sha1": "f8605b297ea0270a0d2f37037f2434cc221af0c8",
+            "md5": "74fdaa5bfdb35736473fcc4c5c513c3f",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "tests",
+            "type": "directory",
+            "name": "tests",
+            "base_name": "tests",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 1,
+            "dirs_count": 0,
+            "size_count": 6969,
+            "scan_errors": []
+          },
+          {
+            "path": "tests/test.rs",
+            "type": "file",
+            "name": "test.rs",
+            "base_name": "test",
+            "extension": ".rs",
+            "size": 6969,
+            "date": "2018-05-21",
+            "sha1": "23ed488bbc53132e9c7df99e6b74371065d10a1b",
+            "md5": "a1802d97cb7f9e1afdc71bbef99832b9",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          }
+        ]
+      }
+    }
+  }
+}

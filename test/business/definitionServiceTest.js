@@ -6,6 +6,7 @@ const sinon = require('sinon')
 const validator = require('../../schemas/validator')
 const DefinitionService = require('../../business/definitionService')
 const AggregatorService = require('../../business/aggregator')
+const SummaryService = require('../../business/summarizer')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
 const Curation = require('../../lib/curation')
@@ -319,7 +320,28 @@ describe('Aggregation service', () => {
     expect(aggregated.files[1].path).to.eq('bar.txt')
     expect(aggregated.files[1].license).to.eq('GPL-2.0')
   })
+
+  it('handles Rust quote crate with dual licenses', async () => {
+    const coordSpec = 'crate/cratesio/-/quote/1.0.9'
+    //const coordSpec = 'crate/cratesio/-/quote/0.6.4'
+    const coords = EntityCoordinates.fromString(coordSpec)
+    const raw = require('./evidence/crate-quote-1.0.9.json')
+    //const raw = require('./evidence/crate-quote-0.6.4.json')
+    const tools = [['clearlydefined', 'licensee', 'scancode']]
+    //const tools = [['clearlydefined', 'licensee', 'scancode', 'fossology']]
+    const summary_options = {}
+    const summaryService = SummaryService(summary_options)
+    const summaries = summaryService.summarizeAll(coords, raw)
+    const { service } = setupAggregatorWithParams(coordSpec, tools)
+    const aggregated = service.process(summaries)
+    console.log(`${summaries}`)
+    console.log(`${aggregated}`)
+    expect(aggregated.licensed.declared == 'Apache-2.0 OR MIT')
+  })
 })
+
+
+
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
@@ -365,6 +387,13 @@ function setup(definition, coordinateSpec, curation) {
 function setupAggregator() {
   const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
   const config = { precedence: [['tool1', 'tool2', 'tool3']] }
+  const service = AggregatorService(config)
+  return { service, coordinates }
+}
+
+function setupAggregatorWithParams(coordSpec, tool_precedence) {
+  const coordinates = EntityCoordinates.fromString(coordSpec)
+  const config = { precedence: tool_precedence }
   const service = AggregatorService(config)
   return { service, coordinates }
 }
