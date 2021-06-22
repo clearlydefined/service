@@ -1,0 +1,3068 @@
+{
+  "clearlydefined": {
+    "1.2.0": {
+      "_metadata": {
+        "type": "crate",
+        "url": "cd:/crate/cratesio/-/slog/2.7.0",
+        "fetchedAt": "2021-03-02T16:33:37.386Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:clearlydefined:1.2.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:clearlydefined",
+            "type": "collection"
+          },
+          "licensee": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:licensee",
+            "type": "collection"
+          },
+          "scancode": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:scancode",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "1.2.0",
+        "toolVersion": "1.0.0"
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "token": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ],
+      "summaryInfo": {
+        "k": 208,
+        "count": 31,
+        "hashes": {
+          "sha1": "dd6b0a72ac00becc778c713007b1b21b5421d1d2",
+          "sha256": "8347046d4ebd943127157b94d63abb990fcf729dc4e9978927fdf4ac3c998d06"
+        }
+      },
+      "files": [
+        {
+          "path": ".cargo/config",
+          "hashes": {
+            "sha1": "5d39cb708d5a0427fb26d94a30a5b07156330861",
+            "sha256": "b1d2b4fdf0d7fcfa75533a98408cfad4a537048ce0cd7ac72027d0feda4126b6"
+          }
+        },
+        {
+          "path": ".cargo_vcs_info.json",
+          "hashes": {
+            "sha1": "1d54699ee615462d73286da816a74d3c6b50f726",
+            "sha256": "b7f78a9e5f76c111b4d047977776071637b7b375b5bf0b617d5aa530cd261674"
+          }
+        },
+        {
+          "path": ".editorconfig",
+          "hashes": {
+            "sha1": "5a6d6c61f983762dfbb771455ccc6721622257dd",
+            "sha256": "7bbf4fd0a90ff4c383b4ac32ccf3e8c937b50a8e48441cfe3ee1d05815fd3623"
+          }
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE.md",
+          "hashes": {
+            "sha1": "b865c4d12c6d833b8213a57acd40b4c26642b108",
+            "sha256": "511ce9db25107f037b24865dd7bf33d8205e1d7c95fec7a4674713cc9a36804c"
+          }
+        },
+        {
+          "path": ".github/pull_request_template.md",
+          "hashes": {
+            "sha1": "28f7b270c8906808a3495a883bc00eb17ee50145",
+            "sha256": "82f8dd323277d0a7f10114e06dece38c0cd99a4e8daa5faebc519062f5d90178"
+          }
+        },
+        {
+          "path": ".gitignore",
+          "hashes": {
+            "sha1": "9e0ae69080904c613e9b8cf02f230213f1f38072",
+            "sha256": "5ff3c1131b57ea6f2e048cf69e99c8900163251c1938f8789d16296d1c000f4c"
+          }
+        },
+        {
+          "path": ".rustfmt.toml",
+          "hashes": {
+            "sha1": "57df9e89df2624f1a3055c39a207f5f8e9a98047",
+            "sha256": "a2bfc13700118e2210353957d1d024513b4e542487c91aaeebe683ef4da77e27"
+          }
+        },
+        {
+          "path": ".travis.yml",
+          "hashes": {
+            "sha1": "6dc601c63e2a0c5b52375360cba28f7692f94d4f",
+            "sha256": "57fbe59145eda76446f10dd478863392121b756276ddc4c52144c7462333f749"
+          }
+        },
+        {
+          "path": ".vimrc",
+          "hashes": {
+            "sha1": "f4461254d7aeea6b9d07b1a56879d0699d717c57",
+            "sha256": "65deb3b163326a90200a91143a28637b486a9a7e66e7d9d8876985b0ead15213"
+          }
+        },
+        {
+          "path": "CHANGELOG.md",
+          "hashes": {
+            "sha1": "ce1454b82510c1c95f98a0f4473b65dd1c0a572a",
+            "sha256": "a49373a54ed7dd456f76e7137e5065572853a2b1788684463604935cad49147c"
+          }
+        },
+        {
+          "path": "Cargo.lock",
+          "hashes": {
+            "sha1": "cdab24c42fb9ea0aa24b9dfed40b3a9890589348",
+            "sha256": "7144850c80bef918af8952ae9410417fdebd665f2f805421828b08ac47232891"
+          }
+        },
+        {
+          "path": "Cargo.toml",
+          "hashes": {
+            "sha1": "9e6c5391ba1eacb63bb3ce3e8e66ca94179e73a3",
+            "sha256": "4142407a78484ee95f3e5ec73a20b0ac344c73cc914178ded8c5f25fc18e1cff"
+          }
+        },
+        {
+          "path": "Cargo.toml.orig",
+          "hashes": {
+            "sha1": "466637a3f847f1b3ba2527592e4837956d7e0b06",
+            "sha256": "e6c78ac9cac8ac2eb6c7abdcbdc4cb3ba24192df40b64c294e1b7c5de4c3acaa"
+          }
+        },
+        {
+          "path": "LICENSE-APACHE",
+          "hashes": {
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+          }
+        },
+        {
+          "path": "LICENSE-MIT",
+          "hashes": {
+            "sha1": "9f3c36d2b7d381d9cf382a00166f3fbd06783636",
+            "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+          }
+        },
+        {
+          "path": "LICENSE-MPL2",
+          "hashes": {
+            "sha1": "9744cedce099f727b327cd9913a1fdc58a7f5599",
+            "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+          }
+        },
+        {
+          "path": "Makefile",
+          "hashes": {
+            "sha1": "291da9e1767a3a679aa1fb9124f9f418ea875719",
+            "sha256": "6523caf1bbaee74e50a3c45bc449fd6e73db68665f708ec5ccc6d7b5793298d0"
+          }
+        },
+        {
+          "path": "README.md",
+          "hashes": {
+            "sha1": "ff6225f438038d0b9bc62b8b2460eb35122e8766",
+            "sha256": "0b4dcba040439bdd2f927d715e380925cf06b282c4e37e1ae4bf1a6d22b0b21f"
+          }
+        },
+        {
+          "path": "benches.txt",
+          "hashes": {
+            "sha1": "b5bdeb49cbcb1cab141fbbaff2ba1a010630fb46",
+            "sha256": "dd19c2f77e35973a0bf28ec289652436e9709dcb90536ac447c5ed62d9a8a68e"
+          }
+        },
+        {
+          "path": "build.rs",
+          "hashes": {
+            "sha1": "59e7efa4b2b8203c0bb6d36864aa47daebb5b469",
+            "sha256": "698793d8da1f1216cda4a1dbb0c741bb488358106421c9682084be83f19b3afe"
+          }
+        },
+        {
+          "path": "examples/README.md",
+          "hashes": {
+            "sha1": "19011e76c7b85ec1bade882e2f104e3d99d6de3d",
+            "sha256": "2f696ea5541644ce13046c3992466e1392eb0b338b7851895d5107627d39cbc7"
+          }
+        },
+        {
+          "path": "examples/common/mod.rs",
+          "hashes": {
+            "sha1": "d2eda06edbabd3a9c56e775ef1757f635119b910",
+            "sha256": "18aff9a53296ef77315ca3016e141faa54845950360d75b797b8123d45c19621"
+          }
+        },
+        {
+          "path": "examples/named.rs",
+          "hashes": {
+            "sha1": "8232f5de9b54aae23aba733d4c3798789b5a2a3e",
+            "sha256": "473e6c5953aa764423475ce4088a35e360f3bbbf4f018e8217414e6ecb20b46f"
+          }
+        },
+        {
+          "path": "examples/singlethread.rs",
+          "hashes": {
+            "sha1": "84dc12c5df67953b413f5c906cfaf8224de92183",
+            "sha256": "2db8418d1d1c9af556860f78b28a887e65fd30aec91dd1ea1f76562b892a1d20"
+          }
+        },
+        {
+          "path": "examples/struct-log-self.rs",
+          "hashes": {
+            "sha1": "5e3a825bf62d00e54143100077adcd167e654295",
+            "sha256": "f5609dfe4aa54ec0ee270719a4ba2f6cd359c2df120e37f7d9a9f554d99b44b3"
+          }
+        },
+        {
+          "path": "src/key/dynamic.rs",
+          "hashes": {
+            "sha1": "9bec0fef29f03a3ecfc68faad3436f546d428fb3",
+            "sha256": "d781417d6087165e44878414384183f0195466cbdeb739bc8b25b1a666d8c2f9"
+          }
+        },
+        {
+          "path": "src/key/dynamic_nostd.rs",
+          "hashes": {
+            "sha1": "8f0a97a9f643224be1d1ee67ea845ba84c66af6f",
+            "sha256": "083b13805827dbbb1596f925305348f7f5ccd8285b1113e21adc076fee2d813b"
+          }
+        },
+        {
+          "path": "src/key/mod.rs",
+          "hashes": {
+            "sha1": "d2e3c3267ffbfbe8e4ddfea5db8b00f58ac209d0",
+            "sha256": "55263ebdcdce64276795644723b3ec2b762e9397aba7234407e1ca2a1f1140a5"
+          }
+        },
+        {
+          "path": "src/key/static.rs",
+          "hashes": {
+            "sha1": "73d116633ba81dbae661af896ae14c67862e69ad",
+            "sha256": "51c1b4c200be690aebfc2d443c08fd8d6dad9e1260926949408bf254360dfd0c"
+          }
+        },
+        {
+          "path": "src/lib.rs",
+          "hashes": {
+            "sha1": "2f7bb444d81d767e1f003eb9c3a0e75f49aca66e",
+            "sha256": "246c8d8307fbad7ee442b9daaad02ffb8804f78a958f17069d26b89fabc54233"
+          }
+        },
+        {
+          "path": "src/tests.rs",
+          "hashes": {
+            "sha1": "58b1356e3f4383e97cb93747e8be0842ad0b7797",
+            "sha256": "56a69bf574aacda14af2e89862d26790dd34ae268e6ee5bb301cbac4923e0672"
+          }
+        }
+      ],
+      "manifest": {
+        "id": "slog",
+        "name": "slog",
+        "updated_at": "2020-11-30T06:26:09.367402+00:00",
+        "versions": [
+          310558,
+          164531,
+          162394,
+          162392,
+          110811,
+          110069,
+          105782,
+          101202,
+          100627,
+          100626,
+          86786,
+          86485,
+          86224,
+          73825,
+          73818,
+          65401,
+          65286,
+          64867,
+          63226,
+          63225,
+          54878,
+          53432,
+          52414,
+          52411,
+          50192,
+          50103,
+          50100,
+          46215,
+          45783,
+          47028,
+          48806,
+          48750,
+          48246,
+          48144,
+          47585,
+          47092,
+          70734,
+          70730,
+          68834,
+          44993,
+          44991,
+          44818,
+          42720,
+          40983,
+          38155,
+          38154,
+          36997,
+          36797,
+          36448,
+          36226,
+          35571,
+          34335,
+          33990,
+          33869,
+          33355,
+          32611,
+          31932,
+          31154,
+          30410,
+          29839,
+          29182,
+          28994,
+          28885,
+          28532
+        ],
+        "keywords": [
+          "log",
+          "structured",
+          "hierarchical",
+          "logging"
+        ],
+        "categories": [
+          "development-tools::debugging"
+        ],
+        "badges": [],
+        "created_at": "2016-06-12T23:00:53.182275+00:00",
+        "downloads": 2550299,
+        "recent_downloads": 453019,
+        "max_version": "2.7.0",
+        "newest_version": "2.7.0",
+        "max_stable_version": "2.7.0",
+        "description": "Structured, extensible, composable logging for Rust",
+        "homepage": "https://github.com/slog-rs/slog",
+        "documentation": "https://docs.rs/slog",
+        "repository": "https://github.com/slog-rs/slog",
+        "links": {
+          "version_downloads": "/api/v1/crates/slog/downloads",
+          "versions": null,
+          "owners": "/api/v1/crates/slog/owners",
+          "owner_team": "/api/v1/crates/slog/owner_team",
+          "owner_user": "/api/v1/crates/slog/owner_user",
+          "reverse_dependencies": "/api/v1/crates/slog/reverse_dependencies"
+        },
+        "exact_match": false
+      },
+      "registryData": {
+        "id": 310558,
+        "crate": "slog",
+        "num": "2.7.0",
+        "dl_path": "/api/v1/crates/slog/2.7.0/download",
+        "readme_path": "/api/v1/crates/slog/2.7.0/readme",
+        "updated_at": "2020-11-30T06:26:09.367402+00:00",
+        "created_at": "2020-11-30T06:26:09.367402+00:00",
+        "downloads": 300653,
+        "features": {
+          "default": [
+            "std"
+          ],
+          "dynamic-keys": [],
+          "max_level_debug": [],
+          "max_level_error": [],
+          "max_level_info": [],
+          "max_level_off": [],
+          "max_level_trace": [],
+          "max_level_warn": [],
+          "nested-values": [
+            "erased-serde"
+          ],
+          "nothreads": [],
+          "release_max_level_debug": [],
+          "release_max_level_error": [],
+          "release_max_level_info": [],
+          "release_max_level_off": [],
+          "release_max_level_trace": [],
+          "release_max_level_warn": [],
+          "std": []
+        },
+        "yanked": false,
+        "license": "MPL-2.0 OR MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/slog/2.7.0/dependencies",
+          "version_downloads": "/api/v1/crates/slog/2.7.0/downloads",
+          "authors": "/api/v1/crates/slog/2.7.0/authors"
+        },
+        "crate_size": 45432,
+        "published_by": {
+          "id": 133,
+          "login": "dpc",
+          "name": "Dawid Ciężarkiewicz",
+          "avatar": "https://avatars2.githubusercontent.com/u/9209?v=4",
+          "url": "https://github.com/dpc"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 133,
+              "login": "dpc",
+              "name": "Dawid Ciężarkiewicz",
+              "avatar": "https://avatars2.githubusercontent.com/u/9209?v=4",
+              "url": "https://github.com/dpc"
+            },
+            "time": "2020-11-30T06:26:09.367402+00:00"
+          }
+        ]
+      }
+    }
+  },
+  "licensee": {
+    "9.13.0": {
+      "_metadata": {
+        "type": "licensee",
+        "url": "cd:/crate/cratesio/-/slog/2.7.0",
+        "fetchedAt": "2021-03-02T17:40:17.006Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:licensee:9.13.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:licensee",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "9.13.0",
+        "toolVersion": "9.11.0",
+        "processedAt": "2021-03-02T17:40:19.141Z"
+      },
+      "licensee": {
+        "version": "9.11.0",
+        "parameters": [
+          "--json",
+          "--no-readme"
+        ],
+        "output": {
+          "contentType": "application/json",
+          "content": {
+            "licenses": [
+              {
+                "key": "mit",
+                "spdx_id": "MIT",
+                "meta": {
+                  "title": "MIT License",
+                  "source": "https://spdx.org/licenses/MIT.html",
+                  "description": "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file. Replace [year] with the current year and [fullname] with the name (or names) of the copyright holders.",
+                  "using": [
+                    {
+                      "Babel": "https://github.com/babel/babel/blob/master/LICENSE"
+                    },
+                    {
+                      ".NET Core": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT"
+                    },
+                    {
+                      "Rails": "https://github.com/rails/rails/blob/master/MIT-LICENSE"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/mit/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [
+                  {
+                    "name": "year",
+                    "description": "The current year"
+                  },
+                  {
+                    "name": "fullname",
+                    "description": "The full name or username of the repository owner"
+                  }
+                ],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "apache-2.0",
+                "spdx_id": "Apache-2.0",
+                "meta": {
+                  "title": "Apache License 2.0",
+                  "source": "https://spdx.org/licenses/Apache-2.0.html",
+                  "description": "A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file.",
+                  "using": [
+                    {
+                      "Kubernetes": "https://github.com/kubernetes/kubernetes/blob/master/LICENSE"
+                    },
+                    {
+                      "PDF.js": "https://github.com/mozilla/pdf.js/blob/master/LICENSE"
+                    },
+                    {
+                      "Swift": "https://github.com/apple/swift/blob/master/LICENSE.txt"
+                    }
+                  ],
+                  "featured": true,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": "The Apache Foundation recommends taking the additional step of adding a boilerplate notice to the header of each source file. You can find the notice at the very end of the license in the appendix."
+                },
+                "url": "http://choosealicense.com/licenses/apache-2.0/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "patent-use",
+                      "label": "Patent use",
+                      "description": "This license provides an express grant of patent rights from contributors."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    },
+                    {
+                      "tag": "document-changes",
+                      "label": "State changes",
+                      "description": "Changes made to the code must be documented."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "trademark-use",
+                      "label": "Trademark use",
+                      "description": "This license explicitly states that it does NOT grant trademark rights, even though licenses without such a statement probably do not grant any implicit trademark rights."
+                    },
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "mpl-2.0",
+                "spdx_id": "MPL-2.0",
+                "meta": {
+                  "title": "Mozilla Public License 2.0",
+                  "source": "https://spdx.org/licenses/MPL-2.0.html",
+                  "description": "Permissions of this weak copyleft license are conditioned on making available source code of licensed files and modifications of those files under the same license (or in certain cases, one of the GNU licenses). Copyright and license notices must be preserved. Contributors provide an express grant of patent rights. However, a larger work using the licensed work may be distributed under different terms and without source code for files added in the larger work.",
+                  "how": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file.",
+                  "using": [
+                    {
+                      "Servo": "https://github.com/servo/servo/blob/master/LICENSE"
+                    },
+                    {
+                      "Syncthing": "https://github.com/syncthing/syncthing/blob/master/LICENSE"
+                    },
+                    {
+                      "TimelineJS3": "https://github.com/NUKnightLab/TimelineJS3/blob/master/LICENSE"
+                    }
+                  ],
+                  "featured": false,
+                  "hidden": false,
+                  "nickname": null,
+                  "note": "The Mozilla Foundation recommends taking the additional step of adding a boilerplate notice to the top of each file. The boilerplate can be found at the end of the license (Exhibit A)."
+                },
+                "url": "http://choosealicense.com/licenses/mpl-2.0/",
+                "rules": {
+                  "permissions": [
+                    {
+                      "tag": "commercial-use",
+                      "label": "Commercial use",
+                      "description": "This software and derivatives may be used for commercial purposes."
+                    },
+                    {
+                      "tag": "modifications",
+                      "label": "Modification",
+                      "description": "This software may be modified."
+                    },
+                    {
+                      "tag": "distribution",
+                      "label": "Distribution",
+                      "description": "This software may be distributed."
+                    },
+                    {
+                      "tag": "patent-use",
+                      "label": "Patent use",
+                      "description": "This license provides an express grant of patent rights from contributors."
+                    },
+                    {
+                      "tag": "private-use",
+                      "label": "Private use",
+                      "description": "This software may be used and modified in private."
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "tag": "disclose-source",
+                      "label": "Disclose source",
+                      "description": "Source code must be made available when the software is distributed."
+                    },
+                    {
+                      "tag": "include-copyright",
+                      "label": "License and copyright notice",
+                      "description": "A copy of the license and copyright notice must be included with the software."
+                    },
+                    {
+                      "tag": "same-license--file",
+                      "label": "Same license (file)",
+                      "description": "Modifications of existing files must be released under the same license when distributing the software. In some cases a similar or related license may be used."
+                    }
+                  ],
+                  "limitations": [
+                    {
+                      "tag": "liability",
+                      "label": "Liability",
+                      "description": "This license includes a limitation of liability."
+                    },
+                    {
+                      "tag": "trademark-use",
+                      "label": "Trademark use",
+                      "description": "This license explicitly states that it does NOT grant trademark rights, even though licenses without such a statement probably do not grant any implicit trademark rights."
+                    },
+                    {
+                      "tag": "warranty",
+                      "label": "Warranty",
+                      "description": "The license explicitly states that it does NOT provide any warranty."
+                    }
+                  ]
+                },
+                "fields": [],
+                "other": false,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              },
+              {
+                "key": "other",
+                "spdx_id": "NOASSERTION",
+                "meta": {
+                  "title": null,
+                  "source": null,
+                  "description": null,
+                  "how": null,
+                  "using": null,
+                  "featured": false,
+                  "hidden": true,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/other/",
+                "rules": {
+                  "permissions": [],
+                  "conditions": [],
+                  "limitations": []
+                },
+                "fields": [],
+                "other": true,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              }
+            ],
+            "matched_files": [
+              {
+                "filename": "LICENSE-MIT",
+                "content": "Copyright (c) 2014 The Rust Project Developers\n\nPermission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE.\n",
+                "content_hash": "d64f3bb4282a97b37454b5bb96a8a264a3363dc3",
+                "content_normalized": "permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"software\"), to deal in the software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions: the above copyright notice and this permission notice shall be included in all copies or substantial portions of the software. the software is provided \"as is\", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. in no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "MIT"
+              },
+              {
+                "filename": "LICENSE-APACHE",
+                "content": "                              Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n",
+                "content_hash": "ab3901051663cb8ee5dea9ebdff406ad136910e3",
+                "content_normalized": "terms and conditions for use, reproduction, and distribution - definitions. \"license\" shall mean the terms and conditions for use, reproduction, and distribution as defined by sections 1 through 9 of this document. \"licensor\" shall mean the copyright holder or entity authorized by the copyright holder that is granting the license. \"legal entity\" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. for the purposes of this definition, \"control\" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity. \"you\" (or \"your\") shall mean an individual or legal entity exercising permissions granted by this license. \"source\" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files. \"object\" form shall mean any form resulting from mechanical transformation or translation of a source form, including but not limited to compiled object code, generated documentation, and conversions to other media types. \"work\" shall mean the work of authorship, whether in source or object form, made available under the license, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the appendix below). \"derivative works\" shall mean any work, whether in source or object form, that is based on (or derived from) the work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. for the purposes of this license, derivative works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the work and derivative works thereof. \"contribution\" shall mean any work of authorship, including the original version of the work and any modifications or additions to that work or derivative works thereof, that is intentionally submitted to licensor for inclusion in the work by the copyright holder or by an individual or legal entity authorized to submit on behalf of the copyright holder. for the purposes of this definition, \"submitted\" means any form of electronic, verbal, or written communication sent to the licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the licensor for the purpose of discussing and improving the work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright holder as \"not a contribution.\" \"contributor\" shall mean licensor and any individual or legal entity on behalf of whom a contribution has been received by licensor and subsequently incorporated within the work. - grant of copyright license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the work and such derivative works in source or object form. - grant of patent license. subject to the terms and conditions of this license, each contributor hereby grants to you a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the work, where such license applies only to those patent claims licensable by such contributor that are necessarily infringed by their contribution(s) alone or by combination of their contribution(s) with the work to which such contribution(s) was submitted. if you institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the work or a contribution incorporated within the work constitutes direct or contributory patent infringement, then any patent licenses granted to you under this license for that work shall terminate as of the date such litigation is filed. - redistribution. you may reproduce and distribute copies of the work or derivative works thereof in any medium, with or without modifications, and in source or object form, provided that you meet the following conditions: * you must give any other recipients of the work or derivative works a copy of this license; and * you must cause any modified files to carry prominent notices stating that you changed the files; and * you must retain, in the source form of any derivative works that you distribute, all copyright, patent, trademark, and attribution notices from the source form of the work, excluding those notices that do not pertain to any part of the derivative works; and * if the work includes a \"notice\" text file as part of its distribution, then any derivative works that you distribute must include a readable copy of the attribution notices contained within such notice file, excluding those notices that do not pertain to any part of the derivative works, in at least one of the following places: within a notice text file distributed as part of the derivative works; within the source form or documentation, if provided along with the derivative works; or, within a display generated by the derivative works, if and wherever such third-party notices normally appear. the contents of the notice file are for informational purposes only and do not modify the license. you may add your own attribution notices within derivative works that you distribute, alongside or as an addendum to the notice text from the work, provided that such additional attribution notices cannot be construed as modifying the license. you may add your own copyright statement to your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of your modifications, or for any such derivative works as a whole, provided your use, reproduction, and distribution of the work otherwise complies with the conditions stated in this license. - submission of contributions. unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you to the licensor shall be under the terms and conditions of this license, without any additional terms or conditions. notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with licensor regarding such contributions. - trademarks. this license does not grant permission to use the trade names, trademarks, service marks, or product names of the licensor, except as required for reasonable and customary use in describing the origin of the work and reproducing the content of the notice file. - disclaimer of warranty. unless required by applicable law or agreed to in writing, licensor provides the work (and each contributor provides its contributions) on an \"as is\" basis, without warranties or conditions of any kind, either express or implied, including, without limitation, any warranties or conditions of title, non-infringement, merchantability, or fitness for a particular purpose. you are solely responsible for determining the appropriateness of using or redistributing the work and assume any risks associated with your exercise of permissions under this license. - limitation of liability. in no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any contributor be liable to you for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this license or out of the use or inability to use the work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such contributor has been advised of the possibility of such damages. - accepting warranty or additional liability. while redistributing the work or derivative works thereof, you may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this license. however, in accepting such obligations, you may act only on your own behalf and on your sole responsibility, not on behalf of any other contributor, and only if you agree to indemnify, defend, and hold each contributor harmless for any liability incurred by, or claims asserted against, such contributor by reason of your accepting any such warranty or additional liability.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "Apache-2.0"
+              },
+              {
+                "filename": "LICENSE-MPL2",
+                "content": "Mozilla Public License Version 2.0\n==================================\n\n1. Definitions\n--------------\n\n1.1. \"Contributor\"\n    means each individual or legal entity that creates, contributes to\n    the creation of, or owns Covered Software.\n\n1.2. \"Contributor Version\"\n    means the combination of the Contributions of others (if any) used\n    by a Contributor and that particular Contributor's Contribution.\n\n1.3. \"Contribution\"\n    means Covered Software of a particular Contributor.\n\n1.4. \"Covered Software\"\n    means Source Code Form to which the initial Contributor has attached\n    the notice in Exhibit A, the Executable Form of such Source Code\n    Form, and Modifications of such Source Code Form, in each case\n    including portions thereof.\n\n1.5. \"Incompatible With Secondary Licenses\"\n    means\n\n    (a) that the initial Contributor has attached the notice described\n        in Exhibit B to the Covered Software; or\n\n    (b) that the Covered Software was made available under the terms of\n        version 1.1 or earlier of the License, but not also under the\n        terms of a Secondary License.\n\n1.6. \"Executable Form\"\n    means any form of the work other than Source Code Form.\n\n1.7. \"Larger Work\"\n    means a work that combines Covered Software with other material, in \n    a separate file or files, that is not Covered Software.\n\n1.8. \"License\"\n    means this document.\n\n1.9. \"Licensable\"\n    means having the right to grant, to the maximum extent possible,\n    whether at the time of the initial grant or subsequently, any and\n    all of the rights conveyed by this License.\n\n1.10. \"Modifications\"\n    means any of the following:\n\n    (a) any file in Source Code Form that results from an addition to,\n        deletion from, or modification of the contents of Covered\n        Software; or\n\n    (b) any new file in Source Code Form that contains any Covered\n        Software.\n\n1.11. \"Patent Claims\" of a Contributor\n    means any patent claim(s), including without limitation, method,\n    process, and apparatus claims, in any patent Licensable by such\n    Contributor that would be infringed, but for the grant of the\n    License, by the making, using, selling, offering for sale, having\n    made, import, or transfer of either its Contributions or its\n    Contributor Version.\n\n1.12. \"Secondary License\"\n    means either the GNU General Public License, Version 2.0, the GNU\n    Lesser General Public License, Version 2.1, the GNU Affero General\n    Public License, Version 3.0, or any later versions of those\n    licenses.\n\n1.13. \"Source Code Form\"\n    means the form of the work preferred for making modifications.\n\n1.14. \"You\" (or \"Your\")\n    means an individual or a legal entity exercising rights under this\n    License. For legal entities, \"You\" includes any entity that\n    controls, is controlled by, or is under common control with You. For\n    purposes of this definition, \"control\" means (a) the power, direct\n    or indirect, to cause the direction or management of such entity,\n    whether by contract or otherwise, or (b) ownership of more than\n    fifty percent (50%) of the outstanding shares or beneficial\n    ownership of such entity.\n\n2. License Grants and Conditions\n--------------------------------\n\n2.1. Grants\n\nEach Contributor hereby grants You a world-wide, royalty-free,\nnon-exclusive license:\n\n(a) under intellectual property rights (other than patent or trademark)\n    Licensable by such Contributor to use, reproduce, make available,\n    modify, display, perform, distribute, and otherwise exploit its\n    Contributions, either on an unmodified basis, with Modifications, or\n    as part of a Larger Work; and\n\n(b) under Patent Claims of such Contributor to make, use, sell, offer\n    for sale, have made, import, and otherwise transfer either its\n    Contributions or its Contributor Version.\n\n2.2. Effective Date\n\nThe licenses granted in Section 2.1 with respect to any Contribution\nbecome effective for each Contribution on the date the Contributor first\ndistributes such Contribution.\n\n2.3. Limitations on Grant Scope\n\nThe licenses granted in this Section 2 are the only rights granted under\nthis License. No additional rights or licenses will be implied from the\ndistribution or licensing of Covered Software under this License.\nNotwithstanding Section 2.1(b) above, no patent license is granted by a\nContributor:\n\n(a) for any code that a Contributor has removed from Covered Software;\n    or\n\n(b) for infringements caused by: (i) Your and any other third party's\n    modifications of Covered Software, or (ii) the combination of its\n    Contributions with other software (except as part of its Contributor\n    Version); or\n\n(c) under Patent Claims infringed by Covered Software in the absence of\n    its Contributions.\n\nThis License does not grant any rights in the trademarks, service marks,\nor logos of any Contributor (except as may be necessary to comply with\nthe notice requirements in Section 3.4).\n\n2.4. Subsequent Licenses\n\nNo Contributor makes additional grants as a result of Your choice to\ndistribute the Covered Software under a subsequent version of this\nLicense (see Section 10.2) or under the terms of a Secondary License (if\npermitted under the terms of Section 3.3).\n\n2.5. Representation\n\nEach Contributor represents that the Contributor believes its\nContributions are its original creation(s) or it has sufficient rights\nto grant the rights to its Contributions conveyed by this License.\n\n2.6. Fair Use\n\nThis License is not intended to limit any rights You have under\napplicable copyright doctrines of fair use, fair dealing, or other\nequivalents.\n\n2.7. Conditions\n\nSections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted\nin Section 2.1.\n\n3. Responsibilities\n-------------------\n\n3.1. Distribution of Source Form\n\nAll distribution of Covered Software in Source Code Form, including any\nModifications that You create or to which You contribute, must be under\nthe terms of this License. You must inform recipients that the Source\nCode Form of the Covered Software is governed by the terms of this\nLicense, and how they can obtain a copy of this License. You may not\nattempt to alter or restrict the recipients' rights in the Source Code\nForm.\n\n3.2. Distribution of Executable Form\n\nIf You distribute Covered Software in Executable Form then:\n\n(a) such Covered Software must also be made available in Source Code\n    Form, as described in Section 3.1, and You must inform recipients of\n    the Executable Form how they can obtain a copy of such Source Code\n    Form by reasonable means in a timely manner, at a charge no more\n    than the cost of distribution to the recipient; and\n\n(b) You may distribute such Executable Form under the terms of this\n    License, or sublicense it under different terms, provided that the\n    license for the Executable Form does not attempt to limit or alter\n    the recipients' rights in the Source Code Form under this License.\n\n3.3. Distribution of a Larger Work\n\nYou may create and distribute a Larger Work under terms of Your choice,\nprovided that You also comply with the requirements of this License for\nthe Covered Software. If the Larger Work is a combination of Covered\nSoftware with a work governed by one or more Secondary Licenses, and the\nCovered Software is not Incompatible With Secondary Licenses, this\nLicense permits You to additionally distribute such Covered Software\nunder the terms of such Secondary License(s), so that the recipient of\nthe Larger Work may, at their option, further distribute the Covered\nSoftware under the terms of either this License or such Secondary\nLicense(s).\n\n3.4. Notices\n\nYou may not remove or alter the substance of any license notices\n(including copyright notices, patent notices, disclaimers of warranty,\nor limitations of liability) contained within the Source Code Form of\nthe Covered Software, except that You may alter any license notices to\nthe extent required to remedy known factual inaccuracies.\n\n3.5. Application of Additional Terms\n\nYou may choose to offer, and to charge a fee for, warranty, support,\nindemnity or liability obligations to one or more recipients of Covered\nSoftware. However, You may do so only on Your own behalf, and not on\nbehalf of any Contributor. You must make it absolutely clear that any\nsuch warranty, support, indemnity, or liability obligation is offered by\nYou alone, and You hereby agree to indemnify every Contributor for any\nliability incurred by such Contributor as a result of warranty, support,\nindemnity or liability terms You offer. You may include additional\ndisclaimers of warranty and limitations of liability specific to any\njurisdiction.\n\n4. Inability to Comply Due to Statute or Regulation\n---------------------------------------------------\n\nIf it is impossible for You to comply with any of the terms of this\nLicense with respect to some or all of the Covered Software due to\nstatute, judicial order, or regulation then You must: (a) comply with\nthe terms of this License to the maximum extent possible; and (b)\ndescribe the limitations and the code they affect. Such description must\nbe placed in a text file included with all distributions of the Covered\nSoftware under this License. Except to the extent prohibited by statute\nor regulation, such description must be sufficiently detailed for a\nrecipient of ordinary skill to be able to understand it.\n\n5. Termination\n--------------\n\n5.1. The rights granted under this License will terminate automatically\nif You fail to comply with any of its terms. However, if You become\ncompliant, then the rights granted under this License from a particular\nContributor are reinstated (a) provisionally, unless and until such\nContributor explicitly and finally terminates Your grants, and (b) on an\nongoing basis, if such Contributor fails to notify You of the\nnon-compliance by some reasonable means prior to 60 days after You have\ncome back into compliance. Moreover, Your grants from a particular\nContributor are reinstated on an ongoing basis if such Contributor\nnotifies You of the non-compliance by some reasonable means, this is the\nfirst time You have received notice of non-compliance with this License\nfrom such Contributor, and You become compliant prior to 30 days after\nYour receipt of the notice.\n\n5.2. If You initiate litigation against any entity by asserting a patent\ninfringement claim (excluding declaratory judgment actions,\ncounter-claims, and cross-claims) alleging that a Contributor Version\ndirectly or indirectly infringes any patent, then the rights granted to\nYou by any and all Contributors for the Covered Software under Section\n2.1 of this License shall terminate.\n\n5.3. In the event of termination under Sections 5.1 or 5.2 above, all\nend user license agreements (excluding distributors and resellers) which\nhave been validly granted by You or Your distributors under this License\nprior to termination shall survive termination.\n\n************************************************************************\n*                                                                      *\n*  6. Disclaimer of Warranty                                           *\n*  -------------------------                                           *\n*                                                                      *\n*  Covered Software is provided under this License on an \"as is\"       *\n*  basis, without warranty of any kind, either expressed, implied, or  *\n*  statutory, including, without limitation, warranties that the       *\n*  Covered Software is free of defects, merchantable, fit for a        *\n*  particular purpose or non-infringing. The entire risk as to the     *\n*  quality and performance of the Covered Software is with You.        *\n*  Should any Covered Software prove defective in any respect, You     *\n*  (not any Contributor) assume the cost of any necessary servicing,   *\n*  repair, or correction. This disclaimer of warranty constitutes an   *\n*  essential part of this License. No use of any Covered Software is   *\n*  authorized under this License except under this disclaimer.         *\n*                                                                      *\n************************************************************************\n\n************************************************************************\n*                                                                      *\n*  7. Limitation of Liability                                          *\n*  --------------------------                                          *\n*                                                                      *\n*  Under no circumstances and under no legal theory, whether tort      *\n*  (including negligence), contract, or otherwise, shall any           *\n*  Contributor, or anyone who distributes Covered Software as          *\n*  permitted above, be liable to You for any direct, indirect,         *\n*  special, incidental, or consequential damages of any character      *\n*  including, without limitation, damages for lost profits, loss of    *\n*  goodwill, work stoppage, computer failure or malfunction, or any    *\n*  and all other commercial damages or losses, even if such party      *\n*  shall have been informed of the possibility of such damages. This   *\n*  limitation of liability shall not apply to liability for death or   *\n*  personal injury resulting from such party's negligence to the       *\n*  extent applicable law prohibits such limitation. Some               *\n*  jurisdictions do not allow the exclusion or limitation of           *\n*  incidental or consequential damages, so this exclusion and          *\n*  limitation may not apply to You.                                    *\n*                                                                      *\n************************************************************************\n\n8. Litigation\n-------------\n\nAny litigation relating to this License may be brought only in the\ncourts of a jurisdiction where the defendant maintains its principal\nplace of business and such litigation shall be governed by laws of that\njurisdiction, without reference to its conflict-of-law provisions.\nNothing in this Section shall prevent a party's ability to bring\ncross-claims or counter-claims.\n\n9. Miscellaneous\n----------------\n\nThis License represents the complete agreement concerning the subject\nmatter hereof. If any provision of this License is held to be\nunenforceable, such provision shall be reformed only to the extent\nnecessary to make it enforceable. Any law or regulation which provides\nthat the language of a contract shall be construed against the drafter\nshall not be used to construe this License against a Contributor.\n\n10. Versions of the License\n---------------------------\n\n10.1. New Versions\n\nMozilla Foundation is the license steward. Except as provided in Section\n10.3, no one other than the license steward has the right to modify or\npublish new versions of this License. Each version will be given a\ndistinguishing version number.\n\n10.2. Effect of New Versions\n\nYou may distribute the Covered Software under the terms of the version\nof the License under which You originally received the Covered Software,\nor under the terms of any subsequent version published by the license\nsteward.\n\n10.3. Modified Versions\n\nIf you create software not governed by this License, and you want to\ncreate a new license for such software, you may create and use a\nmodified version of this License if you rename the license and remove\nany references to the name of the license steward (except to note that\nsuch modified license differs from this License).\n\n10.4. Distributing Source Code Form that is Incompatible With Secondary\nLicenses\n\nIf You choose to distribute Source Code Form that is Incompatible With\nSecondary Licenses under the terms of this version of the License, the\nnotice described in Exhibit B of this License must be attached.\n\nExhibit A - Source Code Form License Notice\n-------------------------------------------\n\n  This Source Code Form is subject to the terms of the Mozilla Public\n  License, v. 2.0. If a copy of the MPL was not distributed with this\n  file, You can obtain one at http://mozilla.org/MPL/2.0/.\n\nIf it is not possible or desirable to put the notice in a particular\nfile, then You may include the notice in a location (such as a LICENSE\nfile in a relevant directory) where a recipient would be likely to look\nfor such a notice.\n\nYou may add additional accurate notices of copyright ownership.\n\nExhibit B - \"Incompatible With Secondary Licenses\" Notice\n---------------------------------------------------------\n\n  This Source Code Form is \"Incompatible With Secondary Licenses\", as\n  defined by the Mozilla Public License, v. 2.0.\n",
+                "content_hash": "b4db668fa7573bfdcae74eb51eafc961034f0a61",
+                "content_normalized": "- definitions 1.1. \"contributor\" means each individual or legal entity that creates, contributes to the creation of, or owns covered software. 1.2. \"contributor version\" means the combination of the contributions of others (if any) used by a contributor and that particular contributor's contribution. 1.3. \"contribution\" means covered software of a particular contributor. 1.4. \"covered software\" means source code form to which the initial contributor has attached the notice in exhibit a, the executable form of such source code form, and modifications of such source code form, in each case including portions thereof. 1.5. \"incompatible with secondary licenses\" means * that the initial contributor has attached the notice described in exhibit b to the covered software; or * that the covered software was made available under the terms of version 1.1 or earlier of the license, but not also under the terms of a secondary license. 1.6. \"executable form\" means any form of the work other than source code form. 1.7. \"larger work\" means a work that combines covered software with other material, in a separate file or files, that is not covered software. 1.8. \"license\" means this document. 1.9. \"licensable\" means having the right to grant, to the maximum extent possible, whether at the time of the initial grant or subsequently, any and all of the rights conveyed by this license. 1.10. \"modifications\" means any of the following: * any file in source code form that results from an addition to, deletion from, or modification of the contents of covered software; or * any new file in source code form that contains any covered software. 1.11. \"patent claims\" of a contributor means any patent claim(s), including without limitation, method, process, and apparatus claims, in any patent licensable by such contributor that would be infringed, but for the grant of the license, by the making, using, selling, offering for sale, having made, import, or transfer of either its contributions or its contributor version. 1.12. \"secondary license\" means either the gnu general public license, version 2.0, the gnu lesser general public license, version 2.1, the gnu affero general public license, version 3.0, or any later versions of those licenses. 1.13. \"source code form\" means the form of the work preferred for making modifications. 1.14. \"you\" (or \"your\") means an individual or a legal entity exercising rights under this license. for legal entities, \"you\" includes any entity that controls, is controlled by, or is under common control with you. for purposes of this definition, \"control\" means (a) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (b) ownership of more than fifty percent (50%) of the outstanding shares or beneficial ownership of such entity. - license grants and conditions 2.1. grants each contributor hereby grants you a world-wide, royalty-free, non-exclusive license: * under intellectual property rights (other than patent or trademark) licensable by such contributor to use, reproduce, make available, modify, display, perform, distribute, and otherwise exploit its contributions, either on an unmodified basis, with modifications, or as part of a larger work; and * under patent claims of such contributor to make, use, sell, offer for sale, have made, import, and otherwise transfer either its contributions or its contributor version. 2.2. effective date the licenses granted in section 2.1 with respect to any contribution become effective for each contribution on the date the contributor first distributes such contribution. 2.3. limitations on grant scope the licenses granted in this section 2 are the only rights granted under this license. no additional rights or licenses will be implied from the distribution or licensing of covered software under this license. notwithstanding section 2.1(b) above, no patent license is granted by a contributor: * for any code that a contributor has removed from covered software; or * for infringements caused by: (i) your and any other third party's modifications of covered software, or (ii) the combination of its contributions with other software (except as part of its contributor version); or * under patent claims infringed by covered software in the absence of its contributions. this license does not grant any rights in the trademarks, service marks, or logos of any contributor (except as may be necessary to comply with the notice requirements in section 3.4). 2.4. subsequent licenses no contributor makes additional grants as a result of your choice to distribute the covered software under a subsequent version of this license (see section 10.2) or under the terms of a secondary license (if permitted under the terms of section 3.3). 2.5. representation each contributor represents that the contributor believes its contributions are its original creation(s) or it has sufficient rights to grant the rights to its contributions conveyed by this license. 2.6. fair use this license is not intended to limit any rights you have under applicable copyright doctrines of fair use, fair dealing, or other equivalents. 2.7. conditions sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted in section 2.1. - responsibilities 3.1. distribution of source form all distribution of covered software in source code form, including any modifications that you create or to which you contribute, must be under the terms of this license. you must inform recipients that the source code form of the covered software is governed by the terms of this license, and how they can obtain a copy of this license. you may not attempt to alter or restrict the recipients' rights in the source code form. 3.2. distribution of executable form if you distribute covered software in executable form then: * such covered software must also be made available in source code form, as described in section 3.1, and you must inform recipients of the executable form how they can obtain a copy of such source code form by reasonable means in a timely manner, at a charge no more than the cost of distribution to the recipient; and * you may distribute such executable form under the terms of this license, or sublicense it under different terms, provided that the license for the executable form does not attempt to limit or alter the recipients' rights in the source code form under this license. 3.3. distribution of a larger work you may create and distribute a larger work under terms of your choice, provided that you also comply with the requirements of this license for the covered software. if the larger work is a combination of covered software with a work governed by one or more secondary licenses, and the covered software is not incompatible with secondary licenses, this license permits you to additionally distribute such covered software under the terms of such secondary license(s), so that the recipient of the larger work may, at their option, further distribute the covered software under the terms of either this license or such secondary license(s). 3.4. notices you may not remove or alter the substance of any license notices (including copyright notices, patent notices, disclaimers of warranty, or limitations of liability) contained within the source code form of the covered software, except that you may alter any license notices to the extent required to remedy known factual inaccuracies. 3.5. application of additional terms you may choose to offer, and to charge a fee for, warranty, support, indemnity or liability obligations to one or more recipients of covered software. however, you may do so only on your own behalf, and not on behalf of any contributor. you must make it absolutely clear that any such warranty, support, indemnity, or liability obligation is offered by you alone, and you hereby agree to indemnify every contributor for any liability incurred by such contributor as a result of warranty, support, indemnity or liability terms you offer. you may include additional disclaimers of warranty and limitations of liability specific to any jurisdiction. - inability to comply due to statute or regulation if it is impossible for you to comply with any of the terms of this license with respect to some or all of the covered software due to statute, judicial order, or regulation then you must: (a) comply with the terms of this license to the maximum extent possible; and (b) describe the limitations and the code they affect. such description must be placed in a text file included with all distributions of the covered software under this license. except to the extent prohibited by statute or regulation, such description must be sufficiently detailed for a recipient of ordinary skill to be able to understand it. - termination 5.1. the rights granted under this license will terminate automatically if you fail to comply with any of its terms. however, if you become compliant, then the rights granted under this license from a particular contributor are reinstated (a) provisionally, unless and until such contributor explicitly and finally terminates your grants, and (b) on an ongoing basis, if such contributor fails to notify you of the non-compliance by some reasonable means prior to 60 days after you have come back into compliance. moreover, your grants from a particular contributor are reinstated on an ongoing basis if such contributor notifies you of the non-compliance by some reasonable means, this is the first time you have received notice of non-compliance with this license from such contributor, and you become compliant prior to 30 days after your receipt of the notice. 5.2. if you initiate litigation against any entity by asserting a patent infringement claim (excluding declaratory judgement actions, counter-claims, and cross-claims) alleging that a contributor version directly or indirectly infringes any patent, then the rights granted to you by any and all contributors for the covered software under section 2.1 of this license shall terminate. 5.3. in the event of termination under sections 5.1 or 5.2 above, all end user license agreements (excluding distributors and resellers) which have been validly granted by you or your distributors under this license prior to termination shall survive termination. 6. disclaimer of warranty - covered software is provided under this license on an \"as is\" basis, without warranty of any kind, either expressed, implied, or statutory, including, without limitation, warranties that the covered software is free of defects, merchantable, fit for a particular purpose or non-infringing. the entire risk as to the quality and performance of the covered software is with you. should any covered software prove defective in any respect, you (not any contributor) assume the cost of any necessary servicing, repair, or correction. this disclaimer of warranty constitutes an essential part of this license. no use of any covered software is authorized under this license except under this disclaimer. 7. limitation of liability - under no circumstances and under no legal theory, whether tort (including negligence), contract, or otherwise, shall any contributor, or anyone who distributes covered software as permitted above, be liable to you for any direct, indirect, special, incidental, or consequential damages of any character including, without limitation, damages for lost profits, loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses, even if such party shall have been informed of the possibility of such damages. this limitation of liability shall not apply to liability for death or personal injury resulting from such party's negligence to the extent applicable law prohibits such limitation. some jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this exclusion and limitation may not apply to you. - litigation any litigation relating to this license may be brought only in the courts of a jurisdiction where the defendant maintains its principal place of business and such litigation shall be governed by laws of that jurisdiction, without reference to its conflict-of-law provisions. nothing in this section shall prevent a party's ability to bring cross-claims or counter-claims. - miscellaneous this license represents the complete agreement concerning the subject matter hereof. if any provision of this license is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable. any law or regulation which provides that the language of a contract shall be construed against the drafter shall not be used to construe this license against a contributor. * versions of the license 10.1. new versions mozilla foundation is the license steward. except as provided in section 10.3, no one other than the license steward has the right to modify or publish new versions of this license. each version will be given a distinguishing version number. 10.2. effect of new versions you may distribute the covered software under the terms of the version of the license under which you originally received the covered software, or under the terms of any subsequent version published by the license steward. 10.3. modified versions if you create software not governed by this license, and you want to create a new license for such software, you may create and use a modified version of this license if you rename the license and remove any references to the name of the license steward (except to note that such modified license differs from this license). 10.4. distributing source code form that is incompatible with secondary licenses if you choose to distribute source code form that is incompatible with secondary licenses under the terms of this version of the license, the notice described in exhibit b of this license must be attached. exhibit a - source code form license notice this source code form is subject to the terms of the mozilla public license, v. 2.0. if a copy of the mpl was not distributed with this file, you can obtain one at https://mozilla.org/mpl/2.0/. if it is not possible or desirable to put the notice in a particular file, then you may include the notice in a location (such as a license file in a relevant directory) where a recipient would be likely to look for such a notice. you may add additional accurate notices of copyright ownership. exhibit b - \"incompatible with secondary licenses\" notice this source code form is \"incompatible with secondary licenses\", as defined by the mozilla public license, v. 2.0.",
+                "matcher": {
+                  "name": "exact",
+                  "confidence": 100
+                },
+                "matched_license": "MPL-2.0"
+              },
+              {
+                "filename": "Cargo.toml",
+                "content": "# THIS FILE IS AUTOMATICALLY GENERATED BY CARGO\n#\n# When uploading crates to the registry Cargo will automatically\n# \"normalize\" Cargo.toml files for maximal compatibility\n# with all versions of Cargo and also rewrite `path` dependencies\n# to registry (e.g., crates.io) dependencies\n#\n# If you believe there's an error in this file please file an\n# issue against the rust-lang/cargo repository. If you're\n# editing this file be aware that the upstream Cargo.toml\n# will likely look very different (and much more reasonable)\n\n[package]\nname = \"slog\"\nversion = \"2.7.0\"\nauthors = [\"Dawid Ciężarkiewicz <dpc@dpc.pw>\"]\nbuild = \"build.rs\"\nautoexamples = true\ndescription = \"Structured, extensible, composable logging for Rust\"\nhomepage = \"https://github.com/slog-rs/slog\"\ndocumentation = \"https://docs.rs/slog\"\nreadme = \"README.md\"\nkeywords = [\"log\", \"logging\", \"structured\", \"hierarchical\"]\ncategories = [\"development-tools::debugging\"]\nlicense = \"MPL-2.0 OR MIT OR Apache-2.0\"\nrepository = \"https://github.com/slog-rs/slog\"\n[package.metadata.docs.rs]\nfeatures = [\"std\", \"nested-values\", \"dynamic-keys\"]\n[profile.bench]\nopt-level = 3\nlto = true\ndebug = false\ndebug-assertions = false\n\n[profile.release]\nopt-level = 3\nlto = true\ndebug = false\ndebug-assertions = false\n\n[[example]]\nname = \"singlethread\"\nrequired-features = [\"nothreads\"]\n[dependencies.erased-serde]\nversion = \"0.3\"\noptional = true\n\n[features]\ndefault = [\"std\"]\ndynamic-keys = []\nmax_level_debug = []\nmax_level_error = []\nmax_level_info = []\nmax_level_off = []\nmax_level_trace = []\nmax_level_warn = []\nnested-values = [\"erased-serde\"]\nnothreads = []\nrelease_max_level_debug = []\nrelease_max_level_error = []\nrelease_max_level_info = []\nrelease_max_level_off = []\nrelease_max_level_trace = []\nrelease_max_level_warn = []\nstd = []\n",
+                "content_hash": null,
+                "content_normalized": null,
+                "matcher": {
+                  "name": "cargo",
+                  "confidence": 90
+                },
+                "matched_license": "NOASSERTION"
+              }
+            ]
+          }
+        }
+      },
+      "attachments": [
+        {
+          "path": "LICENSE-MIT",
+          "token": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        },
+        {
+          "path": "LICENSE-APACHE",
+          "token": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "LICENSE-MPL2",
+          "token": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+        },
+        {
+          "path": "Cargo.toml",
+          "token": "4142407a78484ee95f3e5ec73a20b0ac344c73cc914178ded8c5f25fc18e1cff"
+        }
+      ]
+    }
+  },
+  "scancode": {
+    "3.2.2": {
+      "_metadata": {
+        "type": "scancode",
+        "url": "cd:/crate/cratesio/-/slog/2.7.0",
+        "fetchedAt": "2021-03-02T17:40:17.950Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:scancode:3.2.2",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:slog:revision:2.7.0:tool:scancode",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "3.2.2",
+        "toolVersion": "3.0.2",
+        "contentType": "application/json",
+        "releaseDate": "2020-11-30T06:26:09.367402+00:00",
+        "processedAt": "2021-03-02T17:40:45.300Z"
+      },
+      "content": {
+        "headers": [
+          {
+            "tool_name": "scancode-toolkit",
+            "tool_version": "3.0.2",
+            "options": {
+              "input": "/tmp/cd-Ce0Y2r/crate/slog-2.7.0",
+              "--classify": true,
+              "--copyright": true,
+              "--email": true,
+              "--generated": true,
+              "--info": true,
+              "--is-license-text": true,
+              "--json-pp": "/tmp/cd-PfWC7i",
+              "--license": true,
+              "--license-clarity-score": true,
+              "--license-diag": true,
+              "--license-text": true,
+              "--package": true,
+              "--processes": "2",
+              "--strip-root": true,
+              "--summary": true,
+              "--summary-key-files": true,
+              "--timeout": "1000.0",
+              "--url": true
+            },
+            "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+            "start_timestamp": "2021-03-02T174020.503592",
+            "end_timestamp": "2021-03-02T174044.279541",
+            "message": null,
+            "errors": [],
+            "extra_data": {
+              "files_count": 30
+            }
+          }
+        ],
+        "summary": {
+          "license_expressions": [
+            {
+              "value": null,
+              "count": 25
+            },
+            {
+              "value": "apache-2.0",
+              "count": 3
+            },
+            {
+              "value": "mpl-2.0",
+              "count": 3
+            },
+            {
+              "value": "mit",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 29
+            },
+            {
+              "value": "Copyright (c) The Rust Project",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 29
+            },
+            {
+              "value": "The Rust Project",
+              "count": 1
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 28
+            },
+            {
+              "value": "Dawid Ciezarkiewicz <dpc@dpc.pw>",
+              "count": 2
+            }
+          ],
+          "programming_language": [
+            {
+              "value": null,
+              "count": 16
+            },
+            {
+              "value": "Rust",
+              "count": 11
+            },
+            {
+              "value": "Objective-C",
+              "count": 2
+            },
+            {
+              "value": "ActionScript 3",
+              "count": 1
+            }
+          ],
+          "packages": []
+        },
+        "license_clarity_score": {
+          "score": 45,
+          "has_declared_license_in_key_files": true,
+          "file_level_license_and_copyright_coverage": 0,
+          "has_consistent_key_and_file_level_licenses": false,
+          "is_using_only_spdx_licenses": true,
+          "has_full_text_for_all_licenses": false
+        },
+        "summary_of_key_files": {
+          "license_expressions": [
+            {
+              "value": null,
+              "count": 1
+            },
+            {
+              "value": "apache-2.0",
+              "count": 1
+            },
+            {
+              "value": "mit",
+              "count": 1
+            },
+            {
+              "value": "mpl-2.0",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 3
+            },
+            {
+              "value": "Copyright (c) The Rust Project",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 3
+            },
+            {
+              "value": "The Rust Project",
+              "count": 1
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 4
+            }
+          ],
+          "programming_language": [
+            {
+              "value": null,
+              "count": 3
+            },
+            {
+              "value": "Objective-C",
+              "count": 1
+            }
+          ]
+        },
+        "files": [
+          {
+            "path": ".cargo_vcs_info.json",
+            "type": "file",
+            "name": ".cargo_vcs_info.json",
+            "base_name": ".cargo_vcs_info",
+            "extension": ".json",
+            "size": 74,
+            "date": "2020-11-30",
+            "sha1": "1d54699ee615462d73286da816a74d3c6b50f726",
+            "md5": "879af87d22f042f5fbd2cf519d505d3f",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".editorconfig",
+            "type": "file",
+            "name": ".editorconfig",
+            "base_name": ".editorconfig",
+            "extension": "",
+            "size": 73,
+            "date": "2018-02-12",
+            "sha1": "5a6d6c61f983762dfbb771455ccc6721622257dd",
+            "md5": "0d0a6ddb3fa667a902e0baffa766c5d7",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".rustfmt.toml",
+            "type": "file",
+            "name": ".rustfmt.toml",
+            "base_name": ".rustfmt",
+            "extension": ".toml",
+            "size": 38,
+            "date": "2018-02-12",
+            "sha1": "57df9e89df2624f1a3055c39a207f5f8e9a98047",
+            "md5": "d090178e1f3e9b667d1569dcb4a4c2e5",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".travis.yml",
+            "type": "file",
+            "name": ".travis.yml",
+            "base_name": ".travis",
+            "extension": ".yml",
+            "size": 977,
+            "date": "2019-07-11",
+            "sha1": "6dc601c63e2a0c5b52375360cba28f7692f94d4f",
+            "md5": "213d654904687da99ce3eb4a4f301ed4",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "ActionScript 3",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://webhooks.gitter.im/e/87a331e1a21456b6e2ad",
+                "start_line": 29,
+                "end_line": 29
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".vimrc",
+            "type": "file",
+            "name": ".vimrc",
+            "base_name": ".vimrc",
+            "extension": "",
+            "size": 119,
+            "date": "2018-02-12",
+            "sha1": "f4461254d7aeea6b9d07b1a56879d0699d717c57",
+            "md5": "998330b64fa5e3c9e555e1c12cba2f03",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "benches.txt",
+            "type": "file",
+            "name": "benches.txt",
+            "base_name": "benches",
+            "extension": ".txt",
+            "size": 83,
+            "date": "2018-02-12",
+            "sha1": "b5bdeb49cbcb1cab141fbbaff2ba1a010630fb46",
+            "md5": "03ff0d2093832999ceef3764e851a178",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/slog-rs/misc/tree/master/benches",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "build.rs",
+            "type": "file",
+            "name": "build.rs",
+            "base_name": "build",
+            "extension": ".rs",
+            "size": 1120,
+            "date": "2019-07-11",
+            "sha1": "59e7efa4b2b8203c0bb6d36864aa47daebb5b469",
+            "md5": "c1174dab16027506ff4033da059240cd",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/rust-lang/rust/pull/42913",
+                "start_line": 40,
+                "end_line": 40
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.lock",
+            "type": "file",
+            "name": "Cargo.lock",
+            "base_name": "Cargo",
+            "extension": ".lock",
+            "size": 586,
+            "date": "2020-11-30",
+            "sha1": "cdab24c42fb9ea0aa24b9dfed40b3a9890589348",
+            "md5": "637d966066ca90f3986ee3ec4267e78c",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/rust-lang/crates.io-index",
+                "start_line": 6,
+                "end_line": 6
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml",
+            "type": "file",
+            "name": "Cargo.toml",
+            "base_name": "Cargo",
+            "extension": ".toml",
+            "size": 1790,
+            "date": "2020-11-30",
+            "sha1": "9e6c5391ba1eacb63bb3ce3e8e66ca94179e73a3",
+            "md5": "cb478f5f7637644d408d65562c298b97",
+            "mime_type": "text/plain",
+            "file_type": "UTF-8 Unicode text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mpl-2.0",
+                "score": 50,
+                "name": "Mozilla Public License 2.0",
+                "short_name": "MPL 2.0",
+                "category": "Copyleft Limited",
+                "is_exception": false,
+                "owner": "Mozilla",
+                "homepage_url": "http://mpl.mozilla.org/2012/01/03/announcing-mpl-2-0/",
+                "text_url": "http://www.mozilla.com/MPL/2.0/",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mpl-2.0",
+                "spdx_license_key": "MPL-2.0",
+                "spdx_url": "https://spdx.org/licenses/MPL-2.0",
+                "start_line": 25,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_mpl-2.0_for_mpl-2.0.RULE",
+                  "license_expression": "mpl-2.0",
+                  "licenses": [
+                    "mpl-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "MPL-2.0"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 25,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0\""
+              }
+            ],
+            "license_expressions": [
+              "mpl-2.0",
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "Dawid Ciezarkiewicz <dpc@dpc.pw>",
+                "start_line": 16,
+                "end_line": 18
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "dpc@dpc.pw",
+                "start_line": 16,
+                "end_line": 16
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://github.com/slog-rs/slog",
+                "start_line": 20,
+                "end_line": 20
+              },
+              {
+                "url": "https://docs.rs/slog",
+                "start_line": 21,
+                "end_line": 21
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml.orig",
+            "type": "file",
+            "name": "Cargo.toml.orig",
+            "base_name": "Cargo.toml",
+            "extension": ".orig",
+            "size": 1342,
+            "date": "2020-11-30",
+            "sha1": "466637a3f847f1b3ba2527592e4837956d7e0b06",
+            "md5": "d0456319ffa53dbfd42942e1197661ae",
+            "mime_type": "text/plain",
+            "file_type": "UTF-8 Unicode text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mpl-2.0",
+                "score": 50,
+                "name": "Mozilla Public License 2.0",
+                "short_name": "MPL 2.0",
+                "category": "Copyleft Limited",
+                "is_exception": false,
+                "owner": "Mozilla",
+                "homepage_url": "http://mpl.mozilla.org/2012/01/03/announcing-mpl-2-0/",
+                "text_url": "http://www.mozilla.com/MPL/2.0/",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mpl-2.0",
+                "spdx_license_key": "MPL-2.0",
+                "spdx_url": "https://spdx.org/licenses/MPL-2.0",
+                "start_line": 8,
+                "end_line": 8,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_mpl-2.0_for_mpl-2.0.RULE",
+                  "license_expression": "mpl-2.0",
+                  "licenses": [
+                    "mpl-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "MPL-2.0"
+              },
+              {
+                "key": "apache-2.0",
+                "score": 50,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 8,
+                "end_line": 8,
+                "matched_rule": {
+                  "identifier": "spdx_license_id_apache-2.0_for_apache-2.0.RULE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": false,
+                  "is_license_notice": false,
+                  "is_license_reference": true,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 3,
+                  "matched_length": 3,
+                  "match_coverage": 100,
+                  "rule_relevance": 50
+                },
+                "matched_text": "Apache-2.0\""
+              }
+            ],
+            "license_expressions": [
+              "mpl-2.0",
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [
+              {
+                "value": "Dawid Ciezarkiewicz <dpc@dpc.pw>",
+                "start_line": 4,
+                "end_line": 9
+              }
+            ],
+            "packages": [],
+            "emails": [
+              {
+                "email": "dpc@dpc.pw",
+                "start_line": 4,
+                "end_line": 4
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://docs.rs/slog",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://github.com/slog-rs/slog",
+                "start_line": 10,
+                "end_line": 10
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "CHANGELOG.md",
+            "type": "file",
+            "name": "CHANGELOG.md",
+            "base_name": "CHANGELOG",
+            "extension": ".md",
+            "size": 6910,
+            "date": "2020-11-30",
+            "sha1": "ce1454b82510c1c95f98a0f4473b65dd1c0a572a",
+            "md5": "47bbaef9280699c8fb5a16ddbb10d272",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Objective-C",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://keepachangelog.com/",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "url": "http://semver.org/",
+                "start_line": 5,
+                "end_line": 5
+              },
+              {
+                "url": "https://github.com/rust-lang/rust/pull/42125",
+                "start_line": 115,
+                "end_line": 115
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-APACHE",
+            "type": "file",
+            "name": "LICENSE-APACHE",
+            "base_name": "LICENSE-APACHE",
+            "extension": "",
+            "size": 10847,
+            "date": "2018-06-21",
+            "sha1": "5798832c31663cedc1618d18544d445da0295229",
+            "md5": "1836efb2eb779966696f473ee8540542",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "apache-2.0",
+                "score": 100,
+                "name": "Apache License 2.0",
+                "short_name": "Apache 2.0",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "Apache Software Foundation",
+                "homepage_url": "http://www.apache.org/licenses/",
+                "text_url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:apache-2.0",
+                "spdx_license_key": "Apache-2.0",
+                "spdx_url": "https://spdx.org/licenses/Apache-2.0",
+                "start_line": 1,
+                "end_line": 201,
+                "matched_rule": {
+                  "identifier": "apache-2.0.LICENSE",
+                  "license_expression": "apache-2.0",
+                  "licenses": [
+                    "apache-2.0"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "1-hash",
+                  "rule_length": 1608,
+                  "matched_length": 1608,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Apache License\n                        Version 2.0, January 2004\n                     http://www.apache.org/licenses/\n\nTERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n1. Definitions.\n\n   \"License\" shall mean the terms and conditions for use, reproduction,\n   and distribution as defined by Sections 1 through 9 of this document.\n\n   \"Licensor\" shall mean the copyright owner or entity authorized by\n   the copyright owner that is granting the License.\n\n   \"Legal Entity\" shall mean the union of the acting entity and all\n   other entities that control, are controlled by, or are under common\n   control with that entity. For the purposes of this definition,\n   \"control\" means (i) the power, direct or indirect, to cause the\n   direction or management of such entity, whether by contract or\n   otherwise, or (ii) ownership of fifty percent (50%) or more of the\n   outstanding shares, or (iii) beneficial ownership of such entity.\n\n   \"You\" (or \"Your\") shall mean an individual or Legal Entity\n   exercising permissions granted by this License.\n\n   \"Source\" form shall mean the preferred form for making modifications,\n   including but not limited to software source code, documentation\n   source, and configuration files.\n\n   \"Object\" form shall mean any form resulting from mechanical\n   transformation or translation of a Source form, including but\n   not limited to compiled object code, generated documentation,\n   and conversions to other media types.\n\n   \"Work\" shall mean the work of authorship, whether in Source or\n   Object form, made available under the License, as indicated by a\n   copyright notice that is included in or attached to the work\n   (an example is provided in the Appendix below).\n\n   \"Derivative Works\" shall mean any work, whether in Source or Object\n   form, that is based on (or derived from) the Work and for which the\n   editorial revisions, annotations, elaborations, or other modifications\n   represent, as a whole, an original work of authorship. For the purposes\n   of this License, Derivative Works shall not include works that remain\n   separable from, or merely link (or bind by name) to the interfaces of,\n   the Work and Derivative Works thereof.\n\n   \"Contribution\" shall mean any work of authorship, including\n   the original version of the Work and any modifications or additions\n   to that Work or Derivative Works thereof, that is intentionally\n   submitted to Licensor for inclusion in the Work by the copyright owner\n   or by an individual or Legal Entity authorized to submit on behalf of\n   the copyright owner. For the purposes of this definition, \"submitted\"\n   means any form of electronic, verbal, or written communication sent\n   to the Licensor or its representatives, including but not limited to\n   communication on electronic mailing lists, source code control systems,\n   and issue tracking systems that are managed by, or on behalf of, the\n   Licensor for the purpose of discussing and improving the Work, but\n   excluding communication that is conspicuously marked or otherwise\n   designated in writing by the copyright owner as \"Not a Contribution.\"\n\n   \"Contributor\" shall mean Licensor and any individual or Legal Entity\n   on behalf of whom a Contribution has been received by Licensor and\n   subsequently incorporated within the Work.\n\n2. Grant of Copyright License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   copyright license to reproduce, prepare Derivative Works of,\n   publicly display, publicly perform, sublicense, and distribute the\n   Work and such Derivative Works in Source or Object form.\n\n3. Grant of Patent License. Subject to the terms and conditions of\n   this License, each Contributor hereby grants to You a perpetual,\n   worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n   (except as stated in this section) patent license to make, have made,\n   use, offer to sell, sell, import, and otherwise transfer the Work,\n   where such license applies only to those patent claims licensable\n   by such Contributor that are necessarily infringed by their\n   Contribution(s) alone or by combination of their Contribution(s)\n   with the Work to which such Contribution(s) was submitted. If You\n   institute patent litigation against any entity (including a\n   cross-claim or counterclaim in a lawsuit) alleging that the Work\n   or a Contribution incorporated within the Work constitutes direct\n   or contributory patent infringement, then any patent licenses\n   granted to You under this License for that Work shall terminate\n   as of the date such litigation is filed.\n\n4. Redistribution. You may reproduce and distribute copies of the\n   Work or Derivative Works thereof in any medium, with or without\n   modifications, and in Source or Object form, provided that You\n   meet the following conditions:\n\n   (a) You must give any other recipients of the Work or\n       Derivative Works a copy of this License; and\n\n   (b) You must cause any modified files to carry prominent notices\n       stating that You changed the files; and\n\n   (c) You must retain, in the Source form of any Derivative Works\n       that You distribute, all copyright, patent, trademark, and\n       attribution notices from the Source form of the Work,\n       excluding those notices that do not pertain to any part of\n       the Derivative Works; and\n\n   (d) If the Work includes a \"NOTICE\" text file as part of its\n       distribution, then any Derivative Works that You distribute must\n       include a readable copy of the attribution notices contained\n       within such NOTICE file, excluding those notices that do not\n       pertain to any part of the Derivative Works, in at least one\n       of the following places: within a NOTICE text file distributed\n       as part of the Derivative Works; within the Source form or\n       documentation, if provided along with the Derivative Works; or,\n       within a display generated by the Derivative Works, if and\n       wherever such third-party notices normally appear. The contents\n       of the NOTICE file are for informational purposes only and\n       do not modify the License. You may add Your own attribution\n       notices within Derivative Works that You distribute, alongside\n       or as an addendum to the NOTICE text from the Work, provided\n       that such additional attribution notices cannot be construed\n       as modifying the License.\n\n   You may add Your own copyright statement to Your modifications and\n   may provide additional or different license terms and conditions\n   for use, reproduction, or distribution of Your modifications, or\n   for any such Derivative Works as a whole, provided Your use,\n   reproduction, and distribution of the Work otherwise complies with\n   the conditions stated in this License.\n\n5. Submission of Contributions. Unless You explicitly state otherwise,\n   any Contribution intentionally submitted for inclusion in the Work\n   by You to the Licensor shall be under the terms and conditions of\n   this License, without any additional terms or conditions.\n   Notwithstanding the above, nothing herein shall supersede or modify\n   the terms of any separate license agreement you may have executed\n   with Licensor regarding such Contributions.\n\n6. Trademarks. This License does not grant permission to use the trade\n   names, trademarks, service marks, or product names of the Licensor,\n   except as required for reasonable and customary use in describing the\n   origin of the Work and reproducing the content of the NOTICE file.\n\n7. Disclaimer of Warranty. Unless required by applicable law or\n   agreed to in writing, Licensor provides the Work (and each\n   Contributor provides its Contributions) on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n   implied, including, without limitation, any warranties or conditions\n   of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n   PARTICULAR PURPOSE. You are solely responsible for determining the\n   appropriateness of using or redistributing the Work and assume any\n   risks associated with Your exercise of permissions under this License.\n\n8. Limitation of Liability. In no event and under no legal theory,\n   whether in tort (including negligence), contract, or otherwise,\n   unless required by applicable law (such as deliberate and grossly\n   negligent acts) or agreed to in writing, shall any Contributor be\n   liable to You for damages, including any direct, indirect, special,\n   incidental, or consequential damages of any character arising as a\n   result of this License or out of the use or inability to use the\n   Work (including but not limited to damages for loss of goodwill,\n   work stoppage, computer failure or malfunction, or any and all\n   other commercial damages or losses), even if such Contributor\n   has been advised of the possibility of such damages.\n\n9. Accepting Warranty or Additional Liability. While redistributing\n   the Work or Derivative Works thereof, You may choose to offer,\n   and charge a fee for, acceptance of support, warranty, indemnity,\n   or other liability obligations and/or rights consistent with this\n   License. However, in accepting such obligations, You may act only\n   on Your own behalf and on Your sole responsibility, not on behalf\n   of any other Contributor, and only if You agree to indemnify,\n   defend, and hold each Contributor harmless for any liability\n   incurred by, or claims asserted against, such Contributor by reason\n   of your accepting any such warranty or additional liability.\n\nEND OF TERMS AND CONDITIONS\n\nAPPENDIX: How to apply the Apache License to your work.\n\n   To apply the Apache License to your work, attach the following\n   boilerplate notice, with the fields enclosed by brackets \"[]\"\n   replaced with your own identifying information. (Don't include\n   the brackets!)  The text should be enclosed in the appropriate\n   comment syntax for the file format. We also recommend that a\n   file or class name and description of purpose be included on the\n   same \"printed page\" as the copyright notice for easier\n   identification within third-party archives.\n\nCopyright [yyyy] [name of copyright owner]\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License."
+              }
+            ],
+            "license_expressions": [
+              "apache-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://www.apache.org/licenses/",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "http://www.apache.org/licenses/LICENSE-2.0",
+                "start_line": 195,
+                "end_line": 195
+              }
+            ],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": true,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-MIT",
+            "type": "file",
+            "name": "LICENSE-MIT",
+            "base_name": "LICENSE-MIT",
+            "extension": "",
+            "size": 1071,
+            "date": "2018-06-21",
+            "sha1": "9f3c36d2b7d381d9cf382a00166f3fbd06783636",
+            "md5": "362255802eb5aa87810d12ddf3cfedb4",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mit",
+                "score": 100,
+                "name": "MIT License",
+                "short_name": "MIT License",
+                "category": "Permissive",
+                "is_exception": false,
+                "owner": "MIT",
+                "homepage_url": "http://opensource.org/licenses/mit-license.php",
+                "text_url": "http://opensource.org/licenses/mit-license.php",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mit",
+                "spdx_license_key": "MIT",
+                "spdx_url": "https://spdx.org/licenses/MIT",
+                "start_line": 3,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "mit.LICENSE",
+                  "license_expression": "mit",
+                  "licenses": [
+                    "mit"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "2-aho",
+                  "rule_length": 163,
+                  "matched_length": 163,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Permission is hereby granted, free of charge, to any\nperson obtaining a copy of this software and associated\ndocumentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without\nlimitation the rights to use, copy, modify, merge,\npublish, distribute, sublicense, and/or sell copies of\nthe Software, and to permit persons to whom the Software\nis furnished to do so, subject to the following\nconditions:\n\nThe above copyright notice and this permission notice\nshall be included in all copies or substantial portions\nof the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF\nANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED\nTO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\nPARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT\nSHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\nOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR\nIN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER\nDEALINGS IN THE SOFTWARE."
+              }
+            ],
+            "license_expressions": [
+              "mit"
+            ],
+            "holders": [
+              {
+                "value": "The Rust Project",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "copyrights": [
+              {
+                "value": "Copyright (c) 2014 The Rust Project",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE-MPL2",
+            "type": "file",
+            "name": "LICENSE-MPL2",
+            "base_name": "LICENSE-MPL2",
+            "extension": "",
+            "size": 16726,
+            "date": "2018-02-12",
+            "sha1": "9744cedce099f727b327cd9913a1fdc58a7f5599",
+            "md5": "815ca599c9df247a0c7f619bab123dad",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "mpl-2.0",
+                "score": 100,
+                "name": "Mozilla Public License 2.0",
+                "short_name": "MPL 2.0",
+                "category": "Copyleft Limited",
+                "is_exception": false,
+                "owner": "Mozilla",
+                "homepage_url": "http://mpl.mozilla.org/2012/01/03/announcing-mpl-2-0/",
+                "text_url": "http://www.mozilla.com/MPL/2.0/",
+                "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:mpl-2.0",
+                "spdx_license_key": "MPL-2.0",
+                "spdx_url": "https://spdx.org/licenses/MPL-2.0",
+                "start_line": 1,
+                "end_line": 373,
+                "matched_rule": {
+                  "identifier": "mpl-2.0.LICENSE",
+                  "license_expression": "mpl-2.0",
+                  "licenses": [
+                    "mpl-2.0"
+                  ],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "matcher": "1-hash",
+                  "rule_length": 2426,
+                  "matched_length": 2426,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Mozilla Public License Version 2.0\n==================================\n\n1. Definitions\n--------------\n\n1.1. \"Contributor\"\n    means each individual or legal entity that creates, contributes to\n    the creation of, or owns Covered Software.\n\n1.2. \"Contributor Version\"\n    means the combination of the Contributions of others (if any) used\n    by a Contributor and that particular Contributor's Contribution.\n\n1.3. \"Contribution\"\n    means Covered Software of a particular Contributor.\n\n1.4. \"Covered Software\"\n    means Source Code Form to which the initial Contributor has attached\n    the notice in Exhibit A, the Executable Form of such Source Code\n    Form, and Modifications of such Source Code Form, in each case\n    including portions thereof.\n\n1.5. \"Incompatible With Secondary Licenses\"\n    means\n\n    (a) that the initial Contributor has attached the notice described\n        in Exhibit B to the Covered Software; or\n\n    (b) that the Covered Software was made available under the terms of\n        version 1.1 or earlier of the License, but not also under the\n        terms of a Secondary License.\n\n1.6. \"Executable Form\"\n    means any form of the work other than Source Code Form.\n\n1.7. \"Larger Work\"\n    means a work that combines Covered Software with other material, in \n    a separate file or files, that is not Covered Software.\n\n1.8. \"License\"\n    means this document.\n\n1.9. \"Licensable\"\n    means having the right to grant, to the maximum extent possible,\n    whether at the time of the initial grant or subsequently, any and\n    all of the rights conveyed by this License.\n\n1.10. \"Modifications\"\n    means any of the following:\n\n    (a) any file in Source Code Form that results from an addition to,\n        deletion from, or modification of the contents of Covered\n        Software; or\n\n    (b) any new file in Source Code Form that contains any Covered\n        Software.\n\n1.11. \"Patent Claims\" of a Contributor\n    means any patent claim(s), including without limitation, method,\n    process, and apparatus claims, in any patent Licensable by such\n    Contributor that would be infringed, but for the grant of the\n    License, by the making, using, selling, offering for sale, having\n    made, import, or transfer of either its Contributions or its\n    Contributor Version.\n\n1.12. \"Secondary License\"\n    means either the GNU General Public License, Version 2.0, the GNU\n    Lesser General Public License, Version 2.1, the GNU Affero General\n    Public License, Version 3.0, or any later versions of those\n    licenses.\n\n1.13. \"Source Code Form\"\n    means the form of the work preferred for making modifications.\n\n1.14. \"You\" (or \"Your\")\n    means an individual or a legal entity exercising rights under this\n    License. For legal entities, \"You\" includes any entity that\n    controls, is controlled by, or is under common control with You. For\n    purposes of this definition, \"control\" means (a) the power, direct\n    or indirect, to cause the direction or management of such entity,\n    whether by contract or otherwise, or (b) ownership of more than\n    fifty percent (50%) of the outstanding shares or beneficial\n    ownership of such entity.\n\n2. License Grants and Conditions\n--------------------------------\n\n2.1. Grants\n\nEach Contributor hereby grants You a world-wide, royalty-free,\nnon-exclusive license:\n\n(a) under intellectual property rights (other than patent or trademark)\n    Licensable by such Contributor to use, reproduce, make available,\n    modify, display, perform, distribute, and otherwise exploit its\n    Contributions, either on an unmodified basis, with Modifications, or\n    as part of a Larger Work; and\n\n(b) under Patent Claims of such Contributor to make, use, sell, offer\n    for sale, have made, import, and otherwise transfer either its\n    Contributions or its Contributor Version.\n\n2.2. Effective Date\n\nThe licenses granted in Section 2.1 with respect to any Contribution\nbecome effective for each Contribution on the date the Contributor first\ndistributes such Contribution.\n\n2.3. Limitations on Grant Scope\n\nThe licenses granted in this Section 2 are the only rights granted under\nthis License. No additional rights or licenses will be implied from the\ndistribution or licensing of Covered Software under this License.\nNotwithstanding Section 2.1(b) above, no patent license is granted by a\nContributor:\n\n(a) for any code that a Contributor has removed from Covered Software;\n    or\n\n(b) for infringements caused by: (i) Your and any other third party's\n    modifications of Covered Software, or (ii) the combination of its\n    Contributions with other software (except as part of its Contributor\n    Version); or\n\n(c) under Patent Claims infringed by Covered Software in the absence of\n    its Contributions.\n\nThis License does not grant any rights in the trademarks, service marks,\nor logos of any Contributor (except as may be necessary to comply with\nthe notice requirements in Section 3.4).\n\n2.4. Subsequent Licenses\n\nNo Contributor makes additional grants as a result of Your choice to\ndistribute the Covered Software under a subsequent version of this\nLicense (see Section 10.2) or under the terms of a Secondary License (if\npermitted under the terms of Section 3.3).\n\n2.5. Representation\n\nEach Contributor represents that the Contributor believes its\nContributions are its original creation(s) or it has sufficient rights\nto grant the rights to its Contributions conveyed by this License.\n\n2.6. Fair Use\n\nThis License is not intended to limit any rights You have under\napplicable copyright doctrines of fair use, fair dealing, or other\nequivalents.\n\n2.7. Conditions\n\nSections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted\nin Section 2.1.\n\n3. Responsibilities\n-------------------\n\n3.1. Distribution of Source Form\n\nAll distribution of Covered Software in Source Code Form, including any\nModifications that You create or to which You contribute, must be under\nthe terms of this License. You must inform recipients that the Source\nCode Form of the Covered Software is governed by the terms of this\nLicense, and how they can obtain a copy of this License. You may not\nattempt to alter or restrict the recipients' rights in the Source Code\nForm.\n\n3.2. Distribution of Executable Form\n\nIf You distribute Covered Software in Executable Form then:\n\n(a) such Covered Software must also be made available in Source Code\n    Form, as described in Section 3.1, and You must inform recipients of\n    the Executable Form how they can obtain a copy of such Source Code\n    Form by reasonable means in a timely manner, at a charge no more\n    than the cost of distribution to the recipient; and\n\n(b) You may distribute such Executable Form under the terms of this\n    License, or sublicense it under different terms, provided that the\n    license for the Executable Form does not attempt to limit or alter\n    the recipients' rights in the Source Code Form under this License.\n\n3.3. Distribution of a Larger Work\n\nYou may create and distribute a Larger Work under terms of Your choice,\nprovided that You also comply with the requirements of this License for\nthe Covered Software. If the Larger Work is a combination of Covered\nSoftware with a work governed by one or more Secondary Licenses, and the\nCovered Software is not Incompatible With Secondary Licenses, this\nLicense permits You to additionally distribute such Covered Software\nunder the terms of such Secondary License(s), so that the recipient of\nthe Larger Work may, at their option, further distribute the Covered\nSoftware under the terms of either this License or such Secondary\nLicense(s).\n\n3.4. Notices\n\nYou may not remove or alter the substance of any license notices\n(including copyright notices, patent notices, disclaimers of warranty,\nor limitations of liability) contained within the Source Code Form of\nthe Covered Software, except that You may alter any license notices to\nthe extent required to remedy known factual inaccuracies.\n\n3.5. Application of Additional Terms\n\nYou may choose to offer, and to charge a fee for, warranty, support,\nindemnity or liability obligations to one or more recipients of Covered\nSoftware. However, You may do so only on Your own behalf, and not on\nbehalf of any Contributor. You must make it absolutely clear that any\nsuch warranty, support, indemnity, or liability obligation is offered by\nYou alone, and You hereby agree to indemnify every Contributor for any\nliability incurred by such Contributor as a result of warranty, support,\nindemnity or liability terms You offer. You may include additional\ndisclaimers of warranty and limitations of liability specific to any\njurisdiction.\n\n4. Inability to Comply Due to Statute or Regulation\n---------------------------------------------------\n\nIf it is impossible for You to comply with any of the terms of this\nLicense with respect to some or all of the Covered Software due to\nstatute, judicial order, or regulation then You must: (a) comply with\nthe terms of this License to the maximum extent possible; and (b)\ndescribe the limitations and the code they affect. Such description must\nbe placed in a text file included with all distributions of the Covered\nSoftware under this License. Except to the extent prohibited by statute\nor regulation, such description must be sufficiently detailed for a\nrecipient of ordinary skill to be able to understand it.\n\n5. Termination\n--------------\n\n5.1. The rights granted under this License will terminate automatically\nif You fail to comply with any of its terms. However, if You become\ncompliant, then the rights granted under this License from a particular\nContributor are reinstated (a) provisionally, unless and until such\nContributor explicitly and finally terminates Your grants, and (b) on an\nongoing basis, if such Contributor fails to notify You of the\nnon-compliance by some reasonable means prior to 60 days after You have\ncome back into compliance. Moreover, Your grants from a particular\nContributor are reinstated on an ongoing basis if such Contributor\nnotifies You of the non-compliance by some reasonable means, this is the\nfirst time You have received notice of non-compliance with this License\nfrom such Contributor, and You become compliant prior to 30 days after\nYour receipt of the notice.\n\n5.2. If You initiate litigation against any entity by asserting a patent\ninfringement claim (excluding declaratory judgment actions,\ncounter-claims, and cross-claims) alleging that a Contributor Version\ndirectly or indirectly infringes any patent, then the rights granted to\nYou by any and all Contributors for the Covered Software under Section\n2.1 of this License shall terminate.\n\n5.3. In the event of termination under Sections 5.1 or 5.2 above, all\nend user license agreements (excluding distributors and resellers) which\nhave been validly granted by You or Your distributors under this License\nprior to termination shall survive termination.\n\n************************************************************************\n*                                                                      *\n*  6. Disclaimer of Warranty                                           *\n*  -------------------------                                           *\n*                                                                      *\n*  Covered Software is provided under this License on an \"as is\"       *\n*  basis, without warranty of any kind, either expressed, implied, or  *\n*  statutory, including, without limitation, warranties that the       *\n*  Covered Software is free of defects, merchantable, fit for a        *\n*  particular purpose or non-infringing. The entire risk as to the     *\n*  quality and performance of the Covered Software is with You.        *\n*  Should any Covered Software prove defective in any respect, You     *\n*  (not any Contributor) assume the cost of any necessary servicing,   *\n*  repair, or correction. This disclaimer of warranty constitutes an   *\n*  essential part of this License. No use of any Covered Software is   *\n*  authorized under this License except under this disclaimer.         *\n*                                                                      *\n************************************************************************\n\n************************************************************************\n*                                                                      *\n*  7. Limitation of Liability                                          *\n*  --------------------------                                          *\n*                                                                      *\n*  Under no circumstances and under no legal theory, whether tort      *\n*  (including negligence), contract, or otherwise, shall any           *\n*  Contributor, or anyone who distributes Covered Software as          *\n*  permitted above, be liable to You for any direct, indirect,         *\n*  special, incidental, or consequential damages of any character      *\n*  including, without limitation, damages for lost profits, loss of    *\n*  goodwill, work stoppage, computer failure or malfunction, or any    *\n*  and all other commercial damages or losses, even if such party      *\n*  shall have been informed of the possibility of such damages. This   *\n*  limitation of liability shall not apply to liability for death or   *\n*  personal injury resulting from such party's negligence to the       *\n*  extent applicable law prohibits such limitation. Some               *\n*  jurisdictions do not allow the exclusion or limitation of           *\n*  incidental or consequential damages, so this exclusion and          *\n*  limitation may not apply to You.                                    *\n*                                                                      *\n************************************************************************\n\n8. Litigation\n-------------\n\nAny litigation relating to this License may be brought only in the\ncourts of a jurisdiction where the defendant maintains its principal\nplace of business and such litigation shall be governed by laws of that\njurisdiction, without reference to its conflict-of-law provisions.\nNothing in this Section shall prevent a party's ability to bring\ncross-claims or counter-claims.\n\n9. Miscellaneous\n----------------\n\nThis License represents the complete agreement concerning the subject\nmatter hereof. If any provision of this License is held to be\nunenforceable, such provision shall be reformed only to the extent\nnecessary to make it enforceable. Any law or regulation which provides\nthat the language of a contract shall be construed against the drafter\nshall not be used to construe this License against a Contributor.\n\n10. Versions of the License\n---------------------------\n\n10.1. New Versions\n\nMozilla Foundation is the license steward. Except as provided in Section\n10.3, no one other than the license steward has the right to modify or\npublish new versions of this License. Each version will be given a\ndistinguishing version number.\n\n10.2. Effect of New Versions\n\nYou may distribute the Covered Software under the terms of the version\nof the License under which You originally received the Covered Software,\nor under the terms of any subsequent version published by the license\nsteward.\n\n10.3. Modified Versions\n\nIf you create software not governed by this License, and you want to\ncreate a new license for such software, you may create and use a\nmodified version of this License if you rename the license and remove\nany references to the name of the license steward (except to note that\nsuch modified license differs from this License).\n\n10.4. Distributing Source Code Form that is Incompatible With Secondary\nLicenses\n\nIf You choose to distribute Source Code Form that is Incompatible With\nSecondary Licenses under the terms of this version of the License, the\nnotice described in Exhibit B of this License must be attached.\n\nExhibit A - Source Code Form License Notice\n-------------------------------------------\n\n  This Source Code Form is subject to the terms of the Mozilla Public\n  License, v. 2.0. If a copy of the MPL was not distributed with this\n  file, You can obtain one at http://mozilla.org/MPL/2.0/.\n\nIf it is not possible or desirable to put the notice in a particular\nfile, then You may include the notice in a location (such as a LICENSE\nfile in a relevant directory) where a recipient would be likely to look\nfor such a notice.\n\nYou may add additional accurate notices of copyright ownership.\n\nExhibit B - \"Incompatible With Secondary Licenses\" Notice\n---------------------------------------------------------\n\n  This Source Code Form is \"Incompatible With Secondary Licenses\", as\n  defined by the Mozilla Public License, v. 2.0."
+              }
+            ],
+            "license_expressions": [
+              "mpl-2.0"
+            ],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://mozilla.org/MPL/2.0",
+                "start_line": 360,
+                "end_line": 360
+              }
+            ],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Makefile",
+            "type": "file",
+            "name": "Makefile",
+            "base_name": "Makefile",
+            "extension": "",
+            "size": 1624,
+            "date": "2019-07-11",
+            "sha1": "291da9e1767a3a679aa1fb9124f9f418ea875719",
+            "md5": "200d9e4921707c7cf349db272bb1e8b0",
+            "mime_type": "text/x-makefile",
+            "file_type": "makefile script, ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "README.md",
+            "type": "file",
+            "name": "README.md",
+            "base_name": "README",
+            "extension": ".md",
+            "size": 4783,
+            "date": "2020-11-30",
+            "sha1": "ff6225f438038d0b9bc62b8b2460eb35122e8766",
+            "md5": "c0c0df087969dbd5a14232176329779e",
+            "mime_type": "text/html",
+            "file_type": "HTML document, UTF-8 Unicode text",
+            "programming_language": "Objective-C",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/slog-rs/slog",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "https://cdn.rawgit.com/slog-rs/misc/master/media/slog.svg",
+                "start_line": 4,
+                "end_line": 4
+              },
+              {
+                "url": "https://travis-ci.org/slog-rs/slog",
+                "start_line": 8,
+                "end_line": 8
+              },
+              {
+                "url": "https://img.shields.io/travis/slog-rs/slog/master.svg",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://crates.io/crates/slog",
+                "start_line": 12,
+                "end_line": 12
+              },
+              {
+                "url": "https://img.shields.io/crates/d/slog.svg",
+                "start_line": 13,
+                "end_line": 13
+              },
+              {
+                "url": "https://gitter.im/slog-rs/slog",
+                "start_line": 16,
+                "end_line": 16
+              },
+              {
+                "url": "https://img.shields.io/gitter/room/slog-rs/slog.svg",
+                "start_line": 17,
+                "end_line": 17
+              },
+              {
+                "url": "https://docs.rs/releases/search?query=slog",
+                "start_line": 20,
+                "end_line": 20
+              },
+              {
+                "url": "https://docs.rs/slog/badge.svg",
+                "start_line": 21,
+                "end_line": 21
+              },
+              {
+                "url": "https://github.com/slog-rs/slog/wiki/Getting-started",
+                "start_line": 24,
+                "end_line": 24
+              },
+              {
+                "url": "https://crates.io/search?q=slog",
+                "start_line": 28,
+                "end_line": 28
+              },
+              {
+                "url": "https://docs.rs/sloggers",
+                "start_line": 45,
+                "end_line": 45
+              },
+              {
+                "url": "https://docs.rs/",
+                "start_line": 52,
+                "end_line": 52
+              },
+              {
+                "url": "https://docs.rs/slog",
+                "start_line": 52,
+                "end_line": 52
+              },
+              {
+                "url": "https://docs.rs/slog-term",
+                "start_line": 60,
+                "end_line": 60
+              },
+              {
+                "url": "https://docs.rs/slog-async",
+                "start_line": 61,
+                "end_line": 61
+              },
+              {
+                "url": "https://docs.rs/slog-json",
+                "start_line": 62,
+                "end_line": 62
+              },
+              {
+                "url": "https://docs.rs/slog-syslog",
+                "start_line": 63,
+                "end_line": 63
+              },
+              {
+                "url": "https://github.com/sile/sloggers",
+                "start_line": 64,
+                "end_line": 64
+              },
+              {
+                "url": "https://crates.io/crates/slog/reverse_dependencies",
+                "start_line": 69,
+                "end_line": 69
+              },
+              {
+                "url": "https://github.com/slog-rs/misc/blob/master/examples/features.rs",
+                "start_line": 86,
+                "end_line": 86
+              },
+              {
+                "url": "https://github.com/slog-rs/slog/wiki/FAQ",
+                "start_line": 93,
+                "end_line": 93
+              },
+              {
+                "url": "https://github.com/slog-rs/slog/wiki/",
+                "start_line": 94,
+                "end_line": 94
+              },
+              {
+                "url": "http://rust-lang.org/",
+                "start_line": 95,
+                "end_line": 95
+              },
+              {
+                "url": "https://github.com/slog-rs",
+                "start_line": 102,
+                "end_line": 102
+              },
+              {
+                "url": "https://github.com/dpc/public/blob/master/COC.md",
+                "start_line": 107,
+                "end_line": 107
+              },
+              {
+                "url": "https://github.com/crev-dev/cargo-crev",
+                "start_line": 116,
+                "end_line": 116
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": true,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".cargo",
+            "type": "directory",
+            "name": ".cargo",
+            "base_name": ".cargo",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 1,
+            "dirs_count": 0,
+            "size_count": 16,
+            "scan_errors": []
+          },
+          {
+            "path": ".cargo/config",
+            "type": "file",
+            "name": "config",
+            "base_name": "config",
+            "extension": "",
+            "size": 16,
+            "date": "2018-07-21",
+            "sha1": "5d39cb708d5a0427fb26d94a30a5b07156330861",
+            "md5": "22646562eba8b37fcbb37f5e1181c946",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".github",
+            "type": "directory",
+            "name": ".github",
+            "base_name": ".github",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 2,
+            "dirs_count": 0,
+            "size_count": 318,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/ISSUE_TEMPLATE.md",
+            "type": "file",
+            "name": "ISSUE_TEMPLATE.md",
+            "base_name": "ISSUE_TEMPLATE",
+            "extension": ".md",
+            "size": 252,
+            "date": "2018-06-21",
+            "sha1": "b865c4d12c6d833b8213a57acd40b4c26642b108",
+            "md5": "0f428be0e927c636416d9bbea53f72a4",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://gitter.im/slog-rs/slog",
+                "start_line": 6,
+                "end_line": 6
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/pull_request_template.md",
+            "type": "file",
+            "name": "pull_request_template.md",
+            "base_name": "pull_request_template",
+            "extension": ".md",
+            "size": 66,
+            "date": "2019-07-11",
+            "sha1": "28f7b270c8906808a3495a883bc00eb17ee50145",
+            "md5": "df01797452284fa8595f38616a5b1536",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "examples",
+            "type": "directory",
+            "name": "examples",
+            "base_name": "examples",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 5,
+            "dirs_count": 1,
+            "size_count": 4850,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/named.rs",
+            "type": "file",
+            "name": "named.rs",
+            "base_name": "named",
+            "extension": ".rs",
+            "size": 857,
+            "date": "2018-11-28",
+            "sha1": "8232f5de9b54aae23aba733d4c3798789b5a2a3e",
+            "md5": "93a08834f4b6fbbadfb2ccba7e2b52e4",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/README.md",
+            "type": "file",
+            "name": "README.md",
+            "base_name": "README",
+            "extension": ".md",
+            "size": 249,
+            "date": "2018-02-12",
+            "sha1": "19011e76c7b85ec1bade882e2f104e3d99d6de3d",
+            "md5": "2bd3a8c19dc1be9af26a1481e47e8f96",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/slog-rs/misc/tree/master/examples",
+                "start_line": 3,
+                "end_line": 3
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": true,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/singlethread.rs",
+            "type": "file",
+            "name": "singlethread.rs",
+            "base_name": "singlethread",
+            "extension": ".rs",
+            "size": 660,
+            "date": "2019-07-11",
+            "sha1": "84dc12c5df67953b413f5c906cfaf8224de92183",
+            "md5": "9abe21aea39225aa4bf2d1e4b0c29cf8",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/struct-log-self.rs",
+            "type": "file",
+            "name": "struct-log-self.rs",
+            "base_name": "struct-log-self",
+            "extension": ".rs",
+            "size": 2352,
+            "date": "2019-07-11",
+            "sha1": "5e3a825bf62d00e54143100077adcd167e654295",
+            "md5": "2d08770709829eee7d65d1d5831733be",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/common",
+            "type": "directory",
+            "name": "common",
+            "base_name": "common",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 1,
+            "dirs_count": 0,
+            "size_count": 732,
+            "scan_errors": []
+          },
+          {
+            "path": "examples/common/mod.rs",
+            "type": "file",
+            "name": "mod.rs",
+            "base_name": "mod",
+            "extension": ".rs",
+            "size": 732,
+            "date": "2018-06-21",
+            "sha1": "d2eda06edbabd3a9c56e775ef1757f635119b910",
+            "md5": "d1ce96811954eefc115f2df66f06a146",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src",
+            "type": "directory",
+            "name": "src",
+            "base_name": "src",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 6,
+            "dirs_count": 1,
+            "size_count": 131010,
+            "scan_errors": []
+          },
+          {
+            "path": "src/lib.rs",
+            "type": "file",
+            "name": "lib.rs",
+            "base_name": "lib",
+            "extension": ".rs",
+            "size": 110976,
+            "date": "2020-11-30",
+            "sha1": "2f7bb444d81d767e1f003eb9c3a0e75f49aca66e",
+            "md5": "1e81262b19acc4da53d2d0f6f0af1681",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://github.com/slog-rs/slog",
+                "start_line": 11,
+                "end_line": 11
+              },
+              {
+                "url": "https://github.com/slog-rs/slog/wiki/What-makes-slog-fast",
+                "start_line": 39,
+                "end_line": 39
+              },
+              {
+                "url": "https://github.com/dpc/slog-rs/wiki/Bench-log",
+                "start_line": 40,
+                "end_line": 40
+              },
+              {
+                "url": "https://docs.rs/slog-async",
+                "start_line": 43,
+                "end_line": 43
+              },
+              {
+                "url": "https://github.com/slog-rs/example-lib",
+                "start_line": 53,
+                "end_line": 53
+              },
+              {
+                "url": "https://docs.rs/slog-stdlog",
+                "start_line": 55,
+                "end_line": 55
+              },
+              {
+                "url": "https://docs.rs/slog-scope",
+                "start_line": 58,
+                "end_line": 58
+              },
+              {
+                "url": "https://github.com/slog-rs/envlogger",
+                "start_line": 65,
+                "end_line": 65
+              },
+              {
+                "url": "https://docs.rs/slog-term",
+                "start_line": 68,
+                "end_line": 68
+              },
+              {
+                "url": "https://docs.rs/slog-json",
+                "start_line": 69,
+                "end_line": 69
+              },
+              {
+                "url": "https://docs.rs/slog-bunyan",
+                "start_line": 70,
+                "end_line": 70
+              },
+              {
+                "url": "https://docs.rs/slog-syslog",
+                "start_line": 71,
+                "end_line": 71
+              },
+              {
+                "url": "https://docs.rs/slog-journald",
+                "start_line": 72,
+                "end_line": 72
+              },
+              {
+                "url": "https://docs.rs/slog-atomic",
+                "start_line": 75,
+                "end_line": 75
+              },
+              {
+                "url": "https://docs.rs/slog-config",
+                "start_line": 77,
+                "end_line": 77
+              },
+              {
+                "url": "https://crates.io/crates/env_logger",
+                "start_line": 80,
+                "end_line": 80
+              },
+              {
+                "url": "https://github.com/dpc/slog-rs/wiki/Functional-overview",
+                "start_line": 101,
+                "end_line": 101
+              },
+              {
+                "url": "https://docs.rs/slog-atomic/",
+                "start_line": 102,
+                "end_line": 102
+              },
+              {
+                "url": "https://github.com/slog-rs/term/tree/master/examples",
+                "start_line": 245,
+                "end_line": 245
+              },
+              {
+                "url": "https://github.com/slog-rs/slog/wiki",
+                "start_line": 247,
+                "end_line": 247
+              },
+              {
+                "url": "https://crates.io/crates/slog/reverse_dependencies",
+                "start_line": 251,
+                "end_line": 251
+              },
+              {
+                "url": "https://gitter.im/slog-rs/slog",
+                "start_line": 254,
+                "end_line": 254
+              },
+              {
+                "url": "https://github.com/rust-lang/rust/issues/29661",
+                "start_line": 1333,
+                "end_line": 1333
+              },
+              {
+                "url": "https://github.com/rust-lang/rust/issues/34511",
+                "start_line": 1800,
+                "end_line": 1800
+              },
+              {
+                "url": "https://docs.rs/slog-async/latest/slog_async/struct.Async.html",
+                "start_line": 2478,
+                "end_line": 2478
+              },
+              {
+                "url": "https://docs.rs/serde/1/serde/trait.Serialize.html",
+                "start_line": 2700,
+                "end_line": 2700
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/tests.rs",
+            "type": "file",
+            "name": "tests.rs",
+            "base_name": "tests",
+            "extension": ".rs",
+            "size": 11324,
+            "date": "2020-11-30",
+            "sha1": "58b1356e3f4383e97cb93747e8be0842ad0b7797",
+            "md5": "40ace5b685861981d972f95f4c64c71f",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/key",
+            "type": "directory",
+            "name": "key",
+            "base_name": "key",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 4,
+            "dirs_count": 0,
+            "size_count": 8710,
+            "scan_errors": []
+          },
+          {
+            "path": "src/key/dynamic.rs",
+            "type": "file",
+            "name": "dynamic.rs",
+            "base_name": "dynamic",
+            "extension": ".rs",
+            "size": 4657,
+            "date": "2020-11-30",
+            "sha1": "9bec0fef29f03a3ecfc68faad3436f546d428fb3",
+            "md5": "6937387df058755aaae2ac83d0d6f6cc",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/key/dynamic_nostd.rs",
+            "type": "file",
+            "name": "dynamic_nostd.rs",
+            "base_name": "dynamic_nostd",
+            "extension": ".rs",
+            "size": 3764,
+            "date": "2020-11-30",
+            "sha1": "8f0a97a9f643224be1d1ee67ea845ba84c66af6f",
+            "md5": "adf6e82e0950f7fa74e228bd75f4e4f6",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/key/mod.rs",
+            "type": "file",
+            "name": "mod.rs",
+            "base_name": "mod",
+            "extension": ".rs",
+            "size": 247,
+            "date": "2018-11-28",
+            "sha1": "d2e3c3267ffbfbe8e4ddfea5db8b00f58ac209d0",
+            "md5": "0de0fd0684cce9cc068f54a1c67476db",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src/key/static.rs",
+            "type": "file",
+            "name": "static.rs",
+            "base_name": "static",
+            "extension": ".rs",
+            "size": 42,
+            "date": "2018-07-26",
+            "sha1": "73d116633ba81dbae661af896ae14c67862e69ad",
+            "md5": "e9d9c736485e8e017b47b725e1237753",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "holders": [],
+            "copyrights": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          }
+        ]
+      }
+    }
+  }
+}

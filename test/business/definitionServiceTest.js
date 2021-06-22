@@ -321,27 +321,64 @@ describe('Aggregation service', () => {
     expect(aggregated.files[1].license).to.eq('GPL-2.0')
   })
 
-  it('handles Rust quote crate with dual licenses', async () => {
-    const coordSpec = 'crate/cratesio/-/quote/1.0.9'
-    //const coordSpec = 'crate/cratesio/-/quote/0.6.4'
-    const coords = EntityCoordinates.fromString(coordSpec)
-    const raw = require('./evidence/crate-quote-1.0.9.json')
-    //const raw = require('./evidence/crate-quote-0.6.4.json')
-    const tools = [['clearlydefined', 'licensee', 'scancode']]
-    //const tools = [['clearlydefined', 'licensee', 'scancode', 'fossology']]
+  it('handles Rust crates with license choices', async () => {
+    const testcases = [
+      {
+        name: 'slog',
+        version: '2.7.0',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        // Ideally this would be declared without any parentheses, but currently
+        // the SPDX normalization adds them.
+        expected: 'MPL-2.0 OR (MIT OR Apache-2.0)',
+      },
+      {
+        name: 'quote',
+        version: '0.6.4',
+        tools: [['clearlydefined', 'fossology', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0',
+      },
+      {
+        name: 'quote',
+        version: '1.0.9',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0',
+      },
+      {
+        name: 'rand',
+        version: '0.8.2',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0',
+      },
+      {
+        name: 'regex',
+        version: '1.5.3',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0',
+      },
+      {
+        name: 'serde',
+        version: '1.0.123',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0',
+      },
+    ]
+
     const summary_options = {}
     const summaryService = SummaryService(summary_options)
-    const summaries = summaryService.summarizeAll(coords, raw)
-    const { service } = setupAggregatorWithParams(coordSpec, tools)
-    const aggregated = service.process(summaries)
-    console.log(`${summaries}`)
-    console.log(`${aggregated}`)
-    expect(aggregated.licensed.declared == 'Apache-2.0 OR MIT')
+
+    for (let i = 0; i < testcases.length; i++) {
+      let testcase = testcases[i]
+      const coordSpec = `crate/cratesio/-/${testcase.name}/${testcase.version}`
+      const coords = EntityCoordinates.fromString(coordSpec)
+      const raw = require(`./evidence/crate-${testcase.name}-${testcase.version}.json`)
+      const tools = testcase.tools
+      const summaries = summaryService.summarizeAll(coords, raw)
+      const { service } = setupAggregatorWithParams(coordSpec, tools)
+      const aggregated = service.process(summaries)
+      expect(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`).to.eq(testcase.expected)
+    }
   })
 })
-
-
-
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
