@@ -92,6 +92,8 @@ class FOSSologySummarizer {
 
   _declareLicense(coordinates, result) {
     if (!result.files) return
+    // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
+    if (get(coordinates, 'type') === 'crate') return
     // if we know this is a license file by the name of it and it has a license detected in it
     // then let's declare the license for the component
     const licenses = uniq(

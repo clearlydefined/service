@@ -32,9 +32,12 @@ class ScanCodeSummarizer {
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
-    const declaredLicense =
-      this._readDeclaredLicense(harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
-    setIfValue(result, 'licensed.declared', declaredLicense)
+    // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
+    if (get(coordinates, 'type') !== 'crate') {
+      const declaredLicense =
+        this._readDeclaredLicense(harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+      setIfValue(result, 'licensed.declared', declaredLicense)
+    }
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
     return result
   }
