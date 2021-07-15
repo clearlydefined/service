@@ -103,7 +103,7 @@ For example: `go.uber.org/multierr v1.6.0` maps to `go/proxy.golang.org/go.uber.
 
 **Examples that seem to work well:**
 
-* `collectd.org v0.5.0` maps to `go/proxy.golang.org/collectd.org/v0.5.0`
+* `collectd.org v0.5.0` maps to `go/proxy.golang.org/-/collectd.org/v0.5.0`
 * `go.starlark.net v0.0.0-20210406145628-7a1108eaa012` maps to `go/proxy.golang.org/go.starlark.net/v0.0.0-20210406145628-7a1108eaa012`
 * `cloud.google.com/go v0.56.0` maps to `go/proxy.golang.org/cloud.google.com/go/v0.56.0`
 * `code.cloudfoundry.org/clock v1.0.0` maps to `go/proxy.golang.org/code.cloudfoundry.org/clock/v1.0.0`
