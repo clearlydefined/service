@@ -110,6 +110,7 @@ For example: `go.uber.org/multierr v1.6.0` maps to `go/proxy.golang.org/go.uber.
 * `go.uber.org/multierr v1.6.0` maps to `go/proxy.golang.org/go.uber.org/multierr/v1.6.0`
 * `k8s.io/api v0.20.4` maps to `go/proxy.golang.org/k8s.io/api/v0.20.4`
 * `modernc.org/sqlite v1.10.8` maps to `go/proxy.golang.org/modernc.org/sqlite v1.10.8`
+* `github.com/project/package v1.2.3` maps to `go/proxy.golang.org/github.com.project/package/v1.2.3`
 
 **Examples that seem a little weird:**
 * `github.com/Azure/azure-event-hubs-go/v3 v3.2.0` maps to `go/proxy.golang.org/github.com.Azure.azure-event-hubs-go/v3/v3.2.0`
