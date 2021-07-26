@@ -374,12 +374,14 @@ class ClearlyDescribedSummarizer {
 
   getGitUrls(coordinates) {
     var urls = { download: '', registry: '', version: '' }
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
     switch (coordinates.provider) {
+      // GitLab allows multiple namespaces in a url
       case 'gitlab':
-        urls.registry = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}`
-        urls.download = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}/-/archive/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.zip`
-        urls.version = `https://gitlab.com/${coordinates.namespace}/${coordinates.name}/-/tree/${coordinates.revision}`
+        urls.registry = `https://gitlab.com/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `https://gitlab.com/${namespaceAsFolders}/${coordinates.name}/-/archive/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.zip`
+        urls.version = `https://gitlab.com/${namespaceAsFolders}/${coordinates.name}/-/tree/${coordinates.revision}`
         break
 
       default:

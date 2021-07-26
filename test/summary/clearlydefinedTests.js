@@ -95,9 +95,19 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
-  it('declares dual license from registryData', () => {
+  it('declares dual license from registryData with SPDX expression', () => {
     let result = {}
-    summarizer.addCrateData(result, { registryData: { license: 'MIT/Apache-2.0' } }, crateTestCoordinates)
+    let data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    data.registryData = { license: 'MIT OR Apache-2.0' }
+    summarizer.addCrateData(result, data, crateTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
+  })
+
+  it('declares dual license from registryData with slash-separated licenses', () => {
+    let result = {}
+    let data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    data.registryData = { license: 'MIT/Apache-2.0' }
+    summarizer.addCrateData(result, data, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
   })
 
@@ -710,3 +720,14 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
     }
   })
 })
+
+function setup(files, attachments) {
+  const matched_files = files.map(file => {
+    return {
+      filename: file.path,
+      matcher: { name: file.matcher || 'exact', confidence: file.confidence || '100' },
+      matched_license: file.license
+    }
+  })
+  return { licensee: { version: '1.2.3', output: { content: { matched_files } } }, attachments }
+}
