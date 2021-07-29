@@ -29,6 +29,7 @@
         "maven",
         "nuget",
         "gem",
+        "go",
         "composer",
         "pod",
         "pypi",

@@ -38,6 +38,7 @@
         "composer",
         "nuget",
         "gem",
+        "go",
         "pod",
         "pypi",
         "sourcearchive",

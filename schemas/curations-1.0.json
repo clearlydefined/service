@@ -28,6 +28,7 @@
         "npm",
         "crate",
         "git",
+        "go",
         "maven",
         "nuget",
         "composer",
