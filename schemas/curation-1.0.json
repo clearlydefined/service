@@ -53,6 +53,7 @@
         "mavencentral",
         "mavengoogle",
         "packagist",
+        "proxy.golang.org",
         "nuget",
         "rubygems",
         "pypi",
