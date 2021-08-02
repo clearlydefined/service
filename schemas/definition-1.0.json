@@ -54,7 +54,7 @@
         "github",
         "gitlab",
         "packagist",
-        "proxy.golang.org",
+        "golang",
         "mavencentral",
         "mavengoogle",
         "nuget",
