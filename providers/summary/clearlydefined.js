@@ -474,6 +474,7 @@ class ClearlyDescribedSummarizer {
     urls.version = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}@${coordinates.revision}`
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+
     setIfValue(
       result,
       'described.urls.registry',
@@ -485,6 +486,10 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       urls.download
     )
+<<<<<<< HEAD
+=======
+
+>>>>>>> adds in code and test for determining urls for a go package
   }
 }
 
