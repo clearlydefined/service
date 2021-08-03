@@ -236,6 +236,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - git
 - maven
 - crate
+- go
 - npm
 - nuget
 - pod
@@ -254,6 +255,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - npmjs.org
 - nuget.org
 - packagist.org
+- proxy.golang.org
 - ftp.debian.org
 
 ## Tool Name Registry
