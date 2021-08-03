@@ -731,3 +731,36 @@ function setup(files, attachments) {
   })
   return { licensee: { version: '1.2.3', output: { content: { matched_files } } }, attachments }
 }
+
+
+describe('ClearlyDescribedSummarizer addGoData', () => {
+  const testCoordinatesGo = EntityCoordinates.fromString('go/golang/rsc.io/quote/v1.3.0')
+
+  const expectedUrls = {
+    download: 'https://proxy.golang.org/rsc.io/quote/@v/v1.3.0.zip',
+    registry: 'https://pkg.go.dev/rsc.io/quote',
+    version: 'https://pkg.go.dev/rsc.io/quote@v1.3.0'
+  }
+
+  const expectedResult = { described: { urls: expectedUrls } }
+
+  it('should set the correct urls', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addGoData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinatesGo
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+})

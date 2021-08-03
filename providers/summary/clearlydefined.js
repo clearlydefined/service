@@ -32,6 +32,9 @@ class ClearlyDescribedSummarizer {
       case 'git':
         this.addGitData(result, data, coordinates)
         break
+      case 'go':
+        this.addGoData(result, data, coordinates)
+        break
       case 'npm':
         this.addNpmData(result, data, coordinates)
         break
@@ -459,6 +462,27 @@ class ClearlyDescribedSummarizer {
       return 'http://ftp.debian.org/debian/' + pathName
     }
     return null
+  }
+
+  addGoData(result, data, coordinates) {
+    var urls = { download: '', registry: '', version: '' }
+
+    urls.registry = `https://pkg.go.dev/${coordinates.namespace}/${coordinates.name}`
+    urls.download = `https://proxy.golang.org/${coordinates.namespace}/${coordinates.name}/@v/${coordinates.revision}.zip`
+    urls.version = `https://pkg.go.dev/${coordinates.namespace}/${coordinates.name}@${coordinates.revision}`
+
+    setIfValue(
+      result,
+      'described.urls.registry',
+      urls.registry
+    )
+    setIfValue(result, 'described.urls.version', urls.version)
+    setIfValue(
+      result,
+      'described.urls.download',
+      urls.download
+    )
+
   }
 }
 
