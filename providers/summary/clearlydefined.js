@@ -467,9 +467,11 @@ class ClearlyDescribedSummarizer {
   addGoData(result, data, coordinates) {
     var urls = { download: '', registry: '', version: '' }
 
-    urls.registry = `https://pkg.go.dev/${coordinates.namespace}/${coordinates.name}`
-    urls.download = `https://proxy.golang.org/${coordinates.namespace}/${coordinates.name}/@v/${coordinates.revision}.zip`
-    urls.version = `https://pkg.go.dev/${coordinates.namespace}/${coordinates.name}@${coordinates.revision}`
+    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/%2f/g, '/') : coordinates.namespace
+
+    urls.registry = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}`
+    urls.download = `https://proxy.golang.org/${namespaceAsFolders}/${coordinates.name}/@v/${coordinates.revision}.zip`
+    urls.version = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}@${coordinates.revision}`
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(
