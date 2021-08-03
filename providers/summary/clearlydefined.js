@@ -471,6 +471,7 @@ class ClearlyDescribedSummarizer {
     urls.download = `https://proxy.golang.org/${coordinates.namespace}/${coordinates.name}/@v/${coordinates.revision}.zip`
     urls.version = `https://pkg.go.dev/${coordinates.namespace}/${coordinates.name}@${coordinates.revision}`
 
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(
       result,
       'described.urls.registry',
@@ -482,7 +483,6 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       urls.download
     )
-
   }
 }
 

@@ -763,4 +763,10 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
       else assert.deepEqual(result, expectedResult)
     }
   })
+
+  it('gets releaseDate from data', () => {
+    let result = {}
+    summarizer.addGoData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGo)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
 })
