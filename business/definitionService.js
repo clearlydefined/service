@@ -214,7 +214,7 @@ class DefinitionService {
 
   async computeStoreAndCurate(coordinates) {
     // one coordinate a time through this method so no duplicate auto curation will be created.
-    this.logger.info('3:memory-lock:start', { ts: new Date().toISOString() })
+    this.logger.info('3:memory_lock:start', { ts: new Date().toISOString() })
     while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
     try {
       computeLock.set(coordinates.toString(), true)
