@@ -31,9 +31,9 @@ class AzBlobAttachmentStore {
     return limiter.wrap(async () => {
       try {
         const name = 'attachment/' + key + '.json'
-        this.logger.info('2:1:1:notice_generate:get_single_file:start', { ts: new Date().toISOString() })
+        this.logger.info('2:1:1:notice_generate:get_single_file:start', { ts: new Date().toISOString(), file: key })
         const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
-        this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString() })
+        this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString(), file: key })
         return JSON.parse(result).attachment
       } catch (error) {
         if (error.statusCode === 404) return null
