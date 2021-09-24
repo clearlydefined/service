@@ -6,6 +6,7 @@ const express = require('express')
 const router = express.Router()
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
+const logger = require('../providers/logging/logger')
 
 router.post('/', asyncMiddleware(generateNotices))
 
@@ -20,8 +21,12 @@ router.post('/', asyncMiddleware(generateNotices))
 async function generateNotices(request, response) {
   if (!validator.validate('notice-request', request.body)) return response.status(400).send(validator.errorsText())
   const coordinates = request.body.coordinates.map(entry => EntityCoordinates.fromString(entry))
+  const log = logger()
+  log.info('notice_generate:start', { ts: new Date().toISOString(), cnt: coordinates.length })
   const result = await noticeService.generate(coordinates, request.body.renderer, request.body.options)
+  log.info('notice_generate:prepared', { ts: new Date().toISOString(), cnt: coordinates.length })
   response.send(result)
+  log.info('notice_generate:sent', { ts: new Date().toISOString(), cnt: coordinates.length })
 }
 
 let noticeService

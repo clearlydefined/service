@@ -7,6 +7,7 @@ const router = express.Router()
 const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
+const logger = require('../providers/logging/logger')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -18,8 +19,12 @@ async function getDefinition(request, response) {
   const pr = request.params.pr
   const force = request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
+  const log = logger()
+  log.info('get_definition:start', { ts: new Date().toISOString() })
   const result = await definitionService.get(coordinates, pr, force, expand)
+  log.info('get_definition:prepared', { ts: new Date().toISOString() })
   response.status(200).send(result)
+  log.info('get_definition:sent', { ts: new Date().toISOString() })
 }
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
