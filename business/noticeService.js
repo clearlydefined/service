@@ -20,13 +20,18 @@ class NoticeService {
 
   async generate(coordinates, output, options) {
     options = options || {}
+    this.logger.info('1:notice_generate:get_definitions:start', { ts: new Date().toISOString(), cnt: coordinates.length })
     const definitions = await this.definitionService.getAll(coordinates)
+    this.logger.info('2:notice_generate:get_blobs:start', { ts: new Date().toISOString(), cnt: coordinates.length })
     const packages = await this._getPackages(definitions)
+    this.logger.info('2:notice_generate:get_blobs:end', { ts: new Date().toISOString(), cnt: coordinates.length })
     const source = new JsonSource(JSON.stringify({ packages: packages.packages }))
+    this.logger.info('3:notice_generate:render:start', { ts: new Date().toISOString(), cnt: coordinates.length })
     const renderer = this._getRenderer(output, options)
     const docbuilder = new DocBuilder(renderer)
     await docbuilder.read(source)
     const content = docbuilder.build()
+    this.logger.info('3:notice_generate:render:end', { ts: new Date().toISOString(), cnt: coordinates.length })
     return {
       content,
       summary: {
@@ -63,6 +68,7 @@ class NoticeService {
         }
       })
     )).filter(x => x && isDeclaredLicense(x.license))
+    // MT_TODO: log
     return { packages, noDefinition, noLicense, noCopyright }
   }
 
@@ -85,6 +91,7 @@ class NoticeService {
 
   async _getPackageText(definition) {
     if (!definition.files) return ''
+    this.logger.info('2:1:notice_generate:get_single_package_files:start', { ts: new Date().toISOString() })
     const texts = await Promise.all(
       definition.files
         .filter(file =>
@@ -98,6 +105,7 @@ class NoticeService {
           ))
         .map(file => this.attachmentStore.get(file.token))
     )
+    this.logger.info('2:1:notice_generate:get_single_package_files:end', { ts: new Date().toISOString(), cnt: texts.length })
     return texts.join('\n\n')
   }
 }
