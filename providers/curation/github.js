@@ -615,17 +615,17 @@ ${this._formatDefinitions(patch.patches)}`
     const path = this._getCurationPath(coordinates)
     const { owner, repo } = this.options
     const smartGit = geit(`https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.git`)
-    this.logger.info('7:compute:curation_source:start', { ts: new Date().toISOString() })
+    this.logger.info('7:compute:curation_source:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const tree = await smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
-    this.logger.info('7:compute:curation_source:end', { ts: new Date().toISOString() })
+    this.logger.info('7:compute:curation_source:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const treePath = flatMap(path.split('/'), (current, i, original) =>
       original.length - 1 != i ? [current, 'children'] : current
     )
     const blob = get(tree, treePath)
     if (!blob) return null
-    this.logger.info('8:compute:curation_blob:start', { ts: new Date().toISOString() })
+    this.logger.info('8:compute:curation_blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const data = await smartGit.blob(blob.object)
-    this.logger.info('8:compute:curation_blob:end', { ts: new Date().toISOString() })
+    this.logger.info('8:compute:curation_blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const content = yaml.safeLoad(data.toString())
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })

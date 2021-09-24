@@ -68,7 +68,6 @@ class NoticeService {
         }
       })
     )).filter(x => x && isDeclaredLicense(x.license))
-    // MT_TODO: log
     return { packages, noDefinition, noLicense, noCopyright }
   }
 
@@ -91,7 +90,7 @@ class NoticeService {
 
   async _getPackageText(definition) {
     if (!definition.files) return ''
-    this.logger.info('2:1:notice_generate:get_single_package_files:start', { ts: new Date().toISOString() })
+    this.logger.info('2:1:notice_generate:get_single_package_files:start', { ts: new Date().toISOString(), coordinates: definition.coordinates.toString() })
     const texts = await Promise.all(
       definition.files
         .filter(file =>
@@ -105,7 +104,7 @@ class NoticeService {
           ))
         .map(file => this.attachmentStore.get(file.token))
     )
-    this.logger.info('2:1:notice_generate:get_single_package_files:end', { ts: new Date().toISOString(), cnt: texts.length })
+    this.logger.info('2:1:notice_generate:get_single_package_files:end', { ts: new Date().toISOString(), cnt: texts.length, coordinates: definition.coordinates.toString() })
     return texts.join('\n\n')
   }
 }

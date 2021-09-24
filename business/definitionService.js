@@ -83,10 +83,10 @@ class DefinitionService {
    */
   async getStored(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
-    this.logger.info('1:Redis:start', { ts: new Date().toISOString() })
+    this.logger.info('1:Redis:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const cached = await this.cache.get(cacheKey)
     if (cached) return cached
-    this.logger.info('2:blob+mongoDB:start', { ts: new Date().toISOString() })
+    this.logger.info('2:blob+mongoDB:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const stored = await this.definitionStore.get(coordinates)
     if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
@@ -214,7 +214,7 @@ class DefinitionService {
 
   async computeStoreAndCurate(coordinates) {
     // one coordinate a time through this method so no duplicate auto curation will be created.
-    this.logger.info('3:memory_lock:start', { ts: new Date().toISOString() })
+    this.logger.info('3:memory_lock:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
     try {
       computeLock.set(coordinates.toString(), true)
@@ -253,9 +253,9 @@ class DefinitionService {
 
   async _harvest(coordinates) {
     try {
-      this.logger.info('trigger_harvest:start', { ts: new Date().toISOString() })
+      this.logger.info('trigger_harvest:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
       await this.harvestService.harvest({ tool: 'component', coordinates }, true)
-      this.logger.info('trigger_harvest:end', { ts: new Date().toISOString() })
+      this.logger.info('trigger_harvest:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     } catch (error) {
       this.logger.info('failed to harvest from definition service', {
         crawlerError: error,
@@ -279,26 +279,26 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
-    this.logger.info('4:compute:blob:start', { ts: new Date().toISOString() })
+    this.logger.info('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const raw = await this.harvestStore.getAll(coordinates)
-    this.logger.info('4:compute:blob:end', { ts: new Date().toISOString() })
+    this.logger.info('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     coordinates = this._getCasedCoordinates(raw, coordinates)
-    this.logger.info('5:compute:summarize:start', { ts: new Date().toISOString() })
+    this.logger.info('5:compute:summarize:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    this.logger.info('6:compute:aggregate:start', { ts: new Date().toISOString() })
+    this.logger.info('6:compute:aggregate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
-    this.logger.info('6:compute:aggregate:end', { ts: new Date().toISOString() })
+    this.logger.info('6:compute:aggregate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    this.logger.info('9:compute:calculate:start', { ts: new Date().toISOString() })
+    this.logger.info('9:compute:calculate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
-    this.logger.info('9:compute:calculate:end', { ts: new Date().toISOString() })
+    this.logger.info('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     return definition
   }
 
