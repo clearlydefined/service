@@ -14,6 +14,9 @@
 * The Licensee summarizer pulls any declared license information detected by Licensee (form more infomration, see the [code here](https://github.com/clearlydefined/service/blob/master/providers/summary/licensee.js)
 * Then the ClearlyDefined service aggregates the information from the three tools - when there is conflicting information, the order of precedence is 'clearlydefined', 'licensee', 'scancode', 'cdsource'
 
+## Curations
+* If the declared license is changed through [the human curation process](https://github.com/clearlydefined/clearlydefined/blob/master/docs/curation-guidelines.md), the declared license in the curation will take precedence.
+
 ## Harvesting and Determining Declared License (by the ClearlyDefined Summarizer)
 
 ### npm
@@ -40,7 +43,7 @@
 * The crawler downloads the maven artifact from maven.org
 * The crawler then extracts all pom files from the artifact
 * And then merges the poms (including all the licenses defined in the poms)
-* The ClearlyDefind summarizer parses the merged poms and sets the declared license(s) based on that data
+* The ClearlyDefined summarizer parses the merged poms and sets the declared license(s) based on that data
 
 **google maven**
 
@@ -84,7 +87,7 @@
 * It then finds the relevant copyright URL from the registry information [Code](https://github.com/clearlydefined/crawler/blob/f461b2358fbde130bcc5d183de01a4212c4cd66d/providers/fetch/debianFetch.js#L295) [Example](https://metadata.ftp-master.debian.org/changelogs/main/0/0ad-data/0ad-data_0.0.17-1_copyright)
 * It then pulls information from the copyright URL [Code](https://github.com/clearlydefined/crawler/blob/f461b2358fbde130bcc5d183de01a4212c4cd66d/providers/fetch/debianFetch.js#L306)
 * And parses that information [Code](https://github.com/clearlydefined/crawler/blob/f461b2358fbde130bcc5d183de01a4212c4cd66d/providers/fetch/debianFetch.js#L320) to determine the declared license(s)
-* The ClearlyDefined summarizer then parses the declared licenses and, if necessary, joins them with 'AND'
+* The ClearlyDefined summarizer then parses the declared licenses and, if there is more than one, joins them with 'AND'
 
 ### debsrc
 * source: http://ftp.debian.org/
