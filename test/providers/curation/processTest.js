@@ -7,7 +7,8 @@ const memoryQueue = require('../../../providers/queueing/memoryQueue')
 const sinon = require('sinon')
 
 describe('Curation queue processing', () => {
-  it('handles opened message', async () => {
+  it('handles opened message', async function () {
+    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'opened' })
     await process(queue, curationService, logger, true)
 
@@ -19,7 +20,8 @@ describe('Curation queue processing', () => {
     expect(queue.data.length).to.eq(0)
   })
 
-  it('handles synchronize message', async () => {
+  it('handles synchronize message', async function () {
+    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'synchronize' })
     await process(queue, curationService, logger, true)
 
@@ -31,7 +33,8 @@ describe('Curation queue processing', () => {
     expect(queue.data.length).to.eq(0)
   })
 
-  it('handles closed message', async () => {
+  it('handles closed message', async function () {
+    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'closed' })
     await process(queue, curationService, logger, true)
 

@@ -16,7 +16,7 @@ const semver = require('semver')
 const { LicenseMatcher } = require('../../lib/licenseMatcher')
 const { Cache } = require('memory-cache')
 
-const hourInMS = 60 * 60 * 1000;
+const hourInMS = 60 * 60 * 1000
 
 // Responsible for managing curation patches in a store
 //

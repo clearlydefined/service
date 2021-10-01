@@ -7,20 +7,21 @@ async function work(once) {
   try {
     let message = await queue.dequeue()
     if (!get(message, 'data.pull_request') || !get(message, 'data.action')) return
-    // Wait for ten seconds because GitHub use eventual consistency so that
-    // later may not able to get PRs when event happened.
-    await new Promise(resolve => setTimeout(resolve, 10 * 1000))
     const pr = message.data.pull_request
     const action = message.data.action
     switch (action) {
       case 'opened':
       case 'synchronize': {
+        // Wait for ten seconds because GitHub use eventual consistency so that
+        // later may not able to get PRs when event happened.
+        await new Promise(resolve => setTimeout(resolve, 10 * 1000))
         const curations = await curationService.getContributedCurations(pr.number, pr.head.sha)
         await curationService.validateContributions(pr.number, pr.head.sha, curations)
         await curationService.updateContribution(pr, curations)
         break
       }
       case 'closed': {
+        await new Promise(resolve => setTimeout(resolve, 10 * 1000))
         await curationService.addByMergedCuration(pr)
         await curationService.updateContribution(pr)
         break

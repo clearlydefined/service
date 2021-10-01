@@ -25,21 +25,22 @@ function handlePost(request, response) {
 async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
   if (!body) return
-  // Wait for ten seconds because GitHub use eventual consistency so that
-  // later may not able to get PRs when event happened.
-  await new Promise(resolve => setTimeout(resolve, 10 * 1000))
   const pr = body.pull_request
   try {
     switch (body.action) {
       case 'opened':
       case 'reopened':
       case 'synchronize': {
+        // Wait for ten seconds because GitHub use eventual consistency so that
+        // later may not able to get PRs when event happened.
+        await new Promise(resolve => setTimeout(resolve, 10 * 1000))
         const curations = await curationService.getContributedCurations(pr.number, pr.head.sha)
         await curationService.validateContributions(pr.number, pr.head.sha, curations)
         await curationService.updateContribution(pr, curations)
         break
       }
       case 'closed': {
+        await new Promise(resolve => setTimeout(resolve, 10 * 1000))
         await curationService.addByMergedCuration(pr)
         await curationService.updateContribution(pr)
         break
