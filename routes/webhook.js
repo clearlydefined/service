@@ -25,6 +25,9 @@ function handlePost(request, response) {
 async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
   if (!body) return
+  // Wait for ten seconds because GitHub use eventual consistency so that
+  // later may not able to get PRs when event happened.
+  await new Promise(resolve => setTimeout(resolve, 10 * 1000))
   const pr = body.pull_request
   try {
     switch (body.action) {

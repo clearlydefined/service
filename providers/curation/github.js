@@ -14,6 +14,9 @@ tmp.setGracefulCleanup()
 const logger = require('../logging/logger')
 const semver = require('semver')
 const { LicenseMatcher } = require('../../lib/licenseMatcher')
+const { Cache } = require('memory-cache')
+
+const hourInMS = 60 * 60 * 1000;
 
 // Responsible for managing curation patches in a store
 //
@@ -33,6 +36,8 @@ class GitHubCurationService {
     this.logger = logger()
     this.harvestStore = harvestStore
     this.licenseMatcher = licenseMatcher || new LicenseMatcher()
+    this.smartGit = this._initSmartGit(options)
+    this.treeCache = new Cache()
   }
 
   get tmpOptions() {
@@ -99,6 +104,7 @@ class GitHubCurationService {
       head: { ...pick(pr.head, ['sha']), repo: { ...pick(get(pr, 'head.repo'), ['id']) } },
       base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
     }
+    this._cleanCurationTree(pr)
     await this.store.updateContribution(data, curations)
     let toBeCleaned = flatten(curations.map(curation => curation.getCoordinates()))
     // Should also delete revision less coordinate curation cache
@@ -119,6 +125,7 @@ class GitHubCurationService {
    * to interaction with GitHub or PR storage
    */
   async _prMerged(curations) {
+    this._cleanCurationTree()
     await this.store.updateCurations(curations)
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
     // even if there are errors recomputing the definitions.
@@ -613,10 +620,8 @@ ${this._formatDefinitions(patch.patches)}`
    */
   async _getCurations(coordinates, pr = null) {
     const path = this._getCurationPath(coordinates)
-    const { owner, repo } = this.options
-    const smartGit = geit(`https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.git`)
     this.logger.info('7:compute:curation_source:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    const tree = await smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
+    const tree = await this._getCurationTree(pr)
     this.logger.info('7:compute:curation_source:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const treePath = flatMap(path.split('/'), (current, i, original) =>
       original.length - 1 != i ? [current, 'children'] : current
@@ -624,7 +629,7 @@ ${this._formatDefinitions(patch.patches)}`
     const blob = get(tree, treePath)
     if (!blob) return null
     this.logger.info('8:compute:curation_blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    const data = await smartGit.blob(blob.object)
+    const data = await this.smartGit.blob(blob.object)
     this.logger.info('8:compute:curation_blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const content = yaml.safeLoad(data.toString())
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
@@ -888,6 +893,30 @@ ${this._formatDefinitions(patch.patches)}`
       })
     }
     return contributions
+  }
+
+  _initSmartGit({ owner, repo }) {
+    return geit(`https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.git`)
+  }
+
+  async _getCurationTree(pr) {
+    const key = this._generateCurationTreeKey(pr)
+    const cached = this.treeCache.get(key)
+    if (cached) return cached
+    const tree = await this.smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
+    // Since these trees are used very often and not changed frequently, it should be cached but not be kept in Redis.
+    // In case webhook event failed to trigger cache clean, set ttl to a day
+    this.treeCache.put(key, tree, 24 * hourInMS)
+    return tree
+  }
+
+  _cleanCurationTree(pr) {
+    const key = this._generateCurationTreeKey(pr)
+    this.treeCache.del(key)
+  }
+
+  _generateCurationTreeKey(pr) {
+    return pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch
   }
 }
 

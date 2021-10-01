@@ -7,6 +7,9 @@ async function work(once) {
   try {
     let message = await queue.dequeue()
     if (!get(message, 'data.pull_request') || !get(message, 'data.action')) return
+    // Wait for ten seconds because GitHub use eventual consistency so that
+    // later may not able to get PRs when event happened.
+    await new Promise(resolve => setTimeout(resolve, 10 * 1000))
     const pr = message.data.pull_request
     const action = message.data.action
     switch (action) {
