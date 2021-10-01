@@ -64,7 +64,8 @@ describe('Webhook Route for GitHub calls', () => {
   //   expect(definitionService.computeAndStore.getCall(0).args[0]).to.be.eq(simpleCoords)
   // })
 
-  it('skips closed event that is not merged', async () => {
+  it('skips closed event that is not merged', async function () {
+    this.timeout(12000)
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -80,7 +81,8 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('calls valid for PR changes', async () => {
+  it('calls valid for PR changes', async function () {
+    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -94,7 +96,8 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('calls missing for PR changes', async () => {
+  it('calls missing for PR changes', async function () {
+    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -108,7 +111,8 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('validates the curation when a PR is opened', async () => {
+  it('validates the curation when a PR is opened', async function () {
+    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -118,7 +122,8 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.validateContributions.calledOnce).to.be.true
   })
 
-  it('validates the curation when a PR is reopened', async () => {
+  it('validates the curation when a PR is reopened', async function () {
+    this.timeout(12000)
     const request = createRequest('reopened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
