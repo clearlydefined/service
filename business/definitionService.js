@@ -131,9 +131,9 @@ class DefinitionService {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        this.logger.info('1:1:notice_generate:get_single_start', { ts: new Date().toISOString() })
+        this.logger.info(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
         const definition = await this.get(coordinates, null, force, expand)
-        this.logger.info('1:1:notice_generate:get_single_end', { ts: new Date().toISOString() })
+        this.logger.info(`1:1:notice_generate:get_single_end:${coordinates}`, { ts: new Date().toISOString() })
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
