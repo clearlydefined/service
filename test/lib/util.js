@@ -451,3 +451,39 @@ describe('Utils extractDate', () => {
     }
   })
 })
+
+describe('Utils toEntityCoordinatesFromRequest', () => {
+  const fakeRequest = {
+    params: {
+      type: 'pypi',
+      provider: 'pypi',
+      namespace: '-',
+      name: 'javaproperties',
+      revision: '0.8.1'
+    }
+  }
+
+  it('should turn a request into entity coordinates', () => {
+    const result = utils.toEntityCoordinatesFromRequest(fakeRequest)
+    expect(result.type).to.eq('pypi')
+    expect(result.provider).to.eq('pypi')
+    expect(result.namespace).to.eq(undefined)
+    expect(result.name).to.eq('javaproperties')
+    expect(result.revision).to.eq('0.8.1')
+  })
+
+  const fakeSlashNamespaceRequest = {
+    params: {
+      type: 'go',
+      provider: 'golang',
+      namespace: 'rsc.io/quote',
+      name: 'v3',
+      revision: 'v3.1.0'
+    }
+  }
+
+  it('encodes slashes in namespaces', () => {
+    const result = utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
+    expect(result.namespace).to.eq('rsc.io%2fquote')
+  })
+})
