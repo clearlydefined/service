@@ -22,6 +22,7 @@ class NoticeService {
     options = options || {}
     this.logger.info('1:notice_generate:get_definitions:start', { ts: new Date().toISOString(), cnt: coordinates.length })
     const definitions = await this.definitionService.getAll(coordinates)
+    this.logger.info('1:notice_generate:get_definitions:end', { ts: new Date().toISOString(), cnt: coordinates.length })
     this.logger.info('2:notice_generate:get_blobs:start', { ts: new Date().toISOString(), cnt: coordinates.length })
     const packages = await this._getPackages(definitions)
     this.logger.info('2:notice_generate:get_blobs:end', { ts: new Date().toISOString(), cnt: coordinates.length })
