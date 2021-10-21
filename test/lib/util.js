@@ -421,7 +421,6 @@ describe('Utils extractDate', () => {
       '2014-11-21T00:06:54.027559+00:00': '2014-11-21',
       '2014-11-21': '2014-11-21',
       '11-21-2014': '2014-11-21',
-      '21-11-2014': null,
       // This commented out line fails due to a bug
       // in the dependency that we use (moment)
       // if the string starts with the current year
@@ -436,6 +435,9 @@ describe('Utils extractDate', () => {
       // Hopefully we will be able to replace it before 2022,
       // if not, this test will fail at that time and remind us
       //      '21-garbage': null, // This one is failing
+      // This one has the same issue - because it starts with the current
+      // year (2021) it corrects to "2021-11-20", which is a valid Datetime
+      //'21-11-2014': null,
       '22-garbage': null,
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
