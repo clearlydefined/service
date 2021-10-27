@@ -1,4 +1,5 @@
 const { expect } = require('chai')
+const { eq } = require('lodash')
 const utils = require('../../lib/utils')
 
 describe('Utils latest version', () => {
@@ -485,5 +486,23 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   it('encodes slashes in namespaces', () => {
     const result = utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
     expect(result.namespace).to.eq('rsc.io%2fquote')
+  })
+})
+
+describe('Utils getLicenseLocations', () => {
+  const fakeRequest = {
+    params: {
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: '-',
+      name: 'javascriptproperties',
+      revision: '0.8.1'
+    }
+  }
+
+  it('finds the correct license location', () => {
+    const coordinates = utils.toEntityCoordinatesFromRequest(fakeRequest)
+    const result = utils.getLicenseLocations(coordinates)
+    expect(result).to.deep.include('package/')
   })
 })
