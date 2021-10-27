@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const { eq } = require('lodash')
 const utils = require('../../lib/utils')
 
 describe('Utils latest version', () => {
@@ -490,7 +489,7 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
 })
 
 describe('Utils getLicenseLocations', () => {
-  const fakeRequest = {
+  const npmRequest = {
     params: {
       type: 'npm',
       provider: 'npmjs',
@@ -500,9 +499,43 @@ describe('Utils getLicenseLocations', () => {
     }
   }
 
-  it('finds the correct license location', () => {
-    const coordinates = utils.toEntityCoordinatesFromRequest(fakeRequest)
+  it('finds the correct license location for npm packages', () => {
+    const coordinates = utils.toEntityCoordinatesFromRequest(npmRequest)
     const result = utils.getLicenseLocations(coordinates)
     expect(result).to.deep.include('package/')
+  })
+
+  describe('Go packages', () => {
+    const goRequest = {
+      params: {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'go.uber.org',
+        name: 'fx',
+        revision: '1.14.2'
+      }
+    }
+
+    it('finds the correct location for go packages', () => {
+      const coordinates = utils.toEntityCoordinatesFromRequest(goRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
+    })
+
+    it('finds the correct license location for complex namespaces', () => {
+      const complexNamespaceRequest = {
+        params: {
+          type: 'go',
+          provider: 'golang',
+          namespace: 'github.com%2fconcourse',
+          name: 'github-release-resource',
+          revision: 'v1.6.4'
+        }
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+    })
   })
 })
