@@ -4,10 +4,8 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
-const { promisify } = require('util')
 
 // Get versions
-
 router.get(
   '/:namespace/:name/revisions',
   asyncMiddleware(async (request, response) => {
