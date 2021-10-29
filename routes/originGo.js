@@ -12,13 +12,12 @@ router.get(
   asyncMiddleware(async (request, response) => {
     try {
       const { name, namespace } = request.params
-      //      const namespacePath = `${namespace.replace(/%2f/g, '/')}`
       const namespacePath = `${deCodeSlashes(namespace)}`
       const url = `https://proxy.golang.org/${namespacePath}/${name}/@v/list`
       const answer = await requestPromise({ url, method: 'GET', json: true })
 
       // Split on new lines that are not followed by the end of the string
-      // And covert into an array
+      // And convert into an array
       // This results in an empty string as the last element of the array
       // So we pop that element off
       const result = answer.split(/\n/)
