@@ -4,6 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
+const { deCodeSlashes } = require('../lib/utils')
 
 // Get versions
 router.get(
@@ -11,7 +12,8 @@ router.get(
   asyncMiddleware(async (request, response) => {
     try {
       const { name, namespace } = request.params
-      const namespacePath = `${namespace.replace(/%2f/g, '/')}`
+      //      const namespacePath = `${namespace.replace(/%2f/g, '/')}`
+      const namespacePath = `${deCodeSlashes(namespace)}`
       const url = `https://proxy.golang.org/${namespacePath}/${name}/@v/list`
       const answer = await requestPromise({ url, method: 'GET', json: true })
 

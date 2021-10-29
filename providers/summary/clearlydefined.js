@@ -10,6 +10,7 @@ const {
   buildSourceUrl,
   isDeclaredLicense,
   isLicenseFile,
+  deCodeSlashes,
   updateSourceLocation,
   mergeDefinitions
 } = require('../../lib/utils')
@@ -467,7 +468,7 @@ class ClearlyDescribedSummarizer {
   addGoData(result, data, coordinates) {
     var urls = { download: '', registry: '', version: '' }
 
-    const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/%2f/g, '/') : coordinates.namespace
+    const namespaceAsFolders = coordinates.namespace ? deCodeSlashes(coordinates.namespace) : coordinates.namespace
 
     urls.registry = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}`
     urls.download = `https://proxy.golang.org/${namespaceAsFolders}/${coordinates.name}/@v/${coordinates.revision}.zip`
