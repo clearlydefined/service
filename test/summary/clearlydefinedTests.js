@@ -731,3 +731,72 @@ function setup(files, attachments) {
   })
   return { licensee: { version: '1.2.3', output: { content: { matched_files } } }, attachments }
 }
+
+
+describe('ClearlyDescribedSummarizer addGoData', () => {
+  const testCoordinatesGo = EntityCoordinates.fromString('go/golang/rsc.io/quote/v1.3.0')
+
+  const expectedUrls = {
+    download: 'https://proxy.golang.org/rsc.io/quote/@v/v1.3.0.zip',
+    registry: 'https://pkg.go.dev/rsc.io/quote',
+    version: 'https://pkg.go.dev/rsc.io/quote@v1.3.0'
+  }
+
+  const expectedResult = { described: { urls: expectedUrls } }
+
+  it('should set the correct urls', () => {
+    const data = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(data)) {
+      let result = {}
+      summarizer.addGoData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testCoordinatesGo
+      )
+      if (data[url])
+        assert.deepEqual(result, {
+          ...expectedResult,
+        })
+      else assert.deepEqual(result, expectedResult)
+    }
+  })
+
+  it('should handle url encoding in the coordinates', () => {
+    const testEncodedCoordinatesGo = EntityCoordinates.fromString('go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110')
+
+    const expectedDecodedUrls = {
+      download: 'https://proxy.golang.org/golang.org/x/net/@v/v0.0.0-20210226172049-e18ecbb05110.zip',
+      registry: 'https://pkg.go.dev/golang.org/x/net',
+      version: 'https://pkg.go.dev/golang.org/x/net@v0.0.0-20210226172049-e18ecbb05110'
+    }
+
+    const expectedDecodedResult = { described: { urls: expectedDecodedUrls } }
+
+    const testData = {
+      'https://opensource.org/licenses/MIT': 'MIT',
+    }
+
+    for (let url of Object.keys(testData)) {
+      let result = {}
+      summarizer.addGoData(
+        result,
+        { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
+        testEncodedCoordinatesGo
+      )
+      if (testData[url])
+        assert.deepEqual(result, {
+          ...expectedDecodedResult,
+        })
+      else assert.deepEqual(result, expectedDecodedResult)
+    }
+  })
+
+  it('gets releaseDate from data', () => {
+    let result = {}
+    summarizer.addGoData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGo)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+  })
+})

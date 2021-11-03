@@ -536,6 +536,7 @@ components:
           - debsrc
           - gem
           - git
+          - go
           - maven
           - npm
           - nuget

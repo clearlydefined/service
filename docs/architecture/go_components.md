@@ -6,7 +6,7 @@ This drafts an architecture document for adding support for Go components to Cle
 
 * Add a new "go" type to ClearlyDefined
 * Only support go modules as components (which were added in Go 1.11). [According to the Go documentation](https://blog.golang.org/using-go-modules), modules are a dependency management system that makes dependency version information explicit and easier to manage. There were other, more complicated ways of managing go dependencies prior to this, but we should only focus on modules in our first iteration. We can revisit other ways of managing go dependencies later if necessary.
-* Use the import path as the provider for the component. 
+* Use 'golang' as the provider for the component. 
 * Use URL encoding for slashes in go import paths and package names
 
 ## Prior work
@@ -98,8 +98,8 @@ A Go component's coordinates will also need to consist of a type, provider, name
 Go's support of vanity package names makes this a little different than other components. While there are a few different approaches we could take, we should map the coordinates to what go developers know the package as.
 
 * **type** should be go
-* **provider** should be the import path (if any)
-* **namespace** should be anything that appears before the package name (it should be "-" if nothing appears before the package name)
+* **provider** should be 'golang'
+* **namespace** should be anything that appears before the package name in the import path (it should be "-" if nothing appears before the package name)
 * **name** should be the name of the package
 * **revision** should be the component revision (note - go components seem to have multiple ways of specifying revisons - sometimes version numbers, sometimes commit hashes)
 
@@ -109,8 +109,8 @@ In previous drafts, I considered replacing slashes with periods like with Maven 
 
 ### Examples 
 
-* `collectd.org v0.5.0` maps to `go/-/-/collectd.org/v0.5.0`
-* `go.starlark.net v0.0.0-20210406145628-7a1108eaa012` maps to `go/-/-/go.starlark.net/v0.0.0-20210406145628-7a1108eaa012`
-* `cloud.google.com/go v0.56.0` maps to `go/cloud.google.com/-/go/v0.56.0`
-* `golang.org/x/net v0.0.0-20210226172049-e18ecbb05110` maps to `go/golang.org/x/net/v0.0.0-20210226172049-e18ecbb05110`
-* `github.com/Azure/azure-event-hubs-go/v3 v3.2.0` maps to `go/github.com/Azure%2fazure-event-hubs-go/v3/v3.2.0`
+* `collectd.org v0.5.0` maps to `go/golang/-/collectd.org/v0.5.0`
+* `go.starlark.net v0.0.0-20210406145628-7a1108eaa012` maps to `go/golang/-/go.starlark.net/v0.0.0-20210406145628-7a1108eaa012`
+* `cloud.google.com/go v0.56.0` maps to `go/golang/cloud.google.com/go/v0.56.0`
+* `golang.org/x/net v0.0.0-20210226172049-e18ecbb05110` maps to `go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110`
+* `github.com/Azure/azure-event-hubs-go/v3 v3.2.0` maps to `go/golang/github.com%2fAzure%2fazure-event-hubs-go/v3/v3.2.0`

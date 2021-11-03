@@ -451,3 +451,91 @@ describe('Utils extractDate', () => {
     }
   })
 })
+
+describe('Utils toEntityCoordinatesFromRequest', () => {
+  const fakeRequest = {
+    params: {
+      type: 'pypi',
+      provider: 'pypi',
+      namespace: '-',
+      name: 'javaproperties',
+      revision: '0.8.1'
+    }
+  }
+
+  it('should turn a request into entity coordinates', () => {
+    const result = utils.toEntityCoordinatesFromRequest(fakeRequest)
+    expect(result.type).to.eq('pypi')
+    expect(result.provider).to.eq('pypi')
+    expect(result.namespace).to.eq(undefined)
+    expect(result.name).to.eq('javaproperties')
+    expect(result.revision).to.eq('0.8.1')
+  })
+
+  const fakeSlashNamespaceRequest = {
+    params: {
+      type: 'go',
+      provider: 'golang',
+      namespace: 'rsc.io/quote',
+      name: 'v3',
+      revision: 'v3.1.0'
+    }
+  }
+
+  it('encodes slashes in namespaces', () => {
+    const result = utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
+    expect(result.namespace).to.eq('rsc.io%2fquote')
+  })
+})
+
+describe('Utils getLicenseLocations', () => {
+  const npmRequest = {
+    params: {
+      type: 'npm',
+      provider: 'npmjs',
+      namespace: '-',
+      name: 'javascriptproperties',
+      revision: '0.8.1'
+    }
+  }
+
+  it('finds the correct license location for npm packages', () => {
+    const coordinates = utils.toEntityCoordinatesFromRequest(npmRequest)
+    const result = utils.getLicenseLocations(coordinates)
+    expect(result).to.deep.include('package/')
+  })
+
+  describe('Go packages', () => {
+    const goRequest = {
+      params: {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'go.uber.org',
+        name: 'fx',
+        revision: '1.14.2'
+      }
+    }
+
+    it('finds the correct location for go packages', () => {
+      const coordinates = utils.toEntityCoordinatesFromRequest(goRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
+    })
+
+    it('finds the correct license location for complex namespaces', () => {
+      const complexNamespaceRequest = {
+        params: {
+          type: 'go',
+          provider: 'golang',
+          namespace: 'github.com%2fconcourse',
+          name: 'github-release-resource',
+          revision: 'v1.6.4'
+        }
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+    })
+  })
+})

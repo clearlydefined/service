@@ -10,6 +10,7 @@ const {
   buildSourceUrl,
   isDeclaredLicense,
   isLicenseFile,
+  deCodeSlashes,
   updateSourceLocation,
   mergeDefinitions
 } = require('../../lib/utils')
@@ -31,6 +32,9 @@ class ClearlyDescribedSummarizer {
     switch (coordinates.type) {
       case 'git':
         this.addGitData(result, data, coordinates)
+        break
+      case 'go':
+        this.addGoData(result, data, coordinates)
         break
       case 'npm':
         this.addNpmData(result, data, coordinates)
@@ -459,6 +463,31 @@ class ClearlyDescribedSummarizer {
       return 'http://ftp.debian.org/debian/' + pathName
     }
     return null
+  }
+
+  addGoData(result, data, coordinates) {
+    var urls = { download: '', registry: '', version: '' }
+
+    const namespaceAsFolders = coordinates.namespace ? deCodeSlashes(coordinates.namespace) : coordinates.namespace
+
+    urls.registry = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}`
+    urls.download = `https://proxy.golang.org/${namespaceAsFolders}/${coordinates.name}/@v/${coordinates.revision}.zip`
+    urls.version = `https://pkg.go.dev/${namespaceAsFolders}/${coordinates.name}@${coordinates.revision}`
+
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(
+      result,
+      'described.urls.registry',
+      urls.registry
+    )
+    setIfValue(result, 'described.urls.version', urls.version)
+    setIfValue(
+      result,
+      'described.urls.download',
+      urls.download
+    )
   }
 }
 
