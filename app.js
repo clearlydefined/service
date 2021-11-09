@@ -155,6 +155,7 @@ function createApp(config) {
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {
+    logger.info('Error when handling a request', { request: req, response: res })
     const err = new Error('Not Found')
     err.status = 404
     next(err)
