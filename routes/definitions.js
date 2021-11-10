@@ -13,6 +13,7 @@ const logger = require('../providers/logging/logger')
 // API for serving consumers and API
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
+router.get('/:type/:provider/:namespace/:name/:revision/:extra', asyncMiddleware(getDefinition))
 
 async function getDefinition(request, response) {
   const log = logger()
