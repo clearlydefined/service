@@ -26,12 +26,14 @@ async function getDefinition(request, response) {
   const log = logger()
   log.info('getDefinition route hit', { ts: new Date().toISOString(), requestParams: request.params })
 
+  let coordinates
+
   // Painful way of handling go namespaces with multiple slashes
   // Unfortunately, it seems the best option without doing a massive
   // rearchitecture of the entire coordinate system
-  if (request.params.type == "go" && request.params.provider == "golang") {
+  if (request.params.type == 'go' && request.params.provider == 'golang') {
     let namespaceNameRevision = utils.parseNamespaceNameRevision(request)
-    let splitString = namespaceNameRevision.split("/")
+    let splitString = namespaceNameRevision.split('/')
 
     // Pull off the last part of the string as the revision
     const revision = splitString.pop()
