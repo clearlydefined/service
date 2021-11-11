@@ -19,7 +19,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 // However, when it comes through a load balancer, the load balancer sometimes decodes the encoding to
 // go/golang/github.com/gorilla/mux/v1.7.3
 // which causes routing errors unless we allow for additional fields
-// We currently allow up to one extra field
+// We currently allow up to three extra fields (that means up to three slashes in the namespace)
 router.get('/:type/:provider/:namespace/:name/:revision/:extra1?/:extra2?/:extra3?', asyncMiddleware(getDefinition))
 
 async function getDefinition(request, response) {
