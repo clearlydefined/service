@@ -30,26 +30,16 @@ async function getDefinition(request, response) {
   // Unfortunately, it seems the best option without doing a massive
   // rearchitecture of the entire coordinate system
   if (request.params.type == "go" && request.params.provider == "golang") {
-    let namespaceNameRevision = `${request.params.namespace}/${request.params.name}/${request.params.revision}`
-
-    if (request.params.extra1) {
-      namespaceNameRevision += `/${request.params.extra1}`
-    }
-
-    if (request.params.extra2) {
-      namespaceNameRevision += `/${request.params.extra2}`
-    }
-
-    if (request.params.extra3) {
-      namespaceNameRevision += `/${request.params.extra3}`
-    }
-
+    let namespaceNameRevision = utils.parseNamespaceNameRevision(request)
     let splitString = namespaceNameRevision.split("/")
 
     // Pull off the last part of the string as the revision
     const revision = splitString.pop()
+
+    // Pull of next part of the string as the name
     const name = splitString.pop()
 
+    // Join the rest of the string as the namespace
     const nameSpace = splitString.join('/')
 
     coordinates = utils.toEntityCoordinatesFromArgs(
