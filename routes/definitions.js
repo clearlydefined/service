@@ -44,8 +44,6 @@ async function getDefinition(request, response) {
       namespaceNameRevision += `/${request.params.extra3}`
     }
 
-    console.log(namespaceNameRevision)
-
     let splitString = namespaceNameRevision.split("/")
 
     // Pull off the last part of the string as the revision
@@ -54,15 +52,15 @@ async function getDefinition(request, response) {
 
     const nameSpace = splitString.join('/')
 
-    console.log(revision)
-    console.log(name)
-    console.log(nameSpace)
-
-    request.params.namespace = nameSpace
-    request.params.name = name
-    request.params.revision = revision
-
-    coordinates = utils.toEntityCoordinatesFromRequest(request)
+    coordinates = utils.toEntityCoordinatesFromArgs(
+      {
+        'type': request.params.type,
+        'provider': request.params.provider,
+        'namespace': nameSpace,
+        'name': name,
+        'revision': revision
+      }
+    )
   } else {
     coordinates = utils.toEntityCoordinatesFromRequest(request)
   }
