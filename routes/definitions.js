@@ -13,12 +13,60 @@ const logger = require('../providers/logging/logger')
 // API for serving consumers and API
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
-router.get('/:type/:provider/:namespace/:name/:revision/:extra', asyncMiddleware(getDefinition))
+
+// When a request for a component with slashes in the namespace comes in
+// They are initially encoded with url encoding like this go/golang/github.com%2fgorilla/mux/v1.7.3
+// However, when it comes through a load balancer, the load balancer sometimes decodes the encoding to
+// go/golang/github.com/gorilla/mux/v1.7.3
+// which causes routing errors unless we allow for additional fields
+// We currently allow up to one extra field
+router.get('/:type/:provider/:namespace/:name/:revision/:extra1?/:extra2?/:extra3?', asyncMiddleware(getDefinition))
 
 async function getDefinition(request, response) {
   const log = logger()
   log.info('getDefinition route hit', { ts: new Date().toISOString(), requestParams: request.params })
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+
+  // Painful way of handling go namespaces with multiple slashes
+  // Unfortunately, it seems the best option without doing a massive
+  // rearchitecture of the entire coordinate system
+  if (request.params.type == "go" && request.params.provider == "golang") {
+    let namespaceNameRevision = `${request.params.namespace}/${request.params.name}/${request.params.revision}`
+
+    if (request.params.extra1) {
+      namespaceNameRevision += `/${request.params.extra1}`
+    }
+
+    if (request.params.extra2) {
+      namespaceNameRevision += `/${request.params.extra2}`
+    }
+
+    if (request.params.extra3) {
+      namespaceNameRevision += `/${request.params.extra3}`
+    }
+
+    console.log(namespaceNameRevision)
+
+    let splitString = namespaceNameRevision.split("/")
+
+    // Pull off the last part of the string as the revision
+    const revision = splitString.pop()
+    const name = splitString.pop()
+
+    const nameSpace = splitString.join('/')
+
+    console.log(revision)
+    console.log(name)
+    console.log(nameSpace)
+
+    request.params.namespace = nameSpace
+    request.params.name = name
+    request.params.revision = revision
+
+    coordinates = utils.toEntityCoordinatesFromRequest(request)
+  } else {
+    coordinates = utils.toEntityCoordinatesFromRequest(request)
+  }
+
   const pr = request.params.pr
   const force = request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
