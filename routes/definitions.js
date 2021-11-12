@@ -14,10 +14,49 @@ const logger = require('../providers/logging/logger')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
 
+// When a request for a component with slashes in the namespace comes in
+// They are initially encoded with url encoding like this go/golang/github.com%2fgorilla/mux/v1.7.3
+// However, when it comes through a load balancer, the load balancer sometimes decodes the encoding to
+// go/golang/github.com/gorilla/mux/v1.7.3
+// which causes routing errors unless we allow for additional fields
+// We currently allow up to three extra fields (that means up to three slashes in the namespace)
+router.get('/:type/:provider/:namespace/:name/:revision/:extra1?/:extra2?/:extra3?', asyncMiddleware(getDefinition))
+
 async function getDefinition(request, response) {
   const log = logger()
   log.info('getDefinition route hit', { ts: new Date().toISOString(), requestParams: request.params })
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+
+  let coordinates
+
+  // Painful way of handling go namespaces with multiple slashes
+  // Unfortunately, it seems the best option without doing a massive
+  // rearchitecture of the entire coordinate system
+  if (request.params.type === 'go' && request.params.provider === 'golang') {
+    let namespaceNameRevision = utils.parseNamespaceNameRevision(request)
+    let splitString = namespaceNameRevision.split('/')
+
+    // Pull off the last part of the string as the revision
+    const revision = splitString.pop()
+
+    // Pull of next part of the string as the name
+    const name = splitString.pop()
+
+    // Join the rest of the string as the namespace
+    const nameSpace = splitString.join('/')
+
+    coordinates = utils.toEntityCoordinatesFromArgs(
+      {
+        'type': request.params.type,
+        'provider': request.params.provider,
+        'namespace': nameSpace,
+        'name': name,
+        'revision': revision
+      }
+    )
+  } else {
+    coordinates = utils.toEntityCoordinatesFromRequest(request)
+  }
+
   const pr = request.params.pr
   const force = request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now

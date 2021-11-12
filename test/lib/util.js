@@ -488,6 +488,45 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   })
 })
 
+describe('Utils toEntityCoordinatesFromArgs', () => {
+  const args = {
+    type: 'go',
+    provider: 'golang',
+    namespace: 'rsc.io/quote',
+    name: 'v3',
+    revision: 'v3.1.0'
+  }
+
+  it('should turn the args into entity coordinates', () => {
+    const result = utils.toEntityCoordinatesFromArgs(args)
+    expect(result.type).to.eq('go')
+    expect(result.provider).to.eq('golang')
+    expect(result.namespace).to.eq('rsc.io%2fquote')
+    expect(result.name).to.eq('v3')
+    expect(result.revision).to.eq('v3.1.0')
+  })
+})
+
+describe('Utils parseNamespaceNameRevision', () => {
+  const fakeSlashNamespaceRequest = {
+    params: {
+      type: 'go',
+      provider: 'golang',
+      namespace: 'rsc.io/quote',
+      name: 'v3',
+      revision: 'foo',
+      extra1: 'bar',
+      extra2: 'bah',
+      extra3: 'v3.1.0',
+    }
+  }
+
+  it('parses the args into one string', () => {
+    const result = utils.parseNamespaceNameRevision(fakeSlashNamespaceRequest)
+    expect(result).to.eq('rsc.io/quote/v3/foo/bar/bah/v3.1.0')
+  })
+})
+
 describe('Utils getLicenseLocations', () => {
   const npmRequest = {
     params: {
