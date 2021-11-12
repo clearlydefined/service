@@ -31,7 +31,7 @@ async function getDefinition(request, response) {
   // Painful way of handling go namespaces with multiple slashes
   // Unfortunately, it seems the best option without doing a massive
   // rearchitecture of the entire coordinate system
-  if (request.params.type == 'go' && request.params.provider == 'golang') {
+  if (request.params.type === 'go' && request.params.provider === 'golang') {
     let namespaceNameRevision = utils.parseNamespaceNameRevision(request)
     let splitString = namespaceNameRevision.split('/')
 
