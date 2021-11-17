@@ -22,8 +22,13 @@ async function get(request, response) {
     }
     case 'summary': {
       const raw = await harvestStore.get(coordinates)
-      const filter = await getFilter(coordinates)
-      const result = await summarizeService.summarize(coordinates, filter, raw)
+      const rawFromTool = {
+        [coordinates.tool]: {
+          [coordinates.toolVersion]: raw
+        }
+      }
+      const resultFromTool = await summarizeService.summarizeAll(coordinates, rawFromTool)
+      const result = (resultFromTool[coordinates.tool] || {})[coordinates.toolVersion]
       return response.status(200).send(result)
     }
     case 'list': {
@@ -105,7 +110,10 @@ function setup(harvester, store, summarizer, testFlag = false) {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer
-  if (testFlag) router._queue = queue
+  if (testFlag) {
+    router._queue = queue
+    router._get = get
+  }
   return router
 }
 

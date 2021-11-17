@@ -42,10 +42,21 @@ describe('Harvest route', () => {
     expect(response.statusCode).to.be.eq(201)
     expect(harvester.harvest.calledOnce).to.be.true
   })
+
+  it('summarize harvested data for given tool and tool version', async () => {
+    const request = createGetRequest({ tool: 'test', toolVersion: 'toolVersion' })
+    const response = httpMocks.createResponse()
+    const harvester = { harvest: sinon.stub() }
+    const harvestStore = { get: sinon.stub() }
+    const summarizer = { summarizeAll: sinon.stub().resolves({}) }
+    const router = createRoutes(harvester, harvestStore, summarizer)
+    await router._get(request, response)
+    expect(response.statusCode).to.be.eq(200)
+  })
 })
 
-function createRoutes(harvester) {
-  return harvestRoutes(harvester, null, null, true)
+function createRoutes(harvester, harvestStore, summarizer) {
+  return harvestRoutes(harvester, harvestStore, summarizer, true)
 }
 
 function createRequest(entries) {
@@ -54,5 +65,13 @@ function createRequest(entries) {
     url: '/',
     body: entries
     // body: JSON.stringify(entries)
+  })
+}
+
+function createGetRequest(entries) {
+  return httpMocks.createRequest({
+    method: 'GET',
+    url: '/',
+    params: entries
   })
 }
