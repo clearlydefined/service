@@ -23,4 +23,9 @@ describe('EntityCoordinates', () => {
     expect(coordinates.name).to.be.eq('name')
   })
 
+  it('pypi coordinates should have name in lower case', () => {
+    const coordinates = new EntityCoordinates('pypi', 'pypi', '-', 'NAME', 'REVISION')
+    expect(coordinates.name).to.be.eq('name')
+  })
+
 })
