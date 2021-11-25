@@ -12,7 +12,7 @@ const validator = require('../schemas/validator')
 router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(get))
 
 async function get(request, response) {
-  const coordinates = utils.toResultCoordinatesFromRequest(request)
+  const coordinates = await utils.toResultCoordinatesFromRequest(request)
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
@@ -86,7 +86,7 @@ async function getAll(request, response) {
 router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(list))
 
 async function list(request, response) {
-  const coordinates = utils.toResultCoordinatesFromRequest(request)
+  const coordinates = await utils.toResultCoordinatesFromRequest(request)
   const result = await harvestStore.list(coordinates)
   return response.status(200).send(result)
 }
