@@ -54,7 +54,7 @@ async function getDefinition(request, response) {
       }
     )
   } else {
-    coordinates = utils.toEntityCoordinatesFromRequest(request)
+    coordinates = await utils.toEntityCoordinatesFromRequest(request)
   }
 
   const pr = request.params.pr
@@ -80,7 +80,8 @@ async function getDefinitions(request, response) {
   const pattern = request.query.pattern
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
-  const result = await definitionService.find(request.query)
+  const normalizedCoordinates = await utils.toNormalizedEntityCoordinates(request.query)
+  const result = await definitionService.find({ ...request.query, ...normalizedCoordinates })
   response.send(result)
 }
 
@@ -98,7 +99,7 @@ router.post(
     if (!request.query.preview)
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
     if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
-    const coordinates = utils.toEntityCoordinatesFromRequest(request)
+    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)
   })
@@ -111,11 +112,14 @@ async function listDefinitions(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  const normalizedCoordinatesList = await Promise.all(
+    coordinatesList.map(entry => utils.toNormalizedEntityCoordinates(entry)))
+
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
-    const result = await definitionService.getAll(coordinatesList, force, expand)
+    const result = await definitionService.getAll(normalizedCoordinatesList, force, expand)
     const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
     if (matchCasing) {
       // enforce request casing on keys as per issue #589

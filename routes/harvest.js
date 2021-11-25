@@ -60,7 +60,7 @@ function buildFilter(facets) {
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getAll))
 
 async function getAll(request, response) {
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   switch ((request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {

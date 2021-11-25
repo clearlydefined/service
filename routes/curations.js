@@ -13,7 +13,7 @@ const { permissionsCheck } = require('../middleware/permissions')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getChangesForCoordinatesInPr))
 
 async function getChangesForCoordinatesInPr(request, response) {
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.get(coordinates, request.params.pr)
   if (result) return response.status(200).send(result)
   response.sendStatus(404)
@@ -38,7 +38,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getCur
 
 async function getCurationForCoordinates(request, response) {
   if (request.query.expand === 'prs') return listCurations(request, response)
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.get(coordinates)
   if (!result) return response.sendStatus(404)
   return response.status(200).send(result)
@@ -48,7 +48,7 @@ async function getCurationForCoordinates(request, response) {
 router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(listCurations))
 
 async function listCurations(request, response) {
-  const coordinates = utils.toEntityCoordinatesFromRequest(request)
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.list(coordinates)
   if (!result || !result.contributions.length) return response.sendStatus(404)
   return response.status(200).send(result)
