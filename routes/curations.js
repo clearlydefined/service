@@ -60,7 +60,9 @@ async function listAllCurations(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
-  const result = await curationService.listAll(coordinatesList)
+  const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
+
+  const result = await curationService.listAll(normalizedCoordinatesList)
   response.send(result)
 }
 
@@ -82,7 +84,12 @@ async function updateCurations(request, response) {
     logger.error('intended curations are invalid', errorData)
     return response.status(400).send(errorData)
   }
-  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, request.body)
+
+  const normalizedPatches = await Promise.all(request.body.patches.map(async entry => {
+    return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
+  }))
+  const normalizedBody = { ...request.body, patches: normalizedPatches }
+  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
   response.status(200).send({
     prNumber: result.data.number,
     url: curationService.getCurationUrl(result.data.number)
@@ -110,7 +117,8 @@ async function reprocessMergedCurations(request, respond) {
   if (coordinatesArray.length >= reprocessThreshold) {
     return respond.status(403).send({ message: `Reprocess coordinates number exceed ${reprocessThreshold} threshold.` })
   }
-  const result = await curationService.reprocessMergedCurations(coordinatesArray)
+  const normalizedCoordinatesList = await Promise.all(coordinatesArray.map(utils.toNormalizedEntityCoordinates))
+  const result = await curationService.reprocessMergedCurations(normalizedCoordinatesList)
   respond.status(200).send(result)
 }
 

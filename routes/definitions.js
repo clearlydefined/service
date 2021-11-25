@@ -112,8 +112,7 @@ async function listDefinitions(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
-  const normalizedCoordinatesList = await Promise.all(
-    coordinatesList.map(entry => utils.toNormalizedEntityCoordinates(entry)))
+  const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
 
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
