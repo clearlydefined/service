@@ -72,7 +72,7 @@ class DefinitionService {
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
-    } else result = force ? await this.computeAndStore() : await this.computeStoreAndCurate(coordinates)
+    } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
     return this._trimDefinition(this._cast(result), expand)
   }
 
