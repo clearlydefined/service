@@ -3,7 +3,6 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const minimatch = require('minimatch')
 const utils = require('../lib/utils')
 const bodyParser = require('body-parser')
 const validator = require('../schemas/validator')
@@ -40,22 +39,6 @@ async function get(request, response) {
   }
 }
 
-async function getFilter(coordinates) {
-  try {
-    const descriptionCoordinates = { ...coordinates, tool: 'clearlydefined' }
-    const rawDescription = await harvestStore.get(descriptionCoordinates)
-    return buildFilter(rawDescription.facets)
-  } catch (error) {
-    return null
-  }
-}
-
-function buildFilter(facets) {
-  if (!facets) return null
-  const list = [...facets.test, ...facets.dev, ...facets.data]
-  return file => !list.some(filter => minimatch(file, filter))
-}
-
 // Gets ALL the harvested data for a given component revision
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getAll))
 
@@ -69,8 +52,7 @@ async function getAll(request, response) {
     }
     case 'summary': {
       const raw = await harvestStore.getAll(coordinates)
-      const filter = await getFilter(coordinates)
-      const summarized = await summarizeService.summarizeAll(coordinates, raw, filter)
+      const summarized = await summarizeService.summarizeAll(coordinates, raw)
       return response.status(200).send(summarized)
     }
     case 'list': {
