@@ -1,4 +1,5 @@
 const { expect } = require('chai')
+const sinon = require('sinon')
 const utils = require('../../lib/utils')
 
 describe('Utils latest version', () => {
@@ -463,8 +464,16 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
     }
   }
 
-  it('should turn a request into entity coordinates', () => {
-    const result = utils.toEntityCoordinatesFromRequest(fakeRequest)
+  before(function () {
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', (entry) => Promise.resolve(entry))
+  })
+
+  after(function () {
+    sinon.restore()
+  })
+
+  it('should turn a request into entity coordinates', async () => {
+    const result = await utils.toEntityCoordinatesFromRequest(fakeRequest)
     expect(result.type).to.eq('pypi')
     expect(result.provider).to.eq('pypi')
     expect(result.namespace).to.eq(undefined)
@@ -482,8 +491,8 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
     }
   }
 
-  it('encodes slashes in namespaces', () => {
-    const result = utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
+  it('encodes slashes in namespaces', async () => {
+    const result = await utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
     expect(result.namespace).to.eq('rsc.io%2fquote')
   })
 })
@@ -538,8 +547,16 @@ describe('Utils getLicenseLocations', () => {
     }
   }
 
-  it('finds the correct license location for npm packages', () => {
-    const coordinates = utils.toEntityCoordinatesFromRequest(npmRequest)
+  before(function () {
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', (entry) => Promise.resolve(entry))
+  })
+
+  after(function () {
+    sinon.restore()
+  })
+
+  it('finds the correct license location for npm packages', async () => {
+    const coordinates = await utils.toEntityCoordinatesFromRequest(npmRequest)
     const result = utils.getLicenseLocations(coordinates)
     expect(result).to.deep.include('package/')
   })
@@ -555,13 +572,13 @@ describe('Utils getLicenseLocations', () => {
       }
     }
 
-    it('finds the correct location for go packages', () => {
-      const coordinates = utils.toEntityCoordinatesFromRequest(goRequest)
+    it('finds the correct location for go packages', async () => {
+      const coordinates = await utils.toEntityCoordinatesFromRequest(goRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
     })
 
-    it('finds the correct license location for complex namespaces', () => {
+    it('finds the correct license location for complex namespaces', async () => {
       const complexNamespaceRequest = {
         params: {
           type: 'go',
@@ -572,7 +589,7 @@ describe('Utils getLicenseLocations', () => {
         }
       }
 
-      const coordinates = utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
     })
