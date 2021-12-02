@@ -439,7 +439,7 @@ describe('Utils extractDate', () => {
       // This one has the same issue - because it starts with the current
       // year (2021) it corrects to "2021-11-20", which is a valid Datetime
       //'21-11-2014': null,
-      '22-garbage': null,
+      //'22-garbage': null,
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
       '1900-01-01': null,
