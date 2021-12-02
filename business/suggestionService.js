@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get } = require('lodash')
-const { isDeclaredLicense, setIfValue } = require('../lib/utils')
-const moment = require('moment')
+const { isDeclaredLicense, setIfValue, compareDates } = require('../lib/utils')
 
 class SuggestionService {
   constructor(definitionService) {
@@ -56,7 +55,7 @@ class SuggestionService {
     query.namespace = query.namespace ? query.namespace : null // explicitly exclude namespace
     const results = await this.definitionService.find(query)
     const definitions = results.data.sort((a, b) =>
-      moment(get(a, 'described.releaseDate')).isBefore(get(b, 'described.releaseDate')) ? -1 : 1
+      compareDates(get(a, 'described.releaseDate'), get(b, 'described.releaseDate'))
     )
     // If the related array only has one entry then return early
     if (definitions.length < 1) return null

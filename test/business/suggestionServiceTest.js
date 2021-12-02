@@ -1,19 +1,22 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
 const sinon = require('sinon')
 const SuggestionService = require('../../business/suggestionService')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
-const moment = require('moment')
+const { DateTime } = require('luxon')
 const { get } = require('lodash')
 
 const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')
 
 describe('Suggestion Service', () => {
   it('gets suggestion for missing declared license', async () => {
-    const now = moment()
+    const now = DateTime.now()
     const definition = createDefinition(testCoordinates, now, null, files)
     const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
     const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
@@ -37,7 +40,7 @@ describe('Suggestion Service', () => {
   })
 
   it('sorts suggestion by releaseDate', async () => {
-    const now = moment()
+    const now = DateTime.now()
     const definition = createDefinition(testCoordinates, now, null, files)
     const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
     const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
@@ -61,7 +64,7 @@ describe('Suggestion Service', () => {
   })
 
   it('gets no suggestions for definition with declared license', async () => {
-    const now = moment()
+    const now = DateTime.now()
     const definition = createDefinition(testCoordinates, now, 'MIT', files)
     const before1 = createModifiedDefinition(testCoordinates, now, -3, 'MIT', files, attributions)
     const before2 = createModifiedDefinition(testCoordinates, now, -5, 'MIT', files, attributions)
@@ -79,7 +82,7 @@ describe('Suggestion Service', () => {
   })
 
   it('returns no suggestions if there are no related definitions AND no discoveries', async () => {
-    const now = moment()
+    const now = DateTime.now()
     const definition = createDefinition(testCoordinates, now, null, files)
     const service = setup(definition, [])
     const suggestions = await service.get(testCoordinates)
@@ -87,7 +90,7 @@ describe('Suggestion Service', () => {
   })
 
   it('queries related definitions with namespace', async () => {
-    const now = moment()
+    const now = DateTime.now()
     const coordinates = EntityCoordinates.fromString('npm/npmjs/@scope/scope-test/1.0.0')
     const definition = createDefinition(coordinates, now, null, files)
     const service = setup(definition, [])
@@ -124,14 +127,14 @@ function createModifiedDefinition(coordinates, now, amount, license, files, attr
   const newFiles = files.map(file => {
     return { ...file, license, attributions }
   })
-  const newDate = moment(now).add(amount, 'days')
+  const newDate = now.plus(amount, 'days')
   return createDefinition(newCoordinates, newDate, license, newFiles)
 }
 
 function createDefinition(coordinates, releaseDate, license, files) {
   const result = { coordinates }
   setIfValue(result, 'licensed.declared', license)
-  setIfValue(result, 'described.releaseDate', releaseDate.toDate())
+  setIfValue(result, 'described.releaseDate', releaseDate.toISODate())
   setIfValue(result, 'files', files)
   return result
 }
