@@ -637,48 +637,83 @@ describe('Utils buildSourceUrl', () => {
     expect(result).to.eq('https://gitlab.com/clearlydefined/service/-/tree/123abc')
   })
 
-  it('returns the correct mavencentral source url', () => {
-    const args = {
-      type: 'maven',
-      provider: 'mavencentral',
-      namespace: 'clearlydefined',
-      name: 'service',
-      revision: '1.2.3'
-    }
+  describe('maven urls', () => {
+    it('returns the correct mavencentral source url', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavencentral',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: '1.2.3'
+      }
 
-    const coordinates = utils.toEntityCoordinatesFromArgs(args)
-    const result = utils.buildSourceUrl(coordinates)
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar')
+      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar')
+    })
+
+    it('returns the correct mavencentral source url with dots in the namespace', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavencentral',
+        namespace: 'clearlydefined.foo',
+        name: 'service',
+        revision: '1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/foo/service/1.2.3/service-1.2.3-sources.jar')
+
+    })
+
+    it('returns the correct mavengoogle source url', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavengoogle',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: '1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
+    })
   })
 
-  it('returns the correct mavengoogle source url', () => {
-    const args = {
-      type: 'maven',
-      provider: 'mavengoogle',
-      namespace: 'clearlydefined',
-      name: 'service',
-      revision: '1.2.3'
-    }
+  describe('go urls', () => {
+    it('returns the correct golang source url', () => {
+      const args = {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: 'v1.2.3'
+      }
 
-    const coordinates = utils.toEntityCoordinatesFromArgs(args)
-    const result = utils.buildSourceUrl(coordinates)
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
-  })
+      expect(result).to.eq('https://pkg.go.dev/clearlydefined/service@v1.2.3')
+    })
 
-  it('returns the correct golang source url', () => {
-    const args = {
-      type: 'go',
-      provider: 'golang',
-      namespace: 'clearlydefined',
-      name: 'service',
-      revision: 'v1.2.3'
-    }
+    it('returns the correct golang source url with slashes in the namespace', () => {
+      const args = {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'clearlydefined%2ffoo',
+        name: 'service',
+        revision: 'v1.2.3'
+      }
 
-    const coordinates = utils.toEntityCoordinatesFromArgs(args)
-    const result = utils.buildSourceUrl(coordinates)
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://pkg.go.dev/clearlydefined/service@v1.2.3')
+      expect(result).to.eq('https://pkg.go.dev/clearlydefined/foo/service@v1.2.3')
+    })
   })
 })
