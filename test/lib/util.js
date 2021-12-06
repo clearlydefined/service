@@ -716,4 +716,19 @@ describe('Utils buildSourceUrl', () => {
       expect(result).to.eq('https://pkg.go.dev/clearlydefined/foo/service@v1.2.3')
     })
   })
+
+  it('returns the correct pypi source url', () => {
+    const args = {
+      type: 'pypi',
+      provider: 'pypi',
+      namespace: '-',
+      name: 'zuul',
+      revision: '3.3.0'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://pypi.org/project/zuul/3.3.0/')
+  })
 })
