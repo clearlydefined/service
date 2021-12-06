@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = require('lodash')
-const moment = require('moment')
+const { DateTime } = require('luxon')
 const geit = require('geit')
 const yaml = require('js-yaml')
 const throat = require('throat')
@@ -486,7 +486,7 @@ class GitHubCurationService {
     const { owner, repo, branch } = this.options
     const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
-    const prBranch = await this._getBranchName(info)
+    const prBranch = this._getBranchName(info)
     await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
 
     await Promise.all(
@@ -796,8 +796,8 @@ ${this._formatDefinitions(patch.patches)}`
     return coordinates.toString()
   }
 
-  async _getBranchName(info) {
-    return `${info.login}_${moment().format('YYMMDD_HHmmss.SSS')}`
+  _getBranchName(info) {
+    return `${info.login}_${DateTime.now().toFormat('yyMMdd_HHmmss.SSS')}`
   }
 
   _getCurationPath(coordinates) {
