@@ -605,3 +605,80 @@ describe('Utils getLicenseLocations', () => {
     })
   })
 })
+
+describe('Utils buildSourceUrl', () => {
+  it('returns the correct github source url', () => {
+    const args = {
+      type: 'git',
+      provider: 'github',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '123abc'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://github.com/clearlydefined/service/tree/123abc')
+  })
+
+  it('returns the correct gitlab source url', () => {
+    const args = {
+      type: 'git',
+      provider: 'gitlab',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '123abc'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://gitlab.com/clearlydefined/service/-/tree/123abc')
+  })
+
+  it('returns the correct mavencentral source url', () => {
+    const args = {
+      type: 'maven',
+      provider: 'mavencentral',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '1.2.3'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar')
+  })
+
+  it('returns the correct mavengoogle source url', () => {
+    const args = {
+      type: 'maven',
+      provider: 'mavengoogle',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '1.2.3'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
+  })
+
+  it('returns the correct golang source url', () => {
+    const args = {
+      type: 'go',
+      provider: 'golang',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: 'v1.2.3'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://pkg.go.dev/clearlydefined/service@v1.2.3')
+  })
+})
