@@ -561,7 +561,8 @@ class DefinitionService {
     switch (coordinates.provider) {
       case 'golang':
       case 'gitlab':
-      case 'github': {
+      case 'github':
+      case 'pypi': {
         const url = buildSourceUrl(coordinates)
         if (!url) return
         this._ensureDescribed(definition)
