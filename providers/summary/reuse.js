@@ -1,9 +1,9 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { setIfValue, isDeclaredLicense, isLicenseFile } = require('../../lib/utils')
+const { setIfValue, isDeclaredLicense } = require('../../lib/utils')
 const SPDX = require('@clearlydefined/spdx')
-const { get, uniq } = require('lodash')
+const { get } = require('lodash')
 
 class FsfeReuseSummarizer {
   constructor(options) {
@@ -37,7 +37,10 @@ class FsfeReuseSummarizer {
         }
         const license = SPDX.normalize(declaredLicense)
         if (path && isDeclaredLicense(license)) {
-          const resultFile = { path, license, hashes: { sha1: file.FileChecksumSHA1 }, attributions: [file.FileCopyrightText] }
+          const resultFile = { path, license, hashes: { sha1: file.FileChecksumSHA1 } }
+          if (file.FileCopyrightText && file.FileCopyrightText !== 'NONE') {
+            resultFile['attributions'] = [file.FileCopyrightText]
+          }
           return resultFile
         }
       })
