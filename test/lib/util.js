@@ -1,4 +1,7 @@
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
 const sinon = require('sinon')
 const utils = require('../../lib/utils')
 
@@ -422,24 +425,9 @@ describe('Utils extractDate', () => {
       '2014-11-21T00:06:54.027559+00:00': '2014-11-21',
       '2014-11-21': '2014-11-21',
       '11-21-2014': '2014-11-21',
-      // This commented out line fails due to a bug
-      // in the dependency that we use (moment)
-      // if the string starts with the current year
-      // (which at the time of this writing is 2021), it will
-      // convert the string to "2021-01-01", which 
-      // is a valid Datetime, rather than returning null
-      // moment is a legacy project and, according to their own page,
-      // "In most cases, you should choose a different library."
-      // https://www.npmjs.com/package/moment
-      // I've opened an issue to replace this library
-      // https://github.com/clearlydefined/service/issues/789
-      // Hopefully we will be able to replace it before 2022,
-      // if not, this test will fail at that time and remind us
-      //      '21-garbage': null, // This one is failing
-      // This one has the same issue - because it starts with the current
-      // year (2021) it corrects to "2021-11-20", which is a valid Datetime
-      //'21-11-2014': null,
-      //'22-garbage': null,
+      '21-garbage': null,
+      '21-11-2014': null,
+      '22-garbage': null,
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
       '1900-01-01': null,
@@ -450,6 +438,28 @@ describe('Utils extractDate', () => {
       const date = utils.extractDate(timestamp)
       expect(date).to.equal(inputs[timestamp])
     }
+  })
+})
+
+describe('Utils compareDates', () => {
+  it('sort non null dates', () => {
+    const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort(utils.compareDates)
+    expect(sorted).to.deep.eq(['1990-01-01', '2000-01-01', '2010-01-01'])
+  })
+
+  it('reverse sort non null dates', () => {
+    const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort((x, y) => (-utils.compareDates(x, y)))
+    expect(sorted).to.deep.eq(['2010-01-01', '2000-01-01', '1990-01-01'])
+  })
+
+  it('sort null and non null dates: null first', () => {
+    const sorted = [null, '1990-01-01', null].sort(utils.compareDates)
+    expect(sorted).to.deep.eq([null, null, '1990-01-01'])
+  })
+
+  it('reverse sort null and non null: null last', () => {
+    const sorted = [null, '1990-01-01', null].sort((x, y) => (-utils.compareDates(x, y)))
+    expect(sorted).to.deep.eq(['1990-01-01', null, null])
   })
 })
 
@@ -593,5 +603,132 @@ describe('Utils getLicenseLocations', () => {
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
     })
+  })
+})
+
+describe('Utils buildSourceUrl', () => {
+  it('returns the correct github source url', () => {
+    const args = {
+      type: 'git',
+      provider: 'github',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '123abc'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://github.com/clearlydefined/service/tree/123abc')
+  })
+
+  it('returns the correct gitlab source url', () => {
+    const args = {
+      type: 'git',
+      provider: 'gitlab',
+      namespace: 'clearlydefined',
+      name: 'service',
+      revision: '123abc'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://gitlab.com/clearlydefined/service/-/tree/123abc')
+  })
+
+  describe('maven urls', () => {
+    it('returns the correct mavencentral source url', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavencentral',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: '1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar')
+    })
+
+    it('returns the correct mavencentral source url with dots in the namespace', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavencentral',
+        namespace: 'clearlydefined.foo',
+        name: 'service',
+        revision: '1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/foo/service/1.2.3/service-1.2.3-sources.jar')
+
+    })
+
+    it('returns the correct mavengoogle source url', () => {
+      const args = {
+        type: 'maven',
+        provider: 'mavengoogle',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: '1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
+    })
+  })
+
+  describe('go urls', () => {
+    it('returns the correct golang source url', () => {
+      const args = {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'clearlydefined',
+        name: 'service',
+        revision: 'v1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://pkg.go.dev/clearlydefined/service@v1.2.3')
+    })
+
+    it('returns the correct golang source url with slashes in the namespace', () => {
+      const args = {
+        type: 'go',
+        provider: 'golang',
+        namespace: 'clearlydefined%2ffoo',
+        name: 'service',
+        revision: 'v1.2.3'
+      }
+
+      const coordinates = utils.toEntityCoordinatesFromArgs(args)
+      const result = utils.buildSourceUrl(coordinates)
+
+      expect(result).to.eq('https://pkg.go.dev/clearlydefined/foo/service@v1.2.3')
+    })
+  })
+
+  it('returns the correct pypi source url', () => {
+    const args = {
+      type: 'pypi',
+      provider: 'pypi',
+      namespace: '-',
+      name: 'zuul',
+      revision: '3.3.0'
+    }
+
+    const coordinates = utils.toEntityCoordinatesFromArgs(args)
+    const result = utils.buildSourceUrl(coordinates)
+
+    expect(result).to.eq('https://pypi.org/project/zuul/3.3.0/')
   })
 })

@@ -11,6 +11,7 @@ const Curation = require('../../../lib/curation')
 const sinon = require('sinon')
 const extend = require('extend')
 const { find } = require('lodash')
+const { DateTime } = require('luxon')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -441,6 +442,22 @@ describe('Github Curation Service', () => {
           contribution: 'www.curation.pr.com'
         }]
       }])
+    })
+  })
+
+  describe('verify _getBranchName', () => {
+    before(function () {
+      sinon.replace(DateTime, 'now', sinon.stub().callsFake()
+        .returns(DateTime.fromFormat('211203_140949.712', 'yyMMdd_HHmmss.SSS')))
+    })
+
+    after(function () {
+      sinon.restore()
+    })
+
+    it('verify branch name', () => {
+      const branchName = createService()._getBranchName({ login: 'test' })
+      expect(branchName).to.be.eq('test_211203_140949.712')
     })
   })
 })
