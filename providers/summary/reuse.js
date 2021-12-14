@@ -44,6 +44,7 @@ class FsfeReuseSummarizer {
           return resultFile
         }
       })
+      .filter(e => e)
   }
 
 }

@@ -28,6 +28,16 @@ describe('FsfeReuseSummarizer', () => {
     })
   })
 
+  it('should ignore missing license information', () => {
+    const data = setup([{ fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' }, { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', fileCopyrightText: 'NONE', checksumSha1: '23' }])
+    const result = summarizer.summarize(null, data)
+    assert.deepEqual(result, {
+      files: [
+        { path: 'README.md', license: 'MIT', hashes: { sha1: '42' }, attributions: ['Somebody'] }
+      ]
+    })
+  })
+
   it('should handle no files found', () => {
     const data = setup([])
     data.reuse.files = null
