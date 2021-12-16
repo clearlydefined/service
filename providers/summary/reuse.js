@@ -3,7 +3,7 @@
 
 const { setIfValue, isDeclaredLicense } = require('../../lib/utils')
 const SPDX = require('@clearlydefined/spdx')
-const { get } = require('lodash')
+const { get, uniq } = require('lodash')
 
 class FsfeReuseSummarizer {
   constructor(options) {
@@ -22,12 +22,27 @@ class FsfeReuseSummarizer {
     const result = {}
 
     setIfValue(result, 'files', this._summarizeFiles(harvested))
+    this._addLicenseDeclaration(harvested, result)
     return result
   }
 
   _summarizeFiles(harvested) {
     const files = get(harvested, 'reuse.files')
     if (!files) return null
+    const licenseFiles = []
+    const attachments = harvested.attachments || []
+    const licenses = get(harvested, 'reuse.licenses')
+    if (licenses) {
+      licenses.forEach(license => {
+        const licenseSpdxId = SPDX.normalize(license.spdxId)
+        if (license.filePath && isDeclaredLicense(licenseSpdxId)) {
+          const attachment = attachments.find(x => x.path === license.filePath)
+          const licenseFile = { path: license.filePath, license: licenseSpdxId, natures: ['license'] }
+          setIfValue(licenseFile, 'token', get(attachment, 'token'))
+          licenseFiles.push(licenseFile)
+        }
+      })
+    }
     return files
       .map(file => {
         const path = file.FileName
@@ -44,7 +59,14 @@ class FsfeReuseSummarizer {
           return resultFile
         }
       })
+      .concat(licenseFiles)
       .filter(e => e)
+  }
+
+  _addLicenseDeclaration(harvested, result) {
+    if (!harvested.reuse.licenses) return
+    const declaredLicenses = harvested.reuse.licenses.map(license => isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null).filter(x => x)
+    setIfValue(result, 'licensed.declared', uniq(declaredLicenses).join(' AND '))
   }
 
 }
