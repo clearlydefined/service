@@ -435,11 +435,11 @@ describe('Utils extractDate', () => {
       '9999-01-01': null
     }
     const nowIso = DateTime.utc().toISODate()
-    inputs[nowIso] = nowIso;
-    const nowPlus20DaysIso = DateTime.utc().plus({ days: 20 }).toISODate();
-    inputs[nowPlus20DaysIso] = nowPlus20DaysIso;
-    const nowPlus31DaysIso = DateTime.utc().plus({ days: 31 }).toISODate();
-    inputs[nowPlus31DaysIso] = null;
+    inputs[nowIso] = nowIso
+    const nowPlus20DaysIso = DateTime.utc().plus({ days: 20 }).toISODate()
+    inputs[nowPlus20DaysIso] = nowPlus20DaysIso
+    const nowPlus31DaysIso = DateTime.utc().plus({ days: 31 }).toISODate()
+    inputs[nowPlus31DaysIso] = null
 
     for (const timestamp of Object.getOwnPropertyNames(inputs)) {
       const date = utils.extractDate(timestamp)
