@@ -41,7 +41,7 @@ Better to use a copy of the real dev environment, can change queue names to be y
    * "CURATION_GITHUB_TOKEN"
    * "CRAWLER_GITHUB_TOKEN"
    * "SCANCODE_HOME"
-0. Any other environmental variable values you might need can be found in the Clearly Defined subsciption in Azure Portal under App Services -> clearlydefined-api-dev -> Settings -> Configuration
+0. Any other environmental variable values you might need can be found in the Clearly Defined subscription in Azure Portal under App Services -> clearlydefined-api-dev -> Settings -> Configuration
 0. Consider all the vars and what you need for testing what you will test. 
 
 ## Dependency Security Management
