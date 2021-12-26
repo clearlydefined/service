@@ -137,7 +137,7 @@ async function listDefinitions(request, response) {
       response.send(result)
     }
   } catch (err) {
-    response.send(`An error occured when trying to fetch coordinates for one of the components: ${err.message}`)
+    response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
   }
 }
 
