@@ -16,7 +16,7 @@ class FOSSologySummarizer {
    * Summarize the raw information related to the given coordinates.
    *
    * @param {EntitySpec} coordinates - The entity for which we are summarizing
-   * @param {*} harvested - the set of raw tool ouptuts related to the idenified entity
+   * @param {*} harvested - the set of raw tool outputs related to the identified entity
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested) {

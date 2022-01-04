@@ -123,13 +123,13 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
-  it('decribes projectWebsite from manifest', () => {
+  it('describes projectWebsite from manifest', () => {
     let result = {}
     summarizer.addCrateData(result, { manifest: { homepage: 'https://github.com/owner/repo' } }, crateTestCoordinates)
     assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
   })
 
-  it('decribes releaseDate from registryData', () => {
+  it('describes releaseDate from registryData', () => {
     let result = {}
     summarizer.addCrateData(
       result,
@@ -204,7 +204,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
-  it('decribes projectWebsite from manifest', () => {
+  it('describes projectWebsite from manifest', () => {
     let result = {}
     summarizer.addComposerData(
       result,
@@ -214,7 +214,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
     assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
   })
 
-  it('decribes releaseDate from registryData', () => {
+  it('describes releaseDate from registryData', () => {
     let result = {}
     summarizer.addComposerData(
       result,
@@ -636,7 +636,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
 
 describe('ClearlyDescribedSummarizer addDebData', () => {
   const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
-  it('decribes releaseDate from data', () => {
+  it('describes releaseDate from data', () => {
     let result = {}
     summarizer.addDebData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
@@ -645,7 +645,7 @@ describe('ClearlyDescribedSummarizer addDebData', () => {
 
 describe('ClearlyDescribedSummarizer addDebSrcData', () => {
   const debsrcTestCoordinates = EntityCoordinates.fromString('debsrc/debian/-/test/1.0')
-  it('decribes releaseDate from data', () => {
+  it('describes releaseDate from data', () => {
     let result = {}
     summarizer.addDebSrcData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debsrcTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')

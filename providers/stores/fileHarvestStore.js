@@ -46,7 +46,7 @@ class FileHarvestStore extends AbstractFileStore {
    * @returns An object with a property for each tool and tool version
    */
   async getAll(coordinates) {
-    // TODO validate/enforce that the coordiates are down to the component revision
+    // TODO validate/enforce that the coordinates are down to the component revision
     const root = this._toStoragePathFromCoordinates(coordinates)
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and

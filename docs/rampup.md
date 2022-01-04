@@ -39,9 +39,9 @@ Better to use a copy of the real dev environment, can change queue names to be y
    * "FILE_STORE_LOCATION"
    * "CURATION_GITHUB_REPO"
    * "CURATION_GITHUB_TOKEN"
-   * "CRAWLER_GITHUGB_TOKEN"
+   * "CRAWLER_GITHUB_TOKEN"
    * "SCANCODE_HOME"
-0. Any other environmental variable values you might need can be found in the Clearly Defined subsciption in Azure Portal under App Services -> clearlydefined-api-dev -> Settings -> Configuration
+0. Any other environmental variable values you might need can be found in the Clearly Defined subscription in Azure Portal under App Services -> clearlydefined-api-dev -> Settings -> Configuration
 0. Consider all the vars and what you need for testing what you will test. 
 
 ## Dependency Security Management
@@ -75,7 +75,7 @@ Curations queue: logic app puts messages on queue when it is called by github we
 Providers/harvest/process.js, code for pulling from harvest queue
 Providers/curation/process.js, code for pulling from curation queue
 
-Githhub webhook is set to put message on queue for any change in PR status, this allows service to take different actions on ‘opened’ vs ‘merged’ etc.
+GitHub webhook is set to put message on queue for any change in PR status, this allows service to take different actions on ‘opened’ vs ‘merged’ etc.
 
 ### Database
 What do we put in mongo / Cosmos DB? ( I see config for curations and definitions)

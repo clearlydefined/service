@@ -523,7 +523,7 @@ class DefinitionService {
     const licenseExpressions = new Set()
     let unknownParties = 0
     let unknownLicenses = 0
-    // accummulate all the licenses and attributions, and count anything that's missing
+    // accumulate all the licenses and attributions, and count anything that's missing
     for (let file of facetFiles) {
       file.license ? licenseExpressions.add(file.license) : unknownLicenses++
       const statements = simplifyAttributions(file.attributions)
