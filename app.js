@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const RateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit')
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
@@ -117,15 +117,16 @@ function createApp(config) {
   app.use('/auth', auth.router)
   app.use(config.auth.service.middleware())
 
-  // rate-limit the remaining routes
   app.set('trust-proxy', true)
-  app.use(
-    new RateLimit({
-      windowMs: config.limits.windowSeconds * 1000,
-      max: config.limits.max,
-      delayAfter: 0
-    })
-  )
+
+  // rate-limit the remaining routes
+
+  const apiLimiter = rateLimit({
+    windowMs: config.limits.windowSeconds * 1000,
+    max: config.limits.max
+  })
+
+  app.use(apiLimiter)
 
   app.use(require('./middleware/querystring'))
 
