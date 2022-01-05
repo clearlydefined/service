@@ -30,7 +30,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.4",
     "express-init": "^1.1.1",
-    "express-rate-limit": "^2.11.0",
+    "express-rate-limit": "^6.0.4",
     "extend": "^3.0.2",
     "geit": "0.0.7",
     "he": "^1.1.1",
