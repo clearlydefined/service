@@ -72,7 +72,9 @@ module.exports = {
   },
   limits: {
     windowSeconds: parseInt(config.get('RATE_LIMIT_WINDOW')) || 1,
-    max: parseInt(config.get('RATE_LIMIT_MAX')) || 0
+    max: parseInt(config.get('RATE_LIMIT_MAX')) || 0,
+    batchWindowSeconds: parseInt(config.get('BATCH_RATE_LIMIT_WINDOW')) || 1,
+    batchMax: parseInt(config.get('BATCH_RATE_LIMIT_MAX')) || 0,
   },
   webhook: {
     githubSecret: config.get('WEBHOOK_GITHUB_SECRET') || 'secret',

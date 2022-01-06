@@ -134,8 +134,8 @@ function createApp(config) {
   // * POST /curations
   // * POST /notices
   const batchApiLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 2
+    windowMs: config.limits.batchWindowSeconds * 1000,
+    max: config.limits.batchMax
   })
 
   app.post('/definitions', batchApiLimiter)
