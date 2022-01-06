@@ -120,7 +120,6 @@ function createApp(config) {
   app.set('trust-proxy', true)
 
   // rate-limit the remaining routes
-
   const apiLimiter = rateLimit({
     windowMs: config.limits.windowSeconds * 1000,
     max: config.limits.max
@@ -128,12 +127,20 @@ function createApp(config) {
 
   app.use(apiLimiter)
 
+  // Use a (potentially lower) different API limit
+  // for batch API request
+  // for now, these include
+  // * POST /definitions
+  // * POST /curations
+  // * POST /notices
   const batchApiLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 2
   })
 
-  app.use('/definitions/', batchApiLimiter)
+  app.post('/definitions', batchApiLimiter)
+  app.post('/curations', batchApiLimiter)
+  app.post('/notices', batchApiLimiter)
 
   app.use(require('./middleware/querystring'))
 
