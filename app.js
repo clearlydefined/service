@@ -128,6 +128,13 @@ function createApp(config) {
 
   app.use(apiLimiter)
 
+  const batchApiLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 2
+  })
+
+  app.use('/definitions/', batchApiLimiter)
+
   app.use(require('./middleware/querystring'))
 
   app.use('/', require('./routes/index'))
