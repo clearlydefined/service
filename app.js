@@ -7,6 +7,8 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
+const rateLimitRedisStore = require("rate-limit-redis")
+
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
@@ -133,10 +135,19 @@ function createApp(config) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = rateLimit({
-    windowMs: config.limits.batchWindowSeconds * 1000,
-    max: config.limits.batchMax
-  })
+
+  const batchApiLimiter = config.caching.redis_connection_string ?
+    rateLimit({
+      store: new rateLimitRedisStore({
+        redisURL: config.caching.redis_connection_string
+      }),
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    }) :
+    rateLimit({
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    })
 
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)

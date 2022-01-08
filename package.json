@@ -49,6 +49,7 @@
     "passport-github": "^1.1.0",
     "patch-package": "^6.2.1",
     "promise-retry": "^1.1.1",
+    "rate-limit-redis": "^2.1.0",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
     "redis": "^2.8.0",

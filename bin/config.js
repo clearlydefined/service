@@ -64,7 +64,8 @@ module.exports = {
     service: loadFactory(config.get('AUTH_PROVIDER') || 'github', 'auth')
   },
   caching: {
-    service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching')
+    service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching'),
+    redis_connection_string: config.get('CACHING_REDIS_CONNECTION_STRING')
   },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',
