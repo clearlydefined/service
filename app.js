@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
-const rateLimitRedisStore = require("rate-limit-redis")
+const rateLimitRedisStore = require('rate-limit-redis')
 
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
@@ -139,7 +139,7 @@ function createApp(config) {
   const batchApiLimiter = config.caching.redis_connection_string ?
     rateLimit({
       store: new rateLimitRedisStore({
-        redisURL: config.caching.redis_connection_string
+        redisURL: `redis://${config.caching.redis_connection_string}`
       }),
       windowMs: config.limits.batchWindowSeconds * 1000,
       max: config.limits.batchMax
