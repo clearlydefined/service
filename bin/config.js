@@ -65,7 +65,10 @@ module.exports = {
   },
   caching: {
     service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching'),
-    redis_connection_string: config.get('CACHING_REDIS_CONNECTION_STRING')
+    redis_connection_string: config.get('CACHING_REDIS_CONNECTION_STRING'),
+    caching_redis_service: config.get('CACHING_REDIS_SERVICE'),
+    caching_redis_api_key: config.get('CACHING_REDIS_API_KEY')
+
   },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',

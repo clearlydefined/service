@@ -9,6 +9,7 @@ const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const rateLimitRedisStore = require('rate-limit-redis')
 const redis = require('redis')
+//const redisCache = require('./providers/caching/redis')
 
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
@@ -140,36 +141,27 @@ function createApp(config) {
   // If a redis connection string is configured, store the rate limit 
   // count there. Otherwise, store it in local memory
 
-  const host = 'nell-test-redis.redis.cache.windows.net'
+  const client = redis.createClient(
+    6380,
+    config.caching.caching_redis_service,
+    {
+      auth_pass: config.caching.caching_redis_api_key,
+      tls: { servername: config.caching_redis_service }
+    }
+  )
 
-  const client = redis.createClient({
-    socket: {
-      host: host,
-      tls: true,
-      socket: 6380
-    },
-    password: config.caching.redis_connection_string
-  })
-
-  /** 
-    const batchApiLimiter = config.caching.redis_connection_string ?
-      rateLimit({
-        store: new rateLimitRedisStore({
-          client: client
-        }),
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      }) :
-      rateLimit({
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      })
-  
-  */
-  const batchApiLimiter = rateLimit({
-    windowMs: config.limits.batchWindowSeconds * 1000,
-    max: config.limits.batchMax
-  })
+  const batchApiLimiter = config.caching.caching_redis_service ?
+    rateLimit({
+      store: new rateLimitRedisStore({
+        client: client
+      }),
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    }) :
+    rateLimit({
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    })
 
 
   app.post('/definitions', batchApiLimiter)
