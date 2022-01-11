@@ -123,14 +123,16 @@ function createApp(config) {
   app.set('trust-proxy', true)
 
   // If Redis is configured for caching, connect to it
-  const client = redis.createClient(
-    6380,
-    config.caching.caching_redis_service,
-    {
-      auth_pass: config.caching.caching_redis_api_key,
-      tls: { servername: config.caching_redis_service }
-    }
-  )
+  const client = config.caching.caching_redis_service ?
+    redis.createClient(
+      6380,
+      config.caching.caching_redis_service,
+      {
+        auth_pass: config.caching.caching_redis_api_key,
+        tls: { servername: config.caching_redis_service }
+      }
+    ) :
+    undefined
 
   // rate-limit the remaining routes
   const apiLimiter = config.caching.caching_redis_service ?
