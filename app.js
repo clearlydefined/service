@@ -123,24 +123,7 @@ function createApp(config) {
 
   app.set('trust-proxy', true)
 
-  // rate-limit the remaining routes
-  const apiLimiter = rateLimit({
-    windowMs: config.limits.windowSeconds * 1000,
-    max: config.limits.max
-  })
-
-  app.use(apiLimiter)
-
-  // Use a (potentially lower) different API limit
-  // for batch API request
-  // for now, these include
-  // * POST /definitions
-  // * POST /curations
-  // * POST /notices
-
-  // If a redis connection string is configured, store the rate limit 
-  // count there. Otherwise, store it in local memory
-
+  // If Redis is configured for caching, connect to it
   const client = redis.createClient(
     6380,
     config.caching.caching_redis_service,
@@ -150,10 +133,34 @@ function createApp(config) {
     }
   )
 
+  // rate-limit the remaining routes
+  const apiLimiter = config.caching.caching_redis_service ?
+    rateLimit({
+      store: new rateLimitRedisStore({
+        client: client,
+        prefix: 'api'
+      }),
+      windowMs: config.limits.windowSeconds * 1000,
+      max: config.limits.max
+    }) :
+    rateLimit({
+      windowMs: config.limits.windowSeconds * 1000,
+      max: config.limits.max
+    })
+
+  app.use(apiLimiter)
+
+  // Use a (potentially lower) different API limit
+  // for batch API request
+  // for now, these include
+  // * POST /definitions
+  // * POST /curations
+  // * POST /notices
   const batchApiLimiter = config.caching.caching_redis_service ?
     rateLimit({
       store: new rateLimitRedisStore({
-        client: client
+        client: client,
+        prefix: 'batch-api'
       }),
       windowMs: config.limits.batchWindowSeconds * 1000,
       max: config.limits.batchMax
