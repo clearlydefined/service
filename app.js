@@ -9,7 +9,6 @@ const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const rateLimitRedisStore = require('rate-limit-redis')
 const redis = require('redis')
-//const redisCache = require('./providers/caching/redis')
 
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
