@@ -48,7 +48,7 @@ class SuggestionService {
    * Get related definitions for the given coordinates.
    * Related here means other definitions for the same component with different revisions
    *
-   * @param {EntityCoordinates} coordinates - The entity we are looking for related defintions to
+   * @param {EntityCoordinates} coordinates - The entity we are looking for related definitions to
    */
   async _getRelatedDefinitions(coordinates) {
     const query = coordinates.asRevisionless()

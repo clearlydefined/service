@@ -6,7 +6,10 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const RateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit')
+const rateLimitRedisStore = require('rate-limit-redis')
+const redis = require('redis')
+
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
@@ -117,15 +120,61 @@ function createApp(config) {
   app.use('/auth', auth.router)
   app.use(config.auth.service.middleware())
 
-  // rate-limit the remaining routes
   app.set('trust-proxy', true)
-  app.use(
-    new RateLimit({
+
+  // If Redis is configured for caching, connect to it
+  const client = config.caching.caching_redis_service ?
+    redis.createClient(
+      6380,
+      config.caching.caching_redis_service,
+      {
+        auth_pass: config.caching.caching_redis_api_key,
+        tls: { servername: config.caching_redis_service }
+      }
+    ) :
+    undefined
+
+  // rate-limit the remaining routes
+  const apiLimiter = config.caching.caching_redis_service ?
+    rateLimit({
+      store: new rateLimitRedisStore({
+        client: client,
+        prefix: 'api'
+      }),
       windowMs: config.limits.windowSeconds * 1000,
-      max: config.limits.max,
-      delayAfter: 0
+      max: config.limits.max
+    }) :
+    rateLimit({
+      windowMs: config.limits.windowSeconds * 1000,
+      max: config.limits.max
     })
-  )
+
+  app.use(apiLimiter)
+
+  // Use a (potentially lower) different API limit
+  // for batch API request
+  // for now, these include
+  // * POST /definitions
+  // * POST /curations
+  // * POST /notices
+  const batchApiLimiter = config.caching.caching_redis_service ?
+    rateLimit({
+      store: new rateLimitRedisStore({
+        client: client,
+        prefix: 'batch-api'
+      }),
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    }) :
+    rateLimit({
+      windowMs: config.limits.batchWindowSeconds * 1000,
+      max: config.limits.batchMax
+    })
+
+
+  app.post('/definitions', batchApiLimiter)
+  app.post('/curations', batchApiLimiter)
+  app.post('/notices', batchApiLimiter)
 
   app.use(require('./middleware/querystring'))
 

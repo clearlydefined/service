@@ -29,7 +29,7 @@ Some parts of this set up may require access to the ClearlyDefined Azure Account
 
 That starts the ClearlyDefined service and has it listening for RESTful interaction at http://localhost:4000. See the [Configuration](#configuration) section for info on how to change the port. The REST APIs are (partially) described in the Swagger at http://localhost:4000/api-docs.
 
-You may want to get the sample data. Clone the [Havested-data](https://github.com/clearlydefined/harvested-data) repo and adjust the `FILE_STORE_LOCATION` setting your `env.json` to point to the data repo's location.
+You may want to get the sample data. Clone the [Harvested-data](https://github.com/clearlydefined/harvested-data) repo and adjust the `FILE_STORE_LOCATION` setting your `env.json` to point to the data repo's location.
 
 ## Authorization
 

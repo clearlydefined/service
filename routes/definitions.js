@@ -110,7 +110,7 @@ router.post(
 router.post('/', asyncMiddleware(listDefinitions))
 async function listDefinitions(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-  if (coordinatesList.length > 1000)
+  if (coordinatesList.length > 500)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
 
@@ -137,7 +137,7 @@ async function listDefinitions(request, response) {
       response.send(result)
     }
   } catch (err) {
-    response.send(`An error occured when trying to fetch coordinates for one of the components: ${err.message}`)
+    response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
   }
 }
 

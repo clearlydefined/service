@@ -3,7 +3,7 @@
 
 // Responsible for taking multiple summarized responses and aggregating them into a single response
 //
-// The tools to consider for aggregation and their priorites can be described like this:
+// The tools to consider for aggregation and their priorities can be described like this:
 // aggregators: [
 //   ["toolC/2.0"],
 //   ["toolB/3.0", "toolB/2.1", "toolB/2.0"],

@@ -101,7 +101,7 @@ Go's support of vanity package names makes this a little different than other co
 * **provider** should be 'golang'
 * **namespace** should be anything that appears before the package name in the import path (it should be "-" if nothing appears before the package name)
 * **name** should be the name of the package
-* **revision** should be the component revision (note - go components seem to have multiple ways of specifying revisons - sometimes version numbers, sometimes commit hashes)
+* **revision** should be the component revision (note - go components seem to have multiple ways of specifying revisions - sometimes version numbers, sometimes commit hashes)
 
 A challenge with go components is that import paths and package names can contain slashes and periods - which makes translating them into valid coordinates more difficult.
 
