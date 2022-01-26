@@ -41,6 +41,18 @@ describe('Harvest route', () => {
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(201)
     expect(harvester.harvest.calledOnce).to.be.true
+    expect(harvester.harvest.calledWith([{ tool: 'test', coordinates: '1/2/3/4' }], sinon.match.any)).to.be.true
+  })
+
+  it('filter out falsy coordinates', async () => {
+    const request = createRequest([{ tool: 'test', coordinates: '1/2/3/4' }, null])
+    const response = httpMocks.createResponse()
+    const harvester = { harvest: sinon.stub() }
+    const router = createRoutes(harvester)
+    await router._queue(request, response)
+    expect(response.statusCode).to.be.eq(201)
+    expect(harvester.harvest.calledOnce).to.be.true
+    expect(harvester.harvest.calledWith([{ tool: 'test', coordinates: '1/2/3/4' }], sinon.match.any)).to.be.true
   })
 
   it('summarize harvested data for given tool and tool version', async () => {
