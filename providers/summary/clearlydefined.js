@@ -15,6 +15,11 @@ const {
   mergeDefinitions
 } = require('../../lib/utils')
 
+const mavenBasedUrls = {
+  mavencentral: 'https://repo1.maven.org/maven2',
+  gradleplugin: 'https://plugins.gradle.org/m2'
+}
+
 class ClearlyDescribedSummarizer {
   constructor(options) {
     this.options = options
@@ -150,8 +155,8 @@ class ClearlyDescribedSummarizer {
         break
 
       default:
-        urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
-        urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+        urls.registry = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     }
 
     return urls
@@ -172,6 +177,9 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       urls.download
     )
+    if (!get(result, 'described.sourceLocation.url'))
+      setIfValue(result, 'described.sourceLocation.url', get(data, 'manifest.summary.scm.0.url.0'))
+
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
