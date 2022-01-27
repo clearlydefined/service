@@ -185,6 +185,7 @@ function createApp(config) {
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
   app.use('/origins/mavenGoogle', require('./routes/originMavenGoogle')())
+  app.use('/origins/gradleplugin', require('./routes/originGradlePlugin')())
   app.use('/origins/nuget', require('./routes/originNuget')())
   app.use('/origins/composer', require('./routes/originComposer')())
   app.use('/origins/pypi', require('./routes/originPyPi')())
