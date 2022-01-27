@@ -57,6 +57,7 @@
         "golang",
         "mavencentral",
         "mavengoogle",
+        "gradleplugin",
         "nuget",
         "rubygems",
         "pypi",
