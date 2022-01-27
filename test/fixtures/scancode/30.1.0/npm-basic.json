@@ -1,0 +1,1044 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/npm/npmjs/-/glob/7.1.2",
+    "fetchedAt": "2022-01-28T19:22:00.936Z",
+    "links": {
+      "self": {
+        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode:30.3.0",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "schemaVersion": "30.3.0",
+    "toolVersion": "30.1.0",
+    "contentType": "application/json",
+    "releaseDate": "2017-05-19T20:15:25.471Z",
+    "processedAt": "2022-01-28T19:22:08.702Z"
+  },
+  "content": {
+    "headers": [
+      {
+        "tool_name": "scancode-toolkit",
+        "tool_version": "30.1.0",
+        "options": {
+          "input": [
+            "/tmp/cd-R3RwWm"
+          ],
+          "--classify": true,
+          "--copyright": true,
+          "--email": true,
+          "--generated": true,
+          "--info": true,
+          "--is-license-text": true,
+          "--json-pp": "/tmp/cd-PoeUGW",
+          "--license": true,
+          "--license-clarity-score": true,
+          "--license-text": true,
+          "--package": true,
+          "--processes": "2",
+          "--strip-root": true,
+          "--summary": true,
+          "--summary-key-files": true,
+          "--timeout": "1000.0",
+          "--url": true
+        },
+        "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+        "start_timestamp": "2022-01-28T192201.907302",
+        "end_timestamp": "2022-01-28T192207.928022",
+        "output_format_version": "1.0.0",
+        "duration": 6.02073335647583,
+        "message": null,
+        "errors": [],
+        "extra_data": {
+          "spdx_license_list_version": "3.14",
+          "OUTDATED": "WARNING: Outdated ScanCode Toolkit version! You are using an outdated version of ScanCode Toolkit: 30.1.0 released on: 2021-09-24. A new version is available with important improvements including bug and security fixes, updated license, copyright and package detection, and improved scanning accuracy. Please download and install the latest version of ScanCode. Visit https://github.com/nexB/scancode-toolkit/releases for details.",
+          "files_count": 7
+        }
+      }
+    ],
+    "summary": {
+      "license_expressions": [
+        {
+          "value": "isc",
+          "count": 4
+        },
+        {
+          "value": "mit",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": null,
+          "count": 6
+        },
+        {
+          "value": "Copyright (c) Isaac Z. Schlueter and Contributors",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": null,
+          "count": 6
+        },
+        {
+          "value": "Isaac Z. Schlueter and Contributors",
+          "count": 1
+        }
+      ],
+      "authors": [
+        {
+          "value": null,
+          "count": 6
+        },
+        {
+          "value": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+          "count": 1
+        }
+      ],
+      "programming_language": [
+        {
+          "value": "JavaScript",
+          "count": 3
+        }
+      ],
+      "packages": [
+        {
+          "type": "npm",
+          "namespace": null,
+          "name": "glob",
+          "version": "7.1.2",
+          "qualifiers": {},
+          "subpath": null,
+          "primary_language": "JavaScript",
+          "description": "a little globber",
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "author",
+              "name": "Isaac Z. Schlueter",
+              "email": "i@izs.me",
+              "url": "http://blog.izs.me/"
+            }
+          ],
+          "keywords": [],
+          "homepage_url": null,
+          "download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+          "size": null,
+          "sha1": null,
+          "md5": null,
+          "sha256": null,
+          "sha512": null,
+          "bug_tracking_url": null,
+          "code_view_url": null,
+          "vcs_url": "git://github.com/isaacs/node-glob.git",
+          "copyright": null,
+          "license_expression": "isc",
+          "declared_license": [
+            "ISC"
+          ],
+          "notice_text": null,
+          "root_path": "package",
+          "dependencies": [
+            {
+              "purl": "pkg:npm/fs.realpath",
+              "requirement": "^1.0.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/inflight",
+              "requirement": "^1.0.4",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/inherits",
+              "requirement": "2",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/minimatch",
+              "requirement": "^3.0.4",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/once",
+              "requirement": "^1.3.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/path-is-absolute",
+              "requirement": "^1.0.0",
+              "scope": "dependencies",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/mkdirp",
+              "requirement": "0",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/rimraf",
+              "requirement": "^2.2.8",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/tap",
+              "requirement": "^7.1.2",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            },
+            {
+              "purl": "pkg:npm/tick",
+              "requirement": "0.0.6",
+              "scope": "devDependencies",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": false
+            }
+          ],
+          "contains_source_code": null,
+          "source_packages": [],
+          "extra_data": {},
+          "purl": "pkg:npm/glob@7.1.2",
+          "repository_homepage_url": "https://www.npmjs.com/package/glob",
+          "repository_download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+          "api_data_url": "https://registry.npmjs.org/glob/7.1.2",
+          "files": [
+            {
+              "path": "package/package.json",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    "license_clarity_score": {
+      "score": 30,
+      "declared": true,
+      "discovered": 0,
+      "consistency": false,
+      "spdx": false,
+      "license_texts": false
+    },
+    "summary_of_key_files": {
+      "license_expressions": [
+        {
+          "value": "isc",
+          "count": 3
+        },
+        {
+          "value": "mit",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": "Copyright (c) Isaac Z. Schlueter and Contributors",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": "Isaac Z. Schlueter and Contributors",
+          "count": 1
+        }
+      ],
+      "authors": [
+        {
+          "value": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+          "count": 1
+        }
+      ],
+      "programming_language": []
+    },
+    "files": [
+      {
+        "path": "package",
+        "type": "directory",
+        "name": "package",
+        "base_name": "package",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 7,
+        "dirs_count": 0,
+        "size_count": 55474,
+        "scan_errors": []
+      },
+      {
+        "path": "package/changelog.md",
+        "type": "file",
+        "name": "changelog.md",
+        "base_name": "changelog",
+        "extension": ".md",
+        "size": 1430,
+        "date": "2016-02-11",
+        "sha1": "97bfa68176e50777c07a7ba58f98ff7a1730ac00",
+        "md5": "00f1acff927a7059ab085d87c72bbf43",
+        "sha256": "9cb64aedf3ac2f4e80039a29914f4dacb1780d28d340f757717916cd2ca58f45",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "isc",
+            "score": 99,
+            "name": "ISC License",
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/licenses/",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/isc",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.yml",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 51,
+            "end_line": 51,
+            "matched_rule": {
+              "identifier": "isc_22.RULE",
+              "license_expression": "isc",
+              "licenses": [
+                "isc"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 99
+            },
+            "matched_text": "- switch to ISC license"
+          }
+        ],
+        "license_expressions": [
+          "isc"
+        ],
+        "percentage_of_license_text": 0.88,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/common.js",
+        "type": "file",
+        "name": "common.js",
+        "base_name": "common",
+        "extension": ".js",
+        "size": 6167,
+        "date": "2016-09-29",
+        "sha1": "2f948b495467f2a7ac0afbb1008af557ab040143",
+        "md5": "0041795c4700b9e1c1cd76729517f08b",
+        "sha256": "e9a5f37878266f441069556ea411a60d658bdfb16aa99d3b29b53fd639a5aa3a",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/glob.js",
+        "type": "file",
+        "name": "glob.js",
+        "base_name": "glob",
+        "extension": ".js",
+        "size": 19433,
+        "date": "2017-02-10",
+        "sha1": "c2e95cdccba36eaca7b12e2bcf9b383438cee52d",
+        "md5": "20c4c7d5e53fcaaf2781e53942dc2e32",
+        "sha256": "e3f3d1fd54aa24133a3d518ae7eaf26d5cbc1b9496389e18dd24ba63ea763ed3",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/isaacs/node-glob/issues/205",
+            "start_line": 587,
+            "end_line": 587
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 765,
+        "date": "2014-07-28",
+        "sha1": "bb408e929caeb1731945b2ba54bc337edb87cc66",
+        "md5": "82703a69f6d7411dde679954c2fd9dca",
+        "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "isc",
+            "score": 99,
+            "name": "ISC License",
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/licenses/",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/isc",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.yml",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 1,
+            "end_line": 1,
+            "matched_rule": {
+              "identifier": "isc_22.RULE",
+              "license_expression": "isc",
+              "licenses": [
+                "isc"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 99
+            },
+            "matched_text": "The ISC License"
+          },
+          {
+            "key": "isc",
+            "score": 100,
+            "name": "ISC License",
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/licenses/",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/isc",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.yml",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 5,
+            "end_line": 15,
+            "matched_rule": {
+              "identifier": "isc.LICENSE",
+              "license_expression": "isc",
+              "licenses": [
+                "isc"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 112,
+              "matched_length": 112,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "Permission to use, copy, modify, and/or distribute this software for any\npurpose with or without fee is hereby granted, provided that the above\ncopyright notice and this permission notice appear in all copies.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES\nWITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF\nMERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR\nANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES\nWHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN\nACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR\nIN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."
+          }
+        ],
+        "license_expressions": [
+          "isc",
+          "isc"
+        ],
+        "percentage_of_license_text": 93.44,
+        "copyrights": [
+          {
+            "value": "Copyright (c) Isaac Z. Schlueter and Contributors",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "holders": [
+          {
+            "value": "Isaac Z. Schlueter and Contributors",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": true,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": true,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/package.json",
+        "type": "file",
+        "name": "package.json",
+        "base_name": "package",
+        "extension": ".json",
+        "size": 1013,
+        "date": "2017-05-19",
+        "sha1": "844f90fa8a6fbf45d581593a333f69c5cb1f2d58",
+        "md5": "c48f03d61da8b37477bf9711d56aea41",
+        "sha256": "480d04f663e9461abde03863c44122b239b2fbbf6f309133c654c0595c786c00",
+        "mime_type": "application/json",
+        "file_type": "JSON data",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "mit",
+            "score": 71.25,
+            "name": "MIT License",
+            "short_name": "MIT License",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "MIT",
+            "homepage_url": "http://opensource.org/licenses/mit-license.php",
+            "text_url": "http://opensource.org/licenses/mit-license.php",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/mit",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.yml",
+            "spdx_license_key": "MIT",
+            "spdx_url": "https://spdx.org/licenses/MIT",
+            "start_line": 40,
+            "end_line": 42,
+            "matched_rule": {
+              "identifier": "mit_602.RULE",
+              "license_expression": "mit",
+              "licenses": [
+                "mit"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 3,
+              "matched_length": 3,
+              "match_coverage": 100,
+              "rule_relevance": 95
+            },
+            "matched_text": "    \"benchclean\": \"node benchclean.js\"\n  },\n  \"license\": \"ISC\""
+          },
+          {
+            "key": "isc",
+            "score": 100,
+            "name": "ISC License",
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/licenses/",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/isc",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/isc.yml",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 42,
+            "end_line": 42,
+            "matched_rule": {
+              "identifier": "isc_38.RULE",
+              "license_expression": "isc",
+              "licenses": [
+                "isc"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": true,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "  \"license\": \"ISC\""
+          }
+        ],
+        "license_expressions": [
+          "mit",
+          "isc"
+        ],
+        "percentage_of_license_text": 3.08,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [
+          {
+            "type": "npm",
+            "namespace": null,
+            "name": "glob",
+            "version": "7.1.2",
+            "qualifiers": {},
+            "subpath": null,
+            "primary_language": "JavaScript",
+            "description": "a little globber",
+            "release_date": null,
+            "parties": [
+              {
+                "type": "person",
+                "role": "author",
+                "name": "Isaac Z. Schlueter",
+                "email": "i@izs.me",
+                "url": "http://blog.izs.me/"
+              }
+            ],
+            "keywords": [],
+            "homepage_url": null,
+            "download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+            "size": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "sha512": null,
+            "bug_tracking_url": null,
+            "code_view_url": null,
+            "vcs_url": "git://github.com/isaacs/node-glob.git",
+            "copyright": null,
+            "license_expression": "isc",
+            "declared_license": [
+              "ISC"
+            ],
+            "notice_text": null,
+            "root_path": "package",
+            "dependencies": [
+              {
+                "purl": "pkg:npm/fs.realpath",
+                "requirement": "^1.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/inflight",
+                "requirement": "^1.0.4",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/inherits",
+                "requirement": "2",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/minimatch",
+                "requirement": "^3.0.4",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/once",
+                "requirement": "^1.3.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/path-is-absolute",
+                "requirement": "^1.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/mkdirp",
+                "requirement": "0",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/rimraf",
+                "requirement": "^2.2.8",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/tap",
+                "requirement": "^7.1.2",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              },
+              {
+                "purl": "pkg:npm/tick",
+                "requirement": "0.0.6",
+                "scope": "devDependencies",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": false
+              }
+            ],
+            "contains_source_code": null,
+            "source_packages": [],
+            "extra_data": {},
+            "purl": "pkg:npm/glob@7.1.2",
+            "repository_homepage_url": "https://www.npmjs.com/package/glob",
+            "repository_download_url": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
+            "api_data_url": "https://registry.npmjs.org/glob/7.1.2",
+            "files": [
+              {
+                "path": "package/package.json",
+                "type": "file"
+              }
+            ]
+          }
+        ],
+        "emails": [
+          {
+            "email": "i@izs.me",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "urls": [
+          {
+            "url": "http://blog.izs.me/",
+            "start_line": 2,
+            "end_line": 2
+          },
+          {
+            "url": "git://github.com/isaacs/node-glob.git",
+            "start_line": 8,
+            "end_line": 8
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": true,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/README.md",
+        "type": "file",
+        "name": "README.md",
+        "base_name": "README",
+        "extension": ".md",
+        "size": 14664,
+        "date": "2016-09-20",
+        "sha1": "449f1592c9cf2d32a0d74bead66d7267218f2c4f",
+        "md5": "ebb6bd70ed9742c82792656adb349111",
+        "sha256": "1f0c4810b48885d093a9cf5390f7268bc9b3fc637362a355ed514c9711cc1999",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text, with very long lines",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://travis-ci.org/isaacs/node-glob.svg?branch=master",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://travis-ci.org/isaacs/node-glob",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://ci.appveyor.com/api/projects/status/kd7f3yftf7unxlsx?svg=true",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://ci.appveyor.com/project/isaacs/node-glob",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://coveralls.io/repos/isaacs/node-glob/badge.svg?branch=master&service=github",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://coveralls.io/github/isaacs/node-glob?branch=master",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "url": "https://github.com/isaacs/minimatch",
+            "start_line": 100,
+            "end_line": 100
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package/sync.js",
+        "type": "file",
+        "name": "sync.js",
+        "base_name": "sync",
+        "extension": ".js",
+        "size": 12002,
+        "date": "2016-10-07",
+        "sha1": "7482bc56682b97175655976b07044afcb65b0cc9",
+        "md5": "c29ff74e143a933770c75a66998fbeeb",
+        "sha256": "f04c04e9e40ea1ada97a1e414ad26d871faa0778e3b1fb0d5fc66ec6acbc243f",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/isaacs/node-glob/issues/167",
+            "start_line": 24,
+            "end_line": 24
+          },
+          {
+            "url": "https://github.com/isaacs/node-glob/issues/205",
+            "start_line": 319,
+            "end_line": 319
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}
