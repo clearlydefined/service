@@ -71,3 +71,55 @@ function createDefinitionService() {
   }
 }
 
+describe('Definition adjust result keys ', () => {
+  let router
+
+  function mockResult() {
+    return { a: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }
+  }
+  function mockMapping() {
+    return new Map([['c', 'a']])
+  }
+
+  beforeEach(() => {
+    router = createRoutes(sinon.stub())
+  })
+
+  afterEach(() => {
+    sinon.restore()
+  })
+
+  it('match case: true', () => {
+    const expected = { a: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
+    const stub = sinon.stub(Array.prototype, 'reduce').callThrough()
+    const actual = router._adaptResultKeys(mockResult(), ['a', 'b', 'D'], new Map(), true)
+    expect(actual).to.deep.equal(expected)
+    expect(stub.calledOnce).to.be.true
+  })
+
+  it('match case: false', () => {
+    const expected = { a: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }
+    const stub = sinon.stub(Array.prototype, 'reduce').callThrough()
+    const actual = router._adaptResultKeys(mockResult(), ['a', 'b', 'D'], new Map())
+    expect(actual).to.deep.equal(expected)
+    expect(stub.calledOnce).to.be.false
+  })
+
+  it('with coordinates mapping, match case: true', () => {
+    const expected = { c: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
+    const actual = router._adaptResultKeys(mockResult(), ['c', 'b', 'D'], mockMapping(), true)
+    expect(actual).to.deep.equal(expected)
+  })
+
+  it('with coordinates mapping, match case: false', () => {
+    const expected = { c: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }
+    const actual = router._adaptResultKeys(mockResult(), ['c', 'b', 'D'], mockMapping())
+    expect(actual).to.deep.equal(expected)
+  })
+
+  it('duplicates after coordinates mapping, match case: true', () => {
+    const expected = { a: { test: 'a' }, c: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
+    const actual = router._adaptResultKeys(mockResult(), ['a', 'c', 'b', 'D'], mockMapping(), true)
+    expect(actual).to.deep.equal(expected)
+  })
+})
