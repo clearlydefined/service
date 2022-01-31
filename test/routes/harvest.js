@@ -4,9 +4,13 @@
 const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 const harvestRoutes = require('../../routes/harvest')
+const utils = require('../../lib/utils')
 
 describe('Harvest route', () => {
+  afterEach(() => sinon.restore())
+
   it('rejects empty queue POST', async () => {
     const request = createRequest()
     const response = httpMocks.createResponse()
@@ -53,6 +57,14 @@ describe('Harvest route', () => {
     expect(response.statusCode).to.be.eq(201)
     expect(harvester.harvest.calledOnce).to.be.true
     expect(harvester.harvest.calledWith([{ tool: 'test', coordinates: '1/2/3/4' }], sinon.match.any)).to.be.true
+  })
+
+  it('normalize coordinates', async () => {
+    const harvester = { harvest: sinon.stub() }
+    const router = createRoutes(harvester)
+    sinon.stub(utils, 'toNormalizedEntityCoordinates').resolves(EntityCoordinates.fromString('one/two/three/four'))
+    const normalized = await router._normalizeCoordinates([{ tool: 'test', coordinates: '1/2/3/4' }])
+    expect(normalized).to.deep.equal([{ tool: 'test', coordinates: 'one/two/three/four' }])
   })
 
   it('summarize harvested data for given tool and tool version', async () => {
