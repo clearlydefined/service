@@ -9,7 +9,14 @@ const path = require('path')
 const { get, uniq, flatten } = require('lodash')
 const { expect } = require('chai')
 
-const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2', '30.1.0']
+const scancodeVersions = [
+  '2.2.1',
+  '2.9.2',
+  '2.9.8',
+  '3.0.0',
+  '3.0.2',
+  '30.1.0'
+]
 
 describe('ScancodeSummarizer basic compatability', () => {
   it('summarizes basic npm', () => {
