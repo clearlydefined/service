@@ -7,6 +7,7 @@ summarizer.logger = { info: () => { } }
 const fs = require('fs')
 const path = require('path')
 const { get, uniq, flatten } = require('lodash')
+const { expect } = require('chai')
 
 const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2', '30.1.0']
 
@@ -37,8 +38,6 @@ describe('ScancodeSummarizer basic compatability', () => {
     }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-large')
-      // console.log("foo")
-      // console.log(harvestData)
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
@@ -50,6 +49,18 @@ describe('ScancodeSummarizer basic compatability', () => {
       assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
       assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
       assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+    }
+  })
+
+  it('throws an error on an invalid scancode version', () => {
+    const version = '0.0.0'
+    const coordinates = { type: 'npm', provider: 'npmjs' }
+    const harvestData = getHarvestData(version, 'npm-basic')
+    try {
+      summarizer.summarize(coordinates, harvestData)
+      throw new Error('Invalid version of ScanCode')
+    } catch (error) {
+      expect(error.message).to.eq('Invalid version of ScanCode')
     }
   })
 

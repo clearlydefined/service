@@ -57,6 +57,8 @@ class ScanCodeSummarizer {
         return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license'))
       case '30.1.0':
         return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license[0]'))
+      default:
+        throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
     }
   }
 
