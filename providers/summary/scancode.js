@@ -35,7 +35,7 @@ class ScanCodeSummarizer {
     // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
     if (get(coordinates, 'type') !== 'crate') {
       const declaredLicense =
-        this._readDeclaredLicense(harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+        this._readDeclaredLicense(scancodeVersion, harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
       setIfValue(result, 'licensed.declared', declaredLicense)
     }
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
@@ -47,9 +47,19 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _readDeclaredLicense(harvested) {
-    const declared = get(harvested, 'content.summary.packages[0].declared_license')
-    return SPDX.normalize(declared)
+  _readDeclaredLicense(scancodeVersion, harvested) {
+    switch (scancodeVersion) {
+      case '2.2.1':
+      case '2.9.2':
+      case '2.9.8':
+      case '3.0.0':
+      case '3.0.2':
+        return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license'))
+      case '30.1.0':
+        return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license[0]'))
+      default:
+        throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
+    }
   }
 
   // find and return the files that should be considered for as a license determinator for this summarization
@@ -72,6 +82,8 @@ class ScanCodeSummarizer {
         return this._getLicenseByFileName(rootFile, coordinates)
       case '3.0.0':
       case '3.0.2':
+        return this._getLicenseByIsLicenseText(rootFile)
+      case '30.1.0':
         return this._getLicenseByIsLicenseText(rootFile)
       default:
         return null

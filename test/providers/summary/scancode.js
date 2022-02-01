@@ -3,12 +3,13 @@
 
 const assert = require('assert')
 const summarizer = require('../../../providers/summary/scancode')()
-summarizer.logger = { info: () => {} }
+summarizer.logger = { info: () => { } }
 const fs = require('fs')
 const path = require('path')
 const { get, uniq, flatten } = require('lodash')
+const { expect } = require('chai')
 
-const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2']
+const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2', '30.1.0']
 
 describe('ScancodeSummarizer basic compatability', () => {
   it('summarizes basic npm', () => {
@@ -48,6 +49,18 @@ describe('ScancodeSummarizer basic compatability', () => {
       assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
       assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
       assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+    }
+  })
+
+  it('throws an error on an invalid scancode version', () => {
+    const version = '0.0.0'
+    const coordinates = { type: 'npm', provider: 'npmjs' }
+    const harvestData = getHarvestData(version, 'npm-basic')
+    try {
+      summarizer.summarize(coordinates, harvestData)
+      throw new Error('Invalid version of ScanCode')
+    } catch (error) {
+      expect(error.message).to.eq('Invalid version of ScanCode')
     }
   })
 
@@ -119,6 +132,32 @@ describe('ScancodeSummarizer fixtures', () => {
           hashes: { sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66' }
         },
         { path: 'package/package.json', hashes: { sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58' } },
+        { path: 'package/README.md', hashes: { sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f' } },
+        { path: 'package/sync.js', hashes: { sha1: '7482bc56682b97175655976b07044afcb65b0cc9' } }
+      ]
+    })
+  })
+
+  it('summarizes basic npm 30.1.0', () => {
+    const coordinates = { type: 'npm', provider: 'npmjs', name: 'glob', revision: '7.1.2' }
+    const harvestData = getHarvestData('30.1.0', 'npm-basic')
+    const result = summarizer.summarize(coordinates, harvestData)
+    //console.log(result)
+    assert.deepEqual(result, {
+      described: { releaseDate: '2017-05-19' },
+      licensed: { declared: 'ISC' },
+      files: [
+        { path: 'package/changelog.md', license: 'ISC', hashes: { sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00' } },
+        { path: 'package/common.js', hashes: { sha1: '2f948b495467f2a7ac0afbb1008af557ab040143' } },
+        { path: 'package/glob.js', hashes: { sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d' } },
+        {
+          path: 'package/LICENSE',
+          license: 'ISC',
+          natures: ['license'],
+          attributions: ['Copyright (c) Isaac Z. Schlueter and Contributors'],
+          hashes: { sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66' }
+        },
+        { path: 'package/package.json', license: 'ISC', hashes: { sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58' } },
         { path: 'package/README.md', hashes: { sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f' } },
         { path: 'package/sync.js', hashes: { sha1: '7482bc56682b97175655976b07044afcb65b0cc9' } }
       ]
