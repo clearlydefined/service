@@ -1,0 +1,229 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/npm/npmjs/-/glob/7.1.2",
+    "fetchedAt": "2018-02-27T20:03:11.607Z",
+    "links": {
+      "self": {
+        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode:2.2.1",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "version": "2.2.1",
+    "contentType": "application/json",
+    "releaseDate": "2017-05-19T20:15:25.471Z",
+    "processedAt": "2018-02-27T20:05:25.944Z"
+  },
+  "content": {
+    "scancode_notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+    "scancode_version": "2.2.1",
+    "scancode_options": {
+      "--copyright": true,
+      "--license": true,
+      "--package": true,
+      "--info": true,
+      "--license-score": 0,
+      "--strip-root": true,
+      "--format": "json-pp",
+      "--diag": true,
+      "--only-findings": true
+    },
+    "files_count": 2,
+    "files": [
+      {
+        "path": "package/package.json",
+        "type": "file",
+        "name": "package.json",
+        "base_name": "package",
+        "extension": ".json",
+        "date": "2017-05-19",
+        "size": 1013,
+        "sha1": "844f90fa8a6fbf45d581593a333f69c5cb1f2d58",
+        "md5": "c48f03d61da8b37477bf9711d56aea41",
+        "files_count": null,
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "JSON",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "scan_errors": [],
+        "licenses": [],
+        "copyrights": [
+          {
+            "statements": [],
+            "holders": [],
+            "authors": ["Isaac Z. Schlueter <i@izs.me>"],
+            "start_line": 2,
+            "end_line": 4
+          }
+        ],
+        "packages": [
+          {
+            "type": "npm",
+            "name": "glob",
+            "version": "7.1.2",
+            "primary_language": "JavaScript",
+            "packaging": null,
+            "summary": "a little globber",
+            "description": null,
+            "payload_type": null,
+            "size": null,
+            "release_date": null,
+            "authors": [
+              {
+                "type": "person",
+                "name": "Isaac Z. Schlueter",
+                "email": "i@izs.me",
+                "url": "http://blog.izs.me/"
+              }
+            ],
+            "maintainers": [],
+            "contributors": [],
+            "owners": [],
+            "packagers": [],
+            "distributors": [],
+            "vendors": [],
+            "keywords": [],
+            "keywords_doc_url": null,
+            "metafile_locations": ["package"],
+            "metafile_urls": [],
+            "homepage_url": null,
+            "notes": null,
+            "download_urls": ["https://registry.npmjs.org/glob/-/glob-7.1.2.tgz"],
+            "download_sha1": null,
+            "download_sha256": null,
+            "download_md5": null,
+            "bug_tracking_url": null,
+            "support_contacts": [],
+            "code_view_url": null,
+            "vcs_tool": "git",
+            "vcs_repository": "git://github.com/isaacs/node-glob.git",
+            "vcs_revision": null,
+            "copyright_top_level": null,
+            "copyrights": [],
+            "asserted_licenses": [{ "license": "ISC", "url": null, "text": null, "notice": null }],
+            "legal_file_locations": [],
+            "license_expression": null,
+            "license_texts": [],
+            "notice_texts": [],
+            "dependencies": {
+              "development": [
+                { "name": "mkdirp", "version": null, "version_constraint": "0" },
+                {
+                  "name": "rimraf",
+                  "version": null,
+                  "version_constraint": "^2.2.8"
+                },
+                {
+                  "name": "tap",
+                  "version": null,
+                  "version_constraint": "^7.1.2"
+                },
+                { "name": "tick", "version": null, "version_constraint": "0.0.6" }
+              ],
+              "runtime": [
+                {
+                  "name": "fs.realpath",
+                  "version": null,
+                  "version_constraint": "^1.0.0"
+                },
+                {
+                  "name": "inflight",
+                  "version": null,
+                  "version_constraint": "^1.0.4"
+                },
+                {
+                  "name": "inherits",
+                  "version": null,
+                  "version_constraint": "2"
+                },
+                {
+                  "name": "minimatch",
+                  "version": null,
+                  "version_constraint": "^3.0.4"
+                },
+                {
+                  "name": "once",
+                  "version": null,
+                  "version_constraint": "^1.3.0"
+                },
+                {
+                  "name": "path-is-absolute",
+                  "version": null,
+                  "version_constraint": "^1.0.0"
+                }
+              ]
+            },
+            "related_packages": []
+          }
+        ]
+      },
+      {
+        "path": "package/LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "date": "2014-07-28",
+        "size": 765,
+        "sha1": "bb408e929caeb1731945b2ba54bc337edb87cc66",
+        "md5": "82703a69f6d7411dde679954c2fd9dca",
+        "files_count": null,
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "scan_errors": [],
+        "licenses": [
+          {
+            "key": "isc",
+            "score": 100,
+            "short_name": "ISC License",
+            "category": "Permissive",
+            "owner": "ISC - Internet Systems Consortium",
+            "homepage_url": "https://www.isc.org/software/license",
+            "text_url": "http://fedoraproject.org/wiki/Licensing:MIT#Old_Style_with_legal_disclaimer_2",
+            "reference_url": "https://enterprise.dejacode.com/urn/urn:dje:license:isc",
+            "spdx_license_key": "ISC",
+            "spdx_url": "https://spdx.org/licenses/ISC",
+            "start_line": 5,
+            "end_line": 15,
+            "matched_rule": {
+              "identifier": "isc.LICENSE",
+              "license_choice": false,
+              "licenses": ["isc"],
+              "matcher": "2-aho",
+              "rule_length": 112,
+              "matched_length": 112,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            }
+          }
+        ],
+        "copyrights": [
+          {
+            "statements": ["Copyright (c) Isaac Z. Schlueter"],
+            "holders": ["Isaac Z. Schlueter"],
+            "authors": [],
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "packages": []
+      }
+    ]
+  }
+}
