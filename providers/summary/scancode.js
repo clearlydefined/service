@@ -55,8 +55,18 @@ class ScanCodeSummarizer {
       case '3.0.0':
       case '3.0.2':
         return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license'))
-      case '30.1.0':
-        return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license[0]'))
+      case '30.1.0': {
+        let declared_license = get(harvested, 'content.summary.packages[0].declared_license[0]')
+
+        // Some Maven packages have this value as an object rather than a string
+        // Example: for maven/mavencentral/redis.clients/jedis/4.1.1
+        // declared_license would be { "name": "MIT", "url": "http://github.com/redis/jedis/raw/master/LICENSE.txt", "comments": null, "distribution": "repo" }'
+        if (typeof declared_license != 'string' && declared_license != undefined) {
+          declared_license = declared_license['name']
+        }
+
+        return SPDX.normalize(declared_license)
+      }
       default:
         throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
     }
