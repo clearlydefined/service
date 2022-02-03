@@ -906,7 +906,7 @@ ${this._formatDefinitions(patch.patches)}`
     const tree = await this.smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
     // Since these trees are used very often and not changed frequently, it should be cached but not be kept in Redis.
     // In case webhook event failed to trigger cache clean, set ttl to a day
-    this.treeCache.put(key, tree, 24 * hourInMS)
+    this.treeCache.put(key, tree, 4 * hourInMS)
     return tree
   }
 
