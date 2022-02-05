@@ -4,6 +4,13 @@
   "title": "coordinates-1.0",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "type",
+    "provider",
+    "name",
+    "namespace",
+    "revision"
+  ],
   "properties": {
     "type": {
       "enum": [

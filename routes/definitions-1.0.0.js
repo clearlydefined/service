@@ -17,7 +17,7 @@ async function getDefinition(req, resp) {
   const force = req.query.force === 'true'
   let coordinatesEntity = EntityCoordinates.fromString(coordinates)
   const isValid = validator.validate('definitions-get-dto', {
-    coordinates: coordinatesEntity,
+    coordinates: coordinatesEntity || undefined,
     pr,
     force,
     expand: expand?.split(',')

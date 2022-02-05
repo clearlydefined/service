@@ -4,6 +4,9 @@
   "title": "definitions-get-dto",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "coordinates"
+  ],
   "properties": {
     "coordinates": {
       "$ref": "coordinates-1.0.json#"
