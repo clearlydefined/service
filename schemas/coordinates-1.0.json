@@ -6,9 +6,7 @@
   "additionalProperties": false,
   "required": [
     "type",
-    "provider",
     "name",
-    "namespace",
     "revision"
   ],
   "properties": {

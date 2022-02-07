@@ -7,7 +7,7 @@ const sinon = require('sinon')
 const definitionsRoutes = require('../../routes/definitions-1.0.0')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
-describe('Definition route', () => {
+describe('Definition v1.0.0 route', () => {
   it('accepts a good GET request', async () => {
     const request = createGetRequest()
     const response = httpMocks.createResponse()
