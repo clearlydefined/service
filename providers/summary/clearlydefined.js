@@ -177,9 +177,6 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       urls.download
     )
-    if (!get(result, 'described.sourceLocation.url'))
-      setIfValue(result, 'described.sourceLocation.url', get(data, 'manifest.summary.scm.0.url.0'))
-
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
