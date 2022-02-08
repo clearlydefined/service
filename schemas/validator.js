@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true })
+const ajv = new Ajv({ allErrors: true, jsonPointers: true })
 require('ajv-errors')(ajv)
-ajv.addSchema(require('../schemas/curations-1.0'), 'curations')
-ajv.addSchema(require('../schemas/curation-1.0'), 'curation')
-ajv.addSchema(require('../schemas/definition-1.0'), 'definition')
-ajv.addSchema(require('../schemas/harvest-1.0'), 'harvest')
-ajv.addSchema(require('../schemas/notice-request'), 'notice-request')
-ajv.addSchema(require('../schemas/definitions-find'), 'definitions-find')
+ajv.addSchema(require('./curations-1.0'), 'curations')
+ajv.addSchema(require('./curation-1.0'), 'curation')
+ajv.addSchema(require('./definition-1.0'), 'definition')
+ajv.addSchema(require('./harvest-1.0'), 'harvest')
+ajv.addSchema(require('./notice-request'), 'notice-request')
+ajv.addSchema(require('./definitions-find'), 'definitions-find')
+ajv.addSchema(require('./definitions-get-dto-1.0'), 'definitions-get-dto')
+ajv.addSchema(require('./coordinates-1.0'), 'coordinates-1.0')
 
 module.exports = ajv

@@ -1,0 +1,40 @@
+{
+  "$id": "https://api.clearlydefined.io/schemas/definitions-get-dto-1.0.json#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "definitions-get-dto",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "coordinates"
+  ],
+  "properties": {
+    "coordinates": {
+      "$ref": "coordinates-1.0.json#"
+    },
+    "pr": {
+      "type": "number",
+      "errorMessage": {
+        "type": "pr must be a number"
+      }
+    },
+    "force": {
+      "type": "boolean",
+      "errorMessage": {
+        "type": "force must be boolean"
+      }
+    },
+    "expand": {
+      "type": "array",
+      "items": [
+        {
+          "enum": [
+            "-files"
+          ]
+        }
+      ],
+      "errorMessage": {
+        "type": "expand only support '-files'"
+      }
+    }
+  }
+}

@@ -172,7 +172,8 @@ describe('ScanCode summarizer', () => {
         buildFile('package/LICENSE.foo', 'GPL-3.0', [], 100, {}, { is_license_text: true }),
         buildPackageFile('package/package.json', 'MIT', [])
       ],
-      'npm/npmjs/-/test/1.0'
+      'npm/npmjs/-/test/1.0',
+      '3.0.2'
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
@@ -255,7 +256,7 @@ function validate(definition) {
   if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
 }
 
-function setup(files, coordinateSpec, scancode_version = '3.0.2') {
+function setup(files, coordinateSpec, scancode_version = '30.1.0') {
   const harvested = {
     _metadata: {},
     content: { scancode_version, files }
