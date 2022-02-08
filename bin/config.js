@@ -52,7 +52,7 @@ module.exports = {
     store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store')
   },
   aggregator: {
-    precedence: [['reuse', 'clearlydefined', 'licensee', 'scancode', 'fossology', 'cdsource']]
+    precedence: [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
   },
   definition: {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
