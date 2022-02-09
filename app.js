@@ -16,6 +16,8 @@ const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
+const routesVersioning = require('express-routes-versioning')()
+const v1 = '1.0.0'
 
 function createApp(config) {
   const initializers = []
@@ -72,6 +74,7 @@ function createApp(config) {
 
   const curationsRoute = require('./routes/curations')(curationService, logger)
   const definitionsRoute = require('./routes/definitions')(definitionService)
+  const definitionsRouteV1 = require('./routes/definitions-1.0.0')(definitionService)
 
   const suggestionService = require('./business/suggestionService')(definitionService)
   const suggestionsRoute = require('./routes/suggestions')(suggestionService)
@@ -196,7 +199,7 @@ function createApp(config) {
   app.use('/harvest', harvestRoute)
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
-  app.use('/definitions', definitionsRoute)
+  app.use('/definitions', routesVersioning({ [v1]: definitionsRouteV1 }, definitionsRoute))
   app.use('/notices', noticesRoute)
   app.use('/attachments', attachmentsRoute)
   app.use('/suggestions', suggestionsRoute)
