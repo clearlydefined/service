@@ -52,6 +52,7 @@
         "gitlab",
         "mavencentral",
         "mavengoogle",
+        "gradleplugin",
         "packagist",
         "golang",
         "nuget",
