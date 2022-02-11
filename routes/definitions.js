@@ -112,33 +112,47 @@ async function listDefinitions(request, response) {
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
-  const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
+  const normalizedCoordinates = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
+  const coordinatesLookup = mapCoordinates(request, normalizedCoordinates)
 
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
-    const result = await definitionService.getAll(normalizedCoordinatesList, force, expand)
+    let result = await definitionService.getAll(normalizedCoordinates, force, expand)
+
     const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
-    if (matchCasing) {
-      // enforce request casing on keys as per issue #589
-      const requestLowered = request.body.map(k => k.toLowerCase())
-      const casingEnforced = Object
-        .keys(result)
-        .reduce((total, resultKey) => {
-          const idx = requestLowered.indexOf(resultKey.toLowerCase())
-          const key = idx >= 0 ? request.body[idx] : resultKey
-          total[key] = result[resultKey]
-          return total
-        }, {})
-      response.send(casingEnforced)
-    }
-    else {
-      response.send(result)
-    }
+    // enforce request casing on keys as per issue #589
+    result = adaptResultKeys(result, request.body, coordinatesLookup, matchCasing)
+    response.send(result)
   } catch (err) {
     response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
   }
+}
+
+function mapCoordinates(request, normalizedCoordinates) {
+  const coordinatesLookup = new Map()
+  for (let i = 0; i < request.body.length; i++) {
+    const requestedKey = request.body[i]
+    const normalizedKey = normalizedCoordinates[i]?.toString()
+    if (requestedKey && normalizedKey && requestedKey.toLowerCase() !== normalizedKey.toLowerCase())
+      coordinatesLookup.set(requestedKey, normalizedKey)
+  }
+  return coordinatesLookup
+}
+
+function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
+  const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
+  if (!shouldAdaptKeys) return result
+  const resultKeyLookup = new Map(Object.keys(result).map(key => [key.toLowerCase(), key]))
+  return requestedKeys.reduce((total, requested) => {
+    let mapped = coordinatesLookup.get(requested)
+    if (matchCase) mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
+    const resultKey = mapped || resultKeyLookup.get(requested.toLowerCase())
+    const value = result[resultKey]
+    if (value) total[mapped ? requested : resultKey] = value
+    return total
+  }, {})
 }
 
 let definitionService
@@ -148,6 +162,7 @@ function setup(definition, testFlag = false) {
 
   if (testFlag) {
     router._getDefinition = getDefinition
+    router._adaptResultKeys = adaptResultKeys
   }
   return router
 }

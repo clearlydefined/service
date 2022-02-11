@@ -558,6 +558,7 @@ components:
           - gitlab
           - mavencentral
           - mavengoogle
+          - gradleplugin
           - npmjs
           - nuget
           - packagist

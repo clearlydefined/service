@@ -71,7 +71,7 @@ class MongoCurationStore {
           coordinates: this._lowercaseCoordinates(curation.data.coordinates),
           revisions: Object.keys(curation.data.revisions).map(revision => {
             return {
-              revision,
+              revision: revision.toLowerCase(),
               data: curation.data.revisions[revision]
             }
           })

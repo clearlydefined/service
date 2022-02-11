@@ -6,6 +6,7 @@ const router = require('express').Router()
 const utils = require('../lib/utils')
 const bodyParser = require('body-parser')
 const validator = require('../schemas/validator')
+const EntityCoordinates = require('../lib/entityCoordinates')
 
 // Gets a given harvested file
 router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(get))
@@ -80,8 +81,21 @@ async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
   if (requests.length > 1000) return response.status(400).send(`Too many coordinates: ${requests.length}`)
   if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
-  await harvestService.harvest(request.body, request.query.turbo)
+  const normalizedBody = await normalizeCoordinates(requests)
+
+  await harvestService.harvest(normalizedBody, request.query.turbo)
   response.sendStatus(201)
+}
+
+async function normalizeCoordinates(requests) {
+  const normalizedBody = await Promise.all(requests
+    .map(async (entry) => {
+      const coordinates = EntityCoordinates.fromString(entry?.coordinates)
+      if (!coordinates) return null
+      const mapped = await utils.toNormalizedEntityCoordinates(coordinates)
+      return { ...entry, coordinates: mapped.toString() }
+    }))
+  return normalizedBody.filter(entry => entry && entry.coordinates)
 }
 
 let harvestService
@@ -95,6 +109,7 @@ function setup(harvester, store, summarizer, testFlag = false) {
   if (testFlag) {
     router._queue = queue
     router._get = get
+    router._normalizeCoordinates = normalizeCoordinates
   }
   return router
 }

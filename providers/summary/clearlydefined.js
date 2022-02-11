@@ -15,6 +15,11 @@ const {
   mergeDefinitions
 } = require('../../lib/utils')
 
+const mavenBasedUrls = {
+  mavencentral: 'https://repo1.maven.org/maven2',
+  gradleplugin: 'https://plugins.gradle.org/m2'
+}
+
 class ClearlyDescribedSummarizer {
   constructor(options) {
     this.options = options
@@ -150,8 +155,8 @@ class ClearlyDescribedSummarizer {
         break
 
       default:
-        urls.registry = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}`
-        urls.download = `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+        urls.registry = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     }
 
     return urls
