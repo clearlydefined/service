@@ -50,6 +50,7 @@ class ScanCodeSummarizer {
   _readDeclaredLicense(scancodeVersion, harvested) {
     switch (scancodeVersion) {
       case '2.2.1':
+      case '2.9.1':
       case '2.9.2':
       case '2.9.8':
       case '3.0.0':
