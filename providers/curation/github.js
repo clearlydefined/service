@@ -54,12 +54,15 @@ class GitHubCurationService {
   async syncAllContributions(client) {
     const states = ['open', 'closed']
     for (let state of states) {
-      let response = await client.pullRequests.getAll({
+      let prOptions = {
         owner: this.options.owner,
         repo: this.options.repo,
         per_page: 100,
         state
-      })
+      }
+      //See https://docs.github.com/en/rest/reference/pulls#list-pull-requests
+      if (state === 'closed') prOptions = { ...prOptions, sort: 'updated', direction: 'asc' }
+      let response = await client.pullRequests.getAll(prOptions)
       this._processContributions(response.data)
       while (this.github.hasNextPage(response)) {
         response = await this.github.getNextPage(response)
