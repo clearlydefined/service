@@ -432,7 +432,8 @@ describe('Utils extractDate', () => {
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
       '1900-01-01': null,
-      '9999-01-01': null
+      '9999-01-01': null,
+      '2018-05-28 07:26:25 UTC': '2018-05-28'
     }
     const nowIso = DateTime.utc().toISODate()
     inputs[nowIso] = nowIso
@@ -595,12 +596,28 @@ describe('Utils getLicenseLocations', () => {
       expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
     })
 
-    it('finds the correct license location for complex namespaces', async () => {
+    it('finds the correct license location for complex namespaces with lower case %2f', async () => {
       const complexNamespaceRequest = {
         params: {
           type: 'go',
           provider: 'golang',
           namespace: 'github.com%2fconcourse',
+          name: 'github-release-resource',
+          revision: 'v1.6.4'
+        }
+      }
+
+      const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+    })
+
+    it('finds the correct license location for complex namespaces with upper case %2F', async () => {
+      const complexNamespaceRequest = {
+        params: {
+          type: 'go',
+          provider: 'golang',
+          namespace: 'github.com%2Fconcourse',
           name: 'github-release-resource',
           revision: 'v1.6.4'
         }
