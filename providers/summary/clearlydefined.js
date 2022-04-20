@@ -336,7 +336,7 @@ class ClearlyDescribedSummarizer {
       setIfValue(result, 'described.urls.download', httpSource)
     } else if (gitSource) {
       const homepage = get(data, 'registryData.homepage')
-      const revision = get(data, 'registryData.sourceInfo.revision')
+      const revision = get(data, 'sourceInfo.revision')
       if (homepage && revision) {
         setIfValue(result, 'described.urls.version', `${homepage}/tree/${revision}`)
         setIfValue(result, 'described.urls.download', `${homepage}/archive/${revision}.zip`)

@@ -432,7 +432,8 @@ describe('Utils extractDate', () => {
       '1900-01-01:T00:00:00': null,
       '9999-01-01:T00:00:00': null,
       '1900-01-01': null,
-      '9999-01-01': null
+      '9999-01-01': null,
+      '2018-05-28 07:26:25 UTC': '2018-05-28'
     }
     const nowIso = DateTime.utc().toISODate()
     inputs[nowIso] = nowIso
