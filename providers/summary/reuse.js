@@ -14,7 +14,7 @@ class FsfeReuseSummarizer {
    * Summarize the raw information related to the given coordinates.
    *
    * @param {EntitySpec} coordinates - The entity for which we are summarizing
-   * @param {*} harvested - the set of raw tool ouptuts related to the idenified entity
+   * @param {*} harvested - the set of raw tool outputs related to the identified entity
    * @returns {Definition} - a summary of the given raw information
    */
   summarize(coordinates, harvested) {
@@ -65,7 +65,9 @@ class FsfeReuseSummarizer {
 
   _addLicenseDeclaration(harvested, result) {
     if (!harvested.reuse.licenses) return
-    const declaredLicenses = harvested.reuse.licenses.map(license => isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null).filter(x => x)
+    const declaredLicenses = harvested.reuse.licenses
+      .map(license => isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null)
+      .filter(x => x)
     setIfValue(result, 'licensed.declared', uniq(declaredLicenses).join(' AND '))
   }
 

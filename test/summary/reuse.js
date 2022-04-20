@@ -7,7 +7,10 @@ const summarizer = require('../../providers/summary/reuse')()
 describe('FsfeReuseSummarizer', () => {
 
   it('should include populate all available attributes', () => {
-    const files = [{ fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' }, { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'Somebody else', checksumSha1: '23' }]
+    const files = [
+      { fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' },
+      { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'Somebody else', checksumSha1: '23' }
+    ]
     const licenses = ['MIT', 'Apache-2.0']
     const data = setup(files, licenses)
     const result = summarizer.summarize(null, data)
@@ -23,7 +26,10 @@ describe('FsfeReuseSummarizer', () => {
   })
 
   it('should ignore missing or irrelevant attributes', () => {
-    const files = [{ fileName: 'README.md', licenseConcluded: 'MIT', fileCopyrightText: 'Somebody', checksumSha1: '42' }, { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'NONE', checksumSha1: '23' }]
+    const files = [
+      { fileName: 'README.md', licenseConcluded: 'MIT', fileCopyrightText: 'Somebody', checksumSha1: '42' },
+      { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'NONE', checksumSha1: '23' }
+    ]
     const licenses = ['MIT', 'Apache-2.0']
     const data = setup(files, licenses)
     const result = summarizer.summarize(null, data)
@@ -39,7 +45,10 @@ describe('FsfeReuseSummarizer', () => {
   })
 
   it('should ignore missing license information', () => {
-    const files = [{ fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' }, { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', fileCopyrightText: 'NONE', checksumSha1: '23' }]
+    const files = [
+      { fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' },
+      { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', fileCopyrightText: 'NONE', checksumSha1: '23' }
+    ]
     const licenses = ['MIT']
     const data = setup(files, licenses)
     const result = summarizer.summarize(null, data)
