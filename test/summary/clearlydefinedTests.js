@@ -799,4 +799,10 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
     summarizer.addGoData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGo)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
+
+  it('gets license from data', () => {
+    let result = {}
+    summarizer.addGoData(result, { registryData: { licenses: ['Apache-2.0', 'BSD-2-Clause, BSD-3-Clause, HPND'] } }, testCoordinatesGo)
+    assert.strictEqual(result.licensed.declared, 'Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND HPND')
+  })
 })
