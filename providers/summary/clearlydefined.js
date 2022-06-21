@@ -497,7 +497,7 @@ class ClearlyDescribedSummarizer {
     // Based on the https://pkg.go.dev/license-policy and github.com/google/licensecheck,
     // ',' means use AND logic.
     const andClause = ' AND '
-    const declaredLicense = licenses.map(license => license.replace(/, /g, andClause)).join(andClause);
+    const declaredLicense = licenses.map(license => license.replace(/, /g, andClause)).join(andClause)
     setIfValue(result, 'licensed.declared', SPDX.normalize(declaredLicense))
   }
 }
