@@ -4,6 +4,7 @@ chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 const sinon = require('sinon')
 const utils = require('../../lib/utils')
+const { DateTime } = require('luxon')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -434,6 +435,12 @@ describe('Utils extractDate', () => {
       '9999-01-01': null,
       '2018-05-28 07:26:25 UTC': '2018-05-28'
     }
+    const nowIso = DateTime.utc().toISODate()
+    inputs[nowIso] = nowIso
+    const nowPlus20DaysIso = DateTime.utc().plus({ days: 20 }).toISODate()
+    inputs[nowPlus20DaysIso] = nowPlus20DaysIso
+    const nowPlus31DaysIso = DateTime.utc().plus({ days: 31 }).toISODate()
+    inputs[nowPlus31DaysIso] = null
 
     for (const timestamp of Object.getOwnPropertyNames(inputs)) {
       const date = utils.extractDate(timestamp)
