@@ -15,6 +15,7 @@ const logger = require('../logging/logger')
 const semver = require('semver')
 const { LicenseMatcher } = require('../../lib/licenseMatcher')
 const { Cache } = require('memory-cache')
+const { deCodeSlashes } = require('../../lib/utils')
 
 const hourInMS = 60 * 60 * 1000
 
@@ -107,7 +108,7 @@ class GitHubCurationService {
       head: { ...pick(pr.head, ['sha']), repo: { ...pick(get(pr, 'head.repo'), ['id']) } },
       base: { ...pick(pr.base, ['sha']), repo: { ...pick(get(pr, 'base.repo'), ['id']) } }
     }
-    this._cleanCurationTree(pr)
+    this._cleanCurationTree(pr.number)
     await this.store.updateContribution(data, curations)
     let toBeCleaned = flatten(curations.map(curation => curation.getCoordinates()))
     // Should also delete revision less coordinate curation cache
@@ -626,7 +627,7 @@ ${this._formatDefinitions(patch.patches)}`
     this.logger.info('7:compute:curation_source:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const tree = await this._getCurationTree(pr)
     this.logger.info('7:compute:curation_source:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    const treePath = flatMap(path.split('/'), (current, i, original) =>
+    const treePath = flatMap(deCodeSlashes(path).split('/'), (current, i, original) =>
       original.length - 1 != i ? [current, 'children'] : current
     )
     const blob = get(tree, treePath)
