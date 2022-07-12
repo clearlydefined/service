@@ -554,6 +554,40 @@ describe('Utils parseNamespaceNameRevision', () => {
   })
 })
 
+describe('Utils parseParamsFromPath', () => {
+  it('should parse path into params for go', () => {
+    const result = utils.parseParamsFromPath('go/golang/rsc.io/quote/v3/v3.1.0')
+    expect(result.type).to.eq('go')
+    expect(result.provider).to.eq('golang')
+    expect(result.namespace).to.eq('rsc.io/quote')
+    expect(result.name).to.eq('v3')
+    expect(result.revision).to.eq('v3.1.0')
+  })
+
+  it('should parse path into params for npm', () => {
+    const result = utils.parseParamsFromPath('npm/npmjs/-/javascriptproperties/0.8.1')
+    expect(result.type).to.eq('npm')
+    expect(result.provider).to.eq('npmjs')
+    expect(result.namespace).to.eq('-')
+    expect(result.name).to.eq('javascriptproperties')
+    expect(result.revision).to.eq('0.8.1')
+  })
+
+  it('should parse path into params for gitlab', () => {
+    const result = utils.parseParamsFromPath('git/gitlab/gitlab-org/frontend/playground/batch-issue-creator/fc20856ee7113cea9ffab37e1e3bc65d35c3948f')
+    expect(result.type).to.eq('git')
+    expect(result.provider).to.eq('gitlab')
+    expect(result.namespace).to.eq('gitlab-org/frontend/playground')
+    expect(result.name).to.eq('batch-issue-creator')
+    expect(result.revision).to.eq('fc20856ee7113cea9ffab37e1e3bc65d35c3948f')
+  })
+
+  it('rejects invalid path', () => {
+    const result = utils.parseParamsFromPath('npm/npmjs/javascriptproperties/0.8.1')
+    expect(result).not.to.ok
+  })
+})
+
 describe('Utils getLicenseLocations', () => {
   const npmRequest = {
     params: {

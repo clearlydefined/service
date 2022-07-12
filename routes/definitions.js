@@ -8,6 +8,7 @@ const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
 const logger = require('../providers/logging/logger')
+const pathToParams = require('../middleware/pathToParams')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -91,20 +92,6 @@ async function reload(request, response) {
   response.status(200).end()
 }
 
-// Previews the definition for a component aggregated and with the POST'd curation applied.
-// Typically used by a UI to preview the effect of a patch
-router.post(
-  '/:type/:provider/:namespace/:name/:revision',
-  asyncMiddleware(async (request, response) => {
-    if (!request.query.preview)
-      return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
-    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-    const result = await definitionService.compute(coordinates, request.body)
-    response.status(200).send(result)
-  })
-)
-
 // POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(listDefinitions))
@@ -155,6 +142,18 @@ function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
   }, {})
 }
 
+// Previews the definition for a component aggregated and with the POST'd curation applied.
+// Typically used by a UI to preview the effect of a patch
+router.post('/*', [pathToParams, asyncMiddleware(previewWithCoordinatesParams)])
+async function previewWithCoordinatesParams(request, response) {
+  if (!request.query.preview)
+    return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
+  if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
+  const result = await definitionService.compute(coordinates, request.body)
+  response.status(200).send(result)
+}
+
 let definitionService
 
 function setup(definition, testFlag = false) {
@@ -163,6 +162,7 @@ function setup(definition, testFlag = false) {
   if (testFlag) {
     router._getDefinition = getDefinition
     router._adaptResultKeys = adaptResultKeys
+    router._previewWithCoordinatesParams = previewWithCoordinatesParams
   }
   return router
 }

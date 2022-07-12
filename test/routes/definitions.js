@@ -27,6 +27,42 @@ describe('Definition route', () => {
     const getDefinitionSpy = definitionService.get
     expect(getDefinitionSpy.args[0][2]).to.be.true
   })
+  
+  it('previews with coordinates', async () => {
+    const curation = { described: { releaseDate: '2022-06-04' } }
+    const coordinates = 'crate/cratesio/-/syn/1.0.14'
+    const params = { type: 'crate', provider: 'cratesio', namespace: '-', name: 'syn', revision: '1.0.14' }
+    const { response, definitionService } = await testPreview(coordinates, params, curation)
+    
+    expect(response.statusCode).to.be.eq(200)
+    expect(definitionService.compute.calledOnce).to.be.true
+    expect(definitionService.compute.args[0][0].toString()).to.be.equal(coordinates)
+    expect(definitionService.compute.args[0][1]).to.be.deep.equal(curation)
+  })
+
+  it('previews with empty curation', async () => {
+    const coordinates = 'crate/cratesio/-/syn/1.0.14'
+    const params = { type: 'crate', provider: 'cratesio', namespace: '-', name: 'syn', revision: '1.0.14' }
+    const { response, definitionService } = await testPreview(coordinates, params, {})
+
+    expect(response.statusCode).to.be.eq(200)
+    expect(definitionService.compute.calledOnce).to.be.true
+    expect(definitionService.compute.args[0][0].toString()).to.be.equal(coordinates)
+    expect(definitionService.compute.args[0][1]).to.be.deep.equal({})
+  }) 
+
+  it('previews with go coordinates containing /', async () => {
+    const curation = { described: { releaseDate: '2022-06-04' } }
+    const coordinates = 'go/golang/github.com/dgrijalva/jwt-go/v3.2.0+incompatible'
+    const params = { type: 'go', provider: 'golang', namespace: 'github.com/dgrijalva', name: 'jwt-go', revision: 'v3.2.0+incompatible' }
+    const { response, definitionService } = await testPreview(coordinates, params, curation)
+    
+    expect(response.statusCode).to.be.eq(200)
+    expect(definitionService.compute.calledOnce).to.be.true
+    expect(definitionService.compute.args[0][0].toString()).to.be
+      .equal('go/golang/github.com%2fdgrijalva/jwt-go/v3.2.0+incompatible')
+    expect(definitionService.compute.args[0][1]).to.be.deep.equal(curation)
+  })  
 })
 
 function createGetRequest() {
@@ -60,6 +96,25 @@ function createGetForceComputeRequest() {
   })
 }
 
+async function testPreview(coordinates, params, curation) {
+  const request = createPostPreviewRequest(coordinates, params, curation)
+  const response = httpMocks.createResponse()
+  const definitionService = createDefinitionService()
+  await createRoutes(definitionService)._previewWithCoordinatesParams(request, response)
+  return { response, definitionService }
+}
+
+function createPostPreviewRequest(coordinatesString, params, entries) {
+  return httpMocks.createRequest({
+    method: 'POST',
+    url: `definitions/${coordinatesString}`,
+    hostname: 'https://dev.clearlydefined.io',
+    params: {'0': coordinatesString, ...params},
+    query: { preview: true },
+    body: entries
+  })
+}
+
 function createRoutes(definition) {
   return definitionsRoutes(definition, true)
 }
@@ -67,7 +122,8 @@ function createRoutes(definition) {
 function createDefinitionService() {
   return {
     computeAndStore: sinon.stub(),
-    get: sinon.stub()
+    get: sinon.stub(),
+    compute: sinon.stub()
   }
 }
 
