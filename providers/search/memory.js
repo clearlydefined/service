@@ -18,9 +18,14 @@ class MemorySearch extends AbstractSearch {
    * @returns {String[]} The list of suggested coordinates found
    */
   async suggestCoordinates(pattern) {
+    const patternElements = pattern?.split('/').map(e => e.toLowerCase())
     return values(this.index)
-      .filter(definition => definition.coordinates.includes(pattern))
+      .filter(definition => this._isMatch(patternElements, definition.coordinates.toLowerCase()))
       .map(entry => entry.coordinates)
+  }
+
+  _isMatch(requiredParts = [], coordinates) {
+    return requiredParts.every(part => coordinates.includes(part))
   }
 
   store(definitions) {
