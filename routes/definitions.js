@@ -12,7 +12,7 @@ const pathToParams = require('../middleware/pathToParams')
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
-router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
+router.get('/*/pr/:pr', pathToParams, asyncMiddleware(getDefinition))
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDefinition))
 
 // When a request for a component with slashes in the namespace comes in
@@ -144,7 +144,7 @@ function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
 
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
-router.post('/*', [pathToParams, asyncMiddleware(previewWithCoordinatesParams)])
+router.post('/*', pathToParams, asyncMiddleware(previewWithCoordinatesParams))
 async function previewWithCoordinatesParams(request, response) {
   if (!request.query.preview)
     return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
