@@ -109,6 +109,7 @@ router.post(
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(listDefinitions))
 async function listDefinitions(request, response) {
+  const log = logger()
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
