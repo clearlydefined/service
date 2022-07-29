@@ -122,12 +122,12 @@ async function listDefinitions(request, response) {
   try {
     // Tempoarily adding this verbose logging to find perf issues
     log.info('POSTing to /definitions', {
-        ts: new Date().toISOString(), requestParams: request.params,
-        normalizedCoordinates,
-        coordinateCount: coordinatesList.length,
-        force,
-        expand,
-        userAgent: request.get('User-Agent')
+      ts: new Date().toISOString(), requestParams: request.params,
+      normalizedCoordinates,
+      coordinateCount: coordinatesList.length,
+      force,
+      expand,
+      userAgent: request.get('User-Agent')
     })
     let result = await definitionService.getAll(normalizedCoordinates, force, expand)
 
