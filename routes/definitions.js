@@ -109,6 +109,7 @@ router.post(
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(listDefinitions))
 async function listDefinitions(request, response) {
+  const log = logger()
   const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
@@ -119,6 +120,15 @@ async function listDefinitions(request, response) {
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
+    // Tempoarily adding this verbose logging to find perf issues
+    log.info('POSTing to /definitions', {
+      ts: new Date().toISOString(), requestParams: request.params,
+      normalizedCoordinates,
+      coordinateCount: coordinatesList.length,
+      force,
+      expand,
+      userAgent: request.get('User-Agent')
+    })
     let result = await definitionService.getAll(normalizedCoordinates, force, expand)
 
     const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
