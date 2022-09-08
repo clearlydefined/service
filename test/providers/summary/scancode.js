@@ -63,6 +63,17 @@ describe('ScancodeSummarizer basic compatability', () => {
     )
   })
 
+  it('summarizes github with a single declared license in later versions of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-single-declared-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+
+    assert.equal(
+      result.licensed.declared,
+      'MIT'
+    )
+  })
+
   it('throws an error on an invalid scancode version', () => {
     const version = '0.0.0'
     const coordinates = { type: 'npm', provider: 'npmjs' }
