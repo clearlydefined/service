@@ -196,6 +196,7 @@ function createApp(config) {
   app.use('/origins/deb', require('./routes/originDeb')())
   app.use('/origins/gitlab', require('./routes/originGitLab')())
   app.use('/origins/go', require('./routes/originGo')())
+  app.use('/origins/rpm', require('./routes/originRpm')())
   app.use('/harvest', harvestRoute)
   app.use(bodyParser.json())
   app.use('/curations', curationsRoute)

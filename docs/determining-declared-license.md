@@ -102,3 +102,7 @@
 * source: https://cocoapods.org/
 * The service then sets the declared license based on the registry information
 * The ClearlyDefined summarizer pulls registry information from 'https://raw.githubusercontent.com/CocoaPods/Specs/master
+
+### rpm
+* source: packages.microsoft.com
+* TODO

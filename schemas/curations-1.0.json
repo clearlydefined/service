@@ -37,7 +37,8 @@
         "pypi",
         "sourcearchive",
         "deb",
-        "debsrc"
+        "debsrc",
+        "rpm"
       ],
       "errorMessage": {
         "enum": "Package type must be supported by ClearlyDefined",
@@ -60,7 +61,8 @@
         "nuget",
         "rubygems",
         "pypi",
-        "debian"
+        "debian",
+        "mariner"
       ],
       "errorMessage": {
         "enum": "Provider type must be supported by ClearlyDefined",

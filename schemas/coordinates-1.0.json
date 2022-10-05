@@ -24,7 +24,8 @@
         "pypi",
         "sourcearchive",
         "deb",
-        "debsrc"
+        "debsrc",
+        "rpm"
       ],
       "errorMessage": {
         "type": "coordinates.type must be a string"
@@ -44,7 +45,8 @@
         "nuget",
         "rubygems",
         "pypi",
-        "debian"
+        "debian",
+        "mariner"
       ],
       "errorMessage": {
         "type": "coordinates.provider must be a string"

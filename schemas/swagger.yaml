@@ -543,6 +543,7 @@ components:
           - pod
           - pypi
           - sourcearchive
+          - rpm
     provider:
       name: provider
       in: path
@@ -564,6 +565,7 @@ components:
           - packagist
           - pypi
           - rubygems
+          - mariner
     namespace:
       name: namespace
       in: path
