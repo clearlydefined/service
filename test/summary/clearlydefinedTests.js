@@ -652,6 +652,19 @@ describe('ClearlyDescribedSummarizer addDebSrcData', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addRpmData', () => {
+  const coordinates = EntityCoordinates.fromString('rpm/mariner/-/test/1.0-1.cm2.x86_64')
+  it('describes releaseDate from data', () => {
+    let result = { described: { sourceLocation: {} } }
+    summarizer.addRpmData(result, {
+      releaseDate: '2018-06-01T21:41:57.990052+00:00',
+      registryData: { srcRpmUrl: "https://packages.microsoft.com/src.rpm" }
+    }, coordinates)
+    assert.strictEqual(result.described.releaseDate, '2018-06-01')
+    assert.strictEqual(result.described.sourceLocation.url, 'https://packages.microsoft.com/src.rpm')
+  })
+})
+
 describe('ClearlyDescribedSummarizer addGitData', () => {
   const testCoordinatesGit = EntityCoordinates.fromString('git/github/test_namespace/test/71eee1980b')
 
