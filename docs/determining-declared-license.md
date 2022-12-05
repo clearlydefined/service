@@ -2,17 +2,18 @@
 
 ## Crawler
 * OSS components are harvested by the [ClearlyDefined Crawler](https://github.com/clearlydefined/crawler)
-* The Crawler uses 3 tools for harvest - ClearlyDefined itself, [Scancode](https://scancode-toolkit.readthedocs.io/en/latest/getting-started/home.html), and [Licensee](https://github.com/licensee/licensee)
+* The Crawler uses 4 tools for harvest - ClearlyDefined itself, [Scancode](https://scancode-toolkit.readthedocs.io/en/latest/getting-started/home.html), [Licensee](https://github.com/licensee/licensee), and [Reuse](https://reuse.software/)
 * See below for how it handles different types of components
 * The Crawler then sends the harvest data to the ClearlyDefined Service
 
 ## Service
 * The harvests are processed into definitions by the [ClearlyDefined Service](https://github.com/clearlydefined/service/tree/9e0a677a74c36c6ea276c4548b520b7c91db05ce)
-* The service summarizes the data using the ClearlyDefined summarizer, Scancode summarizer, and Licensee summarizer
+* The service summarizes the data using the ClearlyDefined summarizer, Scancode summarizer, Licensee summarizer, and Reuse summarizer
 * The ClearlyDefined summarizer does different things based on the component type, see below for how it handles different types of components
 * The Scancode summarizer pulls any declared license information detected by Scancode (for more information, see the [code here](https://github.com/clearlydefined/service/blob/2d1e52caf5c07c3b6ef2565b5b77f1b677c82033/providers/summary/scancode.js))
 * The Licensee summarizer pulls any declared license information detected by Licensee (for more information, see the [code here](https://github.com/clearlydefined/service/blob/master/providers/summary/licensee.js))
-* Then the ClearlyDefined service aggregates the information from the three tools - when there is conflicting information, the order of precedence is 'clearlydefined', 'licensee', 'scancode', 'cdsource'
+* The Reuse summarizer pulls any declared license information detected by Reuse (for more information, see the [code here](https://github.com/clearlydefined/service/blob/master/providers/summary/reuse.js))
+* Then the ClearlyDefined service aggregates the information from the four tools - when there is conflicting information, the order of precedence is 'clearlydefined', 'reuse', 'licensee', 'scancode', 'cdsource'
 
 ## Curations
 * If the declared license is changed through [the human curation process](https://github.com/clearlydefined/clearlydefined/blob/master/docs/curation-guidelines.md), the declared license in the curation will take precedence.
@@ -36,7 +37,7 @@
 * The service uses the declared license set by the crawler
 
 ### maven
-* sources https://mvnrepository.com/repos/central and https://maven.google.com/
+* sources https://mvnrepository.com/repos/central, https://maven.google.com/ and https://plugins.gradle.org/m2/
 
 **maven central**
 
@@ -48,6 +49,12 @@
 **google maven**
 
 * The crawler gets pom files for the component from https://dl.google.com/android/maven2/
+* It then merges the poms (including all the licenses defined in the poms)
+* The ClearlyDefined summarizer parses the merged poms and sets the declared license(s) based on that data
+
+**gradle plugin**
+
+* The crawler gets pom files for the component from https://plugins.gradle.org/m2/
 * It then merges the poms (including all the licenses defined in the poms)
 * The ClearlyDefined summarizer parses the merged poms and sets the declared license(s) based on that data
 
