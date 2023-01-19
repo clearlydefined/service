@@ -1,0 +1,1078 @@
+[{
+  "_id": "npm/npmjs/@sinclair/typebox/0.24.45",
+  "described": {
+    "tools": [
+      "licensee/9.14.0"
+    ],
+    "toolScore": {
+      "total": 0,
+      "date": 0,
+      "source": 0
+    },
+    "score": {
+      "total": 0,
+      "date": 0,
+      "source": 0
+    }
+  },
+  "coordinates": {
+    "type": "npm",
+    "provider": "npmjs",
+    "namespace": "@sinclair",
+    "name": "typebox",
+    "revision": "0.24.45"
+  },
+  "licensed": {
+    "toolScore": {
+      "total": 0,
+      "declared": 0,
+      "discovered": 0,
+      "consistency": 0,
+      "spdx": 0,
+      "texts": 0
+    },
+    "score": {
+      "total": 0,
+      "declared": 0,
+      "discovered": 0,
+      "consistency": 0,
+      "spdx": 0,
+      "texts": 0
+    }
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-04T22:37:58.050Z"
+  },
+  "scores": {
+    "effective": 0,
+    "tool": 0
+  },
+  "_mongo": {
+    "partitionKey": "npm/npmjs/@sinclair/typebox/0.24.45",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "pypi/pypi/-/backports.ssl_match_hostname/3.5.0.1",
+  "described": {
+    "releaseDate": "2015-12-19",
+    "urls": {
+      "registry": "https://pypi.org/project/backports.ssl_match_hostname",
+      "version": "https://pypi.org/project/backports.ssl_match_hostname/3.5.0.1",
+      "download": "https://files.pythonhosted.org/packages/76/21/2dc61178a2038a5cb35d14b61467c6ac632791ed05131dda72c20e7b9e23/backports.ssl_match_hostname-3.5.0.1.tar.gz"
+    },
+    "hashes": {
+      "sha1": "0567c136707a5f53b95aa793b79cc8d5c61d8e22",
+      "sha256": "502ad98707319f4a51fa2ca1c677bd659008d27ded9f6380c79e8932e38dcdf2"
+    },
+    "files": 6,
+    "tools": [
+      "clearlydefined/1.3.1",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0",
+      "curation/322086606063f1d221c47667e18b946c3fe94848"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "sourceLocation": {
+      "type": "pypi",
+      "provider": "pypi",
+      "name": "backports.ssl_match_hostname",
+      "revision": "3.5.0.1",
+      "url": "https://pypi.org/project/backports.ssl_match_hostname/3.5.0.1/"
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "coordinates": {
+    "type": "pypi",
+    "provider": "pypi",
+    "name": "backports.ssl_match_hostname",
+    "revision": "3.5.0.1"
+  },
+  "licensed": {
+    "toolScore": {
+      "total": 19,
+      "declared": 0,
+      "discovered": 4,
+      "consistency": 0,
+      "spdx": 0,
+      "texts": 15
+    },
+    "declared": "Python-2.0",
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 5,
+          "parties": [
+            "Copyright (c) 2001-2013 Python Software Foundation"
+          ]
+        },
+        "discovered": {
+          "unknown": 3,
+          "expressions": [
+            "Python-2.0"
+          ]
+        },
+        "files": 6
+      }
+    },
+    "score": {
+      "total": 79,
+      "declared": 30,
+      "discovered": 4,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-05T00:30:36.293Z"
+  },
+  "scores": {
+    "effective": 89,
+    "tool": 59
+  },
+  "_mongo": {
+    "partitionKey": "pypi/pypi/-/backports.ssl_match_hostname/3.5.0.1",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca",
+  "described": {
+    "releaseDate": "2016-08-18",
+    "urls": {
+      "registry": "https://github.com/microsoft/redie",
+      "version": "https://github.com/microsoft/redie/tree/194269b5b7010ad6f8dc4ef608c88128615031ca",
+      "download": "https://github.com/microsoft/redie/archive/194269b5b7010ad6f8dc4ef608c88128615031ca.zip"
+    },
+    "hashes": {
+      "gitSha": "194269b5b7010ad6f8dc4ef608c88128615031ca"
+    },
+    "files": 8,
+    "tools": [
+      "clearlydefined/1.3.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "microsoft",
+      "name": "redie",
+      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca",
+      "url": "https://github.com/microsoft/redie/tree/194269b5b7010ad6f8dc4ef608c88128615031ca"
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "MIT",
+    "toolScore": {
+      "total": 81,
+      "declared": 30,
+      "discovered": 6,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 6,
+          "parties": [
+            "Copyright (c) Microsoft Corporation"
+          ]
+        },
+        "discovered": {
+          "unknown": 5,
+          "expressions": [
+            "MIT"
+          ]
+        },
+        "files": 8
+      }
+    },
+    "score": {
+      "total": 81,
+      "declared": 30,
+      "discovered": 6,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "git",
+    "provider": "github",
+    "namespace": "microsoft",
+    "name": "redie",
+    "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-05T00:40:37.509Z"
+  },
+  "scores": {
+    "effective": 90,
+    "tool": 90
+  },
+  "_mongo": {
+    "partitionKey": "git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "npm/npmjs/-/redie/0.3.0",
+  "described": {
+    "releaseDate": "2016-08-18",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "Microsoft",
+      "name": "redie",
+      "revision": "194269b5b7010ad6f8dc4ef608c88128615031ca",
+      "url": "https://github.com/Microsoft/redie/tree/194269b5b7010ad6f8dc4ef608c88128615031ca"
+    },
+    "urls": {
+      "registry": "https://npmjs.com/package/redie",
+      "version": "https://npmjs.com/package/redie/v/0.3.0",
+      "download": "https://registry.npmjs.com/redie/-/redie-0.3.0.tgz"
+    },
+    "projectWebsite": "https://github.com/Microsoft/redie",
+    "issueTracker": "https://github.com/Microsoft/redie/issues",
+    "hashes": {
+      "sha1": "48581317ac174ac269c398ff946d6c4779145374",
+      "sha256": "66185c319680ee41268217c2467e314019e8ba4ea4d8374335fbe29e64a8d19f"
+    },
+    "files": 4,
+    "tools": [
+      "clearlydefined/1.3.4",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "MIT",
+    "toolScore": {
+      "total": 88,
+      "declared": 30,
+      "discovered": 13,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 2,
+          "parties": [
+            "Copyright (c) Microsoft Corporation"
+          ]
+        },
+        "discovered": {
+          "unknown": 1,
+          "expressions": [
+            "MIT"
+          ]
+        },
+        "files": 4
+      }
+    },
+    "score": {
+      "total": 88,
+      "declared": 30,
+      "discovered": 13,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "npm",
+    "provider": "npmjs",
+    "name": "redie",
+    "revision": "0.3.0"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-05T00:41:06.415Z"
+  },
+  "scores": {
+    "effective": 94,
+    "tool": 94
+  },
+  "_mongo": {
+    "partitionKey": "npm/npmjs/-/redie/0.3.0",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/com.azure/azure-storage-blob/12.20.0",
+  "described": {
+    "releaseDate": "2022-10-12",
+    "sourceLocation": {
+      "type": "sourcearchive",
+      "provider": "mavencentral",
+      "namespace": "com.azure",
+      "name": "azure-storage-blob",
+      "revision": "12.20.0",
+      "url": "https://search.maven.org/remotecontent?filepath=com/azure/azure-storage-blob/12.20.0/azure-storage-blob-12.20.0-sources.jar"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/com/azure/azure-storage-blob",
+      "version": "https://repo1.maven.org/maven2/com/azure/azure-storage-blob/12.20.0",
+      "download": "https://repo1.maven.org/maven2/com/azure/azure-storage-blob/12.20.0/azure-storage-blob-12.20.0.jar"
+    },
+    "hashes": {
+      "sha1": "e682920b0e3115433f25d65b0718f8763035357e",
+      "sha256": "f0976b1d76c184da1372d147fc8fff0bf88cb1e8b9cbeb3dcfa7f48f4aec0816"
+    },
+    "files": 352,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "MIT",
+    "toolScore": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 351,
+          "parties": [
+            "(c) 2008 VeriSign, Inc."
+          ]
+        },
+        "discovered": {
+          "unknown": 352
+        },
+        "files": 352
+      }
+    },
+    "score": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "com.azure",
+    "name": "azure-storage-blob",
+    "revision": "12.20.0"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.159Z"
+  },
+  "scores": {
+    "effective": 80,
+    "tool": 80
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/com.azure/azure-storage-blob/12.20.0",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-beta2",
+  "described": {
+    "releaseDate": "2008-06-20",
+    "sourceLocation": {
+      "type": "sourcearchive",
+      "provider": "mavencentral",
+      "namespace": "org.apache.httpcomponents",
+      "name": "httpcore",
+      "revision": "4.0-beta2",
+      "url": "https://search.maven.org/remotecontent?filepath=org/apache/httpcomponents/httpcore/4.0-beta2/httpcore-4.0-beta2-sources.jar"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore",
+      "version": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.0-beta2",
+      "download": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.0-beta2/httpcore-4.0-beta2.jar"
+    },
+    "hashes": {
+      "sha1": "b704f30ca9bb4c60fb86f43065167dc8331cd624",
+      "sha256": "f6c0b7e5655852f05d4e444d9eef8a56037a2befdadd0e7c2a4cc74567d6500f"
+    },
+    "files": 163,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "Apache-2.0",
+    "toolScore": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 162,
+          "parties": [
+            "Copyright 2006-2008 The Apache Software Foundation"
+          ]
+        },
+        "discovered": {
+          "unknown": 159,
+          "expressions": [
+            "Apache-2.0"
+          ]
+        },
+        "files": 163
+      }
+    },
+    "score": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "org.apache.httpcomponents",
+    "name": "httpcore",
+    "revision": "4.0-beta2"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.195Z"
+  },
+  "scores": {
+    "effective": 87,
+    "tool": 87
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-beta2",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4",
+  "described": {
+    "releaseDate": "2022-10-16",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "quarkiverse",
+      "name": "quarkiverse-cxf",
+      "revision": "1e395bd4bdfb878708b4c81cfcff86da053190ab",
+      "url": "https://github.com/quarkiverse/quarkiverse-cxf/tree/1e395bd4bdfb878708b4c81cfcff86da053190ab"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/io/quarkiverse/cxf/quarkus-cxf",
+      "version": "https://repo1.maven.org/maven2/io/quarkiverse/cxf/quarkus-cxf/1.5.4",
+      "download": "https://repo1.maven.org/maven2/io/quarkiverse/cxf/quarkus-cxf/1.5.4/quarkus-cxf-1.5.4.jar"
+    },
+    "hashes": {
+      "sha1": "c02458b99b176e1dacd0069dbcbd2288d8535820",
+      "sha256": "db0db2b6e6af5d6fb5cc76454e66db92236b86862c1e74e0d0e01ebbaa64ce63"
+    },
+    "files": 52,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "Apache-2.0",
+    "toolScore": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 52
+        },
+        "discovered": {
+          "unknown": 52
+        },
+        "files": 52
+      }
+    },
+    "score": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "io.quarkiverse.cxf",
+    "name": "quarkus-cxf",
+    "revision": "1.5.4"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.204Z"
+  },
+  "scores": {
+    "effective": 80,
+    "tool": 80
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/io.jenetics/jenetics/7.1.1",
+  "described": {
+    "releaseDate": "2022-10-16",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "jenetics",
+      "name": "jenetics",
+      "revision": "9b1ac80db54073b2530996f4a9d195b43dc3fd76",
+      "url": "https://github.com/jenetics/jenetics/tree/9b1ac80db54073b2530996f4a9d195b43dc3fd76"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/io/jenetics/jenetics",
+      "version": "https://repo1.maven.org/maven2/io/jenetics/jenetics/7.1.1",
+      "download": "https://repo1.maven.org/maven2/io/jenetics/jenetics/7.1.1/jenetics-7.1.1.jar"
+    },
+    "hashes": {
+      "sha1": "bdd9f990dcdaef7839e108e3dc228b5cc3f4d4f7",
+      "sha256": "91a2e74e64946b5eb324611f4f9da2679b63a46542d99b87779bca67ddb57b0b"
+    },
+    "files": 223,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "Apache-2.0",
+    "toolScore": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 223
+        },
+        "discovered": {
+          "unknown": 223
+        },
+        "files": 223
+      }
+    },
+    "score": {
+      "total": 60,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "io.jenetics",
+    "name": "jenetics",
+    "revision": "7.1.1"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.226Z"
+  },
+  "scores": {
+    "effective": 80,
+    "tool": 80
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/io.jenetics/jenetics/7.1.1",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5",
+  "described": {
+    "sourceLocation": {
+      "type": "sourcearchive",
+      "provider": "mavencentral",
+      "namespace": "org.apache.httpcomponents",
+      "name": "httpcore",
+      "revision": "4.0-alpha5",
+      "url": "https://search.maven.org/remotecontent?filepath=org/apache/httpcomponents/httpcore/4.0-alpha5/httpcore-4.0-alpha5-sources.jar"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore",
+      "version": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.0-alpha5",
+      "download": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.0-alpha5/httpcore-4.0-alpha5.jar"
+    },
+    "hashes": {
+      "sha1": "28e2aaaca5231e2a42bbe2bf6843acd33ec033de",
+      "sha256": "384343101920d44bfe9f29c238ad738baa66fe90adc69c391487b43ce78e0b5a"
+    },
+    "files": 130,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "reuse/1.2.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "Apache-2.0",
+    "toolScore": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 129,
+          "parties": [
+            "Copyright 2006-2007 The Apache Software Foundation"
+          ]
+        },
+        "discovered": {
+          "unknown": 127,
+          "expressions": [
+            "Apache-2.0"
+          ]
+        },
+        "files": 130
+      }
+    },
+    "score": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "org.apache.httpcomponents",
+    "name": "httpcore",
+    "revision": "4.0-alpha5"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.649Z"
+  },
+  "scores": {
+    "effective": 87,
+    "tool": 87
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/org.flywaydb/flyway-maven-plugin/5.0.7",
+  "described": {
+    "sourceLocation": {
+      "type": "sourcearchive",
+      "provider": "mavencentral",
+      "namespace": "org.flywaydb",
+      "name": "flyway-maven-plugin",
+      "revision": "5.0.7",
+      "url": "https://search.maven.org/remotecontent?filepath=org/flywaydb/flyway-maven-plugin/5.0.7/flyway-maven-plugin-5.0.7-sources.jar"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/org/flywaydb/flyway-maven-plugin",
+      "version": "https://repo1.maven.org/maven2/org/flywaydb/flyway-maven-plugin/5.0.7",
+      "download": "https://repo1.maven.org/maven2/org/flywaydb/flyway-maven-plugin/5.0.7/flyway-maven-plugin-5.0.7.jar"
+    },
+    "hashes": {
+      "sha1": "f4aa5cb11bdbb086015bbe1e5d5769dd6b008546",
+      "sha256": "34a870031a64991337247e4f74e6cc243c93bac50c4514231b7d8a5672d2d873"
+    },
+    "files": 17,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "NOASSERTION",
+    "toolScore": {
+      "total": 19,
+      "declared": 0,
+      "discovered": 4,
+      "consistency": 0,
+      "spdx": 0,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 14,
+          "parties": [
+            "Copyright 2010-2018 Boxfuse GmbH",
+            "Copyright (c) 2010-2015 Axel Fontaine"
+          ]
+        },
+        "discovered": {
+          "unknown": 14,
+          "expressions": [
+            "Apache-2.0"
+          ]
+        },
+        "files": 17
+      }
+    },
+    "score": {
+      "total": 19,
+      "declared": 0,
+      "discovered": 4,
+      "consistency": 0,
+      "spdx": 0,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "org.flywaydb",
+    "name": "flyway-maven-plugin",
+    "revision": "5.0.7"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.831Z"
+  },
+  "scores": {
+    "effective": 59,
+    "tool": 59
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/org.flywaydb/flyway-maven-plugin/5.0.7",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "maven/mavencentral/org.springframework.boot/spring-boot-gradle-plugin/2.6.1",
+  "described": {
+    "releaseDate": "2021-11-29",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "namespace": "spring-projects",
+      "name": "spring-boot",
+      "revision": "a7d2ea3583b162ce9ae37423fdc26f11296384ed",
+      "url": "https://github.com/spring-projects/spring-boot/tree/a7d2ea3583b162ce9ae37423fdc26f11296384ed"
+    },
+    "urls": {
+      "registry": "https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-gradle-plugin",
+      "version": "https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-gradle-plugin/2.6.1",
+      "download": "https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-gradle-plugin/2.6.1/spring-boot-gradle-plugin-2.6.1.jar"
+    },
+    "hashes": {
+      "sha1": "f3cd4a8bc7b5905174fa1171f006fb75d582f822",
+      "sha256": "0047b2bb6509ffef288da650ac9c747641b9474d803d3433f22743853a725359"
+    },
+    "files": 68,
+    "tools": [
+      "clearlydefined/1.5.0",
+      "licensee/9.14.0",
+      "scancode/30.3.0"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "Apache-2.0",
+    "toolScore": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 67,
+          "parties": [
+            "Copyright (c) 2012-2021 Pivotal, Inc."
+          ]
+        },
+        "discovered": {
+          "unknown": 66,
+          "expressions": [
+            "Apache-2.0"
+          ]
+        },
+        "files": 68
+      }
+    },
+    "score": {
+      "total": 75,
+      "declared": 30,
+      "discovered": 0,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 15
+    }
+  },
+  "coordinates": {
+    "type": "maven",
+    "provider": "mavencentral",
+    "namespace": "org.springframework.boot",
+    "name": "spring-boot-gradle-plugin",
+    "revision": "2.6.1"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.1",
+    "updated": "2023-01-11T17:55:57.837Z"
+  },
+  "scores": {
+    "effective": 87,
+    "tool": 87
+  },
+  "_mongo": {
+    "partitionKey": "maven/mavencentral/org.springframework.boot/spring-boot-gradle-plugin/2.6.1",
+    "page": 1,
+    "totalPages": 1
+  }
+},{
+  "_id": "npm/npmjs/-/angular/1.6.9",
+  "described": {
+    "releaseDate": "2018-02-02",
+    "sourceLocation": {
+      "type": "git",
+      "provider": "github",
+      "url": "https://github.com/angular/angular.js/tree/c3c5c5eea2eeff82b1ae6c855a4508f8ff51cedc",
+      "revision": "c3c5c5eea2eeff82b1ae6c855a4508f8ff51cedc",
+      "namespace": "angular",
+      "name": "angular.js"
+    },
+    "urls": {
+      "registry": "https://npmjs.com/package/angular",
+      "version": "https://npmjs.com/package/angular/v/1.6.9",
+      "download": "https://registry.npmjs.com/angular/-/angular-1.6.9.tgz"
+    },
+    "projectWebsite": "http://angularjs.org",
+    "issueTracker": "https://github.com/angular/angular.js/issues",
+    "tools": [
+      "clearlydefined/1",
+      "scancode/2.2.1"
+    ],
+    "toolScore": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    },
+    "score": {
+      "total": 100,
+      "date": 30,
+      "source": 70
+    }
+  },
+  "licensed": {
+    "declared": "MIT",
+    "toolScore": {
+      "total": 68,
+      "declared": 30,
+      "discovered": 8,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    },
+    "facets": {
+      "core": {
+        "attribution": {
+          "unknown": 2,
+          "parties": [
+            "Copyright (c) 2016 Angular",
+            "(c) 2010-2018 Google, Inc. http://angularjs.org",
+            "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org"
+          ]
+        },
+        "discovered": {
+          "unknown": 3,
+          "expressions": [
+            "MIT"
+          ]
+        },
+        "files": 6
+      }
+    },
+    "score": {
+      "total": 68,
+      "declared": 30,
+      "discovered": 8,
+      "consistency": 15,
+      "spdx": 15,
+      "texts": 0
+    }
+  },
+  "coordinates": {
+    "type": "npm",
+    "provider": "npmjs",
+    "name": "angular",
+    "revision": "1.6.9"
+  },
+  "_meta": {
+    "schemaVersion": "1.6.0",
+    "updated": "2019-03-11T14:25:35.991Z"
+  },
+  "scores": {
+    "effective": 84,
+    "tool": 84
+  },
+  "_mongo": {
+    "partitionKey": "npm/npmjs/-/angular/1.6.9",
+    "page": 1,
+    "totalPages": 1
+  }
+}]

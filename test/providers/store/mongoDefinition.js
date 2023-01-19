@@ -3,9 +3,13 @@
 
 const Store = require('../../../providers/stores/mongo')
 const sinon = require('sinon')
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const { range } = require('lodash')
+
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
 
 describe('Mongo Definition store', () => {
   const data = {
@@ -128,31 +132,36 @@ describe('Mongo Definition store', () => {
   it('builds a mongo query with continuationToken', () => {
     const store = createStore()
     const parameters = { namespace: '@owner', name: 'package' }
+    const sort = {'_mongo.partitionKey': 1}
     const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
     const expected = {
-      '_mongo.page': 1,
-      'coordinates.name': 'package',
-      'coordinates.namespace': '@owner',
-      '_mongo.partitionKey': { $gt: 'npm/npmjs/-/verror/1.10.0' }
+      '$and': [{
+        '_mongo.page': 1,
+        'coordinates.name': 'package',
+        'coordinates.namespace': '@owner'
+      }, {
+        '_mongo.partitionKey': { '$gt': 'npm/npmjs/-/verror/1.10.0' }
+      }]  
     }
-    expect(store._buildQuery(parameters, continuationToken)).to.deep.equal(expected)
+
+    expect(store._buildQueryWithPaging(parameters, continuationToken, sort)).to.deep.equal(expected)
   })
 
   it('builds a mongo sort', () => {
     const store = createStore()
     const data = new Map([
       [{}, { '_mongo.partitionKey': 1 }],
-      [{ sort: 'type' }, { 'coordinates.type': 1 }],
-      [{ sort: 'provider' }, { 'coordinates.provider': 1 }],
-      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1 }],
-      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1 }],
-      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1 }],
-      [{ sort: 'releaseDate' }, { 'described.releaseDate': 1 }],
-      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1 }],
-      [{ sort: 'describedScore' }, { 'described.score.total': 1 }],
-      [{ sort: 'effectiveScore' }, { 'scores.effective': 1 }],
-      [{ sort: 'toolScore' }, { 'scores.tool': 1 }],
-      [{ sort: 'revision' }, { 'coordinates.revision': 1 }]
+      [{ sort: 'type' }, { 'coordinates.type': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'provider' }, { 'coordinates.provider': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'describedScore' }, { 'described.score.total': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'effectiveScore' }, { 'scores.effective': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'toolScore' }, { 'scores.tool': 1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'revision' }, { 'coordinates.revision': 1, '_mongo.partitionKey': 1 }]
     ])
     data.forEach((expected, input) => {
       const result = store._buildSort(input)
@@ -163,13 +172,14 @@ describe('Mongo Definition store', () => {
 
   it('gets a continuationToken', () => {
     const store = createStore()
+    const sortClause = {'_mongo.partitionKey': 1}
     const token = store._getContinuationToken(5, [
       { _mongo: { partitionKey: 'npm/npmjs/-/a/1.0.0' } },
       { _mongo: { partitionKey: 'npm/npmjs/-/b/1.0.0' } },
       { _mongo: { partitionKey: 'npm/npmjs/-/c/1.0.0' } },
       { _mongo: { partitionKey: 'npm/npmjs/-/d/1.0.0' } },
       { _mongo: { partitionKey: 'npm/npmjs/-/e/1.0.0' } }
-    ])
+    ], sortClause)
     expect(token).to.eq('bnBtL25wbWpzLy0vZS8xLjAuMA==')
   })
 
