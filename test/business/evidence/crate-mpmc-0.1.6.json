@@ -1,0 +1,1303 @@
+{
+  "clearlydefined": {
+    "1.2.0": {
+      "_metadata": {
+        "type": "crate",
+        "url": "cd:/crate/cratesio/-/mpmc/0.1.6",
+        "fetchedAt": "2022-02-11T17:50:19.221Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:clearlydefined:1.2.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:clearlydefined",
+            "type": "collection"
+          },
+          "licensee": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:licensee",
+            "type": "collection"
+          },
+          "scancode": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:scancode",
+            "type": "collection"
+          },
+          "source": {
+            "href": "urn:git:github:brayniac:mpmc:revision:5ef4c369953cf297a6d6763cf7ecd06d25649834",
+            "type": "resource"
+          }
+        },
+        "schemaVersion": "1.2.0",
+        "toolVersion": "1.0.0"
+      },
+      "attachments": [
+        {
+          "path": "LICENSE",
+          "token": "42bef2e8c391f6ed4018f7cb00838655919a0c3073d0b6acde35287d7fb4db6d"
+        }
+      ],
+      "summaryInfo": {
+        "k": 32,
+        "count": 11,
+        "hashes": {
+          "sha1": "7f0072315432f0e36b511e1051f710783a73b0dd",
+          "sha256": "bf78b1242a953be96e01b5f8ed8ffdfc8055c0a2b779899b3835e5d27a69dced"
+        }
+      },
+      "files": [
+        {
+          "path": ".cargo_vcs_info.json",
+          "hashes": {
+            "sha1": "5e7db90f00d35015f7bf2c500c881c35d6c3e88b",
+            "sha256": "63abd18e7ccbb9584728ea96d911a5089e9e0d3d8714561ac243498bc6d7e9c0"
+          }
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE.md",
+          "hashes": {
+            "sha1": "ad179d45596b30d433bc27510e9f04b2a7a66f2b",
+            "sha256": "72f518a225bd6b6ff28229f18842b0e31ab7b5b8af91016cdf99751ba5c0785a"
+          }
+        },
+        {
+          "path": ".github/PULL_REQUEST_TEMPLATE.md",
+          "hashes": {
+            "sha1": "a4a9a6345ced8a54586bb6c4554af4ab0d58cb50",
+            "sha256": "6c7d4523ce06961f4ad0f6828d933f266a03c63b7e55408540c32d266f17dbe9"
+          }
+        },
+        {
+          "path": ".github/workflows/cargo.yml",
+          "hashes": {
+            "sha1": "588633d1668fa6cc1d76742d74508c208ab0d66e",
+            "sha256": "f685a76d95bb622257635361af01fc03a11bd5cbd16d479b07f7564d5df09bb4"
+          }
+        },
+        {
+          "path": ".gitignore",
+          "hashes": {
+            "sha1": "1842c24559f65088a3571f9d8df131d5b8f91f10",
+            "sha256": "cb9aeb33663745f233ab8f4094c7efa91e36aab30715cb013ce0e459a805340a"
+          }
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "hashes": {
+            "sha1": "25d0cc9e47c68b3e24644b3d5de19101f9508ed0",
+            "sha256": "2d4958332fec690d59e33ad1ffcfdaafefd236e0bc99459fc80e79d8ec53437d"
+          }
+        },
+        {
+          "path": "Cargo.toml",
+          "hashes": {
+            "sha1": "1d3344f5e67e535e25ccc05297ff3086c29e99e6",
+            "sha256": "1c7b6ceb9350c9c91364de0d3bd7999868fd49ea39eca981c175802189dc50ef"
+          }
+        },
+        {
+          "path": "Cargo.toml.orig",
+          "hashes": {
+            "sha1": "4dcc9038ef41a61daf2dc808f7216fc810f4bebe",
+            "sha256": "c20d4a47b7a17107c97b4595b08dfc60076e5557db719277e52332eda8fa7954"
+          }
+        },
+        {
+          "path": "LICENSE",
+          "hashes": {
+            "sha1": "03dd6407cd9fcb0ef993676e056b2ea2a2ece056",
+            "sha256": "42bef2e8c391f6ed4018f7cb00838655919a0c3073d0b6acde35287d7fb4db6d"
+          }
+        },
+        {
+          "path": "README.md",
+          "hashes": {
+            "sha1": "e992d615c1094940e5306c2c6ebfad8177ece5ed",
+            "sha256": "a8b4994477a2c2d1b394b327695875d28c020dc50c15f187aa073d5638879134"
+          }
+        },
+        {
+          "path": "src/lib.rs",
+          "hashes": {
+            "sha1": "eaa42ee1837304efed47cc9eb44dceddd65fcaa9",
+            "sha256": "372de6c0a77af9975e69166c016095b6079fde4fa9f4dc413bd8a4d773fcffa3"
+          }
+        }
+      ],
+      "manifest": {
+        "badges": [],
+        "categories": [],
+        "created_at": "2016-03-23T20:37:55.057283+00:00",
+        "description": "copy-pasted from old rust stdlib",
+        "documentation": "https://docs.rs/mpmc",
+        "downloads": 58422,
+        "exact_match": false,
+        "homepage": "https://github.com/brayniac/mpmc",
+        "id": "mpmc",
+        "keywords": [
+          "queue",
+          "mpmc",
+          "no_std"
+        ],
+        "links": {
+          "owner_team": "/api/v1/crates/mpmc/owner_team",
+          "owner_user": "/api/v1/crates/mpmc/owner_user",
+          "owners": "/api/v1/crates/mpmc/owners",
+          "reverse_dependencies": "/api/v1/crates/mpmc/reverse_dependencies",
+          "version_downloads": "/api/v1/crates/mpmc/downloads",
+          "versions": null
+        },
+        "max_stable_version": "0.1.6",
+        "max_version": "0.1.6",
+        "name": "mpmc",
+        "newest_version": "0.1.6",
+        "recent_downloads": 6183,
+        "repository": "https://github.com/brayniac/mpmc",
+        "updated_at": "2021-07-15T22:51:31.600928+00:00",
+        "versions": [
+          401545,
+          71667,
+          71666,
+          62865,
+          24371
+        ]
+      },
+      "registryData": {
+        "audit_actions": [
+          {
+            "action": "publish",
+            "time": "2021-07-15T22:51:31.600928+00:00",
+            "user": {
+              "avatar": "https://avatars3.githubusercontent.com/u/10478487?v=4",
+              "id": 2235,
+              "login": "brayniac",
+              "name": "Brian Martin",
+              "url": "https://github.com/brayniac"
+            }
+          }
+        ],
+        "crate": "mpmc",
+        "crate_size": 6178,
+        "created_at": "2021-07-15T22:51:31.600928+00:00",
+        "dl_path": "/api/v1/crates/mpmc/0.1.6/download",
+        "downloads": 9805,
+        "features": {},
+        "id": 401545,
+        "license": "non-standard",
+        "links": {
+          "authors": "/api/v1/crates/mpmc/0.1.6/authors",
+          "dependencies": "/api/v1/crates/mpmc/0.1.6/dependencies",
+          "version_downloads": "/api/v1/crates/mpmc/0.1.6/downloads"
+        },
+        "num": "0.1.6",
+        "published_by": {
+          "avatar": "https://avatars3.githubusercontent.com/u/10478487?v=4",
+          "id": 2235,
+          "login": "brayniac",
+          "name": "Brian Martin",
+          "url": "https://github.com/brayniac"
+        },
+        "readme_path": "/api/v1/crates/mpmc/0.1.6/readme",
+        "updated_at": "2021-07-15T22:51:31.600928+00:00",
+        "yanked": false
+      },
+      "sourceInfo": {
+        "type": "git",
+        "provider": "github",
+        "namespace": "brayniac",
+        "name": "mpmc",
+        "revision": "5ef4c369953cf297a6d6763cf7ecd06d25649834",
+        "url": null,
+        "path": null
+      }
+    }
+  },
+  "licensee": {
+    "9.14.0": {
+      "_metadata": {
+        "type": "licensee",
+        "url": "cd:/crate/cratesio/-/mpmc/0.1.6",
+        "fetchedAt": "2022-02-12T16:35:19.568Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:licensee:9.14.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:licensee",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "9.14.0",
+        "toolVersion": "9.12.0",
+        "processedAt": "2022-02-12T16:35:20.325Z"
+      },
+      "licensee": {
+        "version": "9.12.0",
+        "parameters": [
+          "--json",
+          "--no-readme"
+        ],
+        "output": {
+          "contentType": "application/json",
+          "content": {
+            "licenses": [
+              {
+                "key": "other",
+                "spdx_id": "NOASSERTION",
+                "meta": {
+                  "title": null,
+                  "source": null,
+                  "description": null,
+                  "how": null,
+                  "using": null,
+                  "featured": false,
+                  "hidden": true,
+                  "nickname": null,
+                  "note": null
+                },
+                "url": "http://choosealicense.com/licenses/other/",
+                "rules": {
+                  "permissions": [],
+                  "conditions": [],
+                  "limitations": []
+                },
+                "fields": [],
+                "other": true,
+                "gpl": false,
+                "lgpl": false,
+                "cc": false
+              }
+            ],
+            "matched_files": [
+              {
+                "filename": "LICENSE",
+                "content": "Copyright (c) 2010-2011 Dmitry Vyukov. All rights reserved.\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    1. Redistributions of source code must retain the above copyright notice,\n       this list of conditions and the following disclaimer.\n\n    2. Redistributions in binary form must reproduce the above copyright\n       notice, this list of conditions and the following disclaimer in the\n       documentation and/or other materials provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY DMITRY VYUKOV \"AS IS\" AND ANY EXPRESS OR IMPLIED\nWARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\nMERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT\nSHALL DMITRY VYUKOV OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,\nINCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\nPROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\nLIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE\nOR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\nADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nThe views and conclusions contained in the software and documentation are\nthose of the authors and should not be interpreted as representing official\npolicies, either expressed or implied, of Dmitry Vyukov.\n ",
+                "content_hash": "955480a27121321922fa641c7fea81aeeebaf12d",
+                "content_normalized": "redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: - redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. - redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. this software is provided by dmitry vyukov \"as is\" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. in no event shall dmitry vyukov or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage. the views and conclusions contained in the software and documentation are those of the authors and should not be interpreted as representing official policies, either expressed or implied, of dmitry vyukov.",
+                "matcher": null,
+                "matched_license": "NOASSERTION",
+                "attribution": null
+              }
+            ]
+          }
+        }
+      },
+      "attachments": [
+        {
+          "path": "LICENSE",
+          "token": "42bef2e8c391f6ed4018f7cb00838655919a0c3073d0b6acde35287d7fb4db6d"
+        }
+      ]
+    }
+  },
+  "scancode": {
+    "30.3.0": {
+      "_metadata": {
+        "type": "scancode",
+        "url": "cd:/crate/cratesio/-/mpmc/0.1.6",
+        "fetchedAt": "2022-02-12T16:35:19.243Z",
+        "links": {
+          "self": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:scancode:30.3.0",
+            "type": "resource"
+          },
+          "siblings": {
+            "href": "urn:crate:cratesio:-:mpmc:revision:0.1.6:tool:scancode",
+            "type": "collection"
+          }
+        },
+        "schemaVersion": "30.3.0",
+        "toolVersion": "30.1.0",
+        "contentType": "application/json",
+        "releaseDate": "2021-07-15T22:51:31.600928+00:00",
+        "processedAt": "2022-02-12T16:35:26.520Z"
+      },
+      "content": {
+        "headers": [
+          {
+            "tool_name": "scancode-toolkit",
+            "tool_version": "30.1.0",
+            "options": {
+              "input": [
+                "/tmp/cd-RSff7x/crate/mpmc-0.1.6"
+              ],
+              "--classify": true,
+              "--copyright": true,
+              "--email": true,
+              "--generated": true,
+              "--info": true,
+              "--is-license-text": true,
+              "--json-pp": "/tmp/cd-J8bowe",
+              "--license": true,
+              "--license-clarity-score": true,
+              "--license-text": true,
+              "--license-text-diagnostics": true,
+              "--package": true,
+              "--processes": "2",
+              "--strip-root": true,
+              "--summary": true,
+              "--summary-key-files": true,
+              "--timeout": "1000.0",
+              "--url": true
+            },
+            "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+            "start_timestamp": "2022-02-12T163520.409885",
+            "end_timestamp": "2022-02-12T163525.576973",
+            "output_format_version": "1.0.0",
+            "duration": 5.167102098464966,
+            "message": null,
+            "errors": [],
+            "extra_data": {
+              "spdx_license_list_version": "3.14",
+              "OUTDATED": "WARNING: Outdated ScanCode Toolkit version! You are using an outdated version of ScanCode Toolkit: 30.1.0 released on: 2021-09-24. A new version is available with important improvements including bug and security fixes, updated license, copyright and package detection, and improved scanning accuracy. Please download and install the latest version of ScanCode. Visit https://github.com/nexB/scancode-toolkit/releases for details.",
+              "files_count": 10
+            }
+          }
+        ],
+        "summary": {
+          "license_expressions": [
+            {
+              "value": "bsd-2-clause-views",
+              "count": 2
+            }
+          ],
+          "copyrights": [
+            {
+              "value": null,
+              "count": 8
+            },
+            {
+              "value": "Copyright (c) Dmitry Vyukov",
+              "count": 2
+            }
+          ],
+          "holders": [
+            {
+              "value": null,
+              "count": 8
+            },
+            {
+              "value": "Dmitry Vyukov",
+              "count": 2
+            }
+          ],
+          "authors": [
+            {
+              "value": null,
+              "count": 10
+            }
+          ],
+          "programming_language": [
+            {
+              "value": "Rust",
+              "count": 1
+            }
+          ],
+          "packages": [
+            {
+              "type": "cargo",
+              "namespace": null,
+              "name": "mpmc",
+              "version": "0.1.6",
+              "qualifiers": {},
+              "subpath": null,
+              "primary_language": "Rust",
+              "description": "copy-pasted from old rust stdlib",
+              "release_date": null,
+              "parties": [
+                {
+                  "type": "person",
+                  "role": "author",
+                  "name": "Dmitry Vyukov",
+                  "email": null,
+                  "url": null
+                },
+                {
+                  "type": "person",
+                  "role": "author",
+                  "name": "Brian Martin",
+                  "email": "brayniac@gmail.com",
+                  "url": null
+                }
+              ],
+              "keywords": [],
+              "homepage_url": null,
+              "download_url": null,
+              "size": null,
+              "sha1": null,
+              "md5": null,
+              "sha256": null,
+              "sha512": null,
+              "bug_tracking_url": null,
+              "code_view_url": null,
+              "vcs_url": null,
+              "copyright": null,
+              "license_expression": null,
+              "declared_license": null,
+              "notice_text": null,
+              "root_path": null,
+              "dependencies": [],
+              "contains_source_code": null,
+              "source_packages": [],
+              "extra_data": {},
+              "purl": "pkg:cargo/mpmc@0.1.6",
+              "repository_homepage_url": "https://crates.io/crates/mpmc",
+              "repository_download_url": "https://crates.io/api/v1/crates/mpmc/0.1.6/download",
+              "api_data_url": "https://crates.io/api/v1/crates/mpmc",
+              "files": [
+                {
+                  "path": "Cargo.toml",
+                  "type": "file"
+                }
+              ]
+            }
+          ]
+        },
+        "license_clarity_score": {
+          "score": 63,
+          "declared": true,
+          "discovered": 0.12,
+          "consistency": true,
+          "spdx": false,
+          "license_texts": true
+        },
+        "summary_of_key_files": {
+          "license_expressions": [
+            {
+              "value": "bsd-2-clause-views",
+              "count": 1
+            }
+          ],
+          "copyrights": [
+            {
+              "value": "Copyright (c) Dmitry Vyukov",
+              "count": 1
+            }
+          ],
+          "holders": [
+            {
+              "value": "Dmitry Vyukov",
+              "count": 1
+            }
+          ],
+          "authors": [],
+          "programming_language": []
+        },
+        "files": [
+          {
+            "path": ".cargo_vcs_info.json",
+            "type": "file",
+            "name": ".cargo_vcs_info.json",
+            "base_name": ".cargo_vcs_info",
+            "extension": ".json",
+            "size": 74,
+            "date": "1970-01-01",
+            "sha1": "5e7db90f00d35015f7bf2c500c881c35d6c3e88b",
+            "md5": "4b2cf256e6ad48cf96055fd2c096ed04",
+            "sha256": "63abd18e7ccbb9584728ea96d911a5089e9e0d3d8714561ac243498bc6d7e9c0",
+            "mime_type": "application/json",
+            "file_type": "JSON data",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml",
+            "type": "file",
+            "name": "Cargo.toml",
+            "base_name": "Cargo",
+            "extension": ".toml",
+            "size": 899,
+            "date": "1970-01-01",
+            "sha1": "1d3344f5e67e535e25ccc05297ff3086c29e99e6",
+            "md5": "5adb51616c4cc7f5197c08b1ea586f00",
+            "sha256": "1c7b6ceb9350c9c91364de0d3bd7999868fd49ea39eca981c175802189dc50ef",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [
+              {
+                "type": "cargo",
+                "namespace": null,
+                "name": "mpmc",
+                "version": "0.1.6",
+                "qualifiers": {},
+                "subpath": null,
+                "primary_language": "Rust",
+                "description": "copy-pasted from old rust stdlib",
+                "release_date": null,
+                "parties": [
+                  {
+                    "type": "person",
+                    "role": "author",
+                    "name": "Dmitry Vyukov",
+                    "email": null,
+                    "url": null
+                  },
+                  {
+                    "type": "person",
+                    "role": "author",
+                    "name": "Brian Martin",
+                    "email": "brayniac@gmail.com",
+                    "url": null
+                  }
+                ],
+                "keywords": [],
+                "homepage_url": null,
+                "download_url": null,
+                "size": null,
+                "sha1": null,
+                "md5": null,
+                "sha256": null,
+                "sha512": null,
+                "bug_tracking_url": null,
+                "code_view_url": null,
+                "vcs_url": null,
+                "copyright": null,
+                "license_expression": null,
+                "declared_license": null,
+                "notice_text": null,
+                "root_path": null,
+                "dependencies": [],
+                "contains_source_code": null,
+                "source_packages": [],
+                "extra_data": {},
+                "purl": "pkg:cargo/mpmc@0.1.6",
+                "repository_homepage_url": "https://crates.io/crates/mpmc",
+                "repository_download_url": "https://crates.io/api/v1/crates/mpmc/0.1.6/download",
+                "api_data_url": "https://crates.io/api/v1/crates/mpmc",
+                "files": [
+                  {
+                    "path": "Cargo.toml",
+                    "type": "file"
+                  }
+                ]
+              }
+            ],
+            "emails": [
+              {
+                "email": "brayniac@gmail.com",
+                "start_line": 16,
+                "end_line": 16
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://github.com/brayniac/mpmc",
+                "start_line": 18,
+                "end_line": 18
+              },
+              {
+                "url": "https://docs.rs/mpmc",
+                "start_line": 19,
+                "end_line": 19
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": true,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "Cargo.toml.orig",
+            "type": "file",
+            "name": "Cargo.toml.orig",
+            "base_name": "Cargo.toml",
+            "extension": ".orig",
+            "size": 378,
+            "date": "1970-01-01",
+            "sha1": "4dcc9038ef41a61daf2dc808f7216fc810f4bebe",
+            "md5": "995e576f2ea32c93e768cfd5b824af1b",
+            "sha256": "c20d4a47b7a17107c97b4595b08dfc60076e5557db719277e52332eda8fa7954",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [
+              {
+                "email": "brayniac@gmail.com",
+                "start_line": 4,
+                "end_line": 4
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://github.com/brayniac/mpmc",
+                "start_line": 6,
+                "end_line": 6
+              },
+              {
+                "url": "https://docs.rs/mpmc",
+                "start_line": 7,
+                "end_line": 7
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "CODE_OF_CONDUCT.md",
+            "type": "file",
+            "name": "CODE_OF_CONDUCT.md",
+            "base_name": "CODE_OF_CONDUCT",
+            "extension": ".md",
+            "size": 3633,
+            "date": "1970-01-01",
+            "sha1": "25d0cc9e47c68b3e24644b3d5de19101f9508ed0",
+            "md5": "aa3ddcec7a553ece2cb03f33fe4ad89c",
+            "sha256": "2d4958332fec690d59e33ad1ffcfdaafefd236e0bc99459fc80e79d8ec53437d",
+            "mime_type": "text/html",
+            "file_type": "HTML document, UTF-8 Unicode text, with very long lines",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [
+              {
+                "email": "conduct@brayniac.org",
+                "start_line": 7,
+                "end_line": 7
+              }
+            ],
+            "urls": [
+              {
+                "url": "https://www.rust-lang.org/conduct.html",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "https://brayniac.github.io/conduct",
+                "start_line": 3,
+                "end_line": 3
+              },
+              {
+                "url": "http://citizencodeofconduct.org/",
+                "start_line": 14,
+                "end_line": 14
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "LICENSE",
+            "type": "file",
+            "name": "LICENSE",
+            "base_name": "LICENSE",
+            "extension": "",
+            "size": 1502,
+            "date": "1970-01-01",
+            "sha1": "03dd6407cd9fcb0ef993676e056b2ea2a2ece056",
+            "md5": "4458b4f6b800a06786006fc9409fbbf4",
+            "sha256": "42bef2e8c391f6ed4018f7cb00838655919a0c3073d0b6acde35287d7fb4db6d",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "bsd-2-clause-views",
+                "score": 99.04,
+                "name": "BSD 2-Clause with views sentence",
+                "short_name": "BSD-2-Clause-Views",
+                "category": "Permissive",
+                "is_exception": false,
+                "is_unknown": false,
+                "owner": "FreeBSD",
+                "homepage_url": "https://www.freebsd.org/copyright/freebsd-license.html",
+                "text_url": "https://github.com/protegeproject/protege/blob/master/license.txt",
+                "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-2-clause-views",
+                "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-2-clause-views.LICENSE",
+                "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-2-clause-views.yml",
+                "spdx_license_key": "BSD-2-Clause-Views",
+                "spdx_url": "https://spdx.org/licenses/BSD-2-Clause-Views",
+                "start_line": 2,
+                "end_line": 25,
+                "matched_rule": {
+                  "identifier": "bsd-2-clause-views_11.RULE",
+                  "license_expression": "bsd-2-clause-views",
+                  "licenses": [
+                    "bsd-2-clause-views"
+                  ],
+                  "referenced_filenames": [],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "is_license_intro": false,
+                  "has_unknown": false,
+                  "matcher": "3-seq",
+                  "rule_length": 206,
+                  "matched_length": 206,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    1. Redistributions of source code must retain the above copyright notice,\n       this list of conditions and the following disclaimer.\n\n    2. Redistributions in binary form must reproduce the above copyright\n       notice, this list of conditions and the following disclaimer in the\n       documentation and/or other materials provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY [DMITRY] [VYUKOV] \"AS IS\" AND ANY EXPRESS OR IMPLIED\nWARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\nMERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT\nSHALL [DMITRY] [VYUKOV] OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,\nINCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\nPROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\nLIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE\nOR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\nADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nThe views and conclusions contained in the software and documentation are\nthose of the authors and should not be interpreted as representing official\npolicies, either expressed or implied, of"
+              }
+            ],
+            "license_expressions": [
+              "bsd-2-clause-views"
+            ],
+            "percentage_of_license_text": 93.21,
+            "copyrights": [
+              {
+                "value": "Copyright (c) 2010-2011 Dmitry Vyukov",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "holders": [
+              {
+                "value": "Dmitry Vyukov",
+                "start_line": 1,
+                "end_line": 1
+              }
+            ],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": true,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": true,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "README.md",
+            "type": "file",
+            "name": "README.md",
+            "base_name": "README",
+            "extension": ".md",
+            "size": 1240,
+            "date": "1970-01-01",
+            "sha1": "e992d615c1094940e5306c2c6ebfad8177ece5ed",
+            "md5": "c7298e375733bf41d7214fe2b6b80743",
+            "sha256": "a8b4994477a2c2d1b394b327695875d28c020dc50c15f187aa073d5638879134",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg",
+                "start_line": 7,
+                "end_line": 7
+              },
+              {
+                "url": "https://github.com/brayniac/mpmc/actions/workflows/cargo.yml/badge.svg?branch=master",
+                "start_line": 8,
+                "end_line": 8
+              },
+              {
+                "url": "https://img.shields.io/crates/d/mpmc.svg",
+                "start_line": 9,
+                "end_line": 9
+              },
+              {
+                "url": "https://img.shields.io/crates/v/mpmc.svg",
+                "start_line": 10,
+                "end_line": 10
+              },
+              {
+                "url": "https://img.shields.io/crates/l/mpmc.svg",
+                "start_line": 11,
+                "end_line": 11
+              },
+              {
+                "url": "https://brayniac.github.io/conduct",
+                "start_line": 12,
+                "end_line": 12
+              },
+              {
+                "url": "https://github.com/brayniac/mpmc/actions/workflows/cargo.yml?query=branch:master",
+                "start_line": 13,
+                "end_line": 13
+              },
+              {
+                "url": "https://crates.io/crates/mpmc",
+                "start_line": 14,
+                "end_line": 14
+              },
+              {
+                "url": "https://github.com/rust-lang/cargo",
+                "start_line": 15,
+                "end_line": 15
+              },
+              {
+                "url": "https://docs.rs/mpmc",
+                "start_line": 37,
+                "end_line": 37
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": true,
+            "is_top_level": true,
+            "is_key_file": true,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".github",
+            "type": "directory",
+            "name": ".github",
+            "base_name": ".github",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 3,
+            "dirs_count": 1,
+            "size_count": 1182,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/ISSUE_TEMPLATE.md",
+            "type": "file",
+            "name": "ISSUE_TEMPLATE.md",
+            "base_name": "ISSUE_TEMPLATE",
+            "extension": ".md",
+            "size": 179,
+            "date": "1970-01-01",
+            "sha1": "ad179d45596b30d433bc27510e9f04b2a7a66f2b",
+            "md5": "42f310dbc933bebb358afaa94b6ca8e7",
+            "sha256": "72f518a225bd6b6ff28229f18842b0e31ab7b5b8af91016cdf99751ba5c0785a",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/PULL_REQUEST_TEMPLATE.md",
+            "type": "file",
+            "name": "PULL_REQUEST_TEMPLATE.md",
+            "base_name": "PULL_REQUEST_TEMPLATE",
+            "extension": ".md",
+            "size": 305,
+            "date": "1970-01-01",
+            "sha1": "a4a9a6345ced8a54586bb6c4554af4ab0d58cb50",
+            "md5": "1bca25dafae8ef3b72e84d62bf891b21",
+            "sha256": "6c7d4523ce06961f4ad0f6828d933f266a03c63b7e55408540c32d266f17dbe9",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/workflows",
+            "type": "directory",
+            "name": "workflows",
+            "base_name": "workflows",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 1,
+            "dirs_count": 0,
+            "size_count": 698,
+            "scan_errors": []
+          },
+          {
+            "path": ".github/workflows/cargo.yml",
+            "type": "file",
+            "name": "cargo.yml",
+            "base_name": "cargo",
+            "extension": ".yml",
+            "size": 698,
+            "date": "1970-01-01",
+            "sha1": "588633d1668fa6cc1d76742d74508c208ab0d66e",
+            "md5": "0edadb9d6e6aed496a9ec4050e7520c6",
+            "sha256": "f685a76d95bb622257635361af01fc03a11bd5cbd16d479b07f7564d5df09bb4",
+            "mime_type": "text/plain",
+            "file_type": "ASCII text",
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          },
+          {
+            "path": "src",
+            "type": "directory",
+            "name": "src",
+            "base_name": "src",
+            "extension": "",
+            "size": 0,
+            "date": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "mime_type": null,
+            "file_type": null,
+            "programming_language": null,
+            "is_binary": false,
+            "is_text": false,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": false,
+            "is_script": false,
+            "licenses": [],
+            "license_expressions": [],
+            "percentage_of_license_text": 0,
+            "copyrights": [],
+            "holders": [],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": true,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 1,
+            "dirs_count": 0,
+            "size_count": 7810,
+            "scan_errors": []
+          },
+          {
+            "path": "src/lib.rs",
+            "type": "file",
+            "name": "lib.rs",
+            "base_name": "lib",
+            "extension": ".rs",
+            "size": 7810,
+            "date": "1970-01-01",
+            "sha1": "eaa42ee1837304efed47cc9eb44dceddd65fcaa9",
+            "md5": "2d046978cb035c8a97521ec5707b48d5",
+            "sha256": "372de6c0a77af9975e69166c016095b6079fde4fa9f4dc413bd8a4d773fcffa3",
+            "mime_type": "text/x-c",
+            "file_type": "C source, ASCII text",
+            "programming_language": "Rust",
+            "is_binary": false,
+            "is_text": true,
+            "is_archive": false,
+            "is_media": false,
+            "is_source": true,
+            "is_script": false,
+            "licenses": [
+              {
+                "key": "bsd-2-clause-views",
+                "score": 99.04,
+                "name": "BSD 2-Clause with views sentence",
+                "short_name": "BSD-2-Clause-Views",
+                "category": "Permissive",
+                "is_exception": false,
+                "is_unknown": false,
+                "owner": "FreeBSD",
+                "homepage_url": "https://www.freebsd.org/copyright/freebsd-license.html",
+                "text_url": "https://github.com/protegeproject/protege/blob/master/license.txt",
+                "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-2-clause-views",
+                "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-2-clause-views.LICENSE",
+                "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-2-clause-views.yml",
+                "spdx_license_key": "BSD-2-Clause-Views",
+                "spdx_url": "https://spdx.org/licenses/BSD-2-Clause-Views",
+                "start_line": 7,
+                "end_line": 33,
+                "matched_rule": {
+                  "identifier": "bsd-2-clause-views_11.RULE",
+                  "license_expression": "bsd-2-clause-views",
+                  "licenses": [
+                    "bsd-2-clause-views"
+                  ],
+                  "referenced_filenames": [],
+                  "is_license_text": true,
+                  "is_license_notice": false,
+                  "is_license_reference": false,
+                  "is_license_tag": false,
+                  "is_license_intro": false,
+                  "has_unknown": false,
+                  "matcher": "3-seq",
+                  "rule_length": 206,
+                  "matched_length": 206,
+                  "match_coverage": 100,
+                  "rule_relevance": 100
+                },
+                "matched_text": "Redistribution and use in source and binary forms, with or without\n// modification, are permitted provided that the following conditions are met:\n//\n//    1. Redistributions of source code must retain the above copyright notice,\n//       this list of conditions and the following disclaimer.\n//\n//    2. Redistributions in binary form must reproduce the above copyright\n//       notice, this list of conditions and the following disclaimer in the\n//       documentation and/or other materials provided with the distribution.\n//\n// THIS SOFTWARE IS PROVIDED BY [DMITRY] [VYUKOV] \"AS IS\" AND ANY EXPRESS OR IMPLIED\n// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\n// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO\n// EVENT\n// SHALL [DMITRY] [VYUKOV] OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,\n// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\n// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,\n// OR\n// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n// NEGLIGENCE\n// OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\n// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n//\n// The views and conclusions contained in the software and documentation are\n// those of the authors and should not be interpreted as representing official\n// policies, either expressed or implied, of"
+              }
+            ],
+            "license_expressions": [
+              "bsd-2-clause-views"
+            ],
+            "percentage_of_license_text": 24.21,
+            "copyrights": [
+              {
+                "value": "Copyright (c) 2010-2011 Dmitry Vyukov",
+                "start_line": 6,
+                "end_line": 6
+              }
+            ],
+            "holders": [
+              {
+                "value": "Dmitry Vyukov",
+                "start_line": 6,
+                "end_line": 6
+              }
+            ],
+            "authors": [],
+            "packages": [],
+            "emails": [],
+            "urls": [
+              {
+                "url": "http://www.1024cores.net/home/lock-free-algorithms/queues/bounded-mpmc-queue",
+                "start_line": 38,
+                "end_line": 38
+              }
+            ],
+            "is_legal": false,
+            "is_manifest": false,
+            "is_readme": false,
+            "is_top_level": false,
+            "is_key_file": false,
+            "is_generated": false,
+            "is_license_text": false,
+            "files_count": 0,
+            "dirs_count": 0,
+            "size_count": 0,
+            "scan_errors": []
+          }
+        ]
+      }
+    }
+  }
+}
