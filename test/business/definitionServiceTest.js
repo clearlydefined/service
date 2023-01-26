@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
 const sinon = require('sinon')
 const validator = require('../../schemas/validator')
 const DefinitionService = require('../../business/definitionService')
@@ -11,6 +10,11 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setIfValue } = require('../../lib/utils')
 const Curation = require('../../lib/curation')
 const { set } = require('lodash')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
+
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -361,6 +365,12 @@ describe('Aggregation service', () => {
         tools: [['clearlydefined', 'licensee', 'scancode']],
         expected: 'MIT OR Apache-2.0',
       },
+      {
+        name: 'mpmc',
+        version: '0.1.6',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'BSD-2-Clause-Views',
+      }
     ]
 
     const summary_options = {}
@@ -374,7 +384,7 @@ describe('Aggregation service', () => {
       const tools = testcase.tools
       const summaries = summaryService.summarizeAll(coords, raw)
       const { service } = setupAggregatorWithParams(coordSpec, tools)
-      const aggregated = service.process(summaries)
+      const aggregated = service.process(summaries, coords)
       expect(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`).to.eq(testcase.expected)
     }
   })
