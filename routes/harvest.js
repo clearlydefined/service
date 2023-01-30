@@ -22,7 +22,7 @@ async function get(request, response) {
     }
     case 'summary': {
       const raw = await harvestStore.get(coordinates)
-      const rawFromTool = {
+      const rawFromTool = raw && {
         [coordinates.tool]: {
           [coordinates.toolVersion]: raw
         }
