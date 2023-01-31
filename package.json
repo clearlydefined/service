@@ -76,6 +76,7 @@
     "deep-equal-in-any-order": "^1.0.10",
     "eslint": "^7.5",
     "mocha": "^8.2.1",
+    "mongodb-memory-server": "^8.11.2",
     "node-mocks-http": "^1.6.7",
     "nodemon": "^2.0.3",
     "nyc": "^15.0.0",

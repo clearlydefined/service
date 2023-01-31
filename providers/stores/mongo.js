@@ -22,9 +22,18 @@ const sortOptions = {
   toolScore: ['scores.tool']
 }
 
+const valueTransformers = {
+  'licensed.score.total': value => value && parseInt(value),
+  'described.score.total': value => value && parseInt(value),
+  'scores.effective': value => value && parseInt(value),
+  'scores.tool': value => value && parseInt(value)
+}
+
+const SEPARATOR = '&'
+
 class MongoStore {
   constructor(options) {
-    this.logger = logger()
+    this.logger = options.logger || logger()
     this.options = options
   }
 
@@ -80,17 +89,17 @@ class MongoStore {
    * @param {object} query - The filters and sorts for the request
    * @returns The data and continuationToken if there is more results
    */
-  async find(query, continuationToken = '') {
-    const pageSize = 100 // no option for page size, just next tokens
-    const filter = this._buildQuery(query, continuationToken)
+  async find(query, continuationToken = '', pageSize = 100) {
     const sort = this._buildSort(query)
-    const cursor = await this.collection.find(filter, {
+    const combinedFilters = this._buildQueryWithPaging(query, continuationToken, sort)
+    this.logger.debug(`filter: ${JSON.stringify(combinedFilters)}\nsort: ${JSON.stringify(sort)}`)
+    const cursor = await this.collection.find(combinedFilters, {
       projection: { _id: 0, files: 0 },
       sort: sort,
       limit: pageSize
     })
     const data = await cursor.toArray()
-    continuationToken = this._getContinuationToken(pageSize, data)
+    continuationToken = this._getContinuationToken(pageSize, data, sort)
     data.forEach(def => {
       delete def._mongo
     })
@@ -138,7 +147,7 @@ class MongoStore {
       .toLowerCase()
   }
 
-  _buildQuery(parameters, continuationToken) {
+  _buildQuery(parameters) {
     const filter = { '_mongo.page': 1 } // only get page 1 of each definition
     if (parameters.type) filter['coordinates.type'] = parameters.type
     if (parameters.provider) filter['coordinates.provider'] = parameters.provider
@@ -159,21 +168,90 @@ class MongoStore {
     if (parameters.maxLicensedScore) filter['licensed.score.total'] = { $lt: parseInt(parameters.maxLicensedScore) }
     if (parameters.minDescribedScore) filter['described.score.total'] = { $gt: parseInt(parameters.minDescribedScore) }
     if (parameters.maxDescribedScore) filter['described.score.total'] = { $lt: parseInt(parameters.maxDescribedScore) }
-    if (continuationToken) filter['_mongo.partitionKey'] = { $gt: base64.decode(continuationToken) }
     return filter
   }
 
   _buildSort(parameters) {
-    const sort = sortOptions[parameters.sort] || ['_mongo.partitionKey']
-    let clause = {}
+    const sort = sortOptions[parameters.sort] || []
+    const clause = {}
     sort.forEach(item => clause[item] = parameters.sortDesc ? -1 : 1)
+    //Always sort ascending on partitionKey for continuation token
+    clause['_mongo.partitionKey'] = 1
     return clause
   }
 
-  _getContinuationToken(pageSize, data) {
+  _buildQueryWithPaging(query, continuationToken, sort) {
+    const filter = this._buildQuery(query)
+    const paginationFilter = this._buildPaginationQuery(continuationToken, sort)
+    return paginationFilter ? { $and: [filter, paginationFilter] } : filter
+  }
+
+  _buildPaginationQuery(continuationToken, sort) {
+    if (!continuationToken.length) return
+    const queryExpressions = this._buildQueryExpressions(continuationToken, sort)
+    return queryExpressions.length <= 1 ?
+      queryExpressions [0] :
+      { $or: [ ...queryExpressions ] }
+  }
+
+  _buildQueryExpressions(continuationToken, sort) {
+    const lastValues = base64.decode(continuationToken)
+    const sortValues = lastValues.split(SEPARATOR).map(value => value.length ? value : null)
+
+    const queryExpressions = []
+    const sortConditions = Object.entries(sort)
+    for (let nSorts = 1; nSorts <= sortConditions.length; nSorts++) {
+      const subList = sortConditions.slice(0, nSorts)
+      queryExpressions.push(this._buildQueryExpression(subList, sortValues))
+    }
+    return queryExpressions
+  }
+
+  _buildQueryExpression(sortConditions, sortValues) {
+    return sortConditions.reduce((filter, [sortField, sortDirection], index) => {
+      const transform = valueTransformers[sortField]
+      let sortValue = sortValues[index]
+      sortValue = transform ? transform(sortValue) : sortValue
+      const isLast = index === sortConditions.length - 1
+      const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
+      return { ...filter, ...filterForSort}
+    }, {})
+  }
+
+  _buildQueryForSort(isTieBreaker, sortField, sortValue, sortDirection) {
+    let operator = '$eq'
+    if (isTieBreaker) {
+      if (sortDirection === 1) {
+        operator = sortValue === null ? '$ne' : '$gt'
+      } else {
+        operator = '$lt'
+      }  
+    }
+    const filter = { [sortField]: { [operator]: sortValue } }
+
+    //Less than non null value should include null as well
+    if (operator === '$lt' && sortValue) {
+      return {
+        $or: [
+          filter,
+          { [sortField]: null }
+        ]
+      }
+    }
+    return filter
+  }
+
+  _getContinuationToken(pageSize, data, sortClause) {
     if (data.length !== pageSize) return ''
-    return base64.encode(data[data.length - 1]._mongo.partitionKey)
+    const lastItem = data[data.length - 1]
+    const lastValues = Object.keys(sortClause)
+      .map(key => get(lastItem, key))
+      .join(SEPARATOR)
+    return base64.encode(lastValues)
+  }
+
+  async close() {
+    await this.client.close()
   }
 }
-
 module.exports = options => new MongoStore(options)
