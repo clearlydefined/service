@@ -378,6 +378,20 @@ describe('Aggregation service', () => {
       expect(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`).to.eq(testcase.expected)
     }
   })
+
+  it('should handle composer/packagist components', () => {
+    const tools = [['clearlydefined', 'licensee', 'scancode', 'reuse']]
+    const coordSpec = 'composer/packagist/mmucklo/krumo/0.7.0'
+    const coords = EntityCoordinates.fromString(coordSpec)
+    const raw = require(`./evidence/${coordSpec.replace(/\//g, '-')}.json`)
+
+    const summary_options = {}
+    const summaryService = SummaryService(summary_options)
+    const summaries = summaryService.summarizeAll(coords, raw)
+    const { service } = setupAggregatorWithParams(coordSpec, tools)
+    const aggregated = service.process(summaries, coords)
+    expect(aggregated.licensed.declared).to.be.equal('LGPL-2.1-only')
+  })
 })
 
 function validate(definition) {

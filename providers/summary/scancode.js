@@ -34,8 +34,10 @@ class ScanCodeSummarizer {
     this.addDescribedInfo(result, harvested)
     // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
     if (get(coordinates, 'type') !== 'crate') {
-      const declaredLicense =
-        this._readDeclaredLicense(scancodeVersion, harvested) || this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+      let declaredLicense = this._readDeclaredLicense(scancodeVersion, harvested)
+      if (!declaredLicense || declaredLicense === 'NOASSERTION') {
+        declaredLicense = this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+      }
       setIfValue(result, 'licensed.declared', declaredLicense)
     }
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
@@ -77,6 +79,15 @@ class ScanCodeSummarizer {
   _getRootFiles(coordinates, files) {
     const roots = getLicenseLocations(coordinates) || []
     roots.push('') // for no prefix
+    let rootFiles = this._findRootFiles(files, roots)
+    //Some components (e.g. composer/packgist) are packaged under one directory
+    if (rootFiles.length === 1 && rootFiles[0].type === 'directory') {
+      rootFiles = this._findRootFiles(files, [`${rootFiles[0].path}/`])
+    }
+    return rootFiles
+  }
+
+  _findRootFiles(files, roots) {
     return files.filter(file => {
       for (let root of roots)
         if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
