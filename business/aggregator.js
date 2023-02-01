@@ -32,6 +32,7 @@
 const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
 const { flattenDeep, get, set, intersectionBy } = require('lodash')
 const logger = require('../providers/logging/logger')
+const { setIfValue } = require('../lib/utils')
 
 class AggregationService {
   constructor(options) {
@@ -64,9 +65,9 @@ class AggregationService {
   _overrideDeclaredLicense(result, cdSummarized, coordinates) {
     const declaredByCD = cdSummarized?.summary?.licensed?.declared
     const isCrateComponent = get(coordinates, 'type') === 'crate'
-    if (isCrateComponent && declaredByCD && declaredByCD !== 'NOASSERTION') {
+    if (isCrateComponent && declaredByCD !== 'NOASSERTION') {
       // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
-      set(result, 'licensed.declared', declaredByCD)
+      setIfValue(result, 'licensed.declared', declaredByCD)
     }
   }
 
