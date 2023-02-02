@@ -32,6 +32,7 @@
 const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
 const { flattenDeep, get, set, intersectionBy } = require('lodash')
 const logger = require('../providers/logging/logger')
+const { setIfValue } = require('../lib/utils')
 
 class AggregationService {
   constructor(options) {
@@ -55,8 +56,19 @@ class AggregationService {
     })
     if (!tools.length) return null
     set(result, 'described.tools', tools.reverse())
-    this._normalizeFiles(result, summarized, coordinates)
+    const cdSummarized = this._findData('clearlydefined', summarized)
+    this._overrideDeclaredLicense(result, cdSummarized, coordinates)
+    this._normalizeFiles(result, cdSummarized, coordinates)
     return result
+  }
+
+  _overrideDeclaredLicense(result, cdSummarized, coordinates) {
+    const declaredByCD = cdSummarized?.summary?.licensed?.declared
+    const isCrateComponent = get(coordinates, 'type') === 'crate'
+    if (isCrateComponent && declaredByCD !== 'NOASSERTION') {
+      // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
+      setIfValue(result, 'licensed.declared', declaredByCD)
+    }
   }
 
   // search the summarized data for an entry that best matches the given tool spec
@@ -74,8 +86,8 @@ class AggregationService {
    * Take the clearlydefined tool as the source of truth for file paths as it is just a recursive dir
    * Intersect the summarized file list with the clearlydefined file list by path
    */
-  _normalizeFiles(result, summarized, coordinates) {
-    const cdFiles = get(this._findData('clearlydefined', summarized), 'summary.files')
+  _normalizeFiles(result, cdSummarized, coordinates) {
+    const cdFiles = get(cdSummarized, 'summary.files')
     if (!cdFiles || !cdFiles.length) return
     const difference = result.files.length - cdFiles.length
     if (!difference) return

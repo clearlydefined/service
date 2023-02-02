@@ -47,8 +47,6 @@ class LicenseeSummarizer {
 
   _addLicenseFromFiles(result, coordinates) {
     if (!result.files) return
-    // For Rust crates, leave the license declaration to the ClearlyDefined summarizer which parses Cargo.toml
-    if (get(coordinates, 'type') === 'crate') return
     const licenses = result.files
       .map(file => (isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null))
       .filter(x => x)
