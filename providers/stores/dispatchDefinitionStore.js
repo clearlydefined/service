@@ -6,34 +6,34 @@ const logger = require('../logging/logger')
 class DispatchDefinitionStore {
   constructor(options) {
     this.stores = options.stores
-    this.logger = logger()
+    this.logger = options.logger || logger()
   }
 
   initialize() {
-    return this._perform(store => store.initialize())
+    return this._performInParallel(store => store.initialize())
   }
 
   get(coordinates) {
-    return this._perform(store => store.get(coordinates), true)
+    return this._performInSequence(store => store.get(coordinates))
   }
 
   list(coordinates) {
-    return this._perform(store => store.list(coordinates), true)
+    return this._performInSequence(store => store.list(coordinates))
   }
 
   store(definition) {
-    return this._perform(store => store.store(definition))
+    return this._performInParallel(store => store.store(definition))
   }
 
   delete(coordinates) {
-    return this._perform(store => store.delete(coordinates))
+    return this._performInParallel(store => store.delete(coordinates))
   }
 
   find(query, continuationToken = '') {
-    return this._perform(store => store.find(query, continuationToken), true)
+    return this._performInSequence(store => store.find(query, continuationToken))
   }
 
-  async _perform(operation, first = false) {
+  async _performInSequence(operation, first = true) {
     let result = null
     for (let i = 0; i < this.stores.length; i++) {
       const store = this.stores[i]
@@ -46,6 +46,16 @@ class DispatchDefinitionStore {
       }
     }
     return result
+  }
+
+  async _performInParallel(operation) {
+    const opPromises = this.stores.map(store => operation(store))
+    const results = await Promise.allSettled(opPromises)
+    results
+      .filter(result => result.status === 'rejected')
+      .forEach(result => this.logger.error('DispatchDefinitionStore failure', result.reason))
+    const fulfilled = results.find(result => result.status === 'fulfilled')
+    return fulfilled?.value
   }
 }
 
