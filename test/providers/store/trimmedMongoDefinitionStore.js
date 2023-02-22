@@ -60,82 +60,88 @@ describe('Trimmed Mongo Definition store', () => {
     expect(defs).to.be.not.ok
   })
 
-  it('should call replaceOne with the right arguments', async () => {
-    mongoStore.collection.replaceOne = sinon.fake.resolves()
-    const definition = createDefinition('npm/npmjs/-/foo/1.0')
-    await mongoStore.store(definition)
-    expect(mongoStore.collection.replaceOne.callCount).to.eq(1)
-    const args = mongoStore.collection.replaceOne.args[0]
-    expect(args[0]['_id']).to.eq('npm/npmjs/-/foo/1.0')
-    expect(args[1].files).to.be.not.ok
+  describe('store', () => {
+    it('should call replaceOne with the right arguments', async () => {
+      mongoStore.collection.replaceOne = sinon.fake.resolves()
+      const definition = createDefinition('npm/npmjs/-/foo/1.0')
+      await mongoStore.store(definition)
+      expect(mongoStore.collection.replaceOne.callCount).to.eq(1)
+      const args = mongoStore.collection.replaceOne.args[0]
+      expect(args[0]['_id']).to.eq('npm/npmjs/-/foo/1.0')
+      expect(args[1].files).to.be.not.ok
+    })
+
+    it('should store the definition', async () => {
+      const definition = createDefinition('npm/npmjs/-/foo/1.0')
+      await mongoStore.store(definition)
+      const defs = await mongoStore.find({ name: 'foo' }, '')
+      expect(defs.data.length).to.be.eq(1)
+      const coordinates = EntityCoordinates.fromObject(defs.data[0].coordinates)
+      expect(coordinates.toString()).to.be.eq('npm/npmjs/-/foo/1.0')
+    })
   })
 
-  it('should store the definition', async () => {
-    const definition = createDefinition('npm/npmjs/-/foo/1.0')
-    await mongoStore.store(definition)
-    const defs = await mongoStore.find({ name: 'foo' }, '', 5)
-    expect(defs.data.length).to.be.eq(1)
-    const coordinates = EntityCoordinates.fromObject(defs.data[0].coordinates)
-    expect(coordinates.toString()).to.be.eq('npm/npmjs/-/foo/1.0')
+  describe('delete', () => {
+    it('should call deleteOne with the right arguments', async () => {
+      mongoStore.collection.deleteOne = sinon.fake.resolves()
+      await mongoStore.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
+      expect(mongoStore.collection.deleteOne.callCount).to.eq(1)
+      expect(mongoStore.collection.deleteOne.args[0][0]['_id']).to.eq('npm/npmjs/-/foo/1.0')
+    })
+
+    it('should delete the definition', async () => {
+      let defs = await mongoStore.find({ name: 'jenetics' }, '')
+      expect(defs.data.length).to.be.eq(1)
+      await mongoStore.delete(EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics/7.1.1'))
+      defs = await mongoStore.find({ name: 'jenetics' }, '')
+      expect(defs.data.length).to.be.eq(0)
+    })
+  })
+ 
+  describe('find', () => {
+    it('should call find with right arguments', async () => {
+      mongoStore.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([]) })
+      await mongoStore.find({ type: 'npm' })
+
+      const filter = { 'coordinates.type': 'npm' }
+      const opts = {
+        projection: undefined,
+        sort: { _id: 1 },
+        limit: 100,
+      }
+      const findArgs = mongoStore.collection.find.firstCall.args
+      expect(findArgs[0]).to.be.deep.equal(filter)
+      expect(findArgs[1]).to.be.deep.equal(opts)
+    })
+    
+    it('should find one page of records', async () => {
+      const expected = [
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
+        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
+        'maven/mavencentral/io.jenetics/jenetics/7.1.1',
+        'maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4',
+        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5'
+      ]
+      const defs = await mongoStore.find({}, '', 5)
+      expect(defs.continuationToken).to.be.ok
+      expect(defs.data.length).to.be.equal(5)
+      expect(defs.data[0]._id).to.be.not.ok
+      const coordinates = verifyUniqueCoordinates(defs.data)
+      verifyExpectedCoordinates(coordinates, expected)
+    })
+
+    it('should find all with continuous token', async () => {
+      const query = {}
+      const defs1 = await mongoStore.find(query, '', 7)
+      expect(defs1.continuationToken).to.be.ok
+      const defs2 = await mongoStore.find(query, defs1.continuationToken, 7)
+      expect(defs2.continuationToken).to.be.not.ok
+      const allDefs = [ ...defs1.data, ...defs2.data]
+      const coordinates = verifyUniqueCoordinates(allDefs)
+      expect(coordinates.length).to.be.equal(12)
+    })
   })
 
-  it('should call deleteOne with the right arguments', async () => {
-    mongoStore.collection.deleteOne = sinon.fake.resolves()
-    await mongoStore.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(mongoStore.collection.deleteOne.callCount).to.eq(1)
-    expect(mongoStore.collection.deleteOne.args[0][0]['_id']).to.eq('npm/npmjs/-/foo/1.0')
-  })
-
-  it('should delete the definition', async () => {
-    let defs = await mongoStore.find({ name: 'jenetics' }, '', 5)
-    expect(defs.data.length).to.be.eq(1)
-    await mongoStore.delete(EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics/7.1.1'))
-    defs = await mongoStore.find({ name: 'jenetics' }, '', 5)
-    expect(defs.data.length).to.be.eq(0)
-  })
-
-  it('should call find with right arguments', async () => {
-    mongoStore.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([]) })
-    await mongoStore.find({ type: 'npm' })
-
-    const filter = { 'coordinates.type': 'npm' }
-    const opts = {
-      projection: undefined,
-      sort: { _id: 1 },
-      limit: 100,
-    }
-    const findArgs = mongoStore.collection.find.firstCall.args
-    expect(findArgs[0]).to.be.deep.equal(filter)
-    expect(findArgs[1]).to.be.deep.equal(opts)
-  })
-  
-  it('should find one page of records', async () => {
-    const expected = [
-      'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
-      'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
-      'maven/mavencentral/io.jenetics/jenetics/7.1.1',
-      'maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4',
-      'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5'
-    ]
-    const defs = await mongoStore.find({}, '', 5)
-    expect(defs.continuationToken).to.be.ok
-    expect(defs.data.length).to.be.equal(5)
-    expect(defs.data[0]._id).to.be.not.ok
-    const coordinates = verifyUniqueCoordinates(defs.data)
-    verifyExpectedCoordinates(coordinates, expected)
-  })
-
-  it('should find all with continuous token', async () => {
-    const query = {}
-    const defs1 = await mongoStore.find(query, '', 7)
-    expect(defs1.continuationToken).to.be.ok
-    const defs2 = await mongoStore.find(query, defs1.continuationToken, 7)
-    expect(defs2.continuationToken).to.be.not.ok
-    const allDefs = [ ...defs1.data, ...defs2.data]
-    const coordinates = verifyUniqueCoordinates(allDefs)
-    expect(coordinates.length).to.be.equal(12)
-  })
-  
   describe('trimmed vs. paged definition', () => {
     let pagedMongoStore
   
@@ -158,10 +164,10 @@ describe('Trimmed Mongo Definition store', () => {
       const definition = createDefinition('npm/npmjs/-/foo/1.0')
       const query = { name: 'foo' }
       await pagedMongoStore.store(definition)
-      const expected = await pagedMongoStore.find(query, '', 2)
+      const expected = await pagedMongoStore.find(query, '')
 
       await mongoStore.store(definition)
-      const actual = await mongoStore.find(query, '', 2)
+      const actual = await mongoStore.find(query, '')
       expect(actual).to.be.deep.equal(expected)
     })
   })
