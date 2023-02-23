@@ -9,7 +9,7 @@ module.exports = {
     azure: require('../providers/stores/azblobConfig').definition,
     file: require('../providers/stores/fileConfig').definition,
     mongo: require('../providers/stores/mongoConfig').definitionPaged,
-    mongotrimmed: require('../providers/stores/mongoConfig').definitionTrimmed,
+    mongoTrimmed: require('../providers/stores/mongoConfig').definitionTrimmed,
     dispatch: require('../providers/stores/dispatchConfig')
   },
   attachment: {
