@@ -8,7 +8,8 @@ module.exports = {
   definition: {
     azure: require('../providers/stores/azblobConfig').definition,
     file: require('../providers/stores/fileConfig').definition,
-    mongo: require('../providers/stores/mongoConfig'),
+    mongo: require('../providers/stores/mongoConfig').definitionPaged,
+    mongoTrimmed: require('../providers/stores/mongoConfig').definitionTrimmed,
     dispatch: require('../providers/stores/dispatchConfig')
   },
   attachment: {

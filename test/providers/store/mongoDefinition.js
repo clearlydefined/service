@@ -125,7 +125,7 @@ describe('Mongo Definition store', () => {
       [{ maxToolScore: 50 }, { '_mongo.page': 1, 'scores.tool': { $lt: 50 } }]
     ])
     data.forEach((expected, input) => {
-      expect(store._buildQuery(input)).to.deep.equal(expected)
+      expect(store.buildQuery(input)).to.deep.equal(expected)
     })
   })
 
@@ -192,6 +192,20 @@ describe('Mongo Definition store', () => {
     ])
     expect(token).to.eq('')
   })
+  
+  it('should call find with right arguments', async () => {
+    const store = createStore()
+    store.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([])})
+    await store.find({ type: 'npm' })
+    const filter = { 'coordinates.type': 'npm','_mongo.page': 1 }
+    const opts = {
+      'projection': { '_id': 0, 'files': 0 },
+      'sort': { '_mongo.partitionKey': 1 },
+      'limit': 100 }
+    const findArgs = store.collection.find.firstCall.args
+    expect(findArgs[0]).to.be.deep.equal(filter)
+    expect(findArgs[1]).to.be.deep.equal(opts)
+  })
 })
 
 function createDefinition(coordinates) {
@@ -224,7 +238,8 @@ function createStore(data) {
     insertMany: sinon.stub(),
     deleteMany: sinon.stub()
   }
-  const store = Store({})
+  const opts = { logger: { debug: () => {} }}
+  const store = Store(opts)
   store.collection = collectionStub
   return store
 }

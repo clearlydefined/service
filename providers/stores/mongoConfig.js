@@ -2,15 +2,25 @@
 // SPDX-License-Identifier: MIT
 const config = require('painless-config')
 const mongo = require('./mongo')
+const TrimmedMongoDefinitionStore = require('./trimmedMongoDefinitionStore')
 
-function definition(options) {
-  return mongo(
-    options || {
-      connectionString: config.get('DEFINITION_MONGO_CONNECTION_STRING'),
-      dbName: config.get('DEFINITION_MONGO_DB_NAME') || 'clearlydefined',
-      collectionName: config.get('DEFINITION_MONGO_COLLECTION_NAME') || 'definitions'
-    }
-  )
+const dbOptions = {
+  connectionString: config.get('DEFINITION_MONGO_CONNECTION_STRING'),
+  dbName: config.get('DEFINITION_MONGO_DB_NAME') || 'clearlydefined'
 }
 
-module.exports = definition
+function definitionPaged(options) {
+  return mongo(options || {
+    ...dbOptions,
+    collectionName: config.get('DEFINITION_MONGO_COLLECTION_NAME') || 'definitions'
+  })
+}
+
+function definitionTrimmed(options) {
+  return TrimmedMongoDefinitionStore(options || {
+    ...dbOptions,
+    collectionName: config.get('TRIMMED_DEFINITION_MONGO_COLLECTION_NAME') || 'definitions-trimmed'    
+  })
+}
+
+module.exports = { definitionPaged, definitionTrimmed }
