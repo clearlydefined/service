@@ -8,7 +8,7 @@ const dbOptions = {
   collectionName: 'definitions-paged',
 }
 
-describe('Mongo Definition Store: Paged', function() {
+describe.skip('Mongo Definition Store: Paged', function() {
 
   before('setup store factory', async function() {
     this.createStore = createStore

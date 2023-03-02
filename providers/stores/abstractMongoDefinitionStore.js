@@ -32,6 +32,11 @@ const valueTransformers = {
 const SEPARATOR = '&'
 
 class AbstractMongoDefinitionStore {
+  
+  static get sortOptions() {
+    return sortOptions
+  }
+
   constructor(options) {
     this.logger = options.logger || logger()
     this.options = options

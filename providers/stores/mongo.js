@@ -98,5 +98,21 @@ class MongoStore extends AbstractMongoDefinitionStore {
     return { ...filter, '_mongo.page': 1 } // only get page 1 of each definition
   }
 
+  //Override the query building logic to avoid multiple sort fields
+  //Previous pagination query relies only on '_mongo.partitionKey'.  
+  _buildPaginationQuery(continuationToken) {
+    return super._buildPaginationQuery(continuationToken, { [this.getCoordinatesKey()]: 1 })
+  }
+  
+  _getContinuationToken(pageSize, data) {
+    return super._getContinuationToken(pageSize, data, { [this.getCoordinatesKey()]: 1 })
+  }
+  
+  _buildSort(parameters) {
+    const sort = AbstractMongoDefinitionStore.sortOptions[parameters.sort] || [this.getCoordinatesKey()]
+    const clause = {}
+    sort.forEach(item => clause[item] = parameters.sortDesc ? -1 : 1)
+    return clause
+  }
 }
 module.exports = options => new MongoStore(options)

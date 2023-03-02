@@ -151,17 +151,17 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     const data = new Map([
       [{}, { '_mongo.partitionKey': 1 }],
-      [{ sort: 'type' }, { 'coordinates.type': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'provider' }, { 'coordinates.provider': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'describedScore' }, { 'described.score.total': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'effectiveScore' }, { 'scores.effective': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'toolScore' }, { 'scores.tool': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'revision' }, { 'coordinates.revision': 1, '_mongo.partitionKey': 1 }]
+      [{ sort: 'type' }, { 'coordinates.type': 1 }],
+      [{ sort: 'provider' }, { 'coordinates.provider': 1 }],
+      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1 }],
+      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1 }],
+      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1 }],
+      [{ sort: 'releaseDate' }, { 'described.releaseDate': 1 }],
+      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1 }],
+      [{ sort: 'describedScore' }, { 'described.score.total': 1 }],
+      [{ sort: 'effectiveScore' }, { 'scores.effective': 1 }],
+      [{ sort: 'toolScore' }, { 'scores.tool': 1 }],
+      [{ sort: 'revision' }, { 'coordinates.revision': 1 }]
     ])
     data.forEach((expected, input) => {
       const result = store._buildSort(input)
