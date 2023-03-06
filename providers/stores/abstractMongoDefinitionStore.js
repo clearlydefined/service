@@ -86,7 +86,7 @@ class AbstractMongoDefinitionStore {
     const sort = this._buildSort(query)
     const combinedFilters = this._buildQueryWithPaging(query, continuationToken, sort)
     this.logger.debug(`filter: ${JSON.stringify(combinedFilters)}\nsort: ${JSON.stringify(sort)}`)
-    const cursor = await this.collection.find(combinedFilters, {
+    const cursor = this.collection.find(combinedFilters, {
       projection,
       sort,
       limit: pageSize

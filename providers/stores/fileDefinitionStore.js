@@ -24,7 +24,8 @@ class FileDefinitionStore extends AbstractFileStore {
     return sortedUniq(list.filter(x => x))
   }
 
-  async store(coordinates, definition) {
+  async store(definition) {
+    const { coordinates } = definition
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
     const dirName = path.dirname(filePath)
     await promisify(mkdirp)(dirName)
