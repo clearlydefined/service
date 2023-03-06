@@ -100,7 +100,7 @@ describe('Trimmed Mongo Definition store', () => {
  
   describe('find', () => {
     it('should call find with right arguments', async () => {
-      mongoStore.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([]) })
+      mongoStore.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([]) })
       await mongoStore.find({ type: 'npm' })
 
       const filter = { 'coordinates.type': 'npm' }

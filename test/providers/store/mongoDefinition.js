@@ -195,7 +195,7 @@ describe('Mongo Definition store', () => {
   
   it('should call find with right arguments', async () => {
     const store = createStore()
-    store.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([])})
+    store.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([])})
     await store.find({ type: 'npm' })
     const filter = { 'coordinates.type': 'npm','_mongo.page': 1 }
     const opts = {
