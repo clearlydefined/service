@@ -140,6 +140,94 @@ describe('Trimmed Mongo Definition store', () => {
       const coordinates = verifyUniqueCoordinates(allDefs)
       expect(coordinates.length).to.be.equal(12)
     })
+
+    describe('find query', () => {
+      it('builds a mongo query', () => {
+        const data = new Map([
+          [{}, {}],
+          [{ type: 'npm' }, { 'coordinates.type': 'npm' }],
+          [{ provider: 'npmjs' }, { 'coordinates.provider': 'npmjs' }],
+          [{ name: 'package' }, { 'coordinates.name': 'package' }],
+          [
+            { namespace: '@owner', name: 'package' },
+            { 'coordinates.name': 'package', 'coordinates.namespace': '@owner' }
+          ],
+          [{ license: 'MIT' }, { 'licensed.declared': 'MIT' }],
+          [{ releasedAfter: '2018-01-01' }, { 'described.releaseDate': { $gt: '2018-01-01' } }],
+          [{ releasedBefore: '2017-12-30' }, { 'described.releaseDate': { $lt: '2017-12-30' } }],
+          [{ minLicensedScore: 50 }, { 'licensed.score.total': { $gt: 50 } }],
+          [{ maxLicensedScore: 50 }, { 'licensed.score.total': { $lt: 50 } }],
+          [{ minDescribedScore: 50 }, { 'described.score.total': { $gt: 50 } }],
+          [{ maxDescribedScore: 50 }, { 'described.score.total': { $lt: 50 } }],
+          [{ minEffectiveScore: 50 }, { 'scores.effective': { $gt: 50 } }],
+          [{ maxEffectiveScore: 50 }, { 'scores.effective': { $lt: 50 } }],
+          [{ minToolScore: 50 }, { 'scores.tool': { $gt: 50 } }],
+          [{ maxToolScore: 50 }, { 'scores.tool': { $lt: 50 } }]
+        ])
+        data.forEach((expected, input) => {
+          expect(mongoStore.buildQuery(input)).to.deep.equal(expected)
+        })
+      })
+
+      it('builds a mongo query with continuationToken', () => {
+        const parameters = { namespace: '@owner', name: 'package' }
+        const sort = {'_id': 1}
+        const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
+        const expected = {
+          '$and': [{
+            'coordinates.name': 'package',
+            'coordinates.namespace': '@owner'
+          }, {
+            '_id': { '$gt': 'npm/npmjs/-/verror/1.10.0' }
+          }]  
+        }
+    
+        expect(mongoStore._buildQueryWithPaging(parameters, continuationToken, sort)).to.deep.equal(expected)
+      })
+
+      it('builds a mongo sort', () => {
+        const data = new Map([
+          [{}, { '_id': 1 }],
+          [{ sort: 'type' }, { 'coordinates.type': 1, '_id': 1 }],
+          [{ sort: 'provider' }, { 'coordinates.provider': 1, '_id': 1 }],
+          [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_id': 1 }],
+          [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_id': 1 }],
+          [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_id': 1 }],
+          [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_id': 1 }],
+          [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_id': 1 }],
+          [{ sort: 'describedScore' }, { 'described.score.total': 1, '_id': 1 }],
+          [{ sort: 'effectiveScore' }, { 'scores.effective': 1, '_id': 1 }],
+          [{ sort: 'toolScore' }, { 'scores.tool': 1, '_id': 1 }],
+          [{ sort: 'revision' }, { 'coordinates.revision': 1, '_id': 1 }]
+        ])
+        data.forEach((expected, input) => {
+          const result = mongoStore._buildSort(input)
+          expect(result).to.deep.equal(expected)
+          expect(Object.keys(result)).to.have.ordered.members(Object.keys(expected))
+        })
+      })
+
+      it('gets a continuationToken', () => {
+        const sortClause = {'_id': 1}
+        const token = mongoStore._getContinuationToken(5, [
+          { _id: 'npm/npmjs/-/a/1.0.0' },
+          { _id: 'npm/npmjs/-/b/1.0.0' },
+          { _id: 'npm/npmjs/-/c/1.0.0' },
+          { _id: 'npm/npmjs/-/d/1.0.0' },
+          { _id: 'npm/npmjs/-/e/1.0.0' }
+        ], sortClause)
+        expect(token).to.eq('bnBtL25wbWpzLy0vZS8xLjAuMA==')
+      })
+
+      it('does not get a continuationToken', () => {
+        const token = mongoStore._getContinuationToken(5, [
+          { _id: 'npm/npmjs/-/a/1.0.0' },
+          { _id: 'npm/npmjs/-/b/1.0.0' },
+          { _id: 'npm/npmjs/-/c/1.0.0' }
+        ])
+        expect(token).to.eq('')
+      })
+    })
   })
 
   describe('trimmed vs. paged definition', () => {
