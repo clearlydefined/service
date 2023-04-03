@@ -101,6 +101,7 @@
         "provider",
         "name",
         "namespace",
+        "revision",
         "license",
         "releaseDate",
         "licensedScore",

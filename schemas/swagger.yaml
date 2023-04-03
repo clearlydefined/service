@@ -302,7 +302,7 @@ paths:
           name: sort
           schema:
             type: string
-          description: The field to sort the results by, e.g license, releaseDate, name, etc
+          description: The field to sort the results by.  Valid values include type, provider, namespace, name, revision, license, releaseDate, licensedScore, describedScore, effectiveScore and toolScore
         - in: query
           name: sortDesc
           schema:
@@ -393,7 +393,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: /schemas/notice-request.json
+              $ref: /schemas/notice-request.json
       responses:
         200:
           description: Status request has been accepted.
