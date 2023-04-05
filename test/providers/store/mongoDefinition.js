@@ -153,9 +153,9 @@ describe('Mongo Definition store', () => {
       [{}, { '_mongo.partitionKey': 1 }],
       [{ sort: 'type' }, { 'coordinates.type': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'provider' }, { 'coordinates.provider': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': -1 }],
       [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_mongo.partitionKey': 1 }],
+      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_mongo.partitionKey': -1 }],
       [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'describedScore' }, { 'described.score.total': 1, '_mongo.partitionKey': 1 }],
@@ -195,7 +195,7 @@ describe('Mongo Definition store', () => {
   
   it('should call find with right arguments', async () => {
     const store = createStore()
-    store.collection.find = sinon.fake.resolves({ toArray: () => Promise.resolve([])})
+    store.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([])})
     await store.find({ type: 'npm' })
     const filter = { 'coordinates.type': 'npm','_mongo.page': 1 }
     const opts = {

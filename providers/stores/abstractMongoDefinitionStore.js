@@ -43,10 +43,30 @@ class AbstractMongoDefinitionStore {
         this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
+        this._createIndexes()
       } catch (error) {
         retry(error)
       }
     })
+  }
+
+  _createIndexes() {
+    //This is for documentation purpose only. 
+    this.collection.createIndex({ '_meta.updated': 1 })
+
+    const coordinatesKey = this.getCoordinatesKey()
+    this.collection.createIndex({ [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'coordinates.type': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'coordinates.provider': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'coordinates.revision': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'licensed.declared': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'described.releaseDate': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'licensed.score.total': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1  })
+    this.collection.createIndex({ 'scores.effective': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({ 'scores.tool': 1, [coordinatesKey]: 1 })
   }
 
   async close() {
@@ -86,7 +106,7 @@ class AbstractMongoDefinitionStore {
     const sort = this._buildSort(query)
     const combinedFilters = this._buildQueryWithPaging(query, continuationToken, sort)
     this.logger.debug(`filter: ${JSON.stringify(combinedFilters)}\nsort: ${JSON.stringify(sort)}`)
-    const cursor = await this.collection.find(combinedFilters, {
+    const cursor = this.collection.find(combinedFilters, {
       projection,
       sort,
       limit: pageSize
@@ -140,10 +160,11 @@ class AbstractMongoDefinitionStore {
   _buildSort(parameters) {
     const sort = sortOptions[parameters.sort] || []
     const clause = {}
-    sort.forEach(item => clause[item] = parameters.sortDesc ? -1 : 1)
-    //Always sort ascending on partitionKey for continuation token
+    const sortDirection = parameters.sortDesc ? -1 : 1
+    sort.forEach(item => clause[item] = sortDirection)
+    //Always sort on coordinatesKey(_id or partitionKey) for continuation token
     const coordinateKey = this.getCoordinatesKey()
-    clause[coordinateKey] = 1
+    clause[coordinateKey] = sortDirection
     return clause
   }
 
