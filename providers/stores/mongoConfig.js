@@ -19,7 +19,7 @@ function definitionPaged(options) {
 function definitionTrimmed(options) {
   return TrimmedMongoDefinitionStore(options || {
     ...dbOptions,
-    collectionName: config.get('TRIMMED_DEFINITION_MONGO_COLLECTION_NAME') || 'definitions-trimmed'    
+    collectionName: config.get('DEFINITION_MONGO_TRIMMED_COLLECTION_NAME') || 'definitions-trimmed'
   })
 }
 
