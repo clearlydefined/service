@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # FROM node:8-alpine
-FROM node:14
+FROM node:18
 ENV APPDIR=/opt/service
 # RUN apk update && apk upgrade && \
 #    apk add --no-cache bash git openssh
