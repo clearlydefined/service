@@ -53,6 +53,15 @@ class AbstractMongoDefinitionStore {
   _createIndexes() {
     //This is for documentation purpose only. 
     this.collection.createIndex({ '_meta.updated': 1 })
+    //Single field indexes are used for filtering in Cosmo DB
+    //https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/troubleshoot-query-performance#include-necessary-indexes)
+    this.collection.createIndex({ 'coordinates.name' : 1 })
+    this.collection.createIndex({ 'coordinates.type' : 1 })
+    this.collection.createIndex({ 'coordinates.revision' : 1 })
+    this.collection.createIndex({ 'described.releaseDate' : 1 })
+    this.collection.createIndex({ 'licensed.declared' : 1 })
+    this.collection.createIndex({ 'scores.effective' : 1 })
+    this.collection.createIndex({ 'licensed.score.total' : 1 })
 
     const coordinatesKey = this.getCoordinatesKey()
     this.collection.createIndex({ [coordinatesKey]: 1 })
@@ -126,6 +135,11 @@ class AbstractMongoDefinitionStore {
     throw new Error('Unsupported Operation')
   }
 
+  // eslint-disable-next-line no-unused-vars
+  async fetchStats(type) {
+    throw new Error('Unsupported Operation')
+  }
+    
   getId(coordinates) {
     if (!coordinates) return ''
     return EntityCoordinates.fromObject(coordinates)

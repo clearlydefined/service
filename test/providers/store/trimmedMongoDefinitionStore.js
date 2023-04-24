@@ -210,20 +210,28 @@ describe('Trimmed Mongo Definition store', () => {
       it('creates the correct Indexes', () => {
         mongoStore.collection.createIndex = sinon.fake()
         mongoStore._createIndexes()
-        expect(mongoStore.collection.createIndex.callCount).to.be.equal(13)
+        expect(mongoStore.collection.createIndex.callCount).to.be.equal(20)
         expect(mongoStore.collection.createIndex.args[0][0]).to.deep.equal({ '_meta.updated': 1 })
-        expect(mongoStore.collection.createIndex.args[1][0]).to.deep.equal({ _id: 1 })
-        expect(mongoStore.collection.createIndex.args[2][0]).to.deep.equal({ 'coordinates.type': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[3][0]).to.deep.equal({ 'coordinates.provider': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[4][0]).to.deep.equal({ 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[5][0]).to.deep.equal({ 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[6][0]).to.deep.equal({ 'coordinates.revision': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[7][0]).to.deep.equal({ 'licensed.declared': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[8][0]).to.deep.equal({ 'described.releaseDate': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[9][0]).to.deep.equal({ 'licensed.score.total': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[10][0]).to.deep.equal({ 'described.score.total': 1, _id: 1  })
-        expect(mongoStore.collection.createIndex.args[11][0]).to.deep.equal({ 'scores.effective': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[12][0]).to.deep.equal({ 'scores.tool': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[1][0]).to.deep.equal({ 'coordinates.name': 1 })
+        expect(mongoStore.collection.createIndex.args[2][0]).to.deep.equal({ 'coordinates.type': 1 })
+        expect(mongoStore.collection.createIndex.args[3][0]).to.deep.equal({ 'coordinates.revision': 1 })
+        expect(mongoStore.collection.createIndex.args[4][0]).to.deep.equal({ 'described.releaseDate': 1 })
+        expect(mongoStore.collection.createIndex.args[5][0]).to.deep.equal({ 'licensed.declared': 1 })
+        expect(mongoStore.collection.createIndex.args[6][0]).to.deep.equal({ 'scores.effective': 1 })
+        expect(mongoStore.collection.createIndex.args[7][0]).to.deep.equal({ 'licensed.score.total': 1 })
+
+        expect(mongoStore.collection.createIndex.args[8][0]).to.deep.equal({ _id: 1 })
+        expect(mongoStore.collection.createIndex.args[9][0]).to.deep.equal({ 'coordinates.type': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[10][0]).to.deep.equal({ 'coordinates.provider': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[11][0]).to.deep.equal({ 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[12][0]).to.deep.equal({ 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[13][0]).to.deep.equal({ 'coordinates.revision': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[14][0]).to.deep.equal({ 'licensed.declared': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[15][0]).to.deep.equal({ 'described.releaseDate': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[16][0]).to.deep.equal({ 'licensed.score.total': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[17][0]).to.deep.equal({ 'described.score.total': 1, _id: 1  })
+        expect(mongoStore.collection.createIndex.args[18][0]).to.deep.equal({ 'scores.effective': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[19][0]).to.deep.equal({ 'scores.tool': 1, _id: 1 })
       })
 
       it('gets a continuationToken', () => {
@@ -276,6 +284,131 @@ describe('Trimmed Mongo Definition store', () => {
       await mongoStore.store(definition)
       const actual = await mongoStore.find(query, '')
       expect(actual).to.be.deep.equal(expected)
+    })
+  })
+
+  describe('fetch stat', () => {
+    beforeEach(() => {
+      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve([]) })
+    })
+
+    it('should build the right query to fetch total for all components', async () => {
+      const pipeline = [{ $count: 'total' }]
+      const result = await mongoStore._fetchTotal('total')
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.equal(0)
+    })
+
+    it('should build the right query to fetch total for composer', async () => {
+      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve([{ total: 2 }]) })
+
+      const pipeline = [
+        { $match : { 'coordinates.type': 'composer' } },
+        { $count: 'total' }
+      ]
+      const result = await mongoStore._fetchTotal('composer')
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.equal(2)
+    })
+
+    it('should build the right query to fetch Top licenses for all components', async () => {
+      const pipeline = [
+        { $sortByCount:  '$licensed.declared' },
+        { $addFields: { value : '$_id' } },
+        { $project: { _id: 0 } }, 
+        { $limit: 10 }
+      ]
+      const result = await mongoStore._fetchTopFrequencies('total', 'licensed.declared')
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.deep.equal([])
+    })
+    
+    it('should build the right query to fetch Top licenses for all components', async () => {
+      const top10LicenseTypes = [
+        { 'count': 29026, 'value': 'MIT' },
+        { 'count': 5721, 'value': 'Apache-2.0' },
+        { 'count': 2348, 'value': 'NOASSERTION' },
+        { 'count': 2103, 'value': null },
+        { 'count': 1708, 'value': 'GPL-2.0-or-later' },
+        { 'count': 1561, 'value': 'BSD-3-Clause' },
+        { 'count': 1209, 'value': 'GPL-2.0+' },
+        { 'count': 992, 'value': 'OSL-3.0' },
+        { 'count': 633, 'value': 'LGPL-3.0-or-later' },
+        { 'count': 572, 'value': 'GPL-3.0' }
+      ]
+      const pipeline = [
+        { $match : { 'coordinates.type': 'composer' } },        
+        { $sortByCount:  '$licensed.declared' },
+        { $addFields: { value : '$_id' } },
+        { $project: { _id: 0 } }, 
+        { $limit: 10 }
+      ]
+      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve(top10LicenseTypes) })
+
+      const result = await mongoStore._fetchTopFrequencies('composer', 'licensed.declared')
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.deep.equal(top10LicenseTypes)
+    })
+
+    it('should build the right query to fetch Top licenses for all components', async () => {
+      const pipeline = [
+        { $sortByCount:  '$licensed.declared' },
+        { $addFields: { value : '$_id' } },
+        { $project: { _id: 0 } }, 
+        { $limit: 10 }
+      ]
+      const result = await mongoStore._fetchTopFrequencies('total', 'licensed.declared')
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.deep.equal([])
+    })
+
+    it('should build score intervals', () => {
+      const expected = [[0, 10], [10, 20], [20, 30], [30, 40], [40, 50], [50, 60], [60, 70], [70, 80], [80, 90], [90, 100], [100, 101]]
+      const result = mongoStore._buildScoreIntervals()
+      expect(result).to.be.deep.equal(expected)
+    })
+
+    it('should build the right query to fetch count for all components in a given interval', async () => {
+      const pipeline = [
+        {
+          $match : { 
+            'licensed.score.total': {$gte: 10, $lt: 20}
+          }
+        }, 
+        { $count: 'count' },
+        { $addFields: { value : 10 } }
+      ]
+
+      const result = await mongoStore._fetchCountInRange('total', 'licensed.score.total', [10, 20])
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.deep.equal([])
+    })
+
+    it('should build the right query to fetch count for composer in a given interval', async () => {
+      // 'licensed.score.total':{'$gte':5,'$lt':10}}}
+      const pipeline = [
+        {
+          $match : { 
+            'coordinates.type': 'composer', 
+            'licensed.score.total': {$gte: 10, $lt: 20}
+          }
+        }, 
+        { $count: 'count' },
+        { $addFields: { value : 10 } }
+      ]
+
+      const count = [{ count: 20, value: 10 }]
+      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve(count) })
+      const result = await mongoStore._fetchCountInRange('composer', 'licensed.score.total', [10, 20])
+      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
+      expect(result).to.be.deep.equal(count)
     })
   })
 })
