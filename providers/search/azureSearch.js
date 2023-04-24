@@ -42,7 +42,7 @@ class AzureSearch extends AbstractSearch {
    * @param {object} body - the request body to send to search
    * @returns {String[]} The search response. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#response
    */
-  async query(body) {
+  async _query(body) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${definitionsIndexName}/docs/search`),
@@ -51,6 +51,20 @@ class AzureSearch extends AbstractSearch {
       json: true,
       body
     })
+  }
+
+  async fetchStats(type) {
+    const response = await this._query({
+      count: true,
+      filter: type === 'total' ? null : `type eq '${type}'`,
+      facets: ['describedScore,interval:1', 'licensedScore,interval:1', 'declaredLicense'],
+      top: 0
+    })
+    const totalCount = response['@odata.count']
+    const describedScores = response['@search.facets'].describedScore
+    const licensedScores = response['@search.facets'].licensedScore
+    const declaredLicenses = response['@search.facets'].declaredLicense
+    return { totalCount, describedScores, licensedScores, declaredLicenses }
   }
 
   _buildUrl(endpoint) {

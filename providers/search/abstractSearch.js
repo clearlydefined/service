@@ -57,12 +57,12 @@ class AbstractSearch {
   store(definition) {}
 
   /**
-   * Query the definitions in the index
+   * Query the definitions statistics
    *
    * @param {object} body
    */
   // eslint-disable-next-line no-unused-vars
-  query(body) {
+  fetchStats(type) {
     return {}
   }
 

@@ -4,9 +4,9 @@
 const logger = require('../providers/logging/logger')
 
 class StatsService {
-  constructor(definitionService, searchService, cache) {
+  constructor(definitionService, statsProvider, cache) {
     this.definitionService = definitionService
-    this.searchService = searchService
+    this.statsProvider = statsProvider
     this.logger = logger()
     this.cache = cache
     this.statLookup = this._getStatLookup()
@@ -50,16 +50,11 @@ class StatsService {
   }
 
   async _getType(type) {
-    const response = await this.searchService.query({
-      count: true,
-      filter: type === 'total' ? null : `type eq '${type}'`,
-      facets: ['describedScore,interval:1', 'licensedScore,interval:1', 'declaredLicense'],
-      top: 0
-    })
-    const totalCount = response['@odata.count']
-    const describedScoreMedian = this._getMedian(response['@search.facets'].describedScore, totalCount)
-    const licensedScoreMedian = this._getMedian(response['@search.facets'].licensedScore, totalCount)
-    const declaredLicenseBreakdown = this._getFacet(response['@search.facets'].declaredLicense, totalCount)
+    const stats = await this.statsProvider.fetchStats(type)
+    const { totalCount, describedScores = [], licensedScores = [], declaredLicenses = [] } = stats
+    const describedScoreMedian = this._getMedian(describedScores, totalCount)
+    const licensedScoreMedian = this._getMedian(licensedScores, totalCount)
+    const declaredLicenseBreakdown = this._getFacet(declaredLicenses, totalCount)
     return { totalCount, describedScoreMedian, licensedScoreMedian, declaredLicenseBreakdown }
   }
 
