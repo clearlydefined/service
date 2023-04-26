@@ -12,18 +12,17 @@ class StatsService {
     this.statLookup = this._getStatLookup()
   }
 
-  async get(stat) {
+  async get(stat, { withLicenses = true } = {} ) {
     stat = stat.toLowerCase()
     if (!this.statLookup[stat]) throw new Error('Not found')
     try {
-      const cacheKey = this._getCacheKey(stat)
-      const cached = await this.cache.get(cacheKey)
+      const { cacheKey, cached } = await this._lookupInCache(stat, withLicenses)
       if (cached) return cached
-      const result = await this.statLookup[stat].bind(this)()
+      const result = await this.statLookup[stat].bind(this)(withLicenses)
       if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
       return result
     } catch (error) {
-      this.logger.error(`Stat service failed for ${stat}`, error)
+      this.logger.error(`Stat service failed for ${stat}, withLicenses: ${withLicenses}`, error)
       throw new Error('unexpected error')
     }
   }
@@ -34,27 +33,27 @@ class StatsService {
 
   _getStatLookup() {
     return {
-      total: () => this._getType('total'),
-      crate: () => this._getType('crate'),
-      gem: () => this._getType('gem'),
-      git: () => this._getType('git'),
-      maven: () => this._getType('maven'),
-      npm: () => this._getType('npm'),
-      nuget: () => this._getType('nuget'),
-      pod: () => this._getType('pod'),
-      composer: () => this._getType('composer'),
-      pypi: () => this._getType('pypi'),
-      deb: () => this._getType('deb'),
-      debsrc: () => this._getType('debsrc'),
+      total: (withLicenses) => this._getType('total', withLicenses),
+      crate: (withLicenses) => this._getType('crate', withLicenses),
+      gem: (withLicenses) => this._getType('gem', withLicenses),
+      git: (withLicenses) => this._getType('git', withLicenses),
+      maven: (withLicenses) => this._getType('maven', withLicenses),
+      npm: (withLicenses) => this._getType('npm', withLicenses),
+      nuget: (withLicenses) => this._getType('nuget', withLicenses),
+      pod: (withLicenses) => this._getType('pod', withLicenses),
+      composer: (withLicenses) => this._getType('composer', withLicenses),
+      pypi: (withLicenses) => this._getType('pypi', withLicenses),
+      deb: (withLicenses) => this._getType('deb', withLicenses),
+      debsrc: (withLicenses) => this._getType('debsrc', withLicenses),
     }
   }
 
-  async _getType(type) {
-    const stats = await this.statsProvider.fetchStats(type)
+  async _getType(type, withLicenses) {
+    const stats = await this.statsProvider.fetchStats(type, withLicenses)
     const { totalCount, describedScores = [], licensedScores = [], declaredLicenses = [] } = stats
     const describedScoreMedian = this._getMedian(describedScores, totalCount)
     const licensedScoreMedian = this._getMedian(licensedScores, totalCount)
-    const declaredLicenseBreakdown = this._getFacet(declaredLicenses, totalCount)
+    const declaredLicenseBreakdown = withLicenses ? this._getFacet(declaredLicenses, totalCount) : []
     return { totalCount, describedScoreMedian, licensedScoreMedian, declaredLicenseBreakdown }
   }
 
@@ -82,8 +81,19 @@ class StatsService {
     return frequencyTable
   }
 
-  _getCacheKey(stat) {
-    return `stat_${stat.toLowerCase()}`
+  _getCacheKey(stat, withLicenses) {
+    const licenses = withLicenses ? '' : '_no_licenses'
+    return `stat_${stat.toLowerCase()}${licenses}`
+  }
+
+  async _lookupInCache(stat, withLicenses) {
+    const cacheKey = this._getCacheKey(stat, withLicenses)
+    let cached = await this.cache.get(cacheKey)
+    if (!cached && !withLicenses) {
+      const cachedWithLicenses = await this.cache.get(this._getCacheKey(stat, true))
+      cached = cachedWithLicenses && { ...cachedWithLicenses, declaredLicenseBreakdown: [] }
+    }
+    return { cacheKey, cached }
   }
 }
 

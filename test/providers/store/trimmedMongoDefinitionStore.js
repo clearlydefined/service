@@ -289,26 +289,30 @@ describe('Trimmed Mongo Definition store', () => {
 
   describe('fetch stat', () => {
     beforeEach(() => {
-      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve([]) })
+      mongoStore._aggregate = sinon.fake.resolves([])
+    })
+
+    afterEach(() => {
+      sinon.restore()
     })
 
     it('should build the right query to fetch total for all components', async () => {
       const pipeline = [{ $count: 'total' }]
       const result = await mongoStore._fetchTotal('total')
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.equal(0)
     })
 
     it('should build the right query to fetch total for composer', async () => {
-      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve([{ total: 2 }]) })
+      mongoStore._aggregate = sinon.fake.resolves([{ total: 2 }])
 
       const pipeline = [
         { $match : { 'coordinates.type': 'composer' } },
         { $count: 'total' }
       ]
       const result = await mongoStore._fetchTotal('composer')
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.equal(2)
     })
@@ -321,12 +325,12 @@ describe('Trimmed Mongo Definition store', () => {
         { $limit: 10 }
       ]
       const result = await mongoStore._fetchTopFrequencies('total', 'licensed.declared')
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.deep.equal([])
     })
     
-    it('should build the right query to fetch Top licenses for all components', async () => {
+    it('should build the right query to fetch Top licenses for composer', async () => {
       const top10LicenseTypes = [
         { 'count': 29026, 'value': 'MIT' },
         { 'count': 5721, 'value': 'Apache-2.0' },
@@ -346,25 +350,12 @@ describe('Trimmed Mongo Definition store', () => {
         { $project: { _id: 0 } }, 
         { $limit: 10 }
       ]
-      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve(top10LicenseTypes) })
+      mongoStore._aggregate = sinon.fake.resolves(top10LicenseTypes)
 
       const result = await mongoStore._fetchTopFrequencies('composer', 'licensed.declared')
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.deep.equal(top10LicenseTypes)
-    })
-
-    it('should build the right query to fetch Top licenses for all components', async () => {
-      const pipeline = [
-        { $sortByCount:  '$licensed.declared' },
-        { $addFields: { value : '$_id' } },
-        { $project: { _id: 0 } }, 
-        { $limit: 10 }
-      ]
-      const result = await mongoStore._fetchTopFrequencies('total', 'licensed.declared')
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
-      expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
-      expect(result).to.be.deep.equal([])
     })
 
     it('should build score intervals', () => {
@@ -385,13 +376,12 @@ describe('Trimmed Mongo Definition store', () => {
       ]
 
       const result = await mongoStore._fetchCountInRange('total', 'licensed.score.total', [10, 20])
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.deep.equal([])
     })
 
     it('should build the right query to fetch count for composer in a given interval', async () => {
-      // 'licensed.score.total':{'$gte':5,'$lt':10}}}
       const pipeline = [
         {
           $match : { 
@@ -404,11 +394,76 @@ describe('Trimmed Mongo Definition store', () => {
       ]
 
       const count = [{ count: 20, value: 10 }]
-      mongoStore.collection.aggregate = sinon.fake.returns({ toArray: () => Promise.resolve(count) })
+      mongoStore._aggregate = sinon.fake.resolves(count)
       const result = await mongoStore._fetchCountInRange('composer', 'licensed.score.total', [10, 20])
-      const aggregateArgs = mongoStore.collection.aggregate.firstCall.args
+      const aggregateArgs = mongoStore._aggregate.firstCall.args
       expect(aggregateArgs[0]).to.be.deep.equal(pipeline)
       expect(result).to.be.deep.equal(count)
+    })
+
+    it('should build empty frequency table', async () => {
+      const expectedArgs = [
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':0,'$lt':5}}},{'$count':'count'},{'$addFields':{'value':0}}],
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':5,'$lt':10}}},{'$count':'count'},{'$addFields':{'value':5}}],
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':10,'$lt':11}}},{'$count':'count'},{'$addFields':{'value':10}}]
+      ]
+      const results = await mongoStore._buildFrequencyTable('composer', 'licensed.score.total', [0, 5, 10])
+      expect(results).to.be.deep.equal([])
+      const aggregateArgs = mongoStore._aggregate.args.map(callArgs => callArgs[0])
+      expect(aggregateArgs).to.be.deep.equal(expectedArgs)
+    })
+  
+    it('should build frequency table', async () => {
+      const expectedArgs = [
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':0,'$lt':5}}},{'$count':'count'},{'$addFields':{'value':0}}],
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':5,'$lt':10}}},{'$count':'count'},{'$addFields':{'value':5}}],
+        [{'$match':{'coordinates.type':'composer','licensed.score.total':{'$gte':10,'$lt':11}}},{'$count':'count'},{'$addFields':{'value':10}}]
+      ]
+      mongoStore._aggregate = sinon.stub()
+        .onFirstCall()
+        .resolves([{ count: 5, value: 0 }])
+        .onSecondCall()
+        .resolves([])
+        .onThirdCall()
+        .resolves([{ count: 10, value: 10 }])
+  
+      const results = await mongoStore._buildFrequencyTable('composer', 'licensed.score.total', [0, 5, 10])
+      expect(results).to.be.deep.equal([{ count: 5, value: 0 }, { count: 10, value: 10 }])
+      const aggregateArgs = mongoStore._aggregate.args.map(callArgs => callArgs[0])
+      expect(aggregateArgs).to.be.deep.equal(expectedArgs)
+    })
+  
+    it('should fetch stat with license breakdown', async () => {
+      const expectedResult = {
+        totalCount: 0,
+        licensedScores: [],
+        describedScores: [],
+        declaredLicenses: []
+      }
+      mongoStore._fetchTopFrequencies = sinon.fake.resolves([])      
+      mongoStore._buildFrequencyTable = sinon.fake.resolves([])
+      mongoStore._fetchTotal = sinon.fake.resolves(0)
+  
+      const result = await mongoStore.fetchStats('composer')
+      expect(result).to.be.deep.equal(expectedResult)
+      expect(mongoStore._fetchTopFrequencies.callCount).to.be.equal(1)
+      expect(mongoStore._buildFrequencyTable.callCount).to.be.equal(2)
+      expect(mongoStore._fetchTotal.callCount).to.be.equal(1)
+    })
+  
+    it('should skip fetch licenses breakdown if specified', async () => {
+      const expectedResult = {
+        totalCount: 0,
+        licensedScores: [],
+        describedScores: [],
+        declaredLicenses: []
+      }
+      mongoStore._fetchTopFrequencies = sinon.fake.resolves([])
+  
+      const withLicenseBreakdown = false
+      const result = await mongoStore.fetchStats('composer', withLicenseBreakdown) 
+      expect(result).to.be.deep.equal(expectedResult)
+      expect(mongoStore._fetchTopFrequencies.callCount).to.be.equal(0)
     })
   })
 })

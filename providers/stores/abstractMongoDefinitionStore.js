@@ -136,7 +136,7 @@ class AbstractMongoDefinitionStore {
   }
 
   // eslint-disable-next-line no-unused-vars
-  async fetchStats(type) {
+  async fetchStats(type, withLicenses) {
     throw new Error('Unsupported Operation')
   }
     

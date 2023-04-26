@@ -11,7 +11,7 @@ router.get('', (request, response) => {
 
 router.get('/:stat', asyncMiddleware(getStat))
 async function getStat(request, response) {
-  const stat = await statsService.get(request.params.stat)
+  const stat = await statsService.get(request.params.stat, request.query)
   response.send({ value: stat })
 }
 

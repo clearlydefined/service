@@ -42,16 +42,16 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     return '_id'
   }
 
-  async fetchStats(type = 'total') {
-    return this._buildStatsViaQueries(type)
+  async fetchStats(type = 'total', withLicenseBreakdown = true) {
+    return this._buildStatsViaQueries(type, withLicenseBreakdown)
   }
 
-  async _buildStatsViaQueries(type) {
+  async _buildStatsViaQueries(type, withLicenseBreakdown) {
     const  [totalCount, licensedScores, describedScores, declaredLicenses = [] ] = await Promise.all([
       this._fetchTotal(type), 
       this._buildFrequencyTable(type, 'licensed.score.total', [...range(0, 100, 5), 100]),
       this._buildFrequencyTable(type, 'described.score.total'),
-      this._fetchTopFrequencies(type, 'licensed.declared')
+      withLicenseBreakdown ? this._fetchTopFrequencies(type, 'licensed.declared') : Promise.resolve([])
     ])
     return { totalCount, describedScores, licensedScores, declaredLicenses }
   }
