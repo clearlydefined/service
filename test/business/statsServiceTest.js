@@ -63,7 +63,7 @@ describe('Stats Service', () => {
       statsProvider = {
         fetchStats: sinon.stub()
       }
-      statsService = StatsService(null, statsProvider, cache)
+      statsService = StatsService(statsProvider, cache)
     })
 
     afterEach(() => {

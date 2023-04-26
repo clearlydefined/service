@@ -4,8 +4,7 @@
 const logger = require('../providers/logging/logger')
 
 class StatsService {
-  constructor(definitionService, statsProvider, cache) {
-    this.definitionService = definitionService
+  constructor(statsProvider, cache) {
     this.statsProvider = statsProvider
     this.logger = logger()
     this.cache = cache
@@ -97,4 +96,4 @@ class StatsService {
   }
 }
 
-module.exports = (definitionService, searchService, cache) => new StatsService(definitionService, searchService, cache)
+module.exports = (searchService, cache) => new StatsService(searchService, cache)

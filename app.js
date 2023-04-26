@@ -82,7 +82,7 @@ function createApp(config) {
   const noticeService = require('./business/noticeService')(definitionService, attachmentStore)
   const noticesRoute = require('./routes/notices')(noticeService)
 
-  const statsService = require('./business/statsService')(definitionService, searchService, cachingService)
+  const statsService = require('./business/statsService')(searchService, cachingService)
   const statsRoute = require('./routes/stats')(statsService)
 
   const statusService = require('./business/statusService')(config.insights, cachingService)
