@@ -18,7 +18,8 @@ module.exports = {
   },
   search: {
     azure: require('../providers/search/azureConfig'),
-    memory: require('../providers/search/memory')
+    memory: require('../providers/search/memory'),
+    mongoTrimmed: require('../providers/stores/mongoConfig').definitionTrimmed,
   },
   caching: {
     redis: require('../providers/caching/redisConfig'),

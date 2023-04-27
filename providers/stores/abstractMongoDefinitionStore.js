@@ -139,7 +139,25 @@ class AbstractMongoDefinitionStore {
   async fetchStats(type, withLicenses) {
     throw new Error('Unsupported Operation')
   }
-    
+   
+  /**
+   * Get a list of coordinates suggested for the given pattern
+   * @param {String} pattern - A pattern to look for in the coordinates of a definition
+   * @returns {String[]} The list of suggested coordinates found
+   */
+  async suggestCoordinates(pattern) {
+    const coordinatesKey = this.getCoordinatesKey()
+    const validPattern = pattern.substring(0, 100)
+    const cursor = this.collection.find({
+      [coordinatesKey] : { $regex: validPattern, $options: 'i'}
+    }, {
+      projection: { [coordinatesKey] : 1 },
+      limit: 50 //consistent with Azure Search
+    })
+    const data = await cursor.toArray()
+    return data.map(e => e[coordinatesKey]) 
+  }
+
   getId(coordinates) {
     if (!coordinates) return ''
     return EntityCoordinates.fromObject(coordinates)
