@@ -58,7 +58,7 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
   
   async _fetchTotal(type) {
     const pipeline = [
-      ...this._matchStage(this._typeFilter(type)),
+      ...this._matchStage(this._filterType(type)),
       { $count: 'total' }
     ]
     const data = await this._aggregate(pipeline)
@@ -70,7 +70,7 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     return emptyFilters ? [] : [{ $match: filters }]
   }
 
-  _typeFilter(type) {
+  _filterType(type) {
     return type === 'total' ? {} : { 'coordinates.type': type }
   }
 
@@ -100,8 +100,8 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
 
   async _fetchCountInRange(type, field, [lowerInclusiveBound = 0, upperExclusiveBound]) {
     const filters =  {
-      ...this._typeFilter(type),
-      ...this._buildRangeFilter(field, lowerInclusiveBound, upperExclusiveBound)      
+      ...this._filterType(type),
+      ...this._filterRange(field, lowerInclusiveBound, upperExclusiveBound)      
     }
 
     const pipeline = [
@@ -112,7 +112,7 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     return this._aggregate(pipeline)
   }
 
-  _buildRangeFilter(field, lowerInclusiveBound, upperExclusiveBound) {
+  _filterRange(field, lowerInclusiveBound, upperExclusiveBound) {
     const rangePredicates = {}
     if (typeof lowerInclusiveBound === 'number') rangePredicates.$gte = lowerInclusiveBound
     if (typeof upperExclusiveBound === 'number') rangePredicates.$lt = upperExclusiveBound
@@ -120,8 +120,12 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
   }
 
   async _fetchTopFrequencies(type, field) {
+    const filters =  {
+      ...this._filterType(type),
+      [field] : { $ne: null }
+    }
     const pipeline = [
-      ...this._matchStage(this._typeFilter(type)),
+      ...this._matchStage(filters),
       ...this._buildSortByCountPipeline(field)
     ]
     return this._aggregate(pipeline)
