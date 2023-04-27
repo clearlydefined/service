@@ -444,7 +444,7 @@ describe('Trimmed Mongo Definition store', () => {
       mongoStore._buildFrequencyTable = sinon.fake.resolves([])
       mongoStore._fetchTotal = sinon.fake.resolves(0)
   
-      const result = await mongoStore.fetchStats('composer')
+      const result = await mongoStore.queryStats('composer')
       expect(result).to.be.deep.equal(expectedResult)
       expect(mongoStore._fetchTopFrequencies.callCount).to.be.equal(1)
       expect(mongoStore._buildFrequencyTable.callCount).to.be.equal(2)
@@ -461,7 +461,7 @@ describe('Trimmed Mongo Definition store', () => {
       mongoStore._fetchTopFrequencies = sinon.fake.resolves([])
   
       const withLicenseBreakdown = false
-      const result = await mongoStore.fetchStats('composer', withLicenseBreakdown) 
+      const result = await mongoStore.queryStats('composer', withLicenseBreakdown) 
       expect(result).to.be.deep.equal(expectedResult)
       expect(mongoStore._fetchTopFrequencies.callCount).to.be.equal(0)
     })

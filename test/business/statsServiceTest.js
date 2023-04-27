@@ -61,7 +61,7 @@ describe('Stats Service', () => {
         set: sinon.stub()
       }
       statsProvider = {
-        fetchStats: sinon.stub()
+        queryStats: sinon.stub()
       }
       statsService = StatsService(statsProvider, cache)
     })
@@ -72,36 +72,36 @@ describe('Stats Service', () => {
 
     it('should trigger fetch with the right arguments when not cached', async () => {
       cache.get.resolves(null)
-      statsProvider.fetchStats.resolves(fetchedStats)
+      statsProvider.queryStats.resolves(fetchedStats)
       const result = await statsService.get('composer')
       expect(result).to.be.ok
-      expect(statsProvider.fetchStats.firstCall.args).to.be.deep.equal(['composer', true])
+      expect(statsProvider.queryStats.firstCall.args).to.be.deep.equal(['composer', true])
     })
 
     it('should trigger fetch without licenses when not cached', async () => {
       cache.get.resolves(null)
-      statsProvider.fetchStats.resolves(fetchedStats)
+      statsProvider.queryStats.resolves(fetchedStats)
       const result = await statsService.get('composer', { withLicenses : false })
       expect(result).to.be.ok
-      expect(statsProvider.fetchStats.firstCall.args).to.be.deep.equal(['composer', false])
+      expect(statsProvider.queryStats.firstCall.args).to.be.deep.equal(['composer', false])
     })
 
     it('should use cache when cached', async () => {
       cache.get.resolves(computedStats)
-      statsProvider.fetchStats.rejects('should not be called')
+      statsProvider.queryStats.rejects('should not be called')
       const result = await statsService.get('composer')
       expect(result).to.be.deep.equal(computedStats)
-      expect(statsProvider.fetchStats.callCount).to.be.equal(0)
+      expect(statsProvider.queryStats.callCount).to.be.equal(0)
     })
 
     it('should use cache when licensed cache available', async () => {
       cache.get
         .withArgs('stat_composer_no_licenses').resolves(null)
         .withArgs('stat_composer').resolves(computedStats)
-      statsProvider.fetchStats.rejects('should not be called')
+      statsProvider.queryStats.rejects('should not be called')
       const result = await statsService.get('composer', { withLicenses : false })
       expect(result).to.be.deep.equal({ ...computedStats, declaredLicenseBreakdown: [] })
-      expect(statsProvider.fetchStats.callCount).to.be.equal(0)
+      expect(statsProvider.queryStats.callCount).to.be.equal(0)
     })      
   })
 })

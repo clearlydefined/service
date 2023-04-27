@@ -53,7 +53,7 @@ class AzureSearch extends AbstractSearch {
     })
   }
 
-  async fetchStats(type) {
+  async queryStats(type) {
     const response = await this._query({
       count: true,
       filter: type === 'total' ? null : `type eq '${type}'`,

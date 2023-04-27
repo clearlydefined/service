@@ -33,7 +33,7 @@ class MemorySearch extends AbstractSearch {
     entries.forEach(entry => (this.index[entry.coordinates] = entry))
   }
 
-  async fetchStats() {
+  async queryStats() {
     return { totalCount: Object.keys(this.index).length }
   }
 

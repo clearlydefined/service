@@ -42,7 +42,7 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     return '_id'
   }
 
-  async fetchStats(type = 'total', withLicenseBreakdown = true) {
+  async queryStats(type = 'total', withLicenseBreakdown = true) {
     return this._buildStatsViaQueries(type, withLicenseBreakdown)
   }
 

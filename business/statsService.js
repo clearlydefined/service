@@ -48,7 +48,7 @@ class StatsService {
   }
 
   async _getType(type, withLicenses) {
-    const stats = await this.statsProvider.fetchStats(type, withLicenses)
+    const stats = await this.statsProvider.queryStats(type, withLicenses)
     const { totalCount, describedScores = [], licensedScores = [], declaredLicenses = [] } = stats
     const describedScoreMedian = this._getMedian(describedScores, totalCount)
     const licensedScoreMedian = this._getMedian(licensedScores, totalCount)

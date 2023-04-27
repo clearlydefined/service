@@ -59,10 +59,10 @@ class AbstractSearch {
   /**
    * Query the definitions statistics
    *
-   * @param {object} body
+   * @param {type} type of components
    */
   // eslint-disable-next-line no-unused-vars
-  fetchStats(type) {
+  async queryStats(type) {
     return {}
   }
 
