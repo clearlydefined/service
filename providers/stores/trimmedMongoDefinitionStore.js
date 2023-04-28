@@ -42,25 +42,38 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     return '_id'
   }
 
+  async suggestCoordinates(pattern) {
+    const coordinatesKey = this.getCoordinatesKey()
+    const validPattern = pattern.substring(0, 100) //consistent with Azure Search
+    const cursor = this.collection.find(
+      {
+        [coordinatesKey]: { $regex: validPattern, $options: 'i' }
+      },
+      {
+        projection: { [coordinatesKey]: 1 },
+        limit: 50 //consistent with Azure Search
+      }
+    )
+    const data = await cursor.toArray()
+    return data.map((e) => e[coordinatesKey])
+  }
+
   async queryStats(type = 'total', withLicenseBreakdown = true) {
     return this._buildStatsViaQueries(type, withLicenseBreakdown)
   }
 
   async _buildStatsViaQueries(type, withLicenseBreakdown) {
-    const  [totalCount, licensedScores, describedScores, declaredLicenses = [] ] = await Promise.all([
-      this._fetchTotal(type), 
+    const [totalCount, licensedScores, describedScores, declaredLicenses = []] = await Promise.all([
+      this._fetchTotal(type),
       this._buildFrequencyTable(type, 'licensed.score.total', [...range(0, 100, 5), 100]),
       this._buildFrequencyTable(type, 'described.score.total'),
       withLicenseBreakdown ? this._fetchTopFrequencies(type, 'licensed.declared') : Promise.resolve([])
     ])
     return { totalCount, describedScores, licensedScores, declaredLicenses }
   }
-  
+
   async _fetchTotal(type) {
-    const pipeline = [
-      ...this._matchStage(this._filterType(type)),
-      { $count: 'total' }
-    ]
+    const pipeline = [...this._matchStage(this._filterType(type)), { $count: 'total' }]
     const data = await this._aggregate(pipeline)
     return data[0]?.total || 0
   }
@@ -83,7 +96,8 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
   async _buildFrequencyTable(type, field, milestones) {
     const intervals = this._buildScoreIntervals(milestones)
     const promises = intervals.map(
-      throat(CONCURRENCY, async interval => this._fetchCountInRange(type, field, interval)))
+      throat(CONCURRENCY, async (interval) => this._fetchCountInRange(type, field, interval))
+    )
 
     const results = await Promise.all(promises)
     return results.flat()
@@ -92,23 +106,19 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
   _buildScoreIntervals(givenMilestones) {
     const milestones = givenMilestones || [...range(0, 100, 10), 100]
     const intervals = milestones.map((cur, index) => {
-      const upperBound = index + 1 < milestones.length ? milestones [index + 1] : cur + 1
+      const upperBound = index + 1 < milestones.length ? milestones[index + 1] : cur + 1
       return [cur, upperBound]
     }, [])
     return intervals
   }
 
   async _fetchCountInRange(type, field, [lowerInclusiveBound = 0, upperExclusiveBound]) {
-    const filters =  {
+    const filters = {
       ...this._filterType(type),
-      ...this._filterRange(field, lowerInclusiveBound, upperExclusiveBound)      
+      ...this._filterRange(field, lowerInclusiveBound, upperExclusiveBound)
     }
 
-    const pipeline = [
-      ...this._matchStage(filters),
-      { $count: 'count' },
-      { $addFields: { value : lowerInclusiveBound } }
-    ]
+    const pipeline = [...this._matchStage(filters), { $count: 'count' }, { $addFields: { value: lowerInclusiveBound } }]
     return this._aggregate(pipeline)
   }
 
@@ -116,30 +126,27 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
     const rangePredicates = {}
     if (typeof lowerInclusiveBound === 'number') rangePredicates.$gte = lowerInclusiveBound
     if (typeof upperExclusiveBound === 'number') rangePredicates.$lt = upperExclusiveBound
-    return (field && Object.keys(rangePredicates).length > 0) ? { [field]: rangePredicates } : {}
+    return field && Object.keys(rangePredicates).length > 0 ? { [field]: rangePredicates } : {}
   }
 
   async _fetchTopFrequencies(type, field) {
-    const filters =  {
+    const filters = {
       ...this._filterType(type),
-      [field] : { $ne: null }
+      [field]: { $ne: null }
     }
-    const pipeline = [
-      ...this._matchStage(filters),
-      ...this._buildSortByCountPipeline(field)
-    ]
+    const pipeline = [...this._matchStage(filters), ...this._buildSortByCountPipeline(field)]
     return this._aggregate(pipeline)
   }
 
   _buildSortByCountPipeline(groupField, limit = 10) {
     //To be consistent with AzureSearch count default to top 10
-    return  [ 
+    return [
       { $sortByCount: '$' + groupField },
-      { $addFields: { value : '$_id' } },
+      { $addFields: { value: '$_id' } },
       { $project: { _id: 0 } },
       { $limit: limit }
     ]
   }
 }
 
-module.exports = options => new TrimmedMongoDefinitionStore(options)
+module.exports = (options) => new TrimmedMongoDefinitionStore(options)

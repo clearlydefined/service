@@ -145,17 +145,9 @@ class AbstractMongoDefinitionStore {
    * @param {String} pattern - A pattern to look for in the coordinates of a definition
    * @returns {String[]} The list of suggested coordinates found
    */
+  // eslint-disable-next-line no-unused-vars
   async suggestCoordinates(pattern) {
-    const coordinatesKey = this.getCoordinatesKey()
-    const validPattern = pattern.substring(0, 100)
-    const cursor = this.collection.find({
-      [coordinatesKey] : { $regex: validPattern, $options: 'i'}
-    }, {
-      projection: { [coordinatesKey] : 1 },
-      limit: 50 //consistent with Azure Search
-    })
-    const data = await cursor.toArray()
-    return data.map(e => e[coordinatesKey]) 
+    throw new Error('Unsupported Operation')
   }
 
   getId(coordinates) {
