@@ -210,20 +210,35 @@ describe('Trimmed Mongo Definition store', () => {
       it('creates the correct Indexes', () => {
         mongoStore.collection.createIndex = sinon.fake()
         mongoStore._createIndexes()
-        expect(mongoStore.collection.createIndex.callCount).to.be.equal(13)
+        expect(mongoStore.collection.createIndex.callCount).to.be.equal(19)
         expect(mongoStore.collection.createIndex.args[0][0]).to.deep.equal({ '_meta.updated': 1 })
         expect(mongoStore.collection.createIndex.args[1][0]).to.deep.equal({ _id: 1 })
         expect(mongoStore.collection.createIndex.args[2][0]).to.deep.equal({ 'coordinates.type': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[3][0]).to.deep.equal({ 'coordinates.provider': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[4][0]).to.deep.equal({ 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[5][0]).to.deep.equal({ 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[4][0]).to.deep.equal({
+          'coordinates.name': 1,
+          'coordinates.revision': 1,
+          _id: 1
+        })
+        expect(mongoStore.collection.createIndex.args[5][0]).to.deep.equal({
+          'coordinates.namespace': 1,
+          'coordinates.name': 1,
+          'coordinates.revision': 1,
+          _id: 1
+        })
         expect(mongoStore.collection.createIndex.args[6][0]).to.deep.equal({ 'coordinates.revision': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[7][0]).to.deep.equal({ 'licensed.declared': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[8][0]).to.deep.equal({ 'described.releaseDate': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[9][0]).to.deep.equal({ 'licensed.score.total': 1, _id: 1 })
-        expect(mongoStore.collection.createIndex.args[10][0]).to.deep.equal({ 'described.score.total': 1, _id: 1  })
+        expect(mongoStore.collection.createIndex.args[10][0]).to.deep.equal({ 'described.score.total': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[11][0]).to.deep.equal({ 'scores.effective': 1, _id: 1 })
         expect(mongoStore.collection.createIndex.args[12][0]).to.deep.equal({ 'scores.tool': 1, _id: 1 })
+        expect(mongoStore.collection.createIndex.args[13][0]).to.deep.equal({ 'coordinates.name': 1 })
+        expect(mongoStore.collection.createIndex.args[14][0]).to.deep.equal({ 'coordinates.revision': 1 })
+        expect(mongoStore.collection.createIndex.args[15][0]).to.deep.equal({ 'coordinates.type': 1 })
+        expect(mongoStore.collection.createIndex.args[16][0]).to.deep.equal({ 'described.releaseDate': 1 })
+        expect(mongoStore.collection.createIndex.args[17][0]).to.deep.equal({ 'licensed.declared': 1 })
+        expect(mongoStore.collection.createIndex.args[18][0]).to.deep.equal({ 'scores.effective': 1 })
       })
 
       it('gets a continuationToken', () => {

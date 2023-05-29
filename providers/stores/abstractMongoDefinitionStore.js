@@ -72,6 +72,15 @@ class AbstractMongoDefinitionStore {
     this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'scores.effective': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'scores.tool': 1, [coordinatesKey]: 1 })
+
+    //Single field indexes are used for filtering in Cosmo DB
+    //https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/troubleshoot-query-performance#include-necessary-indexes)
+    this.collection.createIndex({ 'coordinates.name': 1 })
+    this.collection.createIndex({ 'coordinates.revision': 1 })
+    this.collection.createIndex({ 'coordinates.type': 1 })
+    this.collection.createIndex({ 'described.releaseDate': 1 })
+    this.collection.createIndex({ 'licensed.declared': 1 })
+    this.collection.createIndex({ 'scores.effective': 1 })
   }
 
   async close() {
