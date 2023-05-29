@@ -23,10 +23,10 @@ const sortOptions = {
 }
 
 const valueTransformers = {
-  'licensed.score.total': value => value && parseInt(value),
-  'described.score.total': value => value && parseInt(value),
-  'scores.effective': value => value && parseInt(value),
-  'scores.tool': value => value && parseInt(value)
+  'licensed.score.total': (value) => value && parseInt(value),
+  'described.score.total': (value) => value && parseInt(value),
+  'scores.effective': (value) => value && parseInt(value),
+  'scores.tool': (value) => value && parseInt(value)
 }
 
 const SEPARATOR = '&'
@@ -38,7 +38,7 @@ class AbstractMongoDefinitionStore {
   }
 
   initialize() {
-    return promiseRetry(async retry => {
+    return promiseRetry(async (retry) => {
       try {
         this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
@@ -51,7 +51,7 @@ class AbstractMongoDefinitionStore {
   }
 
   _createIndexes() {
-    //This is for documentation purpose only. 
+    //This is for documentation purpose only.
     this.collection.createIndex({ '_meta.updated': 1 })
 
     const coordinatesKey = this.getCoordinatesKey()
@@ -59,19 +59,24 @@ class AbstractMongoDefinitionStore {
     this.collection.createIndex({ 'coordinates.type': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'coordinates.provider': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 })
+    this.collection.createIndex({
+      'coordinates.namespace': 1,
+      'coordinates.name': 1,
+      'coordinates.revision': 1,
+      [coordinatesKey]: 1
+    })
     this.collection.createIndex({ 'coordinates.revision': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'licensed.declared': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'described.releaseDate': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'licensed.score.total': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1  })
+    this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'scores.effective': 1, [coordinatesKey]: 1 })
     this.collection.createIndex({ 'scores.tool': 1, [coordinatesKey]: 1 })
   }
 
   async close() {
     await this.client.close()
-  } 
+  }
 
   /**
    * List all of the matching components for the given coordinates.
@@ -128,13 +133,11 @@ class AbstractMongoDefinitionStore {
 
   getId(coordinates) {
     if (!coordinates) return ''
-    return EntityCoordinates.fromObject(coordinates)
-      .toString()
-      .toLowerCase()
+    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
   buildQuery(parameters) {
-    const filter = { }
+    const filter = {}
     if (parameters.type) filter['coordinates.type'] = parameters.type
     if (parameters.provider) filter['coordinates.provider'] = parameters.provider
     if (parameters.namespace) filter['coordinates.namespace'] = parameters.namespace
@@ -161,7 +164,7 @@ class AbstractMongoDefinitionStore {
     const sort = sortOptions[parameters.sort] || []
     const clause = {}
     const sortDirection = parameters.sortDesc ? -1 : 1
-    sort.forEach(item => clause[item] = sortDirection)
+    sort.forEach((item) => (clause[item] = sortDirection))
     //Always sort on coordinatesKey(_id or partitionKey) for continuation token
     const coordinateKey = this.getCoordinatesKey()
     clause[coordinateKey] = sortDirection
@@ -177,14 +180,12 @@ class AbstractMongoDefinitionStore {
   _buildPaginationQuery(continuationToken, sort) {
     if (!continuationToken.length) return
     const queryExpressions = this._buildQueryExpressions(continuationToken, sort)
-    return queryExpressions.length <= 1 ?
-      queryExpressions [0] :
-      { $or: [ ...queryExpressions ] }
+    return queryExpressions.length <= 1 ? queryExpressions[0] : { $or: [...queryExpressions] }
   }
 
   _buildQueryExpressions(continuationToken, sort) {
     const lastValues = base64.decode(continuationToken)
-    const sortValues = lastValues.split(SEPARATOR).map(value => value.length ? value : null)
+    const sortValues = lastValues.split(SEPARATOR).map((value) => (value.length ? value : null))
 
     const queryExpressions = []
     const sortConditions = Object.entries(sort)
@@ -202,7 +203,7 @@ class AbstractMongoDefinitionStore {
       sortValue = transform ? transform(sortValue) : sortValue
       const isLast = index === sortConditions.length - 1
       const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
-      return { ...filter, ...filterForSort}
+      return { ...filter, ...filterForSort }
     }, {})
   }
 
@@ -213,17 +214,14 @@ class AbstractMongoDefinitionStore {
         operator = sortValue === null ? '$ne' : '$gt'
       } else {
         operator = '$lt'
-      }  
+      }
     }
     const filter = { [sortField]: { [operator]: sortValue } }
 
     //Less than non null value should include null as well
     if (operator === '$lt' && sortValue) {
       return {
-        $or: [
-          filter,
-          { [sortField]: null }
-        ]
+        $or: [filter, { [sortField]: null }]
       }
     }
     return filter
@@ -233,10 +231,9 @@ class AbstractMongoDefinitionStore {
     if (data.length !== pageSize) return ''
     const lastItem = data[data.length - 1]
     const lastValues = Object.keys(sortClause)
-      .map(key => get(lastItem, key))
+      .map((key) => get(lastItem, key))
       .join(SEPARATOR)
     return base64.encode(lastValues)
   }
-
 }
 module.exports = AbstractMongoDefinitionStore
