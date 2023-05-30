@@ -12,7 +12,7 @@ const dbOptions = {
 function definitionPaged(options) {
   return mongo(options || {
     ...dbOptions,
-    collectionName: config.get('DEFINITION_MONGO_COLLECTION_NAME') || 'definitions'
+    collectionName: config.get('DEFINITION_MONGO_COLLECTION_NAME') || 'definitions-paged'
   })
 }
 
