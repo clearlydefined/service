@@ -402,6 +402,20 @@ describe('Aggregation service', () => {
     const aggregated = service.process(summaries, coords)
     expect(aggregated.licensed.declared).to.be.equal('LGPL-2.1-only')
   })
+
+  it('should handle non standard spdx license from registry', () => {
+    const tools = [['clearlydefined', 'licensee', 'scancode', 'reuse']]
+    const coordSpec = 'gem/rubygems/-/blacklight_range_limit/7.0.1'
+    const coords = EntityCoordinates.fromString(coordSpec)
+    const raw = require('./evidence/gem-blacklight_range_limit-7.0.1.json')
+
+    const summary_options = {}
+    const summaryService = SummaryService(summary_options)
+    const summaries = summaryService.summarizeAll(coords, raw)
+    const { service } = setupAggregatorWithParams(coordSpec, tools)
+    const aggregated = service.process(summaries, coords)
+    expect(aggregated.licensed.declared).to.be.equal('Apache-2.0')
+  })
 })
 
 function validate(definition) {

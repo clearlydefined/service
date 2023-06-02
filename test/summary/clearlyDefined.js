@@ -307,11 +307,32 @@ describe('ClearlyDefined Gem summarizer', () => {
     expect(summary.licensed.declared).to.eq('MIT OR NOASSERTION')
   })
 
+  it('corrects multiple licenses', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT', 'Apache 2.0'])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('MIT OR Apache-2.0')
+  })
+
   it('handles singular license', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed.declared).to.eq('MIT')
+  })
+
+  it('corrects singular license', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'Apache 2.0')
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed.declared).to.eq('Apache-2.0')
+  })
+
+  it('handles no license', () => {
+    const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', [])
+    const summary = Summarizer().summarize(coordinates, harvested)
+    validate(summary)
+    expect(summary.licensed).to.be.not.ok
   })
 
   it('handles data with source location', () => {

@@ -3,6 +3,7 @@
 
 const { get, set, isArray, uniq, cloneDeep, flatten, find } = require('lodash')
 const SPDX = require('@clearlydefined/spdx')
+const spdxCorrect = require('spdx-correct')
 const {
   extractDate,
   setIfValue,
@@ -346,12 +347,11 @@ class ClearlyDescribedSummarizer {
 
   addGemData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const license = SPDX.normalize(get(data, 'registryData.license'))
-    if (license) set(result, 'licensed.declared', license)
-    else {
-      const licenses = SPDX.normalize((get(data, 'registryData.licenses') || []).join(' OR '))
-      setIfValue(result, 'licensed.declared', licenses)
-    }
+    const license = get(data, 'registryData.license')
+    const rawLicenses = license ? [license] : get(data, 'registryData.licenses') || []
+    const corrected = rawLicenses.map(license => this._correct(license))
+    const licenses = SPDX.normalize(corrected.join(' OR '))
+    setIfValue(result, 'licensed.declared', licenses)
     setIfValue(result, 'described.urls.registry', `https://rubygems.org/gems/${coordinates.name}`)
     setIfValue(
       result,
@@ -363,6 +363,11 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `https://rubygems.org/downloads/${coordinates.name}-${coordinates.revision}.gem`
     )
+  }
+
+  _correct(license) {
+    const corrected = license && spdxCorrect(license)
+    return corrected || license
   }
 
   addPyPiData(result, data, coordinates) {
