@@ -33,12 +33,20 @@ class ScanCodeSummarizer {
     const result = {}
     this.addDescribedInfo(result, harvested)
     let declaredLicense = this._readDeclaredLicense(scancodeVersion, harvested)
-    if (!declaredLicense || declaredLicense === 'NOASSERTION') {
-      declaredLicense = this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+    if (!this._isLicenseDeclared(declaredLicense)) {
+      declaredLicense = this._getDeclaredLicense(scancodeVersion, harvested, coordinates) || declaredLicense
     }
+    if (!this._isLicenseDeclared(declaredLicense)) {
+      declaredLicense = this._readSummaryLicenseExpression(harvested) || declaredLicense
+    }
+
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
     return result
+  }
+
+  _isLicenseDeclared(declaredLicense) {
+    return declaredLicense && declaredLicense !== 'NOASSERTION'
   }
 
   addDescribedInfo(result, harvested) {
@@ -70,6 +78,11 @@ class ScanCodeSummarizer {
       default:
         throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
     }
+  }
+
+  _readSummaryLicenseExpression(harvested) {
+    const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
+    return licenseExpression && this._normalizeLicenseExpression(licenseExpression)
   }
 
   // find and return the files that should be considered for as a license determinator for this summarization
@@ -188,9 +201,13 @@ class ScanCodeSummarizer {
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
     if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scancodeMap.get(key) || key))
+    return this._normalizeLicenseExpression(rule.license_expression)
+  }
+
+  _normalizeLicenseExpression(licenseExpression) {
+    const parsed = SPDX.parse(licenseExpression, (key) => SPDX.normalizeSingle(scancodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
-    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
     return result
   }
 }
