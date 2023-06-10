@@ -74,6 +74,20 @@ describe('ScancodeSummarizer basic compatability', () => {
     )
   })
 
+  it('summarizes using license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'debsrc', provider: 'debian' }
+    const harvestData = getHarvestData('30.1.0', 'debsrc-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
+  })
+
+  it('summarizes falling back to license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
+  })
+
   it('throws an error on an invalid scancode version', () => {
     const version = '0.0.0'
     const coordinates = { type: 'npm', provider: 'npmjs' }
