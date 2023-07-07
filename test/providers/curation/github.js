@@ -206,6 +206,9 @@ describe('Github Curation Service', () => {
 
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
+    expect(gitHubService.github.issues.createComment.getCall(0).args[0].body).to.contain(
+      '(http://localhost:3000/curations/143)'
+    )
   })
 
   describe('addByMergedCuration()', () => {
@@ -295,6 +298,9 @@ describe('Github Curation Service', () => {
 
       const result = await gitHubService.addByMergedCuration(pr)
       expect(result).to.be.deep.equal({ data: { number: 143 } })
+      expect(gitHubService.github.issues.createComment.getCall(0).args[0].body).to.contain(
+        '(http://localhost:3000/curations/143)'
+      )
 
       assert(startMatchingSpy.calledWith(
         EntityCoordinates.fromObject(definitionCoordinates),
@@ -458,6 +464,13 @@ describe('Github Curation Service', () => {
     it('verify branch name', () => {
       const branchName = createService()._getBranchName({ login: 'test' })
       expect(branchName).to.be.eq('test_211203_140949.712')
+    })
+  })
+
+  describe('verify _getCurationReviewUrl', () => {
+    it('verify branch name', () => {
+      const curationReviewUrl = createService()._getCurationReviewUrl(143)
+      expect(curationReviewUrl).to.be.eq('http://localhost:3000/curations/143')
     })
   })
 })

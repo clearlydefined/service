@@ -511,7 +511,7 @@ class GitHubCurationService {
       owner,
       repo,
       number,
-      body: `You can review the change introduced to the full definition at [ClearlyDefined](https://clearlydefined.io/curations/${number}).`
+      body: `You can review the change introduced to the full definition at [ClearlyDefined](${this._getCurationReviewUrl(number)}).`
     }
     await serviceGithub.issues.createComment(comment)
     return result
@@ -694,7 +694,7 @@ ${this._formatDefinitions(patch.patches)}`
 
   async _postCommitStatus(sha, number, state, description) {
     const { owner, repo } = this.options
-    const target_url = `${this.endpoints.website}/curations/${number}`
+    const target_url = this._getCurationReviewUrl(number)
     try {
       return this.github.repos.createStatus({
         owner,
@@ -708,6 +708,10 @@ ${this._formatDefinitions(patch.patches)}`
     } catch (error) {
       this.logger.info(`Failed to create status for PR #${number}`)
     }
+  }
+
+  _getCurationReviewUrl(number) {
+    return `${this.endpoints.website}/curations/${number}`
   }
 
   async _postErrorsComment(number, body) {
