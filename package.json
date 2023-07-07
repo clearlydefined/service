@@ -14,7 +14,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@clearlydefined/spdx": "^0.1.6",
+    "@clearlydefined/spdx": "^0.1.7",
     "@gitbeaker/node": "^29.2.4",
     "@octokit/rest": "^14.0.9",
     "ajv": "^6.12.3",
@@ -59,9 +59,7 @@
     "semver": "^5.4.1",
     "serialize-error": "^2.1.0",
     "spdx-expression-parse": "github:clearlydefined/spdx-expression-parse.js#fork",
-    "spdx-license-ids": "^3.0.7",
-    "spdx-license-list": "^6.4.0",
-    "spdx-satisfies": "github:clearlydefined/spdx-satisfies.js#parse-override",
+    "spdx-license-list": "^6.6.0",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
     "tiny-attribution-generator": "0.1.2",
