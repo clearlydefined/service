@@ -88,6 +88,17 @@ describe('ScancodeSummarizer basic compatability', () => {
     assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
   })
 
+  it('license declared from files should be same as the license file in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'composer', provider: 'packagist' }
+    const harvestData = getHarvestData('30.1.0', 'cache-backend-redis-license-score')
+    const licenseFromFiles = summarizer._getDeclaredLicense('30.1.0', harvestData, coordinates)
+    assert.equal(licenseFromFiles, 'BSD-3-Clause')
+
+    const files = summarizer._summarizeFileInfo(harvestData.content.files, coordinates)
+    const licenseFile = files.find(file => file.natures?.includes('license'))
+    assert.equal(licenseFile.license, 'BSD-3-Clause')
+  })
+
   it('throws an error on an invalid scancode version', () => {
     const version = '0.0.0'
     const coordinates = { type: 'npm', provider: 'npmjs' }

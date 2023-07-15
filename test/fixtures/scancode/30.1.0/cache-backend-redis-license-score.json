@@ -1,0 +1,2174 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/composer/packagist/colinmollenhour/cache-backend-redis/1.14.4",
+    "fetchedAt": "2023-01-27T00:48:53.613Z",
+    "links": {
+      "self": {
+        "href": "urn:composer:packagist:colinmollenhour:cache-backend-redis:revision:1.14.4:tool:scancode:30.3.0",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:composer:packagist:colinmollenhour:cache-backend-redis:revision:1.14.4:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "schemaVersion": "30.3.0",
+    "toolVersion": "30.1.0",
+    "contentType": "application/json",
+    "releaseDate": "2022-08-12T20:16:06+00:00",
+    "processedAt": "2023-01-27T00:49:01.654Z"
+  },
+  "content": {
+    "headers": [
+      {
+        "tool_name": "scancode-toolkit",
+        "tool_version": "30.1.0",
+        "options": {
+          "input": [
+            "/tmp/cd-EHj18y"
+          ],
+          "--classify": true,
+          "--copyright": true,
+          "--email": true,
+          "--generated": true,
+          "--info": true,
+          "--is-license-text": true,
+          "--json-pp": "/tmp/cd-B4hAmR",
+          "--license": true,
+          "--license-clarity-score": true,
+          "--license-text": true,
+          "--license-text-diagnostics": true,
+          "--package": true,
+          "--processes": "2",
+          "--strip-root": true,
+          "--summary": true,
+          "--summary-key-files": true,
+          "--timeout": "1000.0",
+          "--url": true
+        },
+        "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+        "start_timestamp": "2023-01-27T004854.400753",
+        "end_timestamp": "2023-01-27T004901.008986",
+        "output_format_version": "1.0.0",
+        "duration": 6.608247995376587,
+        "message": null,
+        "errors": [],
+        "extra_data": {
+          "spdx_license_list_version": "3.14",
+          "OUTDATED": "WARNING: Outdated ScanCode Toolkit version! You are using an outdated version of ScanCode Toolkit: 30.1.0 released on: 2021-09-24. A new version is available with important improvements including bug and security fixes, updated license, copyright and package detection, and improved scanning accuracy. Please download and install the latest version of ScanCode. Visit https://github.com/nexB/scancode-toolkit/releases for details.",
+          "files_count": 13
+        }
+      }
+    ],
+    "summary": {
+      "license_expressions": [
+        {
+          "value": "bsd-new",
+          "count": 19
+        },
+        {
+          "value": "gpl-2.0",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": null,
+          "count": 5
+        },
+        {
+          "value": "Copyright (c) Colin Mollenhour",
+          "count": 5
+        },
+        {
+          "value": "Copyright (c) Colin Mollenhour (http://colin.mollenhour.com)",
+          "count": 5
+        },
+        {
+          "value": "Copyright (c) Zend Technologies USA Inc. (http://www.zend.com)",
+          "count": 4
+        }
+      ],
+      "holders": [
+        {
+          "value": "Colin Mollenhour",
+          "count": 10
+        },
+        {
+          "value": null,
+          "count": 5
+        },
+        {
+          "value": "Zend Technologies USA Inc.",
+          "count": 4
+        }
+      ],
+      "authors": [
+        {
+          "value": null,
+          "count": 12
+        },
+        {
+          "value": "Colin Mollenhour (http://colin.mollenhour.com)",
+          "count": 1
+        }
+      ],
+      "programming_language": [
+        {
+          "value": "PHP",
+          "count": 7
+        }
+      ],
+      "packages": [
+        {
+          "type": "composer",
+          "namespace": "colinmollenhour",
+          "name": "cache-backend-redis",
+          "version": null,
+          "qualifiers": {},
+          "subpath": null,
+          "primary_language": "PHP",
+          "description": null,
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "author",
+              "name": "Colin Mollenhour",
+              "email": null,
+              "url": null
+            },
+            {
+              "type": "person",
+              "role": "vendor",
+              "name": "colinmollenhour",
+              "email": null,
+              "url": null
+            }
+          ],
+          "keywords": [],
+          "homepage_url": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
+          "download_url": null,
+          "size": null,
+          "sha1": null,
+          "md5": null,
+          "sha256": null,
+          "sha512": null,
+          "bug_tracking_url": null,
+          "code_view_url": null,
+          "vcs_url": null,
+          "copyright": null,
+          "license_expression": "repoze",
+          "declared_license": "BSD-3-Clause-Modification",
+          "notice_text": null,
+          "root_path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f",
+          "dependencies": [
+            {
+              "purl": "pkg:composer/colinmollenhour/credis",
+              "requirement": "*",
+              "scope": "require",
+              "is_runtime": true,
+              "is_optional": false,
+              "is_resolved": false
+            }
+          ],
+          "contains_source_code": null,
+          "source_packages": [],
+          "extra_data": {},
+          "purl": "pkg:composer/colinmollenhour/cache-backend-redis",
+          "repository_homepage_url": "https://packagist.org/packages/colinmollenhour/cache-backend-redis",
+          "repository_download_url": null,
+          "api_data_url": "https://packagist.org/p/packages/colinmollenhour/cache-backend-redis.json",
+          "files": [
+            {
+              "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/composer.json",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    "license_clarity_score": {
+      "score": 45,
+      "declared": true,
+      "discovered": 0.6,
+      "consistency": false,
+      "spdx": false,
+      "license_texts": false
+    },
+    "summary_of_key_files": {
+      "license_expressions": [
+        {
+          "value": "bsd-new",
+          "count": 3
+        },
+        {
+          "value": "gpl-2.0",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": "Copyright (c) Colin Mollenhour",
+          "count": 1
+        },
+        {
+          "value": "Copyright (c) Colin Mollenhour (http://colin.mollenhour.com)",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": "Colin Mollenhour",
+          "count": 2
+        }
+      ],
+      "authors": [],
+      "programming_language": []
+    },
+    "files": [
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f",
+        "type": "directory",
+        "name": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f",
+        "base_name": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 13,
+        "dirs_count": 4,
+        "size_count": 99678,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/.gitmodules",
+        "type": "file",
+        "name": ".gitmodules",
+        "base_name": ".gitmodules",
+        "extension": "",
+        "size": 93,
+        "date": "2022-08-12",
+        "sha1": "697497a610e8e57b2d12ae0762b80f3fd29c852a",
+        "md5": "1440ccb57da430eed6224b1b33dc8d9f",
+        "sha256": "789918f25876fa75cdaf565c9a1175cb0170c7813738216a0b99e7a0a43a378d",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/colinmollenhour/credis",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/composer.json",
+        "type": "file",
+        "name": "composer.json",
+        "base_name": "composer",
+        "extension": ".json",
+        "size": 521,
+        "date": "2022-08-12",
+        "sha1": "24ab8d057319c52665209c48a162f1ffd48bcc57",
+        "md5": "9938b19a46fbaf9a39fc372fe9987715",
+        "sha256": "b998fed83b47163e0ba95ebb4040d4aa8105e241345a9e9ce9b963bd2663fc1c",
+        "mime_type": "application/json",
+        "file_type": "JSON data",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 4,
+            "end_line": 4,
+            "matched_rule": {
+              "identifier": "bsd-new_195.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": true,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 4,
+              "matched_length": 4,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license\":\"BSD-3-Clause-"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 8.51,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [
+          {
+            "type": "composer",
+            "namespace": "colinmollenhour",
+            "name": "cache-backend-redis",
+            "version": null,
+            "qualifiers": {},
+            "subpath": null,
+            "primary_language": "PHP",
+            "description": null,
+            "release_date": null,
+            "parties": [
+              {
+                "type": "person",
+                "role": "author",
+                "name": "Colin Mollenhour",
+                "email": null,
+                "url": null
+              },
+              {
+                "type": "person",
+                "role": "vendor",
+                "name": "colinmollenhour",
+                "email": null,
+                "url": null
+              }
+            ],
+            "keywords": [],
+            "homepage_url": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
+            "download_url": null,
+            "size": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "sha512": null,
+            "bug_tracking_url": null,
+            "code_view_url": null,
+            "vcs_url": null,
+            "copyright": null,
+            "license_expression": "repoze",
+            "declared_license": "BSD-3-Clause-Modification",
+            "notice_text": null,
+            "root_path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f",
+            "dependencies": [
+              {
+                "purl": "pkg:composer/colinmollenhour/credis",
+                "requirement": "*",
+                "scope": "require",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false
+              }
+            ],
+            "contains_source_code": null,
+            "source_packages": [],
+            "extra_data": {},
+            "purl": "pkg:composer/colinmollenhour/cache-backend-redis",
+            "repository_homepage_url": "https://packagist.org/packages/colinmollenhour/cache-backend-redis",
+            "repository_download_url": null,
+            "api_data_url": "https://packagist.org/p/packages/colinmollenhour/cache-backend-redis.json",
+            "files": [
+              {
+                "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/composer.json",
+                "type": "file"
+              }
+            ]
+          }
+        ],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
+            "start_line": 5,
+            "end_line": 5
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": true,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/ISSUE_TEMPLATE.md",
+        "type": "file",
+        "name": "ISSUE_TEMPLATE.md",
+        "base_name": "ISSUE_TEMPLATE",
+        "extension": ".md",
+        "size": 182,
+        "date": "2022-08-12",
+        "sha1": "e3681a88e987eabed94a1777da348d9ca15d4e99",
+        "md5": "11d201dd2c32a17e44b73029529f7673",
+        "sha256": "6e38d01a7f6c9fac0d953cd651ce0f91d5a26eb6c1f8f53aa28b2ec373c13ec9",
+        "mime_type": "text/plain",
+        "file_type": "exported SGML document, ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 1644,
+        "date": "2022-08-12",
+        "sha1": "d480c205c82dbd0fe0e3adf0d2a3c05962c4835d",
+        "md5": "9bae28ed1ee5805ee146f41ff115dc7f",
+        "sha256": "c583d5f7558ab67005a6a9baa6313bf6c9cb5aa4206b10d84fc1ec96e3a04448",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 95.71,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 4,
+            "end_line": 29,
+            "matched_rule": {
+              "identifier": "bsd-new_dispatch.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 210,
+              "matched_length": 201,
+              "match_coverage": 95.71,
+              "rule_relevance": 100
+            },
+            "matched_text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n      \n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n      \n    * The name of [Colin] [Mollenhour] may not be used to endorse or promote products\n      derived from this software without specific prior written permission.\n      \n    * [If] [any] [files] [are] [modified], [you] [must] [cause] [the] [modified] [files] [to] [carry] [prominent]\n      [notices] [stating] [that] [you] [changed] [the] [files] [and] [the] [date] [of] [any] [change].\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT [HOLDER] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+          },
+          {
+            "key": "gpl-2.0",
+            "score": 11.72,
+            "name": "GNU General Public License 2.0",
+            "short_name": "GPL 2.0",
+            "category": "Copyleft",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Free Software Foundation (FSF)",
+            "homepage_url": "http://www.gnu.org/licenses/gpl-2.0.html",
+            "text_url": "http://www.gnu.org/licenses/gpl-2.0.txt",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/gpl-2.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/gpl-2.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/gpl-2.0.yml",
+            "spdx_license_key": "GPL-2.0-only",
+            "spdx_url": "https://spdx.org/licenses/GPL-2.0-only",
+            "start_line": 17,
+            "end_line": 18,
+            "matched_rule": {
+              "identifier": "gpl-2.0_19.RULE",
+              "license_expression": "gpl-2.0",
+              "licenses": [
+                "gpl-2.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 169,
+              "matched_length": 22,
+              "match_coverage": 13.02,
+              "rule_relevance": 90
+            },
+            "matched_text": "you must cause the modified files to carry prominent\n      notices stating that you changed the files and the date of any change."
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "gpl-2.0"
+        ],
+        "percentage_of_license_text": 93.31,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2013, Colin Mollenhour",
+            "start_line": 1,
+            "end_line": 1
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 1,
+            "end_line": 1
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": true,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": true,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/modman",
+        "type": "file",
+        "name": "modman",
+        "base_name": "modman",
+        "extension": "",
+        "size": 112,
+        "date": "2022-08-12",
+        "sha1": "50f950002d52e827c8b0306bded9224d2be54bc8",
+        "md5": "e493604f95c3cf5414df3627bcb8694e",
+        "sha256": "a046b57997d8b0513d29631391471d18816c88dfc6e53f16b22548b836fd5a3c",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/README.md",
+        "type": "file",
+        "name": "README.md",
+        "base_name": "README",
+        "extension": ".md",
+        "size": 14138,
+        "date": "2022-08-12",
+        "sha1": "1612f171fe8bfe6c5ba9f83873fc90e1bc99c4cd",
+        "md5": "6119038a462c133f255c2d3586bbeb05",
+        "sha256": "562d0306bb958681c673c3b27c872d8b6761f59e2a3a5d5dd14d3855afde36ea",
+        "mime_type": "text/plain",
+        "file_type": "exported SGML document, UTF-8 Unicode text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 228,
+            "end_line": 228,
+            "matched_rule": {
+              "identifier": "bsd-new_281.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 6,
+              "matched_length": 6,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "licensed under the \"New BSD\" license ("
+          }
+        ],
+        "license_expressions": [
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 0.32,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2012 Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 227,
+            "end_line": 227
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 227,
+            "end_line": 227
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "https://github.com/nicolasff/phpredis",
+            "start_line": 9,
+            "end_line": 9
+          },
+          {
+            "url": "https://github.com/colinmollenhour/credis",
+            "start_line": 10,
+            "end_line": 10
+          },
+          {
+            "url": "https://github.com/colinmollenhour/modman",
+            "start_line": 36,
+            "end_line": 36
+          },
+          {
+            "url": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
+            "start_line": 38,
+            "end_line": 38
+          },
+          {
+            "url": "https://github.com/nicolasff/phpredis/issues/70",
+            "start_line": 50,
+            "end_line": 50
+          },
+          {
+            "url": "http://redis.io/topics/sentinel",
+            "start_line": 90,
+            "end_line": 90
+          },
+          {
+            "url": "http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Endpoints.html#Endpoints.Find.Redis",
+            "start_line": 154,
+            "end_line": 154
+          },
+          {
+            "url": "https://github.com/colinmollenhour/magento-cache-benchmark",
+            "start_line": 192,
+            "end_line": 192
+          },
+          {
+            "url": "http://code.google.com/p/snappy",
+            "start_line": 196,
+            "end_line": 196
+          },
+          {
+            "url": "http://code.google.com/p/php-snappy",
+            "start_line": 196,
+            "end_line": 196
+          },
+          {
+            "url": "https://gist.github.com/1177716",
+            "start_line": 197,
+            "end_line": 197
+          },
+          {
+            "url": "http://colin.mollenhour.com/",
+            "start_line": 227,
+            "end_line": 227
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/stats.php",
+        "type": "file",
+        "name": "stats.php",
+        "base_name": "stats",
+        "extension": ".php",
+        "size": 2665,
+        "date": "2022-08-12",
+        "sha1": "6a39e26c929637e3753522065aff2643e2b8ae71",
+        "md5": "d8cd4e2841469941f07227f8f1f5222b",
+        "sha256": "6cbfe2cf74445babf8d0f187dd67fbf63623ffbf633243415517c56d9c745848",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, ASCII text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/Cm",
+        "type": "directory",
+        "name": "Cm",
+        "base_name": "Cm",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 1,
+        "dirs_count": 2,
+        "size_count": 51730,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/Cm/Cache",
+        "type": "directory",
+        "name": "Cache",
+        "base_name": "Cache",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 1,
+        "dirs_count": 1,
+        "size_count": 51730,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/Cm/Cache/Backend",
+        "type": "directory",
+        "name": "Backend",
+        "base_name": "Backend",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 1,
+        "dirs_count": 0,
+        "size_count": 51730,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/Cm/Cache/Backend/Redis.php",
+        "type": "file",
+        "name": "Redis.php",
+        "base_name": "Redis",
+        "extension": ".php",
+        "size": 51730,
+        "date": "2022-08-12",
+        "sha1": "b8d8c642838691346c14e7e789948049978d7232",
+        "md5": "e58216f11cc35589c4793033fac70989",
+        "sha256": "6474751406a800ca69bbfe71b297f134e8e0f777a0d6fc58e7efc5173e282489",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, ASCII text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 3,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "bsd-new_228.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 3,
+              "matched_length": 3,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "New BSD License=="
+          },
+          {
+            "key": "bsd-new",
+            "score": 97.57,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 8,
+            "end_line": 29,
+            "matched_rule": {
+              "identifier": "bsd-new_235.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 206,
+              "matched_length": 201,
+              "match_coverage": 97.57,
+              "rule_relevance": 100
+            },
+            "matched_text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n    * The name of [Colin] [Mollenhour] may not be used to endorse or promote products\n      derived from this software without specific prior written permission.\n    * [The] class [name] [must] [remain] [as] [Cm]_[Cache]_[Backend]_[Redis].\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT [HOLDER] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 36,
+            "end_line": 36,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 4.5,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2013, Colin Mollenhour",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "value": "Copyright (c) 2013 Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "authors": [
+          {
+            "value": "Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 37,
+            "end_line": 37
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://colin.mollenhour.com/",
+            "start_line": 35,
+            "end_line": 35
+          },
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 36,
+            "end_line": 36
+          },
+          {
+            "url": "https://github.com/antirez/redis/blob/b903145/deps/lua/src/luaconf.h#L439",
+            "start_line": 119,
+            "end_line": 119
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests",
+        "type": "directory",
+        "name": "tests",
+        "base_name": "tests",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 5,
+        "dirs_count": 0,
+        "size_count": 28593,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests/CommonBackendTest.php",
+        "type": "file",
+        "name": "CommonBackendTest.php",
+        "base_name": "CommonBackendTest",
+        "extension": ".php",
+        "size": 9137,
+        "date": "2022-08-12",
+        "sha1": "17933b4f652ee28a0c600495f0dbac3ea7dac4e9",
+        "md5": "908ecade5156590571755ae67f5f601b",
+        "sha256": "794686a7e5e9917fe77c10f1a983e48b2144a922de9ca67ba5927a3d885e4278",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, UTF-8 Unicode text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 5,
+            "end_line": 13,
+            "matched_rule": {
+              "identifier": "bsd-new_128.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 76,
+              "matched_length": 76,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "LICENSE\n *\n * This source file is subject to the new BSD license that is bundled\n * with this package in the file LICENSE.txt.\n * It is also available through the world-wide-web at this URL:\n * http://framework.zend.com/license/new-bsd\n * If you did not receive a copy of the license and are unable to\n * obtain it through the world-wide-web, please send an email\n * to license@zend.com so we can send you a copy immediately."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 19,
+            "end_line": 19,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 31,
+            "end_line": 31,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 11.25,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)",
+            "start_line": 18,
+            "end_line": 18
+          },
+          {
+            "value": "Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)",
+            "start_line": 30,
+            "end_line": 30
+          }
+        ],
+        "holders": [
+          {
+            "value": "Zend Technologies USA Inc.",
+            "start_line": 18,
+            "end_line": 18
+          },
+          {
+            "value": "Zend Technologies USA Inc.",
+            "start_line": 30,
+            "end_line": 30
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [
+          {
+            "email": "license@zend.com",
+            "start_line": 13,
+            "end_line": 13
+          }
+        ],
+        "urls": [
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 10,
+            "end_line": 10
+          },
+          {
+            "url": "http://www.zend.com/",
+            "start_line": 18,
+            "end_line": 18
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests/CommonExtendedBackendTest.php",
+        "type": "file",
+        "name": "CommonExtendedBackendTest.php",
+        "base_name": "CommonExtendedBackendTest",
+        "extension": ".php",
+        "size": 7076,
+        "date": "2022-08-12",
+        "sha1": "2f026998cbb0f58a0ec4fd49031089403c5ab158",
+        "md5": "166cff6bd1b260685e740c70bff91372",
+        "sha256": "b13ec6f58b2b124c81ce6784f03c875a3c55f75cee8be4273fdfc78b90c4d8c7",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, UTF-8 Unicode text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 5,
+            "end_line": 13,
+            "matched_rule": {
+              "identifier": "bsd-new_128.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 76,
+              "matched_length": 76,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "LICENSE\n *\n * This source file is subject to the new BSD license that is bundled\n * with this package in the file LICENSE.txt.\n * It is also available through the world-wide-web at this URL:\n * http://framework.zend.com/license/new-bsd\n * If you did not receive a copy of the license and are unable to\n * obtain it through the world-wide-web, please send an email\n * to license@zend.com so we can send you a copy immediately."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 19,
+            "end_line": 19,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 33,
+            "end_line": 33,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 14.12,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)",
+            "start_line": 18,
+            "end_line": 18
+          },
+          {
+            "value": "Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)",
+            "start_line": 32,
+            "end_line": 32
+          }
+        ],
+        "holders": [
+          {
+            "value": "Zend Technologies USA Inc.",
+            "start_line": 18,
+            "end_line": 18
+          },
+          {
+            "value": "Zend Technologies USA Inc.",
+            "start_line": 32,
+            "end_line": 32
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [
+          {
+            "email": "license@zend.com",
+            "start_line": 13,
+            "end_line": 13
+          }
+        ],
+        "urls": [
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 10,
+            "end_line": 10
+          },
+          {
+            "url": "http://www.zend.com/",
+            "start_line": 18,
+            "end_line": 18
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests/RedisBackendAutoExpiryTest.php",
+        "type": "file",
+        "name": "RedisBackendAutoExpiryTest.php",
+        "base_name": "RedisBackendAutoExpiryTest",
+        "extension": ".php",
+        "size": 2368,
+        "date": "2022-08-12",
+        "sha1": "369b87f575a3484b6d39bcb4366fd55f2d71f00a",
+        "md5": "360e942713df8f5c3f38ca3164422f6c",
+        "sha256": "c7e8c43235d4e6d18c91c97808740ca3f5cb55ad0c03827a8c70d24e6a526a88",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, ASCII text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 96.15,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 4,
+            "end_line": 29,
+            "matched_rule": {
+              "identifier": "bsd-new_583.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 208,
+              "matched_length": 200,
+              "match_coverage": 96.15,
+              "rule_relevance": 100
+            },
+            "matched_text": "License==\n\n[Copyright] ([c]) [2012], [Colin] [Mollenhour]\n[All] [rights] [reserved].\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n    * The name of [Colin] [Mollenhour] [may] [not] be used to endorse or promote products\n      derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT [HOLDER] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 36,
+            "end_line": 36,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 70.81,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2012, Colin Mollenhour",
+            "start_line": 6,
+            "end_line": 6
+          },
+          {
+            "value": "Copyright (c) 2012 Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 6,
+            "end_line": 6
+          },
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://colin.mollenhour.com/",
+            "start_line": 35,
+            "end_line": 35
+          },
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 36,
+            "end_line": 36
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests/RedisBackendStandaloneTest.php",
+        "type": "file",
+        "name": "RedisBackendStandaloneTest.php",
+        "base_name": "RedisBackendStandaloneTest",
+        "extension": ".php",
+        "size": 1825,
+        "date": "2022-08-12",
+        "sha1": "d8d0d72ff3f22f9f2096bead3c593f013e1a5e65",
+        "md5": "727984b5b4f90aeccd89d808d674a219",
+        "sha256": "30dd6a7d3d60bd79f3a63776af55a401ec1e41887f1357ab80edfc726ff0e121",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, ASCII text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 96.15,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 4,
+            "end_line": 29,
+            "matched_rule": {
+              "identifier": "bsd-new_583.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 208,
+              "matched_length": 200,
+              "match_coverage": 96.15,
+              "rule_relevance": 100
+            },
+            "matched_text": "License==\n\n[Copyright] ([c]) [2012], [Colin] [Mollenhour]\n[All] [rights] [reserved].\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n    * The name of [Colin] [Mollenhour] [may] [not] be used to endorse or promote products\n      derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT [HOLDER] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 36,
+            "end_line": 36,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 84.06,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2012, Colin Mollenhour",
+            "start_line": 6,
+            "end_line": 6
+          },
+          {
+            "value": "Copyright (c) 2012 Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 6,
+            "end_line": 6
+          },
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 35,
+            "end_line": 35
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://colin.mollenhour.com/",
+            "start_line": 35,
+            "end_line": 35
+          },
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 36,
+            "end_line": 36
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "colinmollenhour-Cm_Cache_Backend_Redis-6661e3f/tests/RedisBackendTest.php",
+        "type": "file",
+        "name": "RedisBackendTest.php",
+        "base_name": "RedisBackendTest",
+        "extension": ".php",
+        "size": 8187,
+        "date": "2022-08-12",
+        "sha1": "d7adfa22eee9c369c2cc2369c11d567a16d00c96",
+        "md5": "efbb6a4afd8e0759aebf181c5caf89bd",
+        "sha256": "acd5bf0ffe2fd3154b193e0f080afce6ad0b177341b0d3ae15b3d0ca211aaa3f",
+        "mime_type": "text/x-php",
+        "file_type": "PHP script, ASCII text",
+        "programming_language": "PHP",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "licenses": [
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 3,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "bsd-new_228.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 3,
+              "matched_length": 3,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "New BSD License=="
+          },
+          {
+            "key": "bsd-new",
+            "score": 95.71,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 8,
+            "end_line": 28,
+            "matched_rule": {
+              "identifier": "bsd-new_dispatch.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 210,
+              "matched_length": 201,
+              "match_coverage": 95.71,
+              "rule_relevance": 100
+            },
+            "matched_text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n    * Redistributions in binary form must reproduce the above copyright\n      notice, this list of conditions and the following disclaimer in the\n      documentation and/or other materials provided with the distribution.\n    * The name of [Colin] [Mollenhour] may not be used to endorse or promote products\n      derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT [HOLDER] BE LIABLE FOR ANY\nDIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\nON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+          },
+          {
+            "key": "bsd-new",
+            "score": 100,
+            "name": "BSD-3-Clause",
+            "short_name": "BSD-3-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "text_url": "http://www.opensource.org/licenses/BSD-3-Clause",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-new",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-new.yml",
+            "spdx_license_key": "BSD-3-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-3-Clause",
+            "start_line": 38,
+            "end_line": 38,
+            "matched_rule": {
+              "identifier": "bsd-new_123.RULE",
+              "license_expression": "bsd-new",
+              "licenses": [
+                "bsd-new"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 11,
+              "matched_length": 11,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "license    http://framework.zend.com/license/new-bsd     New BSD License"
+          }
+        ],
+        "license_expressions": [
+          "bsd-new",
+          "bsd-new",
+          "bsd-new"
+        ],
+        "percentage_of_license_text": 24.68,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2012, Colin Mollenhour",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "value": "Copyright (c) 2012 Colin Mollenhour (http://colin.mollenhour.com)",
+            "start_line": 37,
+            "end_line": 37
+          }
+        ],
+        "holders": [
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 5,
+            "end_line": 5
+          },
+          {
+            "value": "Colin Mollenhour",
+            "start_line": 37,
+            "end_line": 37
+          }
+        ],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://colin.mollenhour.com/",
+            "start_line": 37,
+            "end_line": 37
+          },
+          {
+            "url": "http://framework.zend.com/license/new-bsd",
+            "start_line": 38,
+            "end_line": 38
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}
