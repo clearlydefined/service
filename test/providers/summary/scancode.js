@@ -95,8 +95,15 @@ describe('ScancodeSummarizer basic compatability', () => {
     assert.equal(licenseFromFiles, 'BSD-3-Clause')
 
     const files = summarizer._summarizeFileInfo(harvestData.content.files, coordinates)
-    const licenseFile = files.find(file => file.natures?.includes('license'))
+    const licenseFile = files.find((file) => file.natures?.includes('license'))
     assert.equal(licenseFile.license, 'BSD-3-Clause')
+  })
+
+  it('should detect license from maven license file in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'maven', provider: 'mavencentral' }
+    const harvestData = getHarvestData('30.1.0', 'maven-flywaydb-file-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
   })
 
   it('throws an error on an invalid scancode version', () => {
