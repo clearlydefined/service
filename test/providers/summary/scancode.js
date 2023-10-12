@@ -88,7 +88,7 @@ describe('ScancodeSummarizer basic compatability', () => {
     assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
   })
 
-  it('license declared from files should be same as the license file in version 30.1.0 of ScanCode', () => {
+  it('license matched with lower score should be filtered out in declared license for version 30.1.0 of ScanCode', () => {
     const coordinates = { type: 'composer', provider: 'packagist' }
     const harvestData = getHarvestData('30.1.0', 'cache-backend-redis-license-score')
     const licenseFromFiles = summarizer._getDeclaredLicense('30.1.0', harvestData, coordinates)

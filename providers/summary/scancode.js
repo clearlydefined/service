@@ -119,20 +119,16 @@ class ScanCodeSummarizer {
   }
 
   _getLicenseByIsLicenseText(files) {
-    const fullLicenses = files
-      .filter(file => file.is_license_text && file.licenses)
-      .reduce((licenses, file) => {
-        file.licenses.forEach((license) => {
-          if (this._isMatchedLicense(license)) licenses.add(this._createExpressionFromLicense(license))
-        })
-        return licenses
-      }, new Set())
-    return this._joinExpressions(fullLicenses)
+    return this._extractDeclaredLicenses(files, file => file.is_license_text && file.licenses)
   }
 
   _getLicenseByFileName(files, coordinates) {
+    return this._extractDeclaredLicenses(files, file => isLicenseFile(file.path, coordinates) && file.licenses)
+  }
+
+  _extractDeclaredLicenses(files, isValidLicenseFile) {
     const fullLicenses = files
-      .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
+      .filter(file => isValidLicenseFile(file))
       .reduce((licenses, file) => {
         file.licenses.forEach(license => {
           if (license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
@@ -169,9 +165,7 @@ class ScanCodeSummarizer {
         const fileLicense = asserted || file.licenses || []
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size)
-          licenses = new Set(
-            fileLicense.filter((x) => this._isMatchedLicense(x)).map((x) => this._createExpressionFromLicense(x))
-          )
+          licenses = new Set(fileLicense.filter(x => x.score >= 80).map(x => this._createExpressionFromLicense(x)))
         const licenseExpression = this._joinExpressions(licenses)
         setIfValue(result, 'license', licenseExpression)
         if (this._getLicenseByIsLicenseText([file]) || this._getLicenseByFileName([file], coordinates)) {
@@ -187,10 +181,6 @@ class ScanCodeSummarizer {
         return result
       })
       .filter(e => e)
-  }
-
-  _isMatchedLicense(license) {
-    return license.score >= 80
   }
 
   _joinExpressions(expressions) {
