@@ -63,6 +63,13 @@ describe('ScancodeSummarizer basic compatability', () => {
     )
   })
 
+  it('summarizes pypi with a complex declared license for version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'pypi', provider: 'pypi' }
+    const harvestData = getHarvestData('30.1.0', 'pypi-complex-declared-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'HPND')
+  })
+
   it('summarizes github with a single declared license in later versions of ScanCode', () => {
     const coordinates = { type: 'git', provider: 'github' }
     const harvestData = getHarvestData('30.1.0', 'github-single-declared-license')
