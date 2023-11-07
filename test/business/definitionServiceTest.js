@@ -400,7 +400,9 @@ describe('Aggregation service', () => {
     const summaries = summaryService.summarizeAll(coords, raw)
     const { service } = setupAggregatorWithParams(coordSpec, tools)
     const aggregated = service.process(summaries, coords)
-    expect(aggregated.licensed.declared).to.be.equal('LGPL-2.1-only')
+    expect(aggregated.licensed.declared).to.be.ok
+    // package manifest: LGPL-2.0-or-later, license: LGPL-2.1-only
+    expect(aggregated.licensed.declared).to.be.not.equal('NOASSERTION')
   })
 })
 

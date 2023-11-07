@@ -63,6 +63,13 @@ describe('ScancodeSummarizer basic compatability', () => {
     )
   })
 
+  it('summarizes pypi with a complex declared license for version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'pypi', provider: 'pypi' }
+    const harvestData = getHarvestData('30.1.0', 'pypi-complex-declared-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'HPND')
+  })
+
   it('summarizes github with a single declared license in later versions of ScanCode', () => {
     const coordinates = { type: 'git', provider: 'github' }
     const harvestData = getHarvestData('30.1.0', 'github-single-declared-license')
@@ -72,6 +79,38 @@ describe('ScancodeSummarizer basic compatability', () => {
       result.licensed.declared,
       'MIT'
     )
+  })
+
+  it('summarizes using license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'debsrc', provider: 'debian' }
+    const harvestData = getHarvestData('30.1.0', 'debsrc-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
+  })
+
+  it('summarizes falling back to license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
+  })
+
+  it('license matched with lower score should be filtered out in declared license for version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'composer', provider: 'packagist' }
+    const harvestData = getHarvestData('30.1.0', 'cache-backend-redis-license-score')
+    const licenseFromFiles = summarizer._getDeclaredLicense('30.1.0', harvestData, coordinates)
+    assert.equal(licenseFromFiles, 'BSD-3-Clause')
+
+    const files = summarizer._summarizeFileInfo(harvestData.content.files, coordinates)
+    const licenseFile = files.find((file) => file.natures?.includes('license'))
+    assert.equal(licenseFile.license, 'BSD-3-Clause')
+  })
+
+  it('should detect license from maven license file in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'maven', provider: 'mavencentral' }
+    const harvestData = getHarvestData('30.1.0', 'maven-flywaydb-file-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
   })
 
   it('throws an error on an invalid scancode version', () => {
