@@ -33,12 +33,9 @@ class ScanCodeSummarizer {
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
-    let declaredLicense = this._readDeclaredLicense(scancodeVersion, harvested)
+    let declaredLicense = this._getDeclaredLicenseFromSummary(scancodeVersion, harvested)
     if (!isDeclaredLicense(declaredLicense)) {
-      declaredLicense = this._readLicenseExpression(harvested) || declaredLicense
-    }
-    if (!isDeclaredLicense(declaredLicense)) {
-      declaredLicense = this._getDeclaredLicense(scancodeVersion, harvested, coordinates) || declaredLicense
+      declaredLicense = this._getDeclaredLicenseFromFiles(scancodeVersion, harvested, coordinates) || declaredLicense
     }
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
@@ -50,7 +47,15 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _readDeclaredLicense(scancodeVersion, harvested) {
+  _getDeclaredLicenseFromSummary(scancodeVersion, harvested) {
+    let declaredLicense = this._readDeclaredLicenseFromSummary(scancodeVersion, harvested)
+    if (!isDeclaredLicense(declaredLicense)) {
+      declaredLicense = this._readLicenseExpressionFromSummary(harvested) || declaredLicense
+    }
+    return declaredLicense
+  }
+
+  _readDeclaredLicenseFromSummary(scancodeVersion, harvested) {
     switch (scancodeVersion) {
       case '2.2.1':
       case '2.9.1':
@@ -76,7 +81,7 @@ class ScanCodeSummarizer {
     }
   }
 
-  _readLicenseExpression(harvested) {
+  _readLicenseExpressionFromSummary(harvested) {
     const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
     return licenseExpression && this._normalizeLicenseExpression(licenseExpression)
   }
@@ -100,7 +105,7 @@ class ScanCodeSummarizer {
     })
   }
 
-  _getDeclaredLicense(scancodeVersion, harvested, coordinates) {
+  _getDeclaredLicenseFromFiles(scancodeVersion, harvested, coordinates) {
     const rootFile = this._getRootFiles(coordinates, harvested.content.files)
     switch (scancodeVersion) {
       case '2.2.1':
