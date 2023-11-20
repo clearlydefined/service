@@ -87,6 +87,49 @@ describe('ClearlyDescribedSummarizer add files', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer addCondaData', () => {
+  const condaTestCoordinates = EntityCoordinates.fromString('conda/conda-forge/-/test/1.0')
+  it('declares license from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(result, { declaredLicenses: 'MIT' }, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
+  it('declares dual license from registryData with SPDX expression', () => {
+    let result = {}
+    let data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    data.declaredLicenses = 'MIT OR Apache-2.0'
+    summarizer.addCondaData(result, data, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
+  })
+
+  it('normalizes to spdx only', () => {
+    let result = {}
+    summarizer.addCondaData(result, { declaredLicenses: 'Garbage' }, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
+  })
+
+  it('describes projectWebsite from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(result, {
+      registryData: {
+        channelData: { home: 'https://github.com/owner/repo' }
+      }
+    }, condaTestCoordinates)
+    assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
+  })
+
+  it('describes releaseDate from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(
+      result,
+      { releaseDate: 'Wed, 14 Jun 2017 07:00:00 GMT' },
+      condaTestCoordinates
+    )
+    assert.strictEqual(result.described.releaseDate, '2017-06-14')
+  })
+})
+
 describe('ClearlyDescribedSummarizer addCrateData', () => {
   const crateTestCoordinates = EntityCoordinates.fromString('crate/cratesio/-/test/1.0')
   it('declares license from registryData', () => {

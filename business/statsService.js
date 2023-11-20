@@ -35,6 +35,8 @@ class StatsService {
   _getStatLookup() {
     return {
       total: () => this._getType('total'),
+      conda: () => this._getType('conda'),
+      condasource: () => this._getType('condasource'),
       crate: () => this._getType('crate'),
       gem: () => this._getType('gem'),
       git: () => this._getType('git'),

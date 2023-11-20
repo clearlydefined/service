@@ -74,6 +74,13 @@ describe('ScancodeSummarizer basic compatability', () => {
     )
   })
 
+  it('should detect license from maven license file in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'maven', provider: 'mavencentral' }
+    const harvestData = getHarvestData('30.1.0', 'maven-flywaydb-file-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
+  })
+
   it('throws an error on an invalid scancode version', () => {
     const version = '0.0.0'
     const coordinates = { type: 'npm', provider: 'npmjs' }
