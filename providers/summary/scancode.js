@@ -71,6 +71,8 @@ class ScanCodeSummarizer {
         // Example: for maven/mavencentral/redis.clients/jedis/4.1.1
         // declared_license would be { "name": "MIT", "url": "http://github.com/redis/jedis/raw/master/LICENSE.txt", "comments": null, "distribution": "repo" }'
         // Some pypi packages have this value as an object with a license field 
+        // Example: for pypi/pypi/abseil/absl-py/0.9.0
+        // declared_license would be { "license": "Apache 2.0", "classifiers": ["License :: OSI Approved :: Apache Software License"] }
         if (typeof declared_license != 'string' && declared_license != undefined) {
           declared_license = declared_license['name'] || declared_license['license']
         }
