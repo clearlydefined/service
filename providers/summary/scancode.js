@@ -84,7 +84,8 @@ class ScanCodeSummarizer {
 
   _readLicenseExpressionFromSummary(harvested) {
     const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
-    return licenseExpression && this._normalizeLicenseExpression(licenseExpression)
+    const result = licenseExpression && this._normalizeLicenseExpression(licenseExpression)
+    return result?.includes('NOASSERTION') ? null : result
   }
 
   // find and return the files that should be considered for as a license determinator for this summarization

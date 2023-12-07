@@ -95,6 +95,20 @@ describe('ScancodeSummarizer basic compatability', () => {
     assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
   })
 
+  it('summarizes and ignore license_expression containing NOASSERTION in version 3.0.2 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('3.0.2', 'github-locationtech-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'BSD-3-Clause AND EPL-1.0')
+  })
+
+  it('summarizes and ignore license_expression containing NOASSERTION in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-LatencyUtils-license-expression.')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'BSD-2-Clause AND CC0-1.0 OR BSD-2-Clause')
+  })
+
   it('throws an error on an invalid scancode version', () => {
     const version = '0.0.0'
     const coordinates = { type: 'npm', provider: 'npmjs' }
