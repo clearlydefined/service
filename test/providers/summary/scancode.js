@@ -3,7 +3,7 @@
 
 const assert = require('assert')
 const summarizer = require('../../../providers/summary/scancode')()
-summarizer.logger = { info: () => { } }
+summarizer.logger = { info: () => {} }
 const fs = require('fs')
 const path = require('path')
 const { get, uniq, flatten } = require('lodash')
@@ -20,9 +20,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
-      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
+      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
     }
   })
 
@@ -46,9 +46,9 @@ describe('ScancodeSummarizer basic compatability', () => {
         `Declared license mismatch for version ${version}`
       )
       assert.equal(result.described.releaseDate, '2018-03-31', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
-      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 33)
+      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
     }
   })
 
@@ -57,10 +57,14 @@ describe('ScancodeSummarizer basic compatability', () => {
     const harvestData = getHarvestData('30.1.0', 'maven-complex-declared-license')
     const result = summarizer.summarize(coordinates, harvestData)
 
-    assert.equal(
-      result.licensed.declared,
-      'MIT'
-    )
+    assert.equal(result.licensed.declared, 'MIT')
+  })
+
+  it('summarizes pypi with a complex declared license for version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'pypi', provider: 'pypi' }
+    const harvestData = getHarvestData('30.1.0', 'pypi-complex-declared-license')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'HPND')
   })
 
   it('summarizes github with a single declared license in later versions of ScanCode', () => {
@@ -68,10 +72,7 @@ describe('ScancodeSummarizer basic compatability', () => {
     const harvestData = getHarvestData('30.1.0', 'github-single-declared-license')
     const result = summarizer.summarize(coordinates, harvestData)
 
-    assert.equal(
-      result.licensed.declared,
-      'MIT'
-    )
+    assert.equal(result.licensed.declared, 'MIT')
   })
 
   it('should detect license from maven license file in version 30.1.0 of ScanCode', () => {
@@ -79,6 +80,34 @@ describe('ScancodeSummarizer basic compatability', () => {
     const harvestData = getHarvestData('30.1.0', 'maven-flywaydb-file-license')
     const result = summarizer.summarize(coordinates, harvestData)
     assert.equal(result.licensed.declared, 'Apache-2.0')
+  })
+
+  it('summarizes using license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'debsrc', provider: 'debian' }
+    const harvestData = getHarvestData('30.1.0', 'debsrc-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'Apache-2.0')
+  })
+
+  it('summarizes falling back to license_expression in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
+  })
+
+  it('summarizes and ignore license_expression containing NOASSERTION in version 3.0.2 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('3.0.2', 'github-locationtech-license-expression')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'BSD-3-Clause AND EPL-1.0')
+  })
+
+  it('summarizes and ignore license_expression containing NOASSERTION in version 30.1.0 of ScanCode', () => {
+    const coordinates = { type: 'git', provider: 'github' }
+    const harvestData = getHarvestData('30.1.0', 'github-LatencyUtils-license-expression.')
+    const result = summarizer.summarize(coordinates, harvestData)
+    assert.equal(result.licensed.declared, 'BSD-2-Clause AND CC0-1.0 OR BSD-2-Clause')
   })
 
   it('throws an error on an invalid scancode version', () => {
@@ -106,9 +135,9 @@ describe('ScancodeSummarizer basic compatability', () => {
         undefinedOverrides.indexOf(version) > -1 ? undefined : 'MIT',
         `Declared license mismatch for version ${version}`
       )
-      assert.equal(result.files.find(x => x.path === 'MIT-LICENSE.md').license, 'MIT')
+      assert.equal(result.files.find((x) => x.path === 'MIT-LICENSE.md').license, 'MIT')
       assert.equal(result.described.releaseDate, '2018-08-09', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 3)
+      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 3)
     }
   })
 
@@ -120,9 +149,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-02-24', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
-      assert.deepEqual(result.files.find(x => x.path === 'LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
+      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
     }
   })
 
@@ -134,9 +163,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2018-11-15', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
-      assert.deepEqual(result.files.find(x => x.path === 'redis-3.0.1/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
+      assert.deepEqual(result.files.find((x) => x.path === 'redis-3.0.1/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
     }
   })
 })
@@ -206,51 +235,54 @@ describe('ScancodeSummarizer fixtures', () => {
     assert.deepEqual(result.described, { releaseDate: '2019-01-31' })
     assert.deepEqual(result.licensed, { declared: 'NOASSERTION' })
     assert.deepEqual(result.files.length, 576)
-    assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 21)
-    assert.deepEqual(result.files.filter(x => x.natures), [
-      {
-        path: 'LICENSE',
-        license: 'NOASSERTION',
-        natures: ['license'],
-        attributions: ['Copyright 2018-2019 Redis Labs Ltd. and Contributors.'],
-        hashes: { sha1: '6c9da49858267f91fa10f08ad556f02fdc689e63' }
-      },
-      {
-        path: 'src/dep/friso/LICENSE.md',
-        license: 'Apache-2.0 AND MIT',
-        natures: ['license'],
-        attributions: ['Copyright (c) 2010'],
-        hashes: { sha1: 'aeb9db6237c570c389886e0540e01a0ec78134bb' }
-      },
-      {
-        path: 'src/dep/hll/LICENSE',
-        license: 'MIT',
-        natures: ['license'],
-        attributions: ['Copyright (c) 2015 Artem Zaytsev <arepo@nologin.ru>'],
-        hashes: { sha1: 'c0e8a4bbdcbc9c81f7ea72b0631f67973aa0f244' }
-      },
-      {
-        path: 'src/dep/libnu/LICENSE',
-        license: 'MIT',
-        natures: ['license'],
-        attributions: ['Copyright (c) 2013 Aleksey Tulinov <aleksey.tulinov@gmail.com>'],
-        hashes: { sha1: 'ea1ed91b37e5c99835b9ebf0861f96dfda2524cd' }
-      },
-      {
-        path: 'src/dep/snowball/COPYING',
-        license: 'BSD-3-Clause',
-        natures: ['license'],
-        attributions: ['Copyright (c) 2001, Dr Martin Porter', 'Copyright (c) 2004,2005, Richard Boulton'],
-        hashes: { sha1: '3938505906e841002141cb01bbda1e971614e34a' }
-      },
-      {
-        path: 'src/dep/triemap/LICENSE',
-        license: 'BSD-2-Clause',
-        natures: ['license'],
-        attributions: ['Copyright (c) 2017, Redis Labs'],
-        hashes: { sha1: 'f35ea366f34f63097146d8b77417d393aab877d3' }
-      }
-    ])
+    assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 21)
+    assert.deepEqual(
+      result.files.filter((x) => x.natures),
+      [
+        {
+          path: 'LICENSE',
+          license: 'NOASSERTION',
+          natures: ['license'],
+          attributions: ['Copyright 2018-2019 Redis Labs Ltd. and Contributors.'],
+          hashes: { sha1: '6c9da49858267f91fa10f08ad556f02fdc689e63' }
+        },
+        {
+          path: 'src/dep/friso/LICENSE.md',
+          license: 'Apache-2.0 AND MIT',
+          natures: ['license'],
+          attributions: ['Copyright (c) 2010'],
+          hashes: { sha1: 'aeb9db6237c570c389886e0540e01a0ec78134bb' }
+        },
+        {
+          path: 'src/dep/hll/LICENSE',
+          license: 'MIT',
+          natures: ['license'],
+          attributions: ['Copyright (c) 2015 Artem Zaytsev <arepo@nologin.ru>'],
+          hashes: { sha1: 'c0e8a4bbdcbc9c81f7ea72b0631f67973aa0f244' }
+        },
+        {
+          path: 'src/dep/libnu/LICENSE',
+          license: 'MIT',
+          natures: ['license'],
+          attributions: ['Copyright (c) 2013 Aleksey Tulinov <aleksey.tulinov@gmail.com>'],
+          hashes: { sha1: 'ea1ed91b37e5c99835b9ebf0861f96dfda2524cd' }
+        },
+        {
+          path: 'src/dep/snowball/COPYING',
+          license: 'BSD-3-Clause',
+          natures: ['license'],
+          attributions: ['Copyright (c) 2001, Dr Martin Porter', 'Copyright (c) 2004,2005, Richard Boulton'],
+          hashes: { sha1: '3938505906e841002141cb01bbda1e971614e34a' }
+        },
+        {
+          path: 'src/dep/triemap/LICENSE',
+          license: 'BSD-2-Clause',
+          natures: ['license'],
+          attributions: ['Copyright (c) 2017, Redis Labs'],
+          hashes: { sha1: 'f35ea366f34f63097146d8b77417d393aab877d3' }
+        }
+      ]
+    )
   })
 })
 
