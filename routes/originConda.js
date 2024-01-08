@@ -29,7 +29,7 @@ router.get(
           Object.entries(repoData['packages'])
             .forEach(([, packageData]) => {
               if (packageData.name == name) {
-                revisions.push(`${packageData.version}_${subdir}`)
+                revisions.push(`${subdir}--${packageData.version}-${packageData.build}`)
               }
             })
         }
@@ -37,7 +37,7 @@ router.get(
           Object.entries(repoData['packages.conda'])
             .forEach(([, packageData]) => {
               if (packageData.name == name) {
-                revisions.push(`${packageData.version}_${subdir}`)
+                revisions.push(`${subdir}--${packageData.version}-${packageData.build}`)
               }
             })
         }
