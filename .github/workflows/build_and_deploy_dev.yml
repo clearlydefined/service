@@ -1,0 +1,77 @@
+name: Build and Deploy to dev service app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+env:
+  AZURE_WEBAPP_NAME: clearlydefined-api-dev
+  DOCKER_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-dev
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log into ghcr registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          file: DevDockerfile
+          tags: |
+            ${{ env.DOCKER_IMAGE_NAME }}:latest 
+            ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+          labels: |
+            env=dev
+            type=api
+
+      - name: Login for Azure cli commands
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set DOCKER configs in Azure web app
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-settings-json: |
+            [
+              {
+                    "name": "DOCKER_CUSTOM_IMAGE_NAME",
+                    "value": "${{ env.DOCKER_IMAGE_NAME }}:latest }}",
+                    "slotSetting": false
+              },
+              {
+                    "name": "DOCKER_REGISTRY_SERVER_URL",
+                    "value": "https://ghcr.io",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                    "value": "${{ secrets.REGISTRY_USERNAME  }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                    "value": "${{ secrets.REGISTRY_PASSWORD }}",
+                    "slotSetting": false
+                }
+            ]
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ env.DOCKER_IMAGE_NAME }}:latest
