@@ -12,9 +12,9 @@ const condaChannels = {
 }
 
 router.get(
-  '/:name/:channel/revisions',
+  '/:channel/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const { name, channel } = request.params
+    const { channel, name } = request.params
     if (!condaChannels[channel]) {
       return response.status(404).send([])
     }
@@ -29,7 +29,7 @@ router.get(
           Object.entries(repoData['packages'])
             .forEach(([, packageData]) => {
               if (packageData.name == name) {
-                revisions.push(`${subdir}--${packageData.version}-${packageData.build}`)
+                revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
               }
             })
         }
@@ -37,7 +37,7 @@ router.get(
           Object.entries(repoData['packages.conda'])
             .forEach(([, packageData]) => {
               if (packageData.name == name) {
-                revisions.push(`${subdir}--${packageData.version}-${packageData.build}`)
+                revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
               }
             })
         }

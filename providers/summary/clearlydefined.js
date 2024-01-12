@@ -53,7 +53,7 @@ class ClearlyDescribedSummarizer {
       case 'conda':
         this.addCondaData(result, data, coordinates)
         break
-      case 'condasource':
+      case 'condasrc':
         this.addCondaSrcData(result, data, coordinates)
         break
       case 'crate':
