@@ -116,9 +116,8 @@ describe('ScancodeSummarizer basic compatability', () => {
     const harvestData = getHarvestData(version, 'npm-basic')
     try {
       summarizer.summarize(coordinates, harvestData)
-      throw new Error('Invalid version of ScanCode')
     } catch (error) {
-      expect(error.message).to.eq('Invalid version of ScanCode')
+      expect(error.message).to.eq(`Invalid version of ScanCode: ${version}`)
     }
   })
 
