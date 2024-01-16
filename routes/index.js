@@ -4,7 +4,11 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', function(req, res) {
-  res.status(200).send({ status: 'OK' })
+  const sha = require('child_process')
+    .execSync('git rev-parse HEAD')
+    .toString().trim()
+  const msg = `{ "status": "OK", "sha": "${sha}" }`
+  res.status(200).send(msg)
 })
 
 module.exports = router
