@@ -1,4 +1,4 @@
-name: Update ScanCode Database
+name: Update mapping from ScanCode LicenseDB data
 
 on:
   schedule:
