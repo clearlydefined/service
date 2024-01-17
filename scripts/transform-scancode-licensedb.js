@@ -17,7 +17,7 @@
 const fs = require('fs');
 
 // Read the downloaded JSON file
-const rawData = fs.readFileSync('scancode-database.json');
+const rawData = fs.readFileSync('scancode-licensedb.json');
 const scancodeData = JSON.parse(rawData.toString());
 
 // Transform the data
