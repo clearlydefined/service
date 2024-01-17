@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   update-database:
+    name: Update mapping
     runs-on: ubuntu-latest
 
     steps:
