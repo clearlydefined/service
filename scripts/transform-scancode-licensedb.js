@@ -24,7 +24,7 @@ const scancodeData = JSON.parse(rawData.toString());
 const transformedData = transformScancodeData(scancodeData);
 
 // Write the transformed data to scancodeMap.js
-fs.writeFileSync('../../lib/scancodeMap.js', generateScancodeMapContent(transformedData));
+fs.writeFileSync('lib/scancodeMap.js', generateScancodeMapContent(transformedData));
 
 /**
  * @param {LicenseEntry[]} data
