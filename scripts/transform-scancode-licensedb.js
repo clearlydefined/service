@@ -14,17 +14,17 @@
  * @property {string} license - Relative path to the LICENSE file for the license.
  */
 
-const fs = require('fs');
+const fs = require('fs')
 
 // Read the downloaded JSON file
-const rawData = fs.readFileSync('scancode-licensedb.json');
-const scancodeData = JSON.parse(rawData.toString());
+const rawData = fs.readFileSync('scancode-licensedb.json')
+const scancodeData = JSON.parse(rawData.toString())
 
 // Transform the data
-const transformedData = transformScancodeData(scancodeData);
+const transformedData = transformScancodeData(scancodeData)
 
 // Write the transformed data to scancodeMap.js
-fs.writeFileSync('lib/scancodeMap.js', generateScancodeMapContent(transformedData));
+fs.writeFileSync('lib/scancodeMap.js', generateScancodeMapContent(transformedData))
 
 /**
  * @param {LicenseEntry[]} data
@@ -32,7 +32,7 @@ fs.writeFileSync('lib/scancodeMap.js', generateScancodeMapContent(transformedDat
  */
 function transformScancodeData(data) {
   // Map the data to the required format
-  return data.map(entry => [entry.license_key, entry.spdx_license_key]);
+  return data.map(entry => [entry.license_key, entry.spdx_license_key])
 }
 
 /**
@@ -40,7 +40,7 @@ function transformScancodeData(data) {
  */
 function generateScancodeMapContent(data) {
   // Convert the array pairs into string format
-  const content = data.map(([licenseKey, spdxLicenseKey]) => `  ['${licenseKey}', '${spdxLicenseKey}']`);
+  const content = data.map(([licenseKey, spdxLicenseKey]) => `  ['${licenseKey}', '${spdxLicenseKey}']`)
   return `// Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -51,5 +51,5 @@ function generateScancodeMapContent(data) {
 // See licenses in https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/
 module.exports = new Map([
 ${content.join(',\n')}
-]);`;
+]);`
 }
