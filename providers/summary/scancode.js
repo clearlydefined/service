@@ -80,7 +80,7 @@ class ScanCodeSummarizer {
         return SPDX.normalize(declared_license)
       }
       default:
-        throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
+        throw new Error(`Invalid version of ScanCode: ${scancodeVersion}`)
     }
   }
 

@@ -5,7 +5,7 @@
     "fetchedAt": "2018-02-27T20:03:11.607Z",
     "links": {
       "self": {
-        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode:2.2.1",
+        "href": "urn:npm:npmjs:-:glob:revision:7.1.2:tool:scancode:0.0.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,14 +13,14 @@
         "type": "collection"
       }
     },
-    "version": "2.2.1",
+    "version": "0.0.0",
     "contentType": "application/json",
     "releaseDate": "2017-05-19T20:15:25.471Z",
     "processedAt": "2018-02-27T20:05:25.944Z"
   },
   "content": {
     "scancode_notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-    "scancode_version": "2.2.1",
+    "scancode_version": "0.0.0",
     "scancode_options": {
       "--copyright": true,
       "--license": true,
