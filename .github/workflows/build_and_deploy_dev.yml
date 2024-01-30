@@ -6,8 +6,11 @@ on:
     branches: [master]
 
 env:
+  CODE_ENVIRONMENT: dev
+  APPLICATION_TYPE: api
   AZURE_WEBAPP_NAME: clearlydefined-api-dev
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-dev
+  # SEMVER: '' # if you want to use semver, you will need to add a tag to the Docker build
 
 jobs:
   build-and-deploy:
@@ -20,21 +23,21 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ github.actor }}         # user that kicked off the action
+          password: ${{ secrets.GITHUB_TOKEN }} # token created when the action launched (short lived)
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          file: DevDockerfile
+          file: Dockerfile
           tags: |
             ${{ env.DOCKER_IMAGE_NAME }}:latest 
             ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
           labels: |
-            env=dev
-            type=api
+            env=${{ env.CODE_ENVIRONMENT }}
+            type=${{ env.APPLICATION_TYPE }}
 
       - name: Login for Azure cli commands
         uses: azure/login@v1
