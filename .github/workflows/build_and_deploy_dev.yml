@@ -19,7 +19,7 @@ on:
 # Environment Variables:
 #   APPLICATION_TYPE:   type of application that is being deployed; used to add a label to the Docker image (values: api | web | worker)
 #   AZURE_WEBAPP_NAME:  name of the Azure WebApp being deployed
-#   CODE_ENVIRONMENT:   environment that the code is being deployed to; used to add a label to the Docker image (values: dev | prod)
+#   DEPLOY_ENVIRONMENT:   environment that the code is being deployed to; used to add a label to the Docker image (values: dev | prod)
 #   DEPLOY_DOCKER_TAG:  the tag used for deploying a specific Docker image to Azure.  For dev, use the `github.sha`.  For production, use the SEMVER
 #                       version of the release.  Make sure to add this tag to the `DOCKER_TAGS` in the `Build and push Docker image` step.
 #   DOCKER_IMAGE_NAME:  name of the Docker image that is being built and pushed to ghcr.io.
@@ -27,7 +27,7 @@ on:
 env:
   APPLICATION_TYPE: api
   AZURE_WEBAPP_NAME: clearlydefined-api-dev
-  CODE_ENVIRONMENT: dev
+  DEPLOY_ENVIRONMENT: dev
   DEPLOY_DOCKER_TAG: ${{ github.sha }}
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-dev
 
@@ -48,7 +48,7 @@ jobs:
       - name: Build and push Docker image
         env:
           DOCKER_TAGS: |
-            ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}
         uses: docker/build-push-action@v5.1.0
         with:
           context: .
@@ -56,7 +56,7 @@ jobs:
           file: Dockerfile
           tags: ${{ env.DOCKER_TAGS }}
           labels: |
-            env=${{ env.CODE_ENVIRONMENT }}
+            env=${{ env.DEPLOY_ENVIRONMENT }}
             type=${{ env.APPLICATION_TYPE }}
 
       - name: Login for Azure cli commands
