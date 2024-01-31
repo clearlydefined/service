@@ -205,7 +205,7 @@ class ClearlyDescribedSummarizer {
 
   addCondaData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'releaseDate')))
-    setIfValue(result, 'described.urls.download', get(data, 'downloadUrl'))
+    setIfValue(result, 'described.urls.download', get(data, 'registryData.downloadUrl'))
     setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
     setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicenses))

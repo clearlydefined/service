@@ -5,10 +5,23 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const requestPromise = require('request-promise-native')
 const { uniq } = require('lodash')
+const { Cache } = require('memory-cache')
 const condaChannels = {
   'anaconda-main': 'https://repo.anaconda.com/pkgs/main',
   'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
   'conda-forge': 'https://conda.anaconda.org/conda-forge'
+}
+const condaCache = new Cache();
+
+async function fetchCondaChannelData(channel) {
+  const key = `${channel}-channelData`
+  let channelData = condaCache.get(key)
+  if (!channelData) {
+    const url = `${condaChannels[channel]}/channeldata.json`
+    channelData = await requestPromise({ url, method: 'GET', json: true })
+    condaCache.put(key, channelData, 8 * 60 * 60 * 1000) // 8 hours
+  }
+  return channelData
 }
 
 router.get(
@@ -18,8 +31,7 @@ router.get(
     if (!condaChannels[channel]) {
       return response.status(404).send([])
     }
-    const url = `${condaChannels[channel]}/channeldata.json`
-    const channelData = await requestPromise({ url, method: 'GET', json: true })
+    let channelData = await fetchCondaChannelData(channel)
     if (channelData.packages[name]) {
       let revisions = []
       for (let subdir of channelData.packages[name].subdirs) {
@@ -28,7 +40,7 @@ router.get(
         if (repoData['packages']) {
           Object.entries(repoData['packages'])
             .forEach(([, packageData]) => {
-              if (packageData.name == name) {
+              if (packageData.name === name) {
                 revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
               }
             })
@@ -36,7 +48,7 @@ router.get(
         if (repoData['packages.conda']) {
           Object.entries(repoData['packages.conda'])
             .forEach(([, packageData]) => {
-              if (packageData.name == name) {
+              if (packageData.name === name) {
                 revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
               }
             })
@@ -50,14 +62,13 @@ router.get(
 )
 
 router.get(
-  '/:name/:channel',
+  '/:channel/:name',
   asyncMiddleware(async (request, response) => {
-    const { name, channel } = request.params
+    const { channel, name } = request.params
     if (!condaChannels[channel]) {
       return response.status(404).send([])
     }
-    const url = `${condaChannels[channel]}/channeldata.json`
-    const channelData = await requestPromise({ url, method: 'GET', json: true })
+    let channelData = await fetchCondaChannelData(channel)
     let matches = Object.entries(channelData.packages).filter(([packageName,]) => packageName.includes(name)).map(
       ([packageName,]) => { return { id: packageName } }
     )
