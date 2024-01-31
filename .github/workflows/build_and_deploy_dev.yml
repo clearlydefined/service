@@ -70,6 +70,11 @@ jobs:
                     "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                     "value": "${{ secrets.REGISTRY_PASSWORD }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "BUILD_SHA",
+                    "value": "${{ github.sha }}",
+                    "slotSetting": false
                 }
             ]
 
