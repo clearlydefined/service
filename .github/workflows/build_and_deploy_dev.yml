@@ -7,8 +7,7 @@ name: Build and Deploy to dev service app
 on:
   workflow_dispatch:
   push:
-    branches: [elr/gh-action-dev-deploy]
-    # branches: [master]
+    branches: [master]
 
 # There are secrets and environment variables that need to be set that control what is pushed to
 # ghcr and Azure.
