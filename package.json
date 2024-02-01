@@ -41,7 +41,7 @@
     "luxon": "^2.5.2",
     "memory-cache": "^0.2.0",
     "minimatch": "^3.0.4",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^3.0.1",
     "mongodb": "^3.1.13",
     "morgan": "^1.9.1",
     "painless-config": "^0.1.0",
