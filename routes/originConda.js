@@ -24,6 +24,17 @@ async function fetchCondaChannelData(channel) {
   return channelData
 }
 
+async function fetchCondaRepoData(channel, subdir) {
+  const key = `${channel}-${subdir}-repoData`
+  let channelData = condaCache.get(key)
+  if (!channelData) {
+    const url = `${condaChannels[channel]}/${subdir}/repodata.json`
+    channelData = await requestPromise({ url, method: 'GET', json: true })
+    condaCache.put(key, channelData, 8 * 60 * 60 * 1000) // 8 hours
+  }
+  return channelData
+}
+
 router.get(
   '/:channel/:name/revisions',
   asyncMiddleware(async (request, response) => {
@@ -35,8 +46,7 @@ router.get(
     if (channelData.packages[name]) {
       let revisions = []
       for (let subdir of channelData.packages[name].subdirs) {
-        const repoUrl = `${condaChannels[channel]}/${subdir}/repodata.json`
-        const repoData = await requestPromise({ url: repoUrl, method: 'GET', json: true })
+        const repoData = await fetchCondaRepoData(channel, subdir)
         if (repoData['packages']) {
           Object.entries(repoData['packages'])
             .forEach(([, packageData]) => {
