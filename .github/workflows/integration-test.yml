@@ -1,0 +1,28 @@
+name: Integration Test
+
+on:
+  workflow_dispatch:
+    ## The tests take a long time to run and can be potentially quite costly, so set it to run manually
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Trigger harvest and verify completion
+        run: npx mocha integration/test/harvestTest.js
+
+      - name: Verify computed definitions
+        run: npx mocha integration/test/serviceTest.js
