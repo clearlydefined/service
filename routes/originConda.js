@@ -11,7 +11,7 @@ const condaChannels = {
   'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
   'conda-forge': 'https://conda.anaconda.org/conda-forge'
 }
-const condaCache = new Cache();
+const condaCache = new Cache()
 
 async function fetchCondaChannelData(channel) {
   const key = `${channel}-channelData`
