@@ -1,0 +1,2733 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/git/github/latencyutils/latencyutils/319ad7a36652cdc3833e2072551a2836a0747578",
+    "fetchedAt": "2023-02-19T17:16:56.698Z",
+    "links": {
+      "self": {
+        "href": "urn:git:github:latencyutils:latencyutils:revision:319ad7a36652cdc3833e2072551a2836a0747578:tool:scancode:30.3.0",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:git:github:latencyutils:latencyutils:revision:319ad7a36652cdc3833e2072551a2836a0747578:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "schemaVersion": "30.3.0",
+    "toolVersion": "30.1.0",
+    "contentType": "application/json",
+    "releaseDate": "2014-11-24T00:00:13.000Z",
+    "processedAt": "2023-02-19T17:17:08.869Z"
+  },
+  "content": {
+    "headers": [
+      {
+        "tool_name": "scancode-toolkit",
+        "tool_version": "30.1.0",
+        "options": {
+          "input": [
+            "/tmp/cd-IJLZBH/latencyutils"
+          ],
+          "--classify": true,
+          "--copyright": true,
+          "--email": true,
+          "--generated": true,
+          "--info": true,
+          "--is-license-text": true,
+          "--json-pp": "/tmp/cd-041LWe",
+          "--license": true,
+          "--license-clarity-score": true,
+          "--license-text": true,
+          "--license-text-diagnostics": true,
+          "--package": true,
+          "--processes": "2",
+          "--strip-root": true,
+          "--summary": true,
+          "--summary-key-files": true,
+          "--timeout": "1000.0",
+          "--url": true
+        },
+        "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+        "start_timestamp": "2023-02-19T171657.980677",
+        "end_timestamp": "2023-02-19T171707.763602",
+        "output_format_version": "1.0.0",
+        "duration": 9.782946825027466,
+        "message": null,
+        "errors": [],
+        "extra_data": {
+          "spdx_license_list_version": "3.14",
+          "OUTDATED": "WARNING: Outdated ScanCode Toolkit version! You are using an outdated version of ScanCode Toolkit: 30.1.0 released on: 2021-09-24. A new version is available with important improvements including bug and security fixes, updated license, copyright and package detection, and improved scanning accuracy. Please download and install the latest version of ScanCode. Visit https://github.com/nexB/scancode-toolkit/releases for details.",
+          "files_count": 19
+        }
+      }
+    ],
+    "summary": {
+      "license_expressions": [
+        {
+          "value": "cc0-1.0",
+          "count": 18
+        },
+        {
+          "value": "bsd-simplified",
+          "count": 1
+        },
+        {
+          "value": "cc0-1.0 OR bsd-simplified",
+          "count": 1
+        },
+        {
+          "value": "public-domain",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": null,
+          "count": 18
+        },
+        {
+          "value": "Copyright (c) Gil Tene",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": null,
+          "count": 18
+        },
+        {
+          "value": "Gil Tene",
+          "count": 1
+        }
+      ],
+      "authors": [
+        {
+          "value": "Gil Tene of Azul Systems",
+          "count": 18
+        },
+        {
+          "value": null,
+          "count": 1
+        }
+      ],
+      "programming_language": [
+        {
+          "value": "Java",
+          "count": 16
+        }
+      ],
+      "packages": [
+        {
+          "type": "maven",
+          "namespace": "org.latencyutils",
+          "name": "LatencyUtils",
+          "version": "2.0.1",
+          "qualifiers": {},
+          "subpath": null,
+          "primary_language": "Java",
+          "description": "LatencyUtils\nLatencyUtils is a package that provides latency recording and reporting utilities.",
+          "release_date": null,
+          "parties": [
+            {
+              "type": "person",
+              "role": "developper",
+              "name": "Gil Tene",
+              "email": null,
+              "url": "https://github.com/giltene"
+            }
+          ],
+          "keywords": [],
+          "homepage_url": "http://latencyutils.github.io/LatencyUtils/",
+          "download_url": null,
+          "size": null,
+          "sha1": null,
+          "md5": null,
+          "sha256": null,
+          "sha512": null,
+          "bug_tracking_url": "https://github.com/LatencyUtils/LatencyUtils/issues",
+          "code_view_url": "scm:git:git://github.com/LatencyUtils/LatencyUtils.git",
+          "vcs_url": "git://github.com/LatencyUtils/LatencyUtils.git",
+          "copyright": null,
+          "license_expression": "(public-domain AND unknown) AND cc0-1.0 AND (cc0-1.0 AND unknown)",
+          "declared_license": [
+            {
+              "name": "Public Domain, per Creative Commons CC0",
+              "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+              "comments": "* This code was Written by Gil Tene of Azul Systems, and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+              "distribution": null
+            }
+          ],
+          "notice_text": null,
+          "root_path": null,
+          "dependencies": [
+            {
+              "purl": "pkg:maven/junit/junit@4.10",
+              "requirement": "4.10",
+              "scope": "test",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": true
+            },
+            {
+              "purl": "pkg:maven/org.hdrhistogram/HdrHistogram@2.0.3",
+              "requirement": "2.0.3",
+              "scope": "compile",
+              "is_runtime": false,
+              "is_optional": true,
+              "is_resolved": true
+            }
+          ],
+          "contains_source_code": null,
+          "source_packages": [
+            "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?classifier=sources"
+          ],
+          "extra_data": {},
+          "purl": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1",
+          "repository_homepage_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/",
+          "repository_download_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.jar",
+          "api_data_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.pom",
+          "files": [
+            {
+              "path": "pom.xml",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    "license_clarity_score": {
+      "score": 30,
+      "declared": true,
+      "discovered": 0,
+      "consistency": false,
+      "spdx": false,
+      "license_texts": false
+    },
+    "summary_of_key_files": {
+      "license_expressions": [
+        {
+          "value": "bsd-simplified",
+          "count": 1
+        },
+        {
+          "value": "cc0-1.0 OR bsd-simplified",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": "Copyright (c) Gil Tene",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": "Gil Tene",
+          "count": 1
+        }
+      ],
+      "authors": [
+        {
+          "value": "Gil Tene of Azul Systems",
+          "count": 1
+        }
+      ],
+      "programming_language": []
+    },
+    "files": [
+      {
+        "path": "LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 2091,
+        "date": "2023-02-19",
+        "sha1": "2a08217e5b571885ec71b9c8b92ce53f9e85ca6f",
+        "md5": "deadc78cbcc98b16d1e2787747713830",
+        "sha256": "50b43424ea5a8855c49f89e4d3a00fd55fb572ecd0c872f4215f63f654983c6c",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 1,
+            "end_line": 13,
+            "matched_rule": {
+              "identifier": "cc0-1.0_or_bsd-simplified_1.RULE",
+              "license_expression": "cc0-1.0 OR bsd-simplified",
+              "licenses": [
+                "cc0-1.0",
+                "bsd-simplified"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 97,
+              "matched_length": 97,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **"
+          },
+          {
+            "key": "bsd-simplified",
+            "score": 100,
+            "name": "BSD-2-Clause",
+            "short_name": "BSD-2-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-2-Clause",
+            "text_url": "http://opensource.org/licenses/bsd-license.php",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-simplified",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-simplified.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-simplified.yml",
+            "spdx_license_key": "BSD-2-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-2-Clause",
+            "start_line": 1,
+            "end_line": 13,
+            "matched_rule": {
+              "identifier": "cc0-1.0_or_bsd-simplified_1.RULE",
+              "license_expression": "cc0-1.0 OR bsd-simplified",
+              "licenses": [
+                "cc0-1.0",
+                "bsd-simplified"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 97,
+              "matched_length": 97,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **"
+          },
+          {
+            "key": "bsd-simplified",
+            "score": 100,
+            "name": "BSD-2-Clause",
+            "short_name": "BSD-2-Clause",
+            "category": "Permissive",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Regents of the University of California",
+            "homepage_url": "http://www.opensource.org/licenses/BSD-2-Clause",
+            "text_url": "http://opensource.org/licenses/bsd-license.php",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/bsd-simplified",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-simplified.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-simplified.yml",
+            "spdx_license_key": "BSD-2-Clause",
+            "spdx_url": "https://spdx.org/licenses/BSD-2-Clause",
+            "start_line": 18,
+            "end_line": 38,
+            "matched_rule": {
+              "identifier": "bsd-simplified_16.RULE",
+              "license_expression": "bsd-simplified",
+              "licenses": [
+                "bsd-simplified"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": true,
+              "is_license_notice": false,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 185,
+              "matched_length": 185,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE."
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0 OR bsd-simplified",
+          "bsd-simplified"
+        ],
+        "percentage_of_license_text": 93.07,
+        "copyrights": [
+          {
+            "value": "Copyright (c) 2012, 2013, 2014 Gil Tene",
+            "start_line": 15,
+            "end_line": 15
+          }
+        ],
+        "holders": [
+          {
+            "value": "Gil Tene",
+            "start_line": 15,
+            "end_line": 15
+          }
+        ],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 1,
+            "end_line": 1
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "is_legal": true,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": true,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "pom.xml",
+        "type": "file",
+        "name": "pom.xml",
+        "base_name": "pom",
+        "extension": ".xml",
+        "size": 7255,
+        "date": "2023-02-19",
+        "sha1": "484313e3e9d627dacf8ee4b432ccd2092dca8590",
+        "md5": "5ae03a4a5093aa36a52ee4c58dad49c0",
+        "sha256": "73a435f1f440a03073a074230cdfa2e3c381e81b720055eb3d384cb01843b733",
+        "mime_type": "text/xml",
+        "file_type": "XML 1.0 document, ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 26,
+            "end_line": 27,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          },
+          {
+            "key": "public-domain",
+            "score": 70,
+            "name": "Public Domain",
+            "short_name": "Public Domain",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Unspecified",
+            "homepage_url": "http://www.linfo.org/publicdomain.html",
+            "text_url": "",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/public-domain",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/public-domain.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/public-domain.yml",
+            "spdx_license_key": "LicenseRef-scancode-public-domain",
+            "spdx_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/public-domain.LICENSE",
+            "start_line": 29,
+            "end_line": 29,
+            "matched_rule": {
+              "identifier": "public-domain_bare_words.RULE",
+              "license_expression": "public-domain",
+              "licenses": [
+                "public-domain"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": false,
+              "is_license_reference": true,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 2,
+              "matched_length": 2,
+              "match_coverage": 100,
+              "rule_relevance": 70
+            },
+            "matched_text": "Public Domain,"
+          },
+          {
+            "key": "cc0-1.0",
+            "score": 29.41,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 29,
+            "end_line": 30,
+            "matched_rule": {
+              "identifier": "cc0-1.0_108.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "3-seq",
+              "rule_length": 34,
+              "matched_length": 10,
+              "match_coverage": 29.41,
+              "rule_relevance": 100
+            },
+            "matched_text": "Creative Commons CC0</[name]>\n            <[url]>http://creativecommons.org/publicdomain/zero/1.0/</"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0",
+          "public-domain",
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 5.08,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 26,
+            "end_line": 26
+          }
+        ],
+        "packages": [
+          {
+            "type": "maven",
+            "namespace": "org.latencyutils",
+            "name": "LatencyUtils",
+            "version": "2.0.1",
+            "qualifiers": {},
+            "subpath": null,
+            "primary_language": "Java",
+            "description": "LatencyUtils\nLatencyUtils is a package that provides latency recording and reporting utilities.",
+            "release_date": null,
+            "parties": [
+              {
+                "type": "person",
+                "role": "developper",
+                "name": "Gil Tene",
+                "email": null,
+                "url": "https://github.com/giltene"
+              }
+            ],
+            "keywords": [],
+            "homepage_url": "http://latencyutils.github.io/LatencyUtils/",
+            "download_url": null,
+            "size": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "sha512": null,
+            "bug_tracking_url": "https://github.com/LatencyUtils/LatencyUtils/issues",
+            "code_view_url": "scm:git:git://github.com/LatencyUtils/LatencyUtils.git",
+            "vcs_url": "git://github.com/LatencyUtils/LatencyUtils.git",
+            "copyright": null,
+            "license_expression": "(public-domain AND unknown) AND cc0-1.0 AND (cc0-1.0 AND unknown)",
+            "declared_license": [
+              {
+                "name": "Public Domain, per Creative Commons CC0",
+                "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+                "comments": "* This code was Written by Gil Tene of Azul Systems, and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "distribution": null
+              }
+            ],
+            "notice_text": null,
+            "root_path": null,
+            "dependencies": [
+              {
+                "purl": "pkg:maven/junit/junit@4.10",
+                "requirement": "4.10",
+                "scope": "test",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": true
+              },
+              {
+                "purl": "pkg:maven/org.hdrhistogram/HdrHistogram@2.0.3",
+                "requirement": "2.0.3",
+                "scope": "compile",
+                "is_runtime": false,
+                "is_optional": true,
+                "is_resolved": true
+              }
+            ],
+            "contains_source_code": null,
+            "source_packages": [
+              "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?classifier=sources"
+            ],
+            "extra_data": {},
+            "purl": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1",
+            "repository_homepage_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/",
+            "repository_download_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.jar",
+            "api_data_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.pom",
+            "files": [
+              {
+                "path": "pom.xml",
+                "type": "file"
+              }
+            ]
+          }
+        ],
+        "emails": [
+          {
+            "email": "git@github.com",
+            "start_line": 45,
+            "end_line": 45
+          }
+        ],
+        "urls": [
+          {
+            "url": "http://maven.apache.org/xsd/maven-4.0.0.xsd",
+            "start_line": 2,
+            "end_line": 2
+          },
+          {
+            "url": "http://latencyutils.github.io/LatencyUtils/",
+            "start_line": 17,
+            "end_line": 17
+          },
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 27,
+            "end_line": 27
+          },
+          {
+            "url": "https://github.com/giltene",
+            "start_line": 38,
+            "end_line": 38
+          },
+          {
+            "url": "git://github.com/LatencyUtils/LatencyUtils.git",
+            "start_line": 43,
+            "end_line": 43
+          },
+          {
+            "url": "git@github.com:LatencyUtils/LatencyUtils.git",
+            "start_line": 45,
+            "end_line": 45
+          },
+          {
+            "url": "https://github.com/LatencyUtils/LatencyUtils/issues",
+            "start_line": 50,
+            "end_line": 50
+          },
+          {
+            "url": "https://oss.sonatype.org/content/repositories/snapshots",
+            "start_line": 64,
+            "end_line": 64
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "README.md",
+        "type": "file",
+        "name": "README.md",
+        "base_name": "README",
+        "extension": ".md",
+        "size": 2616,
+        "date": "2023-02-19",
+        "sha1": "feed5cda4ab1dcede5f1f2f4ab5b29b162acd3be",
+        "md5": "ce1fc9844a5d51a568d549df342467eb",
+        "sha256": "deffde62a94a3e68449249717021ac756d5dde3b58f67d32d04179439e7a3104",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": true,
+        "is_key_file": true,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src",
+        "type": "directory",
+        "name": "src",
+        "base_name": "src",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 16,
+        "dirs_count": 10,
+        "size_count": 119689,
+        "scan_errors": []
+      },
+      {
+        "path": "src/examples",
+        "type": "directory",
+        "name": "examples",
+        "base_name": "examples",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 3,
+        "dirs_count": 1,
+        "size_count": 18266,
+        "scan_errors": []
+      },
+      {
+        "path": "src/examples/java",
+        "type": "directory",
+        "name": "java",
+        "base_name": "java",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 3,
+        "dirs_count": 0,
+        "size_count": 18266,
+        "scan_errors": []
+      },
+      {
+        "path": "src/examples/java/LatencyComparativeLoggingDemo.java",
+        "type": "file",
+        "name": "LatencyComparativeLoggingDemo.java",
+        "base_name": "LatencyComparativeLoggingDemo",
+        "extension": ".java",
+        "size": 7759,
+        "date": "2023-02-19",
+        "sha1": "67c13e829d554711a660156f77ac379695bb5c3b",
+        "md5": "8a40c94c30a9a938626cfc3d052a0b66",
+        "sha256": "6d3bf2a81021b613b1afbba94312c2d9b8d368b23c10f5e35db6abda2f5180a7",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 2.06,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/examples/java/LatencyLoggingDemo.java",
+        "type": "file",
+        "name": "LatencyLoggingDemo.java",
+        "base_name": "LatencyLoggingDemo",
+        "extension": ".java",
+        "size": 6307,
+        "date": "2023-02-19",
+        "sha1": "a81510691f2bad2e19d315644703f479070d10ca",
+        "md5": "2f534fcacaed9a4fa4276e70a47423b8",
+        "sha256": "8655ad41cccc40f32ebebac64529c5c1293e756738697f40deb0431939178eb7",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 2.37,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/examples/java/LatencyStatsDemo.java",
+        "type": "file",
+        "name": "LatencyStatsDemo.java",
+        "base_name": "LatencyStatsDemo",
+        "extension": ".java",
+        "size": 4200,
+        "date": "2023-02-19",
+        "sha1": "f55b93bdb5efb66433a9f1b0342202f8d667c74f",
+        "md5": "267bdbb57a223fb57961be1d48f1a47a",
+        "sha256": "ff5c2bb49afe169c4797989251aaef8be37cc25e4bb1ac4f11057f587ecbcae9",
+        "mime_type": "text/x-c",
+        "file_type": "C source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 3.47,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main",
+        "type": "directory",
+        "name": "main",
+        "base_name": "main",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 9,
+        "dirs_count": 3,
+        "size_count": 65590,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java",
+        "type": "directory",
+        "name": "java",
+        "base_name": "java",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 9,
+        "dirs_count": 2,
+        "size_count": 65590,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org",
+        "type": "directory",
+        "name": "org",
+        "base_name": "org",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 9,
+        "dirs_count": 1,
+        "size_count": 65590,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils",
+        "type": "directory",
+        "name": "LatencyUtils",
+        "base_name": "LatencyUtils",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 9,
+        "dirs_count": 0,
+        "size_count": 65590,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/IntervalEstimator.java",
+        "type": "file",
+        "name": "IntervalEstimator.java",
+        "base_name": "IntervalEstimator",
+        "extension": ".java",
+        "size": 769,
+        "date": "2023-02-19",
+        "sha1": "e47cd84dbe2800bb0c73612363d667edabd26fc2",
+        "md5": "b04335b404f014a08660ba481ad8bfcd",
+        "sha256": "292586ceed4e5a9427db86982d57290bd94f629ffa9b1dee0f9b1cd2dcef1a03",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 17.39,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/LatencyStats.java",
+        "type": "file",
+        "name": "LatencyStats.java",
+        "base_name": "LatencyStats",
+        "extension": ".java",
+        "size": 21249,
+        "date": "2023-02-19",
+        "sha1": "7d8c617fe2e9c9f9003f1616a6d5a38860fcb0ca",
+        "md5": "6eacc06ac1fb5ff64c316b1f57bee175",
+        "sha256": "0dcfb1ee5f3d4925331881fb827ee20154163efc60c2047f5b1000c5e340cb46",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 0.9,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/MovingAverageIntervalEstimator.java",
+        "type": "file",
+        "name": "MovingAverageIntervalEstimator.java",
+        "base_name": "MovingAverageIntervalEstimator",
+        "extension": ".java",
+        "size": 4111,
+        "date": "2023-02-19",
+        "sha1": "f71cc58e8b92c8d268ecda22349807aa248eccae",
+        "md5": "73c73fef854b8f9a9c1a1d52da85f812",
+        "sha256": "ce65397badaf0c94aac89c0ac9997027cac98c909a9249cdc33e331e79739b98",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 3.6,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/package-info.java",
+        "type": "file",
+        "name": "package-info.java",
+        "base_name": "package-info",
+        "extension": ".java",
+        "size": 3033,
+        "date": "2023-02-19",
+        "sha1": "daa7c1f74fb3683b5e8595d66f50752e909aca16",
+        "md5": "3039993031f148ca575ead4ad68e437f",
+        "sha256": "31dab282068afc67b7cb8296646e72d18d8454f783b49218e85cb0e83550f256",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 3,
+            "end_line": 4,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 4.3,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 4,
+            "end_line": 4
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/PauseDetector.java",
+        "type": "file",
+        "name": "PauseDetector.java",
+        "base_name": "PauseDetector",
+        "extension": ".java",
+        "size": 5691,
+        "date": "2023-02-19",
+        "sha1": "b9f0497fa9cf84babd14c866b4fe5d6131fd574f",
+        "md5": "a9ff1d0fc683c72c5ed8d883ff634382",
+        "sha256": "6bd38231dd1a1cf241b5fe96fd24c0767f404b449357b089bdd2bb1be2911275",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 3.74,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/PauseDetectorListener.java",
+        "type": "file",
+        "name": "PauseDetectorListener.java",
+        "base_name": "PauseDetectorListener",
+        "extension": ".java",
+        "size": 607,
+        "date": "2023-02-19",
+        "sha1": "6b1d7eb8758bf0d5abf689a6ed1ddc2f28f0a95d",
+        "md5": "9302f492f8b6bf1726c03fe6e6fd4a08",
+        "sha256": "23fe5cb31be3ad7669ac9e546bfdac03b1bc61b35e293146a62a9fe681ac68c3",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 22.22,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/SimplePauseDetector.java",
+        "type": "file",
+        "name": "SimplePauseDetector.java",
+        "base_name": "SimplePauseDetector",
+        "extension": ".java",
+        "size": 8362,
+        "date": "2023-02-19",
+        "sha1": "623ea3ae6f2bd9bf17b412e96879d208913cc48f",
+        "md5": "12346d50add0a15d96ebda8b7325b45c",
+        "sha256": "c2e0bb1ba34420a566fe1ed613ada1167d10c9126e6d7d5e054fdd1bbd2b10dd",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 2.22,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/TimeCappedMovingAverageIntervalEstimator.java",
+        "type": "file",
+        "name": "TimeCappedMovingAverageIntervalEstimator.java",
+        "base_name": "TimeCappedMovingAverageIntervalEstimator",
+        "extension": ".java",
+        "size": 13352,
+        "date": "2023-02-19",
+        "sha1": "74e51b879ef08f42e6e4b6a3b07bb3b569cf2bcb",
+        "md5": "0dd4b2b5638d787c791444e458581b03",
+        "sha256": "a552ce83747f25ad71602c29b8ca21d204ca55343ec79c3c1c1f4e49ef5c1f2b",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 1.39,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/main/java/org/LatencyUtils/TimeServices.java",
+        "type": "file",
+        "name": "TimeServices.java",
+        "base_name": "TimeServices",
+        "extension": ".java",
+        "size": 8416,
+        "date": "2023-02-19",
+        "sha1": "2356112f3f541eaa2de97407822c069c6917a93c",
+        "md5": "676634bd0980537c9c2ab9a230d79b98",
+        "sha256": "069f51dee20b03a98b8dacd4034f79570e9a50c4b602ffcc3e5dfb524f500fca",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 2.7,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test",
+        "type": "directory",
+        "name": "test",
+        "base_name": "test",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 4,
+        "dirs_count": 3,
+        "size_count": 35833,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java",
+        "type": "directory",
+        "name": "java",
+        "base_name": "java",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 4,
+        "dirs_count": 2,
+        "size_count": 35833,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org",
+        "type": "directory",
+        "name": "org",
+        "base_name": "org",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 4,
+        "dirs_count": 1,
+        "size_count": 35833,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org/LatencyUtils",
+        "type": "directory",
+        "name": "LatencyUtils",
+        "base_name": "LatencyUtils",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "licenses": [],
+        "license_expressions": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "packages": [],
+        "emails": [],
+        "urls": [],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 4,
+        "dirs_count": 0,
+        "size_count": 35833,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org/LatencyUtils/LatencyStatsTest.java",
+        "type": "file",
+        "name": "LatencyStatsTest.java",
+        "base_name": "LatencyStatsTest",
+        "extension": ".java",
+        "size": 16077,
+        "date": "2023-02-19",
+        "sha1": "207b77f84f5281ff751e11cf359d3a3cacbb45f7",
+        "md5": "326e98c927cb3bee35477d69f55a7a2b",
+        "sha256": "903f450428e613672c9d88818ed958c1d0ca84368e4ad831df9b989f45eee5ee",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 1.17,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org/LatencyUtils/MovingAverageIntervalEstimatorTest.java",
+        "type": "file",
+        "name": "MovingAverageIntervalEstimatorTest.java",
+        "base_name": "MovingAverageIntervalEstimatorTest",
+        "extension": ".java",
+        "size": 1393,
+        "date": "2023-02-19",
+        "sha1": "69bb1683197d2e811fa466cbd0fdad76cc7a664a",
+        "md5": "9c8ae9129474c099d280ab6c0c4c6bba",
+        "sha256": "ad900cf304aa46cb32876c4f7d7cf9049e28d9c9bc6d6e02bb90b8ced6c8cdd5",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 11.35,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org/LatencyUtils/SimplePauseDetectorTest.java",
+        "type": "file",
+        "name": "SimplePauseDetectorTest.java",
+        "base_name": "SimplePauseDetectorTest",
+        "extension": ".java",
+        "size": 9009,
+        "date": "2023-02-19",
+        "sha1": "482319a5b6df46683394360779b98dfb89655051",
+        "md5": "8b2d389e70d7c4f60ec4584ecf68e8e8",
+        "sha256": "add23e821a0e7dd453e78e90d2493981f8980d1593fd6233a47c9101b2952f26",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 1.87,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "src/test/java/org/LatencyUtils/TimeCappedMovingAverageIntervalEstimatorTest.java",
+        "type": "file",
+        "name": "TimeCappedMovingAverageIntervalEstimatorTest.java",
+        "base_name": "TimeCappedMovingAverageIntervalEstimatorTest",
+        "extension": ".java",
+        "size": 9354,
+        "date": "2023-02-19",
+        "sha1": "c2f581341c06a32c1cc124ea2e0e028f097a7b55",
+        "md5": "0b2824be22d4ef57b1d1eb8159df807a",
+        "sha256": "1181779ee70c1cacff5daaa2b2938e6e3c58e106654d46829b936dae28872f45",
+        "mime_type": "text/x-java",
+        "file_type": "Java source, ASCII text",
+        "programming_language": "Java",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": false,
+        "licenses": [
+          {
+            "key": "cc0-1.0",
+            "score": 100,
+            "name": "Creative Commons CC0 1.0 Universal",
+            "short_name": "CC0-1.0",
+            "category": "Public Domain",
+            "is_exception": false,
+            "is_unknown": false,
+            "owner": "Creative Commons",
+            "homepage_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "text_url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+            "reference_url": "https://scancode-licensedb.aboutcode.org/cc0-1.0",
+            "scancode_text_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.LICENSE",
+            "scancode_data_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/cc0-1.0.yml",
+            "spdx_license_key": "CC0-1.0",
+            "spdx_url": "https://spdx.org/licenses/CC0-1.0",
+            "start_line": 2,
+            "end_line": 3,
+            "matched_rule": {
+              "identifier": "cc0-1.0_44.RULE",
+              "license_expression": "cc0-1.0",
+              "licenses": [
+                "cc0-1.0"
+              ],
+              "referenced_filenames": [],
+              "is_license_text": false,
+              "is_license_notice": true,
+              "is_license_reference": false,
+              "is_license_tag": false,
+              "is_license_intro": false,
+              "has_unknown": false,
+              "matcher": "2-aho",
+              "rule_length": 16,
+              "matched_length": 16,
+              "match_coverage": 100,
+              "rule_relevance": 100
+            },
+            "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ],
+        "license_expressions": [
+          "cc0-1.0"
+        ],
+        "percentage_of_license_text": 1.7,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "value": "Gil Tene of Azul Systems",
+            "start_line": 2,
+            "end_line": 2
+          }
+        ],
+        "packages": [],
+        "emails": [],
+        "urls": [
+          {
+            "url": "http://creativecommons.org/publicdomain/zero/1.0/",
+            "start_line": 3,
+            "end_line": 3
+          }
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "is_generated": false,
+        "is_license_text": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}
