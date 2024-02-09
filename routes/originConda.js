@@ -26,13 +26,13 @@ async function fetchCondaChannelData(channel) {
 
 async function fetchCondaRepoData(channel, subdir) {
   const key = `${channel}-${subdir}-repoData`
-  let channelData = condaCache.get(key)
-  if (!channelData) {
+  let repoData = condaCache.get(key)
+  if (!repoData) {
     const url = `${condaChannels[channel]}/${subdir}/repodata.json`
-    channelData = await requestPromise({ url, method: 'GET', json: true })
-    condaCache.put(key, channelData, 8 * 60 * 60 * 1000) // 8 hours
+    repoData = await requestPromise({ url, method: 'GET', json: true })
+    condaCache.put(key, repoData, 8 * 60 * 60 * 1000) // 8 hours
   }
-  return channelData
+  return repoData
 }
 
 router.get(
