@@ -80,7 +80,7 @@ GitHub webhook is set to put message on queue for any change in PR status, this 
 ### Database
 What do we put in mongo / Cosmos DB? ( I see config for curations and definitions)
 *	Curations: looks like pr info, coordinates. Guess: used for curation info in relation to a coordinate (in UI)
-*	Definitions: mapping between attachments and definitions, finding the attachment blobs in azure storage.
+*	Definitions: mapping between attachments and definitions, finding the attachment blobs in azure storage
 
 ### Definitions
 business/definitionservice.js: code to compute definition, recomputed after harvest or curation

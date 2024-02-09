@@ -5,6 +5,7 @@ const { get, flatten, uniq } = require('lodash')
 const SPDX = require('@clearlydefined/spdx')
 const {
   extractDate,
+  isDeclaredLicense,
   getLicenseLocations,
   isLicenseFile,
   setIfValue,
@@ -32,9 +33,9 @@ class ScanCodeSummarizer {
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
     const result = {}
     this.addDescribedInfo(result, harvested)
-    let declaredLicense = this._readDeclaredLicense(scancodeVersion, harvested)
-    if (!declaredLicense || declaredLicense === 'NOASSERTION') {
-      declaredLicense = this._getDeclaredLicense(scancodeVersion, harvested, coordinates)
+    let declaredLicense = this._getDeclaredLicenseFromSummary(scancodeVersion, harvested)
+    if (!isDeclaredLicense(declaredLicense)) {
+      declaredLicense = this._getDeclaredLicenseFromFiles(scancodeVersion, harvested, coordinates) || declaredLicense
     }
     setIfValue(result, 'licensed.declared', declaredLicense)
     result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
@@ -46,7 +47,15 @@ class ScanCodeSummarizer {
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _readDeclaredLicense(scancodeVersion, harvested) {
+  _getDeclaredLicenseFromSummary(scancodeVersion, harvested) {
+    let declaredLicense = this._readDeclaredLicenseFromSummary(scancodeVersion, harvested)
+    if (!isDeclaredLicense(declaredLicense)) {
+      declaredLicense = this._readLicenseExpressionFromSummary(harvested) || declaredLicense
+    }
+    return declaredLicense
+  }
+
+  _readDeclaredLicenseFromSummary(scancodeVersion, harvested) {
     switch (scancodeVersion) {
       case '2.2.1':
       case '2.9.1':
@@ -61,15 +70,24 @@ class ScanCodeSummarizer {
         // Some Maven packages have this value as an object rather than a string
         // Example: for maven/mavencentral/redis.clients/jedis/4.1.1
         // declared_license would be { "name": "MIT", "url": "http://github.com/redis/jedis/raw/master/LICENSE.txt", "comments": null, "distribution": "repo" }'
+        // Some pypi packages have this value as an object with a license field 
+        // Example: for pypi/pypi/abseil/absl-py/0.9.0
+        // declared_license would be { "license": "Apache 2.0", "classifiers": ["License :: OSI Approved :: Apache Software License"] }
         if (typeof declared_license != 'string' && declared_license != undefined) {
-          declared_license = declared_license['name']
+          declared_license = declared_license['name'] || declared_license['license']
         }
 
         return SPDX.normalize(declared_license)
       }
       default:
-        throw new Error(`Invalid version of scancode: ${scancodeVersion}`)
+        throw new Error(`Invalid version of ScanCode: ${scancodeVersion}`)
     }
+  }
+
+  _readLicenseExpressionFromSummary(harvested) {
+    const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
+    const result = licenseExpression && this._normalizeLicenseExpression(licenseExpression)
+    return result?.includes('NOASSERTION') ? null : result
   }
 
   // find and return the files that should be considered for as a license determinator for this summarization
@@ -91,7 +109,7 @@ class ScanCodeSummarizer {
     })
   }
 
-  _getDeclaredLicense(scancodeVersion, harvested, coordinates) {
+  _getDeclaredLicenseFromFiles(scancodeVersion, harvested, coordinates) {
     const rootFile = this._getRootFiles(coordinates, harvested.content.files)
     switch (scancodeVersion) {
       case '2.2.1':
@@ -188,9 +206,13 @@ class ScanCodeSummarizer {
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
     if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    const parsed = SPDX.parse(rule.license_expression, key => SPDX.normalizeSingle(scancodeMap.get(key) || key))
+    return this._normalizeLicenseExpression(rule.license_expression)
+  }
+
+  _normalizeLicenseExpression(licenseExpression) {
+    const parsed = SPDX.parse(licenseExpression, (key) => SPDX.normalizeSingle(scancodeMap.get(key) || key))
     const result = SPDX.stringify(parsed)
-    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${rule.license_expression}`)
+    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
     return result
   }
 }

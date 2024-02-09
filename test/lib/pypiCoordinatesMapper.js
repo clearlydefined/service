@@ -10,38 +10,47 @@ function mockPypiCoordinates(name) {
   return EntityCoordinates.fromString(`pypi/pypi/-/${name}/1.1.0a4`)
 }
 
-describe('PypiCoordinatesMapper', () => {
+function mockPypiAnswer(name) {
+  return { info: { name } }
+}
 
-  it('name containing "_" mapped to "-"', async () => {
-    const coordinatesMapper = new PypiCoordinatesMapper()
-    sinon.stub(coordinatesMapper, '_resolve').resolves({ name: '0-core-client' })
+describe('PypiCoordinatesMapper', () => {
+  let coordinatesMapper
+  beforeEach(() => {
+    coordinatesMapper = new PypiCoordinatesMapper()
+  })
+
+  it('should map name containing "_" mapped to "-"', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').resolves(mockPypiAnswer('0-core-client'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0_core_client'))
     expect(mapped.name).to.be.eq('0-core-client')
   })
 
-  it('name containing "." mapped to "-"', async () => {
-    const coordinatesMapper = new PypiCoordinatesMapper()
-    sinon.stub(coordinatesMapper, '_resolve').resolves({ name: '0-core-client' })
+  it('should map name containing "." mapped to "-"', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').resolves(mockPypiAnswer('0-core-client'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0.core_client'))
     expect(mapped.name).to.be.eq('0-core-client')
   })
 
-  it('name containing "-" mapped to "_"', async () => {
-    const coordinatesMapper = new PypiCoordinatesMapper()
-    sinon.stub(coordinatesMapper, '_resolve').resolves({ name: 'backports.ssl_match_hostname' })
+  it('should map name containing "-" mapped to "_"', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').resolves(mockPypiAnswer('backports.ssl_match_hostname'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('Backports.ssl-match-hostname'))
     expect(mapped.name).to.be.eq('backports.ssl_match_hostname')
   })
 
-  it('name not resolved', async () => {
-    const coordinatesMapper = new PypiCoordinatesMapper()
+  it('should return null when pypi api returns 404', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').throws({ statusCode: 404 })
+    const mapped = await coordinatesMapper.map(mockPypiCoordinates('blivet-gui'))
+    expect(mapped).to.be.null
+  })
+
+  it('should handle name not resolved', async () => {
     sinon.stub(coordinatesMapper, '_resolve').resolves(undefined)
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0_core_client'))
     expect(mapped).to.be.undefined
   })
 
-  it('no mapping necessary', async () => {
-    const coordinatesMapper = new PypiCoordinatesMapper()
+  it('should handle no mapping necessary', async () => {
     sinon.stub(coordinatesMapper, '_resolve').rejects('Should not be called')
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('backports'))
     expect(mapped).to.be.null
