@@ -1,6 +1,6 @@
 {
   "name": "service",
-  "version": "0.1.1",
+  "version": "1.1.0",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "nyc mocha --exit \"test/**/*.js\" && eslint .",
