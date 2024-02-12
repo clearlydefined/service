@@ -574,7 +574,7 @@ components:
       name: namespace
       in: path
       required: true
-      description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
+      description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, Conda Subdir/Architecture ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
       schema:
         type: string
     name:
