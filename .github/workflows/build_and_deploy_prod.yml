@@ -13,7 +13,7 @@ on:
 # ghcr and Azure.
 #
 # Secrets:
-#   AZURE_CREDENTIALS:               service principal that has access to the Azure WebApp
+#   AZURE_CREDENTIALS_PROD:          service principal that has access to the Azure prod WebApp
 #   AZURE_WEBAPP_PUBLISH_PROFILE:    publish profile for the Azure WebApp
 #   AZURE_WEBAPP_PUBLISH_PROFILE_EU: publish profile for the Azure WebApp in Europe
 #
@@ -65,7 +65,7 @@ jobs:
       - name: Login for Azure cli commands
         uses: azure/login@v1.6.1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
 
       - name: Set DOCKER configs in Azure web app
         uses: azure/appservice-settings@v1.1.1
