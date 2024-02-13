@@ -1,0 +1,41 @@
+name: Update mapping from ScanCode LicenseDB data
+
+on:
+  schedule:
+    - cron: '43 5 * * 0'
+  workflow_dispatch:  # This allows for manual triggering of the workflow
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-database:
+    name: Update mapping
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4.1.1
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4.0.1
+
+    - name: Fetch ScanCode LicenseDB
+      run: |
+        curl -o scancode-licensedb.json https://scancode-licensedb.aboutcode.org/index.json
+
+    - name: Transform JSON and Update scancodeMap.js
+      run: |
+        node ./scripts/transform-scancode-licensedb.js
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        add-paths: lib/scancodeMap.js
+        commit-message: Update ScanCode license mapping
+        branch: update-scancode-licensedb
+        title: Update license mapping with latest ScanCode LicenseDB data
+        body: |
+          This pull request updates the license mapping with the latest ScanCode LicenseDB data.
+          For more information, see https://github.com/nexB/scancode-licensedb
