@@ -41,7 +41,7 @@ jobs:
       - name: Get version
         id: package
         run: |
-          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+          echo "::set-output name=version::$(curl --silent "https://api.github.com/repos/clearlydefined/service/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
         shell: bash
 
       - name: Use version
@@ -51,98 +51,98 @@ jobs:
 
       - uses: actions/checkout@v4.1.1
 
-      - name: Log into ghcr registry
-        uses: docker/login-action@v3.0.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }} # user that kicked off the action
-          password: ${{ secrets.GITHUB_TOKEN }} # token created when the action launched (short lived)
+      # - name: Log into ghcr registry
+      #   uses: docker/login-action@v3.0.0
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }} # user that kicked off the action
+      #     password: ${{ secrets.GITHUB_TOKEN }} # token created when the action launched (short lived)
 
-      - name: Build and push Docker image
-        env:
-          DOCKER_TAGS: |
-            ${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}
-        uses: docker/build-push-action@v5.1.0
-        with:
-          context: .
-          push: true
-          file: Dockerfile
-          tags: ${{ env.DOCKER_TAGS }}
-          labels: |
-            env=${{ env.DEPLOY_ENVIRONMENT }}
-            type=${{ env.APPLICATION_TYPE }}
+      # - name: Build and push Docker image
+      #   env:
+      #     DOCKER_TAGS: |
+      #       ${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}
+      #   uses: docker/build-push-action@v5.1.0
+      #   with:
+      #     context: .
+      #     push: true
+      #     file: Dockerfile
+      #     tags: ${{ env.DOCKER_TAGS }}
+      #     labels: |
+      #       env=${{ env.DEPLOY_ENVIRONMENT }}
+      #       type=${{ env.APPLICATION_TYPE }}
 
-      - name: Login for Azure cli commands
-        uses: azure/login@v1.6.1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
+      # - name: Login for Azure cli commands
+      #   uses: azure/login@v1.6.1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
 
-      - name: Set DOCKER configs in Azure web app
-        uses: azure/appservice-settings@v1.1.1
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          app-settings-json: |
-            [
-              {
-                "name": "DOCKER_CUSTOM_IMAGE_NAME",
-                "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}",
-                "slotSetting": false
-              },
-              {
-                "name": "DOCKER_REGISTRY_SERVER_URL",
-                "value": "https://ghcr.io",
-                "slotSetting": false
-              },
-              {
-                "name": "APP_VERSION",
-                "value": "${{ steps.package.outputs.version }}",
-                "slotSetting": false
-              },
-              {
-                "name": "BUILD_SHA",
-                "value": "${{ github.sha }}",
-                "slotSetting": false
-              }
-            ]
+      # - name: Set DOCKER configs in Azure web app
+      #   uses: azure/appservice-settings@v1.1.1
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     app-settings-json: |
+      #       [
+      #         {
+      #           "name": "DOCKER_CUSTOM_IMAGE_NAME",
+      #           "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "DOCKER_REGISTRY_SERVER_URL",
+      #           "value": "https://ghcr.io",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "APP_VERSION",
+      #           "value": "${{ steps.package.outputs.version }}",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "BUILD_SHA",
+      #           "value": "${{ github.sha }}",
+      #           "slotSetting": false
+      #         }
+      #       ]
 
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v3.0.0
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
-          images: '${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}'
+      # - name: Deploy to Azure WebApp
+      #   uses: azure/webapps-deploy@v3.0.0
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
+      #     images: '${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}'
 
-      - name: Set DOCKER configs in Azure EU web app
-        uses: azure/appservice-settings@v1.1.1
-        with:
-          app-name: ${{ env.AZURE_EU_WEBAPP_NAME }}
-          app-settings-json: |
-            [
-              {
-                "name": "DOCKER_CUSTOM_IMAGE_NAME",
-                "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}",
-                "slotSetting": false
-              },
-              {
-                "name": "DOCKER_REGISTRY_SERVER_URL",
-                "value": "https://ghcr.io",
-                "slotSetting": false
-              },
-              {
-                "name": "APP_VERSION",
-                "value": "${{ steps.package.outputs.version }}",
-                "slotSetting": false
-              },
-              {
-                "name": "BUILD_SHA",
-                "value": "${{ github.sha }}",
-                "slotSetting": false
-              }
-            ]
+      # - name: Set DOCKER configs in Azure EU web app
+      #   uses: azure/appservice-settings@v1.1.1
+      #   with:
+      #     app-name: ${{ env.AZURE_EU_WEBAPP_NAME }}
+      #     app-settings-json: |
+      #       [
+      #         {
+      #           "name": "DOCKER_CUSTOM_IMAGE_NAME",
+      #           "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "DOCKER_REGISTRY_SERVER_URL",
+      #           "value": "https://ghcr.io",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "APP_VERSION",
+      #           "value": "${{ steps.package.outputs.version }}",
+      #           "slotSetting": false
+      #         },
+      #         {
+      #           "name": "BUILD_SHA",
+      #           "value": "${{ github.sha }}",
+      #           "slotSetting": false
+      #         }
+      #       ]
 
-      - name: Deploy to Azure EU WebApp
-        uses: azure/webapps-deploy@v3.0.0
-        with:
-          app-name: ${{ env.AZURE_EU_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU }}
-          images: '${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}'
+      # - name: Deploy to Azure EU WebApp
+      #   uses: azure/webapps-deploy@v3.0.0
+      #   with:
+      #     app-name: ${{ env.AZURE_EU_WEBAPP_NAME }}
+      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU }}
+      #     images: '${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}'
