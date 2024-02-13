@@ -41,7 +41,7 @@ jobs:
       - name: Get version
         id: package
         run: |
-          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+          echo "::set-output name=version::$(curl --silent "https://api.github.com/repos/clearlydefined/service/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
         shell: bash
 
       - name: Use version
