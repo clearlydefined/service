@@ -110,17 +110,7 @@
 * The service then sets the declared license based on the registry information
 * The ClearlyDefined summarizer pulls registry information from 'https://raw.githubusercontent.com/CocoaPods/Specs/master
 
-### anaconda-main
-* source: https://repo.anaconda.com/
-* The crawler gets registry information from https://repo.anaconda.com/pkgs/main
-* The ClearlyDefined summarizer sets the declared license to the license(s) in the registry information
-
-### anaconda-r
-* source: https://repo.anaconda.com/
-* The crawler gets registry information from https://repo.anaconda.com/pkgs/r
-* The ClearlyDefined summarizer sets the declared license to the license(s) in the registry information
-
-### conda-forge
-* source: https://conda.anaconda.org
+### conda
+* source: conda-forge anaconda-main, or anaconda-r (https://conda.anaconda.org)
 * The crawler gets registry information from https://conda.anaconda.org/conda-forge
 * The ClearlyDefined summarizer sets the declared license to the license(s) in the registry information
