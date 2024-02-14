@@ -14,6 +14,7 @@ const {
 } = require('../../lib/utils')
 const logger = require('../logging/logger')
 const scancodeMap = require('../../lib/scancodeMap')
+const ScanCodeSummarizerNew = require('./scancode-new')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -31,6 +32,11 @@ class ScanCodeSummarizer {
     const scancodeVersion =
       get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
+
+    if (scancodeVersion === '32.0.8') {
+      return ScanCodeSummarizerNew(this.options).summarize(coordinates, harvested)
+    }
+
     const result = {}
     this.addDescribedInfo(result, harvested)
     let declaredLicense = this._getDeclaredLicenseFromSummary(scancodeVersion, harvested)
