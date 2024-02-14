@@ -1,4 +1,5 @@
 {
+  "editor.defaultFormatter": "esbenp.preter-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2
 }
