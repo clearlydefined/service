@@ -51,5 +51,6 @@ function generateScancodeMapContent(data) {
 // See licenses in https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/
 module.exports = new Map([
 ${content.join(',\n')}
-]);`
+])
+`
 }

@@ -30,7 +30,7 @@ jobs:
         node ./scripts/transform-scancode-licensedb.js
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v6.0.0
       with:
         add-paths: lib/scancodeMap.js
         commit-message: Update ScanCode license mapping
