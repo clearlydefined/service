@@ -20,9 +20,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -46,9 +46,9 @@ describe('ScancodeSummarizer basic compatability', () => {
         `Declared license mismatch for version ${version}`
       )
       assert.equal(result.described.releaseDate, '2018-03-31', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 33)
-      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
+      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -134,9 +134,9 @@ describe('ScancodeSummarizer basic compatability', () => {
         undefinedOverrides.indexOf(version) > -1 ? undefined : 'MIT',
         `Declared license mismatch for version ${version}`
       )
-      assert.equal(result.files.find((x) => x.path === 'MIT-LICENSE.md').license, 'MIT')
+      assert.equal(result.files.find(x => x.path === 'MIT-LICENSE.md').license, 'MIT')
       assert.equal(result.described.releaseDate, '2018-08-09', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 3)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 3)
     }
   })
 
@@ -148,9 +148,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-02-24', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -162,9 +162,9 @@ describe('ScancodeSummarizer basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2018-11-15', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'redis-3.0.1/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'redis-3.0.1/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 })
@@ -234,9 +234,9 @@ describe('ScancodeSummarizer fixtures', () => {
     assert.deepEqual(result.described, { releaseDate: '2019-01-31' })
     assert.deepEqual(result.licensed, { declared: 'NOASSERTION' })
     assert.deepEqual(result.files.length, 576)
-    assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 21)
+    assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 21)
     assert.deepEqual(
-      result.files.filter((x) => x.natures),
+      result.files.filter(x => x.natures),
       [
         {
           path: 'LICENSE',

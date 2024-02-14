@@ -10,7 +10,7 @@ function azure(options) {
     queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests',
     dequeueOptions: {
       numOfMessages: 32,
-      visibilityTimeout: 10 * 60, // 10 min. The default value is 30 seconds.
+      visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
     }
   }
   return new AzureStorageQueue(realOptions)

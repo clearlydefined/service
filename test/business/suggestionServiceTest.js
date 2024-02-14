@@ -103,16 +103,14 @@ describe('Suggestion Service', () => {
     })
   })
 
-  it('will include \'discovered\' licenses for declared license suggestions', async () => {
+  it("will include 'discovered' licenses for declared license suggestions", async () => {
     const t2 = EntityCoordinates.fromString('gem/rubygems/-/autobuild/1.6.2.b8')
     const sample_definition = require('./evidence/issue-453-sample-1.json')
     const service = setup(sample_definition, [])
     const suggestions = await service.get(t2)
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.equalInAnyOrder([
-      { value: 'GPL-2.0', version: '1.6.2.b8' }
-    ])
+    expect(declared).to.equalInAnyOrder([{ value: 'GPL-2.0', version: '1.6.2.b8' }])
   })
 })
 
@@ -140,7 +138,7 @@ function createDefinition(coordinates, releaseDate, license, files) {
 }
 
 function setup(definition, others) {
-  const definitionService = { find: () => { } }
+  const definitionService = { find: () => {} }
   sinon.stub(definitionService, 'find').resolves({ data: [...others, definition] })
   return SuggestionService(definitionService)
 }

@@ -29,7 +29,9 @@ describe('Harvest queue processing', () => {
 
   it('handles new message from non-clearlydefined tool', async () => {
     const { queue, definitionService, logger } = setup({
-      _metadata: { links: { self: { href: 'urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2' } } }
+      _metadata: {
+        links: { self: { href: 'urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2' } }
+      }
     })
     await process(queue, definitionService, logger, true)
 

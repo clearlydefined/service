@@ -27,5 +27,4 @@ describe('EntityCoordinates', () => {
     const coordinates = new EntityCoordinates('pypi', 'pypi', '-', 'NAME', 'REVISION')
     expect(coordinates.name).to.be.eq('name')
   })
-
 })

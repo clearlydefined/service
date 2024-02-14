@@ -85,9 +85,11 @@ async function updateCurations(request, response) {
     return response.status(400).send(errorData)
   }
 
-  const normalizedPatches = await Promise.all(request.body.patches.map(async entry => {
-    return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
-  }))
+  const normalizedPatches = await Promise.all(
+    request.body.patches.map(async entry => {
+      return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
+    })
+  )
   const normalizedBody = { ...request.body, patches: normalizedPatches }
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
   response.status(200).send({

@@ -13,7 +13,7 @@ class AbstractFileStore {
     this.options = options
   }
 
-  async initialize() { }
+  async initialize() {}
 
   /**
    * Visit all of the files associated with the given coordinates.
@@ -24,13 +24,15 @@ class AbstractFileStore {
   async list(coordinates, visitor) {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
-      return (await Promise.all(
-        paths.map(async path => {
-          if (!this._isValidPath(path)) return null
-          const data = await promisify(fs.readFile)(path)
-          return data ? visitor(JSON.parse(data)) : null
-        })
-      )).filter(x => x)
+      return (
+        await Promise.all(
+          paths.map(async path => {
+            if (!this._isValidPath(path)) return null
+            const data = await promisify(fs.readFile)(path)
+            return data ? visitor(JSON.parse(data)) : null
+          })
+        )
+      ).filter(x => x)
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       if (error.code === 'ENOENT') return []
@@ -63,21 +65,23 @@ class AbstractFileStore {
    */
   async find(query) {
     const paths = await recursive(this.options.location, ['.DS_Store'])
-    return (await Promise.all(
-      paths.map(async path => {
-        try {
-          if (!this._isValidPath(path)) return null
-          const data = await promisify(fs.readFile)(path)
-          if (!data) return null
-          const definition = JSON.parse(data)
-          return definition
-        } catch (error) {
-          // If there is just no entry, that's fine, there is no content.
-          if (error.code === 'ENOENT') return null
-          throw error
-        }
-      })
-    )).filter(definition => {
+    return (
+      await Promise.all(
+        paths.map(async path => {
+          try {
+            if (!this._isValidPath(path)) return null
+            const data = await promisify(fs.readFile)(path)
+            if (!data) return null
+            const definition = JSON.parse(data)
+            return definition
+          } catch (error) {
+            // If there is just no entry, that's fine, there is no content.
+            if (error.code === 'ENOENT') return null
+            throw error
+          }
+        })
+      )
+    ).filter(definition => {
       if (!definition) return false
       if (query.type && definition.coordinates.type !== query.type) return false
       if (query.provider && definition.coordinates.provider !== query.provider) return false

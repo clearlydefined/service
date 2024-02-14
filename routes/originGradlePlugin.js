@@ -17,7 +17,7 @@ router.get(
   asyncMiddleware(async (request, response) => {
     const { pluginId } = request.params
     const answer = await gradleHelper.getMavenMetadata(pluginId)
-    const meta = answer && await parseXml(answer)
+    const meta = answer && (await parseXml(answer))
     const result = get(meta, 'metadata.versioning.0.versions.0.version') || []
     result.reverse()
     return response.status(200).send(uniq(result))

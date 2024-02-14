@@ -132,16 +132,19 @@ describe('Mongo Definition store', () => {
   it('builds a mongo query with continuationToken', () => {
     const store = createStore()
     const parameters = { namespace: '@owner', name: 'package' }
-    const sort = {'_mongo.partitionKey': 1}
+    const sort = { '_mongo.partitionKey': 1 }
     const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
     const expected = {
-      '$and': [{
-        '_mongo.page': 1,
-        'coordinates.name': 'package',
-        'coordinates.namespace': '@owner'
-      }, {
-        '_mongo.partitionKey': { '$gt': 'npm/npmjs/-/verror/1.10.0' }
-      }]  
+      $and: [
+        {
+          '_mongo.page': 1,
+          'coordinates.name': 'package',
+          'coordinates.namespace': '@owner'
+        },
+        {
+          '_mongo.partitionKey': { $gt: 'npm/npmjs/-/verror/1.10.0' }
+        }
+      ]
     }
 
     expect(store._buildQueryWithPaging(parameters, continuationToken, sort)).to.deep.equal(expected)
@@ -153,11 +156,23 @@ describe('Mongo Definition store', () => {
       [{}, { '_mongo.partitionKey': 1 }],
       [{ sort: 'type' }, { 'coordinates.type': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'provider' }, { 'coordinates.provider': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': -1 }],
-      [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_mongo.partitionKey': -1 }],
+      [
+        { sort: 'name', sortDesc: true },
+        { 'coordinates.name': -1, 'coordinates.revision': -1, '_mongo.partitionKey': -1 }
+      ],
+      [
+        { sort: 'namespace' },
+        { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_mongo.partitionKey': 1 }
+      ],
+      [
+        { sort: 'license', sortDesc: true },
+        { 'licensed.declared': -1, '_mongo.partitionKey': -1 }
+      ],
       [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_mongo.partitionKey': 1 }],
-      [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_mongo.partitionKey': 1 }],
+      [
+        { sort: 'licensedScore', sortDesc: false },
+        { 'licensed.score.total': 1, '_mongo.partitionKey': 1 }
+      ],
       [{ sort: 'describedScore' }, { 'described.score.total': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'effectiveScore' }, { 'scores.effective': 1, '_mongo.partitionKey': 1 }],
       [{ sort: 'toolScore' }, { 'scores.tool': 1, '_mongo.partitionKey': 1 }],
@@ -172,14 +187,18 @@ describe('Mongo Definition store', () => {
 
   it('gets a continuationToken', () => {
     const store = createStore()
-    const sortClause = {'_mongo.partitionKey': 1}
-    const token = store._getContinuationToken(5, [
-      { _mongo: { partitionKey: 'npm/npmjs/-/a/1.0.0' } },
-      { _mongo: { partitionKey: 'npm/npmjs/-/b/1.0.0' } },
-      { _mongo: { partitionKey: 'npm/npmjs/-/c/1.0.0' } },
-      { _mongo: { partitionKey: 'npm/npmjs/-/d/1.0.0' } },
-      { _mongo: { partitionKey: 'npm/npmjs/-/e/1.0.0' } }
-    ], sortClause)
+    const sortClause = { '_mongo.partitionKey': 1 }
+    const token = store._getContinuationToken(
+      5,
+      [
+        { _mongo: { partitionKey: 'npm/npmjs/-/a/1.0.0' } },
+        { _mongo: { partitionKey: 'npm/npmjs/-/b/1.0.0' } },
+        { _mongo: { partitionKey: 'npm/npmjs/-/c/1.0.0' } },
+        { _mongo: { partitionKey: 'npm/npmjs/-/d/1.0.0' } },
+        { _mongo: { partitionKey: 'npm/npmjs/-/e/1.0.0' } }
+      ],
+      sortClause
+    )
     expect(token).to.eq('bnBtL25wbWpzLy0vZS8xLjAuMA==')
   })
 
@@ -192,16 +211,17 @@ describe('Mongo Definition store', () => {
     ])
     expect(token).to.eq('')
   })
-  
+
   it('should call find with right arguments', async () => {
     const store = createStore()
-    store.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([])})
+    store.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([]) })
     await store.find({ type: 'npm' })
-    const filter = { 'coordinates.type': 'npm','_mongo.page': 1 }
+    const filter = { 'coordinates.type': 'npm', '_mongo.page': 1 }
     const opts = {
-      'projection': { '_id': 0, 'files': 0 },
-      'sort': { '_mongo.partitionKey': 1 },
-      'limit': 100 }
+      projection: { _id: 0, files: 0 },
+      sort: { '_mongo.partitionKey': 1 },
+      limit: 100
+    }
     const findArgs = store.collection.find.firstCall.args
     expect(findArgs[0]).to.be.deep.equal(filter)
     expect(findArgs[1]).to.be.deep.equal(opts)
@@ -238,7 +258,7 @@ function createStore(data) {
     insertMany: sinon.stub(),
     deleteMany: sinon.stub()
   }
-  const opts = { logger: { debug: () => {} }}
+  const opts = { logger: { debug: () => {} } }
   const store = Store(opts)
   store.collection = collectionStub
   return store

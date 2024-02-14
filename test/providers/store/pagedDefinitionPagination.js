@@ -5,12 +5,11 @@ const Store = require('../../../providers/stores/mongo')
 const shouldPaginateSearchCorrectly = require('./mongoDefinitionPagination')
 
 const dbOptions = {
-  collectionName: 'definitions-paged',
+  collectionName: 'definitions-paged'
 }
 
-describe('Mongo Definition Store: Paged', function() {
-
-  before('setup store factory', async function() {
+describe('Mongo Definition Store: Paged', function () {
+  before('setup store factory', async function () {
     this.createStore = createStore
   })
 

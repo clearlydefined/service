@@ -1,15 +1,16 @@
 # How ClearlyDefined Scores are calculated
 
 If you look at a component on ClearlyDefined such as [this one](https://clearlydefined.io/definitions/maven/mavencentral/org.opendaylight.controller/sal-common-util/4.0.6), you will see two types of scores:
-* Described
-* Licensed
+
+- Described
+- Licensed
 
 ## Described
 
 The Described Score is based on two factors:
 
-* Whether the definition has a release date
-* Whether the definition has a source location URL
+- Whether the definition has a release date
+- Whether the definition has a source location URL
 
 See below for more details
 
@@ -17,17 +18,17 @@ See below for more details
 
 The license score is based on several factors:
 
-* whether the definition has a declared license
-* whether the definition has discovered licenses
-* whether the declared and discovered licenses are consistent
-* whether the declared license can be parsed as an SPDX expression
-* whether all there is text available for all referenced licenses
+- whether the definition has a declared license
+- whether the definition has discovered licenses
+- whether the declared and discovered licenses are consistent
+- whether the declared license can be parsed as an SPDX expression
+- whether all there is text available for all referenced licenses
 
 This document explores how these scores are calculated.
 
 ## Where it starts
 
-Computing ClearlyDefined scores starts in 
+Computing ClearlyDefined scores starts in
 
 **service/business/definitionService.js**
 
@@ -39,16 +40,18 @@ Computing ClearlyDefined scores starts in
     }
   }
 ```
-* this function returns a "Licensed Score" and "Declared Score"
+
+- this function returns a "Licensed Score" and "Declared Score"
 
 ## Calculating the Licensed Score
 
 There are several parts that go into computing the Licensed Score
-* declared score
-* discovered score
-* consistency score
-* spdx score
-* texts score
+
+- declared score
+- discovered score
+- consistency score
+- spdx score
+- texts score
 
 ```javascript
   _computeLicensedScore(definition) {
@@ -60,9 +63,9 @@ There are several parts that go into computing the Licensed Score
     const total = declared + discovered + consistency + spdx + texts
     return { total, declared, discovered, consistency, spdx, texts }
   }
-````
+```
 
-* it then adds the scores together and returns the total along with the various scores
+- it then adds the scores together and returns the total along with the various scores
 
 ### Declared Score
 
@@ -107,12 +110,13 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
     return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
   }
 ```
-* checks for files in the definition
-* if there are no files, returns 0
-* filters out files in the core facet
-* if there are no files in the core facet, returns 0
-* filters out files that have a licenses and attributions
-* divides files in the core facet / files that have licenses and attributions, then multiplies that number by the weight for the discovered score
+
+- checks for files in the definition
+- if there are no files, returns 0
+- filters out files in the core facet
+- if there are no files in the core facet, returns 0
+- filters out files that have a licenses and attributions
+- divides files in the core facet / files that have licenses and attributions, then multiplies that number by the weight for the discovered score
 
 ```javascript
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
@@ -130,10 +134,11 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
     return discovered.every(expression => SPDX.satisfies(expression, declared)) ? weights.consistency : 0
   }
 ```
-* searches for declared and discovered licenses
-* if there are no declared or discovered licenses, return 0
-* otherwise, it checks whether every discovered license is compatible with the declared license(s)
-* if so, it returns the weight for consistency
+
+- searches for declared and discovered licenses
+- if there are no declared or discovered licenses, return 0
+- otherwise, it checks whether every discovered license is compatible with the declared license(s)
+- if so, it returns the weight for consistency
 
 ```javascript
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
@@ -151,8 +156,9 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
     }
   }
 ```
-* checks whether the declared license can be parsed 
-* if so, returns weight for spdx
+
+- checks whether the declared license can be parsed
+- if so, returns weight for spdx
 
 ```javascript
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
@@ -174,8 +180,8 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
   }
 ```
 
-* checks for definition files
-* collects license texts
+- checks for definition files
+- collects license texts
 
 ```javascript
   // Get the full set of license texts captured in the definition
@@ -188,7 +194,7 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
   }
 ```
 
-* collects referenced licenses
+- collects referenced licenses
 
 ```javascript
   // get all the licenses that have been referenced anywhere in the definition (declared and core)
@@ -202,8 +208,8 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
   }
 ```
 
-* checks that all referenced licenses have texts
-* if they do, returns texts weight
+- checks that all referenced licenses have texts
+- if they do, returns texts weight
 
 ```javascript
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
@@ -221,12 +227,9 @@ const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts
   }
 ```
 
-* checks whether the definition has a release date. If so, applies the date weight.
-* Also checks whether the definition has a source location url. If so, applies the source weight:
+- checks whether the definition has a release date. If so, applies the date weight.
+- Also checks whether the definition has a source location url. If so, applies the source weight:
 
 ```javascript
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 ```
-
-
-

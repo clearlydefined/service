@@ -59,7 +59,6 @@ describe('Notice Service', () => {
           licensed: { declared: 'MIT' },
           files: [{ path: 'LICENSE', token: 'abcd', natures: ['license'] }],
           described: { tools: ['clearlydefined/1.0.0'] }
-
         },
         'npm/npmjs/-/tested/2.0.0': {
           coordinates: { name: 'tested', revision: '2.0.0' },
@@ -69,16 +68,18 @@ describe('Notice Service', () => {
             { path: 'LICENSE', token: 'ijkl', natures: ['license'] }
           ],
           described: { tools: ['clearlydefined/1.0.0'] }
-        },
+        }
       },
       {
         abcd: '%%%This is the attachment%%%',
         efgh: '%%%This should not be included!%%%',
-        ijkl: '%%%This should be included!%%%',
+        ijkl: '%%%This should be included!%%%'
       }
     )
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** tested; version 2.0.0 -- \n\n%%%This should be included!%%%\n\n------\n\n** tested; version 1.0.0 -- \n\n%%%This is the attachment%%%')
+    expect(notice.content).to.eq(
+      '** tested; version 2.0.0 -- \n\n%%%This should be included!%%%\n\n------\n\n** tested; version 1.0.0 -- \n\n%%%This is the attachment%%%'
+    )
   })
 
   it('renders with custom template', async () => {

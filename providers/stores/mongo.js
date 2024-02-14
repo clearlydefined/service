@@ -5,7 +5,6 @@ const { clone, get, range } = require('lodash')
 const AbstractMongoDefinitionStore = require('./abstractMongoDefinitionStore')
 
 class MongoStore extends AbstractMongoDefinitionStore {
-
   /**
    * List all of the matching components for the given coordinates.
    * Accepts partial coordinates.
@@ -88,15 +87,14 @@ class MongoStore extends AbstractMongoDefinitionStore {
     await this.collection.deleteMany({ '_mongo.partitionKey': this.getId(coordinates) })
     return null
   }
-  
+
   getCoordinatesKey() {
     return '_mongo.partitionKey'
   }
-  
+
   buildQuery(parameters) {
     const filter = super.buildQuery(parameters)
     return { ...filter, '_mongo.page': 1 } // only get page 1 of each definition
   }
-
 }
 module.exports = options => new MongoStore(options)

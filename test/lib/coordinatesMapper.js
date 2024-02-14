@@ -13,13 +13,12 @@ function pypiCoordinates(name) {
 function fakeCache(cache) {
   return {
     get: key => cache[key],
-    set: (key, value) => cache[key] = value,
+    set: (key, value) => (cache[key] = value),
     size: () => Object.keys(cache).length
   }
 }
 
 describe('CoordinatesMapper', () => {
-
   it('return coordinate when no mapper', async () => {
     const coordinates = pypiCoordinates('0_core_client')
     const mapped = await coordinatesMapper({}).map(coordinates)

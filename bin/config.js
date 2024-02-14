@@ -67,7 +67,6 @@ module.exports = {
     service: loadFactory(config.get('CACHING_PROVIDER') || 'memory', 'caching'),
     caching_redis_service: config.get('CACHING_REDIS_SERVICE'),
     caching_redis_api_key: config.get('CACHING_REDIS_API_KEY')
-
   },
   endpoints: {
     service: config.get('SERVICE_ENDPOINT') || 'http://localhost:4000',
@@ -77,7 +76,7 @@ module.exports = {
     windowSeconds: parseInt(config.get('RATE_LIMIT_WINDOW')) || 1,
     max: parseInt(config.get('RATE_LIMIT_MAX')) || 0,
     batchWindowSeconds: parseInt(config.get('BATCH_RATE_LIMIT_WINDOW')) || 1,
-    batchMax: parseInt(config.get('BATCH_RATE_LIMIT_MAX')) || 0,
+    batchMax: parseInt(config.get('BATCH_RATE_LIMIT_MAX')) || 0
   },
   webhook: {
     githubSecret: config.get('WEBHOOK_GITHUB_SECRET') || 'secret',
@@ -92,5 +91,5 @@ module.exports = {
     crawlerId: config.get('APPINSIGHTS_CRAWLER_APPLICATIONID'),
     crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   },
-  buildsha : config.get('BUILD_SHA')
+  buildsha: config.get('BUILD_SHA')
 }

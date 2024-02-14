@@ -30,7 +30,10 @@ describe('LicenseeSummarizer', () => {
   })
 
   it('should AND together matched declared licenses', () => {
-    const data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    const data = setup([
+      { path: 'LICENSE-MIT', license: 'MIT' },
+      { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
+    ])
     const result = summarizer.summarize(null, data)
     assert.deepEqual(result, {
       files: [
@@ -42,7 +45,10 @@ describe('LicenseeSummarizer', () => {
   })
 
   it('should filter NOASSERTION for matched declared licenses', () => {
-    const data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE', license: 'NOASSERTION' }])
+    const data = setup([
+      { path: 'LICENSE-MIT', license: 'MIT' },
+      { path: 'LICENSE', license: 'NOASSERTION' }
+    ])
     const result = summarizer.summarize(null, data)
     assert.deepEqual(result, {
       files: [{ path: 'LICENSE-MIT', license: 'MIT', natures: ['license'] }],

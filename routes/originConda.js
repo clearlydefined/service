@@ -57,20 +57,18 @@ router.get(
     for (let subdir of subdirs) {
       const repoData = await fetchCondaRepoData(channel, subdir)
       if (repoData['packages']) {
-        Object.entries(repoData['packages'])
-          .forEach(([, packageData]) => {
-            if (packageData.name === name) {
-              revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
-            }
-          })
+        Object.entries(repoData['packages']).forEach(([, packageData]) => {
+          if (packageData.name === name) {
+            revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
+          }
+        })
       }
       if (repoData['packages.conda']) {
-        Object.entries(repoData['packages.conda'])
-          .forEach(([, packageData]) => {
-            if (packageData.name === name) {
-              revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
-            }
-          })
+        Object.entries(repoData['packages.conda']).forEach(([, packageData]) => {
+          if (packageData.name === name) {
+            revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
+          }
+        })
       }
     }
     return response.status(200).send(uniq(revisions))
@@ -87,9 +85,11 @@ router.get(
       return response.status(404).send([])
     }
     let channelData = await fetchCondaChannelData(channel)
-    let matches = Object.entries(channelData.packages).filter(([packageName,]) => packageName.includes(name)).map(
-      ([packageName,]) => { return { id: packageName } }
-    )
+    let matches = Object.entries(channelData.packages)
+      .filter(([packageName]) => packageName.includes(name))
+      .map(([packageName]) => {
+        return { id: packageName }
+      })
     return response.status(200).send(matches)
   })
 )

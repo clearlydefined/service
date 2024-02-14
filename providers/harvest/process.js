@@ -10,9 +10,7 @@ async function work(once) {
   try {
     const messages = await queue.dequeueMultiple()
     if (messages && messages.length > 0) isQueueEmpty = false
-    await Promise.all(
-      messages.map(message => processMessage(message))
-    )
+    await Promise.all(messages.map(message => processMessage(message)))
   } catch (error) {
     logger.error(error)
   } finally {

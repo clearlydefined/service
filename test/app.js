@@ -13,7 +13,7 @@ const config = proxyquire('../bin/config', {
 })
 
 describe('Application', () => {
-  it('should initialize', (done) => {
+  it('should initialize', done => {
     const app = Application(config)
     init(app, error => {
       if (error) {
