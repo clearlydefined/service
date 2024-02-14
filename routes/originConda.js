@@ -36,38 +36,41 @@ async function fetchCondaRepoData(channel, subdir) {
 }
 
 router.get(
-  '/:channel/:name/revisions',
+  '/:channel/:subdir/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const { channel, name } = request.params
+    const { channel, subdir, name } = request.params
     if (!condaChannels[channel]) {
       return response.status(404).send([])
     }
     let channelData = await fetchCondaChannelData(channel)
-    if (channelData.packages[name]) {
-      let revisions = []
-      for (let subdir of channelData.packages[name].subdirs) {
-        const repoData = await fetchCondaRepoData(channel, subdir)
-        if (repoData['packages']) {
-          Object.entries(repoData['packages'])
-            .forEach(([, packageData]) => {
-              if (packageData.name === name) {
-                revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
-              }
-            })
-        }
-        if (repoData['packages.conda']) {
-          Object.entries(repoData['packages.conda'])
-            .forEach(([, packageData]) => {
-              if (packageData.name === name) {
-                revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
-              }
-            })
-        }
-      }
-      return response.status(200).send(uniq(revisions))
-    } else {
-      return response.status(404).send([])
+    if (!channelData.packages[name]) {
+      return response.status(404).send(`Package ${name} not found in Conda channel ${channel}`)
     }
+    if (subdir !== '-' && !channelData.subdirs.find(x => x == subdir)) {
+      return response.status(404).send(`Subdir ${subdir} is non-existent in Conda channel ${channel}`)
+    }
+    let revisions = []
+    let subdirs = subdir === '-' ? channelData.packages[name].subdirs : [subdir]
+    for (let subdir of subdirs) {
+      const repoData = await fetchCondaRepoData(channel, subdir)
+      if (repoData['packages']) {
+        Object.entries(repoData['packages'])
+          .forEach(([, packageData]) => {
+            if (packageData.name === name) {
+              revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
+            }
+          })
+      }
+      if (repoData['packages.conda']) {
+        Object.entries(repoData['packages.conda'])
+          .forEach(([, packageData]) => {
+            if (packageData.name === name) {
+              revisions.push(`${subdir}:${packageData.version}-${packageData.build}`)
+            }
+          })
+      }
+    }
+    return response.status(200).send(uniq(revisions))
   })
 )
 
