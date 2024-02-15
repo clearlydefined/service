@@ -40,7 +40,7 @@ router.get(
   asyncMiddleware(async (request, response) => {
     const { channel, subdir, name } = request.params
     if (!condaChannels[channel]) {
-      return response.status(404).send([])
+      return response.status(404).send(`Unrecognized Conda channel ${channel}`)
     }
     let channelData = await fetchCondaChannelData(channel)
     if (!channelData.packages[name]) {
