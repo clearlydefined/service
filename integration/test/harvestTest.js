@@ -18,12 +18,12 @@ describe('Tests for Harvester', function () {
 async function harvestTillCompletion(components) {
   const { harvestToolVersions, poll } = harvest
   const harvester = new Harvester(devApiBaseUrl, harvestToolVersions)
-  const poller = new Poller(poll.interval, poll.maxTime)
 
   //make sure that we have one entire set of harvest results (old or new)
   console.log('Ensure harvest results exit before starting tests')
-  const previousHarvests = await harvester.pollForCompletion(components, poller)
+  const previousHarvests = await harvester.pollForCompletion(components, new Poller(1, 1))
   const previousHarvestsComplete = Array.from(previousHarvests.values()).every(v => v)
+  const poller = new Poller(poll.interval, poll.maxTime)
   if (!previousHarvestsComplete) {
     await harvester.harvest(components)
     await harvester.pollForCompletion(components, poller)

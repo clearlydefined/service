@@ -8,14 +8,24 @@ describe('Validate Definition between dev and prod', function () {
     this.timeout(definition.timeout)
     for (const coordinates of components) {
       console.log(coordinates)
-      await compareDefintion(coordinates)
+      await fetchAndCompareDefinition(coordinates)
+      //Rest a bit to avoid overloading the server
+      await new Promise(resolve => setTimeout(resolve, definition.timeout / components.length / 2))
     }
   })
 })
 
-async function compareDefintion(coordinates) {
-  const recomputedDef = await callFetch(`${devApiBaseUrl}/definitions/${coordinates}?force=true`).then(r => r.json())
-  const expectedDef = await callFetch(`${prodApiBaseUrl}/definitions/${coordinates}`).then(r => r.json())
+async function fetchAndCompareDefinition(coordinates) {
+  const [recomputedDef, expectedDef] = await Promise.all(
+    [
+      callFetch(`${devApiBaseUrl}/definitions/${coordinates}?force=true`),
+      callFetch(`${prodApiBaseUrl}/definitions/${coordinates}`)
+    ].map(p => p.then(r => r.json()))
+  )
+  compareDefinition(recomputedDef, expectedDef)
+}
+
+function compareDefinition(recomputedDef, expectedDef) {
   expect(recomputedDef.coordinates).to.be.deep.equals(expectedDef.coordinates)
   compareLicensed(recomputedDef, expectedDef)
   compareDescribed(recomputedDef, expectedDef)
@@ -43,14 +53,14 @@ function compareFiles(result, expectation) {
   const differentEntries = result.files.filter(f => expectedFiles.has(f.path) && !isEqual(expectedFiles.get(f.path), f))
 
   const differences = [...extraInResult, ...missingInResult, ...differentEntries]
-  differences.forEach(f => logFiles(expectedFiles.get(f.path), resultFiles.get(f.path)))
+  differences.forEach(f => logDifferences(expectedFiles.get(f.path), resultFiles.get(f.path)))
 
   expect(missingInResult.length).to.be.equal(0, 'Some files are missing in the result')
   expect(extraInResult.length).to.be.equal(0, 'There are extra files in the result')
   expect(differentEntries.length).to.be.equal(0, 'Some files are different between the result and the expectation')
 }
 
-function logFiles(expected, actual) {
+function logDifferences(expected, actual) {
   console.log('-------------------')
   console.log(`expected: ${JSON.stringify(expected || {})}`)
   console.log(`actual:   ${JSON.stringify(actual || {})}`)

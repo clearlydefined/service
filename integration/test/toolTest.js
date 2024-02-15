@@ -12,7 +12,7 @@ describe('Integration test against dev deployment', function () {
     expect(result.length).to.be.greaterThan(0)
   })
 
-  it.skip('should harvest a component', async function () {
+  it('should harvest a component', async function () {
     const coordinates = 'nuget/nuget/-/HotChocolate/13.8.1'
     const harvester = new Harvester(devApiBaseUrl)
     const result = await harvester.harvest([coordinates])
@@ -77,6 +77,12 @@ describe('Integration Tests for Harvester and Poller', function () {
     const status = await harvester.pollForCompletion([coordinates], poller, Date.now())
     expect(status.get(coordinates)).to.be.equal(false)
   })
+
+  it('should handle an error', async function () {
+    sinon.stub(harvester, 'fetchHarvestResult').rejects(new Error('failed'))
+    const status = await harvester.pollForCompletion([coordinates], poller, Date.now())
+    expect(status.get(coordinates)).to.be.equal(false)
+  })
 })
 
 describe('Unit Tests for Poller', function () {
@@ -91,7 +97,7 @@ describe('Unit Tests for Poller', function () {
   it('should poll until max time reached', async function () {
     const activity = sinon.stub().resolves(false)
     const result = await poller.poll(activity)
-    expect(activity.callCount).to.be.equal(3)
+    expect(activity.callCount).to.be.equal(2)
     expect(result).to.be.equal(false)
   })
 
@@ -107,6 +113,13 @@ describe('Unit Tests for Poller', function () {
     const result = await poller.poll(activity)
     expect(activity.callCount).to.be.equal(2)
     expect(result).to.be.equal(true)
+  })
+
+  it('should poll once for one time poller', async function () {
+    const activity = sinon.stub().resolves(false)
+    const result = await new Poller(1, 1).poll(activity)
+    expect(activity.callCount).to.be.equal(1)
+    expect(result).to.be.equal(false)
   })
 })
 

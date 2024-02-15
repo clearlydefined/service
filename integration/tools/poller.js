@@ -6,7 +6,7 @@ class Poller {
 
   async poll(activity) {
     let counter = 0
-    while (counter * this.interval <= this.maxTime) {
+    while (counter * this.interval < this.maxTime) {
       console.log(`Polling ${counter}`)
       const isDone = await activity()
       if (isDone) return true
