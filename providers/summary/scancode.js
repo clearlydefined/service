@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get, flatten, uniq } = require('lodash')
+const { gte } = require('semver')
 const SPDX = require('@clearlydefined/spdx')
 const {
   extractDate,
@@ -33,7 +34,7 @@ class ScanCodeSummarizer {
       get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
 
-    if (scancodeVersion === '32.0.8') {
+    if (gte(scancodeVersion, '32.0.8')) {
       return ScanCodeSummarizerNew(this.options).summarize(coordinates, harvested)
     }
 
