@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const summarizer = require('../../../providers/summary/scancode-new')()
+const summarizer = require('../../../providers/summary/scancode')()
 summarizer.logger = { info: () => {} }
 const fs = require('fs')
 const path = require('path')
