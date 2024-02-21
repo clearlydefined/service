@@ -9,10 +9,10 @@ const {
   getLicenseLocations,
   isLicenseFile,
   setIfValue,
-  setToArray
+  joinExpressions,
+  normalizeLicenseExpression,
 } = require('../../lib/utils')
 const logger = require('../logging/logger')
-const scancodeMap = require('../../lib/scancodeMap')
 
 class ScanCodeSummarizerNew {
   constructor(options) {
@@ -70,7 +70,7 @@ class ScanCodeSummarizerNew {
 
   _readDeclaredLicenseExpressionFromSummary({ content }) {
     const licenseExpression = get(content, 'summary.declared_license_expression')
-    const result = licenseExpression && this._normalizeLicenseExpression(licenseExpression)
+    const result = licenseExpression && normalizeLicenseExpression(licenseExpression)
 
     return result?.includes('NOASSERTION') ? null : result
   }
@@ -82,7 +82,7 @@ class ScanCodeSummarizerNew {
     if (!firstPackage) return null
 
     const licenseExpression = firstPackage.declared_license_expression_spdx
-      || this._normalizeLicenseExpression(firstPackage.declared_license_expression)
+      || normalizeLicenseExpression(firstPackage.declared_license_expression)
 
     return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression
   }
@@ -122,7 +122,7 @@ class ScanCodeSummarizerNew {
       .filter(file => (file.percentage_of_license_text >= 80 && file.license_detections))
       .reduce((licenses, file) => {
         file.license_detections.forEach(licenseDetection => {
-          licenses.add(this._normalizeLicenseExpression(licenseDetection.license_expression))
+          licenses.add(normalizeLicenseExpression(licenseDetection.license_expression))
         })
         return licenses
       }, new Set())
@@ -150,7 +150,7 @@ class ScanCodeSummarizerNew {
         const result = { path: file.path }
 
         const licenseExpression = file.detected_license_expression_spdx
-        || this._normalizeLicenseExpression(file.detected_license_expression)
+        || normalizeLicenseExpression(file.detected_license_expression)
         setIfValue(result, 'license', licenseExpression)
         
         if (this._getLicenseFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
@@ -169,30 +169,6 @@ class ScanCodeSummarizerNew {
         return result
       })
       .filter(e => e)
-  }
-
-  _joinExpressions(expressions) {
-    if (!expressions) return null
-    const list = setToArray(expressions)
-    if (!list) return null
-    return list.join(' AND ')
-  }
-
-  _createExpressionFromLicense(license) {
-    const rule = license.matched_rule
-    if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    return this._normalizeLicenseExpression(rule.license_expression)
-  }
-
-  _normalizeLicenseExpression(licenseExpression) {
-    if (!licenseExpression) return null
-
-    const parsed = SPDX.parse(licenseExpression || '', (key) => SPDX.normalizeSingle(scancodeMap.get(key) || key))
-    const result = SPDX.stringify(parsed)
-
-    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
-    
-    return result
   }
 }
 
