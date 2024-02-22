@@ -6,7 +6,7 @@ const summarizer = require('../../../providers/summary/scancode')()
 summarizer.logger = { info: () => {} }
 const fs = require('fs')
 const path = require('path')
-const { get, uniq, flatten } = require('lodash')
+const { compact, uniq, flatten } = require('lodash')
 const { expect } = require('chai')
 
 const scancodeVersions = ['32.0.8']
@@ -16,7 +16,6 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-basic')
-      if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
@@ -34,7 +33,6 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-large')
-      if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
         result.licensed.declared,
@@ -124,44 +122,53 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     const coordinates = { type: 'gem', provider: 'rubygems' }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'gem')
-      if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
 
-      assert.equal(
-        get(result.licensed, 'declared'),
-        `Declared license mismatch for version ${version}`
-      )
+      assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.files.find((x) => x.path === 'MIT-LICENSE.md').license, 'MIT')
-      assert.equal(result.described.releaseDate, '2018-08-09', `releaseDate mismatch for version ${version}`)
+      assert.equal(result.described.releaseDate, '2023-07-27', `releaseDate mismatch for version ${version}`)
       assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 3)
-    }
+    } 
   })
 
   it('summarizes git repos', () => {
     const coordinates = { type: 'git', provider: 'github' }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'git')
-      if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
-      assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
-      assert.equal(result.described.releaseDate, '2017-02-24', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
+      assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
+      assert.equal(result.described.releaseDate, '2021-01-28', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 1)
       assert.deepEqual(result.files.find((x) => x.path === 'LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.equal(compact(flatten(result.files.map((x) => x.natures))).length, 1)
     }
   })
 
   it('summarizes pythons', () => {
-    const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '3.0.1' }
+    const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '5.0.1' }
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'python')
-      if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
-      assert.equal(result.described.releaseDate, '2018-11-15', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'redis-3.0.1/LICENSE').natures, ['license'])
+      assert.equal(result.described.releaseDate, '2023-09-26', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 1)
+      assert.deepEqual(result.files.find((x) => x.path === 'redis-5.0.1/LICENSE').natures, ['license'])
       assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+    }
+  })
+
+  it('summarizes crates', () => {
+    const coordinates = { type: 'crate', provider: 'cratesio', name: 'rand', revision: '0.8.2' }
+    for (let version of scancodeVersions) {
+      const harvestData = getHarvestData(version, 'crate-file-summary')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'Apache-2.0 AND (Apache-2.0 OR MIT)', `Declared license mismatch for version ${version}`)
+      assert.equal(result.described.releaseDate, '2021-01-13', `releaseDate mismatch for version ${version}`)
+      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 6)
+      assert.deepEqual(result.files.find((x) => x.path === 'COPYRIGHT').natures, ['license'])
+      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE-APACHE').natures, ['license'])
+      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE-MIT').natures, ['license'])
+      assert.equal(compact(flatten(result.files.map((x) => x.natures))).length, 3)
     }
   })
 })
