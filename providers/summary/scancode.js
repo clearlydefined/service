@@ -93,7 +93,7 @@ class ScanCodeSummarizer {
 
   _readLicenseExpressionFromSummary(harvested) {
     const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
-    const result = licenseExpression && normalizeLicenseExpression(licenseExpression)
+    const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger)
     return result?.includes('NOASSERTION') ? null : result
   }
 
@@ -206,7 +206,7 @@ class ScanCodeSummarizer {
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
     if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    return normalizeLicenseExpression(rule.license_expression)
+    return normalizeLicenseExpression(rule.license_expression, this.logger)
   }
 }
 

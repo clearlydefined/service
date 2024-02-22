@@ -8,6 +8,7 @@ chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 const Summarizer = require('../../providers/summary/scancode')
 const EntityCoordinates = require('../../lib/entityCoordinates')
+const { joinExpressions } = require('../../lib/utils')
 
 describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {
@@ -212,7 +213,7 @@ describe('ScanCode summarizer', () => {
       [null, null]
     ])
     examples.forEach((expected, input) => {
-      const result = Summarizer()._joinExpressions(input)
+      const result = joinExpressions(input)
       expect(result).to.eq(expected)
     })
   })
