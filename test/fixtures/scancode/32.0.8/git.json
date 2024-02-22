@@ -1,0 +1,1213 @@
+{
+  "_metadata": {
+    "type": "scancode",
+    "url": "cd:/git/github/microsoft/redie/3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46",
+    "fetchedAt": "2024-02-21T17:56:28.545Z",
+    "links": {
+      "self": {
+        "href": "urn:git:github:microsoft:redie:revision:3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46:tool:scancode:32.2.8",
+        "type": "resource"
+      },
+      "siblings": {
+        "href": "urn:git:github:microsoft:redie:revision:3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46:tool:scancode",
+        "type": "collection"
+      }
+    },
+    "schemaVersion": "32.2.8",
+    "toolVersion": "32.0.8",
+    "contentType": "application/json",
+    "releaseDate": "2021-01-28T20:22:54.000Z",
+    "processedAt": "2024-02-21T17:56:32.639Z"
+  },
+  "content": {
+    "headers": [
+      {
+        "tool_name": "scancode-toolkit",
+        "tool_version": "32.0.8",
+        "options": {
+          "input": [
+            "/tmp/cd-RflHbe/redie"
+          ],
+          "--classify": true,
+          "--copyright": true,
+          "--email": true,
+          "--generated": true,
+          "--info": true,
+          "--json-pp": "/tmp/cd-STSkGl",
+          "--license": true,
+          "--license-clarity-score": true,
+          "--license-references": true,
+          "--license-text": true,
+          "--license-text-diagnostics": true,
+          "--package": true,
+          "--processes": "2",
+          "--strip-root": true,
+          "--summary": true,
+          "--tallies": true,
+          "--tallies-key-files": true,
+          "--timeout": "1000.0",
+          "--url": true
+        },
+        "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
+        "start_timestamp": "2024-02-21T175629.146749",
+        "end_timestamp": "2024-02-21T175631.969770",
+        "output_format_version": "3.0.0",
+        "duration": 2.82303786277771,
+        "message": null,
+        "errors": [],
+        "warnings": [],
+        "extra_data": {
+          "system_environment": {
+            "operating_system": "linux",
+            "cpu_architecture": "64",
+            "platform": "Linux-6.2.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#19~22.04.1-Ubuntu SMP Wed Jan 10 22:57:03 UTC 2024",
+            "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
+          },
+          "spdx_license_list_version": "3.21",
+          "files_count": 6
+        }
+      }
+    ],
+    "summary": {
+      "declared_license_expression": "mit",
+      "license_clarity_score": {
+        "score": 100,
+        "declared_license": true,
+        "identification_precision": true,
+        "has_license_text": true,
+        "declared_copyrights": true,
+        "conflicting_license_categories": false,
+        "ambiguous_compound_licensing": false
+      },
+      "declared_holder": "Microsoft",
+      "primary_language": "JavaScript",
+      "other_license_expressions": [
+        {
+          "value": null,
+          "count": 3
+        }
+      ],
+      "other_holders": [
+        {
+          "value": null,
+          "count": 4
+        }
+      ],
+      "other_languages": []
+    },
+    "packages": [
+      {
+        "type": "npm",
+        "namespace": null,
+        "name": "redie",
+        "version": "0.3.0",
+        "qualifiers": {},
+        "subpath": null,
+        "primary_language": "JavaScript",
+        "description": "Redis client focused on providing a delightful user experience.",
+        "release_date": null,
+        "parties": [
+          {
+            "type": "person",
+            "role": "author",
+            "name": "William Bartholomew",
+            "email": "willbar@microsoft.com",
+            "url": null
+          }
+        ],
+        "keywords": [
+          "redis",
+          "repl",
+          "cli",
+          "json"
+        ],
+        "homepage_url": "https://github.com/Microsoft/redie",
+        "download_url": "https://registry.npmjs.org/redie/-/redie-0.3.0.tgz",
+        "size": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "sha512": null,
+        "bug_tracking_url": "https://github.com/Microsoft/redie/issues",
+        "code_view_url": null,
+        "vcs_url": "git+https://github.com/Microsoft/redie.git",
+        "copyright": null,
+        "holder": null,
+        "declared_license_expression": "mit",
+        "declared_license_expression_spdx": "MIT",
+        "license_detections": [
+          {
+            "license_expression": "mit",
+            "matches": [
+              {
+                "score": 100,
+                "start_line": 1,
+                "end_line": 1,
+                "matched_length": 1,
+                "match_coverage": 100,
+                "matcher": "1-spdx-id",
+                "license_expression": "mit",
+                "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
+                "rule_relevance": 100,
+                "rule_url": null,
+                "matched_text": "MIT"
+              }
+            ],
+            "identifier": "mit-a822f434-d61f-f2b1-c792-8b8cb9e7b9bf"
+          }
+        ],
+        "other_license_expression": null,
+        "other_license_expression_spdx": null,
+        "other_license_detections": [],
+        "extracted_license_statement": "- MIT\n",
+        "notice_text": null,
+        "source_packages": [],
+        "extra_data": {},
+        "repository_homepage_url": "https://www.npmjs.com/package/redie",
+        "repository_download_url": "https://registry.npmjs.org/redie/-/redie-0.3.0.tgz",
+        "api_data_url": "https://registry.npmjs.org/redie/0.3.0",
+        "package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_paths": [
+          "package.json"
+        ],
+        "datasource_ids": [
+          "npm_package_json"
+        ],
+        "purl": "pkg:npm/redie@0.3.0"
+      }
+    ],
+    "dependencies": [
+      {
+        "purl": "pkg:npm/argv-split",
+        "extracted_requirement": "^1.0.0",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/argv-split?uuid=9079e9df-ee86-43aa-b79f-e3d65573a769",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/command-line-args",
+        "extracted_requirement": "^2.1.6",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/command-line-args?uuid=ebd48b20-3aa6-4937-860b-6647b82f6a9e",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/is-json",
+        "extracted_requirement": "^2.0.0",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/is-json?uuid=37f234c3-947a-495d-96f5-88172341ac5d",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/json-colorz",
+        "extracted_requirement": "^0.2.7",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/json-colorz?uuid=cb973113-a9fd-4256-a70a-ed4e7bbed20a",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/painless-config",
+        "extracted_requirement": "^0.1.0",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/painless-config?uuid=0a8f9faa-0dde-47bc-aec8-08ddf358809d",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/redis",
+        "extracted_requirement": "^2.6.0-0",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/redis?uuid=72e0dbdd-771d-4225-aa0b-4164ba572b15",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      },
+      {
+        "purl": "pkg:npm/redis-commands",
+        "extracted_requirement": "^1.1.0",
+        "scope": "dependencies",
+        "is_runtime": true,
+        "is_optional": false,
+        "is_resolved": false,
+        "resolved_package": {},
+        "extra_data": {},
+        "dependency_uid": "pkg:npm/redis-commands?uuid=1d1c6362-2ed1-45c7-8786-90c6fe0bb799",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "datafile_path": "package.json",
+        "datasource_id": "npm_package_json"
+      }
+    ],
+    "license_detections": [
+      {
+        "identifier": "mit-3fce6ea2-8abd-6c6b-3ede-a37af7c6efee",
+        "license_expression": "mit",
+        "detection_count": 1
+      },
+      {
+        "identifier": "mit-a822f434-d61f-f2b1-c792-8b8cb9e7b9bf",
+        "license_expression": "mit",
+        "detection_count": 1
+      },
+      {
+        "identifier": "mit-ac40beba-5702-f54d-755f-333441314bb0",
+        "license_expression": "mit",
+        "detection_count": 1
+      },
+      {
+        "identifier": "mit-ba6b4e66-7e0e-a2b1-cca9-23918f3964b6",
+        "license_expression": "mit",
+        "detection_count": 1
+      }
+    ],
+    "tallies": {
+      "detected_license_expression": [
+        {
+          "value": null,
+          "count": 3
+        },
+        {
+          "value": "mit",
+          "count": 3
+        }
+      ],
+      "copyrights": [
+        {
+          "value": null,
+          "count": 4
+        },
+        {
+          "value": "Copyright (c) Microsoft Corporation",
+          "count": 2
+        }
+      ],
+      "holders": [
+        {
+          "value": null,
+          "count": 4
+        },
+        {
+          "value": "Microsoft",
+          "count": 2
+        }
+      ],
+      "authors": [
+        {
+          "value": null,
+          "count": 5
+        },
+        {
+          "value": "William Bartholomew <willbar@microsoft.com>",
+          "count": 1
+        }
+      ],
+      "programming_language": [
+        {
+          "value": "JavaScript",
+          "count": 1
+        }
+      ]
+    },
+    "tallies_of_key_files": {
+      "detected_license_expression": [
+        {
+          "value": "mit",
+          "count": 1
+        }
+      ],
+      "copyrights": [
+        {
+          "value": "Copyright (c) Microsoft Corporation",
+          "count": 1
+        }
+      ],
+      "holders": [
+        {
+          "value": "Microsoft",
+          "count": 1
+        }
+      ],
+      "authors": [],
+      "programming_language": []
+    },
+    "license_references": [
+      {
+        "key": "mit",
+        "language": "en",
+        "short_name": "MIT License",
+        "name": "MIT License",
+        "category": "Permissive",
+        "owner": "MIT",
+        "homepage_url": "http://opensource.org/licenses/mit-license.php",
+        "notes": "Per SPDX.org, this license is OSI certified.",
+        "is_builtin": true,
+        "is_exception": false,
+        "is_unknown": false,
+        "is_generic": false,
+        "spdx_license_key": "MIT",
+        "other_spdx_license_keys": [
+          "LicenseRef-MIT-Bootstrap",
+          "LicenseRef-MIT-Discord",
+          "LicenseRef-MIT-TC",
+          "LicenseRef-MIT-Diehl"
+        ],
+        "osi_license_key": null,
+        "text_urls": [
+          "http://opensource.org/licenses/mit-license.php"
+        ],
+        "osi_url": "http://www.opensource.org/licenses/MIT",
+        "faq_url": "https://ieeexplore.ieee.org/document/9263265",
+        "other_urls": [
+          "https://opensource.com/article/18/3/patent-grant-mit-license",
+          "https://opensource.com/article/19/4/history-mit-license",
+          "https://opensource.org/licenses/MIT"
+        ],
+        "key_aliases": [],
+        "minimum_coverage": 0,
+        "standard_notice": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "Permission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n\"Software\"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+        "scancode_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+        "licensedb_url": "https://scancode-licensedb.aboutcode.org/mit",
+        "spdx_url": "https://spdx.org/licenses/MIT"
+      }
+    ],
+    "license_rule_references": [
+      {
+        "license_expression": "mit",
+        "identifier": "mit.LICENSE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+        "is_license_text": true,
+        "is_license_notice": false,
+        "is_license_reference": false,
+        "is_license_tag": false,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": true,
+        "is_synthetic": false,
+        "length": 161,
+        "relevance": 100,
+        "minimum_coverage": 0,
+        "referenced_filenames": [],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "Permission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n\"Software\"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      },
+      {
+        "license_expression": "mit",
+        "identifier": "mit_14.RULE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+        "is_license_text": false,
+        "is_license_notice": false,
+        "is_license_reference": true,
+        "is_license_tag": false,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": false,
+        "length": 2,
+        "relevance": 100,
+        "minimum_coverage": 100,
+        "referenced_filenames": [],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "MIT license"
+      },
+      {
+        "license_expression": "mit",
+        "identifier": "mit_192.RULE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_192.RULE",
+        "is_license_text": false,
+        "is_license_notice": true,
+        "is_license_reference": false,
+        "is_license_tag": false,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": false,
+        "length": 14,
+        "relevance": 100,
+        "minimum_coverage": 50,
+        "referenced_filenames": [
+          "LICENSE"
+        ],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "*  Licensed under the MIT License. See LICENSE in the project root for license information."
+      },
+      {
+        "license_expression": "mit",
+        "identifier": "mit_30.RULE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_30.RULE",
+        "is_license_text": false,
+        "is_license_notice": false,
+        "is_license_reference": false,
+        "is_license_tag": true,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": false,
+        "length": 2,
+        "relevance": 100,
+        "minimum_coverage": 100,
+        "referenced_filenames": [],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "License: MIT"
+      },
+      {
+        "license_expression": "mit",
+        "identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
+        "language": "en",
+        "rule_url": null,
+        "is_license_text": false,
+        "is_license_notice": false,
+        "is_license_reference": false,
+        "is_license_tag": true,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": true,
+        "length": 1,
+        "relevance": 100,
+        "minimum_coverage": 0,
+        "referenced_filenames": [],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "MIT"
+      }
+    ],
+    "files": [
+      {
+        "path": "index.js",
+        "type": "file",
+        "name": "index.js",
+        "base_name": "index",
+        "extension": ".js",
+        "size": 4940,
+        "date": "2024-02-21",
+        "sha1": "7561b32ffa21eeb8ca1c12a5e76ec28d718c3dfd",
+        "md5": "c643675cb984801703fb0d2ebcc84675",
+        "sha256": "b83c7eeef19b2f4be9a8947db0bedc4ef43a15746e9c9b6f14e491f68bd2db60",
+        "mime_type": "application/javascript",
+        "file_type": "Node.js script, ASCII text executable",
+        "programming_language": "JavaScript",
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": true,
+        "is_script": true,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "detected_license_expression": "mit",
+        "detected_license_expression_spdx": "MIT",
+        "license_detections": [
+          {
+            "license_expression": "mit",
+            "matches": [
+              {
+                "score": 100,
+                "start_line": 5,
+                "end_line": 5,
+                "matched_length": 14,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit_192.RULE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_192.RULE",
+                "matched_text": "Licensed under the MIT License. See LICENSE in the project root for license information."
+              },
+              {
+                "score": 100,
+                "start_line": 9,
+                "end_line": 9,
+                "matched_length": 2,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit_14.RULE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+                "matched_text": "MIT License"
+              },
+              {
+                "score": 100,
+                "start_line": 11,
+                "end_line": 27,
+                "matched_length": 161,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit.LICENSE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+              }
+            ],
+            "identifier": "mit-ba6b4e66-7e0e-a2b1-cca9-23918f3964b6",
+            "detection_log": [
+              "unknown-reference-to-local-file"
+            ]
+          }
+        ],
+        "license_clues": [],
+        "percentage_of_license_text": 2.71,
+        "copyrights": [
+          {
+            "copyright": "Copyright (c) Microsoft Corporation",
+            "start_line": 4,
+            "end_line": 4
+          }
+        ],
+        "holders": [
+          {
+            "holder": "Microsoft Corporation",
+            "start_line": 4,
+            "end_line": 4
+          }
+        ],
+        "authors": [],
+        "emails": [],
+        "urls": [],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "LICENSE",
+        "type": "file",
+        "name": "LICENSE",
+        "base_name": "LICENSE",
+        "extension": "",
+        "size": 1113,
+        "date": "2024-02-21",
+        "sha1": "6401e7f1f46654117270c4860a263d3c4d6df1eb",
+        "md5": "e7b465bb6dd47f014d544ba0c60e34b6",
+        "sha256": "42c7def049b7ef692085ca9bdf5984d439d3291922e02cb112d5cd1287b3cc56",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": true,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": true,
+        "detected_license_expression": "mit",
+        "detected_license_expression_spdx": "MIT",
+        "license_detections": [
+          {
+            "license_expression": "mit",
+            "matches": [
+              {
+                "score": 100,
+                "start_line": 9,
+                "end_line": 9,
+                "matched_length": 2,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit_14.RULE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+                "matched_text": "MIT License"
+              },
+              {
+                "score": 100,
+                "start_line": 11,
+                "end_line": 27,
+                "matched_length": 161,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit.LICENSE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+              }
+            ],
+            "identifier": "mit-ac40beba-5702-f54d-755f-333441314bb0"
+          }
+        ],
+        "license_clues": [],
+        "percentage_of_license_text": 93.14,
+        "copyrights": [
+          {
+            "copyright": "Copyright (c) Microsoft Corporation",
+            "start_line": 5,
+            "end_line": 5
+          }
+        ],
+        "holders": [
+          {
+            "holder": "Microsoft Corporation",
+            "start_line": 5,
+            "end_line": 5
+          }
+        ],
+        "authors": [],
+        "emails": [],
+        "urls": [],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "package.json",
+        "type": "file",
+        "name": "package.json",
+        "base_name": "package",
+        "extension": ".json",
+        "size": 880,
+        "date": "2024-02-21",
+        "sha1": "74c5c9c1de88406c3d08272bfb6fe57055625fc9",
+        "md5": "bc2a28164bcd8154647f940af5687dc3",
+        "sha256": "7bf06a09d2b1c79b2cad7820a97e3887749418e6c53da1f7fb7f1b7c430e386d",
+        "mime_type": "application/json",
+        "file_type": "JSON data",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [
+          {
+            "type": "npm",
+            "namespace": null,
+            "name": "redie",
+            "version": "0.3.0",
+            "qualifiers": {},
+            "subpath": null,
+            "primary_language": "JavaScript",
+            "description": "Redis client focused on providing a delightful user experience.",
+            "release_date": null,
+            "parties": [
+              {
+                "type": "person",
+                "role": "author",
+                "name": "William Bartholomew",
+                "email": "willbar@microsoft.com",
+                "url": null
+              }
+            ],
+            "keywords": [
+              "redis",
+              "repl",
+              "cli",
+              "json"
+            ],
+            "homepage_url": "https://github.com/Microsoft/redie",
+            "download_url": "https://registry.npmjs.org/redie/-/redie-0.3.0.tgz",
+            "size": null,
+            "sha1": null,
+            "md5": null,
+            "sha256": null,
+            "sha512": null,
+            "bug_tracking_url": "https://github.com/Microsoft/redie/issues",
+            "code_view_url": null,
+            "vcs_url": "git+https://github.com/Microsoft/redie.git",
+            "copyright": null,
+            "holder": null,
+            "declared_license_expression": "mit",
+            "declared_license_expression_spdx": "MIT",
+            "license_detections": [
+              {
+                "license_expression": "mit",
+                "matches": [
+                  {
+                    "score": 100,
+                    "start_line": 1,
+                    "end_line": 1,
+                    "matched_length": 1,
+                    "match_coverage": 100,
+                    "matcher": "1-spdx-id",
+                    "license_expression": "mit",
+                    "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
+                    "rule_relevance": 100,
+                    "rule_url": null,
+                    "matched_text": "MIT"
+                  }
+                ],
+                "identifier": "mit-a822f434-d61f-f2b1-c792-8b8cb9e7b9bf"
+              }
+            ],
+            "other_license_expression": null,
+            "other_license_expression_spdx": null,
+            "other_license_detections": [],
+            "extracted_license_statement": "- MIT\n",
+            "notice_text": null,
+            "source_packages": [],
+            "file_references": [],
+            "extra_data": {},
+            "dependencies": [
+              {
+                "purl": "pkg:npm/argv-split",
+                "extracted_requirement": "^1.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/command-line-args",
+                "extracted_requirement": "^2.1.6",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/is-json",
+                "extracted_requirement": "^2.0.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/json-colorz",
+                "extracted_requirement": "^0.2.7",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/painless-config",
+                "extracted_requirement": "^0.1.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/redis",
+                "extracted_requirement": "^2.6.0-0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              },
+              {
+                "purl": "pkg:npm/redis-commands",
+                "extracted_requirement": "^1.1.0",
+                "scope": "dependencies",
+                "is_runtime": true,
+                "is_optional": false,
+                "is_resolved": false,
+                "resolved_package": {},
+                "extra_data": {}
+              }
+            ],
+            "repository_homepage_url": "https://www.npmjs.com/package/redie",
+            "repository_download_url": "https://registry.npmjs.org/redie/-/redie-0.3.0.tgz",
+            "api_data_url": "https://registry.npmjs.org/redie/0.3.0",
+            "datasource_id": "npm_package_json",
+            "purl": "pkg:npm/redie@0.3.0"
+          }
+        ],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "detected_license_expression": "mit",
+        "detected_license_expression_spdx": "MIT",
+        "license_detections": [
+          {
+            "license_expression": "mit",
+            "matches": [
+              {
+                "score": 100,
+                "start_line": 25,
+                "end_line": 25,
+                "matched_length": 2,
+                "match_coverage": 100,
+                "matcher": "2-aho",
+                "license_expression": "mit",
+                "rule_identifier": "mit_30.RULE",
+                "rule_relevance": 100,
+                "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_30.RULE",
+                "matched_text": "license\": \"MIT\","
+              }
+            ],
+            "identifier": "mit-3fce6ea2-8abd-6c6b-3ede-a37af7c6efee"
+          }
+        ],
+        "license_clues": [],
+        "percentage_of_license_text": 1.89,
+        "copyrights": [],
+        "holders": [],
+        "authors": [
+          {
+            "author": "William Bartholomew <willbar@microsoft.com>",
+            "start_line": 24,
+            "end_line": 24
+          }
+        ],
+        "emails": [
+          {
+            "email": "willbar@microsoft.com",
+            "start_line": 24,
+            "end_line": 24
+          }
+        ],
+        "urls": [
+          {
+            "url": "https://github.com/Microsoft/redie",
+            "start_line": 18,
+            "end_line": 18
+          },
+          {
+            "url": "https://github.com/Microsoft/redie/issues",
+            "start_line": 19,
+            "end_line": 19
+          },
+          {
+            "url": "https://github.com/Microsoft/redie.git",
+            "start_line": 22,
+            "end_line": 22
+          }
+        ],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "README.md",
+        "type": "file",
+        "name": "README.md",
+        "base_name": "README",
+        "extension": ".md",
+        "size": 2517,
+        "date": "2024-02-21",
+        "sha1": "32a1b1ec0f71cfd550fb68fbac340d6060973e88",
+        "md5": "607c10bbb77df9a54f3269c85a91489b",
+        "sha256": "cb8c8fcb5d180718f3339344b204890c64d699c02818fdd7df343be9db9c520d",
+        "mime_type": "text/plain",
+        "file_type": "ASCII text",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": true,
+        "is_top_level": true,
+        "is_key_file": true,
+        "detected_license_expression": null,
+        "detected_license_expression_spdx": null,
+        "license_detections": [],
+        "license_clues": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "emails": [
+          {
+            "email": "opencode@microsoft.com",
+            "start_line": 66,
+            "end_line": 66
+          }
+        ],
+        "urls": [
+          {
+            "url": "https://img.shields.io/npm/v/redie.svg",
+            "start_line": 1,
+            "end_line": 1
+          },
+          {
+            "url": "https://img.shields.io/github/license/Microsoft/redie.svg",
+            "start_line": 2,
+            "end_line": 2
+          },
+          {
+            "url": "https://img.shields.io/npm/dt/redie.svg",
+            "start_line": 3,
+            "end_line": 3
+          },
+          {
+            "url": "https://www.npmjs.com/package/painless-config",
+            "start_line": 12,
+            "end_line": 12
+          },
+          {
+            "url": "https://opensource.microsoft.com/codeofconduct",
+            "start_line": 63,
+            "end_line": 63
+          },
+          {
+            "url": "https://opensource.microsoft.com/codeofconduct/faq",
+            "start_line": 65,
+            "end_line": 65
+          }
+        ],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": "screenshot.png",
+        "type": "file",
+        "name": "screenshot.png",
+        "base_name": "screenshot",
+        "extension": ".png",
+        "size": 26290,
+        "date": "2024-02-21",
+        "sha1": "d01607f9847c1edf3005f200630675123230225e",
+        "md5": "dd51d941688aa2da0dcda7ba48694fe8",
+        "sha256": "ad5cb9f1c344128d522f486bdedc2bff717204832807dad1b2667869f40405cc",
+        "mime_type": "image/png",
+        "file_type": "PNG image data, 956 x 188, 8-bit/color RGBA, non-interlaced",
+        "programming_language": null,
+        "is_binary": true,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": true,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "detected_license_expression": null,
+        "detected_license_expression_spdx": null,
+        "license_detections": [],
+        "license_clues": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "emails": [],
+        "urls": [],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      },
+      {
+        "path": ".vscode",
+        "type": "directory",
+        "name": ".vscode",
+        "base_name": ".vscode",
+        "extension": "",
+        "size": 0,
+        "date": null,
+        "sha1": null,
+        "md5": null,
+        "sha256": null,
+        "mime_type": null,
+        "file_type": null,
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": false,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": true,
+        "is_key_file": false,
+        "detected_license_expression": null,
+        "detected_license_expression_spdx": null,
+        "license_detections": [],
+        "license_clues": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "emails": [],
+        "urls": [],
+        "is_generated": false,
+        "files_count": 1,
+        "dirs_count": 0,
+        "size_count": 688,
+        "scan_errors": []
+      },
+      {
+        "path": ".vscode/launch.json",
+        "type": "file",
+        "name": "launch.json",
+        "base_name": "launch",
+        "extension": ".json",
+        "size": 688,
+        "date": "2024-02-21",
+        "sha1": "67b6a924db5580872b2e011c33642c9e8cd5a27e",
+        "md5": "8504705bff1a9f2a2e2c2199a3e3a480",
+        "sha256": "6661a4ec342b857cc43ad6bbb412b75d53172970108d2621166ff23720c8ffbf",
+        "mime_type": "application/json",
+        "file_type": "JSON data",
+        "programming_language": null,
+        "is_binary": false,
+        "is_text": true,
+        "is_archive": false,
+        "is_media": false,
+        "is_source": false,
+        "is_script": false,
+        "package_data": [],
+        "for_packages": [
+          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+        ],
+        "is_legal": false,
+        "is_manifest": false,
+        "is_readme": false,
+        "is_top_level": false,
+        "is_key_file": false,
+        "detected_license_expression": null,
+        "detected_license_expression_spdx": null,
+        "license_detections": [],
+        "license_clues": [],
+        "percentage_of_license_text": 0,
+        "copyrights": [],
+        "holders": [],
+        "authors": [],
+        "emails": [],
+        "urls": [],
+        "is_generated": false,
+        "files_count": 0,
+        "dirs_count": 0,
+        "size_count": 0,
+        "scan_errors": []
+      }
+    ]
+  }
+}
