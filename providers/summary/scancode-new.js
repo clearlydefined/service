@@ -41,7 +41,7 @@ class ScanCodeSummarizerNew {
     }
     setIfValue(result, 'licensed.declared', declaredLicense)
     
-    result.files = this._summarizeFileInfo(scancodeVersion, harvested.content.files, coordinates)
+    result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
     
     return result
   }
@@ -70,7 +70,7 @@ class ScanCodeSummarizerNew {
 
   _readDeclaredLicenseExpressionFromSummary({ content }) {
     const licenseExpression = get(content, 'summary.declared_license_expression')
-    const result = licenseExpression && normalizeLicenseExpression(licenseExpression)
+    const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger)
 
     return result?.includes('NOASSERTION') ? null : result
   }
@@ -82,7 +82,7 @@ class ScanCodeSummarizerNew {
     if (!firstPackage) return null
 
     const licenseExpression = firstPackage.declared_license_expression_spdx
-      || normalizeLicenseExpression(firstPackage.declared_license_expression)
+      || normalizeLicenseExpression(firstPackage.declared_license_expression, this.logger)
 
     return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression
   }
@@ -122,11 +122,11 @@ class ScanCodeSummarizerNew {
       .filter(file => (file.percentage_of_license_text >= 80 && file.license_detections))
       .reduce((licenses, file) => {
         file.license_detections.forEach(licenseDetection => {
-          licenses.add(normalizeLicenseExpression(licenseDetection.license_expression))
+          licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
         })
         return licenses
       }, new Set())
-    return this._joinExpressions(fullLicenses)
+    return joinExpressions(fullLicenses)
   }
 
   _getLicenseByFileName(files, coordinates) {
@@ -139,10 +139,10 @@ class ScanCodeSummarizerNew {
         })
         return licenses
       }, new Set())
-    return this._joinExpressions(fullLicenses)
+    return joinExpressions(fullLicenses)
   }
 
-  _summarizeFileInfo(scancodeVersion, files, coordinates) {
+  _summarizeFileInfo(files, coordinates) {
     return files
       .map(file => {
         if (file.type !== 'file') return null
@@ -150,7 +150,7 @@ class ScanCodeSummarizerNew {
         const result = { path: file.path }
 
         const licenseExpression = file.detected_license_expression_spdx
-        || normalizeLicenseExpression(file.detected_license_expression)
+        || normalizeLicenseExpression(file.detected_license_expression, this.logger)
         setIfValue(result, 'license', licenseExpression)
         
         if (this._getLicenseFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
