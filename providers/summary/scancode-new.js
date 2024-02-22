@@ -131,11 +131,16 @@ class ScanCodeSummarizerNew {
 
   _getLicenseByFileName(files, coordinates) {
     const fullLicenses = files
-    // TODO: Update, file no longer has licenses property
-      .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
+      .filter(file => isLicenseFile(file.path, coordinates) && file.license_detections)
       .reduce((licenses, file) => {
-        file.licenses.forEach(license => {
-          if (license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+        file.license_detections.forEach(licenseDetection => {
+          if (licenseDetection.license_expression) {
+            licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
+            return
+          }
+          licenseDetection.matches.forEach(match => {
+            if (match.score >= 90) licenses.add(normalizeLicenseExpression(match.license_expression, this.logger))
+          })
         })
         return licenses
       }, new Set())
