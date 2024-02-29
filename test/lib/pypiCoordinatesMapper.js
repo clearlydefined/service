@@ -55,6 +55,30 @@ describe('PypiCoordinatesMapper', () => {
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('backports'))
     expect(mapped).to.be.null
   })
+  
+  it('should return null when pypi name to be mapped is invalid', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').rejects('Should not be called')
+    const spec = {
+      type: 'pypi',
+      provider: 'pypi',
+      name: 'back.ports/test',
+      revision: '1.0.0'
+    }
+    const coordinates = EntityCoordinates.fromObject(spec)
+    const mapped = await coordinatesMapper.map(coordinates)
+    expect(mapped).to.be.null
+  })
+
+  it('should return null given no name', async () => {
+    sinon.stub(coordinatesMapper, '_handleRequest').rejects('Should not be called')
+    const spec = {
+      type: 'pypi',
+      provider: 'pypi'
+    }
+    const coordinates = EntityCoordinates.fromObject(spec)
+    const mapped = await coordinatesMapper.map(coordinates)
+    expect(mapped).to.be.null
+  })
 })
 
 
