@@ -33,7 +33,7 @@
       "enum": [
         "npm",
         "conda",
-        "condasrc",
+        "condasource",
         "crate",
         "git",
         "maven",
