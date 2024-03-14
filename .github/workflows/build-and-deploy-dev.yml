@@ -82,7 +82,7 @@ jobs:
                 },
                 {
                     "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                    "value": "${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME  }}",
+                    "value": "${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }}",
                     "slotSetting": false
                 },
                 {
