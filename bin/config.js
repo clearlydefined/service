@@ -91,5 +91,6 @@ module.exports = {
     serviceKey: config.get('APPINSIGHTS_SERVICE_APIKEY'),
     crawlerId: config.get('APPINSIGHTS_CRAWLER_APPLICATIONID'),
     crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
-  }
+  },
+  buildsha : config.get('BUILD_SHA')
 }

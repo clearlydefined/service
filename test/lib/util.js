@@ -5,6 +5,7 @@ const expect = chai.expect
 const sinon = require('sinon')
 const utils = require('../../lib/utils')
 const { DateTime } = require('luxon')
+const EntityCoordinates = require('../../lib/entityCoordinates')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -301,8 +302,9 @@ describe('Utils isLicenseFile', () => {
       'package/COPYING.md',
       'package/COPYING.HTML'
     ]
+    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.true
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
   })
 
@@ -319,8 +321,28 @@ describe('Utils isLicenseFile', () => {
       'meta-inf/COPYING.md',
       'meta-inf/COPYING.HTML'
     ]
+    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.true
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
+    }
+  })
+
+  it('should detect package level license files for sourcearchive', () => {
+    const inputs = [
+      'meta-inf/LICENSE',
+      'meta-inf/license',
+      'meta-inf/License.txt',
+      'meta-inf/LICENSE.md',
+      'meta-inf/LICENSE.HTML',
+      'meta-inf/COPYING',
+      'meta-inf/copying',
+      'meta-inf/Copying.txt',
+      'meta-inf/COPYING.md',
+      'meta-inf/COPYING.HTML'
+    ]
+    const coordinate = EntityCoordinates.fromString('sourcearchive/mavencentral/group/artifact/version')
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
   })
 
@@ -337,8 +359,9 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/COPYING.md',
       'redis-3.1/COPYING.HTML'
     ]
+    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be.true
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
   })
 
@@ -355,8 +378,9 @@ describe('Utils isLicenseFile', () => {
       'package/COPYING.md',
       'package/COPYING.HTML',
     ]
+    const coordinate = EntityCoordinates.fromString('nuget/nuget/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'nuget' }), `input: ${input}`).to.be.false
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
   })
 
@@ -373,8 +397,9 @@ describe('Utils isLicenseFile', () => {
       '.package/COPYING.md',
       'package2/COPYING.HTML'
     ]
+    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'npm' }), `input: ${input}`).to.be.false
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
   })
 
@@ -391,8 +416,9 @@ describe('Utils isLicenseFile', () => {
       '.package/COPYING.md',
       'package2/COPYING.HTML'
     ]
+    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'maven' }), `input: ${input}`).to.be.false
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
   })
 
@@ -409,9 +435,9 @@ describe('Utils isLicenseFile', () => {
       'other-3.1/COPYING',
       'package/COPYING'
     ]
+    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, { type: 'pypi', name: 'redis', revision: '3.1' }), `input: ${input}`).to.be
-        .false
+      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
   })
 
