@@ -71,20 +71,30 @@ jobs:
           app-settings-json: |
             [
               {
-                "name": "DOCKER_CUSTOM_IMAGE_NAME",
-                "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}",
-                "slotSetting": false
+                    "name": "DOCKER_CUSTOM_IMAGE_NAME",
+                    "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}",
+                    "slotSetting": false
               },
               {
-                "name": "DOCKER_REGISTRY_SERVER_URL",
-                "value": "https://ghcr.io",
-                "slotSetting": false
-              },
-              {
-                  "name": "BUILD_SHA",
-                  "value": "${{ github.sha }}",
-                  "slotSetting": false
-              }
+                    "name": "DOCKER_REGISTRY_SERVER_URL",
+                    "value": "https://ghcr.io",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                    "value": "${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                    "value": "${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "BUILD_SHA",
+                    "value": "${{ github.sha }}",
+                    "slotSetting": false
+                }
             ]
 
       - name: Deploy to Azure WebApp
