@@ -46,6 +46,7 @@ class StatsService {
       pypi: () => this._getType('pypi'),
       deb: () => this._getType('deb'),
       debsrc: () => this._getType('debsrc'),
+      rpm: () => this._getType('rpm'),
     }
   }
 

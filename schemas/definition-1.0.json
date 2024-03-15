@@ -43,7 +43,8 @@
         "pypi",
         "sourcearchive",
         "deb",
-        "debsrc"
+        "debsrc",
+        "rpm"
       ]
     },
     "provider": {
@@ -61,7 +62,8 @@
         "nuget",
         "rubygems",
         "pypi",
-        "debian"
+        "debian",
+        "mariner"
       ]
     },
     "_meta": {

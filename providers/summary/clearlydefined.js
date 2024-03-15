@@ -74,6 +74,9 @@ class ClearlyDescribedSummarizer {
       case 'debsrc':
         this.addDebSrcData(result, data, coordinates)
         break
+      case 'rpm':
+        this.addRpmData(result, data, coordinates)
+        break
       default:
     }
     return result
@@ -89,6 +92,9 @@ class ClearlyDescribedSummarizer {
   }
 
   addSourceLocation(result, data) {
+    // It's not deducible where the source of RPMs are - in this case
+    // we rely on the crawler to tell us.
+    setIfValue(result, 'described.sourceLocation', get(data, 'registryData.srcRpmUrl'))
     if (!data.sourceInfo) return
     const spec = data.sourceInfo
     updateSourceLocation(spec)
@@ -468,6 +474,17 @@ class ClearlyDescribedSummarizer {
       return 'http://ftp.debian.org/debian/' + pathName
     }
     return null
+  }
+
+  addRpmData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    if (!data.registryData) return
+    if (result.described.sourceLocation) {
+      result.described.sourceLocation.url = data.registryData.srcRpmUrl
+    }
+    setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicense))
+    setIfValue(result, 'described.urls.registry', data.registryData.rpmUrl)
+    setIfValue(result, 'described.urls.download', data.registryData.rpmUrl)
   }
 
   addGoData(result, data, coordinates) {
