@@ -73,7 +73,7 @@ jobs:
             type=${{ env.APPLICATION_TYPE }}
 
       - name: Login for Azure cli commands
-        uses: azure/login@v1.6.1
+        uses: azure/login@v2.0.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
 
