@@ -49,7 +49,7 @@ jobs:
         env:
           DOCKER_TAGS: |
             ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v5.2.0
         with:
           context: .
           push: true
