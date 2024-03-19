@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { get, flatten, uniq } = require('lodash')
+const { gte } = require('semver')
 const SPDX = require('@clearlydefined/spdx')
 const {
   extractDate,
@@ -10,10 +11,11 @@ const {
   isLicenseFile,
   setIfValue,
   addArrayToSet,
-  setToArray
+  joinExpressions,
+  normalizeLicenseExpression
 } = require('../../lib/utils')
 const logger = require('../logging/logger')
-const scancodeMap = require('../../lib/scancodeMap')
+const ScanCodeSummarizerNew = require('./scancode-new')
 
 class ScanCodeSummarizer {
   constructor(options) {
@@ -31,6 +33,11 @@ class ScanCodeSummarizer {
     const scancodeVersion =
       get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
+
+    if (gte(scancodeVersion, '32.0.8')) {
+      return ScanCodeSummarizerNew(this.options).summarize(coordinates, harvested)
+    }
+
     const result = {}
     this.addDescribedInfo(result, harvested)
     let declaredLicense = this._getDeclaredLicenseFromSummary(scancodeVersion, harvested)
@@ -86,7 +93,7 @@ class ScanCodeSummarizer {
 
   _readLicenseExpressionFromSummary(harvested) {
     const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression')
-    const result = licenseExpression && this._normalizeLicenseExpression(licenseExpression)
+    const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger)
     return result?.includes('NOASSERTION') ? null : result
   }
 
@@ -136,7 +143,7 @@ class ScanCodeSummarizer {
         })
         return licenses
       }, new Set())
-    return this._joinExpressions(fullLicenses)
+    return joinExpressions(fullLicenses)
   }
 
   _getLicenseByFileName(files, coordinates) {
@@ -148,7 +155,7 @@ class ScanCodeSummarizer {
         })
         return licenses
       }, new Set())
-    return this._joinExpressions(fullLicenses)
+    return joinExpressions(fullLicenses)
   }
 
   // Create a license expression from all of the package info in the output
@@ -163,7 +170,7 @@ class ScanCodeSummarizer {
           // TODO, is `license.license` real?
           license => license.license || license.spdx_license_key
         )
-        return this._joinExpressions(packageLicenses)
+        return joinExpressions(packageLicenses)
       }
     }
     return null
@@ -179,7 +186,7 @@ class ScanCodeSummarizer {
         let licenses = new Set(fileLicense.map(x => x.license).filter(x => x))
         if (!licenses.size)
           licenses = new Set(fileLicense.filter(x => x.score >= 80).map(x => this._createExpressionFromLicense(x)))
-        const licenseExpression = this._joinExpressions(licenses)
+        const licenseExpression = joinExpressions(licenses)
         setIfValue(result, 'license', licenseExpression)
         if (this._getLicenseByIsLicenseText([file]) || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
@@ -196,24 +203,10 @@ class ScanCodeSummarizer {
       .filter(e => e)
   }
 
-  _joinExpressions(expressions) {
-    if (!expressions) return null
-    const list = setToArray(expressions)
-    if (!list) return null
-    return list.join(' AND ')
-  }
-
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
     if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
-    return this._normalizeLicenseExpression(rule.license_expression)
-  }
-
-  _normalizeLicenseExpression(licenseExpression) {
-    const parsed = SPDX.parse(licenseExpression, (key) => SPDX.normalizeSingle(scancodeMap.get(key) || key))
-    const result = SPDX.stringify(parsed)
-    if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
-    return result
+    return normalizeLicenseExpression(rule.license_expression, this.logger)
   }
 }
 
