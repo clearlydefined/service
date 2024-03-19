@@ -38,7 +38,10 @@ async function fetchCondaRepoData(channel, subdir) {
 router.get(
   '/:channel/:subdir/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const { channel, subdir, name } = request.params
+    let { channel, subdir, name } = request.params
+    channel = encodeURIComponent(channel)
+    subdir = encodeURIComponent(subdir)
+    name = encodeURIComponent(channel)
     if (!condaChannels[channel]) {
       return response.status(404).send(`Unrecognized Conda channel ${channel}`)
     }
@@ -77,7 +80,9 @@ router.get(
 router.get(
   '/:channel/:name',
   asyncMiddleware(async (request, response) => {
-    const { channel, name } = request.params
+    let { channel, name } = request.params
+    channel = encodeURIComponent(channel)
+    name = encodeURIComponent(name)
     if (!condaChannels[channel]) {
       return response.status(404).send([])
     }
