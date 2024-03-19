@@ -20,6 +20,12 @@ const mavenBasedUrls = {
   gradleplugin: 'https://plugins.gradle.org/m2'
 }
 
+const condaChannels = {
+  'anaconda-main': 'https://repo.anaconda.com/pkgs/main',
+  'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
+  'conda-forge': 'https://conda.anaconda.org/conda-forge'
+}
+
 class ClearlyDescribedSummarizer {
   constructor(options) {
     this.options = options
@@ -43,6 +49,12 @@ class ClearlyDescribedSummarizer {
         break
       case 'npm':
         this.addNpmData(result, data, coordinates)
+        break
+      case 'conda':
+        this.addCondaData(result, data, coordinates)
+        break
+      case 'condasrc':
+        this.addCondaSrcData(result, data, coordinates)
         break
       case 'crate':
         this.addCrateData(result, data, coordinates)
@@ -190,6 +202,23 @@ class ClearlyDescribedSummarizer {
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
+
+  addCondaData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(get(data, 'releaseDate')))
+    setIfValue(result, 'described.urls.download', get(data, 'registryData.downloadUrl'))
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
+    setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicenses))
+  }
+
+  addCondaSrcData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.download', get(data, 'registryData.channelData.source_url'))
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
+    setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicenses))
+  }
+
 
   addCrateData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at')))
