@@ -12,7 +12,7 @@ describe('Dispatch Definition store', () => {
     store1 = createStore()
     store2 = createStore()
     logger = { error: sinon.stub() }
-    dispatchDefinitionStore = DispatchDefinitionStore({      
+    dispatchDefinitionStore = DispatchDefinitionStore({
       stores: [store1, store2],
       logger
     })

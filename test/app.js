@@ -8,12 +8,19 @@ const init = require('express-init')
 const Application = require('../app')
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
-    get: () => null
+    get: name => {
+      return (
+        {
+          WEBHOOK_GITHUB_SECRET: 'secret',
+          WEBHOOK_CRAWLER_SECRET: 'secret'
+        }[name] || null
+      )
+    }
   }
 })
 
 describe('Application', () => {
-  it('should initialize', (done) => {
+  it('should initialize', done => {
     const app = Application(config)
     init(app, error => {
       if (error) {

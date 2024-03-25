@@ -10,7 +10,7 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
     const inputs = {
-      '1': ['1'], // https://github.com/clearlydefined/crawler/issues/124
+      1: ['1'], // https://github.com/clearlydefined/crawler/issues/124
       '1.1.0': ['1', '1.0.1', '1.1.0'], // special handling for version = '1'
       '1.2.0': ['1', '1.2.0'],
       '2.0.0': ['2.0.0'],
@@ -165,7 +165,10 @@ describe('Utils mergeDefinitions', () => {
   it('does not mess with existing entries', () => {
     const base = {
       described: { releaseDate: '2018-6-3' },
-      files: [{ path: '1.txt', license: 'MIT' }, { path: '2.txt', license: 'GPL' }]
+      files: [
+        { path: '1.txt', license: 'MIT' },
+        { path: '2.txt', license: 'GPL' }
+      ]
     }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition)
@@ -269,8 +272,16 @@ describe('Copyright simplification', () => {
 describe('Utils isLicenseFile', () => {
   it('should detect root level license files', () => {
     const inputs = [
-      'LICENSE', 'license', 'License.txt', 'LICENSE.md', 'LICENSE.HTML',
-      'COPYING', 'copying', 'copying.txt', 'COPYING.md', 'copying.html'
+      'LICENSE',
+      'license',
+      'License.txt',
+      'LICENSE.md',
+      'LICENSE.HTML',
+      'COPYING',
+      'copying',
+      'copying.txt',
+      'COPYING.md',
+      'copying.html'
     ]
 
     for (const input of inputs) {
@@ -279,10 +290,7 @@ describe('Utils isLicenseFile', () => {
   })
 
   it('should not detect nested license files without coordinates', () => {
-    const inputs = [
-      'package/LICENSE', 'licenses/license',
-      'package/COPYING', 'licenses/copying'
-    ]
+    const inputs = ['package/LICENSE', 'licenses/license', 'package/COPYING', 'licenses/copying']
 
     for (const input of inputs) {
       expect(utils.isLicenseFile(input), `input: ${input}`).to.be.false
@@ -376,7 +384,7 @@ describe('Utils isLicenseFile', () => {
       'package/copying',
       'package/Copying.txt',
       'package/COPYING.md',
-      'package/COPYING.HTML',
+      'package/COPYING.HTML'
     ]
     const coordinate = EntityCoordinates.fromString('nuget/nuget/-/redis/3.1')
     for (const input of inputs) {
@@ -482,7 +490,7 @@ describe('Utils compareDates', () => {
   })
 
   it('reverse sort non null dates', () => {
-    const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort((x, y) => (-utils.compareDates(x, y)))
+    const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort((x, y) => -utils.compareDates(x, y))
     expect(sorted).to.deep.eq(['2010-01-01', '2000-01-01', '1990-01-01'])
   })
 
@@ -492,7 +500,7 @@ describe('Utils compareDates', () => {
   })
 
   it('reverse sort null and non null: null last', () => {
-    const sorted = [null, '1990-01-01', null].sort((x, y) => (-utils.compareDates(x, y)))
+    const sorted = [null, '1990-01-01', null].sort((x, y) => -utils.compareDates(x, y))
     expect(sorted).to.deep.eq(['1990-01-01', null, null])
   })
 })
@@ -509,7 +517,7 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   }
 
   before(function () {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', (entry) => Promise.resolve(entry))
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
   })
 
   after(function () {
@@ -570,7 +578,7 @@ describe('Utils parseNamespaceNameRevision', () => {
       revision: 'foo',
       extra1: 'bar',
       extra2: 'bah',
-      extra3: 'v3.1.0',
+      extra3: 'v3.1.0'
     }
   }
 
@@ -592,7 +600,7 @@ describe('Utils getLicenseLocations', () => {
   }
 
   before(function () {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', (entry) => Promise.resolve(entry))
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
   })
 
   after(function () {
@@ -700,7 +708,9 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar')
+      expect(result).to.eq(
+        'https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar'
+      )
     })
 
     it('returns the correct mavencentral source url with dots in the namespace', () => {
@@ -715,8 +725,9 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq('https://search.maven.org/remotecontent?filepath=clearlydefined/foo/service/1.2.3/service-1.2.3-sources.jar')
-
+      expect(result).to.eq(
+        'https://search.maven.org/remotecontent?filepath=clearlydefined/foo/service/1.2.3/service-1.2.3-sources.jar'
+      )
     })
 
     it('returns the correct mavengoogle source url', () => {

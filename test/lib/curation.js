@@ -100,7 +100,9 @@ describe('Curations', () => {
     const content = getFixture('curation-invalid.11.yaml')
     const curation = new Curation(content)
     expect(curation.isValid).to.be.false
-    expect(curation.errors[0].error).to.equal('/foo in 4.17.4 files with value "mit and apache-2.0" is not SPDX compliant')
+    expect(curation.errors[0].error).to.equal(
+      '/foo in 4.17.4 files with value "mit and apache-2.0" is not SPDX compliant'
+    )
   })
 
   it('should identify valid curations', () => {

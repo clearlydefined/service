@@ -9,7 +9,7 @@ const redisCache = require('../../../providers/caching/redis')
 
 describe('get a tool result', () => {
   const store = {}
-  beforeEach(function() {
+  beforeEach(function () {
     sandbox.stub(redis, 'createClient').callsFake(() => {
       return {
         get: (key, callback) => callback(null, store[key]),
@@ -25,7 +25,7 @@ describe('get a tool result', () => {
     })
   })
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore()
   })
 

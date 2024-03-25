@@ -55,8 +55,9 @@ describe('Github Curation Service', () => {
     })
 
     const curations = await service.getContributedCurations(42, 'testBranch')
-    service.logger = { // intercept and verify invalid contribution
-      error: (description) => {
+    service.logger = {
+      // intercept and verify invalid contribution
+      error: description => {
         expect(description).to.be.eq('Invalid curations: curations/sdfdsf/npmjs/test.yaml')
       }
     }
@@ -65,7 +66,9 @@ describe('Github Curation Service', () => {
     expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
     expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
     expect(service._postErrorsComment.calledOnce).to.be.true
-    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq('We discovered some errors in this curation when validating it:\n\nThis is an error\n')
+    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq(
+      'We discovered some errors in this curation when validating it:\n\nThis is an error\n'
+    )
   })
 
   it('merges simple changes', async () => {
@@ -259,7 +262,9 @@ describe('Github Curation Service', () => {
       const { service, harvestStore } = setup()
       sinon
         .stub(service, 'listAll')
-        .callsFake(() => [EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })])
+        .callsFake(() => [
+          EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+        ])
       sinon.stub(service, 'list').callsFake(() => [
         'npm/npmjs/-/test/1.0', // curated revision
         'npm/npmjs/-/test/1.1', // license match on file
@@ -282,12 +287,17 @@ describe('Github Curation Service', () => {
       const expectedResults = [
         { version: '1.1', matchingProperties: [{ file: 'LICENSE.txt' }] },
         {
-          version: '1.2', matchingProperties: [{
-            propPath: 'registryData.manifest.license',
-            value: ['LICENSE METADATA']
-          }]
-        }]
-      const expectedDescription = '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: ["LICENSE METADATA"]'
+          version: '1.2',
+          matchingProperties: [
+            {
+              propPath: 'registryData.manifest.license',
+              value: ['LICENSE METADATA']
+            }
+          ]
+        }
+      ]
+      const expectedDescription =
+        '- 1.1\n- 1.2\n\nMatching license file(s): LICENSE.txt\nMatching metadata: registryData.manifest.license: ["LICENSE METADATA"]'
       const description = gitHubService._formatMultiversionCuratedRevisions(expectedResults)
       expect(description).to.be.deep.equal(expectedDescription)
 
@@ -302,14 +312,14 @@ describe('Github Curation Service', () => {
         '(http://localhost:3000/curations/143)'
       )
 
-      assert(startMatchingSpy.calledWith(
-        EntityCoordinates.fromObject(definitionCoordinates),
-        [
+      assert(
+        startMatchingSpy.calledWith(EntityCoordinates.fromObject(definitionCoordinates), [
           EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
           EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
           EntityCoordinates.fromString('npm/npmjs/-/test/1.3'),
-          EntityCoordinates.fromString('npm/npmjs/-/test/1.4'),
-        ]))
+          EntityCoordinates.fromString('npm/npmjs/-/test/1.4')
+        ])
+      )
       assert(calculateMatchingRevisionAndReasonSpy.calledWith(curatedCoordinates))
       assert(formatRevisionsSpy.calledWith(expectedResults))
     })
@@ -341,7 +351,7 @@ describe('Github Curation Service', () => {
       gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
       // TODO: Should not stub private functions and private properties
       sinon.stub(gitHubService, 'github').value({
-        users: { get: sinon.stub() },
+        users: { get: sinon.stub() }
       })
       sinon.stub(gitHubService, '_addOrUpdate').resolves({
         data: { number: 1 }
@@ -389,10 +399,7 @@ describe('Github Curation Service', () => {
 
     beforeEach(() => {
       const definitionService = {
-        list: sinon.stub().resolves([
-          'npm/npmjs/-/express/5.0.0',
-          'npm/npmjs/-/express/4.0.0'
-        ]),
+        list: sinon.stub().resolves(['npm/npmjs/-/express/5.0.0', 'npm/npmjs/-/express/4.0.0']),
         getStored: sinon.stub().resolves({
           coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
         })
@@ -431,30 +438,40 @@ describe('Github Curation Service', () => {
       }
       matcherResult = {
         isMatching: true,
-        match: [{
-          file: 'LICENSE.txt'
-        }, {
-          propPath: 'registryData.manifest.license',
-          value: 'LICENSE METADATA'
-        }]
+        match: [
+          {
+            file: 'LICENSE.txt'
+          },
+          {
+            propPath: 'registryData.manifest.license',
+            value: 'LICENSE METADATA'
+          }
+        ]
       }
       const coordinatesList = [EntityCoordinates.fromString('npm/npmjs/-/express')]
       const result = await gitHubService.reprocessMergedCurations(coordinatesList)
       expect(result).to.have.lengthOf(1)
-      expect(result).to.be.deep.includes.members([{
-        coordinates: 'npm/npmjs/-/express',
-        contributions: [{
-          coordinates: 'npm/npmjs/-/express/5.0.0',
-          contribution: 'www.curation.pr.com'
-        }]
-      }])
+      expect(result).to.be.deep.includes.members([
+        {
+          coordinates: 'npm/npmjs/-/express',
+          contributions: [
+            {
+              coordinates: 'npm/npmjs/-/express/5.0.0',
+              contribution: 'www.curation.pr.com'
+            }
+          ]
+        }
+      ])
     })
   })
 
   describe('verify _getBranchName', () => {
     before(function () {
-      sinon.replace(DateTime, 'now', sinon.stub().callsFake()
-        .returns(DateTime.fromFormat('211203_140949.712', 'yyMMdd_HHmmss.SSS')))
+      sinon.replace(
+        DateTime,
+        'now',
+        sinon.stub().callsFake().returns(DateTime.fromFormat('211203_140949.712', 'yyMMdd_HHmmss.SSS'))
+      )
     })
 
     after(function () {
@@ -494,15 +511,24 @@ const complexCuration = {
     '1.0': {
       described: { releaseDate: '2018-10-19', projectWebsite: 'http://foo.com' },
       licensed: { declared: 'Apache-2.0' },
-      files: [{ path: '1.txt', license: 'MIT' }, { path: '2.txt', license: 'GPL' }]
+      files: [
+        { path: '1.txt', license: 'MIT' },
+        { path: '2.txt', license: 'GPL' }
+      ]
     }
   }
 }
 
-function createService(definitionService = null, licenseMatcher = null, harvestStore = null, endpoints = { website: 'http://localhost:3000' }, store = CurationStore({})) {
+function createService(
+  definitionService = null,
+  licenseMatcher = null,
+  harvestStore = null,
+  endpoints = { website: 'http://localhost:3000' },
+  store = CurationStore({})
+) {
   const mockCache = {
     get: sinon.stub().resolves(undefined),
-    set: sinon.stub(),
+    set: sinon.stub()
   }
   require('../../../providers/logging/logger')({
     error: sinon.stub(),
@@ -555,7 +581,10 @@ const simpleHarvested = {
 const complexHarvested = {
   coordinates: definitionCoordinates,
   described: { releaseDate: '2018-08-09' },
-  files: [{ path: '2.txt', token: '2 token' }, { path: '1.txt', token: '1 token' }]
+  files: [
+    { path: '2.txt', token: '2 token' },
+    { path: '1.txt', token: '1 token' }
+  ]
 }
 
 const complexHarvestedWithLicenses = {

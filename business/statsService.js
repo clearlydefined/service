@@ -47,7 +47,7 @@ class StatsService {
       composer: () => this._getType('composer'),
       pypi: () => this._getType('pypi'),
       deb: () => this._getType('deb'),
-      debsrc: () => this._getType('debsrc'),
+      debsrc: () => this._getType('debsrc')
     }
   }
 

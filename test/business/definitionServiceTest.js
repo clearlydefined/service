@@ -15,7 +15,6 @@ const chai = require('chai')
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
-
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
     const { service, coordinates } = setup()
@@ -333,43 +332,43 @@ describe('Aggregation service', () => {
         tools: [['clearlydefined', 'licensee', 'scancode']],
         // Ideally this would be declared without any parentheses, but currently
         // the SPDX normalization adds them.
-        expected: 'MPL-2.0 OR (MIT OR Apache-2.0)',
+        expected: 'MPL-2.0 OR (MIT OR Apache-2.0)'
       },
       {
         name: 'quote',
         version: '0.6.4',
         tools: [['clearlydefined', 'fossology', 'licensee', 'scancode']],
-        expected: 'MIT OR Apache-2.0',
+        expected: 'MIT OR Apache-2.0'
       },
       {
         name: 'quote',
         version: '1.0.9',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        expected: 'MIT OR Apache-2.0',
+        expected: 'MIT OR Apache-2.0'
       },
       {
         name: 'rand',
         version: '0.8.2',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        expected: 'MIT OR Apache-2.0',
+        expected: 'MIT OR Apache-2.0'
       },
       {
         name: 'regex',
         version: '1.5.3',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        expected: 'MIT OR Apache-2.0',
+        expected: 'MIT OR Apache-2.0'
       },
       {
         name: 'serde',
         version: '1.0.123',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        expected: 'MIT OR Apache-2.0',
+        expected: 'MIT OR Apache-2.0'
       },
       {
         name: 'mpmc',
         version: '0.1.6',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        expected: 'BSD-2-Clause-Views',
+        expected: 'BSD-2-Clause-Views'
       }
     ]
 
@@ -434,7 +433,9 @@ function setup(definition, coordinateSpec, curation) {
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation)),
-    autoCurate: () => { return }
+    autoCurate: () => {
+      return
+    }
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
   const harvestService = { harvest: () => sinon.stub() }

@@ -61,9 +61,8 @@ class FileHarvestStore extends AbstractFileStore {
     const contents = await Promise.all(
       files.map(file => {
         return new Promise((resolve, reject) =>
-          fs.readFile(
-            file,
-            (error, data) => (error ? reject(error) : resolve({ name: file, content: JSON.parse(data) }))
+          fs.readFile(file, (error, data) =>
+            error ? reject(error) : resolve({ name: file, content: JSON.parse(data) })
           )
         )
       })

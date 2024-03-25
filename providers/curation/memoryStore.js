@@ -57,9 +57,7 @@ class MemoryStore {
 
   _getCurationId(coordinates) {
     if (!coordinates) return ''
-    return EntityCoordinates.fromObject(coordinates)
-      .toString()
-      .toLowerCase()
+    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 }
 

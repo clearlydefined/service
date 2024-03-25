@@ -11,9 +11,7 @@ const validator = require('../schemas/validator')
 router.get('/', asyncMiddleware(getDefinition))
 
 async function getDefinition(req, resp) {
-  const {
-    coordinates, pr, expand
-  } = req.query
+  const { coordinates, pr, expand } = req.query
   const force = req.query.force === true || req.query.force === 'true'
   let coordinatesEntity = EntityCoordinates.fromString(coordinates)
   const isValid = validator.validate('definitions-get-dto', {
@@ -28,7 +26,7 @@ async function getDefinition(req, resp) {
   try {
     coordinatesEntity = await utils.toNormalizedEntityCoordinates(coordinatesEntity)
   } catch (err) {
-    return resp.status(404).send(`The ${coordinates} is not public.`)
+    return resp.status(404).send(`The ${encodeURIComponent(coordinates)} is not public.`)
   }
   const result = await definitionService.get(coordinatesEntity, pr, force, expand)
 

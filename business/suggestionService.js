@@ -22,8 +22,11 @@ class SuggestionService {
     let hasSuggested = false
     const suggestion = { coordinates }
     if (Array.isArray(definitions.related) && definitions.related.length > 0) {
-      hasSuggested = this._collectSuggestionsForField(definitions, suggestion, 'licensed.declared', (definition, field) =>
-        isDeclaredLicense(get(definition, field))
+      hasSuggested = this._collectSuggestionsForField(
+        definitions,
+        suggestion,
+        'licensed.declared',
+        (definition, field) => isDeclaredLicense(get(definition, field))
       )
       hasSuggested |= this._collectSuggestionsForField(definitions, suggestion, 'described.sourceLocation')
     }
@@ -31,13 +34,15 @@ class SuggestionService {
     if (!isDeclaredLicense(get(definitions.original, 'licensed.declared'))) {
       let discoveredExpressions = get(definitions.original, 'licensed.facets.core.discovered.expressions')
       if (Array.isArray(discoveredExpressions)) {
-        let appendDeclared = discoveredExpressions
-          .filter(isDeclaredLicense)
-          .map(value => { return { value, version: get(definitions.original, 'coordinates.revision') } })
+        let appendDeclared = discoveredExpressions.filter(isDeclaredLicense).map(value => {
+          return { value, version: get(definitions.original, 'coordinates.revision') }
+        })
         let suggestedSoFar = get(suggestion, 'licensed.declared') || []
-        hasSuggested |= setIfValue(suggestion, 'licensed.declared', appendDeclared
-          .concat(suggestedSoFar)
-          .filter((v, i, a) => a.indexOf(v) === i))
+        hasSuggested |= setIfValue(
+          suggestion,
+          'licensed.declared',
+          appendDeclared.concat(suggestedSoFar).filter((v, i, a) => a.indexOf(v) === i)
+        )
       }
     }
 

@@ -39,8 +39,8 @@ TBD
 
 Configuration properties can be found at:
 
-* [service/full.env.json](https://github.com/clearlydefined/service/blob/master/full.env.json)
-* [service/bin/config.js](https://github.com/clearlydefined/service/blob/master/bin/config.js)
+- [service/full.env.json](https://github.com/clearlydefined/service/blob/master/full.env.json)
+- [service/bin/config.js](https://github.com/clearlydefined/service/blob/master/bin/config.js)
 
 # Contributing
 

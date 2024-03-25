@@ -23,10 +23,10 @@ const sortOptions = {
 }
 
 const valueTransformers = {
-  'licensed.score.total': (value) => value && parseInt(value),
-  'described.score.total': (value) => value && parseInt(value),
-  'scores.effective': (value) => value && parseInt(value),
-  'scores.tool': (value) => value && parseInt(value)
+  'licensed.score.total': value => value && parseInt(value),
+  'described.score.total': value => value && parseInt(value),
+  'scores.effective': value => value && parseInt(value),
+  'scores.tool': value => value && parseInt(value)
 }
 
 const SEPARATOR = '&'
@@ -38,7 +38,7 @@ class AbstractMongoDefinitionStore {
   }
 
   initialize() {
-    return promiseRetry(async (retry) => {
+    return promiseRetry(async retry => {
       try {
         this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
         this.db = this.client.db(this.options.dbName)
@@ -173,7 +173,7 @@ class AbstractMongoDefinitionStore {
     const sort = sortOptions[parameters.sort] || []
     const clause = {}
     const sortDirection = parameters.sortDesc ? -1 : 1
-    sort.forEach((item) => (clause[item] = sortDirection))
+    sort.forEach(item => (clause[item] = sortDirection))
     //Always sort on coordinatesKey(_id or partitionKey) for continuation token
     const coordinateKey = this.getCoordinatesKey()
     clause[coordinateKey] = sortDirection
@@ -194,7 +194,7 @@ class AbstractMongoDefinitionStore {
 
   _buildQueryExpressions(continuationToken, sort) {
     const lastValues = base64.decode(continuationToken)
-    const sortValues = lastValues.split(SEPARATOR).map((value) => (value.length ? value : null))
+    const sortValues = lastValues.split(SEPARATOR).map(value => (value.length ? value : null))
 
     const queryExpressions = []
     const sortConditions = Object.entries(sort)
@@ -240,7 +240,7 @@ class AbstractMongoDefinitionStore {
     if (data.length !== pageSize) return ''
     const lastItem = data[data.length - 1]
     const lastValues = Object.keys(sortClause)
-      .map((key) => get(lastItem, key))
+      .map(key => get(lastItem, key))
       .join(SEPARATOR)
     return base64.encode(lastValues)
   }

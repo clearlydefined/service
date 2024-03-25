@@ -15,7 +15,6 @@ router.get(
   '/:namespace/:project/:revisions',
   asyncMiddleware(async (request, response) => {
     try {
-
       const { namespace, project } = request.params
 
       const project_info = await gitlab.Projects.search(project)
@@ -24,10 +23,10 @@ router.get(
       const tags = await gitlab.Tags.all(project_match.id)
 
       const unsorted = tags.map(tag => {
-        return ({
+        return {
           tag: tag.name,
           sha: tag.commit.id
-        })
+        }
       })
 
       const result = unsorted.filter(x => x).sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
@@ -82,7 +81,7 @@ function setup() {
 function getExactProjectMatch(namespace, project, projects) {
   let exact_match
 
-  projects.filter((item) => {
+  projects.filter(item => {
     if (item.path_with_namespace == `${namespace}/${project}`) {
       exact_match = item
     }
@@ -95,9 +94,9 @@ async function projectsByProjectName(namespace, project) {
   const projects = await gitlab.Projects.search(project)
 
   let project_names = projects.map(project => {
-    return ({
+    return {
       id: project.path_with_namespace
-    })
+    }
   })
 
   return project_names
@@ -109,9 +108,7 @@ async function getUserProjects(username) {
   const user_projects = await gitlab.Users.projects(user_response[0].id)
 
   const user_project_names = user_projects.map(project => {
-    return (
-      project.name
-    )
+    return project.name
   })
 
   return user_project_names
@@ -121,10 +118,10 @@ async function getUsers(userName) {
   const users = await gitlab.Users.search(userName)
 
   let user_names = users.map(user => {
-    return ({
+    return {
       id: user.id,
       username: user.username
-    })
+    }
   })
 
   return user_names
@@ -137,9 +134,7 @@ async function getGroupProjects(groupName) {
     const group_projects = await gitlab.Groups.projects(group_response[0])
 
     let group_project_names = group_projects.map(project => {
-      return (
-        project.name
-      )
+      return project.name
     })
 
     return group_project_names
@@ -154,9 +149,7 @@ async function getGroups(groupName) {
   const groups = await gitlab.Groups.search(groupName)
 
   let group_names = groups.map(group => {
-    return (
-      group.id
-    )
+    return group.id
   })
 
   return group_names

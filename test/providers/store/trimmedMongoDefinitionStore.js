@@ -15,8 +15,8 @@ const dbOptions = {
   dbName: 'clearlydefined',
   collectionName: 'definitions-trimmed',
   logger: {
-    debug: () => {},
-  },
+    debug: () => {}
+  }
 }
 
 describe('Trimmed Mongo Definition store', () => {
@@ -28,7 +28,7 @@ describe('Trimmed Mongo Definition store', () => {
     const uri = await mongoServer.getUri()
     const options = {
       ...dbOptions,
-      connectionString: uri,
+      connectionString: uri
     }
     mongoStore = TrimmedMongoDefinitionStore(options)
     await mongoStore.initialize()
@@ -97,7 +97,7 @@ describe('Trimmed Mongo Definition store', () => {
       expect(defs.data.length).to.be.eq(0)
     })
   })
- 
+
   describe('find', () => {
     it('should call find with right arguments', async () => {
       mongoStore.collection.find = sinon.fake.returns({ toArray: () => Promise.resolve([]) })
@@ -107,13 +107,13 @@ describe('Trimmed Mongo Definition store', () => {
       const opts = {
         projection: undefined,
         sort: { _id: 1 },
-        limit: 100,
+        limit: 100
       }
       const findArgs = mongoStore.collection.find.firstCall.args
       expect(findArgs[0]).to.be.deep.equal(filter)
       expect(findArgs[1]).to.be.deep.equal(opts)
     })
-    
+
     it('should find one page of records', async () => {
       const expected = [
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
@@ -136,7 +136,7 @@ describe('Trimmed Mongo Definition store', () => {
       expect(defs1.continuationToken).to.be.ok
       const defs2 = await mongoStore.find(query, defs1.continuationToken, 7)
       expect(defs2.continuationToken).to.be.not.ok
-      const allDefs = [ ...defs1.data, ...defs2.data]
+      const allDefs = [...defs1.data, ...defs2.data]
       const coordinates = verifyUniqueCoordinates(allDefs)
       expect(coordinates.length).to.be.equal(12)
     })
@@ -171,34 +171,49 @@ describe('Trimmed Mongo Definition store', () => {
 
       it('builds a mongo query with continuationToken', () => {
         const parameters = { namespace: '@owner', name: 'package' }
-        const sort = {'_id': 1}
+        const sort = { _id: 1 }
         const continuationToken = 'bnBtL25wbWpzLy0vdmVycm9yLzEuMTAuMA'
         const expected = {
-          '$and': [{
-            'coordinates.name': 'package',
-            'coordinates.namespace': '@owner'
-          }, {
-            '_id': { '$gt': 'npm/npmjs/-/verror/1.10.0' }
-          }]  
+          $and: [
+            {
+              'coordinates.name': 'package',
+              'coordinates.namespace': '@owner'
+            },
+            {
+              _id: { $gt: 'npm/npmjs/-/verror/1.10.0' }
+            }
+          ]
         }
-    
+
         expect(mongoStore._buildQueryWithPaging(parameters, continuationToken, sort)).to.deep.equal(expected)
       })
 
       it('builds a mongo sort', () => {
         const data = new Map([
-          [{}, { '_id': 1 }],
-          [{ sort: 'type' }, { 'coordinates.type': 1, '_id': 1 }],
-          [{ sort: 'provider' }, { 'coordinates.provider': 1, '_id': 1 }],
-          [{ sort: 'name', sortDesc: true }, { 'coordinates.name': -1, 'coordinates.revision': -1, '_id': -1 }],
-          [{ sort: 'namespace' }, { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, '_id': 1 }],
-          [{ sort: 'license', sortDesc: true }, { 'licensed.declared': -1, '_id': -1 }],
-          [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, '_id': 1 }],
-          [{ sort: 'licensedScore', sortDesc: false }, { 'licensed.score.total': 1, '_id': 1 }],
-          [{ sort: 'describedScore' }, { 'described.score.total': 1, '_id': 1 }],
-          [{ sort: 'effectiveScore' }, { 'scores.effective': 1, '_id': 1 }],
-          [{ sort: 'toolScore' }, { 'scores.tool': 1, '_id': 1 }],
-          [{ sort: 'revision' }, { 'coordinates.revision': 1, '_id': 1 }]
+          [{}, { _id: 1 }],
+          [{ sort: 'type' }, { 'coordinates.type': 1, _id: 1 }],
+          [{ sort: 'provider' }, { 'coordinates.provider': 1, _id: 1 }],
+          [
+            { sort: 'name', sortDesc: true },
+            { 'coordinates.name': -1, 'coordinates.revision': -1, _id: -1 }
+          ],
+          [
+            { sort: 'namespace' },
+            { 'coordinates.namespace': 1, 'coordinates.name': 1, 'coordinates.revision': 1, _id: 1 }
+          ],
+          [
+            { sort: 'license', sortDesc: true },
+            { 'licensed.declared': -1, _id: -1 }
+          ],
+          [{ sort: 'releaseDate' }, { 'described.releaseDate': 1, _id: 1 }],
+          [
+            { sort: 'licensedScore', sortDesc: false },
+            { 'licensed.score.total': 1, _id: 1 }
+          ],
+          [{ sort: 'describedScore' }, { 'described.score.total': 1, _id: 1 }],
+          [{ sort: 'effectiveScore' }, { 'scores.effective': 1, _id: 1 }],
+          [{ sort: 'toolScore' }, { 'scores.tool': 1, _id: 1 }],
+          [{ sort: 'revision' }, { 'coordinates.revision': 1, _id: 1 }]
         ])
         data.forEach((expected, input) => {
           const result = mongoStore._buildSort(input)
@@ -242,14 +257,18 @@ describe('Trimmed Mongo Definition store', () => {
       })
 
       it('gets a continuationToken', () => {
-        const sortClause = {'_id': 1}
-        const token = mongoStore._getContinuationToken(5, [
-          { _id: 'npm/npmjs/-/a/1.0.0' },
-          { _id: 'npm/npmjs/-/b/1.0.0' },
-          { _id: 'npm/npmjs/-/c/1.0.0' },
-          { _id: 'npm/npmjs/-/d/1.0.0' },
-          { _id: 'npm/npmjs/-/e/1.0.0' }
-        ], sortClause)
+        const sortClause = { _id: 1 }
+        const token = mongoStore._getContinuationToken(
+          5,
+          [
+            { _id: 'npm/npmjs/-/a/1.0.0' },
+            { _id: 'npm/npmjs/-/b/1.0.0' },
+            { _id: 'npm/npmjs/-/c/1.0.0' },
+            { _id: 'npm/npmjs/-/d/1.0.0' },
+            { _id: 'npm/npmjs/-/e/1.0.0' }
+          ],
+          sortClause
+        )
         expect(token).to.eq('bnBtL25wbWpzLy0vZS8xLjAuMA==')
       })
 
@@ -266,18 +285,18 @@ describe('Trimmed Mongo Definition store', () => {
 
   describe('trimmed vs. paged definition', () => {
     let pagedMongoStore
-  
+
     beforeEach('setup database', async () => {
       const uri = await mongoServer.getUri()
       const options = {
         ...dbOptions,
         connectionString: uri,
-        collectionName: 'definitions-paged',
+        collectionName: 'definitions-paged'
       }
       pagedMongoStore = PagedMongoDefinitionStore(options)
       await pagedMongoStore.initialize()
     })
-  
+
     afterEach('cleanup database', async () => {
       await pagedMongoStore.close()
     })
@@ -298,7 +317,7 @@ describe('Trimmed Mongo Definition store', () => {
 async function setupStore(mongoStore) {
   const fileName = path.join(__dirname, '../../fixtures/store/definitions-paged-no-files')
   const content = await fsPromise.readFile(fileName)
-  const defDump = JSON.parse(content.toString()).map((def) => {
+  const defDump = JSON.parse(content.toString()).map(def => {
     delete def._mongo
     return def
   })
@@ -311,7 +330,7 @@ function verifyExpectedCoordinates(allCoordinates, expected) {
 }
 
 function verifyUniqueCoordinates(defs) {
-  const allCoordinates = defs.map((e) => EntityCoordinates.fromObject(e.coordinates).toString())
+  const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates).toString())
   const uniqTokens = uniq(allCoordinates)
   expect(uniqTokens.length).to.be.equal(allCoordinates.length)
   return allCoordinates
@@ -319,7 +338,7 @@ function verifyUniqueCoordinates(defs) {
 
 function createDefinition(coordinates) {
   coordinates = EntityCoordinates.fromString(coordinates)
-  return { 
+  return {
     coordinates,
     described: {},
     licensed: {},

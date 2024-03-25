@@ -38,7 +38,7 @@ function createGetRequest() {
       type: 'crate',
       provider: 'cratesio',
       namespace: '-',
-      revision: '1.0.14',
+      revision: '1.0.14'
     }
   })
 }
@@ -52,7 +52,7 @@ function createGetForceComputeRequest() {
       type: 'crate',
       provider: 'cratesio',
       namespace: '-',
-      revision: '1.0.14',
+      revision: '1.0.14'
     },
     query: {
       force: true

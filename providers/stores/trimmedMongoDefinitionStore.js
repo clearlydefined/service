@@ -19,7 +19,7 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
 
   async find(query, continuationToken = '', pageSize) {
     const result = await super.find(query, continuationToken, pageSize)
-    result.data.forEach((def) => delete def._id)
+    result.data.forEach(def => delete def._id)
     return result
   }
 

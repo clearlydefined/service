@@ -4,10 +4,10 @@ This drafts an architecture document for adding support for Go components to Cle
 
 ## TLDR;
 
-* Add a new "go" type to ClearlyDefined
-* Only support go modules as components (which were added in Go 1.11). [According to the Go documentation](https://blog.golang.org/using-go-modules), modules are a dependency management system that makes dependency version information explicit and easier to manage. There were other, more complicated ways of managing go dependencies prior to this, but we should only focus on modules in our first iteration. We can revisit other ways of managing go dependencies later if necessary.
-* Use 'golang' as the provider for the component. 
-* Use URL encoding for slashes in go import paths and package names
+- Add a new "go" type to ClearlyDefined
+- Only support go modules as components (which were added in Go 1.11). [According to the Go documentation](https://blog.golang.org/using-go-modules), modules are a dependency management system that makes dependency version information explicit and easier to manage. There were other, more complicated ways of managing go dependencies prior to this, but we should only focus on modules in our first iteration. We can revisit other ways of managing go dependencies later if necessary.
+- Use 'golang' as the provider for the component.
+- Use URL encoding for slashes in go import paths and package names
 
 ## Prior work
 
@@ -15,8 +15,8 @@ This drafts an architecture document for adding support for Go components to Cle
 
 I have also completed a few prior drafts of this architecture:
 
-* [Go Architecture Draft 1](https://github.com/clearlydefined/service/pull/862)
-* [Go Architecture Draft 2](https://github.com/clearlydefined/service/pull/864)
+- [Go Architecture Draft 1](https://github.com/clearlydefined/service/pull/862)
+- [Go Architecture Draft 2](https://github.com/clearlydefined/service/pull/864)
 
 ### No central Go repository
 
@@ -71,11 +71,12 @@ curl -X GET https://clearlydefined.io/definitions/maven/mavencentral/com.apollog
 In this case, the coordinates are maven/mavencentral/com.apollographql.apollo3/apollo-runtime-jvm/3.0.0-dev14
 
 Let's break this down:
-* **maven** is the **type** 
-* **mavencentral** is the **provider**
-* **com.apollographql.apollo3** is the **namespace**
-* **apollo-runtime-jvm** is the **name**
-* **3.0.0-dev14** is the **revision**
+
+- **maven** is the **type**
+- **mavencentral** is the **provider**
+- **com.apollographql.apollo3** is the **namespace**
+- **apollo-runtime-jvm** is the **name**
+- **3.0.0-dev14** is the **revision**
 
 When we run this API call:
 
@@ -85,7 +86,7 @@ curl -X GET https://clearlydefined.io/definitions/maven/mavencentral/com.apollog
 
 It harvests the component from [here](https://repo1.maven.org/maven2/com/apollographql/apollo3/apollo-runtime-jvm/3.0.0-dev14/).
 
-Notice something in the url - the namespace is "com/apollographql/apollo3" - there are a lot of slashes in there. 
+Notice something in the url - the namespace is "com/apollographql/apollo3" - there are a lot of slashes in there.
 
 The way we translate this namespace into coordinates is to replace the slashes in the namespace with periods.
 
@@ -97,20 +98,20 @@ A Go component's coordinates will also need to consist of a type, provider, name
 
 Go's support of vanity package names makes this a little different than other components. While there are a few different approaches we could take, we should map the coordinates to what go developers know the package as.
 
-* **type** should be go
-* **provider** should be 'golang'
-* **namespace** should be anything that appears before the package name in the import path (it should be "-" if nothing appears before the package name)
-* **name** should be the name of the package
-* **revision** should be the component revision (note - go components seem to have multiple ways of specifying revisions - sometimes version numbers, sometimes commit hashes)
+- **type** should be go
+- **provider** should be 'golang'
+- **namespace** should be anything that appears before the package name in the import path (it should be "-" if nothing appears before the package name)
+- **name** should be the name of the package
+- **revision** should be the component revision (note - go components seem to have multiple ways of specifying revisions - sometimes version numbers, sometimes commit hashes)
 
 A challenge with go components is that import paths and package names can contain slashes and periods - which makes translating them into valid coordinates more difficult.
 
 In previous drafts, I considered replacing slashes with periods like with Maven components, but periods are also valid characters in Go import paths. Any character that can appear in a url can be used in an import path and package name. I considered using a different character to replace slashes in components...but this has the potential to become very confusing and inconsistent. In order to be as straightforward and consistent as possible, we need to use [URL encoding](https://www.tutorialspoint.com/html/html_url_encoding.htm) for slashes in go components (and potentially in other components as well).
 
-### Examples 
+### Examples
 
-* `collectd.org v0.5.0` maps to `go/golang/-/collectd.org/v0.5.0`
-* `go.starlark.net v0.0.0-20210406145628-7a1108eaa012` maps to `go/golang/-/go.starlark.net/v0.0.0-20210406145628-7a1108eaa012`
-* `cloud.google.com/go v0.56.0` maps to `go/golang/cloud.google.com/go/v0.56.0`
-* `golang.org/x/net v0.0.0-20210226172049-e18ecbb05110` maps to `go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110`
-* `github.com/Azure/azure-event-hubs-go/v3 v3.2.0` maps to `go/golang/github.com%2fAzure%2fazure-event-hubs-go/v3/v3.2.0`
+- `collectd.org v0.5.0` maps to `go/golang/-/collectd.org/v0.5.0`
+- `go.starlark.net v0.0.0-20210406145628-7a1108eaa012` maps to `go/golang/-/go.starlark.net/v0.0.0-20210406145628-7a1108eaa012`
+- `cloud.google.com/go v0.56.0` maps to `go/golang/cloud.google.com/go/v0.56.0`
+- `golang.org/x/net v0.0.0-20210226172049-e18ecbb05110` maps to `go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110`
+- `github.com/Azure/azure-event-hubs-go/v3 v3.2.0` maps to `go/golang/github.com%2fAzure%2fazure-event-hubs-go/v3/v3.2.0`
