@@ -8,7 +8,14 @@ const init = require('express-init')
 const Application = require('../app')
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
-    get: () => null
+    get: name => {
+      return (
+        {
+          WEBHOOK_GITHUB_SECRET: 'secret',
+          WEBHOOK_CRAWLER_SECRET: 'secret'
+        }[name] || null
+      )
+    }
   }
 })
 
