@@ -26,7 +26,7 @@ async function getDefinition(req, resp) {
   try {
     coordinatesEntity = await utils.toNormalizedEntityCoordinates(coordinatesEntity)
   } catch (err) {
-    return resp.status(404).send(`The ${(encodeURIComponent(coordinates))} is not public.`)
+    return resp.status(404).send(`The ${encodeURIComponent(coordinates)} is not public.`)
   }
   const result = await definitionService.get(coordinatesEntity, pr, force, expand)
 

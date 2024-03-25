@@ -79,8 +79,16 @@ module.exports = {
     batchMax: parseInt(config.get('BATCH_RATE_LIMIT_MAX')) || 0
   },
   webhook: {
-    githubSecret: config.get('WEBHOOK_GITHUB_SECRET') || (() => { throw new Error('WEBHOOK_GITHUB_SECRET is required'); })(),
-    crawlerSecret: config.get('WEBHOOK_CRAWLER_SECRET') || (() => { throw new Error('WEBHOOK_CRAWLER_SECRET is required'); })()
+    githubSecret:
+      config.get('WEBHOOK_GITHUB_SECRET') ||
+      (() => {
+        throw new Error('WEBHOOK_GITHUB_SECRET is required')
+      })(),
+    crawlerSecret:
+      config.get('WEBHOOK_CRAWLER_SECRET') ||
+      (() => {
+        throw new Error('WEBHOOK_CRAWLER_SECRET is required')
+      })()
   },
   search: {
     service: loadFactory(config.get('SEARCH_PROVIDER') || 'memory', 'search')
