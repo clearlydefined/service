@@ -210,9 +210,23 @@ class ScanCodeSummarizer {
   }
 
   _normalizeLicenseExpression(licenseExpression) {
-    const parsed = SPDX.parse(licenseExpression, key => SPDX.normalizeSingle(scancodeMap.get(key) || key))
+    if (!licenseExpression) return null
+
+    const licenseVisitor = rawLicenseExpression => {
+      const mappedLicenseExpression = scancodeMap.get(rawLicenseExpression)
+
+      if (mappedLicenseExpression && !mappedLicenseExpression.startsWith('LicenseRef-')) {
+        return mappedLicenseExpression
+      }
+
+      return SPDX.normalizeSingle(rawLicenseExpression)
+    }
+
+    const parsed = SPDX.parse(licenseExpression || '', licenseVisitor)
     const result = SPDX.stringify(parsed)
+
     if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
+
     return result
   }
 }
