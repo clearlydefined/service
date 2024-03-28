@@ -35,7 +35,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
-    "express": "^4.17.3",
+    "express": "^4.19.2",
     "express-init": "^1.1.1",
     "express-rate-limit": "^6.0.4",
     "express-routes-versioning": "^1.0.1",
