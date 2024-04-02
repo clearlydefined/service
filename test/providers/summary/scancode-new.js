@@ -27,16 +27,13 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes large npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
-    const overrides = {
-      // TODO: Verify correctness of the 32.0.8 override
-      '32.0.8': 'BSD-3-Clause AND GPL-2.0-only AND GPL-1.0-or-later AND BSD-3-Clause AND GPL-2.0-only'
-    }
+
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-large')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
         result.licensed.declared,
-        overrides[version] || 'BSD-3-Clause OR GPL-2.0',
+        'BSD-3-Clause OR GPL-2.0',
         `Declared license mismatch for version ${version}`
       )
       assert.equal(result.described.releaseDate, '2018-03-31', `releaseDate mismatch for version ${version}`)
@@ -99,11 +96,10 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     assert.equal(result.licensed.declared, 'Apache-2.0 OR MIT')
   })
 
-  it('summarizes', () => {
+  it('summarizes license', () => {
     const coordinates = { type: 'git', provider: 'github' }
     const harvestData = getHarvestData('32.0.8', 'github-LatencyUtils-license-expression.')
     const result = summarizer.summarize(coordinates, harvestData)
-    // TODO: Verify correctness of this expression
     assert.equal(result.licensed.declared, '(CC0-1.0 OR BSD-2-Clause) AND BSD-2-Clause')
   })
 
