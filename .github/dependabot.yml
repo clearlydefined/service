@@ -13,10 +13,13 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
+      azure-actions:
+        patterns:
+          - 'azure/*'
+      docker-actions:
+        patterns:
+          - 'docker/*'
       github-actions:
         patterns:
           - 'actions/*'
           - 'github/*'
-      azure-actions:
-        patterns:
-          - 'azure/*'
