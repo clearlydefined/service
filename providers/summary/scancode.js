@@ -200,7 +200,15 @@ class ScanCodeSummarizer {
     if (!expressions) return null
     const list = setToArray(expressions)
     if (!list) return null
-    return list.join(' AND ')
+
+    return list
+      .map(item => {
+        if (item.toLowerCase().includes(' and ') || item.toLowerCase().includes(' or ')) {
+          return `(${item})`
+        }
+        return item
+      })
+      .join(' AND ')
   }
 
   _createExpressionFromLicense(license) {
