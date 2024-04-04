@@ -23,35 +23,35 @@ class ScanCodeSummarizerNew {
   /**
    * Summarize the raw information related to the given coordinates.
    * @param {EntityCoordinates} coordinates - The entity for which we are summarizing
-   * @param {*} harvested - the set of raw tool outputs related to the identified entity
+   * @param {*} harvestedData - the set of raw tool outputs related to the identified entity
    * @returns {Definition} - a summary of the given raw information
    */
-  summarize(coordinates, harvested) {
+  summarize(coordinates, harvestedData) {
     const scancodeVersion =
-      get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
+      get(harvestedData, 'content.headers[0].tool_version') || get(harvestedData, 'content.scancode_version')
 
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
     
     const result = {}
-    this.addDescribedInfo(result, harvested)
+    this.addDescribedInfo(result, harvestedData)
     
-    let declaredLicense = this._getDeclaredLicense(harvested)
+    let declaredLicense = this._getDeclaredLicense(harvestedData)
     if (!isDeclaredLicense(declaredLicense)) {
-      declaredLicense = this._getDeclaredLicenseFromFiles(harvested, coordinates) || declaredLicense
+      declaredLicense = this._getDeclaredLicenseFromFiles(harvestedData, coordinates) || declaredLicense
     }
     setIfValue(result, 'licensed.declared', declaredLicense)
     
-    result.files = this._summarizeFileInfo(harvested.content.files, coordinates)
+    result.files = this._summarizeFileInfo(harvestedData.content.files, coordinates)
     
     return result
   }
 
-  addDescribedInfo(result, harvested) {
-    const releaseDate = harvested._metadata.releaseDate
+  addDescribedInfo(result, harvestedData) {
+    const releaseDate = harvestedData._metadata.releaseDate
     if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
   }
 
-  _getDeclaredLicense(harvested) {
+  _getDeclaredLicense(harvestedData) {
     const licenseReaders = [
       this._readDeclaredLicenseExpressionFromSummary.bind(this),
       this._readDeclaredLicenseExpressionFromPackage.bind(this),
@@ -59,7 +59,7 @@ class ScanCodeSummarizerNew {
     ]
 
     for (const reader of licenseReaders) {
-      const declaredLicense = reader(harvested)
+      const declaredLicense = reader(harvestedData)
       if (isDeclaredLicense(declaredLicense)) {
         return declaredLicense
       }
@@ -112,8 +112,8 @@ class ScanCodeSummarizerNew {
     })
   }
 
-  _getDeclaredLicenseFromFiles(harvested, coordinates) {
-    const rootFile = this._getRootFiles(coordinates, harvested.content.files)
+  _getDeclaredLicenseFromFiles(harvestedData, coordinates) {
+    const rootFile = this._getRootFiles(coordinates, harvestedData.content.files)
     return this._getLicenseFromLicenseDetections(rootFile)
   }
 
