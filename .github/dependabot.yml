@@ -13,6 +13,10 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
-      actions:
+      github-actions:
         patterns:
           - 'actions/*'
+          - 'github/*'
+      azure-actions:
+        patterns:
+          - 'azure/*'
