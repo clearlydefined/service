@@ -373,6 +373,30 @@ describe('Utils isLicenseFile', () => {
     }
   })
 
+  it('should detect package level license files for debsrc', () => {
+    const inputs = [
+      'tenacity-8.2.1/LICENSE',
+      'tenacity-8.2.1/license',
+      'tenacity-8.2.1/License.txt',
+      'tenacity-8.2.1/LICENSE.md',
+      'tenacity-8.2.1/LICENSE.HTML',
+      'tenacity-8.2.1/COPYING',
+      'tenacity-8.2.1/copying',
+      'tenacity-8.2.1/Copying.txt',
+      'tenacity-8.2.1/COPYING.md',
+      'tenacity-8.2.1/COPYING.HTML'
+    ]
+    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')
+    const packages = [
+      { name: 'python-tenacity-doc' },
+      { name: 'python3-tenacity' },
+      { name: 'tenacity', version: '8.2.1' }
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, coordinate, packages), `input: ${input}`).to.be.true
+    }
+  })
+
   it('should not detect package level license files for NuGets', () => {
     const inputs = [
       'package/LICENSE',
@@ -446,6 +470,40 @@ describe('Utils isLicenseFile', () => {
     const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
+    }
+  })
+
+  it('should not detect package level or random license files for debsrc', () => {
+    const inputs = [
+      'foobar/LICENSE',
+      'package/deeper/license',
+      'deeper/package/License.txt',
+      '.package/LICENSE.md',
+      'package2/LICENSE.HTML',
+      'foobar/COPYING',
+      'package/deeper/copying',
+      'deeper/package/Copying.txt',
+      '.package/COPYING.md',
+      'package2/COPYING.HTML',
+      'special/LICENSE',
+      'tenacity-8.2.1/nested/LICENSE',
+      'tenacity-8.2.2/LICENSE',
+      'other-8.2.1/LICENSE',
+      'package/LICENSE',
+      'special/COPYING',
+      'tenacity-8.2.1/nested/COPYING',
+      'tenacity-8.2.2/COPYING',
+      'other-8.2.1/COPYING',
+      'package/COPYING'
+    ]
+    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')
+    const packages = [
+      { name: 'python-tenacity-doc' },
+      { name: 'python3-tenacity' },
+      { name: 'tenacity', version: '8.2.1' }
+    ]
+    for (const input of inputs) {
+      expect(utils.isLicenseFile(input, coordinate, packages), `input: ${input}`).to.be.false
     }
   })
 
@@ -660,6 +718,35 @@ describe('Utils getLicenseLocations', () => {
       const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+    })
+  })
+
+  describe('debsrc packages', () => {
+    const debsrcRequest = {
+      params: {
+        type: 'debsrc',
+        provider: 'debian',
+        namespace: '-',
+        name: 'python-tenacity',
+        revision: '8.2.1-1'
+      }
+    }
+
+    it('returns an empty array when not passing packages', async () => {
+      const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
+      const result = utils.getLicenseLocations(coordinates)
+      expect(result).to.deep.equal([])
+    })
+
+    it('finds the correct license locations when passing packages', async () => {
+      const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
+      const packages = [
+        { name: 'python-tenacity-doc' },
+        { name: 'python3-tenacity' },
+        { name: 'tenacity', version: '8.2.1' }
+      ]
+      const result = utils.getLicenseLocations(coordinates, packages)
+      expect(result).to.deep.equal(['python-tenacity-doc/', 'python3-tenacity/', 'tenacity-8.2.1/'])
     })
   })
 })
