@@ -19,9 +19,9 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -39,9 +39,9 @@ describe('ScancodeSummarizerNew basic compatability', () => {
         `Declared license mismatch for version ${version}`
       )
       assert.equal(result.described.releaseDate, '2018-03-31', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 33)
-      assert.deepEqual(result.files.find((x) => x.path === 'package/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 33)
+      assert.deepEqual(result.files.find(x => x.path === 'package/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -123,10 +123,10 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
 
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
-      assert.equal(result.files.find((x) => x.path === 'MIT-LICENSE.md').license, 'MIT')
+      assert.equal(result.files.find(x => x.path === 'MIT-LICENSE.md').license, 'MIT')
       assert.equal(result.described.releaseDate, '2023-07-27', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(flatten(result.files.map((x) => x.attributions))).filter((x) => x).length, 3)
-    } 
+      assert.deepEqual(uniq(flatten(result.files.map(x => x.attributions))).filter(x => x).length, 3)
+    }
   })
 
   it('summarizes git repos', () => {
@@ -136,9 +136,9 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2021-01-28', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE').natures, ['license'])
-      assert.equal(compact(flatten(result.files.map((x) => x.natures))).length, 1)
+      assert.deepEqual(uniq(compact(flatten(result.files.map(x => x.attributions)))).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'LICENSE').natures, ['license'])
+      assert.equal(compact(flatten(result.files.map(x => x.natures))).length, 1)
     }
   })
 
@@ -149,9 +149,9 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2023-09-26', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 1)
-      assert.deepEqual(result.files.find((x) => x.path === 'redis-5.0.1/LICENSE').natures, ['license'])
-      assert.equal(flatten(result.files.map((x) => x.natures)).filter((x) => x).length, 1)
+      assert.deepEqual(uniq(compact(flatten(result.files.map(x => x.attributions)))).length, 1)
+      assert.deepEqual(result.files.find(x => x.path === 'redis-5.0.1/LICENSE').natures, ['license'])
+      assert.equal(flatten(result.files.map(x => x.natures)).filter(x => x).length, 1)
     }
   })
 
@@ -160,13 +160,17 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     for (let version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'crate-file-summary')
       const result = summarizer.summarize(coordinates, harvestData)
-      assert.equal(result.licensed.declared, 'Apache-2.0 AND (Apache-2.0 OR MIT)', `Declared license mismatch for version ${version}`)
+      assert.equal(
+        result.licensed.declared,
+        'Apache-2.0 AND (Apache-2.0 OR MIT)',
+        `Declared license mismatch for version ${version}`
+      )
       assert.equal(result.described.releaseDate, '2021-01-13', `releaseDate mismatch for version ${version}`)
-      assert.deepEqual(uniq(compact(flatten(result.files.map((x) => x.attributions)))).length, 6)
-      assert.deepEqual(result.files.find((x) => x.path === 'COPYRIGHT').natures, ['license'])
-      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE-APACHE').natures, ['license'])
-      assert.deepEqual(result.files.find((x) => x.path === 'LICENSE-MIT').natures, ['license'])
-      assert.equal(compact(flatten(result.files.map((x) => x.natures))).length, 3)
+      assert.deepEqual(uniq(compact(flatten(result.files.map(x => x.attributions)))).length, 6)
+      assert.deepEqual(result.files.find(x => x.path === 'COPYRIGHT').natures, ['license'])
+      assert.deepEqual(result.files.find(x => x.path === 'LICENSE-APACHE').natures, ['license'])
+      assert.deepEqual(result.files.find(x => x.path === 'LICENSE-MIT').natures, ['license'])
+      assert.equal(compact(flatten(result.files.map(x => x.natures))).length, 3)
     }
   })
 })
@@ -181,19 +185,60 @@ describe('ScancodeSummarizerNew fixtures', () => {
       described: { releaseDate: '2017-05-19' },
       licensed: { declared: 'ISC' },
       files: [
-        { path: 'package/changelog.md', license: 'ISC', hashes: { sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00', sha256: '9cb64aedf3ac2f4e80039a29914f4dacb1780d28d340f757717916cd2ca58f45' } },
-        { path: 'package/common.js', hashes: { sha1: '2f948b495467f2a7ac0afbb1008af557ab040143', sha256: 'e9a5f37878266f441069556ea411a60d658bdfb16aa99d3b29b53fd639a5aa3a' } },
-        { path: 'package/glob.js', hashes: { sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d', sha256: 'e3f3d1fd54aa24133a3d518ae7eaf26d5cbc1b9496389e18dd24ba63ea763ed3' } },
+        {
+          path: 'package/changelog.md',
+          license: 'ISC',
+          hashes: {
+            sha1: '97bfa68176e50777c07a7ba58f98ff7a1730ac00',
+            sha256: '9cb64aedf3ac2f4e80039a29914f4dacb1780d28d340f757717916cd2ca58f45'
+          }
+        },
+        {
+          path: 'package/common.js',
+          hashes: {
+            sha1: '2f948b495467f2a7ac0afbb1008af557ab040143',
+            sha256: 'e9a5f37878266f441069556ea411a60d658bdfb16aa99d3b29b53fd639a5aa3a'
+          }
+        },
+        {
+          path: 'package/glob.js',
+          hashes: {
+            sha1: 'c2e95cdccba36eaca7b12e2bcf9b383438cee52d',
+            sha256: 'e3f3d1fd54aa24133a3d518ae7eaf26d5cbc1b9496389e18dd24ba63ea763ed3'
+          }
+        },
         {
           path: 'package/LICENSE',
           license: 'ISC',
           natures: ['license'],
           attributions: ['Copyright (c) Isaac Z. Schlueter and Contributors'],
-          hashes: { sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66', sha256: '4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b' }
+          hashes: {
+            sha1: 'bb408e929caeb1731945b2ba54bc337edb87cc66',
+            sha256: '4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b'
+          }
         },
-        { path: 'package/package.json', license: 'MIT AND ISC', hashes: { sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58', sha256: '480d04f663e9461abde03863c44122b239b2fbbf6f309133c654c0595c786c00' } },
-        { path: 'package/README.md', hashes: { sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f', sha256: '1f0c4810b48885d093a9cf5390f7268bc9b3fc637362a355ed514c9711cc1999' } },
-        { path: 'package/sync.js', hashes: { sha1: '7482bc56682b97175655976b07044afcb65b0cc9', sha256: 'f04c04e9e40ea1ada97a1e414ad26d871faa0778e3b1fb0d5fc66ec6acbc243f' } }
+        {
+          path: 'package/package.json',
+          license: 'MIT AND ISC',
+          hashes: {
+            sha1: '844f90fa8a6fbf45d581593a333f69c5cb1f2d58',
+            sha256: '480d04f663e9461abde03863c44122b239b2fbbf6f309133c654c0595c786c00'
+          }
+        },
+        {
+          path: 'package/README.md',
+          hashes: {
+            sha1: '449f1592c9cf2d32a0d74bead66d7267218f2c4f',
+            sha256: '1f0c4810b48885d093a9cf5390f7268bc9b3fc637362a355ed514c9711cc1999'
+          }
+        },
+        {
+          path: 'package/sync.js',
+          hashes: {
+            sha1: '7482bc56682b97175655976b07044afcb65b0cc9',
+            sha256: 'f04c04e9e40ea1ada97a1e414ad26d871faa0778e3b1fb0d5fc66ec6acbc243f'
+          }
+        }
       ]
     })
   })
