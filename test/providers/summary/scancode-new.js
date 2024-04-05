@@ -83,7 +83,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     assert.equal(result.licensed.declared, 'Apache-2.0')
   })
 
-  it.skip('summarizes using license_expression', () => {
+  it('summarizes using license_expression', () => {
     const coordinates = { type: 'debsrc', provider: 'debian' }
     const harvestData = getHarvestData('32.0.8', 'debsrc-license-expression')
     const result = summarizer.summarize(coordinates, harvestData)
