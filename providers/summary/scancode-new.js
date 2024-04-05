@@ -10,7 +10,7 @@ const {
   isLicenseFile,
   setIfValue,
   joinExpressions,
-  normalizeLicenseExpression,
+  normalizeLicenseExpression
 } = require('../../lib/utils')
 const logger = require('../logging/logger')
 
@@ -31,18 +31,18 @@ class ScanCodeSummarizerNew {
       get(harvestedData, 'content.headers[0].tool_version') || get(harvestedData, 'content.scancode_version')
 
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
-    
+
     const result = {}
     this.addDescribedInfo(result, harvestedData)
-    
+
     let declaredLicense = this._getDeclaredLicense(harvestedData)
     if (!isDeclaredLicense(declaredLicense)) {
       declaredLicense = this._getDeclaredLicenseFromFiles(harvestedData, coordinates) || declaredLicense
     }
     setIfValue(result, 'licensed.declared', declaredLicense)
-    
+
     result.files = this._summarizeFileInfo(harvestedData.content.files, coordinates)
-    
+
     return result
   }
 
@@ -81,8 +81,9 @@ class ScanCodeSummarizerNew {
     const [firstPackage] = packages
     if (!firstPackage) return null
 
-    const licenseExpression = firstPackage.declared_license_expression_spdx
-      || normalizeLicenseExpression(firstPackage.declared_license_expression, this.logger)
+    const licenseExpression =
+      firstPackage.declared_license_expression_spdx ||
+      normalizeLicenseExpression(firstPackage.declared_license_expression, this.logger)
 
     return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression
   }
@@ -119,7 +120,7 @@ class ScanCodeSummarizerNew {
 
   _getLicenseFromLicenseDetections(files) {
     const fullLicenses = files
-      .filter(file => (file.percentage_of_license_text >= 80 && file.license_detections))
+      .filter(file => file.percentage_of_license_text >= 80 && file.license_detections)
       .reduce((licenses, file) => {
         file.license_detections.forEach(licenseDetection => {
           licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
@@ -154,10 +155,11 @@ class ScanCodeSummarizerNew {
 
         const result = { path: file.path }
 
-        const licenseExpression = file.detected_license_expression_spdx
-        || normalizeLicenseExpression(file.detected_license_expression, this.logger)
+        const licenseExpression =
+          file.detected_license_expression_spdx ||
+          normalizeLicenseExpression(file.detected_license_expression, this.logger)
         setIfValue(result, 'license', licenseExpression)
-        
+
         if (this._getLicenseFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
           if (!result.natures.includes('license')) result.natures.push('license')
@@ -166,7 +168,9 @@ class ScanCodeSummarizerNew {
         setIfValue(
           result,
           'attributions',
-          file.copyrights ? uniq(flatten(file.copyrights.map(c => c.copyright || c.statements || c.value))).filter(x => x) : null
+          file.copyrights
+            ? uniq(flatten(file.copyrights.map(c => c.copyright || c.statements || c.value))).filter(x => x)
+            : null
         )
         setIfValue(result, 'hashes.sha1', file.sha1)
         setIfValue(result, 'hashes.sha256', file.sha256)
