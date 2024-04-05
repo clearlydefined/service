@@ -114,8 +114,8 @@ class ScanCodeSummarizerNew {
   }
 
   _getDeclaredLicenseFromFiles(harvestedData, coordinates) {
-    const rootFile = this._getRootFiles(coordinates, harvestedData.content.files)
-    return this._getLicenseFromLicenseDetections(rootFile)
+    const rootFiles = this._getRootFiles(coordinates, harvestedData.content.files)
+    return this._getLicenseFromLicenseDetections(rootFiles)
   }
 
   _getLicenseFromLicenseDetections(files) {
@@ -140,7 +140,9 @@ class ScanCodeSummarizerNew {
             return
           }
           licenseDetection.matches.forEach(match => {
-            if (match.score >= 90) licenses.add(normalizeLicenseExpression(match.license_expression, this.logger))
+            if (match.score >= 90) {
+              licenses.add(normalizeLicenseExpression(match.license_expression, this.logger))
+            }
           })
         })
         return licenses
