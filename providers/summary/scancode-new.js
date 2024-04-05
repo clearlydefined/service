@@ -157,12 +157,14 @@ class ScanCodeSummarizerNew {
 
         const result = { path: file.path }
 
+        const licenseExpressionFromFromLicenseDetections = this._getLicenseFromLicenseDetections([file])
         const licenseExpression =
           file.detected_license_expression_spdx ||
-          normalizeLicenseExpression(file.detected_license_expression, this.logger)
+          normalizeLicenseExpression(file.detected_license_expression, this.logger) ||
+          licenseExpressionFromFromLicenseDetections
         setIfValue(result, 'license', licenseExpression)
 
-        if (this._getLicenseFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
+        if (licenseExpressionFromFromLicenseDetections || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
           if (!result.natures.includes('license')) result.natures.push('license')
         }
