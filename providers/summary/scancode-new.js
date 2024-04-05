@@ -94,8 +94,8 @@ class ScanCodeSummarizerNew {
   }
 
   // find and return the files that should be considered for as a license determinator for this summarization
-  _getRootFiles(coordinates, files) {
-    const roots = getLicenseLocations(coordinates) || []
+  _getRootFiles(coordinates, files, packages) {
+    const roots = getLicenseLocations(coordinates, packages) || []
     roots.push('') // for no prefix
     let rootFiles = this._findRootFiles(files, roots)
     //Some components (e.g. composer/packgist) are packaged under one directory
@@ -114,7 +114,7 @@ class ScanCodeSummarizerNew {
   }
 
   _getDeclaredLicenseFromFiles(harvestedData, coordinates) {
-    const rootFiles = this._getRootFiles(coordinates, harvestedData.content.files)
+    const rootFiles = this._getRootFiles(coordinates, harvestedData.content.files, harvestedData.content.packages)
     return this._getLicenseFromLicenseDetections(rootFiles)
   }
 
