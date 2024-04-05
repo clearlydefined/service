@@ -91,7 +91,7 @@ describe('ScancodeSummarizer basic compatability', () => {
 
   it('summarizes falling back to license_expression in version 30.1.0 of ScanCode', () => {
     const coordinates = { type: 'git', provider: 'github' }
-    const harvestData = getHarvestData('30.1.0', 'github-license-expression')
+    const harvestData = getHarvestData('30.1.0', 'github-license-expression-conhash-rs')
     const result = summarizer.summarize(coordinates, harvestData)
     assert.equal(result.licensed.declared, 'MIT OR Apache-2.0')
   })

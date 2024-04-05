@@ -90,12 +90,18 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     assert.equal(result.licensed.declared, 'Apache-2.0')
   })
 
-  it('summarizes falling back to license_expression', () => {
+  it("summarizes falling back to package[0]'s declared_license_expression", () => {
     const coordinates = { type: 'git', provider: 'github' }
-    const harvestData = getHarvestData('32.0.8', 'github-license-expression')
-    const result = summarizer.summarize(coordinates, harvestData)
-    // The order of the licenses changed with the new ScanCode version
-    assert.equal(result.licensed.declared, 'Apache-2.0 OR MIT')
+    const packages = {
+      'github-license-expression-jenkinsci-pipeline-input-step-plugin': 'MIT',
+      'github-license-expression-jenkinsci-workflow-support-plugin': 'MIT'
+    }
+
+    for (let [name, declared] of Object.entries(packages)) {
+      const harvestData = getHarvestData('32.0.8', name)
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, declared)
+    }
   })
 
   it('summarizes license', () => {
