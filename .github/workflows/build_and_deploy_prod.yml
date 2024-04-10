@@ -12,10 +12,12 @@ on:
 # There are secrets and environment variables that need to be set that control what is pushed to
 # ghcr and Azure.
 #
+# Org Secrets:
+#   AZURE_CREDENTIALS: service principal that has access to the Azure apps
+#
 # Secrets:
-#   AZURE_CREDENTIALS_PROD:          service principal that has access to the Azure prod WebApp
-#   AZURE_WEBAPP_PUBLISH_PROFILE:    publish profile for the Azure WebApp
-#   AZURE_WEBAPP_PUBLISH_PROFILE_EU: publish profile for the Azure WebApp in Europe
+#   AZURE_WEBAPP_PUBLISH_PROFILE:    publish profile for the service production Azure WebApp
+#   AZURE_WEBAPP_PUBLISH_PROFILE_EU: publish profile for the service production Azure WebApp in Europe
 #
 # Environment Variables:
 #   APPLICATION_TYPE:     type of application that is being deployed; used to add a label to the Docker image (values: api | web | worker)
@@ -34,9 +36,51 @@ env:
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}
 
 jobs:
+  check-deployable:
+    uses: clearlydefined/operations/.github/workflows/deployable.yml@elr/deploy-limits
+    secrets: inherit
+
+  verify-secrets:
+    name: Secrets Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check secrets
+        run: |
+          missing=false
+
+          secret_value=$(echo '${{ secrets.AZURE_CREDENTIALS }}')
+          single_line_value=$(echo -n "$secret_value" | tr -d '\n')
+          len=${#single_line_value}
+          if [[ ${len} -le 0 ]]; then
+            echo "Secret AZURE_CREDENTIALS does not have a value"
+            missing=true
+          fi
+
+          secret_value=$(echo '${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}')
+          single_line_value=$(echo -n "$secret_value" | tr -d '\n')
+          len=${#single_line_value}
+          if [[ ${len} -le 0 ]]; then
+            echo "Secret AZURE_WEBAPP_PUBLISH_PROFILE_PROD does not have a value"
+            missing=true
+          fi
+
+          secret_value=$(echo '${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU }}')
+          single_line_value=$(echo -n "$secret_value" | tr -d '\n')
+          len=${#single_line_value}
+          if [[ ${len} -le 0 ]]; then
+            echo "Secret AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU does not have a value"
+            missing=true
+          fi
+
+          if [[ $missing == true ]]; then
+            exit 1
+          fi
+          echo "Required secrets all have values"
+
   build-and-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
+    needs: [ check-deployable, verify-secrets ]
     steps:
       - name: Get version
         id: package
@@ -75,7 +119,7 @@ jobs:
       - name: Login for Azure cli commands
         uses: azure/login@v2.0.0
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Set DOCKER configs in Azure web app
         uses: azure/appservice-settings@v1.1.1
@@ -104,9 +148,11 @@ jobs:
                 "slotSetting": false
               }
             ]
-
+  
+      # v3.0.1 passes when AZURE_WEBAPP_PUBLISH_PROFILE_PROD isn't set, but should fail.
+      # Added secret check above to ensure it is set.
       - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v3.0.0
+        uses: azure/webapps-deploy@v3.0.1
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
@@ -140,9 +186,12 @@ jobs:
               }
             ]
 
+      # v3.0.1 passes when AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU isn't set, but should fail.
+      # Added secret check to ensure it is set.
       - name: Deploy to Azure EU WebApp
-        uses: azure/webapps-deploy@v3.0.0
+        uses: azure/webapps-deploy@v3.0.1
         with:
           app-name: ${{ env.AZURE_EU_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU }}
           images: '${{ env.DOCKER_IMAGE_NAME }}:${{ steps.package.outputs.version }}'
+  
