@@ -1,0 +1,36 @@
+# This workflow will build a docker image, push it to ghcr.io, and deploy it to an Azure WebApp.
+name: Build and Deploy -- PROD
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  determine-trigger:
+    name: Determine if this was triggered by a release or workflow_dispatch
+    runs-on: ubuntu-latest
+    outputs:
+      is-release: ${{ env.IS_RELEASE }}
+    steps:
+      - name: Check if this was triggered by a release
+        id: release
+        run: |
+          echo "IS_RELEASE"=${{ github.event_name == 'release' }} >> $GITHUB_ENV
+
+  build-and-deploy-prod:
+    uses: clearlydefined/operations/.github/workflows/app-build-and-deploy.yml
+    needs: determine-trigger
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
+      AZURE_SECONDARY_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_EU }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      PRODUCTION_DEPLOYERS: ${{ secrets.PRODUCTION_DEPLOYERS }}
+    with:
+      deploy-env: prod
+      application-type: api
+      azure-app-base-name: clearlydefined-api
+      azure-app-name-postfix: -prod
+      secondary-azure-app-name-postfix: -prod-europe
+      is-release: ${{ needs.determine-trigger.outputs.is-release }}

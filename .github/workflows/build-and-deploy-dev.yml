@@ -1,95 +1,21 @@
 # This workflow will build a docker image, push it to ghcr.io, and deploy it to an Azure WebApp.
-name: Build and Deploy to dev service app
+name: Build and Deploy -- DEV
 
-# Update the triggers based on the environment that is being deployed to.
-#   Triggers for dev deployments:  1) manually triggered, 2) push to branch `master`
-#   Triggers for prod deployments: 1) manually triggered, 2) release created
 on:
   workflow_dispatch:
   push:
     branches: [master]
 
-# There are secrets and environment variables that need to be set that control what is pushed to
-# ghcr and Azure.
-#
-# Secrets:
-#   AZURE_CREDENTIALS:                service principal that has access to the Azure WebApp
-#   AZURE_WEBAPP_PUBLISH_PROFILE_DEV: publish profile for the Azure WebApp  NOTE: The name of the secret changes.  For dev, it ends in `_DEV`.  Production does not have an extension.
-#
-# Environment Variables:
-#   APPLICATION_TYPE:   type of application that is being deployed; used to add a label to the Docker image (values: api | web | worker)
-#   AZURE_WEBAPP_NAME:  name of the Azure WebApp being deployed
-#   DEPLOY_ENVIRONMENT:   environment that the code is being deployed to; used to add a label to the Docker image (values: dev | prod)
-#   DEPLOY_DOCKER_TAG:  the tag used for deploying a specific Docker image to Azure.  For dev, use the `github.sha`.  For production, use the SEMVER
-#                       version of the release.  Make sure to add this tag to the `DOCKER_TAGS` in the `Build and push Docker image` step.
-#   DOCKER_IMAGE_NAME:  name of the Docker image that is being built and pushed to ghcr.io.
-
-env:
-  APPLICATION_TYPE: api
-  AZURE_WEBAPP_NAME: clearlydefined-api-dev
-  DEPLOY_ENVIRONMENT: dev
-  DEPLOY_DOCKER_TAG: ${{ github.sha }}
-  DOCKER_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-dev
-
 jobs:
   build-and-deploy:
-    name: Build and Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log into ghcr registry
-        uses: docker/login-action@v3.1.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }} # user that kicked off the action
-          password: ${{ secrets.GITHUB_TOKEN }} # token created when the action launched (short lived)
-
-      - name: Build and push Docker image
-        env:
-          DOCKER_TAGS: |
-            ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}
-        uses: docker/build-push-action@v5.3.0
-        with:
-          context: .
-          push: true
-          file: Dockerfile
-          tags: ${{ env.DOCKER_TAGS }}
-          labels: |
-            env=${{ env.DEPLOY_ENVIRONMENT }}
-            type=${{ env.APPLICATION_TYPE }}
-
-      - name: Login for Azure cli commands
-        uses: azure/login@v2.1.0
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set DOCKER configs in Azure web app
-        uses: azure/appservice-settings@v1.1.1
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          app-settings-json: |
-            [
-              {
-                "name": "DOCKER_CUSTOM_IMAGE_NAME",
-                "value": "${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}",
-                "slotSetting": false
-              },
-              {
-                "name": "DOCKER_REGISTRY_SERVER_URL",
-                "value": "https://ghcr.io",
-                "slotSetting": false
-              },
-              {
-                  "name": "BUILD_SHA",
-                  "value": "${{ github.sha }}",
-                  "slotSetting": false
-              }
-            ]
-
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v3.0.1
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEV }}
-          images: '${{ env.DOCKER_IMAGE_NAME }}:${{ env.DEPLOY_DOCKER_TAG }}'
+    uses: clearlydefined/operations/.github/workflows/app-build-and-deploy.yml
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEV }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      PRODUCTION_DEPLOYERS: ${{ secrets.PRODUCTION_DEPLOYERS }}
+    with:
+      deploy-env: dev
+      application-type: api
+      azure-app-base-name: clearlydefined-api
+      azure-app-name-postfix: -dev
