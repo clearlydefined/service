@@ -115,12 +115,12 @@ class ScanCodeSummarizerNew {
 
   _getDeclaredLicenseFromFiles(harvestedData, coordinates) {
     const rootFiles = this._getRootFiles(coordinates, harvestedData.content.files, harvestedData.content.packages)
-    return this._getLicenseFromLicenseDetections(rootFiles)
+    return this._getLicensesFromLicenseDetections(rootFiles)
   }
 
-  _getLicenseFromLicenseDetections(files) {
+  _getLicensesFromLicenseDetections(files) {
     const fullLicenses = files
-      .filter(file => file.percentage_of_license_text >= 80 && file.license_detections)
+      .filter(file => file.percentage_of_license_text >= 90 && file.license_detections)
       .reduce((licenses, file) => {
         file.license_detections.forEach(licenseDetection => {
           licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
@@ -130,7 +130,7 @@ class ScanCodeSummarizerNew {
     return joinExpressions(fullLicenses)
   }
 
-  _getLicenseByFileName(files, coordinates) {
+  _getLicenseByFileName(files, coordinates, licenseClarityScoreThreshold = 90) {
     const fullLicenses = files
       .filter(file => isLicenseFile(file.path, coordinates) && file.license_detections)
       .reduce((licenses, file) => {
@@ -140,7 +140,7 @@ class ScanCodeSummarizerNew {
             return
           }
           licenseDetection.matches.forEach(match => {
-            if (match.score >= 90) {
+            if (match.score >= licenseClarityScoreThreshold) {
               licenses.add(normalizeLicenseExpression(match.license_expression, this.logger))
             }
           })
@@ -157,14 +157,13 @@ class ScanCodeSummarizerNew {
 
         const result = { path: file.path }
 
-        const licenseExpressionFromFromLicenseDetections = this._getLicenseFromLicenseDetections([file])
         const licenseExpression =
           file.detected_license_expression_spdx ||
           normalizeLicenseExpression(file.detected_license_expression, this.logger) ||
-          licenseExpressionFromFromLicenseDetections
+          this._getLicenseByFileName([file], coordinates, 80)
         setIfValue(result, 'license', licenseExpression)
 
-        if (licenseExpressionFromFromLicenseDetections || this._getLicenseByFileName([file], coordinates)) {
+        if (this._getLicensesFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
           if (!result.natures.includes('license')) result.natures.push('license')
         }

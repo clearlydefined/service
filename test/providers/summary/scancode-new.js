@@ -173,10 +173,10 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       )
       assert.equal(result.described.releaseDate, '2021-01-13', `releaseDate mismatch for version ${version}`)
       assert.deepEqual(uniq(compact(flatten(result.files.map(x => x.attributions)))).length, 6)
-      assert.deepEqual(result.files.find(x => x.path === 'COPYRIGHT').natures, ['license'])
+      assert.equal(result.files.find(x => x.path === 'COPYRIGHT').natures, null)
       assert.deepEqual(result.files.find(x => x.path === 'LICENSE-APACHE').natures, ['license'])
       assert.deepEqual(result.files.find(x => x.path === 'LICENSE-MIT').natures, ['license'])
-      assert.equal(compact(flatten(result.files.map(x => x.natures))).length, 3)
+      assert.equal(compact(flatten(result.files.map(x => x.natures))).length, 2)
     }
   })
 })
