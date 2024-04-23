@@ -158,6 +158,17 @@ describe('Definition Service', () => {
           revision: '282bdb12f8ce48a34b4b768863c4e44c310c4bd8',
           url: 'https://gitlab.com/cznic/sqlite/-/tree/282bdb12f8ce48a34b4b768863c4e44c310c4bd8'
         }
+      ],
+      [
+        'sourcearchive/mavencentral/com.azure/azure-storage-blob/12.20.0',
+        {
+          type: 'sourcearchive',
+          provider: 'mavencentral',
+          namespace: 'com.azure',
+          name: 'azure-storage-blob',
+          revision: '12.20.0',
+          url: 'https://search.maven.org/remotecontent?filepath=com/azure/azure-storage-blob/12.20.0/azure-storage-blob-12.20.0-sources.jar'
+        }
       ]
     ])
 

@@ -561,10 +561,10 @@ class DefinitionService {
     if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
-    switch (coordinates.provider) {
-      case 'golang':
-      case 'gitlab':
-      case 'github':
+    switch (coordinates.type) {
+      case 'go':
+      case 'git':
+      case 'sourcearchive':
       case 'pypi': {
         const url = buildSourceUrl(coordinates)
         if (!url) return
