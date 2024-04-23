@@ -113,6 +113,62 @@ describe('Definition Service', () => {
     expect(result.length).to.eq(3)
     expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
+
+  describe('Build source location', () => {
+    const data = new Map([
+      [
+        'pypi/pypi/-/platformdirs/4.2.0',
+        {
+          type: 'pypi',
+          provider: 'pypi',
+          name: 'platformdirs',
+          revision: '4.2.0',
+          url: 'https://pypi.org/project/platformdirs/4.2.0/'
+        }
+      ],
+      [
+        'go/golang/rsc.io/quote/v1.3.0',
+        {
+          type: 'go',
+          provider: 'golang',
+          namespace: 'rsc.io',
+          name: 'quote',
+          revision: 'v1.3.0',
+          url: 'https://pkg.go.dev/rsc.io/quote@v1.3.0'
+        }
+      ],
+      [
+        'git/github/ratatui-org/ratatui/bcf43688ec4a13825307aef88f3cdcd007b32641',
+        {
+          type: 'git',
+          provider: 'github',
+          namespace: 'ratatui-org',
+          name: 'ratatui',
+          revision: 'bcf43688ec4a13825307aef88f3cdcd007b32641',
+          url: 'https://github.com/ratatui-org/ratatui/tree/bcf43688ec4a13825307aef88f3cdcd007b32641'
+        }
+      ],
+      [
+        'git/gitlab/cznic/sqlite/282bdb12f8ce48a34b4b768863c4e44c310c4bd8',
+        {
+          type: 'git',
+          provider: 'gitlab',
+          namespace: 'cznic',
+          name: 'sqlite',
+          revision: '282bdb12f8ce48a34b4b768863c4e44c310c4bd8',
+          url: 'https://gitlab.com/cznic/sqlite/-/tree/282bdb12f8ce48a34b4b768863c4e44c310c4bd8'
+        }
+      ]
+    ])
+
+    data.forEach((expected, coordinatesString) => {
+      it(`should have source location for ${coordinatesString} package`, async () => {
+        const { service, coordinates } = setup(createDefinition(null, null, []), coordinatesString)
+        const definition = await service.compute(coordinates)
+        expect(definition.described.sourceLocation).to.be.deep.equal(expected)
+      })
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {
