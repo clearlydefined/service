@@ -60,7 +60,7 @@ jobs:
             type=${{ env.APPLICATION_TYPE }}
 
       - name: Login for Azure cli commands
-        uses: azure/login@v2.0.0
+        uses: azure/login@v2.1.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -88,7 +88,7 @@ jobs:
             ]
 
       - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v3.0.0
+        uses: azure/webapps-deploy@v3.0.1
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEV }}
