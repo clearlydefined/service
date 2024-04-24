@@ -186,7 +186,15 @@ describe('ScanCode summarizer', () => {
       [buildRule('mit OR apache-2.0', ['mit', 'apache-2.0']), 'MIT OR Apache-2.0'],
       [buildRule('mit AND apache-2.0', ['mit', 'apache-2.0']), 'MIT AND Apache-2.0'],
       [buildRule('mit OR junk', ['mit', 'junk']), 'MIT OR NOASSERTION'],
-      [buildRule('junk OR mit', ['mit', 'junk']), 'NOASSERTION OR MIT']
+      [buildRule('junk OR mit', ['mit', 'junk']), 'NOASSERTION OR MIT'],
+      [
+        buildRule('mit AND apache-2.0 AND agpl-generic-additional-terms', [
+          'mit',
+          'apache-2.0',
+          'agpl-generic-additional-terms'
+        ]),
+        'MIT AND Apache-2.0 AND NOASSERTION'
+      ]
     ])
     examples.forEach((expected, input) => {
       const result = Summarizer()._createExpressionFromLicense(input)
