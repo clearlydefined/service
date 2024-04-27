@@ -12,8 +12,8 @@ module.exports = router
 
 let version
 let sha
-function setup(buildsha, appversion) {
-  version = appversion
+function setup(buildsha, appVersion) {
+  version = appVersion
   sha = buildsha
   return router
 }

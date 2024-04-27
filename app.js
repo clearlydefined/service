@@ -176,7 +176,7 @@ function createApp(config) {
 
   app.use(require('./middleware/querystring'))
 
-  app.use('/', require('./routes/index')(config.buildsha, config.appversion))
+  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
   app.use('/origins/conda', require('./routes/originConda')())
