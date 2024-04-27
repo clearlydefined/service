@@ -19,7 +19,7 @@ jobs:
           echo "IS_RELEASE"=${{ github.event_name == 'release' }} >> $GITHUB_ENV
 
   build-and-deploy-prod:
-    uses: clearlydefined/operations/.github/workflows/app-build-and-deploy.yml
+    uses: clearlydefined/operations/.github/workflows/app-build-and-deploy.yml@v1.0.0
     needs: determine-trigger
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
