@@ -94,7 +94,8 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     const coordinates = { type: 'git', provider: 'github' }
     const packages = {
       'github-license-expression-jenkinsci-pipeline-input-step-plugin': 'MIT',
-      'github-license-expression-jenkinsci-workflow-support-plugin': 'MIT'
+      'github-license-expression-jenkinsci-workflow-support-plugin': 'MIT',
+      'maven-java-jna': 'LGPL-2.1-or-later OR Apache-2.0'
     }
 
     for (let [name, declared] of Object.entries(packages)) {
