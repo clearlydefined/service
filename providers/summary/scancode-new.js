@@ -120,13 +120,8 @@ class ScanCodeSummarizerNew {
 
   _getLicensesFromLicenseDetections(files) {
     const fullLicenses = files
-      .filter(file => file.percentage_of_license_text >= 90 && file.license_detections)
-      .reduce((licenses, file) => {
-        file.license_detections.forEach(licenseDetection => {
-          licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
-        })
-        return licenses
-      }, new Set())
+      .filter(file => file.percentage_of_license_text >= 90 && file.detected_license_expression_spdx)
+      .map(file => file.detected_license_expression_spdx)
     return joinExpressions(fullLicenses)
   }
 
@@ -158,9 +153,7 @@ class ScanCodeSummarizerNew {
         const result = { path: file.path }
 
         const licenseExpression =
-          file.detected_license_expression_spdx ||
-          normalizeLicenseExpression(file.detected_license_expression, this.logger) ||
-          this._getLicenseByFileName([file], coordinates, 80)
+          file.detected_license_expression_spdx || this._getLicenseByFileName([file], coordinates, 80)
         setIfValue(result, 'license', licenseExpression)
 
         if (this._getLicensesFromLicenseDetections([file]) || this._getLicenseByFileName([file], coordinates)) {
