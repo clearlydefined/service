@@ -4,14 +4,16 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', function (req, res) {
-  const msg = `{ "status": "OK", "sha": "${sha}" }`
+  const msg = `{ "status": "OK", "version": "${version}", "sha": "${sha}"`
   res.status(200).send(msg)
 })
 
 module.exports = router
 
+let version
 let sha
-function setup(buildsha) {
+function setup(buildsha, appVersion) {
+  version = appVersion
   sha = buildsha
   return router
 }

@@ -99,5 +99,6 @@ module.exports = {
     crawlerId: config.get('APPINSIGHTS_CRAWLER_APPLICATIONID'),
     crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   },
+  appVersion: config.get('APP_VERSION'),
   buildsha: config.get('BUILD_SHA')
 }
