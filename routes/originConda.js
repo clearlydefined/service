@@ -11,7 +11,6 @@ const condaChannels = {
   'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
   'conda-forge': 'https://conda.anaconda.org/conda-forge'
 }
-const condaCache = new Cache()
 
 async function fetchCondaChannelData(channel) {
   const key = `${channel}-channelData`
@@ -94,7 +93,11 @@ async function getOriginConda(request, response) {
   return response.status(200).send(matches)
 }
 
-function setup(testFlag = false) {
+let condaCache
+
+function setup(cache = new Cache(), testFlag = false) {
+  condaCache = cache
+
   if (testFlag) {
     router._getOriginConda = getOriginConda
     router._getOriginCondaRevisions = getOriginCondaRevisions
