@@ -50,7 +50,9 @@ router.get(
       return response.status(404).send(`Package ${name} not found in Conda channel ${channel}`)
     }
     if (subdir !== '-' && !channelData.subdirs.find(x => x == subdir)) {
-      return response.status(404).send(`Subdir ${subdir} is non-existent in Conda channel ${channel}, subdirs: ${channelData.subdirs}`)
+      return response
+        .status(404)
+        .send(`Subdir ${subdir} is non-existent in Conda channel ${channel}, subdirs: ${channelData.subdirs}`)
     }
     let revisions = []
     let subdirs = subdir === '-' ? channelData.packages[name].subdirs : [subdir]
