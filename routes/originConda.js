@@ -34,7 +34,7 @@ async function fetchCondaRepoData(channel, subdir) {
   return repoData
 }
 
-router.get('/:channel/:subdir/:name/revisions', asyncMiddleware(getOriginCondaRevisions()))
+router.get('/:channel/:subdir/:name/revisions', asyncMiddleware(getOriginCondaRevisions))
 
 async function getOriginCondaRevisions(request, response) {
   let { channel, subdir, name } = request.params
