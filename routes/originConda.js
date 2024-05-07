@@ -41,7 +41,7 @@ router.get(
     let { channel, subdir, name } = request.params
     channel = encodeURIComponent(channel)
     subdir = encodeURIComponent(subdir)
-    name = encodeURIComponent(channel)
+    name = encodeURIComponent(name)
     if (!condaChannels[channel]) {
       return response.status(404).send(`Unrecognized Conda channel ${channel}`)
     }
@@ -50,7 +50,7 @@ router.get(
       return response.status(404).send(`Package ${name} not found in Conda channel ${channel}`)
     }
     if (subdir !== '-' && !channelData.subdirs.find(x => x == subdir)) {
-      return response.status(404).send(`Subdir ${subdir} is non-existent in Conda channel ${channel}`)
+      return response.status(404).send(`Subdir ${subdir} is non-existent in Conda channel ${channel}, subdirs: ${channelData.subdirs}`)
     }
     let revisions = []
     let subdirs = subdir === '-' ? channelData.packages[name].subdirs : [subdir]
@@ -82,7 +82,7 @@ router.get(
     channel = encodeURIComponent(channel)
     name = encodeURIComponent(name)
     if (!condaChannels[channel]) {
-      return response.status(404).send([])
+      return response.status(404).send(`Unrecognized Conda channel ${channel}`)
     }
     let channelData = await fetchCondaChannelData(channel)
     let matches = Object.entries(channelData.packages)
