@@ -81,9 +81,7 @@ class ScanCodeSummarizerNew {
     const [firstPackage] = packages
     if (!firstPackage) return null
 
-    const licenseExpression =
-      firstPackage.declared_license_expression_spdx ||
-      normalizeLicenseExpression(firstPackage.declared_license_expression, this.logger)
+    const licenseExpression = firstPackage.declared_license_expression_spdx
 
     return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression
   }
@@ -130,13 +128,13 @@ class ScanCodeSummarizerNew {
       .filter(file => isLicenseFile(file.path, coordinates) && file.license_detections)
       .reduce((licenses, file) => {
         file.license_detections.forEach(licenseDetection => {
-          if (licenseDetection.license_expression) {
-            licenses.add(normalizeLicenseExpression(licenseDetection.license_expression, this.logger))
+          if (licenseDetection.license_expression_spdx) {
+            licenses.add(licenseDetection.license_expression_spdx)
             return
           }
           licenseDetection.matches.forEach(match => {
             if (match.score >= licenseClarityScoreThreshold) {
-              licenses.add(normalizeLicenseExpression(match.license_expression, this.logger))
+              licenses.add(match.spdx_license_expression)
             }
           })
         })
