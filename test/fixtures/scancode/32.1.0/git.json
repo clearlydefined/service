@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/git/github/microsoft/redie/3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46",
-    "fetchedAt": "2024-02-21T17:56:28.545Z",
+    "fetchedAt": "2024-05-13T12:24:07.032Z",
     "links": {
       "self": {
-        "href": "urn:git:github:microsoft:redie:revision:3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46:tool:scancode:32.2.8",
+        "href": "urn:git:github:microsoft:redie:revision:3d9c88c2d14c82812f0b9cde6cdfb6f11ef48f46:tool:scancode:32.3.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,27 +13,27 @@
         "type": "collection"
       }
     },
-    "schemaVersion": "32.2.8",
-    "toolVersion": "32.0.8",
+    "schemaVersion": "32.3.0",
+    "toolVersion": "32.1.0",
     "contentType": "application/json",
     "releaseDate": "2021-01-28T20:22:54.000Z",
-    "processedAt": "2024-02-21T17:56:32.639Z"
+    "processedAt": "2024-05-13T12:24:12.134Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "32.0.8",
+        "tool_version": "32.1.0",
         "options": {
           "input": [
-            "/tmp/cd-RflHbe/redie"
+            "/tmp/cd-NHmOqe/redie"
           ],
           "--classify": true,
           "--copyright": true,
           "--email": true,
           "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-STSkGl",
+          "--json-pp": "/tmp/cd-Jc2iv0",
           "--license": true,
           "--license-clarity-score": true,
           "--license-references": true,
@@ -49,10 +49,10 @@
           "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2024-02-21T175629.146749",
-        "end_timestamp": "2024-02-21T175631.969770",
-        "output_format_version": "3.0.0",
-        "duration": 2.82303786277771,
+        "start_timestamp": "2024-05-13T122407.828973",
+        "end_timestamp": "2024-05-13T122411.382593",
+        "output_format_version": "3.1.0",
+        "duration": 3.5536296367645264,
         "message": null,
         "errors": [],
         "warnings": [],
@@ -60,11 +60,11 @@
           "system_environment": {
             "operating_system": "linux",
             "cpu_architecture": "64",
-            "platform": "Linux-6.2.0-1019-azure-x86_64-with-glibc2.31",
-            "platform_version": "#19~22.04.1-Ubuntu SMP Wed Jan 10 22:57:03 UTC 2024",
+            "platform": "Linux-6.5.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#20~22.04.1-Ubuntu SMP Wed Apr  3 03:28:18 UTC 2024",
             "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
           },
-          "spdx_license_list_version": "3.21",
+          "spdx_license_list_version": "3.23",
           "files_count": 6
         }
       }
@@ -139,17 +139,20 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/package.json",
                 "start_line": 1,
                 "end_line": 1,
+                "matcher": "1-spdx-id",
+                "score": 100,
                 "matched_length": 1,
                 "match_coverage": 100,
-                "matcher": "1-spdx-id",
-                "license_expression": "mit",
-                "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
                 "rule_relevance": 100,
+                "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
                 "rule_url": null,
                 "matched_text": "MIT"
               }
@@ -167,7 +170,7 @@
         "repository_homepage_url": "https://www.npmjs.com/package/redie",
         "repository_download_url": "https://registry.npmjs.org/redie/-/redie-0.3.0.tgz",
         "api_data_url": "https://registry.npmjs.org/redie/0.3.0",
-        "package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_paths": [
           "package.json"
         ],
@@ -187,8 +190,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/argv-split?uuid=9079e9df-ee86-43aa-b79f-e3d65573a769",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/argv-split?uuid=e8433cd3-0dbd-4c8b-a8ad-56e6610040d1",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -201,8 +204,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/command-line-args?uuid=ebd48b20-3aa6-4937-860b-6647b82f6a9e",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/command-line-args?uuid=59f14e06-b15f-42e3-bb1c-eee3b05d0bf0",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -215,8 +218,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/is-json?uuid=37f234c3-947a-495d-96f5-88172341ac5d",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/is-json?uuid=d03ac884-5c13-49ee-84ba-d795e982dffb",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -229,8 +232,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/json-colorz?uuid=cb973113-a9fd-4256-a70a-ed4e7bbed20a",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/json-colorz?uuid=b17056c2-f4b0-45b1-8178-93d1b3130454",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -243,8 +246,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/painless-config?uuid=0a8f9faa-0dde-47bc-aec8-08ddf358809d",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/painless-config?uuid=3c06042c-7413-4bba-b548-42a0dc6e1cbf",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -257,8 +260,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/redis?uuid=72e0dbdd-771d-4225-aa0b-4164ba572b15",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/redis?uuid=f00b92ef-ef14-4663-b5ac-d05f03be9d84",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       },
@@ -271,8 +274,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:npm/redis-commands?uuid=1d1c6362-2ed1-45c7-8786-90c6fe0bb799",
-        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac",
+        "dependency_uid": "pkg:npm/redis-commands?uuid=464f4ca3-a885-43e8-ac81-437f1548a923",
+        "for_package_uid": "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5",
         "datafile_path": "package.json",
         "datasource_id": "npm_package_json"
       }
@@ -281,22 +284,145 @@
       {
         "identifier": "mit-3fce6ea2-8abd-6c6b-3ede-a37af7c6efee",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/package.json",
+            "start_line": 25,
+            "end_line": 25,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 2,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_30.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_30.RULE",
+            "matched_text": "  \"license\": \"MIT\",",
+            "matched_text_diagnostics": "license\": \"MIT\","
+          }
+        ]
       },
       {
         "identifier": "mit-a822f434-d61f-f2b1-c792-8b8cb9e7b9bf",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/package.json",
+            "start_line": 1,
+            "end_line": 1,
+            "matcher": "1-spdx-id",
+            "score": 100,
+            "matched_length": 1,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
+            "rule_url": null,
+            "matched_text": "MIT"
+          }
+        ]
       },
       {
         "identifier": "mit-ac40beba-5702-f54d-755f-333441314bb0",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/LICENSE",
+            "start_line": 9,
+            "end_line": 9,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 2,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_14.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+            "matched_text": "MIT License",
+            "matched_text_diagnostics": "MIT License"
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/LICENSE",
+            "start_line": 11,
+            "end_line": 27,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 161,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit.LICENSE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+            "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+            "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+          }
+        ]
       },
       {
         "identifier": "mit-ba6b4e66-7e0e-a2b1-cca9-23918f3964b6",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/index.js",
+            "start_line": 5,
+            "end_line": 5,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 14,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_192.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_192.RULE",
+            "matched_text": " * Licensed under the MIT License. See LICENSE in the project root for license information.",
+            "matched_text_diagnostics": "Licensed under the MIT License. See LICENSE in the project root for license information."
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/LICENSE",
+            "start_line": 9,
+            "end_line": 9,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 2,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_14.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+            "matched_text": "MIT License",
+            "matched_text_diagnostics": "MIT License"
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "redie/LICENSE",
+            "start_line": 11,
+            "end_line": 27,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 161,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit.LICENSE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+            "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+            "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+          }
+        ]
       }
     ],
     "tallies": {
@@ -562,7 +688,7 @@
         "base_name": "index",
         "extension": ".js",
         "size": 4940,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "7561b32ffa21eeb8ca1c12a5e76ec28d718c3dfd",
         "md5": "c643675cb984801703fb0d2ebcc84675",
         "sha256": "b83c7eeef19b2f4be9a8947db0bedc4ef43a15746e9c9b6f14e491f68bd2db60",
@@ -577,7 +703,7 @@
         "is_script": true,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -589,45 +715,55 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/index.js",
                 "start_line": 5,
                 "end_line": 5,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 14,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_192.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_192.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_192.RULE",
-                "matched_text": "Licensed under the MIT License. See LICENSE in the project root for license information."
+                "matched_text": " * Licensed under the MIT License. See LICENSE in the project root for license information.",
+                "matched_text_diagnostics": "Licensed under the MIT License. See LICENSE in the project root for license information."
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/LICENSE",
                 "start_line": 9,
                 "end_line": 9,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_14.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_14.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
-                "matched_text": "MIT License"
+                "matched_text": "MIT License",
+                "matched_text_diagnostics": "MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/LICENSE",
                 "start_line": 11,
                 "end_line": 27,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
               }
             ],
             "identifier": "mit-ba6b4e66-7e0e-a2b1-cca9-23918f3964b6",
@@ -668,7 +804,7 @@
         "base_name": "LICENSE",
         "extension": "",
         "size": 1113,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "6401e7f1f46654117270c4860a263d3c4d6df1eb",
         "md5": "e7b465bb6dd47f014d544ba0c60e34b6",
         "sha256": "42c7def049b7ef692085ca9bdf5984d439d3291922e02cb112d5cd1287b3cc56",
@@ -683,7 +819,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": true,
         "is_manifest": false,
@@ -695,32 +831,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/LICENSE",
                 "start_line": 9,
                 "end_line": 9,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_14.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_14.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
-                "matched_text": "MIT License"
+                "matched_text": "MIT License",
+                "matched_text_diagnostics": "MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/LICENSE",
                 "start_line": 11,
                 "end_line": 27,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in\nthe Software without restriction, including without limitation the rights to\nuse, copy, modify, merge, publish, distribute, sublicense, and/or sell copies\nof the Software, and to permit persons to whom the Software is furnished to do\nso, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
               }
             ],
             "identifier": "mit-ac40beba-5702-f54d-755f-333441314bb0"
@@ -758,7 +901,7 @@
         "base_name": "package",
         "extension": ".json",
         "size": 880,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "74c5c9c1de88406c3d08272bfb6fe57055625fc9",
         "md5": "bc2a28164bcd8154647f940af5687dc3",
         "sha256": "7bf06a09d2b1c79b2cad7820a97e3887749418e6c53da1f7fb7f1b7c430e386d",
@@ -814,17 +957,20 @@
             "license_detections": [
               {
                 "license_expression": "mit",
+                "license_expression_spdx": "MIT",
                 "matches": [
                   {
-                    "score": 100,
+                    "license_expression": "mit",
+                    "spdx_license_expression": "MIT",
+                    "from_file": "redie/package.json",
                     "start_line": 1,
                     "end_line": 1,
+                    "matcher": "1-spdx-id",
+                    "score": 100,
                     "matched_length": 1,
                     "match_coverage": 100,
-                    "matcher": "1-spdx-id",
-                    "license_expression": "mit",
-                    "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
                     "rule_relevance": 100,
+                    "rule_identifier": "spdx-license-identifier-mit-5da48780aba670b0860c46d899ed42a0f243ff06",
                     "rule_url": null,
                     "matched_text": "MIT"
                   }
@@ -920,7 +1066,7 @@
           }
         ],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -932,19 +1078,23 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "redie/package.json",
                 "start_line": 25,
                 "end_line": 25,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_30.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_30.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_30.RULE",
-                "matched_text": "license\": \"MIT\","
+                "matched_text": "  \"license\": \"MIT\",",
+                "matched_text_diagnostics": "license\": \"MIT\","
               }
             ],
             "identifier": "mit-3fce6ea2-8abd-6c6b-3ede-a37af7c6efee"
@@ -998,7 +1148,7 @@
         "base_name": "README",
         "extension": ".md",
         "size": 2517,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "32a1b1ec0f71cfd550fb68fbac340d6060973e88",
         "md5": "607c10bbb77df9a54f3269c85a91489b",
         "sha256": "cb8c8fcb5d180718f3339344b204890c64d699c02818fdd7df343be9db9c520d",
@@ -1013,7 +1163,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1080,7 +1230,7 @@
         "base_name": "screenshot",
         "extension": ".png",
         "size": 26290,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "d01607f9847c1edf3005f200630675123230225e",
         "md5": "dd51d941688aa2da0dcda7ba48694fe8",
         "sha256": "ad5cb9f1c344128d522f486bdedc2bff717204832807dad1b2667869f40405cc",
@@ -1095,7 +1245,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1140,7 +1290,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1170,7 +1320,7 @@
         "base_name": "launch",
         "extension": ".json",
         "size": 688,
-        "date": "2024-02-21",
+        "date": "2024-05-13",
         "sha1": "67b6a924db5580872b2e011c33642c9e8cd5a27e",
         "md5": "8504705bff1a9f2a2e2c2199a3e3a480",
         "sha256": "6661a4ec342b857cc43ad6bbb412b75d53172970108d2621166ff23720c8ffbf",
@@ -1185,7 +1335,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:npm/redie@0.3.0?uuid=d3a51e55-b8e5-4026-81d1-92e538aef9ac"
+          "pkg:npm/redie@0.3.0?uuid=2357eac8-a482-42d0-9570-c5517e5e4cd5"
         ],
         "is_legal": false,
         "is_manifest": false,

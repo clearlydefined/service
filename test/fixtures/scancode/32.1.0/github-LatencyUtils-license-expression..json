@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/git/github/latencyutils/latencyutils/319ad7a36652cdc3833e2072551a2836a0747578",
-    "fetchedAt": "2024-01-05T13:44:44.935Z",
+    "fetchedAt": "2024-05-13T12:24:38.113Z",
     "links": {
       "self": {
-        "href": "urn:git:github:latencyutils:latencyutils:revision:319ad7a36652cdc3833e2072551a2836a0747578:tool:scancode:32.2.8",
+        "href": "urn:git:github:latencyutils:latencyutils:revision:319ad7a36652cdc3833e2072551a2836a0747578:tool:scancode:32.3.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,27 +13,27 @@
         "type": "collection"
       }
     },
-    "schemaVersion": "32.2.8",
-    "toolVersion": "32.0.8",
+    "schemaVersion": "32.3.0",
+    "toolVersion": "32.1.0",
     "contentType": "application/json",
     "releaseDate": "2014-11-24T00:00:13.000Z",
-    "processedAt": "2024-01-05T13:44:56.150Z"
+    "processedAt": "2024-05-13T12:24:47.093Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "32.0.8",
+        "tool_version": "32.1.0",
         "options": {
           "input": [
-            "/tmp/cd-aLLbe1/latencyutils"
+            "/tmp/cd-OIqM5S/latencyutils"
           ],
           "--classify": true,
           "--copyright": true,
           "--email": true,
           "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-Jg1CMy",
+          "--json-pp": "/tmp/cd-7zHeZN",
           "--license": true,
           "--license-clarity-score": true,
           "--license-references": true,
@@ -49,10 +49,10 @@
           "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2024-01-05T134445.835933",
-        "end_timestamp": "2024-01-05T134455.598836",
-        "output_format_version": "3.0.0",
-        "duration": 9.762919187545776,
+        "start_timestamp": "2024-05-13T122438.840362",
+        "end_timestamp": "2024-05-13T122446.403561",
+        "output_format_version": "3.1.0",
+        "duration": 7.563213348388672,
         "message": null,
         "errors": [],
         "warnings": [],
@@ -60,11 +60,11 @@
           "system_environment": {
             "operating_system": "linux",
             "cpu_architecture": "64",
-            "platform": "Linux-6.2.0-1018-azure-x86_64-with-glibc2.31",
-            "platform_version": "#18~22.04.1-Ubuntu SMP Tue Nov 21 19:25:02 UTC 2023",
+            "platform": "Linux-6.5.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#20~22.04.1-Ubuntu SMP Wed Apr  3 03:28:18 UTC 2024",
             "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
           },
-          "spdx_license_list_version": "3.21",
+          "spdx_license_list_version": "3.23",
           "files_count": 19
         }
       }
@@ -146,43 +146,50 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 33,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/pom.xml",
                 "start_line": 1,
                 "end_line": 1,
+                "matcher": "2-aho",
+                "score": 33,
                 "matched_length": 6,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_199.RULE",
                 "rule_relevance": 33,
+                "rule_identifier": "cc0-1.0_199.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_199.RULE",
                 "matched_text": "- name: Public Domain, per Creative Commons CC0"
               },
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/pom.xml",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 7,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_3.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_3.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_3.RULE",
                 "matched_text": "  url: http://creativecommons.org/publicdomain/zero/1.0/"
               },
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/pom.xml",
                 "start_line": 4,
                 "end_line": 5,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
                 "matched_text": "    * This code was Written by Gil Tene of Azul Systems, and released to the\n                    * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
@@ -202,7 +209,7 @@
         "repository_homepage_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/",
         "repository_download_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.jar",
         "api_data_url": "https://repo1.maven.org/maven2/org/latencyutils/LatencyUtils/2.0.1/LatencyUtils-2.0.1.pom",
-        "package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89",
+        "package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf",
         "datafile_paths": [
           "pom.xml"
         ],
@@ -222,8 +229,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/junit/junit@4.10?uuid=1eca8b2d-3ec9-4c64-8ba0-0006a8704b32",
-        "for_package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89",
+        "dependency_uid": "pkg:maven/junit/junit@4.10?uuid=21305240-1ee6-4bb3-8017-902d937fca56",
+        "for_package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -236,8 +243,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.hdrhistogram/HdrHistogram@2.0.3?uuid=96baa6e5-d17d-44c7-938a-fa27475c29f0",
-        "for_package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89",
+        "dependency_uid": "pkg:maven/org.hdrhistogram/HdrHistogram@2.0.3?uuid=3029d011-13c6-468a-9de9-2ebf9748aeaa",
+        "for_package_uid": "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       }
@@ -246,27 +253,151 @@
       {
         "identifier": "bsd_simplified-25075703-83ad-f419-e8fc-55c5ce7e67a5",
         "license_expression": "bsd-simplified",
-        "detection_count": 1
+        "license_expression_spdx": "BSD-2-Clause",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "bsd-simplified",
+            "license_expression_spdx": "BSD-2-Clause",
+            "from_file": "latencyutils/LICENSE",
+            "start_line": 18,
+            "end_line": 38,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 185,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "bsd-simplified_16.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/bsd-simplified_16.RULE",
+            "matched_text": "  Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE.",
+            "matched_text_diagnostics": "Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE."
+          }
+        ]
       },
       {
         "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb",
         "license_expression": "cc0-1.0",
-        "detection_count": 16
-      },
-      {
-        "identifier": "cc0_1_0-86717b33-0cfb-e7e3-850d-6680cd92e0c7",
-        "license_expression": "cc0-1.0",
-        "detection_count": 1
+        "license_expression_spdx": "CC0-1.0",
+        "detection_count": 16,
+        "reference_matches": [
+          {
+            "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
+            "from_file": "latencyutils/src/examples/java/LatencyComparativeLoggingDemo.java",
+            "start_line": 2,
+            "end_line": 3,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 16,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "cc0-1.0_44.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
+            "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+            "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ]
       },
       {
         "identifier": "cc0_1_0-8cc2c44f-ae6f-8ab0-35cb-59a998bf3b47",
         "license_expression": "cc0-1.0",
-        "detection_count": 1
+        "license_expression_spdx": "CC0-1.0",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
+            "from_file": "latencyutils/pom.xml",
+            "start_line": 1,
+            "end_line": 1,
+            "matcher": "2-aho",
+            "score": 33,
+            "matched_length": 6,
+            "match_coverage": 100,
+            "rule_relevance": 33,
+            "rule_identifier": "cc0-1.0_199.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_199.RULE",
+            "matched_text": "- name: Public Domain, per Creative Commons CC0"
+          },
+          {
+            "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
+            "from_file": "latencyutils/pom.xml",
+            "start_line": 2,
+            "end_line": 2,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 7,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "cc0-1.0_3.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_3.RULE",
+            "matched_text": "  url: http://creativecommons.org/publicdomain/zero/1.0/"
+          },
+          {
+            "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
+            "from_file": "latencyutils/pom.xml",
+            "start_line": 4,
+            "end_line": 5,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 16,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "cc0-1.0_44.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
+            "matched_text": "    * This code was Written by Gil Tene of Azul Systems, and released to the\n                    * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+          }
+        ]
+      },
+      {
+        "identifier": "cc0_1_0-c3b74f6a-05be-d38b-84dd-3f5e28f74759",
+        "license_expression": "cc0-1.0",
+        "license_expression_spdx": "CC0-1.0",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
+            "from_file": "latencyutils/pom.xml",
+            "start_line": 23,
+            "end_line": 32,
+            "matcher": "3-seq",
+            "score": 81.25,
+            "matched_length": 39,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "cc0-1.0_176.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_176.RULE",
+            "matched_text": "    <licenses>\n        <license>\n            <comments>\n                * This code was Written by Gil Tene of Azul Systems, and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            </comments>\n            <name>Public Domain, per Creative Commons CC0</name>\n            <url>http://creativecommons.org/publicdomain/zero/1.0/</url>\n        </license>\n    </licenses>",
+            "matched_text_diagnostics": "licenses>\n        <license>\n            <comments>\n                * [This] [code] [was] [Written] [by] [Gil] [Tene] [of] [Azul] [Systems], and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            </comments>\n            <name>Public Domain, per Creative Commons CC0</name>\n            <url>http://creativecommons.org/publicdomain/zero/1.0/</url>\n        </license>\n    </licenses>"
+          }
+        ]
       },
       {
         "identifier": "cc0_1_0_or_bsd_simplified-11c046fa-e52b-23e8-8ae9-0591625bd7ad",
         "license_expression": "cc0-1.0 OR bsd-simplified",
-        "detection_count": 1
+        "license_expression_spdx": "CC0-1.0 OR BSD-2-Clause",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "cc0-1.0 OR bsd-simplified",
+            "license_expression_spdx": "CC0-1.0 OR BSD-2-Clause",
+            "from_file": "latencyutils/LICENSE",
+            "start_line": 1,
+            "end_line": 13,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 97,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "cc0-1.0_or_bsd-simplified_1.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_or_bsd-simplified_1.RULE",
+            "matched_text": "  * This code was Written by Gil Tene of Azul Systems, and released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **",
+            "matched_text_diagnostics": "released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **"
+          }
+        ]
       }
     ],
     "tallies": {
@@ -617,7 +748,7 @@
         "base_name": "LICENSE",
         "extension": "",
         "size": 2091,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "2a08217e5b571885ec71b9c8b92ce53f9e85ca6f",
         "md5": "deadc78cbcc98b16d1e2787747713830",
         "sha256": "50b43424ea5a8855c49f89e4d3a00fd55fb572ecd0c872f4215f63f654983c6c",
@@ -632,7 +763,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": true,
         "is_manifest": false,
@@ -644,38 +775,46 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0 OR bsd-simplified",
+            "license_expression_spdx": "CC0-1.0 OR BSD-2-Clause",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0 OR bsd-simplified",
+                "spdx_license_expression": "CC0-1.0 OR BSD-2-Clause",
+                "from_file": "latencyutils/LICENSE",
                 "start_line": 1,
                 "end_line": 13,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 97,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0 OR bsd-simplified",
-                "rule_identifier": "cc0-1.0_or_bsd-simplified_1.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_or_bsd-simplified_1.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_or_bsd-simplified_1.RULE",
-                "matched_text": "released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **"
+                "matched_text": "  * This code was Written by Gil Tene of Azul Systems, and released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **",
+                "matched_text_diagnostics": "released to the\n  * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n\n For users of this code who wish to consume it under the \"BSD\" license\n rather than under the public domain or CC0 contribution text mentioned\n above, the code found under this directory is *also* provided under the\n following license (commonly referred to as the BSD 2-Clause License). This\n license does not detract from the above stated release of the code into\n the public domain, and simply represents an additional license granted by\n the Author.\n\n -----------------------------------------------------------------------------\n ** Beginning of \"BSD 2-Clause License\" text. **"
               }
             ],
             "identifier": "cc0_1_0_or_bsd_simplified-11c046fa-e52b-23e8-8ae9-0591625bd7ad"
           },
           {
             "license_expression": "bsd-simplified",
+            "license_expression_spdx": "BSD-2-Clause",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "bsd-simplified",
+                "spdx_license_expression": "BSD-2-Clause",
+                "from_file": "latencyutils/LICENSE",
                 "start_line": 18,
                 "end_line": 38,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 185,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "bsd-simplified",
-                "rule_identifier": "bsd-simplified_16.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "bsd-simplified_16.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/bsd-simplified_16.RULE",
-                "matched_text": "Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE."
+                "matched_text": "  Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE.",
+                "matched_text_diagnostics": "Redistribution and use in source and binary forms, with or without\n  modification, are permitted provided that the following conditions are met:\n\n  1. Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n\n  2. Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n\n  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF\n  THE POSSIBILITY OF SUCH DAMAGE."
               }
             ],
             "identifier": "bsd_simplified-25075703-83ad-f419-e8fc-55c5ce7e67a5"
@@ -725,7 +864,7 @@
         "base_name": "pom",
         "extension": ".xml",
         "size": 7255,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "484313e3e9d627dacf8ee4b432ccd2092dca8590",
         "md5": "5ae03a4a5093aa36a52ee4c58dad49c0",
         "sha256": "73a435f1f440a03073a074230cdfa2e3c381e81b720055eb3d384cb01843b733",
@@ -776,43 +915,50 @@
             "license_detections": [
               {
                 "license_expression": "cc0-1.0",
+                "license_expression_spdx": "CC0-1.0",
                 "matches": [
                   {
-                    "score": 33,
+                    "license_expression": "cc0-1.0",
+                    "spdx_license_expression": "CC0-1.0",
+                    "from_file": "latencyutils/pom.xml",
                     "start_line": 1,
                     "end_line": 1,
+                    "matcher": "2-aho",
+                    "score": 33,
                     "matched_length": 6,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "cc0-1.0",
-                    "rule_identifier": "cc0-1.0_199.RULE",
                     "rule_relevance": 33,
+                    "rule_identifier": "cc0-1.0_199.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_199.RULE",
                     "matched_text": "- name: Public Domain, per Creative Commons CC0"
                   },
                   {
-                    "score": 100,
+                    "license_expression": "cc0-1.0",
+                    "spdx_license_expression": "CC0-1.0",
+                    "from_file": "latencyutils/pom.xml",
                     "start_line": 2,
                     "end_line": 2,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 7,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "cc0-1.0",
-                    "rule_identifier": "cc0-1.0_3.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "cc0-1.0_3.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_3.RULE",
                     "matched_text": "  url: http://creativecommons.org/publicdomain/zero/1.0/"
                   },
                   {
-                    "score": 100,
+                    "license_expression": "cc0-1.0",
+                    "spdx_license_expression": "CC0-1.0",
+                    "from_file": "latencyutils/pom.xml",
                     "start_line": 4,
                     "end_line": 5,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 16,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "cc0-1.0",
-                    "rule_identifier": "cc0-1.0_44.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "cc0-1.0_44.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
                     "matched_text": "    * This code was Written by Gil Tene of Azul Systems, and released to the\n                    * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/"
                   }
@@ -860,7 +1006,7 @@
           }
         ],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -872,22 +1018,26 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 84.78,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/pom.xml",
                 "start_line": 23,
                 "end_line": 32,
+                "matcher": "3-seq",
+                "score": 81.25,
                 "matched_length": 39,
                 "match_coverage": 100,
-                "matcher": "3-seq",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_176.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_176.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_176.RULE",
-                "matched_text": "licenses>\n        <license>\n            <comments>\n                * [This] [code] [was] [Written] [by] [Gil] [Tene] [of] [Azul] [Systems], and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            </comments>\n            <name>Public Domain, per Creative Commons CC0</name>\n            <url>http://creativecommons.org/publicdomain/zero/1.0/</url>\n        </license>\n    </licenses>"
+                "matched_text": "    <licenses>\n        <license>\n            <comments>\n                * This code was Written by Gil Tene of Azul Systems, and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            </comments>\n            <name>Public Domain, per Creative Commons CC0</name>\n            <url>http://creativecommons.org/publicdomain/zero/1.0/</url>\n        </license>\n    </licenses>",
+                "matched_text_diagnostics": "licenses>\n        <license>\n            <comments>\n                * [This] [code] [was] [Written] [by] [Gil] [Tene] [of] [Azul] [Systems], and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            </comments>\n            <name>Public Domain, per Creative Commons CC0</name>\n            <url>http://creativecommons.org/publicdomain/zero/1.0/</url>\n        </license>\n    </licenses>"
               }
             ],
-            "identifier": "cc0_1_0-86717b33-0cfb-e7e3-850d-6680cd92e0c7"
+            "identifier": "cc0_1_0-c3b74f6a-05be-d38b-84dd-3f5e28f74759"
           }
         ],
         "license_clues": [],
@@ -963,7 +1113,7 @@
         "base_name": "README",
         "extension": ".md",
         "size": 2616,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "feed5cda4ab1dcede5f1f2f4ab5b29b162acd3be",
         "md5": "ce1fc9844a5d51a568d549df342467eb",
         "sha256": "deffde62a94a3e68449249717021ac756d5dde3b58f67d32d04179439e7a3104",
@@ -978,7 +1128,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1023,7 +1173,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1068,7 +1218,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1113,7 +1263,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1143,7 +1293,7 @@
         "base_name": "LatencyComparativeLoggingDemo",
         "extension": ".java",
         "size": 7759,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "67c13e829d554711a660156f77ac379695bb5c3b",
         "md5": "8a40c94c30a9a938626cfc3d052a0b66",
         "sha256": "6d3bf2a81021b613b1afbba94312c2d9b8d368b23c10f5e35db6abda2f5180a7",
@@ -1158,7 +1308,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1170,19 +1320,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/examples/java/LatencyComparativeLoggingDemo.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1220,7 +1374,7 @@
         "base_name": "LatencyLoggingDemo",
         "extension": ".java",
         "size": 6307,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "a81510691f2bad2e19d315644703f479070d10ca",
         "md5": "2f534fcacaed9a4fa4276e70a47423b8",
         "sha256": "8655ad41cccc40f32ebebac64529c5c1293e756738697f40deb0431939178eb7",
@@ -1235,7 +1389,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1247,19 +1401,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/examples/java/LatencyLoggingDemo.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1297,7 +1455,7 @@
         "base_name": "LatencyStatsDemo",
         "extension": ".java",
         "size": 4200,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "f55b93bdb5efb66433a9f1b0342202f8d667c74f",
         "md5": "267bdbb57a223fb57961be1d48f1a47a",
         "sha256": "ff5c2bb49afe169c4797989251aaef8be37cc25e4bb1ac4f11057f587ecbcae9",
@@ -1312,7 +1470,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1324,19 +1482,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/examples/java/LatencyStatsDemo.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1389,7 +1551,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1434,7 +1596,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1479,7 +1641,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1524,7 +1686,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1554,7 +1716,7 @@
         "base_name": "IntervalEstimator",
         "extension": ".java",
         "size": 769,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "e47cd84dbe2800bb0c73612363d667edabd26fc2",
         "md5": "b04335b404f014a08660ba481ad8bfcd",
         "sha256": "292586ceed4e5a9427db86982d57290bd94f629ffa9b1dee0f9b1cd2dcef1a03",
@@ -1569,7 +1731,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1581,19 +1743,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/IntervalEstimator.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1631,7 +1797,7 @@
         "base_name": "LatencyStats",
         "extension": ".java",
         "size": 21249,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "7d8c617fe2e9c9f9003f1616a6d5a38860fcb0ca",
         "md5": "6eacc06ac1fb5ff64c316b1f57bee175",
         "sha256": "0dcfb1ee5f3d4925331881fb827ee20154163efc60c2047f5b1000c5e340cb46",
@@ -1646,7 +1812,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1658,19 +1824,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/LatencyStats.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1708,7 +1878,7 @@
         "base_name": "MovingAverageIntervalEstimator",
         "extension": ".java",
         "size": 4111,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "f71cc58e8b92c8d268ecda22349807aa248eccae",
         "md5": "73c73fef854b8f9a9c1a1d52da85f812",
         "sha256": "ce65397badaf0c94aac89c0ac9997027cac98c909a9249cdc33e331e79739b98",
@@ -1723,7 +1893,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1735,19 +1905,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/MovingAverageIntervalEstimator.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1785,7 +1959,7 @@
         "base_name": "package-info",
         "extension": ".java",
         "size": 3033,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "daa7c1f74fb3683b5e8595d66f50752e909aca16",
         "md5": "3039993031f148ca575ead4ad68e437f",
         "sha256": "31dab282068afc67b7cb8296646e72d18d8454f783b49218e85cb0e83550f256",
@@ -1800,7 +1974,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1812,19 +1986,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/package-info.java",
                 "start_line": 3,
                 "end_line": 4,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1862,7 +2040,7 @@
         "base_name": "PauseDetector",
         "extension": ".java",
         "size": 5691,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "b9f0497fa9cf84babd14c866b4fe5d6131fd574f",
         "md5": "a9ff1d0fc683c72c5ed8d883ff634382",
         "sha256": "6bd38231dd1a1cf241b5fe96fd24c0767f404b449357b089bdd2bb1be2911275",
@@ -1877,7 +2055,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1889,19 +2067,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/PauseDetector.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -1939,7 +2121,7 @@
         "base_name": "PauseDetectorListener",
         "extension": ".java",
         "size": 607,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "6b1d7eb8758bf0d5abf689a6ed1ddc2f28f0a95d",
         "md5": "9302f492f8b6bf1726c03fe6e6fd4a08",
         "sha256": "23fe5cb31be3ad7669ac9e546bfdac03b1bc61b35e293146a62a9fe681ac68c3",
@@ -1954,7 +2136,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1966,19 +2148,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/PauseDetectorListener.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2016,7 +2202,7 @@
         "base_name": "SimplePauseDetector",
         "extension": ".java",
         "size": 8362,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "623ea3ae6f2bd9bf17b412e96879d208913cc48f",
         "md5": "12346d50add0a15d96ebda8b7325b45c",
         "sha256": "c2e0bb1ba34420a566fe1ed613ada1167d10c9126e6d7d5e054fdd1bbd2b10dd",
@@ -2031,7 +2217,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2043,19 +2229,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/SimplePauseDetector.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2093,7 +2283,7 @@
         "base_name": "TimeCappedMovingAverageIntervalEstimator",
         "extension": ".java",
         "size": 13352,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "74e51b879ef08f42e6e4b6a3b07bb3b569cf2bcb",
         "md5": "0dd4b2b5638d787c791444e458581b03",
         "sha256": "a552ce83747f25ad71602c29b8ca21d204ca55343ec79c3c1c1f4e49ef5c1f2b",
@@ -2108,7 +2298,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2120,19 +2310,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/TimeCappedMovingAverageIntervalEstimator.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2170,7 +2364,7 @@
         "base_name": "TimeServices",
         "extension": ".java",
         "size": 8416,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "2356112f3f541eaa2de97407822c069c6917a93c",
         "md5": "676634bd0980537c9c2ab9a230d79b98",
         "sha256": "069f51dee20b03a98b8dacd4034f79570e9a50c4b602ffcc3e5dfb524f500fca",
@@ -2185,7 +2379,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2197,19 +2391,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/main/java/org/LatencyUtils/TimeServices.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2262,7 +2460,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2307,7 +2505,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2352,7 +2550,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2397,7 +2595,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2427,7 +2625,7 @@
         "base_name": "LatencyStatsTest",
         "extension": ".java",
         "size": 16077,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "207b77f84f5281ff751e11cf359d3a3cacbb45f7",
         "md5": "326e98c927cb3bee35477d69f55a7a2b",
         "sha256": "903f450428e613672c9d88818ed958c1d0ca84368e4ad831df9b989f45eee5ee",
@@ -2442,7 +2640,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2454,19 +2652,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/test/java/org/LatencyUtils/LatencyStatsTest.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2504,7 +2706,7 @@
         "base_name": "MovingAverageIntervalEstimatorTest",
         "extension": ".java",
         "size": 1393,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "69bb1683197d2e811fa466cbd0fdad76cc7a664a",
         "md5": "9c8ae9129474c099d280ab6c0c4c6bba",
         "sha256": "ad900cf304aa46cb32876c4f7d7cf9049e28d9c9bc6d6e02bb90b8ced6c8cdd5",
@@ -2519,7 +2721,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2531,19 +2733,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/test/java/org/LatencyUtils/MovingAverageIntervalEstimatorTest.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2581,7 +2787,7 @@
         "base_name": "SimplePauseDetectorTest",
         "extension": ".java",
         "size": 9009,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "482319a5b6df46683394360779b98dfb89655051",
         "md5": "8b2d389e70d7c4f60ec4584ecf68e8e8",
         "sha256": "add23e821a0e7dd453e78e90d2493981f8980d1593fd6233a47c9101b2952f26",
@@ -2596,7 +2802,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2608,19 +2814,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/test/java/org/LatencyUtils/SimplePauseDetectorTest.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"
@@ -2658,7 +2868,7 @@
         "base_name": "TimeCappedMovingAverageIntervalEstimatorTest",
         "extension": ".java",
         "size": 9354,
-        "date": "2024-01-05",
+        "date": "2024-05-13",
         "sha1": "c2f581341c06a32c1cc124ea2e0e028f097a7b55",
         "md5": "0b2824be22d4ef57b1d1eb8159df807a",
         "sha256": "1181779ee70c1cacff5daaa2b2938e6e3c58e106654d46829b936dae28872f45",
@@ -2673,7 +2883,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=7ec85517-b963-4a4f-8069-48e1e85e9a89"
+          "pkg:maven/org.latencyutils/LatencyUtils@2.0.1?uuid=8de3c1d6-8894-4781-9886-5bbc9f6ca4bf"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2685,19 +2895,23 @@
         "license_detections": [
           {
             "license_expression": "cc0-1.0",
+            "license_expression_spdx": "CC0-1.0",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "cc0-1.0",
+                "spdx_license_expression": "CC0-1.0",
+                "from_file": "latencyutils/src/test/java/org/LatencyUtils/TimeCappedMovingAverageIntervalEstimatorTest.java",
                 "start_line": 2,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 16,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "cc0-1.0",
-                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "cc0-1.0_44.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/cc0-1.0_44.RULE",
-                "matched_text": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
+                "matched_text": " * Written by Gil Tene of Azul Systems, and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/",
+                "matched_text_diagnostics": "and released to the public domain,\n * as explained at http://creativecommons.org/publicdomain/zero/1.0/"
               }
             ],
             "identifier": "cc0_1_0-ee74816d-d89c-0935-be1a-81a1d1569edb"

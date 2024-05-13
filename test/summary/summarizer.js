@@ -10,7 +10,7 @@ describe('Summarizer service', () => {
     const summarizer = Summarizer({})
     const coordinates = 'npm/npmjs/-/test/1.0'
     const summary = summarizer.summarizeAll(coordinates, output)
-    const scancode = summary.scancode['32.0.8']
+    const scancode = summary.scancode['32.1.0']
     expect(scancode).to.be.not.null
   })
 })
@@ -18,10 +18,10 @@ describe('Summarizer service', () => {
 function buildOutput(files) {
   return {
     scancode: {
-      '32.0.8': {
+      '32.1.0': {
         _metadata: {},
         content: {
-          scancode_version: '32.0.8',
+          scancode_version: '32.1.0',
           files
         }
       }

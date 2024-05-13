@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/maven/mavencentral/redis.clients/jedis/4.1.1",
-    "fetchedAt": "2023-12-08T19:14:34.578Z",
+    "fetchedAt": "2024-05-13T12:25:38.252Z",
     "links": {
       "self": {
-        "href": "urn:maven:mavencentral:redis.clients:jedis:revision:4.1.1:tool:scancode:32.2.8",
+        "href": "urn:maven:mavencentral:redis.clients:jedis:revision:4.1.1:tool:scancode:32.3.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,29 +13,30 @@
         "type": "collection"
       }
     },
-    "schemaVersion": "32.2.8",
-    "toolVersion": "32.0.8",
+    "schemaVersion": "32.3.0",
+    "toolVersion": "32.1.0",
     "contentType": "application/json",
     "releaseDate": "2022-01-31T11:19:27.000Z",
-    "processedAt": "2023-12-08T19:15:03.732Z"
+    "processedAt": "2024-05-13T12:26:11.759Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "32.0.8",
+        "tool_version": "32.1.0",
         "options": {
           "input": [
-            "/tmp/cd-UWiNF4"
+            "/tmp/cd-kYNKvt"
           ],
           "--classify": true,
           "--copyright": true,
           "--email": true,
           "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-hi2UeJ",
+          "--json-pp": "/tmp/cd-5sir8Y",
           "--license": true,
           "--license-clarity-score": true,
+          "--license-references": true,
           "--license-text": true,
           "--license-text-diagnostics": true,
           "--package": true,
@@ -48,10 +49,10 @@
           "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2023-12-08T191435.181000",
-        "end_timestamp": "2023-12-08T191503.035889",
-        "output_format_version": "3.0.0",
-        "duration": 27.854899883270264,
+        "start_timestamp": "2024-05-13T122538.901472",
+        "end_timestamp": "2024-05-13T122611.029380",
+        "output_format_version": "3.1.0",
+        "duration": 32.127920389175415,
         "message": null,
         "errors": [],
         "warnings": [],
@@ -59,11 +60,11 @@
           "system_environment": {
             "operating_system": "linux",
             "cpu_architecture": "64",
-            "platform": "Linux-6.2.0-1016-azure-x86_64-with-glibc2.31",
-            "platform_version": "#16~22.04.1-Ubuntu SMP Tue Oct 10 17:11:51 UTC 2023",
+            "platform": "Linux-6.5.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#20~22.04.1-Ubuntu SMP Wed Apr  3 03:28:18 UTC 2024",
             "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
           },
-          "spdx_license_list_version": "3.21",
+          "spdx_license_list_version": "3.23",
           "files_count": 350
         }
       }
@@ -125,17 +126,20 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
                 "start_line": 1,
                 "end_line": 1,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_1160.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_1160.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
                 "matched_text": "license - name: MIT"
               }
@@ -155,7 +159,7 @@
         "repository_homepage_url": "https://repo1.maven.org/maven2/redis/clients/jedis/4.1.1/",
         "repository_download_url": "https://repo1.maven.org/maven2/redis/clients/jedis/4.1.1/jedis-4.1.1.jar",
         "api_data_url": "https://repo1.maven.org/maven2/redis/clients/jedis/4.1.1/jedis-4.1.1.pom",
-        "package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_paths": [
           "META-INF/maven/redis.clients/jedis/pom.xml"
         ],
@@ -175,8 +179,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.slf4j/slf4j-api@1.7.32?uuid=31dd9060-df51-4417-8dc5-844a74cf62a1",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/org.slf4j/slf4j-api@1.7.32?uuid=38e38ae1-9ccb-46c1-897f-635913191b90",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -189,8 +193,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.apache.commons/commons-pool2@2.11.1?uuid=142306ee-730a-4892-810c-2c2dcaba67a8",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/org.apache.commons/commons-pool2@2.11.1?uuid=6621b3e1-db4f-4141-bd03-87bb85258700",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -203,8 +207,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.json/json@20211205?uuid=d720f12e-0e03-446f-9c3b-c98e413fe490",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/org.json/json@20211205?uuid=a19b5f32-3075-4517-b017-2bb4bfd37181",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -217,8 +221,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/com.google.code.gson/gson@2.8.9?uuid=b3c806a5-55c2-47b2-baa9-630e50e26dc7",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/com.google.code.gson/gson@2.8.9?uuid=5575d934-2f44-4cb3-a989-34bba4208f41",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -231,8 +235,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/junit/junit@4.13.2?uuid=48f49bf5-4385-4518-a4d6-342e2625c802",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/junit/junit@4.13.2?uuid=529531cf-6f2b-47c5-8e31-b0d0aee47e01",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -245,8 +249,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.slf4j/slf4j-simple@1.7.32?uuid=5195d37b-12e4-457f-ba7b-51ee04fa8ed9",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/org.slf4j/slf4j-simple@1.7.32?uuid=167ac9f0-68e5-4283-b561-9a6437ccf687",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -259,8 +263,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/com.kohlschutter.junixsocket/junixsocket-core@2.4.0?uuid=a65db49b-cb46-414e-90a7-17079f191111",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/com.kohlschutter.junixsocket/junixsocket-core@2.4.0?uuid=425310c1-7240-4ee4-afeb-4e9aafc00ca3",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -273,8 +277,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.mockito/mockito-inline@3.12.4?uuid=d97da3f7-4ab6-4d74-93c5-b69cd185a0cd",
-        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93",
+        "dependency_uid": "pkg:maven/org.mockito/mockito-inline@3.12.4?uuid=081b161e-b078-4323-83fa-7c9f75b7d4f2",
+        "for_package_uid": "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f",
         "datafile_path": "META-INF/maven/redis.clients/jedis/pom.xml",
         "datasource_id": "maven_pom"
       }
@@ -283,17 +287,88 @@
       {
         "identifier": "bsd_3_clause_no_nuclear_warranty_and_mit-d0f497e4-e128-7687-567e-77c5387603f9",
         "license_expression": "bsd-3-clause-no-nuclear-warranty AND mit",
-        "detection_count": 1
+        "license_expression_spdx": "BSD-3-Clause-No-Nuclear-Warranty AND MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "bsd-3-clause-no-nuclear-warranty",
+            "license_expression_spdx": "BSD-3-Clause-No-Nuclear-Warranty",
+            "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
+            "start_line": 27,
+            "end_line": 33,
+            "matcher": "3-seq",
+            "score": 55,
+            "matched_length": 11,
+            "match_coverage": 55,
+            "rule_relevance": 100,
+            "rule_identifier": "bsd-3-clause-no-nuclear-warranty_7.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/bsd-3-clause-no-nuclear-warranty_7.RULE",
+            "matched_text": "\t<licenses>\n\t\t<license>\n\t\t\t<name>MIT</name>\n\t\t\t<url>http://github.com/redis/jedis/raw/master/LICENSE.txt</url>\n\t\t\t<distribution>repo</distribution>\n\t\t</license>\n\t</licenses>",
+            "matched_text_diagnostics": "licenses>\n\t\t<license>\n\t\t\t<name>[MIT]</[name]>\n\t\t\t<[url]>[http]://[github].[com]/[redis]/[jedis]/[raw]/[master]/LICENSE.txt</url>\n\t\t\t<distribution>repo</distribution>\n\t\t</license>\n\t</licenses>"
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
+            "start_line": 28,
+            "end_line": 29,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 3,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_1160.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
+            "matched_text": "\t\t<license>\n\t\t\t<name>MIT</name>",
+            "matched_text_diagnostics": "license>\n\t\t\t<name>MIT</"
+          }
+        ]
       },
       {
         "identifier": "mit-d9e3f4a1-d310-01d5-c705-8088549acd7c",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
+            "start_line": 1,
+            "end_line": 1,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 3,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_1160.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
+            "matched_text": "license - name: MIT"
+          }
+        ]
       },
       {
         "identifier": "unknown-cae3d4dc-2fb5-d48d-3d98-96fe67ca6650",
         "license_expression": "unknown",
-        "detection_count": 1
+        "license_expression_spdx": "LicenseRef-scancode-unknown",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "unknown",
+            "license_expression_spdx": "LicenseRef-scancode-unknown",
+            "from_file": "cd-kYNKvt/META-INF/MANIFEST.MF",
+            "start_line": 1,
+            "end_line": 1,
+            "matcher": "5-undetected",
+            "score": 90,
+            "matched_length": 9,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "package-manifest-unknown-1c9177a85178e99baba520ccf312e4d07d00d7b2",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/package-manifest-unknown-1c9177a85178e99baba520ccf312e4d07d00d7b2",
+            "matched_text": "license http://github.com/redis/jedis/raw/master/LICENSE.txt"
+          }
+        ]
       }
     ],
     "tallies": {
@@ -339,6 +414,178 @@
       "authors": [],
       "programming_language": []
     },
+    "license_references": [
+      {
+        "key": "bsd-3-clause-no-nuclear-warranty",
+        "language": "en",
+        "short_name": "BSD 3-Clause No Nuclear Warranty",
+        "name": "BSD 3-Clause No Nuclear Warranty",
+        "category": "Free Restricted",
+        "owner": "Oracle (Sun)",
+        "homepage_url": "https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt",
+        "notes": "per SPDX.org, it is the same license as BSD-3-Clause-No-Nuclear-License,\nexcept it has a disclaimer for nuclear factility use, instead of the\nsoftware not licensed for such use.\n",
+        "is_builtin": true,
+        "is_exception": false,
+        "is_unknown": false,
+        "is_generic": false,
+        "spdx_license_key": "BSD-3-Clause-No-Nuclear-Warranty",
+        "other_spdx_license_keys": [],
+        "osi_license_key": null,
+        "text_urls": [],
+        "osi_url": null,
+        "faq_url": null,
+        "other_urls": [
+          "https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt"
+        ],
+        "key_aliases": [],
+        "minimum_coverage": 0,
+        "standard_notice": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\nRedistribution of source code must retain the above copyright notice,\nthis list of conditions and the following disclaimer.\n\nRedistribution in binary form must reproduce the above copyright notice,\nthis list of conditions and the following disclaimer in the\ndocumentation and/or other materials provided with the distribution.\n\nNeither the name of Sun Microsystems, Inc. or the names of contributors\nmay be used to endorse or promote products derived from this software\nwithout specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED \"AS IS\", WITHOUT A WARRANTY OF ANY KIND. ALL\nEXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING\nANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR\nPURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN MICROSYSTEMS, INC.\n(\"SUN\") AND ITS LICENSORS SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED\nBY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING THIS\nSOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE\nLIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT,\nSPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED\nAND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR\nINABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE\nPOSSIBILITY OF SUCH DAMAGES.\n\nYou acknowledge that this software is not designed or intended for use\nin the design, construction, operation or maintenance of any nuclear\nfacility.",
+        "scancode_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/bsd-3-clause-no-nuclear-warranty.LICENSE",
+        "licensedb_url": "https://scancode-licensedb.aboutcode.org/bsd-3-clause-no-nuclear-warranty",
+        "spdx_url": "https://spdx.org/licenses/BSD-3-Clause-No-Nuclear-Warranty"
+      },
+      {
+        "key": "mit",
+        "language": "en",
+        "short_name": "MIT License",
+        "name": "MIT License",
+        "category": "Permissive",
+        "owner": "MIT",
+        "homepage_url": "http://opensource.org/licenses/mit-license.php",
+        "notes": "Per SPDX.org, this license is OSI certified.",
+        "is_builtin": true,
+        "is_exception": false,
+        "is_unknown": false,
+        "is_generic": false,
+        "spdx_license_key": "MIT",
+        "other_spdx_license_keys": [
+          "LicenseRef-MIT-Bootstrap",
+          "LicenseRef-MIT-Discord",
+          "LicenseRef-MIT-TC",
+          "LicenseRef-MIT-Diehl"
+        ],
+        "osi_license_key": null,
+        "text_urls": [
+          "http://opensource.org/licenses/mit-license.php"
+        ],
+        "osi_url": "http://www.opensource.org/licenses/MIT",
+        "faq_url": "https://ieeexplore.ieee.org/document/9263265",
+        "other_urls": [
+          "https://opensource.com/article/18/3/patent-grant-mit-license",
+          "https://opensource.com/article/19/4/history-mit-license",
+          "https://opensource.org/licenses/MIT"
+        ],
+        "key_aliases": [],
+        "minimum_coverage": 0,
+        "standard_notice": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "Permission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n\"Software\"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+        "scancode_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+        "licensedb_url": "https://scancode-licensedb.aboutcode.org/mit",
+        "spdx_url": "https://spdx.org/licenses/MIT"
+      },
+      {
+        "key": "unknown",
+        "language": "en",
+        "short_name": "unknown",
+        "name": "Unknown license detected but not recognized",
+        "category": "Unstated License",
+        "owner": "Unspecified",
+        "homepage_url": null,
+        "notes": "This applies to the case where there is text referring to a license, but it is not possible to determine exactly which license.",
+        "is_builtin": true,
+        "is_exception": false,
+        "is_unknown": true,
+        "is_generic": false,
+        "spdx_license_key": "LicenseRef-scancode-unknown",
+        "other_spdx_license_keys": [],
+        "osi_license_key": null,
+        "text_urls": [],
+        "osi_url": null,
+        "faq_url": null,
+        "other_urls": [],
+        "key_aliases": [],
+        "minimum_coverage": 0,
+        "standard_notice": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "",
+        "scancode_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/unknown.LICENSE",
+        "licensedb_url": "https://scancode-licensedb.aboutcode.org/unknown",
+        "spdx_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/unknown.LICENSE"
+      }
+    ],
+    "license_rule_references": [
+      {
+        "license_expression": "bsd-3-clause-no-nuclear-warranty",
+        "identifier": "bsd-3-clause-no-nuclear-warranty_7.RULE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/bsd-3-clause-no-nuclear-warranty_7.RULE",
+        "is_license_text": false,
+        "is_license_notice": true,
+        "is_license_reference": false,
+        "is_license_tag": false,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": false,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": false,
+        "length": 20,
+        "relevance": 100,
+        "minimum_coverage": 50,
+        "referenced_filenames": [
+          "LICENSE.txt"
+        ],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "<licenses>\n    <license>\n      <name>BSD 3-clause License w/nuclear disclaimer</name>\n      <url>LICENSE.txt</url>\n      <distribution>repo</distribution>\n    </license>\n  </licenses>"
+      },
+      {
+        "license_expression": "mit",
+        "identifier": "mit_1160.RULE",
+        "language": "en",
+        "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
+        "is_license_text": false,
+        "is_license_notice": false,
+        "is_license_reference": false,
+        "is_license_tag": true,
+        "is_license_intro": false,
+        "is_license_clue": false,
+        "is_continuous": true,
+        "is_builtin": true,
+        "is_from_license": false,
+        "is_synthetic": false,
+        "length": 3,
+        "relevance": 100,
+        "minimum_coverage": 80,
+        "referenced_filenames": [],
+        "notes": null,
+        "ignorable_copyrights": [],
+        "ignorable_holders": [],
+        "ignorable_authors": [],
+        "ignorable_urls": [],
+        "ignorable_emails": [],
+        "text": "{{license\n    name: MIT}}"
+      }
+    ],
     "files": [
       {
         "path": "META-INF",
@@ -362,7 +609,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -435,17 +682,20 @@
             "license_detections": [
               {
                 "license_expression": "unknown",
+                "license_expression_spdx": "LicenseRef-scancode-unknown",
                 "matches": [
                   {
-                    "score": 90,
+                    "license_expression": "unknown",
+                    "spdx_license_expression": "LicenseRef-scancode-unknown",
+                    "from_file": "cd-kYNKvt/META-INF/MANIFEST.MF",
                     "start_line": 1,
                     "end_line": 1,
+                    "matcher": "5-undetected",
+                    "score": 90,
                     "matched_length": 9,
                     "match_coverage": 100,
-                    "matcher": "5-undetected",
-                    "license_expression": "unknown",
-                    "rule_identifier": "package-manifest-unknown-1c9177a85178e99baba520ccf312e4d07d00d7b2",
                     "rule_relevance": 100,
+                    "rule_identifier": "package-manifest-unknown-1c9177a85178e99baba520ccf312e4d07d00d7b2",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/package-manifest-unknown-1c9177a85178e99baba520ccf312e4d07d00d7b2",
                     "matched_text": "license http://github.com/redis/jedis/raw/master/LICENSE.txt"
                   }
@@ -470,7 +720,7 @@
           }
         ],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": true,
@@ -521,7 +771,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -566,7 +816,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -611,7 +861,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -699,7 +949,7 @@
           }
         ],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": true,
@@ -772,17 +1022,20 @@
             "license_detections": [
               {
                 "license_expression": "mit",
+                "license_expression_spdx": "MIT",
                 "matches": [
                   {
-                    "score": 100,
+                    "license_expression": "mit",
+                    "spdx_license_expression": "MIT",
+                    "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
                     "start_line": 1,
                     "end_line": 1,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 3,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "mit",
-                    "rule_identifier": "mit_1160.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "mit_1160.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
                     "matched_text": "license - name: MIT"
                   }
@@ -890,7 +1143,7 @@
           }
         ],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": true,
@@ -902,32 +1155,39 @@
         "license_detections": [
           {
             "license_expression": "bsd-3-clause-no-nuclear-warranty AND mit",
+            "license_expression_spdx": "BSD-3-Clause-No-Nuclear-Warranty AND MIT",
             "matches": [
               {
-                "score": 55,
+                "license_expression": "bsd-3-clause-no-nuclear-warranty",
+                "spdx_license_expression": "BSD-3-Clause-No-Nuclear-Warranty",
+                "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
                 "start_line": 27,
                 "end_line": 33,
+                "matcher": "3-seq",
+                "score": 55,
                 "matched_length": 11,
                 "match_coverage": 55,
-                "matcher": "3-seq",
-                "license_expression": "bsd-3-clause-no-nuclear-warranty",
-                "rule_identifier": "bsd-3-clause-no-nuclear-warranty_7.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "bsd-3-clause-no-nuclear-warranty_7.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/bsd-3-clause-no-nuclear-warranty_7.RULE",
-                "matched_text": "licenses>\n\t\t<license>\n\t\t\t<name>[MIT]</[name]>\n\t\t\t<[url]>[http]://[github].[com]/[redis]/[jedis]/[raw]/[master]/LICENSE.txt</url>\n\t\t\t<distribution>repo</distribution>\n\t\t</license>\n\t</licenses>"
+                "matched_text": "\t<licenses>\n\t\t<license>\n\t\t\t<name>MIT</name>\n\t\t\t<url>http://github.com/redis/jedis/raw/master/LICENSE.txt</url>\n\t\t\t<distribution>repo</distribution>\n\t\t</license>\n\t</licenses>",
+                "matched_text_diagnostics": "licenses>\n\t\t<license>\n\t\t\t<name>[MIT]</[name]>\n\t\t\t<[url]>[http]://[github].[com]/[redis]/[jedis]/[raw]/[master]/LICENSE.txt</url>\n\t\t\t<distribution>repo</distribution>\n\t\t</license>\n\t</licenses>"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "cd-kYNKvt/META-INF/maven/redis.clients/jedis/pom.xml",
                 "start_line": 28,
                 "end_line": 29,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_1160.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_1160.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1160.RULE",
-                "matched_text": "license>\n\t\t\t<name>MIT</"
+                "matched_text": "\t\t<license>\n\t\t\t<name>MIT</name>",
+                "matched_text_diagnostics": "license>\n\t\t\t<name>MIT</"
               }
             ],
             "identifier": "bsd_3_clause_no_nuclear_warranty_and_mit-d0f497e4-e128-7687-567e-77c5387603f9"
@@ -1020,7 +1280,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1065,7 +1325,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1110,7 +1370,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1155,7 +1415,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1200,7 +1460,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1245,7 +1505,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1290,7 +1550,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1335,7 +1595,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1380,7 +1640,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1425,7 +1685,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1470,7 +1730,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1515,7 +1775,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1560,7 +1820,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1605,7 +1865,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1650,7 +1910,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1695,7 +1955,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1740,7 +2000,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1785,7 +2045,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1830,7 +2090,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1875,7 +2135,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1920,7 +2180,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1965,7 +2225,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2010,7 +2270,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2055,7 +2315,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2100,7 +2360,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2145,7 +2405,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2190,7 +2450,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2235,7 +2495,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2280,7 +2540,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2325,7 +2585,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2370,7 +2630,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2415,7 +2675,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2460,7 +2720,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2505,7 +2765,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2550,7 +2810,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2595,7 +2855,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2640,7 +2900,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2685,7 +2945,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2730,7 +2990,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2775,7 +3035,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2820,7 +3080,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2865,7 +3125,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2910,7 +3170,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2955,7 +3215,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3000,7 +3260,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3045,7 +3305,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3090,7 +3350,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3135,7 +3395,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3180,7 +3440,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3225,7 +3485,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3270,7 +3530,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3315,7 +3575,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3360,7 +3620,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3405,7 +3665,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3450,7 +3710,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3495,7 +3755,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3540,7 +3800,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3585,7 +3845,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3630,7 +3890,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3675,7 +3935,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3720,7 +3980,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3765,7 +4025,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3810,7 +4070,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3855,7 +4115,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3900,7 +4160,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3945,7 +4205,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3990,7 +4250,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4035,7 +4295,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4080,7 +4340,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4125,7 +4385,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4170,7 +4430,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4215,7 +4475,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4260,7 +4520,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4305,7 +4565,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4350,7 +4610,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4395,7 +4655,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4440,7 +4700,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4485,7 +4745,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4530,7 +4790,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4575,7 +4835,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4620,7 +4880,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4665,7 +4925,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4710,7 +4970,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4755,7 +5015,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4800,7 +5060,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4845,7 +5105,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4890,7 +5150,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4935,7 +5195,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4980,7 +5240,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5025,7 +5285,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5070,7 +5330,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5115,7 +5375,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5160,7 +5420,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5205,7 +5465,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5250,7 +5510,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5295,7 +5555,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5340,7 +5600,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5385,7 +5645,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5430,7 +5690,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5475,7 +5735,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5520,7 +5780,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5565,7 +5825,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5610,7 +5870,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5655,7 +5915,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5700,7 +5960,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5745,7 +6005,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5790,7 +6050,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5835,7 +6095,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5880,7 +6140,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5925,7 +6185,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5970,7 +6230,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6015,7 +6275,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6060,7 +6320,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6105,7 +6365,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6150,7 +6410,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6195,7 +6455,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6240,7 +6500,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6285,7 +6545,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6330,7 +6590,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6375,7 +6635,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6420,7 +6680,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6465,7 +6725,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6510,7 +6770,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6555,7 +6815,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6600,7 +6860,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6645,7 +6905,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6690,7 +6950,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6735,7 +6995,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6780,7 +7040,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6825,7 +7085,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6870,7 +7130,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6915,7 +7175,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -6960,7 +7220,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7005,7 +7265,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7050,7 +7310,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7095,7 +7355,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7140,7 +7400,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7185,7 +7445,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7230,7 +7490,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7275,7 +7535,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7320,7 +7580,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7365,7 +7625,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7410,7 +7670,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7455,7 +7715,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7500,7 +7760,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7545,7 +7805,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7590,7 +7850,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7635,7 +7895,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7680,7 +7940,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7725,7 +7985,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7770,7 +8030,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7815,7 +8075,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7860,7 +8120,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7905,7 +8165,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7950,7 +8210,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -7995,7 +8255,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8040,7 +8300,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8085,7 +8345,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8130,7 +8390,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8175,7 +8435,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8220,7 +8480,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8265,7 +8525,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8310,7 +8570,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8355,7 +8615,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8400,7 +8660,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8445,7 +8705,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8490,7 +8750,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8535,7 +8795,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8580,7 +8840,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8625,7 +8885,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8670,7 +8930,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8715,7 +8975,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8760,7 +9020,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8805,7 +9065,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8850,7 +9110,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8895,7 +9155,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8940,7 +9200,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -8985,7 +9245,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9030,7 +9290,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9075,7 +9335,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9120,7 +9380,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9165,7 +9425,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9210,7 +9470,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9255,7 +9515,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9300,7 +9560,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9345,7 +9605,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9390,7 +9650,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9435,7 +9695,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9480,7 +9740,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9525,7 +9785,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9570,7 +9830,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9615,7 +9875,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9660,7 +9920,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9705,7 +9965,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9750,7 +10010,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9795,7 +10055,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9840,7 +10100,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9885,7 +10145,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9930,7 +10190,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -9975,7 +10235,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10020,7 +10280,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10065,7 +10325,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10110,7 +10370,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10155,7 +10415,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10200,7 +10460,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10245,7 +10505,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10290,7 +10550,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10335,7 +10595,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10380,7 +10640,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10425,7 +10685,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10470,7 +10730,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10515,7 +10775,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10560,7 +10820,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10605,7 +10865,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10650,7 +10910,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10695,7 +10955,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10740,7 +11000,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10785,7 +11045,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10830,7 +11090,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10875,7 +11135,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10920,7 +11180,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -10965,7 +11225,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11010,7 +11270,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11055,7 +11315,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11100,7 +11360,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11145,7 +11405,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11190,7 +11450,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11235,7 +11495,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11280,7 +11540,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11325,7 +11585,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11370,7 +11630,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11415,7 +11675,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11460,7 +11720,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11505,7 +11765,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11550,7 +11810,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11595,7 +11855,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11640,7 +11900,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11685,7 +11945,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11730,7 +11990,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11775,7 +12035,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11820,7 +12080,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11865,7 +12125,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11910,7 +12170,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -11955,7 +12215,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12000,7 +12260,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12045,7 +12305,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12090,7 +12350,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12135,7 +12395,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12180,7 +12440,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12225,7 +12485,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12270,7 +12530,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12315,7 +12575,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12360,7 +12620,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12405,7 +12665,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12450,7 +12710,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12495,7 +12755,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12540,7 +12800,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12585,7 +12845,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12630,7 +12890,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12675,7 +12935,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12720,7 +12980,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12765,7 +13025,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12810,7 +13070,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12855,7 +13115,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12900,7 +13160,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12945,7 +13205,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -12990,7 +13250,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13035,7 +13295,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13080,7 +13340,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13125,7 +13385,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13170,7 +13430,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13215,7 +13475,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13260,7 +13520,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13305,7 +13565,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13350,7 +13610,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13395,7 +13655,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13440,7 +13700,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13485,7 +13745,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13530,7 +13790,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13575,7 +13835,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13620,7 +13880,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13665,7 +13925,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13710,7 +13970,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13755,7 +14015,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13800,7 +14060,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13845,7 +14105,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13890,7 +14150,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13935,7 +14195,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -13980,7 +14240,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14025,7 +14285,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14070,7 +14330,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14115,7 +14375,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14160,7 +14420,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14205,7 +14465,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14250,7 +14510,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14295,7 +14555,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14340,7 +14600,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14385,7 +14645,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14430,7 +14690,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14475,7 +14735,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14520,7 +14780,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14565,7 +14825,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14610,7 +14870,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14655,7 +14915,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14700,7 +14960,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14745,7 +15005,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14790,7 +15050,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14835,7 +15095,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14880,7 +15140,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14925,7 +15185,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -14970,7 +15230,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15015,7 +15275,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15060,7 +15320,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15105,7 +15365,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15150,7 +15410,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15195,7 +15455,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15240,7 +15500,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15285,7 +15545,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15330,7 +15590,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15375,7 +15635,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15420,7 +15680,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15465,7 +15725,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15510,7 +15770,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15555,7 +15815,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15600,7 +15860,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15645,7 +15905,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15690,7 +15950,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15735,7 +15995,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15780,7 +16040,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15825,7 +16085,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15870,7 +16130,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15915,7 +16175,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -15960,7 +16220,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16005,7 +16265,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16050,7 +16310,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16095,7 +16355,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16140,7 +16400,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16185,7 +16445,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16230,7 +16490,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16275,7 +16535,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16320,7 +16580,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16365,7 +16625,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16410,7 +16670,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16455,7 +16715,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16500,7 +16760,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16545,7 +16805,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16590,7 +16850,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16635,7 +16895,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16680,7 +16940,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16725,7 +16985,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16770,7 +17030,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16815,7 +17075,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16860,7 +17120,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16905,7 +17165,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16950,7 +17210,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -16995,7 +17255,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -17040,7 +17300,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -17085,7 +17345,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -17130,7 +17390,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -17175,7 +17435,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -17220,7 +17480,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/redis.clients/jedis@4.1.1?uuid=aaaf8d0b-3cca-4072-b65c-efbe79a3bb93"
+          "pkg:maven/redis.clients/jedis@4.1.1?uuid=76720b22-5e9e-4845-974e-d8688d47347f"
         ],
         "is_legal": false,
         "is_manifest": false,

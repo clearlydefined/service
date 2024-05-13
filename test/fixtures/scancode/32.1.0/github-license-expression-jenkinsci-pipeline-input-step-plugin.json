@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/git/github/jenkinsci/pipeline-input-step-plugin/d8a957db5be95ddfbf81f41a60b2f034000314b5",
-    "fetchedAt": "2024-04-05T13:02:21.240Z",
+    "fetchedAt": "2024-05-13T12:23:49.094Z",
     "links": {
       "self": {
-        "href": "urn:git:github:jenkinsci:pipeline-input-step-plugin:revision:d8a957db5be95ddfbf81f41a60b2f034000314b5:tool:scancode:32.2.8",
+        "href": "urn:git:github:jenkinsci:pipeline-input-step-plugin:revision:d8a957db5be95ddfbf81f41a60b2f034000314b5:tool:scancode:32.3.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,27 +13,27 @@
         "type": "collection"
       }
     },
-    "schemaVersion": "32.2.8",
-    "toolVersion": "32.0.8",
+    "schemaVersion": "32.3.0",
+    "toolVersion": "32.1.0",
     "contentType": "application/json",
     "releaseDate": "2022-10-12T18:40:34.000Z",
-    "processedAt": "2024-04-05T13:02:31.776Z"
+    "processedAt": "2024-05-13T12:24:00.980Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "32.0.8",
+        "tool_version": "32.1.0",
         "options": {
           "input": [
-            "/tmp/cd-aejG7u/pipeline-input-step-plugin"
+            "/tmp/cd-IGF1vN/pipeline-input-step-plugin"
           ],
           "--classify": true,
           "--copyright": true,
           "--email": true,
           "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-Xsinq7",
+          "--json-pp": "/tmp/cd-cLBGWQ",
           "--license": true,
           "--license-clarity-score": true,
           "--license-references": true,
@@ -49,10 +49,10 @@
           "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2024-04-05T130221.853761",
-        "end_timestamp": "2024-04-05T130231.170332",
-        "output_format_version": "3.0.0",
-        "duration": 9.31658124923706,
+        "start_timestamp": "2024-05-13T122349.751631",
+        "end_timestamp": "2024-05-13T122400.316248",
+        "output_format_version": "3.1.0",
+        "duration": 10.564629077911377,
         "message": null,
         "errors": [],
         "warnings": [],
@@ -60,11 +60,11 @@
           "system_environment": {
             "operating_system": "linux",
             "cpu_architecture": "64",
-            "platform": "Linux-6.2.0-1019-azure-x86_64-with-glibc2.31",
-            "platform_version": "#19~22.04.1-Ubuntu SMP Wed Jan 10 22:57:03 UTC 2024",
+            "platform": "Linux-6.5.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#20~22.04.1-Ubuntu SMP Wed Apr  3 03:28:18 UTC 2024",
             "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
           },
-          "spdx_license_list_version": "3.21",
+          "spdx_license_list_version": "3.23",
           "files_count": 45
         }
       }
@@ -139,30 +139,35 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/pom.xml",
                 "start_line": 1,
                 "end_line": 1,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_1106.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_1106.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1106.RULE",
                 "matched_text": "- name: MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/pom.xml",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 5,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_65.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_65.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_65.RULE",
                 "matched_text": "  url: https://opensource.org/licenses/MIT"
               }
@@ -182,7 +187,7 @@
         "repository_homepage_url": "https://repo1.maven.org/maven2/org/jenkins-ci/plugins/pipeline-input-step/999999-SNAPSHOT/",
         "repository_download_url": "https://repo1.maven.org/maven2/org/jenkins-ci/plugins/pipeline-input-step/999999-SNAPSHOT/pipeline-input-step-999999-SNAPSHOT.jar",
         "api_data_url": "https://repo1.maven.org/maven2/org/jenkins-ci/plugins/pipeline-input-step/999999-SNAPSHOT/pipeline-input-step-999999-SNAPSHOT.pom",
-        "package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_paths": [
           "pom.xml"
         ],
@@ -202,8 +207,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/io.jenkins.tools.bom/bom-2.289.x@1289.v5c4b_1c43511b_?uuid=89a57e02-81e9-4bbb-a1b7-a95e6b0ca92f",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/io.jenkins.tools.bom/bom-2.289.x@1289.v5c4b_1c43511b_?uuid=e1ab6f9a-3cd2-44db-be20-70ce6cbc5625",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -216,8 +221,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/structs?uuid=90ee50f0-2c96-4330-8176-3330930fdc66",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/structs?uuid=5905f59d-ab88-496f-a7ba-1fb11b0cb4fc",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -230,8 +235,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-step-api?uuid=f3dea4d4-6c8d-46de-a7b3-8613537a8289",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-step-api?uuid=41cd1398-399e-46a9-84f3-b755834c4ab3",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -244,8 +249,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-api?uuid=b38bb741-aa8f-44b6-9b56-d0824fa74aad",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-api?uuid=49b7e403-579c-44b2-8f14-b693e762e9e1",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -258,8 +263,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-support?uuid=ce61b9b0-a60e-4e35-9950-48a317b9bc20",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-support?uuid=cad54bd8-a869-4493-80b5-adc3320bab13",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -272,8 +277,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/credentials?uuid=799f0c80-4682-49fc-8268-856ae14a9d17",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/credentials?uuid=b3879ec1-82bd-46f0-b1e9-d5e2965cb8d3",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -286,8 +291,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-cps?uuid=768d1adc-bbec-48b6-9e8b-40260be9d944",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-cps?uuid=4a56f57c-4c00-459c-b0fb-3b74bed8ad73",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -300,8 +305,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-job?uuid=f09b14a9-d87a-490e-a7b9-ac7b53994243",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-job?uuid=fa5b02d5-5272-4d86-81ae-8d0721507272",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -314,8 +319,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-basic-steps?uuid=536c155e-21de-4d14-8dee-cbde8d3486e3",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-basic-steps?uuid=3bc2dd95-d766-4a77-bd6f-d456e8d709ae",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -328,8 +333,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-durable-task-step?uuid=b7d40047-8de7-4efb-a36c-dded5407d102",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-durable-task-step?uuid=5f71edb0-9d6d-4641-9847-3d273d6bf894",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -342,8 +347,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-step-api?uuid=3cecf610-77d8-4719-b2fd-0faa56879ee7",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-step-api?uuid=76ab8c59-1616-4e52-86d8-aa6d03cc6de2",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -356,8 +361,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-scm-step?uuid=eacff7be-95a3-4334-951b-4625c0b08aeb",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins.workflow/workflow-scm-step?uuid=7ec9ef0e-efa8-42e0-9cdf-36107c75ba78",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -370,8 +375,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/script-security?uuid=53768ee7-e668-4c23-8d85-89c6f91d4d91",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/script-security?uuid=27d11990-e57c-4bdb-9461-b911758b0b67",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -384,8 +389,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/credentials-binding?uuid=1808fe82-e060-4672-93b4-cd5897f2c2ba",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/org.jenkins-ci.plugins/credentials-binding?uuid=bcea08c5-7b8e-4bc2-90be-ecc4582d64bd",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       },
@@ -398,8 +403,8 @@
         "is_resolved": true,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:maven/io.jenkins.tools.bom/bom-2.289.x@1289.v5c4b_1c43511b_?uuid=5fb96f76-059f-4acb-bbf3-d4d3984a5f81",
-        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c",
+        "dependency_uid": "pkg:maven/io.jenkins.tools.bom/bom-2.289.x@1289.v5c4b_1c43511b_?uuid=4ba0256a-1c3b-4b45-9f9a-ae3c79860df9",
+        "for_package_uid": "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b",
         "datafile_path": "pom.xml",
         "datasource_id": "maven_pom"
       }
@@ -408,17 +413,104 @@
       {
         "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2",
         "license_expression": "mit",
-        "detection_count": 9
+        "license_expression_spdx": "MIT",
+        "detection_count": 9,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction.java",
+            "start_line": 2,
+            "end_line": 2,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 3,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_27.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
+            "matched_text": " * The MIT License",
+            "matched_text_diagnostics": "The MIT License"
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction.java",
+            "start_line": 6,
+            "end_line": 22,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 161,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit.LICENSE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+            "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+            "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+          }
+        ]
       },
       {
         "identifier": "mit-5e5e7343-038e-8229-3a6d-18334dccee7d",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "pipeline-input-step-plugin/pom.xml",
+            "start_line": 15,
+            "end_line": 20,
+            "matcher": "3-seq",
+            "score": 61.9,
+            "matched_length": 13,
+            "match_coverage": 61.9,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_1278.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1278.RULE",
+            "matched_text": "    <licenses>\n        <license>\n            <name>MIT License</name>\n            <url>https://opensource.org/licenses/MIT</url>\n        </license>\n    </licenses>",
+            "matched_text_diagnostics": "licenses>\n        <license>\n            <name>MIT License</name>\n            <url>[https]://opensource.org/licenses/MIT</[url]>\n        </license>\n    </licenses>"
+          }
+        ]
       },
       {
         "identifier": "mit-7de144d5-079e-be77-1444-e505aff792a6",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "pipeline-input-step-plugin/pom.xml",
+            "start_line": 1,
+            "end_line": 1,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 3,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_1106.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1106.RULE",
+            "matched_text": "- name: MIT License"
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "pipeline-input-step-plugin/pom.xml",
+            "start_line": 2,
+            "end_line": 2,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 5,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_65.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_65.RULE",
+            "matched_text": "  url: https://opensource.org/licenses/MIT"
+          }
+        ]
       }
     ],
     "tallies": {
@@ -687,7 +779,7 @@
         "base_name": "CHANGELOG",
         "extension": ".md",
         "size": 4247,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "4d381a64c777b70072193c27b867fd5e76991798",
         "md5": "add7120a352878fa1d3fe61e6f696134",
         "sha256": "b41c984e81a694d95e016885db46614803b18a0242b0e412b58a325b508abcd2",
@@ -702,7 +794,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -858,7 +950,7 @@
         "base_name": "Jenkinsfile",
         "extension": "",
         "size": 165,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "516de78e9bbde158d714234595984757ad652e68",
         "md5": "4accee666b7f0d86151c6a8a9a535132",
         "sha256": "cbe0aff5148a9ed14bd8194b0996d70f767cfc692587fbf06d2ec759c5afaf22",
@@ -873,7 +965,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -903,7 +995,7 @@
         "base_name": "pom",
         "extension": ".xml",
         "size": 4484,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "6bd69c283612995097fdd0c9967f29e821dc1161",
         "md5": "3cf6fb32693e015831945ccec55ebf4f",
         "sha256": "9f6d05d8661120a32dcc7d1a84e2ce4550327294046c47e3ae1b5049e49976aa",
@@ -946,30 +1038,35 @@
             "license_detections": [
               {
                 "license_expression": "mit",
+                "license_expression_spdx": "MIT",
                 "matches": [
                   {
-                    "score": 100,
+                    "license_expression": "mit",
+                    "spdx_license_expression": "MIT",
+                    "from_file": "pipeline-input-step-plugin/pom.xml",
                     "start_line": 1,
                     "end_line": 1,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 3,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "mit",
-                    "rule_identifier": "mit_1106.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "mit_1106.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1106.RULE",
                     "matched_text": "- name: MIT License"
                   },
                   {
-                    "score": 100,
+                    "license_expression": "mit",
+                    "spdx_license_expression": "MIT",
+                    "from_file": "pipeline-input-step-plugin/pom.xml",
                     "start_line": 2,
                     "end_line": 2,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 5,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "mit",
-                    "rule_identifier": "mit_65.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "mit_65.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_65.RULE",
                     "matched_text": "  url: https://opensource.org/licenses/MIT"
                   }
@@ -1147,7 +1244,7 @@
           }
         ],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1159,19 +1256,23 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 61.9,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/pom.xml",
                 "start_line": 15,
                 "end_line": 20,
+                "matcher": "3-seq",
+                "score": 61.9,
                 "matched_length": 13,
                 "match_coverage": 61.9,
-                "matcher": "3-seq",
-                "license_expression": "mit",
-                "rule_identifier": "mit_1278.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_1278.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_1278.RULE",
-                "matched_text": "licenses>\n        <license>\n            <name>MIT License</name>\n            <url>[https]://opensource.org/licenses/MIT</[url]>\n        </license>\n    </licenses>"
+                "matched_text": "    <licenses>\n        <license>\n            <name>MIT License</name>\n            <url>https://opensource.org/licenses/MIT</url>\n        </license>\n    </licenses>",
+                "matched_text_diagnostics": "licenses>\n        <license>\n            <name>MIT License</name>\n            <url>[https]://opensource.org/licenses/MIT</[url]>\n        </license>\n    </licenses>"
               }
             ],
             "identifier": "mit-5e5e7343-038e-8229-3a6d-18334dccee7d"
@@ -1234,7 +1335,7 @@
         "base_name": "README",
         "extension": ".md",
         "size": 459,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "ea838160d3a32a23a00f4c56932d5b45b3230e8b",
         "md5": "fa09964d170b225f1a494acc7cf21b57",
         "sha256": "b6a0608ded7270cffe1b3dba90b6a0f789f19f42add4a9b3f1eab61e33f10561",
@@ -1249,7 +1350,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1305,7 +1406,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1335,7 +1436,7 @@
         "base_name": "dependabot",
         "extension": ".yml",
         "size": 313,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "28706c5043c39c601b19eb355f5c2f03480c97a4",
         "md5": "e689bbdd7a56ec4ea0053b8819567a7d",
         "sha256": "6b828698817113553ef2be63aac75564e905c74233868b00a475b66016839852",
@@ -1350,7 +1451,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1386,7 +1487,7 @@
         "base_name": "release-drafter",
         "extension": ".yml",
         "size": 18,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "abc91366a68b9bb4fd8eb3728d33f6c4ac6d3761",
         "md5": "8b185a0c0638cb1763b8b3493f3b9272",
         "sha256": "5428cff8114386633b4e1b7de411f08bf0b30a08e1532041bbbfa2ffca9ed269",
@@ -1401,7 +1502,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1446,7 +1547,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1476,7 +1577,7 @@
         "base_name": "cd",
         "extension": ".yaml",
         "size": 396,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "2dbf025015e20cb1549121375c5ae3c8fc295565",
         "md5": "6e81916a752e09f2a74b9040c1970588",
         "sha256": "d6fe03ef4287e422496e52a73eeba9e66b33df161b384af516a597270b2b3b0a",
@@ -1491,7 +1592,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1542,7 +1643,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1572,7 +1673,7 @@
         "base_name": "extensions",
         "extension": ".xml",
         "size": 415,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "c8ccb22996ea7043fd7f2931a6043c84f0ce5ab6",
         "md5": "51abd65c1015672de5eb1ca5004b942d",
         "sha256": "36176720eb7b2876e9ec384e7962c0c0f6d32bd10c3d27a99c4dd2fa8ba19653",
@@ -1587,7 +1688,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1628,7 +1729,7 @@
         "base_name": "maven",
         "extension": ".config",
         "size": 79,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "94624239c45d10168fb62626c3c4a7420027e634",
         "md5": "c857e936bb0ffff7f2c544c0d536e01d",
         "sha256": "206f585921c0c399714b16fc4c9d9037fa51407dcb7d870bc4ba89ea6de26cc4",
@@ -1643,7 +1744,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1688,7 +1789,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1718,7 +1819,7 @@
         "base_name": "fileParameters",
         "extension": ".md",
         "size": 1451,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "2d6de21953c8a2d1f8384c24bbc31b5b4db3a118",
         "md5": "191ae33468a596861a4da43e0a2edc02",
         "sha256": "c868d64f220e0af3793540e9c35c6c121a4ab6deece037bf1c9bd3d265ff91d8",
@@ -1733,7 +1834,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1789,7 +1890,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1834,7 +1935,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1879,7 +1980,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1924,7 +2025,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1969,7 +2070,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2014,7 +2115,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2059,7 +2160,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2104,7 +2205,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2149,7 +2250,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2194,7 +2295,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2224,7 +2325,7 @@
         "base_name": "ApproverAction",
         "extension": ".java",
         "size": 1939,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "1bdb5432b3e983e88059a835ae1f34c2d0d73adf",
         "md5": "c38563fee83bad530bc20e0b96d0f062",
         "sha256": "82c1206c64f80ca5785ddc257b4bb242fe4386358e396e7cafcf229625bd3169",
@@ -2239,7 +2340,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2251,32 +2352,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction.java",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": " * The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction.java",
                 "start_line": 6,
                 "end_line": 22,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+                "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -2320,7 +2428,7 @@
         "base_name": "InputAction",
         "extension": ".java",
         "size": 6146,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "3ea5654667e3d8e7e00f4bd8235f41039b00cf7f",
         "md5": "ee3e751f340c3dcfe4acf5117c824824",
         "sha256": "e52f61e80b08d10f39e36e7246f0af4859867a9156ed7cbb8cdc4fa46ab9b8d6",
@@ -2335,7 +2443,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2365,7 +2473,7 @@
         "base_name": "InputStep",
         "extension": ".java",
         "size": 13343,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "da12574f4315ab95a3fbf9a695d64e0b68f8b76c",
         "md5": "08a036756b23ca553e980b46f0f09fd5",
         "sha256": "4dddc5b0361930f5df8023d7c22a10df4017868b161f897bf20db4dcbedbce9e",
@@ -2380,7 +2488,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2422,7 +2530,7 @@
         "base_name": "InputStepExecution",
         "extension": ".java",
         "size": 18427,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "e4e7bb5ec539e8a9fb2b36a7031f4342f22a73f3",
         "md5": "9b4e45824b12c96d1231174dfe8dc70a",
         "sha256": "88b07546c223cba6fefa08d9356b40e2adae9bf85e50cbfb53b231ad8c589d1a",
@@ -2437,7 +2545,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2479,7 +2587,7 @@
         "base_name": "InputSubmittedAction",
         "extension": ".java",
         "size": 2406,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "a7eb019ff415f477fa5388653198146cc860f338",
         "md5": "a32bfe422d8674ce4e9879816f06af2d",
         "sha256": "3781d4db6f64265fe7a1bc6ffaf6cb0badfc6a5771f5e3e4396864cec1280a8f",
@@ -2494,7 +2602,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2506,32 +2614,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/InputSubmittedAction.java",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": " * The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/java/org/jenkinsci/plugins/workflow/support/steps/input/InputSubmittedAction.java",
                 "start_line": 6,
                 "end_line": 22,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+                "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -2569,7 +2684,7 @@
         "base_name": "Outcome",
         "extension": ".java",
         "size": 1683,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "5f32885e9520effa53e6ecd185b587bf334241ea",
         "md5": "8ce95a6cdceb70913917ae6cb9775c79",
         "sha256": "20b320556f84efa2f5e5c3fe53902a9ae0ed1b69dca4c9c8fa3ebd7b303a6247",
@@ -2584,7 +2699,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2620,7 +2735,7 @@
         "base_name": "package-info",
         "extension": ".java",
         "size": 189,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "50ecc1654e6ca142c8c5523bbbaef29a2033c6e7",
         "md5": "6b7a962307853a58032d1a8670d47198",
         "sha256": "2345f9dc4e11dbbb17a5fff2c2528f855b008444581a96fac017d1d7ab7ae129",
@@ -2635,7 +2750,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2665,7 +2780,7 @@
         "base_name": "Rejection",
         "extension": ".java",
         "size": 1221,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "9ac18f3bd24ec6e05396db9690f44b94f1e1d7aa",
         "md5": "244ccc552b0f8ab0a6a218f053a1b750",
         "sha256": "1666f93a9fed0015dcdc85b73a487cfa662efcc3eb72a1dc8d74e96b69a14bca",
@@ -2680,7 +2795,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2725,7 +2840,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2755,7 +2870,7 @@
         "base_name": "index",
         "extension": ".jelly",
         "size": 1281,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "a58283b6850ed93382b4d6732e595f6f17417a97",
         "md5": "3bf3e51ec912d834c0f98c6cd77f82db",
         "sha256": "e6db4ca06d69db0b35b0e37c9979d405bf177077d2f831c736832e62c2affe0d",
@@ -2770,7 +2885,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2782,32 +2897,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/index.jelly",
                 "start_line": 3,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": "The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/index.jelly",
                 "start_line": 7,
                 "end_line": 23,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -2860,7 +2982,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2905,7 +3027,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2950,7 +3072,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -2995,7 +3117,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3040,7 +3162,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3085,7 +3207,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3130,7 +3252,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3160,7 +3282,7 @@
         "base_name": "Messages",
         "extension": ".properties",
         "size": 272,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "ba7926ab7d56c9b90e511a40186313e394760a7a",
         "md5": "eb2f887cc2d0885e36af36b2a1bb229c",
         "sha256": "0ee1eb05103aa9a20a9a7378d32b570fa636dafd9c66f3851c7ed78fc953dc5a",
@@ -3175,7 +3297,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3220,7 +3342,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3250,7 +3372,7 @@
         "base_name": "summary",
         "extension": ".jelly",
         "size": 1351,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "149cbd7dd0af8edb3a0fa84ebb740ab8388f15f1",
         "md5": "eb1c9c0f3c011d125788161f2a7ca936",
         "sha256": "ef2752b27828d753e8b1b6ae0d61146df0cefc91f9c3bc58823af3efa09da53c",
@@ -3265,7 +3387,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3277,32 +3399,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction/summary.jelly",
                 "start_line": 3,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": "The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction/summary.jelly",
                 "start_line": 7,
                 "end_line": 23,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -3340,7 +3469,7 @@
         "base_name": "summary",
         "extension": ".properties",
         "size": 1194,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "ced0226d65276f57eeacf12410cd32829fa38dcc",
         "md5": "5ffc5d35ceb649e5ae821960dcd747c7",
         "sha256": "7df3115dd82b5ee13796e0839ad7548436f43e59c54d7dcad59f63451fde3c41",
@@ -3355,7 +3484,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3367,32 +3496,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction/summary.properties",
                 "start_line": 1,
                 "end_line": 1,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": "# The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/ApproverAction/summary.properties",
                 "start_line": 5,
                 "end_line": 21,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n# of this software and associated documentation files (the \"Software\"), to deal\n# in the Software without restriction, including without limitation the rights\n# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n# copies of the Software, and to permit persons to whom the Software is\n# furnished to do so, subject to the following conditions:\n#\n# The above copyright notice and this permission notice shall be included in\n# all copies or substantial portions of the Software.\n#\n# THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n# THE SOFTWARE."
+                "matched_text": "# Permission is hereby granted, free of charge, to any person obtaining a copy\n# of this software and associated documentation files (the \"Software\"), to deal\n# in the Software without restriction, including without limitation the rights\n# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n# copies of the Software, and to permit persons to whom the Software is\n# furnished to do so, subject to the following conditions:\n#\n# The above copyright notice and this permission notice shall be included in\n# all copies or substantial portions of the Software.\n#\n# THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n# THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n# of this software and associated documentation files (the \"Software\"), to deal\n# in the Software without restriction, including without limitation the rights\n# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n# copies of the Software, and to permit persons to whom the Software is\n# furnished to do so, subject to the following conditions:\n#\n# The above copyright notice and this permission notice shall be included in\n# all copies or substantial portions of the Software.\n#\n# THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n# THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -3445,7 +3581,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3475,7 +3611,7 @@
         "base_name": "index",
         "extension": ".jelly",
         "size": 453,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "38ad2b69f31def3c9169357fc9e127eb99415c02",
         "md5": "b6ec4ec12280c537eceb37ed6985fa93",
         "sha256": "b66822114047cdd791fe88fa76f0aff8b74fd9e04c7ec389badf805ca86a1f96",
@@ -3490,7 +3626,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3535,7 +3671,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3565,7 +3701,7 @@
         "base_name": "config",
         "extension": ".jelly",
         "size": 1928,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "d21be8157e9b99e905276ae9dff3b9cb6f7ea2aa",
         "md5": "9760c41457c2d0c801654b2f0a4fe0ed",
         "sha256": "ec24812a526f7db230f058820dacd5fd9b1bd64c61ad6130cd0d9b3e4164b109",
@@ -3580,7 +3716,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3592,32 +3728,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/InputStep/config.jelly",
                 "start_line": 3,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": "The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/main/resources/org/jenkinsci/plugins/workflow/support/steps/input/InputStep/config.jelly",
                 "start_line": 7,
                 "end_line": 23,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -3655,7 +3798,7 @@
         "base_name": "help-id",
         "extension": ".html",
         "size": 239,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "b165f4cb171e6a1c5c35467ac42baa5284f73d8f",
         "md5": "dc3cebcb852551a7e2fe407b44e55f1b",
         "sha256": "c3cadd5a6f3a8da4c8f900c8324093a56c602924c77f4c18c0c5ee7dfaec9448",
@@ -3670,7 +3813,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3700,7 +3843,7 @@
         "base_name": "help-message",
         "extension": ".html",
         "size": 253,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "f01b07ef817bbf9f1c25edc5b9d28d73a7f0a216",
         "md5": "51629443cfb258104aecfc22109094fc",
         "sha256": "deb1c70add8fac9607d441348e36b54e0fb660879ea527eef603db51e12aa790",
@@ -3715,7 +3858,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3745,7 +3888,7 @@
         "base_name": "help-parameters",
         "extension": ".html",
         "size": 488,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "dcc45ffe30ac26325ed5bf9cd8fffbaf86c81c59",
         "md5": "294508de43bfba6443736132429d467f",
         "sha256": "41a8d3bff801970875b5754e16ffc4e44a00326b454848348e36134ffbd7d8cb",
@@ -3760,7 +3903,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3790,7 +3933,7 @@
         "base_name": "help-submitter",
         "extension": ".html",
         "size": 363,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "f2ba675781c98a2f944bef984063e2eadd952861",
         "md5": "e8b354f31aa5a2aa2b7c70bed031a1d0",
         "sha256": "44e84c55a6bffd20c9150b725d2e3fa4472ca5049bfae6706a33d9747e4e4737",
@@ -3805,7 +3948,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3835,7 +3978,7 @@
         "base_name": "help-submitterParameter",
         "extension": ".html",
         "size": 232,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "c42a08a6167c710f7637d66f568c5c4e05dfba01",
         "md5": "3ebe7582132c58eb0e746e123f5d213b",
         "sha256": "a1916258c991dd6abe38912f88e2f2fdf7117da503d1cdf0ee5d6ce83443e133",
@@ -3850,7 +3993,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3880,7 +4023,7 @@
         "base_name": "help",
         "extension": ".html",
         "size": 449,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "ff5afdf2f41b9af52eda46474e92db905d699ca6",
         "md5": "e7703a9f082ab158a30e637cda466093",
         "sha256": "fca82ffd90dbd3f1b3df59745793c602607c9a46d507009a560eb5cc7d649e8f",
@@ -3895,7 +4038,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3940,7 +4083,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -3970,7 +4113,7 @@
         "base_name": "index",
         "extension": ".jelly",
         "size": 1465,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "4c771f6897153fb23f2b2d72d706dc87fc6664a2",
         "md5": "66694e6d4d4ce4aed7c0d839ef1f9135",
         "sha256": "f14cb852ccde7baa616a2b6af43919a210d09af30e13148a178edf20fc29ce59",
@@ -3985,7 +4128,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4036,7 +4179,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4081,7 +4224,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4126,7 +4269,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4171,7 +4314,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4216,7 +4359,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4261,7 +4404,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4306,7 +4449,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4351,7 +4494,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4396,7 +4539,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4426,7 +4569,7 @@
         "base_name": "InputStepConfigTest",
         "extension": ".java",
         "size": 2322,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "062efa932b0492dad64106a5b5ff7452d320fcd9",
         "md5": "4d91cd76ed6aed07b572acaa08b731ae",
         "sha256": "e29b699e13ed908d6edb3a0aa443b5080d160feed99ebc2cc479a76af14bfe5c",
@@ -4441,7 +4584,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4453,32 +4596,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepConfigTest.java",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": " * The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepConfigTest.java",
                 "start_line": 6,
                 "end_line": 22,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+                "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -4516,7 +4666,7 @@
         "base_name": "InputStepRestartTest",
         "extension": ".java",
         "size": 4810,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "cb3a3586db55670e4fe2c93800a93637c41b0249",
         "md5": "5feec3367a9bcae2b55f6a454c570bc9",
         "sha256": "29d2bf00f4d4a5a6c692862e4a5bfc6830ac3ce11d609eeba1d964d2c9d62b29",
@@ -4531,7 +4681,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4543,32 +4693,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepRestartTest.java",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": " * The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepRestartTest.java",
                 "start_line": 6,
                 "end_line": 22,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+                "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -4606,7 +4763,7 @@
         "base_name": "InputStepTest",
         "extension": ".java",
         "size": 30691,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "e6ac749afe2decd1ee3b7a4a8e73fa05c2d33029",
         "md5": "aa6c24b5456f318ed4a1522e506c41b6",
         "sha256": "c45c4b6282f42fb4ca1cbd15ac79cea664219fa9ebe0fd39769b444a62cd8091",
@@ -4621,7 +4778,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4633,32 +4790,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepTest.java",
                 "start_line": 2,
                 "end_line": 2,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 3,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_27.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_27.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_27.RULE",
-                "matched_text": "The MIT License"
+                "matched_text": " * The MIT License",
+                "matched_text_diagnostics": "The MIT License"
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "pipeline-input-step-plugin/src/test/java/org/jenkinsci/plugins/workflow/support/steps/input/InputStepTest.java",
                 "start_line": 6,
                 "end_line": 22,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
+                "matched_text": " * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in\n * all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n * THE SOFTWARE."
               }
             ],
             "identifier": "mit-f7452287-cb8f-dace-dd8d-3e62743150a2"
@@ -4723,7 +4887,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4768,7 +4932,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4813,7 +4977,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4858,7 +5022,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4903,7 +5067,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4948,7 +5112,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -4993,7 +5157,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5038,7 +5202,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5083,7 +5247,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5128,7 +5292,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5158,7 +5322,7 @@
         "base_name": "org.jenkinsci.plugins.workflow.flow.FlowExecutionList",
         "extension": ".xml",
         "size": 116,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "06be9feafbfc065a995604f681f548f97a3bb2b0",
         "md5": "85485a9d3b505fbfa50fdc6b00308f5e",
         "sha256": "aac9a16ddd64864b9905cd4b5caa4bfd2419c0bbb12c6433807030de2df3b187",
@@ -5173,7 +5337,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5218,7 +5382,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5263,7 +5427,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5293,7 +5457,7 @@
         "base_name": "config",
         "extension": ".xml",
         "size": 353,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "9b78f0cb4d88a131f01b42c60e42499015bc557e",
         "md5": "71f49001306c7fe1b9f2613685f695fe",
         "sha256": "af719910824c10fce0370fb3b51577ba8d61ceebeeadea9121324aef768d5953",
@@ -5308,7 +5472,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5338,7 +5502,7 @@
         "base_name": "nextBuildNumber",
         "extension": "",
         "size": 2,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "7448d8798a4380162d4b56f9b452e2f6f9e24e7a",
         "md5": "26ab0db90d72e28ad0ba1e22ee510510",
         "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
@@ -5353,7 +5517,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5398,7 +5562,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5428,7 +5592,7 @@
         "base_name": "legacyIds",
         "extension": "",
         "size": 0,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": null,
         "md5": null,
         "sha256": null,
@@ -5443,7 +5607,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5473,7 +5637,7 @@
         "base_name": "permalinks",
         "extension": "",
         "size": 23,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "3fdeccc45eb080d2c33392ed7e51ddaae9297ac2",
         "md5": "3f7a172df37eab93503cb71306c42749",
         "sha256": "e908016842d0c8d083a58db75ec5d797790e9b4a4554045ba9ef1b13bccda7c9",
@@ -5488,7 +5652,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5533,7 +5697,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5563,7 +5727,7 @@
         "base_name": "build",
         "extension": ".xml",
         "size": 1540,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "caa1bf3add65ec456d07ec04f8670640fd69614d",
         "md5": "2f1ce5ad0afa7622358ee7201fa506d2",
         "sha256": "a4aca797a63f3561ac24e09d6f34f625ca889513a3abc3201b30b5de2a4bf004",
@@ -5578,7 +5742,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5608,7 +5772,7 @@
         "base_name": "log",
         "extension": "",
         "size": 1569,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "9c2dfa765316b661a81b122a0fef41d2f55302ac",
         "md5": "248925dd4280d94a21536f507be015dc",
         "sha256": "1bef70f2ec382ebbebf5afa64a65c8423194f23ea57f56f42ad98d87071de9c4",
@@ -5623,7 +5787,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5653,7 +5817,7 @@
         "base_name": "log-index",
         "extension": "",
         "size": 6,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "7decc39ea061fe0a79b62dd1a5f30989f6ba1468",
         "md5": "57effde695399521f91f6f97b29597d2",
         "sha256": "58b176fb498a05554c6ce6783b30d4c39d9266d80bdae42ce7af09c943ed450a",
@@ -5668,7 +5832,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5698,7 +5862,7 @@
         "base_name": "program",
         "extension": ".dat",
         "size": 2733,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "81efe8aa3963cf8ddc12b7760ccb04177f79b5fd",
         "md5": "3bc49398c7add7d32beb84b72fe8f2fb",
         "sha256": "1e5017077e39714a4fd6fb336d264060bad1bebe8ed3a08171f298d8bdcf957e",
@@ -5713,7 +5877,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5758,7 +5922,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5788,7 +5952,7 @@
         "base_name": "2",
         "extension": ".xml",
         "size": 278,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "87444eb98591f4fc7773b61b6e31e66bf7e8495e",
         "md5": "057bb975ba4642d4ce090ef41b73a839",
         "sha256": "70bd80bf0089229bb631637dca7b0fa74cdf5a4bab01804b44f7f73203ffebce",
@@ -5803,7 +5967,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -5833,7 +5997,7 @@
         "base_name": "3",
         "extension": ".xml",
         "size": 859,
-        "date": "2024-04-05",
+        "date": "2024-05-13",
         "sha1": "7a1d41c51c357959be8361b0e50a9807987efc8e",
         "md5": "fb5ffe17af83a963149b17fb44c92f7c",
         "sha256": "0af5352a7f8e0dfbbbb4e0601a8f7e87ef15ec204bfb500a8420e94deaa536ee",
@@ -5848,7 +6012,7 @@
         "is_script": false,
         "package_data": [],
         "for_packages": [
-          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=aae539b9-16de-4857-9a3a-5b54eb26638c"
+          "pkg:maven/org.jenkins-ci.plugins/pipeline-input-step@999999-SNAPSHOT?uuid=06d94774-a9a4-4f98-8518-b864e8976d6b"
         ],
         "is_legal": false,
         "is_manifest": false,

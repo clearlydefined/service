@@ -2,10 +2,10 @@
   "_metadata": {
     "type": "scancode",
     "url": "cd:/gem/rubygems/-/mocha/2.1.0",
-    "fetchedAt": "2024-02-22T18:12:38.841Z",
+    "fetchedAt": "2024-05-13T12:26:26.319Z",
     "links": {
       "self": {
-        "href": "urn:gem:rubygems:-:mocha:revision:2.1.0:tool:scancode:32.2.8",
+        "href": "urn:gem:rubygems:-:mocha:revision:2.1.0:tool:scancode:32.3.0",
         "type": "resource"
       },
       "siblings": {
@@ -13,27 +13,27 @@
         "type": "collection"
       }
     },
-    "schemaVersion": "32.2.8",
-    "toolVersion": "32.0.8",
+    "schemaVersion": "32.3.0",
+    "toolVersion": "32.1.0",
     "contentType": "application/json",
     "releaseDate": "2023-07-27T00:00:00.000Z",
-    "processedAt": "2024-02-22T18:12:55.135Z"
+    "processedAt": "2024-05-13T12:26:40.706Z"
   },
   "content": {
     "headers": [
       {
         "tool_name": "scancode-toolkit",
-        "tool_version": "32.0.8",
+        "tool_version": "32.1.0",
         "options": {
           "input": [
-            "/tmp/cd-KzqGaA/data"
+            "/tmp/cd-ww2iyV/data"
           ],
           "--classify": true,
           "--copyright": true,
           "--email": true,
           "--generated": true,
           "--info": true,
-          "--json-pp": "/tmp/cd-EP5vb7",
+          "--json-pp": "/tmp/cd-lVvLeY",
           "--license": true,
           "--license-clarity-score": true,
           "--license-references": true,
@@ -49,10 +49,10 @@
           "--url": true
         },
         "notice": "Generated with ScanCode and provided on an \"AS IS\" BASIS, WITHOUT WARRANTIES\nOR CONDITIONS OF ANY KIND, either express or implied. No content created from\nScanCode should be considered or used as legal advice. Consult an Attorney\nfor any legal advice.\nScanCode is a free software code scanning tool from nexB Inc. and others.\nVisit https://github.com/nexB/scancode-toolkit/ for support and download.",
-        "start_timestamp": "2024-02-22T181239.435761",
-        "end_timestamp": "2024-02-22T181254.514934",
-        "output_format_version": "3.0.0",
-        "duration": 15.079187393188477,
+        "start_timestamp": "2024-05-13T122626.974445",
+        "end_timestamp": "2024-05-13T122640.066725",
+        "output_format_version": "3.1.0",
+        "duration": 13.09229302406311,
         "message": null,
         "errors": [],
         "warnings": [],
@@ -60,11 +60,11 @@
           "system_environment": {
             "operating_system": "linux",
             "cpu_architecture": "64",
-            "platform": "Linux-6.2.0-1019-azure-x86_64-with-glibc2.31",
-            "platform_version": "#19~22.04.1-Ubuntu SMP Wed Jan 10 22:57:03 UTC 2024",
+            "platform": "Linux-6.5.0-1019-azure-x86_64-with-glibc2.31",
+            "platform_version": "#20~22.04.1-Ubuntu SMP Wed Apr  3 03:28:18 UTC 2024",
             "python_version": "3.9.2 (default, Feb 28 2021, 17:03:44) \n[GCC 10.2.1 20210110]"
           },
-          "spdx_license_list_version": "3.21",
+          "spdx_license_list_version": "3.23",
           "files_count": 97
         }
       }
@@ -145,19 +145,23 @@
         "license_detections": [
           {
             "license_expression": "mit AND bsd-simplified",
+            "license_expression_spdx": "MIT AND BSD-2-Clause",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit AND bsd-simplified",
+                "spdx_license_expression": "MIT AND BSD-2-Clause",
+                "from_file": "data/mocha.gemspec",
                 "start_line": 8,
                 "end_line": 8,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 4,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit AND bsd-simplified",
-                "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_and_bsd-simplified_5.RULE",
-                "matched_text": "MIT', 'BSD-2-Clause']"
+                "matched_text": "  s.licenses = ['MIT', 'BSD-2-Clause']",
+                "matched_text_diagnostics": "MIT', 'BSD-2-Clause']"
               }
             ],
             "identifier": "mit_and_bsd_simplified-8407e5bc-09d7-2cec-dd3a-65f82010080c"
@@ -173,7 +177,7 @@
         "repository_homepage_url": "https://rubygems.org/gems/mocha/versions/Mocha::VERSION",
         "repository_download_url": "https://rubygems.org/downloads/mocha-Mocha::VERSION.gem",
         "api_data_url": "https://rubygems.org/api/v2/rubygems/mocha/versions/Mocha::VERSION.json",
-        "package_uid": "pkg:gem/mocha@Mocha::VERSION?uuid=543c89cd-4cb9-4457-8d41-c835282bf59d",
+        "package_uid": "pkg:gem/mocha@Mocha::VERSION?uuid=12da6314-6f03-41b9-a168-89cfb5212c64",
         "datafile_paths": [
           "mocha.gemspec"
         ],
@@ -193,8 +197,8 @@
         "is_resolved": false,
         "resolved_package": {},
         "extra_data": {},
-        "dependency_uid": "pkg:gem/ruby2_keywords?uuid=6020f253-625d-4d9d-9d0e-92b6eae5c057",
-        "for_package_uid": "pkg:gem/mocha@Mocha::VERSION?uuid=543c89cd-4cb9-4457-8d41-c835282bf59d",
+        "dependency_uid": "pkg:gem/ruby2_keywords?uuid=8023f447-dbd7-4ea3-8a4f-7cd0679b4657",
+        "for_package_uid": "pkg:gem/mocha@Mocha::VERSION?uuid=12da6314-6f03-41b9-a168-89cfb5212c64",
         "datafile_path": "mocha.gemspec",
         "datasource_id": "gemspec"
       }
@@ -203,22 +207,114 @@
       {
         "identifier": "mit-9967e727-165e-9bb5-f090-7de5e47a3929",
         "license_expression": "mit",
-        "detection_count": 3
+        "license_expression_spdx": "MIT",
+        "detection_count": 3,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "data/.yardopts",
+            "start_line": 23,
+            "end_line": 23,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 2,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_14.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
+            "matched_text": "MIT-LICENSE.md",
+            "matched_text_diagnostics": "MIT-LICENSE."
+          }
+        ]
       },
       {
         "identifier": "mit-d90925e6-b1e6-ed57-dd0d-29125a511567",
         "license_expression": "mit",
-        "detection_count": 2
+        "license_expression_spdx": "MIT",
+        "detection_count": 2,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "data/COPYING.md",
+            "start_line": 3,
+            "end_line": 3,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 4,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_88.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_88.RULE",
+            "matched_text": "You may use, copy and redistribute this library under the same terms as [Ruby itself](https://www.ruby-lang.org/en/about/license.txt) or under the [MIT license](https://mit-license.org/).",
+            "matched_text_diagnostics": "under the [MIT license]("
+          },
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "data/COPYING.md",
+            "start_line": 3,
+            "end_line": 3,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 5,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_480.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_480.RULE",
+            "matched_text": "You may use, copy and redistribute this library under the same terms as [Ruby itself](https://www.ruby-lang.org/en/about/license.txt) or under the [MIT license](https://mit-license.org/).",
+            "matched_text_diagnostics": "license](https://mit-license.org/)."
+          }
+        ]
       },
       {
         "identifier": "mit-cacd5c0c-204a-85c2-affc-e4c125b2492a",
         "license_expression": "mit",
-        "detection_count": 1
+        "license_expression_spdx": "MIT",
+        "detection_count": 1,
+        "reference_matches": [
+          {
+            "license_expression": "mit",
+            "license_expression_spdx": "MIT",
+            "from_file": "data/MIT-LICENSE.md",
+            "start_line": 3,
+            "end_line": 7,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 161,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit.LICENSE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
+            "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,\n subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+            "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,\n subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+          }
+        ]
       },
       {
         "identifier": "mit_and_bsd_simplified-8407e5bc-09d7-2cec-dd3a-65f82010080c",
         "license_expression": "mit AND bsd-simplified",
-        "detection_count": 2
+        "license_expression_spdx": "MIT AND BSD-2-Clause",
+        "detection_count": 2,
+        "reference_matches": [
+          {
+            "license_expression": "mit AND bsd-simplified",
+            "license_expression_spdx": "MIT AND BSD-2-Clause",
+            "from_file": "data/mocha.gemspec",
+            "start_line": 8,
+            "end_line": 8,
+            "matcher": "2-aho",
+            "score": 100,
+            "matched_length": 4,
+            "match_coverage": 100,
+            "rule_relevance": 100,
+            "rule_identifier": "mit_and_bsd-simplified_5.RULE",
+            "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_and_bsd-simplified_5.RULE",
+            "matched_text": "  s.licenses = ['MIT', 'BSD-2-Clause']",
+            "matched_text_diagnostics": "MIT', 'BSD-2-Clause']"
+          }
+        ]
       }
     ],
     "tallies": {
@@ -692,19 +788,23 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/.yardopts",
                 "start_line": 23,
                 "end_line": 23,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_14.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_14.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
-                "matched_text": "MIT-LICENSE."
+                "matched_text": "MIT-LICENSE.md",
+                "matched_text_diagnostics": "MIT-LICENSE."
               }
             ],
             "identifier": "mit-9967e727-165e-9bb5-f090-7de5e47a3929"
@@ -804,32 +904,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/COPYING.md",
                 "start_line": 3,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 4,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_88.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_88.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_88.RULE",
-                "matched_text": "under the [MIT license]("
+                "matched_text": "You may use, copy and redistribute this library under the same terms as [Ruby itself](https://www.ruby-lang.org/en/about/license.txt) or under the [MIT license](https://mit-license.org/).",
+                "matched_text_diagnostics": "under the [MIT license]("
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/COPYING.md",
                 "start_line": 3,
                 "end_line": 3,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 5,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_480.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_480.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_480.RULE",
-                "matched_text": "license](https://mit-license.org/)."
+                "matched_text": "You may use, copy and redistribute this library under the same terms as [Ruby itself](https://www.ruby-lang.org/en/about/license.txt) or under the [MIT license](https://mit-license.org/).",
+                "matched_text_diagnostics": "license](https://mit-license.org/)."
               }
             ],
             "identifier": "mit-d90925e6-b1e6-ed57-dd0d-29125a511567"
@@ -957,19 +1064,23 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/MIT-LICENSE.md",
                 "start_line": 3,
                 "end_line": 7,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 161,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit.LICENSE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit.LICENSE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/licenses/mit.LICENSE",
-                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,\n subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+                "matched_text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,\n subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                "matched_text_diagnostics": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,\n subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
               }
             ],
             "identifier": "mit-cacd5c0c-204a-85c2-affc-e4c125b2492a"
@@ -1065,19 +1176,23 @@
             "license_detections": [
               {
                 "license_expression": "mit AND bsd-simplified",
+                "license_expression_spdx": "MIT AND BSD-2-Clause",
                 "matches": [
                   {
-                    "score": 100,
+                    "license_expression": "mit AND bsd-simplified",
+                    "spdx_license_expression": "MIT AND BSD-2-Clause",
+                    "from_file": "data/mocha.gemspec",
                     "start_line": 8,
                     "end_line": 8,
+                    "matcher": "2-aho",
+                    "score": 100,
                     "matched_length": 4,
                     "match_coverage": 100,
-                    "matcher": "2-aho",
-                    "license_expression": "mit AND bsd-simplified",
-                    "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                     "rule_relevance": 100,
+                    "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                     "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_and_bsd-simplified_5.RULE",
-                    "matched_text": "MIT', 'BSD-2-Clause']"
+                    "matched_text": "  s.licenses = ['MIT', 'BSD-2-Clause']",
+                    "matched_text_diagnostics": "MIT', 'BSD-2-Clause']"
                   }
                 ],
                 "identifier": "mit_and_bsd_simplified-8407e5bc-09d7-2cec-dd3a-65f82010080c"
@@ -1111,7 +1226,7 @@
           }
         ],
         "for_packages": [
-          "pkg:gem/mocha@Mocha::VERSION?uuid=543c89cd-4cb9-4457-8d41-c835282bf59d"
+          "pkg:gem/mocha@Mocha::VERSION?uuid=12da6314-6f03-41b9-a168-89cfb5212c64"
         ],
         "is_legal": false,
         "is_manifest": false,
@@ -1123,19 +1238,23 @@
         "license_detections": [
           {
             "license_expression": "mit AND bsd-simplified",
+            "license_expression_spdx": "MIT AND BSD-2-Clause",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit AND bsd-simplified",
+                "spdx_license_expression": "MIT AND BSD-2-Clause",
+                "from_file": "data/mocha.gemspec",
                 "start_line": 8,
                 "end_line": 8,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 4,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit AND bsd-simplified",
-                "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_and_bsd-simplified_5.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_and_bsd-simplified_5.RULE",
-                "matched_text": "MIT', 'BSD-2-Clause']"
+                "matched_text": "  s.licenses = ['MIT', 'BSD-2-Clause']",
+                "matched_text_diagnostics": "MIT', 'BSD-2-Clause']"
               }
             ],
             "identifier": "mit_and_bsd_simplified-8407e5bc-09d7-2cec-dd3a-65f82010080c"
@@ -1241,32 +1360,39 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/README.md",
                 "start_line": 367,
                 "end_line": 367,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 4,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_88.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_88.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_88.RULE",
-                "matched_text": "under the [MIT license]("
+                "matched_text": "under the [MIT license](",
+                "matched_text_diagnostics": "under the [MIT license]("
               },
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/README.md",
                 "start_line": 367,
                 "end_line": 367,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 5,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_480.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_480.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_480.RULE",
-                "matched_text": "license](https://mit-license.org/)."
+                "matched_text": "license](https://mit-license.org/).",
+                "matched_text_diagnostics": "license](https://mit-license.org/)."
               }
             ],
             "identifier": "mit-d90925e6-b1e6-ed57-dd0d-29125a511567"
@@ -1475,38 +1601,46 @@
         "license_detections": [
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/RELEASE.md",
                 "start_line": 42,
                 "end_line": 42,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_14.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_14.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
-                "matched_text": "MIT-LICENSE."
+                "matched_text": "MIT-LICENSE.",
+                "matched_text_diagnostics": "MIT-LICENSE."
               }
             ],
             "identifier": "mit-9967e727-165e-9bb5-f090-7de5e47a3929"
           },
           {
             "license_expression": "mit",
+            "license_expression_spdx": "MIT",
             "matches": [
               {
-                "score": 100,
+                "license_expression": "mit",
+                "spdx_license_expression": "MIT",
+                "from_file": "data/RELEASE.md",
                 "start_line": 861,
                 "end_line": 861,
+                "matcher": "2-aho",
+                "score": 100,
                 "matched_length": 2,
                 "match_coverage": 100,
-                "matcher": "2-aho",
-                "license_expression": "mit",
-                "rule_identifier": "mit_14.RULE",
                 "rule_relevance": 100,
+                "rule_identifier": "mit_14.RULE",
                 "rule_url": "https://github.com/nexB/scancode-toolkit/tree/develop/src/licensedcode/data/rules/mit_14.RULE",
-                "matched_text": "MIT license"
+                "matched_text": "MIT license",
+                "matched_text_diagnostics": "MIT license"
               }
             ],
             "identifier": "mit-9967e727-165e-9bb5-f090-7de5e47a3929"

@@ -9,12 +9,12 @@ const path = require('path')
 const { compact, uniq, flatten } = require('lodash')
 const { expect } = require('chai')
 
-const scancodeVersions = ['32.0.8']
+const SCANCODE_VERSIONS = ['32.1.0']
 
 describe('ScancodeSummarizerNew basic compatability', () => {
   it('summarizes basic npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'npm-basic')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
@@ -28,7 +28,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
   it('summarizes large npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
 
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'npm-large')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
@@ -46,48 +46,57 @@ describe('ScancodeSummarizerNew basic compatability', () => {
   })
 
   it('summarizes maven with a complex declared license', () => {
-    const coordinates = { type: 'maven', provider: 'mavencentral' }
-    const harvestData = getHarvestData('32.0.8', 'maven-complex-declared-license')
-    const result = summarizer.summarize(coordinates, harvestData)
-
-    assert.equal(result.licensed.declared, 'BSD-3-Clause-No-Nuclear-Warranty AND MIT')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'maven', provider: 'mavencentral' }
+      const harvestData = getHarvestData(scancodeVersion, 'maven-complex-declared-license')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'BSD-3-Clause-No-Nuclear-Warranty AND MIT')
+    }
   })
 
   it('summarizes github with a single declared license', () => {
-    const coordinates = { type: 'git', provider: 'github' }
-    const harvestData = getHarvestData('32.0.8', 'github-single-declared-license')
-    const result = summarizer.summarize(coordinates, harvestData)
-
-    assert.equal(result.licensed.declared, 'MIT')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'git', provider: 'github' }
+      const harvestData = getHarvestData(scancodeVersion, 'github-single-declared-license')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'MIT')
+    }
   })
 
   it('summarizes pypi with a complex declared license', () => {
-    const coordinates = { type: 'pypi', provider: 'pypi' }
-    const harvestData = getHarvestData('32.0.8', 'pypi-complex-declared-license')
-    const result = summarizer.summarize(coordinates, harvestData)
-    assert.equal(result.licensed.declared, 'HPND')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'pypi', provider: 'pypi' }
+      const harvestData = getHarvestData(scancodeVersion, 'pypi-complex-declared-license')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'HPND')
+    }
   })
 
   it('summarizes github with a single declared license', () => {
-    const coordinates = { type: 'git', provider: 'github' }
-    const harvestData = getHarvestData('32.0.8', 'github-single-declared-license')
-    const result = summarizer.summarize(coordinates, harvestData)
-
-    assert.equal(result.licensed.declared, 'MIT')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'git', provider: 'github' }
+      const harvestData = getHarvestData(scancodeVersion, 'github-single-declared-license')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'MIT')
+    }
   })
 
   it('should detect license from maven license file', () => {
-    const coordinates = { type: 'maven', provider: 'mavencentral' }
-    const harvestData = getHarvestData('32.0.8', 'maven-flywaydb-file-license')
-    const result = summarizer.summarize(coordinates, harvestData)
-    assert.equal(result.licensed.declared, 'Apache-2.0')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'maven', provider: 'mavencentral' }
+      const harvestData = getHarvestData(scancodeVersion, 'maven-flywaydb-file-license')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'Apache-2.0')
+    }
   })
 
   it('summarizes using license_expression', () => {
-    const coordinates = { type: 'debsrc', provider: 'debian' }
-    const harvestData = getHarvestData('32.0.8', 'debsrc-license-expression')
-    const result = summarizer.summarize(coordinates, harvestData)
-    assert.equal(result.licensed.declared, 'Apache-2.0')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const coordinates = { type: 'debsrc', provider: 'debian' }
+      const harvestData = getHarvestData(scancodeVersion, 'debsrc-license-expression')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, 'Apache-2.0')
+    }
   })
 
   it("summarizes falling back to package[0]'s declared_license_expression", () => {
@@ -99,17 +108,21 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     }
 
     for (let [name, declared] of Object.entries(packages)) {
-      const harvestData = getHarvestData('32.0.8', name)
-      const result = summarizer.summarize(coordinates, harvestData)
-      assert.equal(result.licensed.declared, declared)
+      for (const scancodeVersion of SCANCODE_VERSIONS) {
+        const harvestData = getHarvestData(scancodeVersion, name)
+        const result = summarizer.summarize(coordinates, harvestData)
+        assert.equal(result.licensed.declared, declared)
+      }
     }
   })
 
   it('summarizes license', () => {
     const coordinates = { type: 'git', provider: 'github' }
-    const harvestData = getHarvestData('32.0.8', 'github-LatencyUtils-license-expression.')
-    const result = summarizer.summarize(coordinates, harvestData)
-    assert.equal(result.licensed.declared, '(CC0-1.0 OR BSD-2-Clause) AND BSD-2-Clause')
+    for (const scancodeVersion of SCANCODE_VERSIONS) {
+      const harvestData = getHarvestData(scancodeVersion, 'github-LatencyUtils-license-expression.')
+      const result = summarizer.summarize(coordinates, harvestData)
+      assert.equal(result.licensed.declared, '(CC0-1.0 OR BSD-2-Clause) AND BSD-2-Clause')
+    }
   })
 
   it('throws an error on an invalid scancode version', () => {
@@ -125,7 +138,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes ruby gems', () => {
     const coordinates = { type: 'gem', provider: 'rubygems' }
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'gem')
       const result = summarizer.summarize(coordinates, harvestData)
 
@@ -138,7 +151,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes git repos', () => {
     const coordinates = { type: 'git', provider: 'github' }
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'git')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
@@ -151,7 +164,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes pythons', () => {
     const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '5.0.1' }
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'python')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
@@ -164,7 +177,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes crates', () => {
     const coordinates = { type: 'crate', provider: 'cratesio', name: 'rand', revision: '0.8.2' }
-    for (let version of scancodeVersions) {
+    for (let version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'crate-file-summary')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
@@ -183,9 +196,9 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 })
 
 describe('ScancodeSummarizerNew fixtures', () => {
-  it('summarizes basic npm 32.0.8', () => {
+  it('summarizes basic npm 32.1.0', () => {
     const coordinates = { type: 'npm', provider: 'npmjs', name: 'glob', revision: '7.1.2' }
-    const harvestData = getHarvestData('32.0.8', 'npm-basic')
+    const harvestData = getHarvestData('32.1.0', 'npm-basic')
     const result = summarizer.summarize(coordinates, harvestData)
     //console.log(result)
     assert.deepEqual(result, {
