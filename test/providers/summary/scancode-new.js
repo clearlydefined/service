@@ -90,7 +90,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
     }
   })
 
-  it('summarizes using license_expression', () => {
+  it('summarizes using file license_expression_spdx', () => {
     for (const scancodeVersion of SCANCODE_VERSIONS) {
       const coordinates = { type: 'debsrc', provider: 'debian' }
       const harvestData = getHarvestData(scancodeVersion, 'debsrc-license-expression')
