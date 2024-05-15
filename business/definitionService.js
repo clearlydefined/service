@@ -162,7 +162,10 @@ class DefinitionService {
    */
   async listAll(coordinatesList) {
     //Take the array of coordinates, strip out the revision and only return uniques
-    const searchCoordinates = uniqWith(coordinatesList.map(coordinates => coordinates.asRevisionless()), isEqual)
+    const searchCoordinates = uniqWith(
+      coordinatesList.map(coordinates => coordinates.asRevisionless()),
+      isEqual
+    )
     const promises = searchCoordinates.map(
       throat(10, async coordinates => {
         try {
@@ -386,7 +389,7 @@ class DefinitionService {
     if (!definition.files) return 0
     const coreFiles = definition.files.filter(DefinitionService._isInCoreFacet)
     if (!coreFiles.length) return 0
-    const completeFiles = coreFiles.filter(file => file.license && (file.attributions && file.attributions.length))
+    const completeFiles = coreFiles.filter(file => file.license && file.attributions && file.attributions.length)
     return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
   }
 
@@ -558,10 +561,10 @@ class DefinitionService {
     if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
-    switch (coordinates.provider) {
-      case 'golang':
-      case 'gitlab':
-      case 'github':
+    switch (coordinates.type) {
+      case 'go':
+      case 'git':
+      case 'sourcearchive':
       case 'pypi': {
         const url = buildSourceUrl(coordinates)
         if (!url) return
@@ -579,9 +582,7 @@ class DefinitionService {
   }
 
   _getCacheKey(coordinates) {
-    return `def_${EntityCoordinates.fromObject(coordinates)
-      .toString()
-      .toLowerCase()}`
+    return `def_${EntityCoordinates.fromObject(coordinates).toString().toLowerCase()}`
   }
 }
 

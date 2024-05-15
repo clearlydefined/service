@@ -44,15 +44,13 @@ async function getDefinition(request, response) {
     // Join the rest of the string as the namespace
     const nameSpace = splitString.join('/')
 
-    coordinates = utils.toEntityCoordinatesFromArgs(
-      {
-        'type': request.params.type,
-        'provider': request.params.provider,
-        'namespace': nameSpace,
-        'name': name,
-        'revision': revision
-      }
-    )
+    coordinates = utils.toEntityCoordinatesFromArgs({
+      type: request.params.type,
+      provider: request.params.provider,
+      namespace: nameSpace,
+      name: name,
+      revision: revision
+    })
   } else {
     coordinates = await utils.toEntityCoordinatesFromRequest(request)
   }
@@ -122,7 +120,8 @@ async function listDefinitions(request, response) {
   try {
     // Tempoarily adding this verbose logging to find perf issues
     log.info('POSTing to /definitions', {
-      ts: new Date().toISOString(), requestParams: request.params,
+      ts: new Date().toISOString(),
+      requestParams: request.params,
       normalizedCoordinates,
       coordinateCount: coordinatesList.length,
       force,

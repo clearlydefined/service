@@ -88,13 +88,14 @@ async function queue(request, response) {
 }
 
 async function normalizeCoordinates(requests) {
-  const normalizedBody = await Promise.all(requests
-    .map(async (entry) => {
+  const normalizedBody = await Promise.all(
+    requests.map(async entry => {
       const coordinates = EntityCoordinates.fromString(entry?.coordinates)
       if (!coordinates) return null
       const mapped = await utils.toNormalizedEntityCoordinates(coordinates)
       return { ...entry, coordinates: mapped.toString() }
-    }))
+    })
+  )
   return normalizedBody.filter(entry => entry && entry.coordinates)
 }
 

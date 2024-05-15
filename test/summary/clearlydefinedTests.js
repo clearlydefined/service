@@ -64,7 +64,12 @@ describe('ClearlyDescribedSummarizer add files', () => {
 
   it('adds tokens for multiple files', () => {
     const result = { files: [{ path: 'foo' }, { path: 'bar' }] }
-    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'bar', token: 'dcba' }] }
+    const files = {
+      attachments: [
+        { path: 'foo', token: 'abcd' },
+        { path: 'bar', token: 'dcba' }
+      ]
+    }
     summarizer.addAttachedFiles(result, files)
     assert.strictEqual(result.files.length, 2)
     assert.strictEqual(result.files[0].path, 'foo')
@@ -75,7 +80,12 @@ describe('ClearlyDescribedSummarizer add files', () => {
 
   it('adds license nature for attachments named license', () => {
     const result = { files: [{ path: 'foo' }, { path: 'LICENSE' }] }
-    const files = { attachments: [{ path: 'foo', token: 'abcd' }, { path: 'LICENSE', token: 'dcba' }] }
+    const files = {
+      attachments: [
+        { path: 'foo', token: 'abcd' },
+        { path: 'LICENSE', token: 'dcba' }
+      ]
+    }
     summarizer.addAttachedFiles(result, files)
     assert.strictEqual(result.files.length, 2)
     assert.strictEqual(result.files[0].path, 'foo')
@@ -84,6 +94,52 @@ describe('ClearlyDescribedSummarizer add files', () => {
     assert.strictEqual(result.files[1].path, 'LICENSE')
     assert.strictEqual(result.files[1].token, 'dcba')
     assert.deepEqual(result.files[1].natures, ['license'])
+  })
+})
+
+describe('ClearlyDescribedSummarizer addCondaData', () => {
+  const condaTestCoordinates = EntityCoordinates.fromString('conda/conda-forge/-/test/1.0')
+  it('declares license from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(result, { declaredLicenses: 'MIT' }, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
+  })
+
+  it('declares dual license from registryData with SPDX expression', () => {
+    let result = {}
+    let data = setup([
+      { path: 'LICENSE-MIT', license: 'MIT' },
+      { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
+    ])
+    data.declaredLicenses = 'MIT OR Apache-2.0'
+    summarizer.addCondaData(result, data, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
+  })
+
+  it('normalizes to spdx only', () => {
+    let result = {}
+    summarizer.addCondaData(result, { declaredLicenses: 'Garbage' }, condaTestCoordinates)
+    assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
+  })
+
+  it('describes projectWebsite from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(
+      result,
+      {
+        registryData: {
+          channelData: { home: 'https://github.com/owner/repo' }
+        }
+      },
+      condaTestCoordinates
+    )
+    assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
+  })
+
+  it('describes releaseDate from registryData', () => {
+    let result = {}
+    summarizer.addCondaData(result, { releaseDate: 'Wed, 14 Jun 2017 07:00:00 GMT' }, condaTestCoordinates)
+    assert.strictEqual(result.described.releaseDate, '2017-06-14')
   })
 })
 
@@ -97,7 +153,10 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 
   it('declares dual license from registryData with SPDX expression', () => {
     let result = {}
-    let data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    let data = setup([
+      { path: 'LICENSE-MIT', license: 'MIT' },
+      { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
+    ])
     data.registryData = { license: 'MIT OR Apache-2.0' }
     summarizer.addCrateData(result, data, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
@@ -105,7 +164,10 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
 
   it('declares dual license from registryData with slash-separated licenses', () => {
     let result = {}
-    let data = setup([{ path: 'LICENSE-MIT', license: 'MIT' }, { path: 'LICENSE-APACHE', license: 'Apache-2.0' }])
+    let data = setup([
+      { path: 'LICENSE-MIT', license: 'MIT' },
+      { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
+    ])
     data.registryData = { license: 'MIT/Apache-2.0' }
     summarizer.addCrateData(result, data, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT OR Apache-2.0')
@@ -275,8 +337,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      }
-      else assert.deepEqual(result, expectedResult)
+      } else assert.deepEqual(result, expectedResult)
     }
 
     for (let license of Object.keys(data)) {
@@ -287,8 +348,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      }
-      else assert.deepEqual(result, expectedResult)
+      } else assert.deepEqual(result, expectedResult)
     }
 
     const licenseArray = ['MIT']
@@ -302,7 +362,11 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     assert.deepEqual(result2, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
 
     let result3 = {}
-    summarizer.addNpmData(result3, { registryData: { manifest: { license: { type: licenseArray2 } } } }, npmTestCoordinates)
+    summarizer.addNpmData(
+      result3,
+      { registryData: { manifest: { license: { type: licenseArray2 } } } },
+      npmTestCoordinates
+    )
     assert.deepEqual(result3, { ...expectedResult, licensed: { declared: 'MIT AND Apache-2.0' } })
 
     let result4 = {}
@@ -408,7 +472,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     })
   })
 
-  it('should not set issueTracker if it is not http', () => { })
+  it('should not set issueTracker if it is not http', () => {})
 
   it('should return if no registry data', () => {
     let result = {}
@@ -484,7 +548,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
     download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
     registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
-    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0',
+    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0'
   }
   const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
@@ -547,7 +611,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
     download: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
     registry: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0',
-    version: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0/1.0',
+    version: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0/1.0'
   }
   const expectedResult = { described: { urls: expectedUrls } }
   it('should set declared license from manifest licenseUrl', () => {
@@ -609,13 +673,13 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
   const expectedUrls = {
     download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
     registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
-    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0',
+    version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0'
   }
 
   const expectedResult = { described: { urls: expectedUrls } }
   it('should set the correct urls', () => {
     const data = {
-      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://opensource.org/licenses/MIT': 'MIT'
     }
 
     for (let url of Object.keys(data)) {
@@ -627,7 +691,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
       )
       if (data[url])
         assert.deepEqual(result, {
-          ...expectedResult,
+          ...expectedResult
         })
       else assert.deepEqual(result, expectedResult)
     }
@@ -664,7 +728,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
 
   it('should set the correct urls', () => {
     const data = {
-      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://opensource.org/licenses/MIT': 'MIT'
     }
 
     for (let url of Object.keys(data)) {
@@ -676,7 +740,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
       )
       if (data[url])
         assert.deepEqual(result, {
-          ...expectedResult,
+          ...expectedResult
         })
       else assert.deepEqual(result, expectedResult)
     }
@@ -702,7 +766,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
 
   it('should set the correct urls', () => {
     const data = {
-      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://opensource.org/licenses/MIT': 'MIT'
     }
 
     for (let url of Object.keys(data)) {
@@ -714,7 +778,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
       )
       if (data[url])
         assert.deepEqual(result, {
-          ...expectedResult,
+          ...expectedResult
         })
       else assert.deepEqual(result, expectedResult)
     }
@@ -732,7 +796,6 @@ function setup(files, attachments) {
   return { licensee: { version: '1.2.3', output: { content: { matched_files } } }, attachments }
 }
 
-
 describe('ClearlyDescribedSummarizer addGoData', () => {
   const testCoordinatesGo = EntityCoordinates.fromString('go/golang/rsc.io/quote/v1.3.0')
 
@@ -746,7 +809,7 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
 
   it('should set the correct urls', () => {
     const data = {
-      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://opensource.org/licenses/MIT': 'MIT'
     }
 
     for (let url of Object.keys(data)) {
@@ -758,14 +821,16 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
       )
       if (data[url])
         assert.deepEqual(result, {
-          ...expectedResult,
+          ...expectedResult
         })
       else assert.deepEqual(result, expectedResult)
     }
   })
 
   it('should handle url encoding in the coordinates', () => {
-    const testEncodedCoordinatesGo = EntityCoordinates.fromString('go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110')
+    const testEncodedCoordinatesGo = EntityCoordinates.fromString(
+      'go/golang/golang.org%2fx/net/v0.0.0-20210226172049-e18ecbb05110'
+    )
 
     const expectedDecodedUrls = {
       download: 'https://proxy.golang.org/golang.org/x/net/@v/v0.0.0-20210226172049-e18ecbb05110.zip',
@@ -776,7 +841,7 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
     const expectedDecodedResult = { described: { urls: expectedDecodedUrls } }
 
     const testData = {
-      'https://opensource.org/licenses/MIT': 'MIT',
+      'https://opensource.org/licenses/MIT': 'MIT'
     }
 
     for (let url of Object.keys(testData)) {
@@ -788,7 +853,7 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
       )
       if (testData[url])
         assert.deepEqual(result, {
-          ...expectedDecodedResult,
+          ...expectedDecodedResult
         })
       else assert.deepEqual(result, expectedDecodedResult)
     }
@@ -802,7 +867,11 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
 
   it('gets license from data', () => {
     let result = {}
-    summarizer.addGoData(result, { registryData: { licenses: ['Apache-2.0', 'BSD-2-Clause, BSD-3-Clause, HPND'] } }, testCoordinatesGo)
+    summarizer.addGoData(
+      result,
+      { registryData: { licenses: ['Apache-2.0', 'BSD-2-Clause, BSD-3-Clause, HPND'] } },
+      testCoordinatesGo
+    )
     assert.strictEqual(result.licensed.declared, 'Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND HPND')
   })
 })

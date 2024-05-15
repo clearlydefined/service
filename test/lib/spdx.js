@@ -176,8 +176,20 @@ describe('SPDX utility functions', () => {
       ['MIT', [['MIT']]],
       ['MIT AND GPL-3.0', [['GPL-3.0', 'MIT']]],
       ['MIT OR GPL-3.0', [['MIT'], ['GPL-3.0']]],
-      ['MIT AND (GPL-3.0 OR BSD-3-Clause)', [['GPL-3.0', 'MIT'], ['BSD-3-Clause', 'MIT']]],
-      ['(MIT OR GPL-3.0) AND ISC', [['ISC', 'MIT'], ['GPL-3.0', 'ISC']]]
+      [
+        'MIT AND (GPL-3.0 OR BSD-3-Clause)',
+        [
+          ['GPL-3.0', 'MIT'],
+          ['BSD-3-Clause', 'MIT']
+        ]
+      ],
+      [
+        '(MIT OR GPL-3.0) AND ISC',
+        [
+          ['ISC', 'MIT'],
+          ['GPL-3.0', 'ISC']
+        ]
+      ]
     ]
     data.forEach(input => {
       const results = SPDX.expand(input[0])

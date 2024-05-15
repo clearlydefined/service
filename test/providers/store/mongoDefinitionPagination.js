@@ -15,13 +15,12 @@ const dbOptions = {
   }
 }
 
-const shouldPaginateSearchCorrectly = function() {
-
-  describe('Mongo Definition Store: search pagination', function() {
+const shouldPaginateSearchCorrectly = function () {
+  describe('Mongo Definition Store: search pagination', function () {
     const mongoServer = new MongoMemoryServer()
     let mongoStore
-    
-    before('setup database', async function() {
+
+    before('setup database', async function () {
       await mongoServer.start()
       const uri = await mongoServer.getUri()
       const options = {
@@ -32,16 +31,16 @@ const shouldPaginateSearchCorrectly = function() {
       mongoStore = await this.createStore(options, defs)
     })
 
-    after('cleanup database', async function() {
+    after('cleanup database', async function () {
       await mongoStore.collection.drop()
       await mongoStore.close()
       await mongoServer.stop()
     })
 
-    it('should fetch records without sort continuously', async function() {
+    it('should fetch records without sort continuously', async function () {
       const expected = [
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca', 
-        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0', 
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
+        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
         'maven/mavencentral/io.jenetics/jenetics/7.1.1',
         'maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5'
@@ -52,8 +51,8 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should sort ascending on releaseDate and find 1 page of records', async function() {
+
+    it('should sort ascending on releaseDate and find 1 page of records', async function () {
       const expected = ['maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5']
       const query = {
         sort: 'releaseDate',
@@ -64,15 +63,16 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should sort ascending on releaseDate and handle null and non null values in continuation', async function() {
+
+    it('should sort ascending on releaseDate and handle null and non null values in continuation', async function () {
       const expected = [
-        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5', 
-        'maven/mavencentral/org.flywaydb/flyway-maven-plugin/5.0.7', 
-        'npm/npmjs/@sinclair/typebox/0.24.45', 
+        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5',
+        'maven/mavencentral/org.flywaydb/flyway-maven-plugin/5.0.7',
+        'npm/npmjs/@sinclair/typebox/0.24.45',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-beta2',
-        'pypi/pypi/-/backports.ssl_match_hostname/3.5.0.1']
-  
+        'pypi/pypi/-/backports.ssl_match_hostname/3.5.0.1'
+      ]
+
       const query = {
         sort: 'releaseDate',
         sortDesc: false
@@ -80,13 +80,13 @@ const shouldPaginateSearchCorrectly = function() {
       const defs = await fetchAll(mongoStore, query)
       expect(defs[0].described.releaseDate).not.to.be.ok
       expect(defs[3].described.releaseDate).to.be.ok
-  
+
       expect(defs.length).to.be.equal(12)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-    
-    it('should sort descending on releaseDate and handle null and non null values in continuation', async function() {
+
+    it('should sort descending on releaseDate and handle null and non null values in continuation', async function () {
       const query = {
         sort: 'releaseDate',
         sortDesc: true
@@ -95,15 +95,16 @@ const shouldPaginateSearchCorrectly = function() {
       expect(defs.length).to.be.equal(12)
       verifyUniqueCoordinates(defs)
     })
-  
-    it('should sort ascending on license and handle null and non null values in continuation ', async function() {
+
+    it('should sort ascending on license and handle null and non null values in continuation ', async function () {
       const expected = [
-        'npm/npmjs/@sinclair/typebox/0.24.45', 
-        'maven/mavencentral/io.jenetics/jenetics/7.1.1', 
-        'maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4', 
-        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5', 
-        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-beta2']
-  
+        'npm/npmjs/@sinclair/typebox/0.24.45',
+        'maven/mavencentral/io.jenetics/jenetics/7.1.1',
+        'maven/mavencentral/io.quarkiverse.cxf/quarkus-cxf/1.5.4',
+        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5',
+        'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-beta2'
+      ]
+
       const query = {
         sort: 'license',
         sortDesc: false
@@ -115,8 +116,8 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should sort descending on license and handle null and non null values in continuation ', async function() {
+
+    it('should sort descending on license and handle null and non null values in continuation ', async function () {
       const query = {
         sort: 'license',
         sortDesc: true
@@ -125,14 +126,15 @@ const shouldPaginateSearchCorrectly = function() {
       expect(defs.length).to.be.equal(12)
       verifyUniqueCoordinates(defs)
     })
-  
-    it('should filter and sort ascending on multiple keys and handle null and non null namespace in continuation', async function() {
+
+    it('should filter and sort ascending on multiple keys and handle null and non null namespace in continuation', async function () {
       const expected = [
-        'npm/npmjs/-/angular/1.6.9', 
-        'npm/npmjs/-/redie/0.3.0', 
-        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0', 
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca']
-    
+        'npm/npmjs/-/angular/1.6.9',
+        'npm/npmjs/-/redie/0.3.0',
+        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca'
+      ]
+
       const query = {
         license: 'MIT',
         sort: 'namespace',
@@ -145,14 +147,15 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should filter and sort descending on multiple keys in continuation', async function() {
+
+    it('should filter and sort descending on multiple keys in continuation', async function () {
       const expected = [
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
-        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0', 
-        'npm/npmjs/-/redie/0.3.0', 
-        'npm/npmjs/-/angular/1.6.9']
-    
+        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
+        'npm/npmjs/-/redie/0.3.0',
+        'npm/npmjs/-/angular/1.6.9'
+      ]
+
       const query = {
         license: 'MIT',
         sort: 'namespace',
@@ -163,14 +166,15 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should filter and sort on numerical scores and fetch continuously', async function() {
+
+    it('should filter and sort on numerical scores and fetch continuously', async function () {
       const expected = [
-        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0', 
-        'npm/npmjs/-/angular/1.6.9', 
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca', 
-        'npm/npmjs/-/redie/0.3.0']
-    
+        'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
+        'npm/npmjs/-/angular/1.6.9',
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
+        'npm/npmjs/-/redie/0.3.0'
+      ]
+
       const query = {
         license: 'MIT',
         sort: 'toolScore',
@@ -185,15 +189,15 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
-    it('should filter and sort descending on numerical scores and fetch continuously', async function() {
+
+    it('should filter and sort descending on numerical scores and fetch continuously', async function () {
       const expected = [
         'npm/npmjs/-/redie/0.3.0',
-        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca', 
-        'npm/npmjs/-/angular/1.6.9', 
+        'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
+        'npm/npmjs/-/angular/1.6.9',
         'maven/mavencentral/com.azure/azure-storage-blob/12.20.0'
       ]
-    
+
       const query = {
         license: 'MIT',
         sort: 'toolScore',
@@ -204,7 +208,6 @@ const shouldPaginateSearchCorrectly = function() {
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
-  
   })
 }
 
@@ -233,7 +236,7 @@ async function fetchAll(mongoStore, query, pageSize) {
 //Default pageSize set to 1 to verify null value handling
 async function fetchUpToNTimes(mongoStore, query, nTimes, pageSize = 1) {
   const allData = []
-  const fetchOperation = async (params) => {
+  const fetchOperation = async params => {
     const { continuationToken, ...query } = params
     const result = await mongoStore.find(query, continuationToken, pageSize)
     allData.push(...result.data)
@@ -265,16 +268,18 @@ class ContinousFetch {
   }
 
   async fetchUpToNtimes(params, nTime) {
-    let dispatchCounter = 0, fetchedCounter = 0
+    let dispatchCounter = 0,
+      fetchedCounter = 0
     let retrieved = {}
 
     while (dispatchCounter < nTime) {
       retrieved = await this._delayedFetch({
         ...params,
-        continuationToken: retrieved.continuationToken })
+        continuationToken: retrieved.continuationToken
+      })
 
       fetchedCounter += retrieved.count
-      dispatchCounter ++
+      dispatchCounter++
 
       if (!retrieved.continuationToken) break
     }

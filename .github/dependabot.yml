@@ -4,8 +4,22 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
+    groups:
+      dev-dependencies:
+        dependency-type: 'development'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+    groups:
+      azure-actions:
+        patterns:
+          - 'azure/*'
+      docker-actions:
+        patterns:
+          - 'docker/*'
+      github-actions:
+        patterns:
+          - 'actions/*'
+          - 'github/*'

@@ -1,7 +1,6 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-
 const { expect } = require('chai')
 const sinon = require('sinon')
 const fs = require('fs')
@@ -9,7 +8,6 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const GradleCoordinatesMapper = require('../../lib/gradleCoordinatesMapper')
 
 describe('GradleCoordinatesMapper', () => {
-
   let coordinatesMapper
   beforeEach(() => {
     coordinatesMapper = new GradleCoordinatesMapper()
@@ -23,11 +21,15 @@ describe('GradleCoordinatesMapper', () => {
   })
 
   it('spec without namespace', async () => {
-    const stub = sinon.stub(coordinatesMapper, '_handleRequest').resolves(fs.readFileSync('test/fixtures/maven/pom.xml'))
+    const stub = sinon
+      .stub(coordinatesMapper, '_handleRequest')
+      .resolves(fs.readFileSync('test/fixtures/maven/pom.xml'))
     const specWithoutNameSpace = 'maven/gradleplugin/-/org.springframework.boot/1.4.2.RELEASE'
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString(specWithoutNameSpace))
 
-    stub.calledOn('https://plugins.gradle.org/m2/org/springframework/boot/org.springframework.boot.gradle.plugin/1.4.2.RELEASE/org.springframework.boot.gradle.plugin-1.4.2.RELEASE.pom')
+    stub.calledOn(
+      'https://plugins.gradle.org/m2/org/springframework/boot/org.springframework.boot.gradle.plugin/1.4.2.RELEASE/org.springframework.boot.gradle.plugin-1.4.2.RELEASE.pom'
+    )
     expect(mapped.namespace).to.be.eq('org.springframework.boot')
     expect(mapped.name).to.be.eq('spring-boot-gradle-plugin')
     expect(mapped.revision).to.be.eq('1.4.2.RELEASE')
@@ -40,10 +42,13 @@ describe('GradleCoordinatesMapper', () => {
   })
 
   it('spec without revision', async () => {
-    sinon.stub(coordinatesMapper, '_handleRequest')
+    sinon
+      .stub(coordinatesMapper, '_handleRequest')
       .withArgs('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/maven-metadata.xml')
       .resolves(fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
-      .withArgs('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/4.5.10/pluginId.gradle.plugin-4.5.10.pom')
+      .withArgs(
+        'https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/4.5.10/pluginId.gradle.plugin-4.5.10.pom'
+      )
       .resolves(fs.readFileSync('test/fixtures/maven/pom.xml'))
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString('maven/gradleplugin/-/pluginId'))
     expect(mapped.revision).not.to.be.ok
@@ -52,7 +57,9 @@ describe('GradleCoordinatesMapper', () => {
   })
 
   it('_getLatestVersion', async () => {
-    const stub = sinon.stub(coordinatesMapper, '_handleRequest').resolves(fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
+    const stub = sinon
+      .stub(coordinatesMapper, '_handleRequest')
+      .resolves(fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
     const latest = await coordinatesMapper._getLatestVersion({ name: 'pluginId' })
     stub.calledOn('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/maven-metadata.xml')
     expect(latest).to.be.equal('4.5.10')

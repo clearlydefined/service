@@ -20,6 +20,12 @@ const mavenBasedUrls = {
   gradleplugin: 'https://plugins.gradle.org/m2'
 }
 
+const condaChannels = {
+  'anaconda-main': 'https://repo.anaconda.com/pkgs/main',
+  'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
+  'conda-forge': 'https://conda.anaconda.org/conda-forge'
+}
+
 class ClearlyDescribedSummarizer {
   constructor(options) {
     this.options = options
@@ -43,6 +49,12 @@ class ClearlyDescribedSummarizer {
         break
       case 'npm':
         this.addNpmData(result, data, coordinates)
+        break
+      case 'conda':
+        this.addCondaData(result, data, coordinates)
+        break
+      case 'condasrc':
+        this.addCondaSrcData(result, data, coordinates)
         break
       case 'crate':
         this.addCrateData(result, data, coordinates)
@@ -166,17 +178,9 @@ class ClearlyDescribedSummarizer {
     const urls = this.getMavenUrls(coordinates)
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(
-      result,
-      'described.urls.registry',
-      urls.registry
-    )
+    setIfValue(result, 'described.urls.registry', urls.registry)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
-    setIfValue(
-      result,
-      'described.urls.download',
-      urls.download
-    )
+    setIfValue(result, 'described.urls.download', urls.download)
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -189,6 +193,22 @@ class ClearlyDescribedSummarizer {
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+  }
+
+  addCondaData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(get(data, 'releaseDate')))
+    setIfValue(result, 'described.urls.download', get(data, 'registryData.downloadUrl'))
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
+    setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicenses))
+  }
+
+  addCondaSrcData(result, data, coordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.download', get(data, 'registryData.channelData.source_url'))
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
+    setIfValue(result, 'licensed.declared', SPDX.normalize(data.declaredLicenses))
   }
 
   addCrateData(result, data, coordinates) {
@@ -206,7 +226,6 @@ class ClearlyDescribedSummarizer {
   }
 
   addSourceArchiveData(result, data, coordinates) {
-
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
@@ -275,14 +294,16 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `https://npmjs.com/package/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      `https://npmjs.com/package/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
       }`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
     setIfValue(
       result,
       'described.urls.download',
-      `https://registry.npmjs.com/${coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+      `https://registry.npmjs.com/${
+        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
       }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = get(data, 'registryData.manifest')
@@ -407,16 +428,8 @@ class ClearlyDescribedSummarizer {
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'described.urls.registry', urls.registry)
-    setIfValue(
-      result,
-      'described.urls.version',
-      urls.version
-    )
-    setIfValue(
-      result,
-      'described.urls.download',
-      urls.download
-    )
+    setIfValue(result, 'described.urls.version', urls.version)
+    setIfValue(result, 'described.urls.download', urls.download)
   }
 
   addDebData(result, data, coordinates) {
@@ -461,10 +474,7 @@ class ClearlyDescribedSummarizer {
     const registryPath = registryData[0].Path
     if (registryPath) {
       // Example: ./pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz -> http://ftp.debian.org/debian/pool/main/0/0ad
-      const pathName = registryPath
-        .split('/')
-        .slice(1, 5)
-        .join('/')
+      const pathName = registryPath.split('/').slice(1, 5).join('/')
       return 'http://ftp.debian.org/debian/' + pathName
     }
     return null
@@ -482,17 +492,9 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(
-      result,
-      'described.urls.registry',
-      urls.registry
-    )
+    setIfValue(result, 'described.urls.registry', urls.registry)
     setIfValue(result, 'described.urls.version', urls.version)
-    setIfValue(
-      result,
-      'described.urls.download',
-      urls.download
-    )
+    setIfValue(result, 'described.urls.download', urls.download)
     const licenses = get(data, 'registryData.licenses') || []
     // Based on the https://pkg.go.dev/license-policy and github.com/google/licensecheck,
     // ',' means use AND logic.

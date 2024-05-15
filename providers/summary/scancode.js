@@ -70,7 +70,7 @@ class ScanCodeSummarizer {
         // Some Maven packages have this value as an object rather than a string
         // Example: for maven/mavencentral/redis.clients/jedis/4.1.1
         // declared_license would be { "name": "MIT", "url": "http://github.com/redis/jedis/raw/master/LICENSE.txt", "comments": null, "distribution": "repo" }'
-        // Some pypi packages have this value as an object with a license field 
+        // Some pypi packages have this value as an object with a license field
         // Example: for pypi/pypi/abseil/absl-py/0.9.0
         // declared_license would be { "license": "Apache 2.0", "classifiers": ["License :: OSI Approved :: Apache Software License"] }
         if (typeof declared_license != 'string' && declared_license != undefined) {
@@ -210,9 +210,18 @@ class ScanCodeSummarizer {
   }
 
   _normalizeLicenseExpression(licenseExpression) {
-    const parsed = SPDX.parse(licenseExpression, (key) => SPDX.normalizeSingle(scancodeMap.get(key) || key))
+    const licenseVisitor = rawLicenseExpression => {
+      const mappedLicenseExpression = scancodeMap.get(rawLicenseExpression)
+      const licenseExpression = mappedLicenseExpression ? mappedLicenseExpression : rawLicenseExpression
+
+      return SPDX.normalizeSingle(licenseExpression)
+    }
+
+    const parsed = SPDX.parse(licenseExpression, licenseVisitor)
     const result = SPDX.stringify(parsed)
+
     if (result === 'NOASSERTION') this.logger.info(`ScanCode NOASSERTION from ${licenseExpression}`)
+
     return result
   }
 }

@@ -126,31 +126,27 @@ function createApp(config) {
   app.set('trust-proxy', true)
 
   // If Redis is configured for caching, connect to it
-  const client = config.caching.caching_redis_service ?
-    redis.createClient(
-      6380,
-      config.caching.caching_redis_service,
-      {
+  const client = config.caching.caching_redis_service
+    ? redis.createClient(6380, config.caching.caching_redis_service, {
         auth_pass: config.caching.caching_redis_api_key,
         tls: { servername: config.caching_redis_service }
-      }
-    ) :
-    undefined
+      })
+    : undefined
 
   // rate-limit the remaining routes
-  const apiLimiter = config.caching.caching_redis_service ?
-    rateLimit({
-      store: new rateLimitRedisStore({
-        client: client,
-        prefix: 'api'
-      }),
-      windowMs: config.limits.windowSeconds * 1000,
-      max: config.limits.max
-    }) :
-    rateLimit({
-      windowMs: config.limits.windowSeconds * 1000,
-      max: config.limits.max
-    })
+  const apiLimiter = config.caching.caching_redis_service
+    ? rateLimit({
+        store: new rateLimitRedisStore({
+          client: client,
+          prefix: 'api'
+        }),
+        windowMs: config.limits.windowSeconds * 1000,
+        max: config.limits.max
+      })
+    : rateLimit({
+        windowMs: config.limits.windowSeconds * 1000,
+        max: config.limits.max
+      })
 
   app.use(apiLimiter)
 
@@ -160,20 +156,19 @@ function createApp(config) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = config.caching.caching_redis_service ?
-    rateLimit({
-      store: new rateLimitRedisStore({
-        client: client,
-        prefix: 'batch-api'
-      }),
-      windowMs: config.limits.batchWindowSeconds * 1000,
-      max: config.limits.batchMax
-    }) :
-    rateLimit({
-      windowMs: config.limits.batchWindowSeconds * 1000,
-      max: config.limits.batchMax
-    })
-
+  const batchApiLimiter = config.caching.caching_redis_service
+    ? rateLimit({
+        store: new rateLimitRedisStore({
+          client: client,
+          prefix: 'batch-api'
+        }),
+        windowMs: config.limits.batchWindowSeconds * 1000,
+        max: config.limits.batchMax
+      })
+    : rateLimit({
+        windowMs: config.limits.batchWindowSeconds * 1000,
+        max: config.limits.batchMax
+      })
 
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
@@ -181,9 +176,10 @@ function createApp(config) {
 
   app.use(require('./middleware/querystring'))
 
-  app.use('/', require('./routes/index')(config.buildsha))
+  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
+  app.use('/origins/conda', require('./routes/originConda')())
   app.use('/origins/pod', require('./routes/originPod')())
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
@@ -208,7 +204,14 @@ function createApp(config) {
 
   // catch 404 and forward to error handler
   const requestHandler = (req, res, next) => {
-    logger.info('Error when handling a request', { rawUrl: req._parsedUrl._raw, baseUrl: req.baseUrl, originalUrl: req.originalUrl, params: req.params, route: req.route, url: req.url })
+    logger.info('Error when handling a request', {
+      rawUrl: req._parsedUrl._raw,
+      baseUrl: req.baseUrl,
+      originalUrl: req.originalUrl,
+      params: req.params,
+      route: req.route,
+      url: req.url
+    })
     const err = new Error('Not Found')
     err.status = 404
     next(err)

@@ -13,6 +13,8 @@
     "type": {
       "enum": [
         "npm",
+        "conda",
+        "condasrc",
         "crate",
         "git",
         "maven",
@@ -32,8 +34,11 @@
     },
     "provider": {
       "enum": [
+        "anaconda-main",
+        "anaconda-r",
         "npmjs",
         "cocoapods",
+        "conda-forge",
         "cratesio",
         "github",
         "gitlab",

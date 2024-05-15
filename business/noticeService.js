@@ -20,7 +20,10 @@ class NoticeService {
 
   async generate(coordinates, output, options) {
     options = options || {}
-    this.logger.info('1:notice_generate:get_definitions:start', { ts: new Date().toISOString(), cnt: coordinates.length })
+    this.logger.info('1:notice_generate:get_definitions:start', {
+      ts: new Date().toISOString(),
+      cnt: coordinates.length
+    })
     const definitions = await this.definitionService.getAll(coordinates)
     this.logger.info('1:notice_generate:get_definitions:end', { ts: new Date().toISOString(), cnt: coordinates.length })
     this.logger.info('2:notice_generate:get_blobs:start', { ts: new Date().toISOString(), cnt: coordinates.length })
@@ -50,25 +53,27 @@ class NoticeService {
     const noDefinition = []
     const noLicense = []
     const noCopyright = []
-    const packages = (await Promise.all(
-      Object.keys(definitions).map(async id => {
-        const definition = definitions[id]
-        if (!get(definition, 'described.tools[0]')) {
-          noDefinition.push(id)
-          return
-        }
-        if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
-        if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
-        return {
-          name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
-          version: get(definition, 'coordinates.revision'),
-          license: get(definition, 'licensed.declared'),
-          copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
-          website: get(definition, 'described.projectWebsite') || '',
-          text: await this._getPackageText(definition)
-        }
-      })
-    )).filter(x => x && isDeclaredLicense(x.license))
+    const packages = (
+      await Promise.all(
+        Object.keys(definitions).map(async id => {
+          const definition = definitions[id]
+          if (!get(definition, 'described.tools[0]')) {
+            noDefinition.push(id)
+            return
+          }
+          if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
+          if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
+          return {
+            name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
+            version: get(definition, 'coordinates.revision'),
+            license: get(definition, 'licensed.declared'),
+            copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
+            website: get(definition, 'described.projectWebsite') || '',
+            text: await this._getPackageText(definition)
+          }
+        })
+      )
+    ).filter(x => x && isDeclaredLicense(x.license))
     return { packages, noDefinition, noLicense, noCopyright }
   }
 
@@ -91,21 +96,28 @@ class NoticeService {
 
   async _getPackageText(definition) {
     if (!definition.files) return ''
-    this.logger.info('2:1:notice_generate:get_single_package_files:start', { ts: new Date().toISOString(), coordinates: definition.coordinates.toString() })
+    this.logger.info('2:1:notice_generate:get_single_package_files:start', {
+      ts: new Date().toISOString(),
+      coordinates: definition.coordinates.toString()
+    })
     const texts = await Promise.all(
       definition.files
-        .filter(file =>
-          file.token
-          && file.natures
-          && file.natures.includes('license')
-          && file.path
-          && (
-            file.path.indexOf('/') === -1
-            || (definition.coordinates.type === 'npm' && file.path.startsWith('package/'))
-          ))
+        .filter(
+          file =>
+            file.token &&
+            file.natures &&
+            file.natures.includes('license') &&
+            file.path &&
+            (file.path.indexOf('/') === -1 ||
+              (definition.coordinates.type === 'npm' && file.path.startsWith('package/')))
+        )
         .map(file => this.attachmentStore.get(file.token))
     )
-    this.logger.info('2:1:notice_generate:get_single_package_files:end', { ts: new Date().toISOString(), cnt: texts.length, coordinates: definition.coordinates.toString() })
+    this.logger.info('2:1:notice_generate:get_single_package_files:end', {
+      ts: new Date().toISOString(),
+      cnt: texts.length,
+      coordinates: definition.coordinates.toString()
+    })
     return texts.join('\n\n')
   }
 }

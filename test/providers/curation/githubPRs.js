@@ -21,7 +21,10 @@ function complexCuration(name = 'foo') {
     revisions: {
       '1.0': {
         described: { releaseDate: '2018-10-19', projectWebsite: `http://${name}.com` },
-        files: [{ path: `${name}.1.txt`, license: 'MIT' }, { path: `${name}.2.txt`, license: 'GPL' }]
+        files: [
+          { path: `${name}.1.txt`, license: 'MIT' },
+          { path: `${name}.2.txt`, license: 'GPL' }
+        ]
       }
     }
   }
@@ -71,8 +74,10 @@ describe('Curation service pr events', () => {
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
-      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+      'cur_npm/npmjs/-/foo/1.0',
+      'cur_npm/npmjs/-/foo'
+    ])
   }).timeout(8000) // First time loading proxyquire('../../../providers/curation/github') is very slow.
 
   it('handles update', async () => {
@@ -85,8 +90,10 @@ describe('Curation service pr events', () => {
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
-      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+      'cur_npm/npmjs/-/foo/1.0',
+      'cur_npm/npmjs/-/foo'
+    ])
   })
 
   it('handles merge', async () => {
@@ -110,8 +117,10 @@ describe('Curation service pr events', () => {
 
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
-      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+      'cur_npm/npmjs/-/foo/1.0',
+      'cur_npm/npmjs/-/foo'
+    ])
 
     const computeSpy = service.definitionService.computeAndStore
     expect(computeSpy.calledOnce).to.be.true
@@ -126,8 +135,10 @@ describe('Curation service pr events', () => {
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]])
-      .to.equalInAnyOrder(['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo'])
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+      'cur_npm/npmjs/-/foo/1.0',
+      'cur_npm/npmjs/-/foo'
+    ])
   })
 
   it('handles list', async () => {

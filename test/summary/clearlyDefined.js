@@ -446,7 +446,12 @@ describe('ClearlyDefined PHP composer summarizer', () => {
   })
 
   it('handles with all the data and a disjunctive license array', () => {
-    const { coordinates, harvested } = setupComposer('2018-03-06T11:38:10.284Z', 'v1.0.0', ['MIT', 'Apache-2.0'], 'http://homepage')
+    const { coordinates, harvested } = setupComposer(
+      '2018-03-06T11:38:10.284Z',
+      'v1.0.0',
+      ['MIT', 'Apache-2.0'],
+      'http://homepage'
+    )
     const summary = Summarizer().summarize(coordinates, harvested)
 
     validate(summary)
@@ -574,7 +579,9 @@ describe('ClearlyDefined Debian summarizer', () => {
     expect(summary.described.urls.version).to.eq(registryUrl)
     expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
     expect(summary.described.sourceLocation.url).to.eq(registryUrl)
-    expect(summary.licensed.declared).to.eq('GPL-2.0+ AND (CPL-1.0 OR MIT) AND (BSD-3-Clause OR GPL-3.0 AND LGPL-2.1+) AND NOASSERTION')
+    expect(summary.licensed.declared).to.eq(
+      'GPL-2.0+ AND (CPL-1.0 OR MIT) AND (BSD-3-Clause OR GPL-3.0 AND LGPL-2.1+) AND NOASSERTION'
+    )
   })
 
   it('handles no data', () => {

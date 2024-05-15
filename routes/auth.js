@@ -99,7 +99,7 @@ async function getUserDetails(token, org) {
     if (error.code === 404)
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
-        'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
+          'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
     else if (error.code === 401 && error.message === 'Bad credentials')
       // the token was bad. trickle up the problem so the user can fix

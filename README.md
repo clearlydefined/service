@@ -39,8 +39,8 @@ TBD
 
 Configuration properties can be found at:
 
-* [service/full.env.json](https://github.com/clearlydefined/service/blob/master/full.env.json)
-* [service/bin/config.js](https://github.com/clearlydefined/service/blob/master/bin/config.js)
+- [service/full.env.json](https://github.com/clearlydefined/service/blob/master/full.env.json)
+- [service/bin/config.js](https://github.com/clearlydefined/service/blob/master/bin/config.js)
 
 # Contributing
 
@@ -243,6 +243,7 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - composer
 - rubygem
 - deb
+- conda
 
 ## Provider Registry
 
@@ -258,6 +259,9 @@ The format of harvested data is tool-specific. Tool output is stored in the tool
 - packagist.org
 - proxy.golang.org
 - ftp.debian.org
+- repo.anaconda.com/pkgs/main (anaconda-main)
+- repo.anaconda.com/pkgs/r (anaconda-r)
+- conda.anaconda.org/conda-forge (conda-forge)
 
 ## Tool Name Registry
 

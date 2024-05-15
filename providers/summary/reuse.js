@@ -66,11 +66,10 @@ class FsfeReuseSummarizer {
   _addLicenseDeclaration(harvested, result) {
     if (!harvested.reuse.licenses) return
     const declaredLicenses = harvested.reuse.licenses
-      .map(license => isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null)
+      .map(license => (isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null))
       .filter(x => x)
     setIfValue(result, 'licensed.declared', uniq(declaredLicenses).join(' AND '))
   }
-
 }
 
 module.exports = options => new FsfeReuseSummarizer(options)

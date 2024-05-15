@@ -20,7 +20,7 @@ describe('memory search tests', () => {
   }
 
   let memorySearch
-  before(() =>{
+  before(() => {
     const definitions = Object.values(searches)
       .map(EntityCoordinates.fromString)
       .map(coordinates => ({ coordinates }))

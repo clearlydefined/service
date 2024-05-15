@@ -106,9 +106,7 @@ class MongoCurationStore {
 
   _getCurationId(coordinates) {
     if (!coordinates) return ''
-    return EntityCoordinates.fromObject(coordinates)
-      .toString()
-      .toLowerCase()
+    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
   _buildContributionQuery(coordinates) {
@@ -132,11 +130,7 @@ class MongoCurationStore {
   }
 
   _lowercaseCoordinates(input) {
-    return EntityCoordinates.fromString(
-      EntityCoordinates.fromObject(input)
-        .toString()
-        .toLowerCase()
-    )
+    return EntityCoordinates.fromString(EntityCoordinates.fromObject(input).toString().toLowerCase())
   }
 }
 

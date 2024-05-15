@@ -58,4 +58,3 @@ function createDefinitionService() {
     get: sinon.stub()
   }
 }
-

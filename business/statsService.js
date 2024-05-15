@@ -35,6 +35,8 @@ class StatsService {
   _getStatLookup() {
     return {
       total: () => this._getType('total'),
+      conda: () => this._getType('conda'),
+      condasrc: () => this._getType('condasrc'),
       crate: () => this._getType('crate'),
       gem: () => this._getType('gem'),
       git: () => this._getType('git'),
@@ -45,7 +47,7 @@ class StatsService {
       composer: () => this._getType('composer'),
       pypi: () => this._getType('pypi'),
       deb: () => this._getType('deb'),
-      debsrc: () => this._getType('debsrc'),
+      debsrc: () => this._getType('debsrc')
     }
   }
 

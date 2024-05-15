@@ -16,7 +16,7 @@ describe('AbstractFileStore lists entries ', () => {
     '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json': {}
   }
 
-  beforeEach(function() {
+  beforeEach(function () {
     const recursiveStub = async path => {
       path = path.replace(/\\/g, '/')
       if (path.includes('error')) throw new Error('test error')
@@ -39,7 +39,7 @@ describe('AbstractFileStore lists entries ', () => {
     })
   })
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore()
   })
 

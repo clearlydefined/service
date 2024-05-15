@@ -423,6 +423,7 @@ components:
       example:
         - git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca
         - npm/npmjs/-/redie/0.3.0
+        - conda/conda-forge/linux-64/21cmfast/3.1.1-py36
 
     noticeFile:
       type: object
@@ -531,6 +532,8 @@ components:
         type: string
         enum:
           - composer
+          - conda
+          - condasrc
           - crate
           - deb
           - debsrc
@@ -551,7 +554,10 @@ components:
       schema:
         type: string
         enum:
+          - anaconda-main
+          - anaconda-r
           - cocoapods
+          - conda-forge
           - cratesio
           - debian
           - github
@@ -568,7 +574,7 @@ components:
       name: namespace
       in: path
       required: true
-      description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
+      description: many component systems have namespaces. GitHub orgs, NPM namespace, Maven group id, Conda Subdir/Architecture ... This segment must be supplied. If your component does not have a namespace, use '-' (ASCII hyphen).
       schema:
         type: string
     name:

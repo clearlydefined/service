@@ -5,11 +5,22 @@ const assert = require('assert')
 const summarizer = require('../../providers/summary/reuse')()
 
 describe('FsfeReuseSummarizer', () => {
-
   it('should include populate all available attributes', () => {
     const files = [
-      { fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' },
-      { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'Somebody else', checksumSha1: '23' }
+      {
+        fileName: 'README.md',
+        licenseConcluded: 'MIT',
+        licenseInfoFile: 'NOASSERTION',
+        fileCopyrightText: 'Somebody',
+        checksumSha1: '42'
+      },
+      {
+        fileName: 'SECURITY.md',
+        licenseConcluded: 'NOASSERTION',
+        licenseInfoFile: 'Apache-2.0',
+        fileCopyrightText: 'Somebody else',
+        checksumSha1: '23'
+      }
     ]
     const licenses = ['MIT', 'Apache-2.0']
     const data = setup(files, licenses)
@@ -19,7 +30,7 @@ describe('FsfeReuseSummarizer', () => {
         { path: 'README.md', license: 'MIT', hashes: { sha1: '42' }, attributions: ['Somebody'] },
         { path: 'SECURITY.md', license: 'Apache-2.0', hashes: { sha1: '23' }, attributions: ['Somebody else'] },
         { path: 'LICENSES/MIT.txt', license: 'MIT', natures: ['license'] },
-        { path: 'LICENSES/Apache-2.0.txt', license: 'Apache-2.0', natures: ['license'] },
+        { path: 'LICENSES/Apache-2.0.txt', license: 'Apache-2.0', natures: ['license'] }
       ],
       licensed: { declared: 'MIT AND Apache-2.0' }
     })
@@ -28,7 +39,13 @@ describe('FsfeReuseSummarizer', () => {
   it('should ignore missing or irrelevant attributes', () => {
     const files = [
       { fileName: 'README.md', licenseConcluded: 'MIT', fileCopyrightText: 'Somebody', checksumSha1: '42' },
-      { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', licenseInfoFile: 'Apache-2.0', fileCopyrightText: 'NONE', checksumSha1: '23' }
+      {
+        fileName: 'SECURITY.md',
+        licenseConcluded: 'NOASSERTION',
+        licenseInfoFile: 'Apache-2.0',
+        fileCopyrightText: 'NONE',
+        checksumSha1: '23'
+      }
     ]
     const licenses = ['MIT', 'Apache-2.0']
     const data = setup(files, licenses)
@@ -38,7 +55,7 @@ describe('FsfeReuseSummarizer', () => {
         { path: 'README.md', license: 'MIT', hashes: { sha1: '42' }, attributions: ['Somebody'] },
         { path: 'SECURITY.md', license: 'Apache-2.0', hashes: { sha1: '23' } },
         { path: 'LICENSES/MIT.txt', license: 'MIT', natures: ['license'] },
-        { path: 'LICENSES/Apache-2.0.txt', license: 'Apache-2.0', natures: ['license'] },
+        { path: 'LICENSES/Apache-2.0.txt', license: 'Apache-2.0', natures: ['license'] }
       ],
       licensed: { declared: 'MIT AND Apache-2.0' }
     })
@@ -46,7 +63,13 @@ describe('FsfeReuseSummarizer', () => {
 
   it('should ignore missing license information', () => {
     const files = [
-      { fileName: 'README.md', licenseConcluded: 'MIT', licenseInfoFile: 'NOASSERTION', fileCopyrightText: 'Somebody', checksumSha1: '42' },
+      {
+        fileName: 'README.md',
+        licenseConcluded: 'MIT',
+        licenseInfoFile: 'NOASSERTION',
+        fileCopyrightText: 'Somebody',
+        checksumSha1: '42'
+      },
       { fileName: 'SECURITY.md', licenseConcluded: 'NOASSERTION', fileCopyrightText: 'NONE', checksumSha1: '23' }
     ]
     const licenses = ['MIT']
@@ -81,18 +104,24 @@ describe('FsfeReuseSummarizer', () => {
 function setup(files, licenses) {
   const matchedFiles = files.map(file => {
     return {
-      'FileName': file.fileName,
-      'LicenseConcluded': file.licenseConcluded,
-      'LicenseInfoInFile': file.licenseInfoFile,
-      'FileCopyrightText': file.fileCopyrightText,
-      'FileChecksumSHA1': file.checksumSha1
+      FileName: file.fileName,
+      LicenseConcluded: file.licenseConcluded,
+      LicenseInfoInFile: file.licenseInfoFile,
+      FileCopyrightText: file.fileCopyrightText,
+      FileChecksumSHA1: file.checksumSha1
     }
   })
   const matchedLicenses = licenses.map(license => {
     return {
-      'filePath': ('LICENSES/' + license + '.txt'),
-      'spdxId': license
+      filePath: 'LICENSES/' + license + '.txt',
+      spdxId: license
     }
   })
-  return { reuse: { metadata: { 'DocumentName': 'ospo-reuse', 'CreatorTool': 'reuse-0.13.0' }, files: matchedFiles, licenses: matchedLicenses } }
+  return {
+    reuse: {
+      metadata: { DocumentName: 'ospo-reuse', CreatorTool: 'reuse-0.13.0' },
+      files: matchedFiles,
+      licenses: matchedLicenses
+    }
+  }
 }
