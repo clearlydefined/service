@@ -7,20 +7,8 @@ on:
     types: [published]
 
 jobs:
-  determine-trigger:
-    name: Determine if this was triggered by a release or workflow_dispatch
-    runs-on: ubuntu-latest
-    outputs:
-      is-release: ${{ env.IS_RELEASE }}
-    steps:
-      - name: Check if this was triggered by a release
-        id: release
-        run: |
-          echo "IS_RELEASE"=${{ github.event_name == 'release' }} >> $GITHUB_ENV
-
   build-and-deploy-prod:
     uses: clearlydefined/operations/.github/workflows/app-build-and-deploy.yml@v1.0.0
-    needs: determine-trigger
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
@@ -33,4 +21,3 @@ jobs:
       azure-app-base-name: clearlydefined-api
       azure-app-name-postfix: -prod
       secondary-azure-app-name-postfix: -prod-europe
-      is-release: ${{ needs.determine-trigger.outputs.is-release }}
