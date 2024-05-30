@@ -14,7 +14,7 @@ const SCANCODE_VERSIONS = ['32.1.0']
 describe('ScancodeSummarizerNew basic compatability', () => {
   it('summarizes basic npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'npm-basic')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
@@ -28,7 +28,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
   it('summarizes large npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
 
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'npm-large')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
@@ -107,7 +107,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
       'maven-java-jna': 'LGPL-2.1-or-later OR Apache-2.0'
     }
 
-    for (let [name, declared] of Object.entries(packages)) {
+    for (const [name, declared] of Object.entries(packages)) {
       for (const scancodeVersion of SCANCODE_VERSIONS) {
         const harvestData = getHarvestData(scancodeVersion, name)
         const result = summarizer.summarize(coordinates, harvestData)
@@ -138,7 +138,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes ruby gems', () => {
     const coordinates = { type: 'gem', provider: 'rubygems' }
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'gem')
       const result = summarizer.summarize(coordinates, harvestData)
 
@@ -151,7 +151,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes git repos', () => {
     const coordinates = { type: 'git', provider: 'github' }
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'git')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
@@ -164,7 +164,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes pythons', () => {
     const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '5.0.1' }
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'python')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
@@ -177,7 +177,7 @@ describe('ScancodeSummarizerNew basic compatability', () => {
 
   it('summarizes crates', () => {
     const coordinates = { type: 'crate', provider: 'cratesio', name: 'rand', revision: '0.8.2' }
-    for (let version of SCANCODE_VERSIONS) {
+    for (const version of SCANCODE_VERSIONS) {
       const harvestData = getHarvestData(version, 'crate-file-summary')
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
