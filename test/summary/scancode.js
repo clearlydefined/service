@@ -206,7 +206,7 @@ describe('ScanCode summarizer', () => {
     const examples = new Map([
       [new Set(['ISC']), 'ISC'],
       [new Set(['MIT', 'Apache-2.0']), 'Apache-2.0 AND MIT'],
-      [new Set(['MIT OR Apache-2.0', 'GPL']), 'GPL AND (MIT OR Apache-2.0)'],
+      [new Set(['MIT OR Apache-2.0', 'GPL-3.0']), 'GPL-3.0 AND (MIT OR Apache-2.0)'],
       [new Set(null), null],
       [new Set(), null],
       [null, null]
