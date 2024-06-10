@@ -107,7 +107,7 @@ describe('ScancodeSummarizer basic compatability', () => {
     const coordinates = { type: 'git', provider: 'github' }
     const harvestData = getHarvestData('30.1.0', 'github-LatencyUtils-license-expression.')
     const result = summarizer.summarize(coordinates, harvestData)
-    assert.equal(result.licensed.declared, 'BSD-2-Clause AND CC0-1.0 OR BSD-2-Clause')
+    assert.equal(result.licensed.declared, 'BSD-2-Clause AND (CC0-1.0 OR BSD-2-Clause)')
   })
 
   it('throws an error on an invalid scancode version', () => {
