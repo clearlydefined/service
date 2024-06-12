@@ -11,13 +11,12 @@ const {
   setIfValue,
   joinExpressions,
   normalizeLicenseExpression
-} = require('../../lib/utils')
-const logger = require('../logging/logger')
+} = require('../../../lib/utils')
 
-class ScanCodeSummarizerNew {
-  constructor(options) {
+class ScanCodeNewSummarizer {
+  constructor(options, logger) {
     this.options = options
-    this.logger = logger()
+    this.logger = logger
   }
 
   /**
@@ -26,10 +25,7 @@ class ScanCodeSummarizerNew {
    * @param {*} harvestedData - the set of raw tool outputs related to the identified entity
    * @returns {Definition} - a summary of the given raw information
    */
-  summarize(coordinates, harvestedData) {
-    const scancodeVersion =
-      get(harvestedData, 'content.headers[0].tool_version') || get(harvestedData, 'content.scancode_version')
-
+  summarize(scancodeVersion, coordinates, harvestedData) {
     if (!scancodeVersion) throw new Error('Not valid ScanCode data')
 
     const result = {}
@@ -178,4 +174,4 @@ class ScanCodeSummarizerNew {
   }
 }
 
-module.exports = options => new ScanCodeSummarizerNew(options)
+module.exports = (options, logger) => new ScanCodeNewSummarizer(options, logger)

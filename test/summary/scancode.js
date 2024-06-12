@@ -7,6 +7,7 @@ const validator = require('../../schemas/validator')
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 const Summarizer = require('../../providers/summary/scancode')
+const ScanCodeLegacySummarizer = require('../../providers/summary/scancode/legacy-summarizer')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { joinExpressions } = require('../../lib/utils')
 
@@ -182,27 +183,6 @@ describe('ScanCode summarizer', () => {
     expect(summary.licensed.declared).to.eq('GPL-3.0')
   })
 
-  it('creates expressions from matched_rule', () => {
-    const examples = new Map([
-      [buildRule('mit OR apache-2.0', ['mit', 'apache-2.0']), 'MIT OR Apache-2.0'],
-      [buildRule('mit AND apache-2.0', ['mit', 'apache-2.0']), 'MIT AND Apache-2.0'],
-      [buildRule('mit OR junk', ['mit', 'junk']), 'MIT OR NOASSERTION'],
-      [buildRule('junk OR mit', ['mit', 'junk']), 'NOASSERTION OR MIT'],
-      [
-        buildRule('mit AND apache-2.0 AND agpl-generic-additional-terms', [
-          'mit',
-          'apache-2.0',
-          'agpl-generic-additional-terms'
-        ]),
-        'MIT AND Apache-2.0 AND NOASSERTION'
-      ]
-    ])
-    examples.forEach((expected, input) => {
-      const result = Summarizer()._createExpressionFromLicense(input)
-      expect(result).to.eq(expected)
-    })
-  })
-
   it('creates expressions from license expressions', () => {
     const examples = new Map([
       [new Set(['ISC']), 'ISC'],
@@ -216,21 +196,6 @@ describe('ScanCode summarizer', () => {
       const result = joinExpressions(input)
       expect(result).to.eq(expected)
     })
-  })
-
-  it('uses spdx license key when no expression is available from matched_rule', () => {
-    const result = Summarizer()._createExpressionFromLicense({ spdx_license_key: 'MIT' })
-    expect(result).to.eq('MIT')
-  })
-
-  it('gets root files', () => {
-    const result = Summarizer()._getRootFiles({ type: 'npm' }, [
-      { path: 'realroot' },
-      { path: 'package/packageRoot' },
-      { path: 'other/nonroot' },
-      { path: 'package/deep/path' }
-    ])
-    expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
   })
 
   it('handles multiple licenses in files', () => {
@@ -255,6 +220,48 @@ describe('ScanCode summarizer', () => {
     expect(summary.files.length).to.eq(2)
     expect(summary.files[0].license).to.eq('MIT AND NOASSERTION')
     expect(summary.files[1].license).to.eq('MIT')
+  })
+})
+
+describe('ScanCodeLegacySummarizer', () => {
+  context('_createExpressionFromLicense', () => {
+    it('creates expressions from matched_rule', () => {
+      const examples = new Map([
+        [buildRule('mit OR apache-2.0', ['mit', 'apache-2.0']), 'MIT OR Apache-2.0'],
+        [buildRule('mit AND apache-2.0', ['mit', 'apache-2.0']), 'MIT AND Apache-2.0'],
+        [buildRule('mit OR junk', ['mit', 'junk']), 'MIT OR NOASSERTION'],
+        [buildRule('junk OR mit', ['mit', 'junk']), 'NOASSERTION OR MIT'],
+        [
+          buildRule('mit AND apache-2.0 AND agpl-generic-additional-terms', [
+            'mit',
+            'apache-2.0',
+            'agpl-generic-additional-terms'
+          ]),
+          'MIT AND Apache-2.0 AND NOASSERTION'
+        ]
+      ])
+      examples.forEach((expected, input) => {
+        const result = ScanCodeLegacySummarizer()._createExpressionFromLicense(input)
+        expect(result).to.eq(expected)
+      })
+    })
+
+    it('uses spdx license key when no expression is available from matched_rule', () => {
+      const result = ScanCodeLegacySummarizer()._createExpressionFromLicense({ spdx_license_key: 'MIT' })
+      expect(result).to.eq('MIT')
+    })
+  })
+
+  context('_getRootFiles', () => {
+    it('gets root files', () => {
+      const result = ScanCodeLegacySummarizer()._getRootFiles({ type: 'npm' }, [
+        { path: 'realroot' },
+        { path: 'package/packageRoot' },
+        { path: 'other/nonroot' },
+        { path: 'package/deep/path' }
+      ])
+      expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
+    })
   })
 })
 

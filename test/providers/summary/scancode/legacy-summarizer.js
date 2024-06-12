@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const summarizer = require('../../../providers/summary/scancode')()
-summarizer.logger = { info: () => {} }
+const summarizer = require('../../../../providers/summary/scancode')({}, { info: () => {} })
 const fs = require('fs')
 const path = require('path')
 const { get, uniq, flatten } = require('lodash')
@@ -11,7 +10,7 @@ const { expect } = require('chai')
 
 const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2', '30.1.0']
 
-describe('ScancodeSummarizer basic compatability', () => {
+describe('ScanCodeLegacySummarizer basic compatability', () => {
   it('summarizes basic npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
     for (let version of scancodeVersions) {
@@ -169,7 +168,7 @@ describe('ScancodeSummarizer basic compatability', () => {
   })
 })
 
-describe('ScancodeSummarizer fixtures', () => {
+describe('ScanCodeLegacySummarizer fixtures', () => {
   it('summarizes basic npm 3.0.2', () => {
     const coordinates = { type: 'npm', provider: 'npmjs', name: 'glob', revision: '7.1.2' }
     const harvestData = getHarvestData('3.0.2', 'npm-basic')
@@ -286,7 +285,7 @@ describe('ScancodeSummarizer fixtures', () => {
 })
 
 function getHarvestData(version, test) {
-  const fileName = path.join(__dirname, `../../fixtures/scancode/${version}/${test}.json`)
+  const fileName = path.join(__dirname, `../../../fixtures/scancode/${version}/${test}.json`)
   if (fs.existsSync(fileName)) {
     return JSON.parse(fs.readFileSync(fileName))
   }
