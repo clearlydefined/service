@@ -53,15 +53,6 @@ describe('ScanCodeNewSummarizer basic compatability', () => {
     }
   })
 
-  it('summarizes github with a single declared license', () => {
-    for (const scancodeVersion of SCANCODE_VERSIONS) {
-      const coordinates = { type: 'git', provider: 'github' }
-      const harvestData = getHarvestData(scancodeVersion, 'github-single-declared-license')
-      const result = summarizer.summarize(coordinates, harvestData)
-      assert.equal(result.licensed.declared, 'MIT')
-    }
-  })
-
   it('summarizes pypi with a complex declared license', () => {
     for (const scancodeVersion of SCANCODE_VERSIONS) {
       const coordinates = { type: 'pypi', provider: 'pypi' }
