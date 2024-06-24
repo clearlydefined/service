@@ -119,7 +119,7 @@ class ScanCodeNewSummarizer {
     return joinExpressions(fullLicenses)
   }
 
-  _getClosestLicenseMatchByFileName(files, coordinates, licenseClarityScoreThreshold = 90) {
+  _getClosestLicenseMatchByFileName(files, coordinates) {
     const fullLicenses = files
       .filter(file => isLicenseFile(file.path, coordinates) && file.license_detections)
       .reduce((licenses, file) => {
@@ -129,7 +129,8 @@ class ScanCodeNewSummarizer {
             return
           }
           licenseDetection.matches.forEach(match => {
-            if (match.score >= licenseClarityScoreThreshold) {
+            // Only consider matches with high clarity score of 90 or higher
+            if (match.score >= 90) {
               licenses.add(match.spdx_license_expression)
             }
           })
@@ -137,6 +138,23 @@ class ScanCodeNewSummarizer {
         return licenses
       }, new Set())
     return joinExpressions(fullLicenses)
+  }
+
+  _getLicenseExpressionFromFileLicenseDetections(file) {
+    const licenseExpressions = file.license_detections.reduce((licenseExpressions, licenseDetection) => {
+      if (licenseDetection.license_expression_spdx) {
+        licenseExpressions.add(licenseDetection.license_expression_spdx)
+      } else {
+        licenseDetection.matches.forEach(match => {
+          // Only consider matches with a reasonably high score of 80 or higher
+          if (match.score >= 80) {
+            licenseExpressions.add(match.spdx_license_expression)
+          }
+        })
+      }
+      return licenseExpressions
+    }, new Set())
+    return joinExpressions(licenseExpressions)
   }
 
   _summarizeFileInfo(files, coordinates) {
@@ -147,7 +165,7 @@ class ScanCodeNewSummarizer {
         const result = { path: file.path }
 
         const licenseExpression =
-          file.detected_license_expression_spdx || this._getClosestLicenseMatchByFileName([file], coordinates, 80)
+          file.detected_license_expression_spdx || this._getLicenseExpressionFromFileLicenseDetections(file)
         setIfValue(result, 'license', licenseExpression)
 
         if (
