@@ -1,0 +1,52 @@
+name: New Harvest source
+description: Request a new Harvest source to be added
+labels: [new Harvest]
+title: 'New Harvest: <repository-name>'
+
+body:
+  - type: input
+    attributes:
+      label: Discoverability
+      description: How are the packages for this language discovered? Is the repository searched by the build tooling without the user having to customize their client?
+    validations:
+      required: true
+      
+body:
+  - type: input
+    attributes:
+      label: Primary Source
+      description: Is this the primary repository that the package is published to? Or is this repository a mirror of an existing repository? We should always harvest from primary sources.
+    validations:
+      required: true
+
+body:
+  - type: input
+    attributes:
+      label: Reputability
+      description: Is this repository operated by a reputable organization? What is the purpose behind running this repository? Is there an identifiable team that can be reached in the event of any issues?
+    validations:
+      required: true
+
+body:
+  - type: input
+    attributes:
+      label: Security
+      description: How secure is the repository? Is there a team that is available to handle issues in a timely manner when they arise? How fast do they respond to issues, such as when a security vulnerability is planted as a backdoor in a package?
+    validations:
+      required: true
+
+body:
+  - type: input
+    attributes:
+      label: Automation
+      description: Does the repository support an API to support pulling of information? If not, is the package index organized in a schematized format that can programmatically queried using the package name and version and queried using HTTP(s). When using HTTP to mine data, ClearlyDefined should check for the existence of robots.txt or robot headers that indicate such mining is unacceptable. How much effort is it to automate the process?
+    validations:
+      required: true
+
+body:
+  - type: input
+    attributes:
+      label: Relationship
+      description: Reach out to the organization that maintains the repository to indicate that ClearlyDefined wishes to harvest data from their repository, with an explanation on how harvesting is done, what the data is used for and how much additional traffic this could result in. Identify/Resolve any concerns and provide a contact from ClearlyDefined in the event they need to support in case of an issue.
+    validations:
+      required: true
