@@ -3,7 +3,7 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const requestPromise = require('request-promise-native').defaults({ headers: { 'user-agent': 'clearlydefined.io' } })
+const requestPromise = require('../lib/fetch').withDefaults({ headers: { 'user-agent': 'clearlydefined.io' } })
 const { uniq } = require('lodash')
 
 // maven.org API documentation https://search.maven.org/classic/#api
