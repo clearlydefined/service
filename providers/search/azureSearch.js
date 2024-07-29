@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const requestPromise = require('request-promise-native')
+const { callFetch: requestPromise } = require('../../lib/fetch')
 const AbstractSearch = require('./abstractSearch')
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
