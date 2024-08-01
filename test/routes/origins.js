@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -5,6 +6,42 @@ const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 const originCondaRoutes = require('../../routes/originConda')
+const originMavenRoutes = require('../../routes/originMaven')
+const fs = require('fs')
+
+describe('Maven Origin routes', () => {
+  let router
+  before(() => {
+    router = originMavenRoutes(true)
+  })
+
+  it('should return suggestions when incomplete group id is provided as input', async () => {
+    const groupId = 'org.apache.httpcom'
+    expect(getResponse(groupId)).to.be.deep.equal(['httpcore', 'httpconn', 'httpcodec', 'httpcommons', 'httprox'])
+  })
+
+  it('should not return suggestions when complete group id is provided as input', async () => {
+    const groupId = 'org.apache.httpcomponents'
+    expect(getResponse(groupId)).to.be.deep.equal(getResponse(`${groupId}-response`))
+  })
+
+  it('should return blank response when suggestions are not present', async () => {
+    const groupId = '12345'
+    expect(getResponse(groupId)).to.be.deep.equal([])
+  })
+
+  it('should return blank response when group id and artefact id are provided as input and suggestions are not present', async () => {
+    const groupId = '12345'
+    const artefactId = '1234'
+    expect(getResponse(`${groupId}-${artefactId}`)).to.be.deep.equal([])
+  })
+
+  function getResponse(coordinate) {
+    const body = fs.readFileSync(`test/fixtures/origins/maven/${coordinate}.json`)
+    if (coordinate.endsWith('-response')) return JSON.parse(body)
+    return router._getSuggestions(JSON.parse(body))
+  }
+})
 
 describe('Conda origin routes', () => {
   it('accepts a good revisions GET request', async () => {
