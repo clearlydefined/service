@@ -22,7 +22,7 @@ describe('Maven Origin routes', () => {
 
   it('should not return suggestions when complete group id is provided as input', async () => {
     const groupId = 'org.apache.httpcomponents'
-    expect(getResponse(groupId)).to.be.deep.equal(getResponse(`${groupId}-response`))
+    expect(getResponse(groupId)).to.be.deep.equal(loadFixture(`${groupId}-response`))
   })
 
   it('should return blank response when suggestions are not present', async () => {
@@ -36,10 +36,12 @@ describe('Maven Origin routes', () => {
     expect(getResponse(`${groupId}-${artefactId}`)).to.be.deep.equal([])
   })
 
-  function getResponse(coordinate) {
+  function loadFixture(coordinate){
     const body = fs.readFileSync(`test/fixtures/origins/maven/${coordinate}.json`)
-    if (coordinate.endsWith('-response')) return JSON.parse(body)
-    return router._getSuggestions(JSON.parse(body))
+    return JSON.parse(body)
+  }
+  function getResponse(coordinate) {
+    return router._getSuggestions(loadFixture(coordinate))
   }
 })
 
