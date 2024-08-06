@@ -20,30 +20,31 @@ describe('Maven Origin routes', () => {
     expect(getResponse(groupId)).to.be.deep.equal(['httpcore', 'httpconn', 'httpcodec', 'httpcommons', 'httprox'])
   })
 
-  it('should not return suggestions when complete group id is provided as input', async () => {
+  it('should return list of artefacts when complete group id is provided as input', async () => {
     const groupId = 'org.apache.httpcomponents'
     expect(getResponse(groupId)).to.be.deep.equal(loadFixture(`${groupId}-response`))
   })
 
-  it('should return blank response when suggestions are not present', async () => {
+  it('should return blank response when group id is invalid and suggestions are not present', async () => {
     const groupId = '12345'
     expect(getResponse(groupId)).to.be.deep.equal([])
   })
 
-  it('should return blank response when group id and artefact id are provided as input and suggestions are not present', async () => {
+  it('should return blank response when group id and artefact id are invalid and suggestions are not present', async () => {
     const groupId = '12345'
     const artefactId = '1234'
     expect(getResponse(`${groupId}-${artefactId}`)).to.be.deep.equal([])
   })
 
-  function loadFixture(coordinate){
-    const body = fs.readFileSync(`test/fixtures/origins/maven/${coordinate}.json`)
-    return JSON.parse(body)
-  }
   function getResponse(coordinate) {
     return router._getSuggestions(loadFixture(coordinate))
   }
 })
+
+function loadFixture(coordinate) {
+  const body = fs.readFileSync(`test/fixtures/origins/maven/${coordinate}.json`)
+  return JSON.parse(body)
+}
 
 describe('Conda origin routes', () => {
   it('accepts a good revisions GET request', async () => {
