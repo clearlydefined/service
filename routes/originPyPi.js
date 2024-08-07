@@ -11,8 +11,7 @@ router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://pypi.python.org/pypi/${name}/json`
-    const answer = await requestPromise({ url, method: 'GET', json: true })
+    const answer = await getPypiData(name)
     const result = answer && answer.releases ? Object.keys(answer.releases) : []
     result.reverse()
     return response.status(200).send(uniq(result))
@@ -23,13 +22,21 @@ router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://pypi.python.org/pypi/${name}/json`
-    const answer = await requestPromise({ url, method: 'GET', json: true })
+    const answer = await getPypiData(name)
     const result = answer && answer.info ? [{ id: answer.info.name }] : []
     return response.status(200).send(result)
   })
 )
+async function getPypiData(name) {
+  const url = `https://pypi.python.org/pypi/${name}/json`
+  try {
+    return await requestPromise({ url, method: 'GET', json: true })
+  }
+  catch (error) {
+    if (error.statusCode === 404) return []
 
+  }
+}
 function setup() {
   return router
 }
