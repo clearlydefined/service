@@ -5,6 +5,47 @@ const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 const originCondaRoutes = require('../../routes/originConda')
+const proxyquire = require('proxyquire')
+const fs = require('fs')
+
+describe('Pypi origin routes', () => {
+  let Fetch
+  const fixturePath = 'test/fixtures/origins/pypi'
+  beforeEach(() => {
+    const requestPromiseStub = options => {
+      //Splitting url to extract the package name searched
+      const name = options.url.split('/')[4]
+      if (name === 'pan') throw { message: { body: 'Internal server Error', statusCode: 500 } }
+      if (name === 'pand') throw { body: { message: 'Not Found' }, statusCode: 404 }
+      const body = loadFixture(`${fixturePath}/${name}.json`)
+      if (name === 'pandas') return { body, statusCode: 200 }
+    }
+    Fetch = proxyquire('../../routes/originPyPi', { 'request-promise-native': requestPromiseStub })
+  })
+
+  afterEach(function () {
+    sinon.restore()
+  })
+
+  it('should return a valid response when a valid package is provided as input', async () => {
+    const router = Fetch(true)
+    const response = await router._getPypiData('pandas')
+    expect(response.body.info.name).to.be.equal('pandas')
+  })
+  it('should return an empty response when a missing package is provided as input', async () => {
+    const router = Fetch(true)
+    expect(await router._getPypiData('pand')).to.be.deep.equal([])
+  })
+  it('should return a valid error message when an error other than 404 occurs', async () => {
+    const router = Fetch(true)
+    await router._getPypiData('pan').catch(error => expect(error.statusCode).to.be.equal(500))
+  })
+})
+
+function loadFixture(path) {
+  const body = fs.readFileSync(path)
+  return JSON.parse(body)
+}
 
 describe('Conda origin routes', () => {
   it('accepts a good revisions GET request', async () => {
