@@ -880,3 +880,45 @@ describe('Utils buildSourceUrl', () => {
     expect(result).to.eq('https://pypi.org/project/zuul/3.3.0/')
   })
 })
+
+describe('normalizeLicenseExpression', () => {
+  it('should normalize license', () => {
+    const expression = 'MIT AND GPL-3.0'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('MIT AND GPL-3.0')
+  })
+  it('should normalize single licenseRef', () => {
+    const expression = 'afpl-9.0'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('LicenseRef-scancode-afpl-9.0')
+  })
+  it('should normalize license and licenseRef', () => {
+    const expression = 'afl-1.1 AND afpl-9.0'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('AFL-1.1 AND LicenseRef-scancode-afpl-9.0')
+  })
+  it('should normalize licenseRef and license', () => {
+    const expression = 'afpl-9.0 AND MIT'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND MIT')
+  })
+  it('should normalize licenseRef and licenseRef', () => {
+    const expression = 'afpl-9.0 AND activestate-community'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community')
+  })
+  it('should normalize licenseRef and licenseRef or licenseRef', () => {
+    const expression = 'afpl-9.0 AND activestate-community OR ac3filter'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community OR LicenseRef-scancode-ac3filter')
+  })
+  it('should normalize INVALID to NOASSERTION', () => {
+    const mockLogger = {
+      info: (message) => {
+        console.log(message);
+      }
+    };  const expression = 'INVALID'
+    const result = utils.normalizeLicenseExpression(expression, mockLogger)
+    expect(result).to.eq('NOASSERTION')
+  })
+})
