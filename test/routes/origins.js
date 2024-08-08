@@ -11,38 +11,50 @@ const fs = require('fs')
 
 describe('Maven Origin routes', () => {
   let router
+  const fixturePath = 'test/fixtures/origins/maven'
+
   before(() => {
     router = originMavenRoutes(true)
   })
 
   it('should return suggestions when incomplete group id is provided as input', async () => {
-    const groupId = 'org.apache.httpcom'
-    expect(getResponse(groupId)).to.be.deep.equal(['httpcore', 'httpconn', 'httpcodec', 'httpcommons', 'httprox'])
+    const partialGroupId = 'org.apache.httpcom'
+    expect(getResponse(partialGroupId)).to.be.deep.equal([
+      'httpcore',
+      'httpconn',
+      'httpcodec',
+      'httpcommons',
+      'httprox'
+    ])
   })
 
   it('should return list of artefacts when complete group id is provided as input', async () => {
-    const groupId = 'org.apache.httpcomponents'
-    expect(getResponse(groupId)).to.be.deep.equal(loadFixture(`${groupId}-response`))
+    const completeGroupId = 'org.apache.httpcomponents'
+    expect(getResponse(completeGroupId)).to.be.deep.equal(
+      loadFixture(`${fixturePath}/${completeGroupId}-response.json`)
+    )
   })
 
   it('should return blank response when group id is invalid and suggestions are not present', async () => {
-    const groupId = '12345'
-    expect(getResponse(groupId)).to.be.deep.equal([])
+    const invalidGroupId = '12345'
+    expect(getResponse(invalidGroupId)).to.be.deep.equal([])
   })
 
   it('should return blank response when group id and artefact id are invalid and suggestions are not present', async () => {
-    const groupId = '12345'
-    const artefactId = '1234'
-    expect(getResponse(`${groupId}-${artefactId}`)).to.be.deep.equal([])
+    const invalidGroupId = '12345'
+    const invalidArtifactId = '1234'
+    expect(
+      router._getSuggestions(loadFixture(`${fixturePath}/${invalidGroupId}-${invalidArtifactId}.json`), invalidGroupId)
+    ).to.be.deep.equal([])
   })
 
-  function getResponse(coordinate) {
-    return router._getSuggestions(loadFixture(coordinate))
+  function getResponse(filename) {
+    return router._getSuggestions(loadFixture(`${fixturePath}/${filename}.json`))
   }
 })
 
-function loadFixture(coordinate) {
-  const body = fs.readFileSync(`test/fixtures/origins/maven/${coordinate}.json`)
+function loadFixture(path) {
+  const body = fs.readFileSync(path)
   return JSON.parse(body)
 }
 
