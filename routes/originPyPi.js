@@ -31,13 +31,13 @@ async function getPypiData(name) {
   const url = `https://pypi.python.org/pypi/${name}/json`
   try {
     return await requestPromise({ url, method: 'GET', json: true })
-  }
-  catch (error) {
+  } catch (error) {
     if (error.statusCode === 404) return []
-
+    throw error.message
   }
 }
-function setup() {
+function setup(testflag = false) {
+  if (testflag) router._getPypiData = getPypiData
   return router
 }
 
