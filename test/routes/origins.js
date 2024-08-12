@@ -43,9 +43,8 @@ describe('Maven Origin routes', () => {
   it('should return blank response when group id and artefact id are invalid and suggestions are not present', async () => {
     const invalidGroupId = '12345'
     const invalidArtifactId = '1234'
-    expect(
-      router._getSuggestions(loadFixture(`${fixturePath}/${invalidGroupId}-${invalidArtifactId}.json`), invalidGroupId)
-    ).to.be.deep.equal([])
+    const responseFilePath = loadFixture(`${fixturePath}/${invalidGroupId}-${invalidArtifactId}.json`)
+    expect(router._getSuggestions(responseFilePath, invalidGroupId)).to.be.deep.equal([])
   })
 
   function getResponse(filename) {
