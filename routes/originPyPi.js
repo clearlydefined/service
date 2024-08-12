@@ -33,7 +33,7 @@ async function getPypiData(name) {
     return await requestPromise({ url, method: 'GET', json: true })
   } catch (error) {
     if (error.statusCode === 404) return []
-    throw error.message
+    throw error
   }
 }
 function setup(testflag = false) {
