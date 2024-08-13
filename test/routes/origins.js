@@ -1,7 +1,7 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const { expect, assert } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 const originCondaRoutes = require('../../routes/originConda')
@@ -37,7 +37,13 @@ describe('Pypi origin routes', () => {
     expect(await router._getPypiData('pand')).to.be.deep.equal([])
   })
   it('should return a valid error message when an error other than 404 occurs', async () => {
-    await router._getPypiData('pan').catch(error => expect(error.statusCode).to.be.equal(400))
+    try {
+      await router._getPypiData('pan')
+      //Fail the test case if the above statement does not throw error
+      assert.fail()
+    } catch (error) {
+      expect(error.statusCode).to.be.equal(400)
+    }
   })
 })
 
