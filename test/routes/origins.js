@@ -13,16 +13,9 @@ describe('Pypi origin routes', () => {
   let requestPromiseStub
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
-    requestPromiseStub = options => {
-      //Splitting url to extract the package name searched
-      const name = options.url.split('/')[4]
-      if (name === 'pand') throw { body: { message: 'Not Found' }, statusCode: 404 }
-      else if (name === 'pandas') return { body: loadFixture(`${fixturePath}/${name}.json`), statusCode: 200 }
-      // Return bad request error for all other input to check testcase with 400 status code error
-      throw { body: 'Bad Request', statusCode: 400 }
-    }
-    const Fetch = proxyquire('../../routes/originPyPi', { 'request-promise-native': requestPromiseStub })
-    router = Fetch(true)
+    requestPromiseStub = sinon.stub()
+    const createRoute = proxyquire('../../routes/originPyPi', { 'request-promise-native': requestPromiseStub })
+    router = createRoute(true)
   })
 
   afterEach(function () {
@@ -30,17 +23,22 @@ describe('Pypi origin routes', () => {
   })
 
   it('should return a valid response when a valid package is provided as input', async () => {
+    requestPromiseStub.returns({ body: loadFixture(`${fixturePath}/pandas.json`), statusCode: 200 })
     const response = await router._getPypiData('pandas')
     expect(response.body.info.name).to.be.equal('pandas')
   })
+
   it('should return an empty response when a missing package is provided as input', async () => {
+    requestPromiseStub.throws({ body: { message: 'Not Found' }, statusCode: 404 })
     expect(await router._getPypiData('pand')).to.be.deep.equal([])
   })
+
   it('should return a valid error message when an error other than 404 occurs', async () => {
+    requestPromiseStub.throws({ statusCode: 400 })
     try {
       await router._getPypiData('pan')
       //Fail the test case if the above statement does not throw error
-      assert.fail()
+      assert.fail('should have thrown error')
     } catch (error) {
       expect(error.statusCode).to.be.equal(400)
     }
