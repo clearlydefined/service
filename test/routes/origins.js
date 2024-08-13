@@ -19,7 +19,7 @@ describe('Pypi origin routes', () => {
       if (name === 'pand') throw { body: { message: 'Not Found' }, statusCode: 404 }
       else if (name === 'pandas') return { body: loadFixture(`${fixturePath}/${name}.json`), statusCode: 200 }
       // Return bad request error for all other input to check testcase with 400 status code error
-      return { body: 'Bad Request', statusCode: 400 }
+      throw { body: 'Bad Request', statusCode: 400 }
     }
     const Fetch = proxyquire('../../routes/originPyPi', { 'request-promise-native': requestPromiseStub })
     router = Fetch(true)
