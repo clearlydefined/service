@@ -30,18 +30,19 @@ describe('Pypi origin routes', () => {
 
   it('should return an empty response when a missing package is provided as input', async () => {
     requestPromiseStub.throws({ body: { message: 'Not Found' }, statusCode: 404 })
-    expect(await router._getPypiData('pand')).to.be.deep.equal([])
+    expect(await router._getPypiData('pand')).to.be.deep.equal({})
   })
 
   it('should return a valid error message when an error other than 404 occurs', async () => {
     requestPromiseStub.throws({ statusCode: 400 })
     try {
-      await router._getPypiData('pan')
-      //Fail the test case if the above statement does not throw error
-      assert.fail('should have thrown error')
+      await router._getPypiData('pand')
     } catch (error) {
       expect(error.statusCode).to.be.equal(400)
+      return
     }
+    //Fail the test case if the error is not thrown
+    assert.fail('Error should have been thrown')
   })
 })
 
