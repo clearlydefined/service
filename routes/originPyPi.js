@@ -28,11 +28,11 @@ router.get(
   })
 )
 async function getPypiData(name) {
-  const url = `https://pypi.python.org/pypi/${name}/json`
+  const url = `https://pypi.python.org/pypi/${encodeURIComponent(name)}/json`
   try {
     return await requestPromise({ url, method: 'GET', json: true })
   } catch (error) {
-    if (error.statusCode === 404) return []
+    if (error.statusCode === 404) return {}
     throw error
   }
 }
