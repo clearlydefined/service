@@ -1,0 +1,1210 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 4,
+    "params": {
+      "q": "org.apache.httpcomponents",
+      "core": "",
+      "defType": "dismax",
+      "qf": "text^20 g^5 a^10",
+      "indent": "off",
+      "spellcheck": "true",
+      "fl": "id,g,a,latestVersion,p,ec,repositoryId,text,timestamp,versionCount",
+      "start": "",
+      "spellcheck.count": "5",
+      "sort": "score desc,timestamp desc,g asc,a asc",
+      "rows": "100",
+      "wt": "json",
+      "version": "2.2"
+    }
+  },
+  "response": {
+    "numFound": 52,
+    "start": 0,
+    "docs": [
+      {
+        "id": "org.apache.httpcomponents:project",
+        "g": "org.apache.httpcomponents",
+        "a": "project",
+        "latestVersion": "8",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1480239346000,
+        "versionCount": 7,
+        "text": [
+          "org.apache.httpcomponents",
+          "project",
+          ".pom"
+        ],
+        "ec": [
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:hc-stylecheck",
+        "g": "org.apache.httpcomponents",
+        "a": "hc-stylecheck",
+        "latestVersion": "2",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1508670213000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.httpcomponents",
+          "hc-stylecheck",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcore-niossl",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcore-niossl",
+        "latestVersion": "4.0-alpha6",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1191841121000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcore-niossl",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:jakarta-httpcore",
+        "g": "org.apache.httpcomponents",
+        "a": "jakarta-httpcore",
+        "latestVersion": "4.0-alpha4",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1175013456000,
+        "versionCount": 3,
+        "text": [
+          "org.apache.httpcomponents",
+          "jakarta-httpcore",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpmime",
+        "g": "org.apache.httpcomponents",
+        "a": "httpmime",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669833664000,
+        "versionCount": 53,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpmime",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcomponents-client",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcomponents-client",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1669833619000,
+        "versionCount": 55,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcomponents-client",
+          ".pom",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcore-osgi",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcore-osgi",
+        "latestVersion": "4.4.16",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1669455929000,
+        "versionCount": 46,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcore-osgi",
+          "-sources.jar",
+          ".pom",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcomponents-core",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcomponents-core",
+        "latestVersion": "4.4.16",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1669455884000,
+        "versionCount": 50,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcomponents-core",
+          ".pom",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpasyncclient-osgi",
+        "g": "org.apache.httpcomponents",
+        "a": "httpasyncclient-osgi",
+        "latestVersion": "4.1.5",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1638998545000,
+        "versionCount": 14,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpasyncclient-osgi",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpasyncclient",
+        "g": "org.apache.httpcomponents",
+        "a": "httpasyncclient",
+        "latestVersion": "4.1.5",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1638998516000,
+        "versionCount": 17,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpasyncclient",
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcomponents-asyncclient",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcomponents-asyncclient",
+        "latestVersion": "4.1.5",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1638998494000,
+        "versionCount": 17,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcomponents-asyncclient",
+          ".pom",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.wso2.orbit.org.apache.httpcomponents:httpasyncclient",
+        "g": "org.wso2.orbit.org.apache.httpcomponents",
+        "a": "httpasyncclient",
+        "latestVersion": "4.1.3.wso2v1",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1638263058000,
+        "versionCount": 2,
+        "text": [
+          "org.wso2.orbit.org.apache.httpcomponents",
+          "httpasyncclient",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.wso2.orbit.org.apache.httpcomponents:httpmime",
+        "g": "org.wso2.orbit.org.apache.httpcomponents",
+        "a": "httpmime",
+        "latestVersion": "4.5.13.wso2v1",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1629455520000,
+        "versionCount": 1,
+        "text": [
+          "org.wso2.orbit.org.apache.httpcomponents",
+          "httpmime",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.wso2.orbit.org.apache.httpcomponents:httpclient",
+        "g": "org.wso2.orbit.org.apache.httpcomponents",
+        "a": "httpclient",
+        "latestVersion": "4.5.13.wso2v1",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1608659834000,
+        "versionCount": 5,
+        "text": [
+          "org.wso2.orbit.org.apache.httpcomponents",
+          "httpclient",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-osgi",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-osgi",
+        "latestVersion": "5.0-beta5",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1539881929000,
+        "versionCount": 9,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-osgi",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.kie.modules:org-apache-httpcomponents-main",
+        "g": "org.kie.modules",
+        "a": "org-apache-httpcomponents-main",
+        "latestVersion": "6.5.0.Final",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1476807195000,
+        "versionCount": 27,
+        "text": [
+          "org.kie.modules",
+          "org-apache-httpcomponents-main",
+          "-tests.jar",
+          ".pom"
+        ],
+        "ec": [
+          "-tests.jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:maven-site-skin",
+        "g": "org.apache.httpcomponents",
+        "a": "maven-site-skin",
+        "latestVersion": "1.1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1297788471000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.httpcomponents",
+          "maven-site-skin",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:maven-notice-plugin",
+        "g": "org.apache.httpcomponents",
+        "a": "maven-notice-plugin",
+        "latestVersion": "0.0.2",
+        "repositoryId": "central",
+        "p": "maven-plugin",
+        "timestamp": 1289481508000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.httpcomponents",
+          "maven-notice-plugin",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:jakarta-httpcore-niossl",
+        "g": "org.apache.httpcomponents",
+        "a": "jakarta-httpcore-niossl",
+        "latestVersion": "4.0-alpha4",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1175013517000,
+        "versionCount": 1,
+        "text": [
+          "org.apache.httpcomponents",
+          "jakarta-httpcore-niossl",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:jakarta-httpcore-nio",
+        "g": "org.apache.httpcomponents",
+        "a": "jakarta-httpcore-nio",
+        "latestVersion": "4.0-alpha4",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1175013475000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.httpcomponents",
+          "jakarta-httpcore-nio",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-testing",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-testing",
+        "latestVersion": "5.4-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1719133384000,
+        "versionCount": 32,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-testing",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-cache",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-cache",
+        "latestVersion": "5.4-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1719133339000,
+        "versionCount": 33,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-cache",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-fluent",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-fluent",
+        "latestVersion": "5.4-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1719133326000,
+        "versionCount": 33,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-fluent",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5",
+        "latestVersion": "5.4-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1719133316000,
+        "versionCount": 33,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-parent",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-parent",
+        "latestVersion": "5.4-beta1",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1719133292000,
+        "versionCount": 33,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-parent",
+          ".pom",
+          "-site.xml",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-site.xml",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-testing",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-testing",
+        "latestVersion": "5.3-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1718641065000,
+        "versionCount": 41,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-testing",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-reactive",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-reactive",
+        "latestVersion": "5.3-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1718640963000,
+        "versionCount": 35,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-reactive",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-h2",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-h2",
+        "latestVersion": "5.3-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1718640953000,
+        "versionCount": 41,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-h2",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5",
+        "latestVersion": "5.3-beta1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1718640934000,
+        "versionCount": 42,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-parent",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-parent",
+        "latestVersion": "5.3-beta1",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1718640902000,
+        "versionCount": 42,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-parent",
+          ".pom",
+          "-site.xml",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-site.xml",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.bedework.deploy:bw-wfmodules-org-apache-httpcomponents-httpcore",
+        "g": "org.bedework.deploy",
+        "a": "bw-wfmodules-org-apache-httpcomponents-httpcore",
+        "latestVersion": "1.0.5",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1712197600811,
+        "versionCount": 6,
+        "text": [
+          "org.bedework.deploy",
+          "bw-wfmodules-org-apache-httpcomponents-httpcore",
+          ".zip",
+          ".pom"
+        ],
+        "ec": [
+          ".zip",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.bedework.deploy:bw-wfmodules-org-apache-httpcomponents-httpclient",
+        "g": "org.bedework.deploy",
+        "a": "bw-wfmodules-org-apache-httpcomponents-httpclient",
+        "latestVersion": "1.0.5",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1712197446656,
+        "versionCount": 6,
+        "text": [
+          "org.bedework.deploy",
+          "bw-wfmodules-org-apache-httpcomponents-httpclient",
+          ".zip",
+          ".pom"
+        ],
+        "ec": [
+          ".zip",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-win",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-win",
+        "latestVersion": "5.2.3",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1701182166000,
+        "versionCount": 27,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-win",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "com.basistech.org.apache.httpcomponents:httpclient-osgi",
+        "g": "com.basistech.org.apache.httpcomponents",
+        "a": "httpclient-osgi",
+        "latestVersion": "4.5.14-1",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1683742407000,
+        "versionCount": 4,
+        "text": [
+          "com.basistech.org.apache.httpcomponents",
+          "httpclient-osgi",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpclient-osgi",
+        "g": "org.apache.httpcomponents",
+        "a": "httpclient-osgi",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1669833704000,
+        "versionCount": 50,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpclient-osgi",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpclient-win",
+        "g": "org.apache.httpcomponents",
+        "a": "httpclient-win",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669833694000,
+        "versionCount": 19,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpclient-win",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpclient-cache",
+        "g": "org.apache.httpcomponents",
+        "a": "httpclient-cache",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669833687000,
+        "versionCount": 44,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpclient-cache",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:fluent-hc",
+        "g": "org.apache.httpcomponents",
+        "a": "fluent-hc",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669833671000,
+        "versionCount": 38,
+        "text": [
+          "org.apache.httpcomponents",
+          "fluent-hc",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpclient",
+        "g": "org.apache.httpcomponents",
+        "a": "httpclient",
+        "latestVersion": "4.5.14",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669833654000,
+        "versionCount": 55,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpclient",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcore-ab",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcore-ab",
+        "latestVersion": "4.4.16",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669455941000,
+        "versionCount": 32,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcore-ab",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcore-nio",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcore-nio",
+        "latestVersion": "4.4.16",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669455922000,
+        "versionCount": 50,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcore-nio",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcore",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcore",
+        "latestVersion": "4.4.16",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1669455901000,
+        "versionCount": 52,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcore",
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".pom",
+          "-javadoc.jar",
+          "-tests.jar",
+          ".jar"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpcomponents-parent",
+        "g": "org.apache.httpcomponents",
+        "a": "httpcomponents-parent",
+        "latestVersion": "13",
+        "repositoryId": "central",
+        "p": "pom",
+        "timestamp": 1667044575000,
+        "versionCount": 5,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpcomponents-parent",
+          ".pom",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ],
+        "ec": [
+          ".pom",
+          "-source-release.zip.sha512",
+          "-source-release.zip"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpasyncclient-cache",
+        "g": "org.apache.httpcomponents",
+        "a": "httpasyncclient-cache",
+        "latestVersion": "4.1.5",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1638998533000,
+        "versionCount": 13,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpasyncclient-cache",
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "com.liferay:org.apache.httpcomponents.httpclient",
+        "g": "com.liferay",
+        "a": "org.apache.httpcomponents.httpclient",
+        "latestVersion": "4.1.3.LIFERAY-PATCHED-1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1550691308000,
+        "versionCount": 1,
+        "text": [
+          "com.liferay",
+          "org.apache.httpcomponents.httpclient",
+          "-sources-commercial.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources-commercial.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.client5:httpclient5-osgi",
+        "g": "org.apache.httpcomponents.client5",
+        "a": "httpclient5-osgi",
+        "latestVersion": "5.0-beta2",
+        "repositoryId": "central",
+        "p": "bundle",
+        "timestamp": 1540302516000,
+        "versionCount": 5,
+        "text": [
+          "org.apache.httpcomponents.client5",
+          "httpclient5-osgi",
+          "-javadoc.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-javadoc.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.eclipse.ecf:org.apache.httpcomponents.httpcore",
+        "g": "org.eclipse.ecf",
+        "a": "org.apache.httpcomponents.httpcore",
+        "latestVersion": "4.4.6.v20170210-0925",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1494159782000,
+        "versionCount": 1,
+        "text": [
+          "org.eclipse.ecf",
+          "org.apache.httpcomponents.httpcore",
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.eclipse.ecf:org.apache.httpcomponents.httpclient",
+        "g": "org.eclipse.ecf",
+        "a": "org.apache.httpcomponents.httpclient",
+        "latestVersion": "4.5.2.v20170210-0925",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1494159774000,
+        "versionCount": 1,
+        "text": [
+          "org.eclipse.ecf",
+          "org.apache.httpcomponents.httpclient",
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents.core5:httpcore5-ab",
+        "g": "org.apache.httpcomponents.core5",
+        "a": "httpcore5-ab",
+        "latestVersion": "5.0-alpha3",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1493321325000,
+        "versionCount": 3,
+        "text": [
+          "org.apache.httpcomponents.core5",
+          "httpcore5-ab",
+          "-javadoc.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-javadoc.jar",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.httpcomponents:httpclient-android",
+        "g": "org.apache.httpcomponents",
+        "a": "httpclient-android",
+        "latestVersion": "4.3.5.1",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1421007446000,
+        "versionCount": 3,
+        "text": [
+          "org.apache.httpcomponents",
+          "httpclient-android",
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          "-javadoc.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.directory.studio:org.apache.httpcomponents.httpclient",
+        "g": "org.apache.directory.studio",
+        "a": "org.apache.httpcomponents.httpclient",
+        "latestVersion": "4.1.2",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1330103792000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.directory.studio",
+          "org.apache.httpcomponents.httpclient",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      },
+      {
+        "id": "org.apache.directory.studio:org.apache.httpcomponents.httpcore",
+        "g": "org.apache.directory.studio",
+        "a": "org.apache.httpcomponents.httpcore",
+        "latestVersion": "4.1.2",
+        "repositoryId": "central",
+        "p": "jar",
+        "timestamp": 1330103778000,
+        "versionCount": 2,
+        "text": [
+          "org.apache.directory.studio",
+          "org.apache.httpcomponents.httpcore",
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ],
+        "ec": [
+          "-sources.jar",
+          ".jar",
+          ".pom"
+        ]
+      }
+    ]
+  },
+  "spellcheck": {
+    "suggestions": []
+  }
+}

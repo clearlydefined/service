@@ -50,12 +50,13 @@ function getSuggestions(answer, group) {
     return docs.map(item => {
       return { id: item.id }
     })
-  const suggestions = answer.spellcheck.suggestions[1]
+  const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
   return group ? result.map(entry => `${group}:${entry}`) : result
 }
 
-function setup() {
+function setup(testFlag = false) {
+  if (testFlag) router._getSuggestions = getSuggestions
   return router
 }
 
