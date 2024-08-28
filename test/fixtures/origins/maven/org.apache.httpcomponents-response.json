@@ -1,0 +1,158 @@
+[
+  {
+    "id": "org.apache.httpcomponents:project"
+  },
+  {
+    "id": "org.apache.httpcomponents:hc-stylecheck"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcore-niossl"
+  },
+  {
+    "id": "org.apache.httpcomponents:jakarta-httpcore"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpmime"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcomponents-client"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcore-osgi"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcomponents-core"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpasyncclient-osgi"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpasyncclient"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcomponents-asyncclient"
+  },
+  {
+    "id": "org.wso2.orbit.org.apache.httpcomponents:httpasyncclient"
+  },
+  {
+    "id": "org.wso2.orbit.org.apache.httpcomponents:httpmime"
+  },
+  {
+    "id": "org.wso2.orbit.org.apache.httpcomponents:httpclient"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-osgi"
+  },
+  {
+    "id": "org.kie.modules:org-apache-httpcomponents-main"
+  },
+  {
+    "id": "org.apache.httpcomponents:maven-site-skin"
+  },
+  {
+    "id": "org.apache.httpcomponents:maven-notice-plugin"
+  },
+  {
+    "id": "org.apache.httpcomponents:jakarta-httpcore-niossl"
+  },
+  {
+    "id": "org.apache.httpcomponents:jakarta-httpcore-nio"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-testing"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-cache"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-fluent"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-parent"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-testing"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-reactive"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-h2"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-parent"
+  },
+  {
+    "id": "org.bedework.deploy:bw-wfmodules-org-apache-httpcomponents-httpcore"
+  },
+  {
+    "id": "org.bedework.deploy:bw-wfmodules-org-apache-httpcomponents-httpclient"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-win"
+  },
+  {
+    "id": "com.basistech.org.apache.httpcomponents:httpclient-osgi"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpclient-osgi"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpclient-win"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpclient-cache"
+  },
+  {
+    "id": "org.apache.httpcomponents:fluent-hc"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpclient"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcore-ab"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcore-nio"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcore"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpcomponents-parent"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpasyncclient-cache"
+  },
+  {
+    "id": "com.liferay:org.apache.httpcomponents.httpclient"
+  },
+  {
+    "id": "org.apache.httpcomponents.client5:httpclient5-osgi"
+  },
+  {
+    "id": "org.eclipse.ecf:org.apache.httpcomponents.httpcore"
+  },
+  {
+    "id": "org.eclipse.ecf:org.apache.httpcomponents.httpclient"
+  },
+  {
+    "id": "org.apache.httpcomponents.core5:httpcore5-ab"
+  },
+  {
+    "id": "org.apache.httpcomponents:httpclient-android"
+  },
+  {
+    "id": "org.apache.directory.studio:org.apache.httpcomponents.httpclient"
+  },
+  {
+    "id": "org.apache.directory.studio:org.apache.httpcomponents.httpcore"
+  }
+]
