@@ -16,7 +16,7 @@ describe('Pypi origin routes', () => {
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
     requestPromiseStub = sinon.stub()
-    const createRoute = proxyquire('../../routes/originPyPi', { 'request-promise-native': requestPromiseStub })
+    const createRoute = proxyquire('../../routes/originPyPi', { '../lib/fetch': { callFetch: requestPromiseStub } })
     router = createRoute(true)
   })
 
