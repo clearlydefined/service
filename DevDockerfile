@@ -17,8 +17,6 @@ ENV APPDIR=/opt/service
 # CMD ["/bin/init_container.sh"]
 
 # Set environment variables from build arguments
-ARG BUILD_NUMBER=0
-ENV BUILD_NUMBER=$APP_VERSION
 ARG APP_VERSION="UNKNOWN"
 ENV APP_VERSION=$APP_VERSION
 ARG BUILD_SHA="UNKNOWN"
