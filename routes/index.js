@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', function (req, res) {
-  const msg = `{ "status": "OK", "version": "${version}", "sha": "${sha}"`
+  const msg = `{ "status": "OK", "version": "${version}", "sha": "${sha}" }`
   res.status(200).send(msg)
 })
 

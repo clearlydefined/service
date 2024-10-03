@@ -225,7 +225,7 @@ function createApp(config) {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         // Commenting out because I believe this is broken
         // if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
-        logger.info('Service initialized', { buildNumber: process.env.BUILD_NUMBER })
+        logger.info('Service initialized', { appVersion: process.env.APP_VERSION })
 
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
