@@ -70,6 +70,7 @@ class DefinitionService {
     const existing = await this._cacheExistingAside(coordinates, force)
     let result
     if (get(existing, '_meta.schemaVersion') === currentSchema) {
+      // Log line used for /status page insights
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
       result = existing
     } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
@@ -83,10 +84,10 @@ class DefinitionService {
    */
   async getStored(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
-    this.logger.info('1:Redis:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('1:Redis:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const cached = await this.cache.get(cacheKey)
     if (cached) return cached
-    this.logger.info('2:blob+mongoDB:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('2:blob+mongoDB:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const stored = await this.definitionStore.get(coordinates)
     if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
@@ -100,7 +101,7 @@ class DefinitionService {
   async _setDefinitionInCache(cacheKey, itemToStore) {
     // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
     if (itemToStore.files && itemToStore.files.length > 1000) {
-      this.logger.info('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
+      this.logger.debug('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
       return
     }
 
@@ -131,9 +132,9 @@ class DefinitionService {
     const result = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
-        this.logger.info(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
+        this.logger.debug(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
         const definition = await this.get(coordinates, null, force, expand)
-        this.logger.info(`1:1:notice_generate:get_single_end:${coordinates}`, { ts: new Date().toISOString() })
+        this.logger.debug(`1:1:notice_generate:get_single_end:${coordinates}`, { ts: new Date().toISOString() })
         if (!definition) return
         const key = definition.coordinates.toString()
         result[key] = definition
@@ -217,7 +218,7 @@ class DefinitionService {
 
   async computeStoreAndCurate(coordinates) {
     // one coordinate a time through this method so no duplicate auto curation will be created.
-    this.logger.info('3:memory_lock:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('3:memory_lock:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
     try {
       computeLock.set(coordinates.toString(), true)
@@ -245,10 +246,12 @@ class DefinitionService {
     // Note that curation is a tool so no tools really means there the definition is effectively empty.
     const tools = get(definition, 'described.tools')
     if (!tools || tools.length === 0) {
+      // Log line used for /status page insights
       this.logger.info('definition not available', { coordinates: coordinates.toString() })
       this._harvest(coordinates) // fire and forget
       return definition
     }
+    // Log line used for /status page insights
     this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
     await this._store(definition)
     return definition
@@ -256,9 +259,9 @@ class DefinitionService {
 
   async _harvest(coordinates) {
     try {
-      this.logger.info('trigger_harvest:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+      this.logger.debug('trigger_harvest:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
       await this.harvestService.harvest({ tool: 'component', coordinates }, true)
-      this.logger.info('trigger_harvest:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+      this.logger.debug('trigger_harvest:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     } catch (error) {
       this.logger.info('failed to harvest from definition service', {
         crawlerError: error,
@@ -282,26 +285,26 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
-    this.logger.info('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const raw = await this.harvestStore.getAll(coordinates)
-    this.logger.info('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     coordinates = this._getCasedCoordinates(raw, coordinates)
-    this.logger.info('5:compute:summarize:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('5:compute:summarize:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    this.logger.info('6:compute:aggregate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('6:compute:aggregate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
-    this.logger.info('6:compute:aggregate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('6:compute:aggregate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    this.logger.info('9:compute:calculate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('9:compute:calculate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
-    this.logger.info('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     return definition
   }
 
