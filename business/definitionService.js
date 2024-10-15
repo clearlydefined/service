@@ -289,15 +289,24 @@ class DefinitionService {
     const raw = await this.harvestStore.getAll(coordinates)
     this.logger.debug('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     coordinates = this._getCasedCoordinates(raw, coordinates)
-    this.logger.debug('5:compute:summarize:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('5:compute:summarize:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     const summaries = await this.summaryService.summarizeAll(coordinates, raw)
-    this.logger.debug('6:compute:aggregate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('6:compute:aggregate:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
     this.logger.debug('6:compute:aggregate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
-    this.logger.debug('9:compute:calculate:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('9:compute:calculate:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     this._finalizeDefinition(coordinates, definition)
     this._ensureCuratedScores(definition)
     this._ensureFinalScores(definition)
