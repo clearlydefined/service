@@ -58,11 +58,11 @@ async function getDefinition(request, response) {
   const pr = request.params.pr
   const force = request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
-  log.info('get_definition:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+  log.debug('get_definition:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
   const result = await definitionService.get(coordinates, pr, force, expand)
-  log.info('get_definition:prepared', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+  log.debug('get_definition:prepared', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
   response.status(200).send(result)
-  log.info('get_definition:sent', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+  log.debug('get_definition:sent', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
 }
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
@@ -119,7 +119,7 @@ async function listDefinitions(request, response) {
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
     // Tempoarily adding this verbose logging to find perf issues
-    log.info('POSTing to /definitions', {
+    log.debug('POSTing to /definitions', {
       ts: new Date().toISOString(),
       requestParams: request.params,
       normalizedCoordinates,

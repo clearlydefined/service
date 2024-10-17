@@ -11,7 +11,7 @@ function factory(options) {
   const realOptions = options || {
     key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
     echo: false,
-    level: 'info'
+    level: config.get('APPINSIGHTS_EXPORT_LOG_LEVEL') || 'info'
   }
   mockInsights.setup(realOptions.key || 'mock', realOptions.echo)
   const result = new winston.Logger()
