@@ -910,14 +910,17 @@ describe('normalizeLicenseExpression', () => {
   it('should normalize licenseRef and licenseRef or licenseRef', () => {
     const expression = 'afpl-9.0 AND activestate-community OR ac3filter'
     const result = utils.normalizeLicenseExpression(expression)
-    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community OR LicenseRef-scancode-ac3filter')
+    expect(result).to.eq(
+      'LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community OR LicenseRef-scancode-ac3filter'
+    )
   })
   it('should normalize INVALID to NOASSERTION', () => {
     const mockLogger = {
-      info: (message) => {
-        console.log(message);
+      info: message => {
+        console.log(message)
       }
-    };  const expression = 'INVALID'
+    }
+    const expression = 'INVALID'
     const result = utils.normalizeLicenseExpression(expression, mockLogger)
     expect(result).to.eq('NOASSERTION')
   })
