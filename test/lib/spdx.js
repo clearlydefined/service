@@ -82,7 +82,7 @@ describe('SPDX utility functions', () => {
             right: { left: { license: 'BSD-3-Clause' }, conjunction: 'and', right: { license: 'Unlicense' } }
           }
         },
-        'MIT OR (BSD-2-Clause OR BSD-3-Clause AND Unlicense)'
+        'MIT OR BSD-2-Clause OR BSD-3-Clause AND Unlicense'
       ],
       [
         {
@@ -217,6 +217,8 @@ describe('SPDX utility functions', () => {
       'NOASSERTION': 'NOASSERTION',
       'See license': 'NOASSERTION',
       'MIT OR Apache-2.0': 'MIT OR Apache-2.0',
+      'MIT or Apache-2.0': 'NOASSERTION',
+      'mit AND apache-2.0': 'MIT AND Apache-2.0',
       'MIT AND LGPL-2.1+ AND BSD-3-Clause': 'MIT AND LGPL-2.1+ AND BSD-3-Clause',
       '(MIT AND BSD-3-Clause WITH GCC-exception-3.1) OR (CC-BY-4.0 AND Apache-2.0)': 'MIT AND BSD-3-Clause WITH GCC-exception-3.1 OR CC-BY-4.0 AND Apache-2.0',
       'MIT AND BSD-3-Clause AND CC-BY-4.0': 'MIT AND BSD-3-Clause AND CC-BY-4.0',
@@ -224,6 +226,8 @@ describe('SPDX utility functions', () => {
       'mit OR Junk': 'MIT OR NOASSERTION',
       'Commercial AND Apache-2.0': 'NOASSERTION AND Apache-2.0',
       'Junk1 OR Junk 2': 'NOASSERTION',
+      'LGPL-2.1-only OR MIT OR BSD-3-Clause': 'LGPL-2.1-only OR MIT OR BSD-3-Clause',
+      'LGPL-2.1-only OR BSD-3-Clause AND MIT': 'LGPL-2.1-only OR BSD-3-Clause AND MIT',
       ' ': null,
       null: null
     }

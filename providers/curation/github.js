@@ -678,12 +678,12 @@ ${this._formatDefinitions(patch.patches)}`
    */
   async _getCurations(coordinates, pr = null) {
     const path = this._getCurationPath(coordinates)
-    this.logger.info('7:compute:curation_source:start', {
+    this.logger.debug('7:compute:curation_source:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
     const tree = await this._getCurationTree(pr)
-    this.logger.info('7:compute:curation_source:end', {
+    this.logger.debug('7:compute:curation_source:end', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
@@ -692,12 +692,12 @@ ${this._formatDefinitions(patch.patches)}`
     )
     const blob = get(tree, treePath)
     if (!blob) return null
-    this.logger.info('8:compute:curation_blob:start', {
+    this.logger.debug('8:compute:curation_blob:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
     const data = await this.smartGit.blob(blob.object)
-    this.logger.info('8:compute:curation_blob:end', {
+    this.logger.debug('8:compute:curation_blob:end', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })

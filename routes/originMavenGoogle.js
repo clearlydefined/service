@@ -3,7 +3,7 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const requestPromise = require('request-promise-native')
+const { callFetch: requestPromise } = require('../lib/fetch')
 const { promisify } = require('util')
 const parseString = promisify(require('xml2js').parseString)
 
