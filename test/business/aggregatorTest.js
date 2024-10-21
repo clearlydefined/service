@@ -95,9 +95,7 @@ describe('Aggregation service', () => {
         name: 'slog',
         version: '2.7.0',
         tools: [['clearlydefined', 'licensee', 'scancode']],
-        // Ideally this would be declared without any parentheses, but currently
-        // the SPDX normalization adds them.
-        expected: 'MPL-2.0 OR (MIT OR Apache-2.0)'
+        expected: 'MPL-2.0 OR MIT OR Apache-2.0'
       },
       {
         name: 'quote',
