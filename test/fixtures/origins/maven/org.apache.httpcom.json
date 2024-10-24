@@ -1,0 +1,46 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 2,
+    "params": {
+      "q": "org.apache.httpcomp",
+      "core": "",
+      "defType": "dismax",
+      "qf": "text^20 g^5 a^10",
+      "indent": "off",
+      "spellcheck": "true",
+      "fl": "id,g,a,latestVersion,p,ec,repositoryId,text,timestamp,versionCount",
+      "start": "",
+      "spellcheck.count": "5",
+      "sort": "score desc,timestamp desc,g asc,a asc",
+      "rows": "100",
+      "wt": "json",
+      "version": "2.2"
+    }
+  },
+  "response": {
+    "numFound": 0,
+    "start": 0,
+    "docs": []
+  },
+  "spellcheck": {
+    "suggestions": [
+      "httpcomp",
+      {
+        "numFound": 5,
+        "startOffset": 11,
+        "endOffset": 19,
+        "suggestion": [
+          "httpcore",
+          "httpconn",
+          "httpcodec",
+          "httpcommons",
+          "httprox"
+        ]
+      }
+    ]
+  },
+  "alternate": [
+    "fc:org.apache.httpcomp"
+  ]
+}

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const requestPromise = require('request-promise-native')
+const { callFetch: requestPromise } = require('../../lib/fetch')
 const logger = require('../logging/logger')
 
 class CrawlingHarvester {

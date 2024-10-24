@@ -3,7 +3,7 @@
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
-const requestPromise = require('request-promise-native')
+const { callFetch: requestPromise } = require('../lib/fetch')
 const { uniq } = require('lodash')
 const { Cache } = require('memory-cache')
 const condaChannels = {
