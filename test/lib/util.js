@@ -887,6 +887,15 @@ describe('normalizeLicenseExpression', () => {
     const result = utils.normalizeLicenseExpression(expression)
     expect(result).to.eq('MIT AND GPL-3.0')
   })
+  it('should normalize license to SPDX equivalent', () => {
+    /* 
+      NOTE: If this fails in tests for generated scancode map workflow PR, it is incorrect if it is expecting a LicenseRef.  
+      There is an SPDX valid license which does not require a LicenseRef meaning this test is correct as is.
+    */
+    const expression = 'net-snmp'
+    const result = utils.normalizeLicenseExpression(expression)
+    expect(result).to.eq('Net-SNMP')
+  })
   it('should normalize single licenseRef', () => {
     const expression = 'afpl-9.0'
     const result = utils.normalizeLicenseExpression(expression)
