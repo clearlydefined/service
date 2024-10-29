@@ -34,4 +34,5 @@ jobs:
       application-type: api
       azure-app-base-name: clearlydefined-api
       azure-app-name-postfix: -prod
+      primary-verification-url: https://api.clearlydefined.io/
       secondary-azure-app-name-postfix: -prod-europe
