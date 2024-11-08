@@ -5,6 +5,7 @@ const AbstractAzBlobStore = require('./abstractAzblobStore')
 const AbstractFileStore = require('./abstractFileStore')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 const { sortedUniq } = require('lodash')
+const { getLatestVersion } = require('../../lib/utils')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -47,33 +48,38 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    * @returns An object with a property for each tool and tool version
    */
   getAll(coordinates) {
-    const name = this._toStoragePathFromCoordinates(coordinates)
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const list = new Promise((resolve, reject) =>
+    return this._getAllFiles(coordinates).then(files => this._getContent(files))
+  }
+
+  _getAllFiles(coordinates) {
+    const name = this._toStoragePathFromCoordinates(coordinates)
+    return new Promise((resolve, reject) =>
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
+    ).then(files =>
+      files.entries.filter(file => {
+        return (
+          file.name.length === name.length || // either an exact match, or
+          (file.name.length > name.length && // a longer string
+            (file.name[name.length] === '/' || // where the next character starts extra tool indications
+              file.name.substr(name.length) === '.json'))
+        )
+      })
     )
-    const contents = list.then(files => {
-      return Promise.all(
-        files.entries
-          .filter(file => {
-            return (
-              file.name.length === name.length || // either an exact match, or
-              (file.name.length > name.length && // a longer string
-                (file.name[name.length] === '/' || // where the next character starts extra tool indications
-                  file.name.substr(name.length) === '.json')) // or is the end, identifying a json file extension
-            )
-          })
-          .map(file => {
-            return new Promise((resolve, reject) =>
-              this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
-            ).then(result => {
-              return { name: file.name, content: JSON.parse(result) }
-            })
-          })
-      )
-    })
+  }
+
+  _getContent(files) {
+    const contents = Promise.all(
+      files.map(file => {
+        return new Promise((resolve, reject) =>
+          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
+        ).then(result => {
+          return { name: file.name, content: JSON.parse(result) }
+        })
+      })
+    )
     return contents.then(entries => {
       return entries.reduce((result, entry) => {
         const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
@@ -84,6 +90,55 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
         return result
       }, {})
     })
+  }
+
+  /**
+   * Get the latest version of each tool output for the given coordinates. The coordinates must be all the way down
+   * to a revision.
+   * @param {EntityCoordinates} coordinates - The component revision to report on
+   * @returns {Promise} A promise that resolves to an object with a property for each tool and tool version
+   *
+   */
+  getAllLatest(coordinates) {
+    const allFiles = this._getAllFiles(coordinates)
+    let latestFiles = this._getLatestFiles(allFiles)
+
+    return latestFiles.then(files => this._getContent(files))
+  }
+
+  _getLatestFiles(allFiles) {
+    return (
+      allFiles
+        .then(files => {
+          const names = files.map(file => file.name)
+          const latest = new Set(this._getLatestToolVersions(names))
+          return files.filter(file => latest.has(file.name))
+        })
+        .catch(error => {
+          this.logger.error('Error getting latest files', error)
+          return []
+        })
+        //fall back to getAll by returning validFiles
+        .then(latest => (latest.length === 0 ? allFiles : latest))
+    )
+  }
+
+  _getLatestToolVersions(paths) {
+    const entries = paths
+      .map(path => {
+        const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(path)
+        return { tool, toolVersion, path }
+      })
+      .reduce((latest, { tool, toolVersion, path }) => {
+        if (!tool || !toolVersion) return latest
+        latest[tool] = latest[tool] || {}
+        //if the version is greater than the current version, replace it
+        if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {
+          latest[tool] = { toolVersion, path }
+        }
+        return latest
+      }, {})
+    return Object.values(entries).map(entry => entry.path)
   }
 }
 
