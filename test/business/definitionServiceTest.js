@@ -342,7 +342,7 @@ function setup(definition, coordinateSpec, curation) {
       return
     }
   }
-  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestStore = { getAllLatest: () => Promise.resolve(null) }
   const harvestService = { harvest: () => sinon.stub() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }

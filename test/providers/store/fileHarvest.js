@@ -9,8 +9,6 @@ const expect = chai.expect
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 const FileStore = require('../../../providers/stores/fileHarvestStore')
-const { file } = require('tmp')
-const { RegexPathMatcher } = require('mockttp/dist/rules/matchers')
 
 const data = {
   'npm/npmjs/-/test/0.0': {},

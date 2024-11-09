@@ -7,7 +7,6 @@ const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 
 describe('azblob Harvest store', () => {
   describe('list', () => {
