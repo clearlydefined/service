@@ -47,17 +47,24 @@ class FileHarvestStore extends AbstractFileStore {
    */
   async getAll(coordinates) {
     // TODO validate/enforce that the coordinates are down to the component revision
-    const root = this._toStoragePathFromCoordinates(coordinates)
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    let files = null
+    const files = await this._getAllFiles(coordinates)
+    return await this._getContent(files)
+  }
+
+  async _getAllFiles(coordinates) {
+    const root = this._toStoragePathFromCoordinates(coordinates)
     try {
-      files = await recursive(root, ['.DS_Store'])
+      return await recursive(root, ['.DS_Store'])
     } catch (error) {
       if (error.code === 'ENOENT') return {}
       throw error
     }
+  }
+
+  async _getContent(files) {
     const contents = await Promise.all(
       files.map(file => {
         return new Promise((resolve, reject) =>
@@ -73,6 +80,41 @@ class FileHarvestStore extends AbstractFileStore {
       current[toolVersion] = entry.content
       return result
     }, {})
+  }
+
+  /**
+   * Get the latest version of each tool output for the given coordinates. The coordinates must be all the way down
+   * to a revision.
+   * @param {EntityCoordinates} coordinates - The component revision to report on
+   * @returns {Promise} A promise that resolves to an object with a property for each tool and tool version
+   *
+   */
+  async getAllLatest(coordinates) {
+    const allFiles = await this._getAllFiles(coordinates)
+    const latestFiles = this._getLatestFiles(allFiles)
+    return await this._getContent(latestFiles)
+  }
+
+  _getLatestFiles(allFiles) {
+    let latestFiles = []
+    try {
+      const latest = this._getLatestToolVersions(allFiles)
+      latestFiles = allFiles.filter(file => latest.has(file))
+    } catch (error) {
+      this.logger.error('Error getting latest files', error)
+    }
+    if (latestFiles.length === 0) {
+      this.logger.debug('No latest files found, returning all files')
+      return allFiles
+    }
+    if (latestFiles.length !== allFiles.length) {
+      this.logger.debug(`Using latest: \n${latestFiles}`)
+    }
+    return latestFiles
+  }
+
+  _getLatestToolVersions(paths) {
+    return AbstractFileStore.getLatestToolPaths(paths, path => this._toResultCoordinatesFromStoragePath(path))
   }
 }
 

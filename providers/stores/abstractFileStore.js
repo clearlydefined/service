@@ -7,10 +7,13 @@ const recursive = require('recursive-readdir')
 const { promisify } = require('util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 const schema = require('../../schemas/definition-1.0')
+const { getLatestVersion } = require('../../lib/utils')
+const logger = require('../logging/logger')
 
 class AbstractFileStore {
   constructor(options) {
-    this.options = options
+    this.options = options || {}
+    this.logger = this.options.logger || logger()
   }
 
   async initialize() {}
@@ -145,6 +148,25 @@ class AbstractFileStore {
       .filter(s => s)
       .join('/')
       .toLowerCase()
+  }
+
+  static getLatestToolPaths(paths, toResultCoordinates = path => this.toResultCoordinatesFromStoragePath(path)) {
+    const entries = paths
+      .map(path => {
+        const { tool, toolVersion } = toResultCoordinates(path)
+        return { tool, toolVersion, path }
+      })
+      .reduce((latest, { tool, toolVersion, path }) => {
+        if (!tool || !toolVersion) return latest
+        latest[tool] = latest[tool] || {}
+        //if the version is greater than the current version, replace it
+        if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {
+          latest[tool] = { toolVersion, path }
+        }
+        return latest
+      }, {})
+    const latestPaths = Object.values(entries).map(entry => entry.path)
+    return new Set(latestPaths)
   }
 }
 

@@ -5,7 +5,6 @@ const AbstractAzBlobStore = require('./abstractAzblobStore')
 const AbstractFileStore = require('./abstractFileStore')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 const { sortedUniq } = require('lodash')
-const { getLatestVersion } = require('../../lib/utils')
 
 const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
 const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
@@ -47,11 +46,12 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
    */
-  getAll(coordinates) {
+  async getAll(coordinates) {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    return this._getAllFiles(coordinates).then(files => this._getContent(files))
+    const files = await this._getAllFiles(coordinates)
+    return await this._getContent(files)
   }
 
   _getAllFiles(coordinates) {
@@ -99,46 +99,26 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    * @returns {Promise} A promise that resolves to an object with a property for each tool and tool version
    *
    */
-  getAllLatest(coordinates) {
-    const allFiles = this._getAllFiles(coordinates)
-    let latestFiles = this._getLatestFiles(allFiles)
-
-    return latestFiles.then(files => this._getContent(files))
+  async getAllLatest(coordinates) {
+    const allFiles = await this._getAllFiles(coordinates)
+    const latestFiles = this._getLatestFiles(allFiles)
+    return await this._getContent(latestFiles)
   }
 
   _getLatestFiles(allFiles) {
-    return (
-      allFiles
-        .then(files => {
-          const names = files.map(file => file.name)
-          const latest = new Set(this._getLatestToolVersions(names))
-          return files.filter(file => latest.has(file.name))
-        })
-        .catch(error => {
-          this.logger.error('Error getting latest files', error)
-          return []
-        })
-        //fall back to getAll by returning validFiles
-        .then(latest => (latest.length === 0 ? allFiles : latest))
-    )
+    let latestFiles = []
+    const names = allFiles.map(file => file.name)
+    try {
+      const latest = this._getLatestToolPaths(names)
+      latestFiles = allFiles.filter(file => latest.has(file.name))
+    } catch (error) {
+      this.logger.error('Error getting latest files', error)
+    }
+    return latestFiles.length === 0 ? allFiles : latestFiles
   }
 
-  _getLatestToolVersions(paths) {
-    const entries = paths
-      .map(path => {
-        const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(path)
-        return { tool, toolVersion, path }
-      })
-      .reduce((latest, { tool, toolVersion, path }) => {
-        if (!tool || !toolVersion) return latest
-        latest[tool] = latest[tool] || {}
-        //if the version is greater than the current version, replace it
-        if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {
-          latest[tool] = { toolVersion, path }
-        }
-        return latest
-      }, {})
-    return Object.values(entries).map(entry => entry.path)
+  _getLatestToolPaths(paths) {
+    return AbstractFileStore.getLatestToolPaths(paths, path => this._toResultCoordinatesFromStoragePath(path))
   }
 }
 

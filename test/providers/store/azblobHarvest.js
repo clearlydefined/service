@@ -170,13 +170,10 @@ describe('azblob Harvest store', () => {
     })
   })
 
-  describe('_getLatestToolVersions', () => {
-    let store
-    beforeEach(() => {
-      store = Store({})
-    })
+  describe('getAllLatest', () => {
     it('should get latest tool versions', () => {
-      let latest = store._getLatestToolVersions([
+      const store = Store({})
+      let latest = store._getLatestToolPaths([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.14.0.json',
@@ -185,72 +182,13 @@ describe('azblob Harvest store', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
       ])
-      expect(latest).to.equalInAnyOrder([
+      expect(Array.from(latest)).to.equalInAnyOrder([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
       ])
     })
-    it('should get latest tool versions and ignore un-versioned data', () => {
-      let latest = store._getLatestToolVersions([
-        'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-        'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
-        'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.1.json',
-        'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json',
-        'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json'
-      ])
-      expect(latest).to.equalInAnyOrder([
-        'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
-        'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'
-      ])
-    })
-    it('should get latest tool versions and ignore invalid semver', () => {
-      let latest = store._getLatestToolVersions([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.10.0.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.2.1.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.2.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/3.2.2.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
-      ])
-      expect(latest).to.equalInAnyOrder([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
-      ])
-    })
-
-    it('should ignore invalid semver, invalid sermver first', () => {
-      let latest = store._getLatestToolVersions([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'
-      ])
-      expect(latest).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
-    })
-
-    it('should ignore invalid semver, invalid sermver last', () => {
-      let latest = store._getLatestToolVersions([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
-      ])
-      expect(latest).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
-    })
-
-    it('should return at least the first tool version', () => {
-      let latest = store._getLatestToolVersions([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
-      ])
-      expect(latest).to.equalInAnyOrder([
-        'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
-        'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
-      ])
-    })
-  })
-
-  describe('getAllLatest', () => {
     it('retrieves latest entries', async () => {
       const azblobStore = createAzBlobStore(
         createEntries([
@@ -321,7 +259,7 @@ describe('azblob Harvest store', () => {
         ])
       )
       azblobStore.logger = { error: sinon.stub() }
-      azblobStore._getLatestToolVersions = sinon.stub().throws(new Error('test error'))
+      azblobStore._getLatestToolPaths = sinon.stub().throws(new Error('test error'))
       const result = await azblobStore.getAllLatest({
         type: 'npm',
         provider: 'npmjs',
