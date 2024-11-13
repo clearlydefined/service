@@ -670,6 +670,9 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
 })
 
 describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
+  const sourceArchiveTestCoordinates = EntityCoordinates.fromString(
+    'sourcearchive/mavencentral/io.clearlydefined/test/1.0'
+  )
   const expectedUrls = {
     download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
     registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
@@ -677,7 +680,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
   }
 
   const expectedResult = { described: { urls: expectedUrls } }
-  it('should set the correct urls', () => {
+  it('should set the correct urls and license', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT'
     }
@@ -687,17 +690,44 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
       summarizer.addSourceArchiveData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
-        testCoordinates
+        sourceArchiveTestCoordinates
       )
       if (data[url])
         assert.deepEqual(result, {
-          ...expectedResult
+          ...expectedResult,
+          licensed: { declared: data[url] }
         })
       else assert.deepEqual(result, expectedResult)
     }
   })
-})
+  it('should set the correct urls and no license when data section is empty', () => {
+    let result = {}
+    summarizer.addSourceArchiveData(result, {}, testCoordinates)
+    assert.deepEqual(result, expectedResult)
+  })
 
+  it('should set declared license from manifest license name and URL', () => {
+    const data = new Map([
+      [[{ license: [{ name: ['Apache-2.0'], url: ['https://opensource.org/licenses/Apache-2.0'] }] }], 'Apache-2.0'],
+      [[{ license: [{ name: ['The MIT License (MIT)'], url: ['http://opensource.org/licenses/MIT'] }] }], 'MIT'],
+      [[{ license: [{ name: ['LGPL 2.1'], url: ['https://www.gnu.org/licenses/lgpl-2.1.html'] }, { name: ['Apache License 2.0'], url: ['https://www.apache.org/licenses/LICENSE-2.0'] }] }], 'LGPL-2.1 OR Apache-2.0'],
+      [[{ license: [{ name: ['CDDL + GPLv2 with classpath exception'], url: ['https://oss.oracle.com/licenses/CDDL+GPL-1.1'] }] }], 'NOASSERTION']
+    ])
+
+    data.forEach((expected, licenses) => {
+      let result = {}
+      summarizer.addSourceArchiveData(result, { manifest: { summary: { licenses } } }, sourceArchiveTestCoordinates)
+      if (expected)
+        assert.deepEqual(result, {
+          described: {
+            urls: expectedUrls
+          },
+          licensed: { declared: expected }
+        })
+      else assert.deepEqual(result, expectedResult)
+    })
+  })
+})
 describe('ClearlyDescribedSummarizer addDebData', () => {
   const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
   it('describes releaseDate from data', () => {
