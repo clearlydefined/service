@@ -174,13 +174,7 @@ class ClearlyDescribedSummarizer {
     return urls
   }
 
-  addMavenData(result, data, coordinates) {
-    const urls = this.getMavenUrls(coordinates)
-
-    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.urls.registry', urls.registry)
-    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
-    setIfValue(result, 'described.urls.download', urls.download)
+  _setDeclaredLicenseMaven(result, data) {
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -193,6 +187,15 @@ class ClearlyDescribedSummarizer {
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
     if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+  }
+  addMavenData(result, data, coordinates) {
+    const urls = this.getMavenUrls(coordinates)
+
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.registry', urls.registry)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(result, 'described.urls.download', urls.download)
+    this._setDeclaredLicenseMaven(result, data)
   }
 
   addCondaData(result, data, coordinates) {
@@ -239,6 +242,7 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
+    this._setDeclaredLicenseMaven(result, data)
   }
 
   addNuGetData(result, data, coordinates) {
