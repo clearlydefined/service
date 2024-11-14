@@ -59,7 +59,7 @@ class FileHarvestStore extends AbstractFileStore {
     try {
       return await recursive(root, ['.DS_Store'])
     } catch (error) {
-      if (error.code === 'ENOENT') return {}
+      if (error.code === 'ENOENT') return []
       throw error
     }
   }
