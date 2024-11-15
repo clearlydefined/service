@@ -1,6 +1,6 @@
 {
   "name": "service",
-  "version": "1.3.1",
+  "version": "2.0.1",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "npm run mocha && npm run lint",
@@ -21,7 +21,7 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@clearlydefined/spdx": "^0.1.7",
+    "@clearlydefined/spdx": "0.1.9",
     "@gitbeaker/node": "^29.2.4",
     "@octokit/rest": "^14.0.9",
     "ajv": "^6.12.3",
@@ -66,7 +66,7 @@
     "semver": "7.6.0",
     "serialize-error": "^2.1.0",
     "spdx-expression-parse": "github:clearlydefined/spdx-expression-parse.js#fork",
-    "spdx-license-list": "^6.6.0",
+    "spdx-license-list": "^6.9.0",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
     "tiny-attribution-generator": "0.1.2",

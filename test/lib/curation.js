@@ -89,20 +89,83 @@ describe('Curations', () => {
     expect(curation.errors[0].error.message).to.equal('Licensed object can only contain declared')
   })
 
-  it('should identify invalid declared licenses (not SPDX license)', () => {
-    const content = getFixture('curation-invalid.10.yaml')
-    const curation = new Curation(content)
-    expect(curation.isValid).to.be.false
-    expect(curation.errors[0].error).to.equal('4.17.4 licensed.declared with value "asdf" is not SPDX compliant')
+  describe('declared licenses', () => {
+    let content
+    beforeEach(() => {
+      content = getFixture('curation-invalid.10.yaml')
+    })
+
+    it('should identify invalid declared licenses (not SPDX license)', () => {
+      const curation = new Curation(content)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal('4.17.4 licensed.declared with value "asdf" is not SPDX compliant')
+    })
+
+    it('should identify non-normalized declared licenses (SPDX license)', () => {
+      const realContent = content.replace('asdf', 'mit AND apache-2.0')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal(
+        '4.17.4 licensed.declared with value "mit AND apache-2.0" is not normalized. Suggest using "MIT AND Apache-2.0"'
+      )
+    })
   })
 
-  it('should identify invalid file licenses (not SPDX valid)', () => {
-    const content = getFixture('curation-invalid.11.yaml')
-    const curation = new Curation(content)
-    expect(curation.isValid).to.be.false
-    expect(curation.errors[0].error).to.equal(
-      '/foo in 4.17.4 files with value "mit and apache-2.0" is not SPDX compliant'
-    )
+  describe('file licenses', () => {
+    let content, licenseToReplace
+    beforeEach(() => {
+      content = getFixture('curation-invalid.11.yaml')
+      licenseToReplace = 'mit and apache-2.0'
+    })
+
+    it('should identify invalid file licenses (not SPDX valid)', () => {
+      const curation = new Curation(content)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal(
+        '/foo in 4.17.4 files with value "mit and apache-2.0" is not SPDX compliant'
+      )
+    })
+
+    it('should identify invalid file licenses(not SPDX compliant)', () => {
+      const realContent = content.replace(licenseToReplace, 'mit AND JUNK')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal('/foo in 4.17.4 files with value "mit AND JUNK" is not SPDX compliant')
+    })
+
+    it('should identify NOASSERTION file licenses', () => {
+      const realContent = content.replace(licenseToReplace, 'NOASSERTION')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal('/foo in 4.17.4 files with value "NOASSERTION" is not SPDX compliant')
+    })
+
+    it('should identify file licenses including NOASSERTION', () => {
+      const realContent = content.replace(licenseToReplace, 'MIT AND NOASSERTION')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal(
+        '/foo in 4.17.4 files with value "MIT AND NOASSERTION" is not SPDX compliant'
+      )
+    })
+
+    it('should identify non normalized file license expression', () => {
+      const realContent = content.replace(licenseToReplace, '(mit) AND apache-2.0')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal(
+        '/foo in 4.17.4 files with value "(mit) AND apache-2.0" is not normalized. Suggest using "MIT AND Apache-2.0"'
+      )
+    })
+
+    it('should identify non normalized file licenses', () => {
+      const realContent = content.replace(licenseToReplace, 'mit AND apache-2.0')
+      const curation = new Curation(realContent)
+      expect(curation.isValid).to.be.false
+      expect(curation.errors[0].error).to.equal(
+        '/foo in 4.17.4 files with value "mit AND apache-2.0" is not normalized. Suggest using "MIT AND Apache-2.0"'
+      )
+    })
   })
 
   it('should identify valid curations', () => {
