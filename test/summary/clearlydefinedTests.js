@@ -544,6 +544,37 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
   })
 })
 
+describe('ClearlyDescribedSummarizer getDeclaredLicenseMaven', () => {
+  const data = new Map([
+    [[{ name: ['Apache-2.0'], url: ['https://opensource.org/licenses/Apache-2.0'] }], ['Apache-2.0']],
+    [[{ name: ['The MIT License (MIT)'], url: ['http://opensource.org/licenses/MIT'] }], ['MIT']],
+    [
+      [
+        { name: ['LGPL 2.1'], url: ['https://www.gnu.org/licenses/lgpl-2.1.html'] },
+        { name: ['Apache License 2.0'], url: ['https://www.apache.org/licenses/LICENSE-2.0'] }
+      ],
+      ['LGPL-2.1', 'Apache-2.0']
+    ],
+    [
+      [{ name: ['CDDL + GPLv2 with classpath exception'], url: ['https://oss.oracle.com/licenses/CDDL+GPL-1.1'] }],
+      ['CDDL + GPLv2 with classpath exception']
+    ],
+    [[{ name: ['NOASSERTION'], url: ['https://something.com'] }], ['NOASSERTION']],
+    [[{ name: [''], url: [''] }], []]
+  ])
+
+  it('should return licenses extracted from manifest.summary', () => {
+    data.forEach((expected, license) => {
+      const licenses = summarizer.getDeclaredLicenseMaven({ manifest: { summary: { licenses: [{ license }] } } })
+      const licenseProject = summarizer.getDeclaredLicenseMaven({
+        manifest: { summary: { project: { licenses: [{ license }] } } }
+      })
+      assert.deepEqual(licenses, expected)
+      assert.deepEqual(licenseProject, expected)
+    })
+  })
+})
+
 describe('ClearlyDescribedSummarizer addMavenData', () => {
   const expectedUrls = {
     download: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0/test-1.0.jar',
@@ -614,6 +645,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     version: 'https://maven.google.com/web/index.html#io.clearlydefined:test:1.0/1.0'
   }
   const expectedResult = { described: { urls: expectedUrls } }
+
   it('should set declared license from manifest licenseUrl', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT',
@@ -678,8 +710,8 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
     registry: 'https://repo1.maven.org/maven2/io/clearlydefined/test',
     version: 'https://repo1.maven.org/maven2/io/clearlydefined/test/1.0'
   }
-
   const expectedResult = { described: { urls: expectedUrls } }
+
   it('should set the correct urls and license', () => {
     const data = {
       'https://opensource.org/licenses/MIT': 'MIT'
@@ -700,6 +732,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
       else assert.deepEqual(result, expectedResult)
     }
   })
+
   it('should set the correct urls and no license when data section is empty', () => {
     let result = {}
     summarizer.addSourceArchiveData(result, {}, testCoordinates)
@@ -708,26 +741,34 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
 
   it('should set declared license from manifest license name and URL', () => {
     const data = new Map([
-      [[{ license: [{ name: ['Apache-2.0'], url: ['https://opensource.org/licenses/Apache-2.0'] }] }], 'Apache-2.0'],
-      [[{ license: [{ name: ['The MIT License (MIT)'], url: ['http://opensource.org/licenses/MIT'] }] }], 'MIT'],
-      [[{ license: [{ name: ['LGPL 2.1'], url: ['https://www.gnu.org/licenses/lgpl-2.1.html'] }, { name: ['Apache License 2.0'], url: ['https://www.apache.org/licenses/LICENSE-2.0'] }] }], 'LGPL-2.1 OR Apache-2.0'],
-      [[{ license: [{ name: ['CDDL + GPLv2 with classpath exception'], url: ['https://oss.oracle.com/licenses/CDDL+GPL-1.1'] }] }], 'NOASSERTION']
+      [[{ name: ['Apache-2.0'], url: ['https://opensource.org/licenses/Apache-2.0'] }], 'Apache-2.0'],
+      [[{ name: ['The MIT License (MIT)'], url: ['http://opensource.org/licenses/MIT'] }], 'MIT'],
+      [
+        [
+          { name: ['LGPL 2.1'], url: ['https://www.gnu.org/licenses/lgpl-2.1.html'] },
+          { name: ['Apache License 2.0'], url: ['https://www.apache.org/licenses/LICENSE-2.0'] }
+        ],
+        'LGPL-2.1 OR Apache-2.0'
+      ],
+      [
+        [{ name: ['CDDL + GPLv2 with classpath exception'], url: ['https://oss.oracle.com/licenses/CDDL+GPL-1.1'] }],
+        'NOASSERTION'
+      ]
     ])
 
-    data.forEach((expected, licenses) => {
+    data.forEach((expected, license) => {
       let result = {}
-      summarizer.addSourceArchiveData(result, { manifest: { summary: { licenses } } }, sourceArchiveTestCoordinates)
-      if (expected)
-        assert.deepEqual(result, {
-          described: {
-            urls: expectedUrls
-          },
-          licensed: { declared: expected }
-        })
+      summarizer.addSourceArchiveData(
+        result,
+        { manifest: { summary: { licenses: [{ license }] } } },
+        sourceArchiveTestCoordinates
+      )
+      if (expected) assert.deepEqual(result, { described: { urls: expectedUrls }, licensed: { declared: expected } })
       else assert.deepEqual(result, expectedResult)
     })
   })
 })
+
 describe('ClearlyDescribedSummarizer addDebData', () => {
   const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
   it('describes releaseDate from data', () => {
