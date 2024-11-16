@@ -93,14 +93,7 @@ describe('FileHarvestStore', () => {
     let fileStore
 
     beforeEach(() => {
-      const options = {
-        location: '/tmp/harvested_data',
-        logger: {
-          error: () => {},
-          debug: () => {}
-        }
-      }
-      fileStore = FileStore(options)
+      fileStore = createFileHarvestStore()
     })
 
     it('should get latest files', () => {
@@ -122,5 +115,50 @@ describe('FileHarvestStore', () => {
       expect(result.length).to.eq(allFiles.length)
       expect(Array.from(result)).to.equalInAnyOrder(allFiles)
     })
+
+    it('should return all harvest results', async () => {
+      const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+      const result = await fileStore.getAll(coordinates)
+      const tools = Object.getOwnPropertyNames(result)
+      expect(tools.length).to.eq(5)
+      const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
+      expect(clearlydefinedVersions).to.equalInAnyOrder(['1', '1.1.2', '1.3.4'])
+      const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
+      expect(scancodeVersions).to.equalInAnyOrder(['2.2.1', '2.9.0+b1', '30.3.0'])
+      const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
+      expect(licenseeVersions).to.equalInAnyOrder(['9.12.1', '9.14.0'])
+      const reuseVersions = Object.getOwnPropertyNames(result.reuse)
+      expect(reuseVersions).to.equalInAnyOrder(['1.3.0', '3.2.1'])
+      const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
+      expect(fossologyVersions).to.equalInAnyOrder(['3.3.0', '3.6.0'])
+    })
+
+    it('should return all latest harvest results', async () => {
+      const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+      const result = await fileStore.getAllLatest(coordinates)
+      const tools = Object.getOwnPropertyNames(result)
+      expect(tools.length).to.eq(5)
+      const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
+      expect(clearlydefinedVersions).to.equalInAnyOrder(['1.3.4'])
+      const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
+      expect(scancodeVersions).to.equalInAnyOrder(['30.3.0'])
+      const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
+      expect(licenseeVersions).to.equalInAnyOrder(['9.14.0'])
+      const reuseVersions = Object.getOwnPropertyNames(result.reuse)
+      expect(reuseVersions).to.equalInAnyOrder(['3.2.1'])
+      const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
+      expect(fossologyVersions).to.equalInAnyOrder(['3.6.0'])
+    })
   })
 })
+
+function createFileHarvestStore() {
+  const options = {
+    location: 'test/fixtures/store',
+    logger: {
+      error: () => {},
+      debug: () => {}
+    }
+  }
+  return FileStore(options)
+}

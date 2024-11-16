@@ -11,7 +11,6 @@ const expect = chai.expect
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 
-describe('AbstractFileStore', () => {
   describe('AbstractFileStore lists entries ', () => {
     let FileStore
     const data = {
@@ -202,7 +201,7 @@ describe('AbstractFileStore', () => {
 
   describe('getLatestToolVersions', () => {
     it('should get latest tool versions', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.14.0.json',
@@ -219,7 +218,7 @@ describe('AbstractFileStore', () => {
       ])
     })
     it('should get latest tool versions and ignore un-versioned data', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
         'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
         'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.1.json',
@@ -232,7 +231,7 @@ describe('AbstractFileStore', () => {
       ])
     })
     it('should get latest tool versions and ignore invalid semver', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.10.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.2.1.json',
@@ -249,7 +248,7 @@ describe('AbstractFileStore', () => {
     })
 
     it('should ignore invalid semver, invalid sermver first', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'
       ])
@@ -257,7 +256,7 @@ describe('AbstractFileStore', () => {
     })
 
     it('should ignore invalid semver, invalid sermver last', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
       ])
@@ -265,7 +264,7 @@ describe('AbstractFileStore', () => {
     })
 
     it('should return at least the first tool version', () => {
-      let latest = AbstractFileStore.getLatestToolPaths([
+      const latest = AbstractFileStore.getLatestToolPaths([
         'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
       ])
@@ -275,4 +274,3 @@ describe('AbstractFileStore', () => {
       ])
     })
   })
-})
