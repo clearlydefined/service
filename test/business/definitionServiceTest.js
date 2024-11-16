@@ -316,7 +316,7 @@ describe('Definition Service Facet management', () => {
 describe('Integration test', () => {
   let fileHarvestStore
   beforeEach(() => {
-    fileHarvestStore = createFileHarvestStore(fileHarvestStore)
+    fileHarvestStore = createFileHarvestStore()
   })
 
   it('computes the same definition with latest harvest data', async () => {
@@ -332,12 +332,12 @@ describe('Integration test', () => {
 
     //updated timestamp is not deterministic
     expect(comparison_def._meta.updated).to.not.equal(baseline_def._meta.updated)
-    comparison_def._meta.updated = baseline_def._meta.updated 
+    comparison_def._meta.updated = baseline_def._meta.updated
     expect(comparison_def).to.deep.equal(baseline_def)
   })
 })
 
-function createFileHarvestStore(fileHarvestStore) {
+function createFileHarvestStore() {
   const options = {
     location: 'test/fixtures/store',
     logger: {
