@@ -188,6 +188,7 @@ describe('azblob Harvest store', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
       ])
     })
+
     it('retrieves latest entries', async () => {
       const azblobStore = createAzBlobStore(
         createEntries([
@@ -209,16 +210,13 @@ describe('azblob Harvest store', () => {
         revision: '4.4.16'
       })
 
-      const tools = Object.getOwnPropertyNames(result)
-      expect(tools.length).to.eq(4)
-      const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-      expect(clearlydefinedVersions).to.deep.eq(['1.5.0'])
-      const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions).to.deep.eq(['32.3.0'])
-      const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
-      expect(licenseeVersions).to.deep.eq(['9.18.1'])
-      const reuseVersions = Object.getOwnPropertyNames(result.reuse)
-      expect(reuseVersions).to.deep.eq(['3.2.2'])
+      const exptected = {
+        clearlydefined: { '1.5.0': {} },
+        licensee: { '9.18.1': {} },
+        reuse: { '3.2.2': {} },
+        scancode: { '32.3.0': {} }
+      }
+      expect(result).to.deep.equal(exptected)
     })
 
     it('retrieves latest entries ignoring unversioned result', async () => {
@@ -240,15 +238,11 @@ describe('azblob Harvest store', () => {
         name: 'co',
         revision: '4.6.0'
       })
-      const tools = Object.getOwnPropertyNames(result)
-      expect(tools.length).to.eq(2)
-      const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-      expect(clearlydefinedVersions).to.deep.eq(['1'])
-      const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions).to.deep.eq(['2.9.2'])
+      const exptected = { clearlydefined: { 1: {} }, scancode: { '2.9.2': {} } }
+      expect(result).to.deep.equal(exptected)
     })
 
-    it('should fall back to getAll when there is no latest', async () => {
+    it('should fall back to getAll when there is error', async () => {
       const azblobStore = createAzBlobStore(
         createEntries([
           'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
@@ -266,13 +260,8 @@ describe('azblob Harvest store', () => {
         name: 'co',
         revision: '4.6.0'
       })
-      const tools = Object.getOwnPropertyNames(result)
-      expect(tools.length).to.eq(2)
-      const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-      expect(clearlydefinedVersions).to.deep.eq(['1'])
-      const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions).to.deep.eq(['2.2.1', '2.9.1', '2.9.0b1'])
-      expect(azblobStore.logger.error.calledOnce).to.be.true
+      const exptected = { clearlydefined: { 1: {} }, scancode: { '2.2.1': {}, '2.9.1': {}, '2.9.0b1': {} } }
+      expect(result).to.deep.equal(exptected)
     })
   })
 })

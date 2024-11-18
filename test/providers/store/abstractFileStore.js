@@ -217,6 +217,7 @@ describe('getLatestToolVersions', () => {
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
     ])
   })
+
   it('should get latest tool versions and ignore un-versioned data', () => {
     const latest = AbstractFileStore.getLatestToolPaths([
       'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
@@ -230,6 +231,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'
     ])
   })
+
   it('should get latest tool versions and ignore invalid semver', () => {
     const latest = AbstractFileStore.getLatestToolPaths([
       'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',

@@ -80,7 +80,7 @@ describe('FileHarvestStore list tool results', () => {
   })
 })
 
-describe('getLatestFiles', () => {
+describe('getAll and getAllLatest', () => {
   const allFiles = [
     '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.3.1.json',
     '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
@@ -94,26 +94,6 @@ describe('getLatestFiles', () => {
 
   beforeEach(() => {
     fileStore = createFileHarvestStore()
-  })
-
-  it('should get latest files', () => {
-    const result = fileStore._getLatestFiles(allFiles)
-    expect(result.length).to.eq(4)
-    expect(Array.from(result)).to.equalInAnyOrder([
-      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
-      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/licensee/9.18.1.json',
-      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.2.json',
-      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/scancode/32.3.0.json'
-    ])
-  })
-
-  it('should handle error', () => {
-    fileStore._getLatestToolVersions = sinon.stub().throws(new Error('test error'))
-    fileStore.logger.error = sinon.stub()
-    const result = fileStore._getLatestFiles(allFiles)
-    expect(fileStore.logger.error.calledOnce).to.be.true
-    expect(result.length).to.eq(allFiles.length)
-    expect(Array.from(result)).to.equalInAnyOrder(allFiles)
   })
 
   it('should return all harvest results', async () => {
@@ -148,6 +128,26 @@ describe('getLatestFiles', () => {
     expect(reuseVersions).to.equalInAnyOrder(['3.2.1'])
     const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
     expect(fossologyVersions).to.equalInAnyOrder(['3.6.0'])
+  })
+
+  it('should get latest files', () => {
+    const result = fileStore._getLatestFiles(allFiles)
+    expect(result.length).to.eq(4)
+    expect(Array.from(result)).to.equalInAnyOrder([
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/licensee/9.18.1.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.2.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/scancode/32.3.0.json'
+    ])
+  })
+
+  it('should handle error', () => {
+    fileStore._getLatestToolVersions = sinon.stub().throws(new Error('test error'))
+    fileStore.logger.error = sinon.stub()
+    const result = fileStore._getLatestFiles(allFiles)
+    expect(fileStore.logger.error.calledOnce).to.be.true
+    expect(result.length).to.eq(allFiles.length)
+    expect(Array.from(result)).to.equalInAnyOrder(allFiles)
   })
 })
 
