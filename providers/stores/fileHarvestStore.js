@@ -50,11 +50,11 @@ class FileHarvestStore extends AbstractFileStore {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const files = await this._getAllFiles(coordinates)
-    return await this._getContent(files)
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    return await this._getContent(allFilesList)
   }
 
-  async _getAllFiles(coordinates) {
+  async _getListOfAllFiles(coordinates) {
     const root = this._toStoragePathFromCoordinates(coordinates)
     try {
       return await recursive(root, ['.DS_Store'])
@@ -90,12 +90,12 @@ class FileHarvestStore extends AbstractFileStore {
    *
    */
   async getAllLatest(coordinates) {
-    const allFiles = await this._getAllFiles(coordinates)
-    const latestFiles = this._getLatestFiles(allFiles)
-    return await this._getContent(latestFiles)
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    const latestFilesList = this._getListOfLatestFiles(allFilesList)
+    return await this._getContent(latestFilesList)
   }
 
-  _getLatestFiles(allFiles) {
+  _getListOfLatestFiles(allFiles) {
     let latestFiles = []
     try {
       const latest = this._getLatestToolVersions(allFiles)

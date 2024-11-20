@@ -131,7 +131,7 @@ describe('getAll and getAllLatest', () => {
   })
 
   it('should get latest files', () => {
-    const result = fileStore._getLatestFiles(allFiles)
+    const result = fileStore._getListOfLatestFiles(allFiles)
     expect(result.length).to.eq(4)
     expect(Array.from(result)).to.equalInAnyOrder([
       '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
@@ -144,7 +144,7 @@ describe('getAll and getAllLatest', () => {
   it('should handle error', () => {
     fileStore._getLatestToolVersions = sinon.stub().throws(new Error('test error'))
     fileStore.logger.error = sinon.stub()
-    const result = fileStore._getLatestFiles(allFiles)
+    const result = fileStore._getListOfLatestFiles(allFiles)
     expect(fileStore.logger.error.calledOnce).to.be.true
     expect(result.length).to.eq(allFiles.length)
     expect(Array.from(result)).to.equalInAnyOrder(allFiles)

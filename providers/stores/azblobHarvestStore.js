@@ -50,11 +50,11 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const files = await this._getAllFiles(coordinates)
-    return await this._getContent(files)
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    return await this._getContent(allFilesList)
   }
 
-  _getAllFiles(coordinates) {
+  _getListOfAllFiles(coordinates) {
     const name = this._toStoragePathFromCoordinates(coordinates)
     return new Promise((resolve, reject) =>
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
@@ -100,12 +100,12 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    *
    */
   async getAllLatest(coordinates) {
-    const allFiles = await this._getAllFiles(coordinates)
-    const latestFiles = this._getLatestFiles(allFiles)
-    return await this._getContent(latestFiles)
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    const latestFilesList = this._getListOfLatestFiles(allFilesList)
+    return await this._getContent(latestFilesList)
   }
 
-  _getLatestFiles(allFiles) {
+  _getListOfLatestFiles(allFiles) {
     let latestFiles = []
     const names = allFiles.map(file => file.name)
     try {
