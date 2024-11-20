@@ -100,6 +100,57 @@ function createApp(config) {
     crawlerSecret
   )
 
+  // ===================================================
+  // Log the heap space statistics at regular intervals
+  // ===================================================
+  const v8 = require('v8')
+  const heapStatsInverval = 10000;  // 10 seconds
+
+  // Function to add commas to a number
+  const addCommas = (num) => Number(num).toLocaleString();
+
+  // Function to log the heap space statistics
+  const logHeapSpaceStats = () => {
+    // Get the current timestamp
+    const currentTimestamp = new Date().toISOString();
+    
+    // Get the heap space statistics
+    const heapSpaceStats = v8.getHeapSpaceStatistics();
+
+    heapSpaceStats.forEach((space) => { 
+      const heapStatsMessage = `[${currentTimestamp}] Heap Space Statistics: `
+        + `Space Name: '${space.space_name}', `
+        + `Space Size: '${addCommas(space.space_size)}' bytes, `
+        + `Space Used Size: '${addCommas(space.space_used_size)}' bytes, `
+        + `Space Available Size: '${addCommas(space.space_available_size)}' bytes, `
+        + `Physical Space Size: '${addCommas(space.physical_space_size)}' bytes`
+        + '\n--------------------------';
+
+      logger.info(heapStatsMessage);
+    });
+
+    // Get the heap statistics
+    const heapStats = v8.getHeapStatistics();
+
+    const heapStatsMessage = `[${currentTimestamp}] Heap Statistics: `
+      + `Total Heap Size: '${addCommas(heapStats.total_heap_size)}' bytes, `
+      + `Total Heap Used Size: '${addCommas(heapStats.total_heap_size)}' bytes, `
+      + `Total Physical Size: '${addCommas(heapStats.total_physical_size)}' bytes, `
+      + `Total Available Size: '${addCommas(heapStats.total_available_size)}' bytes, `
+      + `Used Heap Size: '${addCommas(heapStats.used_heap_size)}' bytes, `
+      + `Heap Size Limit: '${addCommas(heapStats.heap_size_limit)}' bytes`
+      + '\n--------------------------';
+
+      logger.info(heapStatsMessage);
+  };
+
+  // Only run if not in a test environment
+  if (process.argv.every(arg => !arg.includes('mocha'))) {
+    // Set the interval to log the heap space statistics
+    setInterval(logHeapSpaceStats, heapStatsInverval);
+  }
+  // ===================================================
+
   const app = express()
   app.use(cors())
   app.options('*', cors())
