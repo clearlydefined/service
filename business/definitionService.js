@@ -286,7 +286,7 @@ class DefinitionService {
    */
   async compute(coordinates, curationSpec) {
     this.logger.debug('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    const raw = await this.harvestStore.getAll(coordinates)
+    const raw = await this.harvestStore.getAllLatest(coordinates)
     this.logger.debug('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     coordinates = this._getCasedCoordinates(raw, coordinates)
     this.logger.debug('5:compute:summarize:start', {

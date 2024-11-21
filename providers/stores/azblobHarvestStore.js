@@ -46,34 +46,40 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
    */
-  getAll(coordinates) {
-    const name = this._toStoragePathFromCoordinates(coordinates)
+  async getAll(coordinates) {
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
     // b) fit in one list call (i.e., <5000)
-    const list = new Promise((resolve, reject) =>
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    return await this._getContent(allFilesList)
+  }
+
+  _getListOfAllFiles(coordinates) {
+    const name = this._toStoragePathFromCoordinates(coordinates)
+    return new Promise((resolve, reject) =>
       this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
+    ).then(files =>
+      files.entries.filter(file => {
+        return (
+          file.name.length === name.length || // either an exact match, or
+          (file.name.length > name.length && // a longer string
+            (file.name[name.length] === '/' || // where the next character starts extra tool indications
+              file.name.substr(name.length) === '.json'))
+        )
+      })
     )
-    const contents = list.then(files => {
-      return Promise.all(
-        files.entries
-          .filter(file => {
-            return (
-              file.name.length === name.length || // either an exact match, or
-              (file.name.length > name.length && // a longer string
-                (file.name[name.length] === '/' || // where the next character starts extra tool indications
-                  file.name.substr(name.length) === '.json')) // or is the end, identifying a json file extension
-            )
-          })
-          .map(file => {
-            return new Promise((resolve, reject) =>
-              this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
-            ).then(result => {
-              return { name: file.name, content: JSON.parse(result) }
-            })
-          })
-      )
-    })
+  }
+
+  _getContent(files) {
+    const contents = Promise.all(
+      files.map(file => {
+        return new Promise((resolve, reject) =>
+          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
+        ).then(result => {
+          return { name: file.name, content: JSON.parse(result) }
+        })
+      })
+    )
     return contents.then(entries => {
       return entries.reduce((result, entry) => {
         const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
@@ -84,6 +90,35 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
         return result
       }, {})
     })
+  }
+
+  /**
+   * Get the latest version of each tool output for the given coordinates. The coordinates must be all the way down
+   * to a revision.
+   * @param {EntityCoordinates} coordinates - The component revision to report on
+   * @returns {Promise} A promise that resolves to an object with a property for each tool and tool version
+   *
+   */
+  async getAllLatest(coordinates) {
+    const allFilesList = await this._getListOfAllFiles(coordinates)
+    const latestFilesList = this._getListOfLatestFiles(allFilesList)
+    return await this._getContent(latestFilesList)
+  }
+
+  _getListOfLatestFiles(allFiles) {
+    let latestFiles = []
+    const names = allFiles.map(file => file.name)
+    try {
+      const latest = this._getLatestToolPaths(names)
+      latestFiles = allFiles.filter(file => latest.has(file.name))
+    } catch (error) {
+      this.logger.error('Error getting latest files', error)
+    }
+    return latestFiles.length === 0 ? allFiles : latestFiles
+  }
+
+  _getLatestToolPaths(paths) {
+    return AbstractFileStore.getLatestToolPaths(paths, path => this._toResultCoordinatesFromStoragePath(path))
   }
 }
 

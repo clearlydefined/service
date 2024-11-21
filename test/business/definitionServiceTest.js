@@ -12,6 +12,9 @@ const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
+const FileHarvestStore = require('../../providers/stores/fileHarvestStore')
+const SummaryService = require('../../business/summarizer')
+const AggregatorService = require('../../business/aggregator')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -310,6 +313,68 @@ describe('Definition Service Facet management', () => {
   })
 })
 
+describe('Integration test', () => {
+  let fileHarvestStore
+  beforeEach(() => {
+    fileHarvestStore = createFileHarvestStore()
+  })
+
+  it('computes the same definition with latest harvest data', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+    const allHarvestData = await fileHarvestStore.getAll(coordinates)
+    delete allHarvestData['scancode']['2.9.0+b1'] //remove invalid scancode version
+    let service = setupDefinitionService(allHarvestData)
+    const baseline_def = await service.compute(coordinates)
+
+    const latestHarvestData = await fileHarvestStore.getAllLatest(coordinates)
+    service = setupDefinitionService(latestHarvestData)
+    const comparison_def = await service.compute(coordinates)
+
+    //updated timestamp is not deterministic
+    expect(comparison_def._meta.updated).to.not.equal(baseline_def._meta.updated)
+    comparison_def._meta.updated = baseline_def._meta.updated
+    expect(comparison_def).to.deep.equal(baseline_def)
+  })
+})
+
+function createFileHarvestStore() {
+  const options = {
+    location: 'test/fixtures/store',
+    logger: {
+      error: () => {},
+      debug: () => {}
+    }
+  }
+  return FileHarvestStore(options)
+}
+
+function setupDefinitionService(rawHarvestData) {
+  const harvestStore = { getAllLatest: () => Promise.resolve(rawHarvestData) }
+  const summary = SummaryService({})
+
+  const tools = [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
+  const aggregator = AggregatorService({ precedence: tools })
+  aggregator.logger = { info: sinon.stub() }
+  const curator = {
+    get: () => Promise.resolve(),
+    apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+    autoCurate: () => {}
+  }
+  return setupWithDelegates(curator, harvestStore, summary, aggregator)
+}
+
+function setupWithDelegates(curator, harvestStore, summary, aggregator) {
+  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
+  const search = { delete: sinon.stub(), store: sinon.stub() }
+  const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
+
+  const harvestService = { harvest: () => sinon.stub() }
+  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
+  service.logger = { info: sinon.stub(), debug: () => {} }
+  service._harvest = sinon.stub()
+  return service
+}
+
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
@@ -342,7 +407,7 @@ function setup(definition, coordinateSpec, curation) {
       return
     }
   }
-  const harvestStore = { getAll: () => Promise.resolve(null) }
+  const harvestStore = { getAllLatest: () => Promise.resolve(null) }
   const harvestService = { harvest: () => sinon.stub() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
