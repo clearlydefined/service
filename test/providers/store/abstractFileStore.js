@@ -4,8 +4,12 @@
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const sandbox = sinon.createSandbox()
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
 const EntityCoordinates = require('../../../lib/entityCoordinates')
+const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 
 describe('AbstractFileStore lists entries ', () => {
   let FileStore
@@ -192,5 +196,83 @@ describe('coordinates to path mapping', () => {
       const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/')
       expect(normalizedResult).to.deep.equal(normalizedInput)
     })
+  })
+})
+
+describe('getLatestToolVersions', () => {
+  it('should get latest tool versions', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.14.0.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.1.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder([
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
+      'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
+    ])
+  })
+
+  it('should get latest tool versions and ignore un-versioned data', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+      'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.2.1.json',
+      'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.1.json',
+      'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json',
+      'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder([
+      'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
+      'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'
+    ])
+  })
+
+  it('should get latest tool versions and ignore invalid semver', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.10.0.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.2.1.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.2.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/3.2.2.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
+    ])
+  })
+
+  it('should ignore invalid semver, invalid sermver first', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
+  })
+
+  it('should ignore invalid semver, invalid sermver last', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
+  })
+
+  it('should return at least the first tool version', () => {
+    const latest = AbstractFileStore.getLatestToolPaths([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
+    ])
+    expect(Array.from(latest)).to.equalInAnyOrder([
+      'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
+      'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
+    ])
   })
 })
