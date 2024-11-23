@@ -59,6 +59,8 @@ function createApp(config) {
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
 
+  const upgradeHandler = config.upgrade.service()
+
   const definitionService = require('./business/definitionService')(
     harvestStore,
     harvestService,
@@ -67,7 +69,8 @@ function createApp(config) {
     curationService,
     definitionStore,
     searchService,
-    cachingService
+    cachingService,
+    upgradeHandler
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService

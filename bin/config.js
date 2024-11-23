@@ -57,6 +57,9 @@ module.exports = {
   definition: {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
   },
+  upgrade: {
+    service: loadFactory(config.get('DEFINITION_UPGRADE_PROVIDER') || 'versionCheck', 'upgrade.service')
+  },
   attachment: {
     store: loadFactory(config.get('ATTACHMENT_STORE_PROVIDER') || 'file', 'attachment')
   },

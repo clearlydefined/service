@@ -39,7 +39,7 @@ const currentSchema = '1.7.0'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, upgradeHandler) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -48,6 +48,8 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
     this.cache = cache
+    this.upgradeHandler = upgradeHandler
+    this.upgradeHandler.currentSchema = currentSchema
     this.logger = logger()
   }
 
@@ -68,11 +70,10 @@ class DefinitionService {
       return this.compute(coordinates, curation)
     }
     const existing = await this._cacheExistingAside(coordinates, force)
-    let result
-    if (get(existing, '_meta.schemaVersion') === currentSchema) {
+    let result = await this.upgradeHandler.validate(existing)
+    if (result) {
       // Log line used for /status page insights
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
-      result = existing
     } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
     return this._trimDefinition(this._cast(result), expand)
   }
@@ -598,5 +599,15 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, versionHandler) =>
+  new DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curation,
+    store,
+    search,
+    cache,
+    versionHandler
+  )

@@ -27,6 +27,11 @@ module.exports = {
   auth: {
     github: require('../middleware/githubConfig')
   },
+  upgrade: {
+    service: {
+      versionCheck: require('../providers/upgrade/defVersionCheck')
+    }
+  },
   curation: {
     queue: {
       azure: require('../providers/curation/azureQueueConfig'),

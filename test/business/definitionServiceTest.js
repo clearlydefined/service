@@ -369,7 +369,18 @@ function setupWithDelegates(curator, harvestStore, summary, aggregator) {
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
 
   const harvestService = { harvest: () => sinon.stub() }
-  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
+  const upgradeHandler = { validate: def => Promise.resolve(def) }
+  const service = DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curator,
+    store,
+    search,
+    cache,
+    upgradeHandler
+  )
   service.logger = { info: sinon.stub(), debug: () => {} }
   service._harvest = sinon.stub()
   return service
@@ -411,7 +422,18 @@ function setup(definition, coordinateSpec, curation) {
   const harvestService = { harvest: () => sinon.stub() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
+  const upgradeHandler = { validate: def => Promise.resolve(def) }
+  const service = DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curator,
+    store,
+    search,
+    cache,
+    upgradeHandler
+  )
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
