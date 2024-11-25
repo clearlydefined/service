@@ -1,7 +1,6 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { callFetch: requestPromise } = require('../../lib/fetch')
 const logger = require('../logging/logger')
 const { gte } = require('semver')
 const { get } = require('lodash')
@@ -28,4 +27,6 @@ class DefinitionVersionChecker {
   }
 }
 
-module.exports = options => new DefinitionVersionChecker(options)
+const factory = options => new DefinitionVersionChecker(options)
+
+module.exports = { DefinitionVersionChecker, factory }

@@ -58,6 +58,7 @@ module.exports = {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
   },
   upgrade: {
+    queue: loadFactory(config.get('DEFINITION_UPGRADE_QUEUE_PROVIDER') || 'memory', 'upgrade.queue'),
     service: loadFactory(config.get('DEFINITION_UPGRADE_PROVIDER') || 'versionCheck', 'upgrade.service')
   },
   attachment: {

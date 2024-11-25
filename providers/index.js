@@ -28,8 +28,13 @@ module.exports = {
     github: require('../middleware/githubConfig')
   },
   upgrade: {
+    queue: {
+      azure: require('../providers/upgrade/azureQueueConfig'),
+      memory: require('../providers/queueing/memoryQueue')
+    },
     service: {
-      versionCheck: require('../providers/upgrade/defVersionCheck')
+      versionCheck: require('../providers/upgrade/defVersionCheck').factory,
+      upgradeQueue: require('../providers/upgrade/defUpgradeQueueConfig')
     }
   },
   curation: {

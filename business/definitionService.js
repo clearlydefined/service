@@ -49,8 +49,12 @@ class DefinitionService {
     this.search = search
     this.cache = cache
     this.upgradeHandler = upgradeHandler
-    this.upgradeHandler.currentSchema = currentSchema
+    if (this.upgradeHandler) this.upgradeHandler.currentSchema = currentSchema
     this.logger = logger()
+  }
+
+  get currentSchema() {
+    return currentSchema
   }
 
   /**
