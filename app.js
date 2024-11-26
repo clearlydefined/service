@@ -59,7 +59,7 @@ function createApp(config) {
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
 
-  const upgradeHandler = config.upgrade.service({ upgrade: config.upgrade.queue })
+  const upgradeHandler = config.upgrade.service({ queue: config.upgrade.queue })
   initializers.push(async () => upgradeHandler.initialize())
 
   const definitionService = require('./business/definitionService')(

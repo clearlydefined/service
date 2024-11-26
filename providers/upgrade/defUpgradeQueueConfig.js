@@ -5,7 +5,7 @@ const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const memory = require('./memoryQueueConfig')
 
 function serviceFactory(options) {
-  const realOptions = { upgrade: memory, ...options }
+  const realOptions = { queue: memory, ...options }
   return new DefinitionQueueUpgrader(realOptions)
 }
 

@@ -4,16 +4,18 @@
 const config = require('painless-config')
 const AzureStorageQueue = require('../queueing/azureStorageQueue')
 
-function azure(options) {
-  const realOptions = options || {
-    connectionString:
-      config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
-    queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
-    dequeueOptions: {
-      numOfMessages: 32,
-      visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
-    }
+const defaultOptions = {
+  connectionString:
+    config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+  queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
+  dequeueOptions: {
+    numOfMessages: 32,
+    visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
   }
+}
+
+function azure(options) {
+  const realOptions = options || defaultOptions
   return new AzureStorageQueue(realOptions)
 }
 

@@ -25,8 +25,8 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
   }
 
   async initialize() {
-    this.upgrade = this.options.upgrade() //TODO rename to queue? app.js
-    this.upgrade.initialize()
+    this.upgrade = this.options.queue()
+    return this.upgrade.initialize()
   }
 
   setupProcessing(definitionService, logger) {
