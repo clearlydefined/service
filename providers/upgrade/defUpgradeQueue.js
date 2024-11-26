@@ -5,19 +5,15 @@ const logger = require('../logging/logger')
 const { lt } = require('semver')
 const { DefinitionVersionChecker } = require('./defVersionCheck')
 const EntityCoordinates = require('../../lib/entityCoordinates')
-const azure = require('./azureQueueConfig')
+const { setup } = require('./process')
 
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
-  constructor(options) {
-    super(options)
-    this.upgrade = options.upgrade
-  }
-
   async validate(definition) {
     const result = await super.validate(definition)
     if (result) return result
 
     //otherwise queue for upgrade before returning
+    if (!this.upgrade) throw new Error('Upgrade queue is not set')
     const message = JSON.stringify(this._constructMessage(definition))
     await this.upgrade.queue(message)
     return definition
@@ -26,6 +22,15 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
   _constructMessage(definition) {
     const { coordinates, _meta } = definition
     return { coordinates, _meta }
+  }
+
+  async initialize() {
+    this.upgrade = this.options.upgrade() //TODO rename to queue? app.js
+    this.upgrade.initialize()
+  }
+
+  setupProcessing(definitionService, logger) {
+    setup(this.upgrade, definitionService, logger)
   }
 }
 

@@ -2,13 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
-const azure = require('./azureQueueConfig')
+const memory = require('./memoryQueueConfig')
 
 function serviceFactory(options) {
-  const realOptions = options || {
-    upgrade: azure()
-  }
-  realOptions.upgrade.initialize()
+  const realOptions = { upgrade: memory, ...options }
   return new DefinitionQueueUpgrader(realOptions)
 }
 

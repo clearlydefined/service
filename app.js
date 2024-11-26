@@ -59,9 +59,8 @@ function createApp(config) {
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
 
-  const defUpgradeQueue = config.upgrade.queue()
-  initializers.push(async () => defUpgradeQueue.initialize())
-  const upgradeHandler = config.upgrade.service()
+  const upgradeHandler = config.upgrade.service({ upgrade: config.upgrade.queue })
+  initializers.push(async () => upgradeHandler.initialize())
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
@@ -235,7 +234,7 @@ function createApp(config) {
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
         require('./providers/harvest/process')(harvestQueue, definitionService, logger)
-        require('./providers/upgrade/process')(defUpgradeQueue, definitionService, logger)
+        upgradeHandler.setupProcessing(definitionService, logger)
 
         // Signal system is up and ok (no error)
         callback()

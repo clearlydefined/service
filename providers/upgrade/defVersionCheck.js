@@ -25,6 +25,14 @@ class DefinitionVersionChecker {
     this.logger.debug(`Definition version: %s, Current schema version: %s`, defSchemaVersion, this._currentSchema)
     if (defSchemaVersion && gte(defSchemaVersion, this._currentSchema)) return definition
   }
+
+  async initialize() {
+    //do nothing for initialization
+  }
+
+  setupProcessing() {
+    //do nothing for set up processing
+  }
 }
 
 const factory = options => new DefinitionVersionChecker(options)
