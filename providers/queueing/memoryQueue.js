@@ -40,7 +40,8 @@ class MemoryQueue {
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
   async dequeueMultiple() {
-    return [await this.dequeue()]
+    const message = await this.dequeue()
+    return message ? [message] : []
   }
 
   /**
