@@ -6,8 +6,8 @@ const { gte } = require('semver')
 const { get } = require('lodash')
 
 class DefinitionVersionChecker {
-  constructor(options) {
-    this.options = options || {}
+  constructor(options = {}) {
+    this.options = options
     this.logger = this.options.logger || logger()
   }
 

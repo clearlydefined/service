@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
-const memory = require('./memoryQueueConfig')
+const memory = require('../queueing/memoryQueue')
 
-function serviceFactory(options) {
-  const realOptions = { queue: memory, ...options }
-  return new DefinitionQueueUpgrader(realOptions)
+function serviceFactory(options = {}) {
+  const mergedOptions = { queue: memory, ...options }
+  return new DefinitionQueueUpgrader(mergedOptions)
 }
 
 module.exports = serviceFactory
