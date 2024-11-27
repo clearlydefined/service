@@ -22,14 +22,17 @@ async function work(once) {
 async function processMessage(message) {
   let coordinates = get(message, 'data.coordinates')
   if (!coordinates) return
-  coordinates = EntityCoordinates.fromObject(coordinates)
 
+  coordinates = EntityCoordinates.fromObject(coordinates)
   const existing = await definitionService.getStored(coordinates)
   let result = await defVersionChecker.validate(existing)
-  if (result) return //valid definition, no need to upgrade
-  await definitionService.computeStoreAndCurate(coordinates)
+  if (!result) {
+    await definitionService.computeStoreAndCurate(coordinates)
+    logger.info(`Handled definition update for ${coordinates.toString()}`)
+  } else {
+    logger.debug(`Skipped definition update for ${coordinates.toString()}`)
+  }
   await queue.delete(message)
-  logger.info(`Handled definition update for ${coordinates.toString()}`)
 }
 
 let queue
