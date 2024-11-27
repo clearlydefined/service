@@ -5,48 +5,64 @@ const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { factory } = require('./defVersionCheck')
 
-async function work(once) {
-  let isQueueEmpty = true
-  try {
-    const messages = await queue.dequeueMultiple()
-    if (messages && messages.length > 0) isQueueEmpty = false
-    const results = await Promise.allSettled(messages.map(message => processMessage(message)))
-    results.filter(result => result.status === 'rejected').forEach(result => logger.error(result.reason))
-  } catch (error) {
-    logger.error(error)
-  } finally {
-    if (!once) setTimeout(work, isQueueEmpty ? 10000 : 0)
+class QueueHandler {
+  constructor(queue, logger, messageHandler = { processMessage: async () => {} }) {
+    this._queue = queue
+    this.logger = logger
+    this._messageHandler = messageHandler
+  }
+
+  async work(once) {
+    let isQueueEmpty = true
+    try {
+      const messages = await this._queue.dequeueMultiple()
+      if (messages && messages.length > 0) isQueueEmpty = false
+      const results = await Promise.allSettled(
+        messages.map(async message => {
+          await this._messageHandler.processMessage(message)
+          await this._queue.delete(message)
+        })
+      )
+      results.filter(result => result.status === 'rejected').forEach(result => this.logger.error(result.reason))
+    } catch (error) {
+      this.logger.error(error)
+    } finally {
+      if (!once) setTimeout(this.work.bind(this), isQueueEmpty ? 10000 : 0)
+    }
   }
 }
 
-async function processMessage(message) {
-  let coordinates = get(message, 'data.coordinates')
-  if (!coordinates) return
-
-  coordinates = EntityCoordinates.fromObject(coordinates)
-  const existing = await definitionService.getStored(coordinates)
-  let result = await defVersionChecker.validate(existing)
-  if (!result) {
-    await definitionService.computeStoreAndCurate(coordinates)
-    logger.info(`Handled definition update for ${coordinates.toString()}`)
-  } else {
-    logger.debug(`Skipped definition update for ${coordinates.toString()}`)
+class DefinitionUpgrader {
+  constructor(definitionService, logger, defVersionChecker) {
+    this.logger = logger
+    this._definitionService = definitionService
+    this._defVersionChecker = defVersionChecker
+    this._defVersionChecker.currentSchema = definitionService.currentSchema
   }
-  await queue.delete(message)
+
+  async processMessage(message) {
+    let coordinates = get(message, 'data.coordinates')
+    if (!coordinates) return
+
+    coordinates = EntityCoordinates.fromObject(coordinates)
+    const existing = await this._definitionService.getStored(coordinates)
+    let result = await this._defVersionChecker.validate(existing)
+    if (!result) {
+      await this._definitionService.computeStoreAndCurate(coordinates)
+      this.logger.info(`Handled definition update for ${coordinates.toString()}`)
+    } else {
+      this.logger.debug(`Skipped definition update for ${coordinates.toString()}`)
+    }
+  }
 }
 
-let queue
-let definitionService
-let logger
-let defVersionChecker
+let queueHandler
+let defUpgrader
 
 function setup(_queue, _definitionService, _logger, _defVersionChecker = factory(), once = false) {
-  queue = _queue
-  definitionService = _definitionService
-  logger = _logger
-  defVersionChecker = _defVersionChecker
-  defVersionChecker.currentSchema = definitionService.currentSchema
-  return work(once)
+  defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _defVersionChecker)
+  queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
+  return queueHandler.work(once)
 }
 
-module.exports = setup
+module.exports = { DefinitionUpgrader, QueueHandler, setup }
