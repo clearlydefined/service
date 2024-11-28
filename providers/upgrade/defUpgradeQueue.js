@@ -34,8 +34,8 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     return this._upgrade.initialize()
   }
 
-  setupProcessing(definitionService, logger) {
-    return setup(this._upgrade, definitionService, logger)
+  setupProcessing(definitionService, logger, once) {
+    return setup(this._upgrade, definitionService, logger, once)
   }
 }
 

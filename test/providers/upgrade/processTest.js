@@ -6,13 +6,20 @@ const sinon = require('sinon')
 const { QueueHandler, DefinitionUpgrader } = require('../../../providers/upgrade/process')
 
 describe('Definition Upgrade Queue Processing', () => {
+  let logger
+
+  beforeEach(() => {
+    logger = {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+  })
+
   describe('QueueHandler', () => {
-    let logger, queue, messageHandler, handler
+    let queue, messageHandler, handler
+
     beforeEach(() => {
-      logger = {
-        info: sinon.stub(),
-        error: sinon.stub()
-      }
       queue = {
         dequeueMultiple: sinon.stub(),
         delete: sinon.stub().resolves()
@@ -23,11 +30,11 @@ describe('Definition Upgrade Queue Processing', () => {
       handler = new QueueHandler(queue, logger, messageHandler)
     })
 
-    it('should return an instance of QueueHandler', () => {
+    it('returns an instance of QueueHandler', () => {
       expect(handler).to.be.an.instanceOf(QueueHandler)
     })
 
-    it('should work on a queue', () => {
+    it('works on a queue', () => {
       queue.dequeueMultiple.resolves([])
       handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
@@ -35,7 +42,7 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.delete.notCalled).to.be.true
     })
 
-    it('should process one message', async () => {
+    it('processes one message', async () => {
       queue.dequeueMultiple.resolves([{ message: 'test' }])
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
@@ -43,7 +50,7 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.delete.calledOnce).to.be.true
     })
 
-    it('should process multiple messages', async () => {
+    it('processes multiple messages', async () => {
       queue.dequeueMultiple.resolves([{ message: 'testA' }, { message: 'testB' }])
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
@@ -51,7 +58,17 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.delete.calledTwice).to.be.true
     })
 
-    it('should log error and not delete the message', async () => {
+    it('handles if error is thrown', async () => {
+      queue.dequeueMultiple.resolves([{ message: 'testA' }])
+      messageHandler.processMessage = sinon.stub().throws()
+      await handler.work(true)
+      expect(queue.dequeueMultiple.calledOnce).to.be.true
+      expect(messageHandler.processMessage.calledOnce).to.be.true
+      expect(queue.delete.called).to.be.false
+      expect(logger.error.calledOnce).to.be.true
+    })
+
+    it('handles both sucessful and unsucessful messages', async () => {
       queue.dequeueMultiple.resolves([{ message: 'testA' }, { message: 'testB' }])
       messageHandler.processMessage = sinon.stub().onFirstCall().throws().onSecondCall().resolves()
       await handler.work(true)
@@ -63,13 +80,10 @@ describe('Definition Upgrade Queue Processing', () => {
   })
 
   describe('DefinitionUpgrader', () => {
-    const definition = { coordinates: 'pypi/pypi/-/test/revision' }
-    let logger, definitionService, versionChecker, upgrader
+    const definition = Object.freeze({ coordinates: 'pypi/pypi/-/test/revision' })
+    let definitionService, versionChecker, upgrader
+
     beforeEach(() => {
-      logger = {
-        info: sinon.stub(),
-        debug: sinon.stub()
-      }
       definitionService = {
         getStored: sinon.stub(),
         computeStoreAndCurate: sinon.stub().resolves()
@@ -80,7 +94,7 @@ describe('Definition Upgrade Queue Processing', () => {
       upgrader = new DefinitionUpgrader(definitionService, logger, versionChecker)
     })
 
-    it('should recompute a definition', async () => {
+    it('recomputes a definition, if a definition is not up-to-date', async () => {
       definitionService.getStored.resolves(definition)
       versionChecker.validate.resolves()
 
@@ -90,13 +104,30 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
     })
 
-    it('should skip compute when a definition is up-to-date', async () => {
+    it('skips compute if a definition is up-to-date', async () => {
       definitionService.getStored.resolves(definition)
       versionChecker.validate.resolves(definition)
 
       await upgrader.processMessage({ data: { coordinates: 'pypi/pypi/-/test/revision' } })
       expect(definitionService.getStored.calledOnce).to.be.true
       expect(versionChecker.validate.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+    })
+
+    it('computes if a definition does not exist', async () => {
+      definitionService.getStored.resolves()
+      versionChecker.validate.resolves()
+
+      await upgrader.processMessage({ data: { coordinates: 'pypi/pypi/-/test/revision' } })
+      expect(definitionService.getStored.calledOnce).to.be.true
+      expect(versionChecker.validate.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+    })
+
+    it('skips if there is no coordinates', async () => {
+      await upgrader.processMessage({ data: {} })
+      expect(definitionService.getStored.notCalled).to.be.true
+      expect(versionChecker.validate.notCalled).to.be.true
       expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
     })
   })
