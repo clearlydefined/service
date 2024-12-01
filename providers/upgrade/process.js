@@ -59,7 +59,7 @@ class DefinitionUpgrader {
 let queueHandler
 let defUpgrader
 
-function setup(_queue, _definitionService, _logger, once = false, _defVersionChecker = factory()) {
+function setup(_queue, _definitionService, _logger, once = false, _defVersionChecker = factory({ logger: _logger })) {
   defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _defVersionChecker)
   queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
