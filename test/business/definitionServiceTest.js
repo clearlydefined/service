@@ -19,7 +19,6 @@ const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue
 const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
 const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
 const util = require('util')
-const { fail } = require('assert')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -442,6 +441,21 @@ describe('Integration test', () => {
           expect(newResult._meta.schemaVersion).to.eq('1.7.0')
           expect(store.store.calledOnce).to.be.true
           expect(queue.data.length).to.eq(0)
+        })
+
+        it('computes once when the same coordinates is queued twice within one dequeue batch ', async () => {
+          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          await service.get(coordinates)
+          await service.get(coordinates)
+          queue.dequeueMultiple = sinon.stub().callsFake(async () => {
+            const message1 = await queue.dequeue()
+            const message2 = await queue.dequeue()
+            return Promise.resolve([message1, message2])
+          })
+          await upgradeHandler.setupProcessing(service, logger, true)
+          const newResult = await service.get(coordinates)
+          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
+          expect(store.store.calledOnce).to.be.true
         })
       })
     })

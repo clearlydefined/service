@@ -4,6 +4,7 @@
 const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { factory } = require('./defVersionCheck')
+const Cache = require('../caching/memory')
 
 class QueueHandler {
   constructor(queue, logger, messageHandler = { processMessage: async () => {} }) {
@@ -33,18 +34,39 @@ class QueueHandler {
 }
 
 class DefinitionUpgrader {
-  constructor(definitionService, logger, defVersionChecker) {
+  static defaultTtlSeconds = 60 * 5 /* 5 mins */
+  static delayInMSeconds = 500
+
+  constructor(
+    definitionService,
+    logger,
+    defVersionChecker,
+    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds })
+  ) {
     this.logger = logger
     this._definitionService = definitionService
     this._defVersionChecker = defVersionChecker
     this._defVersionChecker.currentSchema = definitionService.currentSchema
+    this._upgradeLock = cache
   }
 
   async processMessage(message) {
     let coordinates = get(message, 'data.coordinates')
     if (!coordinates) return
-
     coordinates = EntityCoordinates.fromObject(coordinates)
+
+    while (this._upgradeLock.get(coordinates.toString())) {
+      await new Promise(resolve => setTimeout(resolve, DefinitionUpgrader.delayInMSeconds))
+    }
+    try {
+      this._upgradeLock.set(coordinates.toString(), true)
+      await this._upgradeIfNecessary(coordinates)
+    } finally {
+      this._upgradeLock.delete(coordinates.toString())
+    }
+  }
+
+  async _upgradeIfNecessary(coordinates) {
     const existing = await this._definitionService.getStored(coordinates)
     let result = await this._defVersionChecker.validate(existing)
     if (!result) {
