@@ -16,8 +16,10 @@ const FileHarvestStore = require('../../providers/stores/fileHarvestStore')
 const SummaryService = require('../../business/summarizer')
 const AggregatorService = require('../../business/aggregator')
 const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
-const memoryQueue = require('../../providers/queueing/memoryQueue')
+const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
 const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
+const util = require('util')
+const { fail } = require('assert')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -347,7 +349,11 @@ describe('Integration test', () => {
 
     let logger, upgradeHandler
     beforeEach(() => {
-      logger = { debug: sinon.stub(), error: sinon.stub(), info: sinon.stub() }
+      logger = {
+        debug: (format, ...args) => console.debug(util.format(format, ...args)),
+        error: (format, ...args) => console.error(util.format(format, ...args)),
+        info: (format, ...args) => console.info(util.format(format, ...args))
+      }
     })
 
     const handleVersionedDefinition = function () {
@@ -399,19 +405,19 @@ describe('Integration test', () => {
     })
 
     describe('queueing schema version updates', () => {
-      let queue
+      let queue, staleDef
       beforeEach(async () => {
         queue = memoryQueue()
         const queueFactory = sinon.stub().returns(queue)
         upgradeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
         await upgradeHandler.initialize()
+        staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
       })
 
       handleVersionedDefinition()
 
       context('with stale definitions', () => {
         it('returns a stale definition, queues update, recomputes and retrieves the updated definition', async () => {
-          const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           const result = await service.get(coordinates)
           expect(result).to.deep.equal(staleDef)
@@ -424,7 +430,6 @@ describe('Integration test', () => {
         })
 
         it('computes once when the same coordinates is queued twice', async () => {
-          const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           await service.get(coordinates)
           const result = await service.get(coordinates)

@@ -26,7 +26,8 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
 
   _constructMessage(definition) {
     const { coordinates, _meta } = definition
-    return { coordinates, _meta }
+    const content = { coordinates, _meta }
+    return Buffer.from(JSON.stringify(content)).toString('base64')
   }
 
   async initialize() {

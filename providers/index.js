@@ -30,7 +30,7 @@ module.exports = {
   upgrade: {
     queue: {
       azure: require('../providers/upgrade/azureQueueConfig'),
-      memory: require('../providers/queueing/memoryQueue')
+      memory: require('../providers/upgrade/memoryQueueConfig')
     },
     service: {
       versionCheck: require('../providers/upgrade/defVersionCheck').factory,

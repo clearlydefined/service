@@ -9,6 +9,7 @@ class MemoryQueue {
     this.logger = logger()
     this.data = []
     this.messageId = 0
+    this.decoder = options.decoder
   }
 
   async initialize() {}
@@ -33,9 +34,13 @@ class MemoryQueue {
     const message = this.data[0]
     if (!message) return null
     this.data[0].dequeueCount++
-    if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: JSON.parse(message.messageText) })
+    if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: this._parseData(message) })
     await this.delete({ original: message })
     return this.dequeue()
+  }
+
+  _parseData({ messageText }) {
+    return JSON.parse(this.decoder(messageText))
   }
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
@@ -59,4 +64,12 @@ class MemoryQueue {
   }
 }
 
-module.exports = () => new MemoryQueue()
+const factory = (opts = {}) => {
+  const defaultOpts = {
+    decoder: text => text
+  }
+  const mergedOpts = { ...defaultOpts, ...opts }
+  return new MemoryQueue(mergedOpts)
+}
+
+module.exports = factory
