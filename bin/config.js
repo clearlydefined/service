@@ -100,5 +100,9 @@ module.exports = {
     crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   },
   appVersion: config.get('APP_VERSION'),
-  buildsha: config.get('BUILD_SHA')
+  buildsha: config.get('BUILD_SHA'),
+  heapstats: {
+    logHeapstats: config.get('LOG_NODE_HEAPSTATS'),
+    logInverval: config.get('LOG_NODE_HEAPSTATS_INTERVAL_MS')
+  }
 }
