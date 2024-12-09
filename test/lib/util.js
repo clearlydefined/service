@@ -19,6 +19,8 @@ describe('Utils latest version', () => {
       '4.0.0': ['4.0.0', '4.0.1-rc.2'],
       '5.0.0': ['5.0.0', '5.0.1-beta'],
       '6.0.0': ['6.0.0', 'undefined'],
+      '7.0.0': [undefined, '7.0.0'],
+      '8.0.0': ['2.9.0b1', '8.0.0'],
       notarray: 'notarray',
       null: [],
       junk: ['junk', 'junk1', 'junk2']
