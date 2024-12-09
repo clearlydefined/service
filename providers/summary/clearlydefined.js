@@ -174,13 +174,7 @@ class ClearlyDescribedSummarizer {
     return urls
   }
 
-  addMavenData(result, data, coordinates) {
-    const urls = this.getMavenUrls(coordinates)
-
-    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    setIfValue(result, 'described.urls.registry', urls.registry)
-    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
-    setIfValue(result, 'described.urls.download', urls.download)
+  getDeclaredLicenseMaven(data) {
     const projectSummaryLicenses =
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses') // the project layer was removed in 1.2.0
     if (!projectSummaryLicenses) return
@@ -192,7 +186,18 @@ class ClearlyDescribedSummarizer {
     const licenseNames = uniq(flatten(licenseSummaries.map(license => license.name)))
     let licenses = licenseUrls.map(extractLicenseFromLicenseUrl).filter(x => x)
     if (!licenses.length) licenses = licenseNames.map(x => SPDX.lookupByName(x) || x).filter(x => x)
-    if (licenses.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+    return licenses
+  }
+
+  addMavenData(result, data, coordinates) {
+    const urls = this.getMavenUrls(coordinates)
+
+    setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
+    setIfValue(result, 'described.urls.registry', urls.registry)
+    setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
+    setIfValue(result, 'described.urls.download', urls.download)
+    const licenses = this.getDeclaredLicenseMaven(data)
+    if (licenses?.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
 
   addCondaData(result, data, coordinates) {
@@ -239,6 +244,8 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
+    const licenses = this.getDeclaredLicenseMaven(data)
+    if (licenses?.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
   }
 
   addNuGetData(result, data, coordinates) {
