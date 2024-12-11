@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 const { DefinitionVersionChecker } = require('./defVersionCheck')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 const { setup } = require('./process')
 
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
@@ -17,11 +16,19 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
 
   async _queueUpgrade(definition) {
     if (!this._upgrade) throw new Error('Upgrade queue is not set')
-    const message = this._constructMessage(definition)
-    await this._upgrade.queue(JSON.stringify(message))
-    this.logger.debug('Queued for definition upgrade ', {
-      coordinates: EntityCoordinates.fromObject(definition.coordinates).toString()
-    })
+    try {
+      const message = this._constructMessage(definition)
+      await this._upgrade.queue(message)
+      this.logger.debug('Queued for definition upgrade ', {
+        coordinates: DefinitionVersionChecker.getCoordinates(definition)
+      })
+    } catch (error) {
+      //continue if queuing fails and requeue at the next request.
+      this.logger.error(`Error queuing for definition upgrade ${error.message}`, {
+        error,
+        coordinates: DefinitionVersionChecker.getCoordinates(definition)
+      })
+    }
   }
 
   _constructMessage(definition) {
