@@ -41,6 +41,7 @@ describe('Utils latest version', () => {
       'http://www.eclipse.org/org/documents/edl-v10.php': 'EDL-1.0',
       'https://www.mozilla.org/en-US/MPL/2.0/': 'MPL-2.0',
       'https://www.mozilla.org/en-US/MPL/1.1/': 'MPL-1.1',
+      'http://www.mozilla.org/MPL/MPL-1.1.html': 'MPL-1.1',
       'https://www.gnu.org/licenses/lgpl-2.1.html': 'LGPL-2.1',
       'http://opensource.org/licenses/Apache-2.0': 'Apache-2.0',
       'https://licenses.nuget.org/Apache-2.0': 'Apache-2.0',
