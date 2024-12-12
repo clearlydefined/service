@@ -100,6 +100,10 @@ function createApp(config) {
     crawlerSecret
   )
 
+  // enable heap stats logging at an interval if configured
+  const trySetHeapLoggingAtInterval = require('./lib/heapLogger')
+  trySetHeapLoggingAtInterval(config, logger)
+
   const app = express()
   app.use(cors())
   app.options('*', cors())
