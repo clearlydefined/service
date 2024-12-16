@@ -9,7 +9,7 @@ const defaultOptions = {
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
   queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
   dequeueOptions: {
-    numOfMessages: 32,
+    numOfMessages: config.get('DEFINITION_UPGRADE_DEQUEUE_BATCH_SIZE') || 16,
     visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
   }
 }
