@@ -10,7 +10,10 @@ const DefinitionQueueUpgrader = require('../../../providers/upgrade/defUpgradeQu
 const MemoryQueue = require('../../../providers/upgrade/memoryQueueConfig')
 
 describe('DefinitionQueueUpgrader', () => {
-  const logger = { debug: sinon.stub(), error: sinon.stub() }
+  let logger
+  beforeEach(() => {
+    logger = { debug: sinon.stub(), error: sinon.stub() }
+  })
 
   describe('Unit tests', () => {
     const definition = { coordinates: 'test', _meta: { schemaVersion: '1.0.0' } }
