@@ -34,8 +34,8 @@ describe('Utils latest version', () => {
 
   it('should extract license from license URLs', () => {
     const inputs = {
-      'http://glassfish.java.net/public/CDDL+GPL_1_1.html': 'CDDL-1.1 or GPL-2.0-only WITH Classpath-exception-2.0',
-      'https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html': 'CDDL-1.1 or GPL-2.0-only WITH Classpath-exception-2.0',
+      'http://glassfish.java.net/public/CDDL+GPL_1_1.html': 'CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0',
+      'https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html': 'CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0',
       'https://glassfish.java.net/public/CDDL%2BGPL.html': 'CDDL-1.0 OR GPL-2.0-only WITH Classpath-exception-2.0',
       'https://glassfish.dev.java.net/public/CDDL+GPL.html': 'CDDL-1.0 OR GPL-2.0-only WITH Classpath-exception-2.0',
       'https://glassfish.dev.java.net/public/CDDLv1.0.html': 'CDDL-1.0',
