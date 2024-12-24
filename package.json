@@ -1,6 +1,6 @@
 {
   "name": "service",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "npm run mocha && npm run lint",
@@ -12,7 +12,7 @@
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www",
+    "start": "node --max-old-space-size=8192 ./bin/www",
     "postinstall": "patch-package"
   },
   "license": "MIT",
