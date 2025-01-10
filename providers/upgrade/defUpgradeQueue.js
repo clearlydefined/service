@@ -19,12 +19,12 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     try {
       const message = this._constructMessage(definition)
       await this._upgrade.queue(message)
-      this.logger.debug('Queued for definition upgrade ', {
+      this.logger.info('Queued for definition upgrade ', {
         coordinates: DefinitionVersionChecker.getCoordinates(definition)
       })
     } catch (error) {
-      //continue if queuing fails and requeue at the next request.
-      this.logger.error(`Error queuing for definition upgrade ${error.message}`, {
+      //continue if queueing fails and requeue at the next request.
+      this.logger.error(`Error queueing for definition upgrade ${error.message}`, {
         error,
         coordinates: DefinitionVersionChecker.getCoordinates(definition)
       })

@@ -67,13 +67,20 @@ class DefinitionUpgrader {
   }
 
   async _upgradeIfNecessary(coordinates) {
-    const existing = await this._definitionService.getStored(coordinates)
-    let result = await this._defVersionChecker.validate(existing)
-    if (!result) {
-      await this._definitionService.computeStoreAndCurate(coordinates)
-      this.logger.info(`Handled definition update for ${coordinates.toString()}`)
-    } else {
-      this.logger.debug(`Skipped definition update for ${coordinates.toString()}`)
+    try {
+      const existing = await this._definitionService.getStored(coordinates)
+      let result = await this._defVersionChecker.validate(existing)
+      if (!result) {
+        await this._definitionService.computeStoreAndCurate(coordinates)
+        this.logger.info('Handled definition upgrade for %s', coordinates)
+      } else {
+        this.logger.debug('Skipped definition upgrade for %s', coordinates)
+      }
+    } catch (error) {
+      const context = `Error handling definition upgrade for ${coordinates.toString()}`
+      const newError = new Error(`${context}: ${error.message}`)
+      newError.stack = error.stack
+      throw newError
     }
   }
 }
