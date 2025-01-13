@@ -30,21 +30,20 @@ describe('CallFetch', () => {
     })
 
     it('checks if all the default headers are present in requests', async () => {
-      const path = '/search.maven.org/solrsearch/select';
-      const exactQuery = '?q=g:org.httpcomponents+AND+a:httpcomponents&core=gav&rows=100&wt=json';
-      
-      const endpointMock = await mockServer.forGet(path).withExactQuery(exactQuery).thenReply(200, 'success');
+      const path = '/search.maven.org/solrsearch/select'
+      const exactQuery = '?q=g:org.httpcomponents+AND+a:httpcomponents&core=gav&rows=100&wt=json'
+
+      const endpointMock = await mockServer.forGet(path).withExactQuery(exactQuery).thenReply(200, 'success')
 
       await callFetch({
-      url: mockServer.urlFor(path + exactQuery),
-      method: 'GET',
-      json: true
-      });
-      
-      const requests = await endpointMock.getSeenRequests();
-      checkDefaultHeaders(requests[0].headers);
-      
-      });
+        url: mockServer.urlFor(path + exactQuery),
+        method: 'GET',
+        json: true
+      })
+
+      const requests = await endpointMock.getSeenRequests()
+      checkDefaultHeaders(requests[0].headers)
+    })
 
     it('checks if all the default headers and other specific header is present in crate component', async () => {
       const path = '/crates.io/api/v1/crates/name'
