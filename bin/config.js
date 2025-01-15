@@ -57,6 +57,10 @@ module.exports = {
   definition: {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
   },
+  upgrade: {
+    queue: loadFactory(config.get('DEFINITION_UPGRADE_QUEUE_PROVIDER') || 'memory', 'upgrade.queue'),
+    service: loadFactory(config.get('DEFINITION_UPGRADE_PROVIDER') || 'versionCheck', 'upgrade.service')
+  },
   attachment: {
     store: loadFactory(config.get('ATTACHMENT_STORE_PROVIDER') || 'file', 'attachment')
   },
@@ -100,5 +104,9 @@ module.exports = {
     crawlerKey: config.get('APPINSIGHTS_CRAWLER_APIKEY')
   },
   appVersion: config.get('APP_VERSION'),
-  buildsha: config.get('BUILD_SHA')
+  buildsha: config.get('BUILD_SHA'),
+  heapstats: {
+    logHeapstats: config.get('LOG_NODE_HEAPSTATS'),
+    logInverval: config.get('LOG_NODE_HEAPSTATS_INTERVAL_MS')
+  }
 }
