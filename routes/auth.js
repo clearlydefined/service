@@ -6,6 +6,7 @@ const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 const { URL } = require('url')
 const GitHubApi = require('@octokit/rest')
+const { defaultHeaders } = require('../lib/fetch')
 
 const router = express.Router()
 let options = null
@@ -80,7 +81,7 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
  * @returns {Promise<Array<string>>} - list of permission names
  */
 async function getUserDetails(token, org) {
-  const options = { headers: { 'user-agent': 'clearlydefined.io' } }
+  const options = { headers: defaultHeaders }
   const client = new GitHubApi(options)
   token && client.authenticate({ type: 'token', token })
 
