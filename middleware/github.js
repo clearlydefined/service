@@ -5,6 +5,7 @@ const crypto = require('crypto')
 const GitHubApi = require('@octokit/rest')
 const asyncMiddleware = require('./asyncMiddleware')
 const Github = require('../lib/github')
+const { defaultHeaders } = require('../lib/fetch')
 
 let options = null
 let cache = null
@@ -64,7 +65,7 @@ async function setupUserClient(req, token) {
     return null
   }
   // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi({ headers: { 'user-agent': 'clearlydefined.io' } })
+  const client = new GitHubApi({ headers: defaultHeaders })
   client.authenticate({ type: 'token', token })
   req.app.locals.user = { github: { client } }
   return client
