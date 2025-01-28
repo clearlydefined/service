@@ -1,6 +1,6 @@
 ## Change Notification API Calls
 
-The system includes a built-in mechanism to [support notifications for definition changes](https://github.com/clearlydefined/service/issues/958). Changes in definitions, excluding files, and their associated coordinates are published at regular intervals. Every hour, a changeset file is released, listing the coordinates of definitions that have changed during that time. You can retrieve these updated definitions (excluding files) using the appropriate API. This document explains how to use the APIs designed to support change notifications.
+The system includes a built-in mechanism to [support notifications for definition changes](https://github.com/clearlydefined/service/issues/958). Changes in definitions, excluding files, and their associated coordinates are published at regular intervals. Every hour, a changeset file is released, listing the coordinates of definitions that have changed during the last hour. You can retrieve these updated definitions (excluding files) using the appropriate API. This document explains how to use the APIs designed to support change notifications.
 
 ### 1. Get List of Changeset File Names
 
