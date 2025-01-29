@@ -6,7 +6,7 @@ The system includes a built-in mechanism to [support notifications for definitio
 
 - **Endpoint:** `GET {{baseurl}}/changes/index`
 - **Description:** Retrieves a list of changeset file names. These files are published hourly and follow the naming convention `yyyy-mm-dd-hh`.
-- **Example Response:**
+- **Example Response:** (_Partial response shown.  The real response will include the list of all changesets from 2019 to now_)
   ```
   2019-04-01-01
   2019-02-07-23
