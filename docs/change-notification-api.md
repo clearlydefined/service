@@ -6,7 +6,7 @@ The system includes a built-in mechanism to [support notifications for definitio
 
 - **Endpoint:** `GET {{baseurl}}/changes/index`
 - **Description:** Retrieves a list of changeset file names. These files are published hourly and follow the naming convention `yyyy-mm-dd-hh`.
-- **Example Response:** (_Partial response shown.  The real response will include the list of all changesets from 2019 to now_)
+- **Example Response:** (_Partial response shown. The real response will include the list of all changesets from 2019 to now_)
   ```
   2019-02-08-03
   2019-02-08-04
@@ -39,6 +39,7 @@ The system includes a built-in mechanism to [support notifications for definitio
   GET {{baseurl}}/maven/mavencentral/nl.vpro.poms/poms-shared/5.11.4.json
   ```
 
-**Base URL** 
+**Base URL**
+
 - Test Data: https://clearlydefineddev.blob.core.windows.net/develop-snapshots
 - Production Data: https://clearlydefinedprod.blob.core.windows.net/changes-notifications
