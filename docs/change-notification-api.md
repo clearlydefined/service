@@ -8,8 +8,8 @@ The system includes a built-in mechanism to [support notifications for definitio
 - **Description:** Retrieves a list of changeset file names. These files are published hourly and follow the naming convention `yyyy-mm-dd-hh`.
 - **Example Response:** (_Partial response shown.  The real response will include the list of all changesets from 2019 to now_)
   ```
-  2019-04-01-01
-  2019-02-07-23
+  2019-02-08-03
+  2019-02-08-04
   ```
 
 ### 2. Get Specific Changeset
@@ -18,12 +18,12 @@ The system includes a built-in mechanism to [support notifications for definitio
 - **Description:** Retrieves a specific changeset containing the coordinates of definitions that have been changed during the specified hourly interval.
 - **Example Request:**
   ```
-  GET {{baseurl}}/changes/2019-02-07-23
+  GET {{baseurl}}/changes/2019-02-08-04
   ```
 - **Example Response:**
   ```
-  composer/packagist/alibabacloud/dysmsapi-20170525/1.0.0.json
-  composer/packagist/alibabacloud/dysmsapi-20170525/1.0.2.json
+composer/packagist/ccxt/ccxt/1.21.52.json
+composer/packagist/ccxt/ccxt/1.21.50.json
   ```
 
 ### 3. Get Changed Definition
