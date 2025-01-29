@@ -10,6 +10,9 @@ The system includes a built-in mechanism to [support notifications for definitio
   ```
   2019-02-08-03
   2019-02-08-04
+  ...
+  2019-04-01-16
+  ...
   ```
 
 ### 2. Get Specific Changeset
@@ -18,12 +21,13 @@ The system includes a built-in mechanism to [support notifications for definitio
 - **Description:** Retrieves a specific changeset containing the coordinates of definitions that have been changed during the specified hourly interval.
 - **Example Request:**
   ```
-  GET {{baseurl}}/changes/2019-02-08-04
+  GET {{baseurl}}/changes/2019-04-01-16
   ```
 - **Example Response:**
   ```
-composer/packagist/ccxt/ccxt/1.21.52.json
-composer/packagist/ccxt/ccxt/1.21.50.json
+  git/github/ithouse/git_loc_tracker/db708b224f77ba98bea5e1fc3eaff51ee0e7fd52.json
+  git/github/searls/gimme/ce0c71c813cae48d0dce222be0fd326bc51fcf3f.json
+  ...
   ```
 
 ### 3. Get Changed Definition
@@ -32,7 +36,9 @@ composer/packagist/ccxt/ccxt/1.21.50.json
 - **Description:** Retrieves the changed definition without including files.
 - **Example Request:**
   ```
-  GET {{baseurl}}/composer/packagist/alibabacloud/dysmsapi-20170525/1.0.0.json
+  GET {{baseurl}}/maven/mavencentral/nl.vpro.poms/poms-shared/5.11.4.json
   ```
 
-**Base URL for Test Data:** https://clearlydefineddev.blob.core.windows.net/develop-snapshots
+**Base URL** 
+- Test Data: https://clearlydefineddev.blob.core.windows.net/develop-snapshots
+- Production Data: https://clearlydefinedprod.blob.core.windows.net/changes-notifications
