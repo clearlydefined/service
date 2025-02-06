@@ -52,7 +52,7 @@ describe('CondaRepoAccess', () => {
   describe('checkIfValidChannel', () => {
     it('should throw an error for an unrecognized channel', async () => {
       try {
-        await condaRepoAccess.checkIfValidChannel('unknown-channel')
+        condaRepoAccess.checkIfValidChannel('unknown-channel')
         assert.fail('Expected error was not thrown')
       } catch (error) {
         assert.strictEqual(error.message, 'Unrecognized Conda channel unknown-channel')
@@ -60,11 +60,7 @@ describe('CondaRepoAccess', () => {
     })
 
     it('should not throw an error for a recognized channel', async () => {
-      try {
-        await condaRepoAccess.checkIfValidChannel('conda-forge')
-      } catch (error) {
-        assert.fail(`Unexpected error thrown: ${error.message}`)
-      }
+      condaRepoAccess.checkIfValidChannel('conda-forge')
     })
   })
 
