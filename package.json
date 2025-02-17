@@ -84,7 +84,7 @@
     "deep-equal-in-any-order": "^1.0.10",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
-    "mocha": "^8.2.1",
+    "mocha": "^11.1.0",
     "mockttp": "^3.13.0",
     "mongodb-memory-server": "^8.11.2",
     "node-mocks-http": "^1.6.7",
