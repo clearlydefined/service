@@ -20,8 +20,19 @@ const config = proxyquire('../bin/config', {
 })
 
 describe('Application', () => {
+  const middleware = async (req, res, next) => {}
+  let resources = {}
+
+  beforeEach(async () => {
+    resources = {
+      rateLimiter: { middleware },
+      batchRateLimiter: { middleware },
+      logger: console
+    }
+  })
+
   it('should initialize', done => {
-    const app = Application(config)
+    const app = Application(config, resources)
     init(app, error => {
       if (error) {
         done(error)

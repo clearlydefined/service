@@ -3,34 +3,46 @@
 // SPDX-License-Identifier: MIT
 
 const config = require('./config')
-const app = require('../app')(config)
+const loggerFactory = require('../providers/logging/logger')
+const { createApiLimiter, createBatchApiLimiter } = require('../lib/rateLimit')
+const createApp = require('../app')
 const debug = require('debug')('service:server')
 const http = require('http')
 const init = require('express-init')
 
-/**
- * Get port from environment and store in Express.
- */
-const port = normalizePort(process.env.PORT || '4000')
-app.set('port', port)
+connect(config).then(resources => {
+  const app = createApp(config, resources)
 
-/**
- * Create HTTP server.
- */
-const server = http.createServer(app)
+  /**
+   * Get port from environment and store in Express.
+   */
+  const port = normalizePort(process.env.PORT || '4000')
+  app.set('port', port)
 
-/**
- * Initialize the apps (if they have async init functions) and start listening
- */
-init(app, error => {
-  if (error) {
-    console.log('Error initializing the Express app: ' + error)
-    throw new Error(error)
-  }
-  server.listen(port)
-  server.on('error', onError)
-  server.on('listening', onListening)
-  console.log(`Service listening on port: ${port}`)
+  /**
+   * Create HTTP server.
+   */
+  const server = http.createServer(app)
+
+  /**
+   * Initialize the apps (if they have async init functions) and start listening
+   */
+  init(app, error => {
+    if (error) {
+      console.log('Error initializing the Express app: ' + error)
+      throw new Error(error)
+    }
+    server.listen(port)
+    server.on('error', onError)
+    server.on('listening', () => onListening(server))
+    console.log(`Service listening on port: ${port}`)
+  })
+
+  /**
+   * Handles graceful shutdown
+   */
+  process.on('SIGINT', () => onShutdown(server, resources))
+  process.on('SIGTERM', () => onShutdown(server, resources))
 })
 
 /**
@@ -69,8 +81,48 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-function onListening() {
+function onListening(server) {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
   debug('Listening on ' + bind)
+}
+
+/**
+ *
+ * Handles gradelful shutdown
+ *
+ * @param server  - The server instance to be shut down.
+ * @param {Object} resources - The resources to be cleaned up during shutdown.
+ */
+const onShutdown = (server, { rateLimiter, batchRateLimiter, logger }) => {
+  logger.info('Shutdown started')
+  server.close(() => {
+    logger.info('Server closed')
+    Promise.allSettled([rateLimiter.done(), batchRateLimiter.done()]).then(results => {
+      const errorResults = results.filter(result => result.status === 'rejected')
+      if (errorResults.length === 0) {
+        logger.info('Shutdown complete')
+        process.exit(0)
+      }
+      errorResults.forEach(errorResult => logger.error(errorResult.reason))
+      process.exit(1)
+    })
+  })
+}
+
+/**
+ * Connect to the required services and return the resources
+ *
+ * @param {Object} config - The configuration object
+ * @returns {Promise<Object>} - The resources object
+ */
+async function connect(config) {
+  const logger = loggerFactory(config.logging.logger())
+  const rateLimiter = createApiLimiter(config, logger)
+  const batchRateLimiter = createBatchApiLimiter(config, logger)
+  await Promise.all([rateLimiter.initialize(), batchRateLimiter.initialize()]).catch(error => {
+    logger.error('Error initializing rate limiters', error)
+    process.exit(1)
+  })
+  return { rateLimiter, batchRateLimiter, logger }
 }
