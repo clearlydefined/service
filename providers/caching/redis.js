@@ -1,8 +1,7 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const redis = require('redis')
-const util = require('util')
+const { createClient } = require('redis')
 const pako = require('pako')
 
 const objectPrefix = '*!~%'
@@ -10,20 +9,19 @@ const objectPrefix = '*!~%'
 class RedisCache {
   constructor(options) {
     this.options = options
+    this.logger = options.logger
   }
 
-  initialize() {
-    this.redis = redis.createClient(6380, this.options.service, {
-      auth_pass: this.options.apiKey,
-      tls: { servername: this.options.service }
-    })
-    this._redisGet = util.promisify(this.redis.get).bind(this.redis)
-    this._redisSet = util.promisify(this.redis.set).bind(this.redis)
-    this._redisDel = util.promisify(this.redis.del).bind(this.redis)
+  async initialize() {
+    this._client = await RedisCache.initializeClient(this.options, this.logger)
+  }
+
+  async done() {
+    return this._client?.disconnect()
   }
 
   async get(item) {
-    const cacheItem = await this._redisGet(item)
+    const cacheItem = await this._client.get(item)
     if (!cacheItem) return null
     const result = pako.inflate(cacheItem, { to: 'string' })
     if (!result.startsWith(objectPrefix)) return result
@@ -37,13 +35,36 @@ class RedisCache {
   async set(item, value, ttlSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
     const data = pako.deflate(value, { to: 'string' })
-    if (ttlSeconds) await this._redisSet(item, data, 'EX', ttlSeconds)
-    else await this._redisSet(item, data)
+    if (ttlSeconds) await this._client.set(item, data, { EX: ttlSeconds })
+    else await this._client.set(item, data)
   }
 
   async delete(item) {
-    await this._redisDel(item)
+    await this._client.del(item)
+  }
+
+  static buildRedisClient({ apiKey, service }) {
+    return createClient({
+      username: 'default',
+      password: apiKey,
+      socket: {
+        host: service,
+        port: 6380,
+        tls: true
+      },
+      pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
+    })
+  }
+
+  static async initializeClient(options, logger) {
+    const client = this.buildRedisClient(options)
+    client.on('error', error => {
+      logger.error(`Redis client error: ${error}`)
+    })
+    await client.connect().then(() => logger.info('Done connecting to redis: %s', options.service))
+    return client
   }
 }
 
 module.exports = options => new RedisCache(options)
+module.exports.RedisCache = RedisCache

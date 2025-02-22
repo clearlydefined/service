@@ -39,61 +39,31 @@ describe('Rate Limiter', () => {
     })
   })
 
-  describe.skip('Redis Based Tests', () => {
+  describe.skip('Redis Based Rate Limiter Integration Tests', () => {
     const apiKey = process.env['CACHING_REDIS_API_KEY']
     const service = process.env['CACHING_REDIS_SERVICE']
     const redis = { apiKey, service }
 
-    describe('Redis Client Test', () => {
-      let redisClient
+    let client, rateLimiter
 
-      beforeEach(async () => {
-        redisClient = RedisBackedRateLimiter.buildRedisClient(redis)
-        await redisClient.connect()
-      })
-
-      afterEach(async () => {
-        await redisClient.disconnect()
-      })
-
-      it('should be empty initially', async () => {
-        const value = await redisClient.get('foo')
-        assert.ok(value === null)
-      })
-
-      it('sets, gets and removes a value', async () => {
-        await redisClient.set('foo', 'bar')
-        let value = await redisClient.get('foo')
-        assert.ok(value === 'bar')
-        //clear the value
-        await redisClient.del('foo')
-        value = await redisClient.get('foo')
-        assert.ok(value === null)
-      })
+    beforeEach(async () => {
+      rateLimiter = new RedisBackedRateLimiter({ limit, redis, logger })
+      const app = await buildApp(rateLimiter)
+      client = supertest(app)
     })
 
-    describe('Redis Based Rate Limiter Tests', () => {
-      let client, rateLimiter
+    afterEach(async () => {
+      await rateLimiter.done()
+      await new Promise(resolve => setTimeout(resolve, limit.windowMs))
+    })
 
-      beforeEach(async () => {
-        rateLimiter = new RedisBackedRateLimiter({ limit, redis, logger })
-        const app = await buildApp(rateLimiter)
-        client = supertest(app)
-      })
+    it('allows requests under the limit', async () => {
+      await client.get('/').expect(200).expect('Hello World!').expect('RateLimit-Limit', '1')
+    })
 
-      afterEach(async () => {
-        await rateLimiter.done()
-        await new Promise(resolve => setTimeout(resolve, limit.windowMs))
-      })
-
-      it('allows requests under the limit', async () => {
-        await client.get('/').expect(200).expect('Hello World!').expect('RateLimit-Limit', '1')
-      })
-
-      it('blocks requests over the limit', async () => {
-        const counter = await tryBeyondLimit(limit.max, client)
-        assert.ok(counter === limit.max, `Counter is ${counter}`)
-      })
+    it('blocks requests over the limit', async () => {
+      const counter = await tryBeyondLimit(limit.max, client)
+      assert.ok(counter === limit.max, `Counter is ${counter}`)
     })
   })
 
