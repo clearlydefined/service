@@ -32,7 +32,10 @@ describe('Rate Limiter', () => {
     })
 
     it('allows requests under the limit', async () => {
-      await client.get('/').expect(200).expect('Hello World!')
+      await client
+        .get('/')
+        .expect(200)
+        .expect('Hello World!')
         .expect('RateLimit-Limit', '1')
         .expect('RateLimit-Remaining', '0')
     })
@@ -40,6 +43,35 @@ describe('Rate Limiter', () => {
     it('blocks requests over the limit', async () => {
       const counter = await tryBeyondLimit(limit.max, client)
       assert.strictEqual(counter, limit.max, `Counter is ${counter}`)
+    })
+
+    it('builds rate limit options', () => {
+      const options = RateLimiter.buildOptions(limit)
+      assert.deepStrictEqual(options, {
+        standardHeaders: true,
+        legacyHeaders: false,
+        limit: 1,
+        windowMs: 1000
+      })
+    })
+
+    it('builds rate limit options with store', async () => {
+      const store = {}
+      const options = RateLimiter.buildOptions(limit, store)
+      assert.deepStrictEqual(options, {
+        standardHeaders: true,
+        legacyHeaders: false,
+        limit: 1,
+        windowMs: 1000,
+        store: {}
+      })
+    })
+
+    it('builds rate limit options when max === 0', async () => {
+      const options = RateLimiter.buildOptions({ windowSeconds: 1, max: 0 })
+      assert.equal(options.standardHeaders, true)
+      assert.equal(options.legacyHeaders, false)
+      assert.equal(options.skip(), true)
     })
   })
 
@@ -93,7 +125,10 @@ describe('Rate Limiter', () => {
       })
 
       it('allows requests under the limit', async () => {
-        await client.get('/').expect(200).expect('Hello World!')
+        await client
+          .get('/')
+          .expect(200)
+          .expect('Hello World!')
           .expect('RateLimit-Limit', '1')
           .expect('RateLimit-Remaining', '0')
       })
