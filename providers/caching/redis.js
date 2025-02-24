@@ -44,14 +44,14 @@ class RedisCache {
     await this._client.del(item)
   }
 
-  static buildRedisClient({ apiKey, service }) {
+  static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
     return createClient({
       username: 'default',
       password: apiKey,
       socket: {
         host: service,
-        port: 6380,
-        tls: true
+        port,
+        tls
       },
       pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
     })

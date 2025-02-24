@@ -12,6 +12,7 @@ const supertest = require('supertest')
 const express = require('express')
 const sandbox = require('sinon').createSandbox()
 const { RedisCache } = require('../../providers/caching/redis')
+const { GenericContainer } = require('testcontainers')
 
 const logger = {
   info: () => {},
@@ -76,9 +77,19 @@ describe('Rate Limiter', () => {
   })
 
   describe('Redis Based Rate Limiter', () => {
-    const apiKey = process.env['CACHING_REDIS_API_KEY']
-    const service = process.env['CACHING_REDIS_SERVICE']
-    const redis = { apiKey, service }
+    let client, rateLimiter
+    let container, redis
+
+    before(async () => {
+      container = await new GenericContainer('redis').withExposedPorts(6379).start()
+      const service = container.getHost()
+      const port = container.getMappedPort(6379)
+      redis = { service, port, tls: false }
+    })
+
+    after(async () => {
+      await container.stop()
+    })
 
     describe('Handling errors', () => {
       let rateLimiter
@@ -111,16 +122,17 @@ describe('Rate Limiter', () => {
     })
 
     describe('Rate Limit Integration Tests', () => {
-      let client, rateLimiter
-
-      beforeEach(async () => {
+      before(async () => {
         rateLimiter = new RedisBasedRateLimiter({ limit, redis, logger })
         const app = await buildApp(rateLimiter)
         client = supertest(app)
       })
 
-      afterEach(async () => {
+      after(async () => {
         await rateLimiter.done()
+      })
+
+      afterEach(async () => {
         await new Promise(resolve => setTimeout(resolve, limit.windowMs))
       })
 

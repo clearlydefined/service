@@ -6,6 +6,7 @@ const sandbox = sinon.createSandbox()
 const assert = require('assert')
 const redisCache = require('../../../providers/caching/redis')
 const { RedisCache } = require('../../../providers/caching/redis')
+const { GenericContainer } = require('testcontainers')
 
 const logger = {
   info: () => {},
@@ -80,16 +81,25 @@ describe('Redis Cache', () => {
   })
 
   describe('Integration Test', () => {
-    const apiKey = process.env['CACHING_REDIS_API_KEY']
-    const service = process.env['CACHING_REDIS_SERVICE']
+    let container, service, port
+
+    before(async () => {
+      container = await new GenericContainer('redis').withExposedPorts(6379).start()
+      service = container.getHost()
+      port = container.getMappedPort(6379)
+    })
+
+    after(async () => {
+      await container.stop()
+    })
 
     describe('Redis Client Test', () => {
       let client
-      beforeEach(async () => {
-        client = await RedisCache.initializeClient({ apiKey, service }, logger)
+      before(async () => {
+        client = await RedisCache.initializeClient({ service, port, tls: false }, logger)
       })
 
-      afterEach(async () => {
+      after(async () => {
         await client.quit()
       })
 
@@ -116,7 +126,7 @@ describe('Redis Cache', () => {
         value = await client.get('tee')
         assert.ok(value === 'value')
 
-        await new Promise(resolve => setTimeout(resolve, 1200))
+        await new Promise(resolve => setTimeout(resolve, 1010))
         value = await client.get('tee')
         assert.ok(value === null)
       }).timeout(3000)
@@ -124,12 +134,12 @@ describe('Redis Cache', () => {
 
     describe('Redis Cache Test', () => {
       let cache
-      beforeEach(async () => {
-        cache = redisCache({ apiKey, service, logger })
+      before(async () => {
+        cache = redisCache({ service, port, tls: false, logger })
         await cache.initialize()
       })
 
-      afterEach(async () => {
+      after(async () => {
         await cache.done()
       })
 
@@ -156,7 +166,7 @@ describe('Redis Cache', () => {
         value = await cache.get('wee')
         assert.ok(value === 'value')
 
-        await new Promise(resolve => setTimeout(resolve, 1200))
+        await new Promise(resolve => setTimeout(resolve, 1010))
         value = await cache.get('wee')
         assert.ok(value === null)
       }).timeout(3000)
