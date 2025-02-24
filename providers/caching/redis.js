@@ -17,7 +17,7 @@ class RedisCache {
   }
 
   async done() {
-    return this._client?.disconnect()
+    return this._client?.quit()
   }
 
   async get(item) {
@@ -28,6 +28,7 @@ class RedisCache {
     try {
       return JSON.parse(result.substring(4))
     } catch (error) {
+      this.logger.error('Error parsing cached item: %s', error)
       return null
     }
   }
@@ -58,11 +59,17 @@ class RedisCache {
 
   static async initializeClient(options, logger) {
     const client = this.buildRedisClient(options)
-    client.on('error', error => {
-      logger.error(`Redis client error: ${error}`)
-    })
-    await client.connect().then(() => logger.info('Done connecting to redis: %s', options.service))
-    return client
+    try {
+      await client.connect()
+      logger.info('Done connecting to redis: %s', options.service)
+      client.on('error', error => {
+        logger.error(`Redis client error: ${error}`)
+      })
+      return client
+    } catch (error) {
+      logger.error('Error connecting to redis: %s', error)
+      throw error
+    }
   }
 }
 

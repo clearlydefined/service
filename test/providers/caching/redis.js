@@ -16,16 +16,20 @@ const logger = {
 describe('Redis Cache', () => {
   describe('get a tool result', () => {
     const store = {}
+    let mockClient
     beforeEach(function () {
-      sandbox.stub(RedisCache, 'initializeClient').resolves({
+      mockClient = {
         get: async key => Promise.resolve(store[key]),
         set: async (key, value) => {
           store[key] = value
         },
         del: async key => {
           store[key] = null
-        }
-      })
+        },
+        connect: async () => Promise.resolve(mockClient),
+        on: () => {}
+      }
+      sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
     })
 
     afterEach(function () {
@@ -63,6 +67,16 @@ describe('Redis Cache', () => {
       const result = await cache.get('foo')
       assert.ok(result === null)
     })
+
+    it('throws error if redis connection fails', async () => {
+      mockClient.connect = () => Promise.reject(new Error('Connection failed'))
+      const cache = redisCache({ logger })
+      try {
+        await cache.initialize()
+      } catch (error) {
+        assert.equal(error.message, 'Connection failed')
+      }
+    })
   })
 
   describe('Integration Test', () => {
@@ -76,7 +90,7 @@ describe('Redis Cache', () => {
       })
 
       afterEach(async () => {
-        await client.disconnect()
+        await client.quit()
       })
 
       it('retrieves empty initially', async () => {
@@ -119,7 +133,7 @@ describe('Redis Cache', () => {
         await cache.done()
       })
 
-      it('should be empty initially', async () => {
+      it('retrieves empty initially', async () => {
         const value = await cache.get('boo')
         assert.ok(value === null)
       })
