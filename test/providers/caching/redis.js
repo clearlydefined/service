@@ -66,7 +66,7 @@ describe('Redis Cache', () => {
       await cache.set('foo', 'bar')
       await cache.delete('foo')
       const result = await cache.get('foo')
-      assert.ok(result === null)
+      assert.strictEqual(result, null)
     })
 
     it('throws error if redis connection fails', async () => {
@@ -75,18 +75,19 @@ describe('Redis Cache', () => {
       try {
         await cache.initialize()
       } catch (error) {
-        assert.equal(error.message, 'Connection failed')
+        assert.strictEqual(error.message, 'Connection failed')
       }
     })
   })
 
   describe('Integration Test', () => {
-    let container, service, port
+    let container, redisConfig
 
     before(async () => {
       container = await new GenericContainer('redis').withExposedPorts(6379).start()
-      service = container.getHost()
-      port = container.getMappedPort(6379)
+      const service = container.getHost()
+      const port = container.getMappedPort(6379)
+      redisConfig = { service, port, tls: false }
     })
 
     after(async () => {
@@ -96,7 +97,7 @@ describe('Redis Cache', () => {
     describe('Redis Client Test', () => {
       let client
       before(async () => {
-        client = await RedisCache.initializeClient({ service, port, tls: false }, logger)
+        client = await RedisCache.initializeClient(redisConfig, logger)
       })
 
       after(async () => {
@@ -105,37 +106,37 @@ describe('Redis Cache', () => {
 
       it('retrieves empty initially', async () => {
         const value = await client.get('boo')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
       })
 
       it('sets, gets and removes a value', async () => {
         await client.set('foo', 'bar')
         let value = await client.get('foo')
-        assert.ok(value === 'bar')
+        assert.strictEqual(value, 'bar')
         //clear the value
         await client.del('foo')
         value = await client.get('foo')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
       })
 
       it('sets value and exipres', async () => {
         let value = await client.get('tee')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
 
         await client.set('tee', 'value', { EX: 1 })
         value = await client.get('tee')
-        assert.ok(value === 'value')
+        assert.strictEqual(value, 'value')
 
         await new Promise(resolve => setTimeout(resolve, 1010))
         value = await client.get('tee')
-        assert.ok(value === null)
-      }).timeout(3000)
+        assert.strictEqual(value, null)
+      }).timeout(2000)
     })
 
     describe('Redis Cache Test', () => {
       let cache
       before(async () => {
-        cache = redisCache({ service, port, tls: false, logger })
+        cache = redisCache({ ...redisConfig, logger })
         await cache.initialize()
       })
 
@@ -145,31 +146,31 @@ describe('Redis Cache', () => {
 
       it('retrieves empty initially', async () => {
         const value = await cache.get('boo')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
       })
 
       it('sets, gets and removes a value', async () => {
         await cache.set('foo', 'bar')
         let value = await cache.get('foo')
-        assert.ok(value === 'bar')
+        assert.strictEqual(value, 'bar')
         //clear the value
         await cache.delete('foo')
         value = await cache.get('foo')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
       })
 
       it('sets value and exipres', async () => {
         let value = await cache.get('wee')
-        assert.ok(value === null)
+        assert.strictEqual(value, null)
 
         await cache.set('wee', 'value', 1)
         value = await cache.get('wee')
-        assert.ok(value === 'value')
+        assert.strictEqual(value, 'value')
 
         await new Promise(resolve => setTimeout(resolve, 1010))
         value = await cache.get('wee')
-        assert.ok(value === null)
-      }).timeout(3000)
+        assert.strictEqual(value, null)
+      }).timeout(2000)
     })
   })
 })

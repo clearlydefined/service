@@ -48,11 +48,7 @@ class RedisCache {
     return createClient({
       username: 'default',
       password: apiKey,
-      socket: {
-        host: service,
-        port,
-        tls
-      },
+      socket: { host: service, port, tls },
       pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
     })
   }

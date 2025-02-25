@@ -77,7 +77,6 @@ describe('Rate Limiter', () => {
   })
 
   describe('Redis Based Rate Limiter', () => {
-    let client, rateLimiter
     let container, redis
 
     before(async () => {
@@ -104,7 +103,7 @@ describe('Rate Limiter', () => {
           rateLimiter = new RedisBasedRateLimiter({ limit, logger })
           await rateLimiter.initialize()
         } catch (error) {
-          assert.ok(error.message === 'Redis configuration is missing')
+          assert.strictEqual(error.message, 'Redis configuration is missing')
         }
       })
 
@@ -122,6 +121,7 @@ describe('Rate Limiter', () => {
     })
 
     describe('Rate Limit Integration Tests', () => {
+      let client, rateLimiter
       before(async () => {
         rateLimiter = new RedisBasedRateLimiter({ limit, redis, logger })
         const app = await buildApp(rateLimiter)
