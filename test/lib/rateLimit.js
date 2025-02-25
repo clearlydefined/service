@@ -10,7 +10,7 @@ const {
 } = require('../../lib/rateLimit.js')
 const supertest = require('supertest')
 const express = require('express')
-const sandbox = require('sinon').createSandbox()
+const sinon = require('sinon')
 const { RedisCache } = require('../../providers/caching/redis')
 const { GenericContainer } = require('testcontainers')
 
@@ -95,7 +95,7 @@ describe('Rate Limiter', () => {
 
       afterEach(async () => {
         await rateLimiter.done()
-        sandbox.restore()
+        sinon.restore()
       })
 
       it('throws error if redis configuration is missing', async () => {
@@ -108,7 +108,7 @@ describe('Rate Limiter', () => {
       })
 
       it('throws error if connecting to redis fails', async () => {
-        sandbox.stub(RedisCache, 'buildRedisClient').returns({
+        sinon.stub(RedisCache, 'buildRedisClient').returns({
           connect: () => Promise.reject(new Error('Connection failed'))
         })
         try {
