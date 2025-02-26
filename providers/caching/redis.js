@@ -3,13 +3,14 @@
 
 const { createClient } = require('redis')
 const pako = require('pako')
+const logger = require('../logging/logger')
 
 const objectPrefix = '*!~%'
 
 class RedisCache {
   constructor(options) {
     this.options = options
-    this.logger = options.logger
+    this.logger = options.logger || logger()
   }
 
   async initialize() {
