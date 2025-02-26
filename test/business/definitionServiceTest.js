@@ -349,9 +349,9 @@ describe('Integration test', () => {
     let logger, upgradeHandler
     beforeEach(() => {
       logger = {
-        debug: (format, ...args) => console.debug(util.format(format, ...args)),
-        error: (format, ...args) => console.error(util.format(format, ...args)),
-        info: (format, ...args) => console.info(util.format(format, ...args))
+        debug: () => {},
+        error: () => {},
+        info: () => {}
       }
     })
 
