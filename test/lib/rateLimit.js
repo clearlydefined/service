@@ -234,9 +234,7 @@ async function tryBeyondLimit(max, client) {
   let counter = 0
   while (counter < max + 10) {
     const response = await client.get('/')
-    if (!response.ok) {
-      break
-    }
+    if (!response.ok) break
     counter++
   }
   return counter
