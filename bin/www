@@ -4,7 +4,6 @@
 
 const config = require('./config')
 const loggerFactory = require('../providers/logging/logger')
-const { createApiLimiter, createBatchApiLimiter } = require('../lib/rateLimit')
 const createApp = require('../app')
 const debug = require('debug')('service:server')
 const http = require('http')
@@ -94,11 +93,11 @@ function onListening(server) {
  * @param server  - The server instance to be shut down.
  * @param {Object} resources - The resources to be cleaned up during shutdown.
  */
-const onShutdown = (server, { rateLimiter, batchRateLimiter, logger }) => {
+const onShutdown = (server, { cachingService, logger }) => {
   logger.info('Shutdown started')
   server.close(() => {
     logger.info('Server closed')
-    Promise.allSettled([rateLimiter.done(), batchRateLimiter.done()]).then(results => {
+    Promise.allSettled([cachingService.done()]).then(results => {
       const errorResults = results.filter(result => result.status === 'rejected')
       if (errorResults.length === 0) {
         logger.info('Shutdown complete')
@@ -118,11 +117,10 @@ const onShutdown = (server, { rateLimiter, batchRateLimiter, logger }) => {
  */
 async function connect(config) {
   const logger = loggerFactory(config.logging.logger())
-  const rateLimiter = createApiLimiter(config, logger)
-  const batchRateLimiter = createBatchApiLimiter(config, logger)
-  await Promise.all([rateLimiter.initialize(), batchRateLimiter.initialize()]).catch(error => {
-    logger.error('Error initializing rate limiters', error)
+  const cachingService = config.caching.service()
+  await Promise.all([cachingService.initialize()]).catch(error => {
+    logger.error('Error connecting to cachingService', error)
     process.exit(1)
   })
-  return { rateLimiter, batchRateLimiter, logger }
+  return { cachingService, logger }
 }

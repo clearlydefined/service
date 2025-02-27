@@ -13,9 +13,11 @@ const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const routesVersioning = require('express-routes-versioning')()
+const { createApiLimiter, createBatchApiLimiter } = require('./lib/rateLimit')
+
 const v1 = '1.0.0'
 
-function createApp(config, { logger, rateLimiter, batchRateLimiter }) {
+function createApp(config, { logger, cachingService }) {
   const initializers = []
 
   process.on('unhandledRejection', exception => logger.error('unhandledRejection', exception))
@@ -42,9 +44,6 @@ function createApp(config, { logger, rateLimiter, batchRateLimiter }) {
 
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
-
-  const cachingService = config.caching.service()
-  initializers.push(async () => cachingService.initialize())
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 
@@ -128,7 +127,7 @@ function createApp(config, { logger, rateLimiter, batchRateLimiter }) {
 
   app.set('trust-proxy', true)
 
-  app.use(rateLimiter.middleware)
+  app.use(createApiLimiter(config, cachingService).middleware)
 
   // Use a (potentially lower) different API limit
   // for batch API request
@@ -136,7 +135,7 @@ function createApp(config, { logger, rateLimiter, batchRateLimiter }) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = batchRateLimiter.middleware
+  const batchApiLimiter = createBatchApiLimiter(config, cachingService).middleware
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
   app.post('/notices', batchApiLimiter)

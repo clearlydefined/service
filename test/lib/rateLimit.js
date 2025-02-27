@@ -23,11 +23,11 @@ const logger = {
 const limit = { windowMs: 1000, max: 1 }
 
 describe('Rate Limiter', () => {
-  describe('Rate Limiter Tests', () => {
-    let client, rateLimiter
+  describe('Rate Limit Integration Tests', () => {
+    let client
 
     beforeEach(async () => {
-      rateLimiter = new RateLimiter({ limit, logger })
+      const rateLimiter = new RateLimiter({ limit, logger })
       const app = await buildApp(rateLimiter)
       client = supertest(app)
     })
@@ -45,7 +45,9 @@ describe('Rate Limiter', () => {
       const counter = await tryBeyondLimit(limit.max, client)
       assert.strictEqual(counter, limit.max, `Counter is ${counter}`)
     })
+  })
 
+  describe('Build Limit Options', () => {
     it('builds rate limit options', () => {
       const options = RateLimiter.buildOptions(limit)
       assert.deepStrictEqual(options, {
@@ -77,59 +79,33 @@ describe('Rate Limiter', () => {
   })
 
   describe('Redis Based Rate Limiter', () => {
-    let container, redis
-
-    before(async () => {
-      container = await new GenericContainer('redis').withExposedPorts(6379).start()
-      const service = container.getHost()
-      const port = container.getMappedPort(6379)
-      redis = { service, port, tls: false }
-    })
-
-    after(async () => {
-      await container.stop()
-    })
-
-    describe('Handling errors', () => {
-      let rateLimiter
-
-      afterEach(async () => {
-        await rateLimiter.done()
-        sinon.restore()
-      })
-
-      it('throws error if redis configuration is missing', async () => {
-        try {
-          rateLimiter = new RedisBasedRateLimiter({ limit, logger })
-          await rateLimiter.initialize()
-        } catch (error) {
-          assert.strictEqual(error.message, 'Redis configuration is missing')
-        }
-      })
-
-      it('throws error if connecting to redis fails', async () => {
-        sinon.stub(RedisCache, 'buildRedisClient').returns({
-          connect: () => Promise.reject(new Error('Connection failed'))
-        })
-        try {
-          rateLimiter = new RedisBasedRateLimiter({ limit, redis, logger })
-          await rateLimiter.initialize()
-        } catch (error) {
-          assert.equal(error.message, 'Connection failed')
-        }
-      })
+    it('throws error if redis client is missing', async () => {
+      try {
+        //eslint-disable-next-line no-unused-vars
+        const middleware = new RedisBasedRateLimiter({ limit, logger }).middleware
+        assert.fail('Should have thrown error')
+      } catch (error) {
+        assert.strictEqual(error.message, 'Redis client is missing')
+      }
     })
 
     describe('Rate Limit Integration Tests', () => {
-      let client, rateLimiter
+      let container, redisClient, client
+
       before(async () => {
-        rateLimiter = new RedisBasedRateLimiter({ limit, redis, logger })
+        container = await new GenericContainer('redis').withExposedPorts(6379).start()
+        const service = container.getHost()
+        const port = container.getMappedPort(6379)
+        const redisOpts = { service, port, tls: false }
+        redisClient = await RedisCache.initializeClient(redisOpts, logger)
+        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
         const app = await buildApp(rateLimiter)
         client = supertest(app)
       })
 
       after(async () => {
-        await rateLimiter.done()
+        await redisClient.quit()
+        await container.stop()
       })
 
       afterEach(async () => {
@@ -159,73 +135,81 @@ describe('Rate Limiter', () => {
       batchWindowSeconds: 10,
       batchMax: 10
     }
-    const caching = {
-      caching_redis_service: 'host',
-      caching_redis_api_key: 'key'
-    }
 
-    it('builds a rate limiter', () => {
-      const rateLimiter = createApiLimiter({ limits })
-      assert.ok(rateLimiter instanceof RateLimiter)
-      const expected = {
-        limit: {
-          windowMs: 1000,
-          max: 0
-        },
-        redis: undefined,
-        logger: undefined
-      }
-      assert.deepStrictEqual(rateLimiter.options, expected)
+    describe('Create Rate Limiter without Caching', () => {
+      it('builds a rate limiter', () => {
+        const rateLimiter = createApiLimiter({ limits }, undefined, logger)
+        assert.ok(rateLimiter instanceof RateLimiter)
+        const expected = {
+          limit: {
+            windowMs: 1000,
+            max: 0
+          },
+          redis: undefined,
+          logger
+        }
+        assert.deepStrictEqual(rateLimiter.options, expected)
+      })
+
+      it('builds a batch rate limiter', () => {
+        const batchRateLimiter = createBatchApiLimiter({ limits }, undefined, logger)
+        assert.ok(batchRateLimiter instanceof RateLimiter)
+        const expected = {
+          limit: {
+            windowMs: 10000,
+            max: 10
+          },
+          redis: undefined,
+          logger
+        }
+        assert.deepStrictEqual(batchRateLimiter.options, expected)
+      })
     })
 
-    it('builds a batch rate limiter', () => {
-      const batchRateLimiter = createBatchApiLimiter({ limits })
-      assert.ok(batchRateLimiter instanceof RateLimiter)
-      const expected = {
-        limit: {
-          windowMs: 10000,
-          max: 10
-        },
-        redis: undefined,
-        logger: undefined
-      }
-      assert.deepStrictEqual(batchRateLimiter.options, expected)
-    })
+    describe('Create Rate Limiter with Caching', () => {
+      let caching
+      beforeEach(() => {
+        caching = new RedisCache({ logger })
+        sinon.stub(caching, 'client').value({})
+      })
 
-    it('builds a redis based rate limiter', () => {
-      const rateLimiter = createApiLimiter({ limits, caching })
-      assert.ok(rateLimiter instanceof RedisBasedRateLimiter)
-      const expected = {
-        limit: {
-          windowMs: 1000,
-          max: 0
-        },
-        redis: {
-          service: 'host',
-          apiKey: 'key',
-          prefix: 'api'
-        },
-        logger: undefined
-      }
-      assert.deepStrictEqual(rateLimiter.options, expected)
-    })
+      afterEach(() => {
+        sinon.restore()
+      })
 
-    it('builds a redis based batch rate limiter', () => {
-      const batchRateLimiter = createBatchApiLimiter({ limits, caching })
-      assert.ok(batchRateLimiter instanceof RedisBasedRateLimiter)
-      const expected = {
-        limit: {
-          windowMs: 10000,
-          max: 10
-        },
-        redis: {
-          service: 'host',
-          apiKey: 'key',
-          prefix: 'batch-api'
-        },
-        logger: undefined
-      }
-      assert.deepStrictEqual(batchRateLimiter.options, expected)
+      it('builds a redis based rate limiter', () => {
+        const rateLimiter = createApiLimiter({ limits }, caching, logger)
+        assert.ok(rateLimiter instanceof RedisBasedRateLimiter)
+        const expected = {
+          limit: {
+            windowMs: 1000,
+            max: 0
+          },
+          redis: {
+            client: {},
+            prefix: 'api'
+          },
+          logger
+        }
+        assert.deepStrictEqual(rateLimiter.options, expected)
+      })
+
+      it('builds a redis based batch rate limiter', () => {
+        const batchRateLimiter = createBatchApiLimiter({ limits }, caching, logger)
+        assert.ok(batchRateLimiter instanceof RedisBasedRateLimiter)
+        const expected = {
+          limit: {
+            windowMs: 10000,
+            max: 10
+          },
+          redis: {
+            client: {},
+            prefix: 'batch-api'
+          },
+          logger
+        }
+        assert.deepStrictEqual(batchRateLimiter.options, expected)
+      })
     })
   })
 })
@@ -242,7 +226,6 @@ async function tryBeyondLimit(max, client) {
 
 async function buildApp(rateLimiter) {
   const app = express()
-  await rateLimiter.initialize()
   app.use(rateLimiter.middleware)
   app.get('/', (req, res) => res.send('Hello World!'))
   return app

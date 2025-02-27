@@ -6,6 +6,7 @@ process.env['CURATION_GITHUB_TOKEN'] = '123'
 process.env['GITLAB_TOKEN'] = 'abc'
 const init = require('express-init')
 const Application = require('../app')
+const logger = require('../providers/logging/logger')
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
     get: name => {
@@ -19,15 +20,23 @@ const config = proxyquire('../bin/config', {
   }
 })
 
+const mockLogger = {
+  info: () => {},
+  error: () => {},
+  debug: () => {}
+}
+
 describe('Application', () => {
-  const middleware = async (req, res, next) => {}
   let resources = {}
 
   beforeEach(async () => {
+    logger(mockLogger)
+
     resources = {
-      rateLimiter: { middleware },
-      batchRateLimiter: { middleware },
-      logger: console
+      logger: mockLogger,
+      cachingService: {
+        initialize: async () => {}
+      }
     }
   })
 
