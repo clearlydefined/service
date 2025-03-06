@@ -18,7 +18,6 @@ const AggregatorService = require('../../business/aggregator')
 const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
 const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
 const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
-const util = require('util')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
