@@ -92,20 +92,29 @@ describe('Rate Limiter', () => {
     describe('Rate Limit Integration Tests', () => {
       let container, redisClient, client
 
-      before(async () => {
-        container = await new GenericContainer('redis').withExposedPorts(6379).start()
-        const service = container.getHost()
-        const port = container.getMappedPort(6379)
-        const redisOpts = { service, port, tls: false }
-        redisClient = await RedisCache.initializeClient(redisOpts, logger)
-        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
-        const app = await buildApp(rateLimiter)
-        client = supertest(app)
+      before(async function () {
+        this.timeout(4000)
+        try {
+          console.info(`Starting redis generic container, timestamp: ${new Date().toISOString()}`)
+          container = await new GenericContainer('redis').withExposedPorts(6379).start()
+          const service = container.getHost()
+          const port = container.getMappedPort(6379)
+          console.info(`Redis running at ${service}:${port}, timestamp: ${new Date().toISOString()}`)
+          const redisOpts = { service, port, tls: false }
+          redisClient = await RedisCache.initializeClient(redisOpts, logger)
+          console.info(`Redis client connected, timestamp: ${new Date().toISOString()}`)
+          const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
+          const app = await buildApp(rateLimiter)
+          console.info(`Test app started, timestamp: ${new Date().toISOString()}`)
+          client = supertest(app)
+        } catch (error) {
+          console.error(error)
+        }
       })
 
       after(async () => {
-        await redisClient.quit()
-        await container.stop()
+        await redisClient?.quit()
+        await container?.stop()
       })
 
       afterEach(async () => {

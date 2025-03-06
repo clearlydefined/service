@@ -83,15 +83,22 @@ describe('Redis Cache', () => {
   describe('Integration Test', () => {
     let container, redisConfig
 
-    before(async () => {
-      container = await new GenericContainer('redis').withExposedPorts(6379).start()
-      const service = container.getHost()
-      const port = container.getMappedPort(6379)
-      redisConfig = { service, port, tls: false }
+    before(async function () {
+      this.timeout(4000)
+      try {
+        console.info(`Starting redis generic container, timestamp: ${new Date().toISOString()}`)
+        container = await new GenericContainer('redis').withExposedPorts(6379).start()
+        const service = container.getHost()
+        const port = container.getMappedPort(6379)
+        console.info(`Redis running at ${service}:${port}, timestamp: ${new Date().toISOString()}`)
+        redisConfig = { service, port, tls: false }
+      } catch (error) {
+        console.error(error)
+      }
     })
 
     after(async () => {
-      await container.stop()
+      await container?.stop()
     })
 
     describe('Redis Client Test', () => {
