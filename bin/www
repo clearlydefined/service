@@ -93,7 +93,7 @@ function onListening(server) {
  * @param server  - The server instance to be shut down.
  * @param {Object} resources - The resources to be cleaned up during shutdown.
  */
-const onShutdown = (server, { cachingService, logger }) => {
+function onShutdown(server, { cachingService, logger }) {
   logger.info('Shutdown started')
   server.close(() => {
     logger.info('Server closed')

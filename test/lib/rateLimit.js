@@ -94,11 +94,7 @@ describe('Rate Limiter', () => {
 
       before(async function () {
         this.timeout(10000)
-        container = await new GenericContainer('redis').withExposedPorts(6379).start()
-        const service = container.getHost()
-        const port = container.getMappedPort(6379)
-        const redisOpts = { service, port, tls: false }
-        redisClient = await RedisCache.initializeClient(redisOpts, logger)
+        ;({ container, redisClient } = await setupRedis())
         const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
         const app = await buildApp(rateLimiter)
         client = supertest(app)
@@ -214,6 +210,15 @@ describe('Rate Limiter', () => {
     })
   })
 })
+
+async function setupRedis() {
+  const container = await new GenericContainer('redis').withExposedPorts(6379).start()
+  const service = container.getHost()
+  const port = container.getMappedPort(6379)
+  const redisOpts = { service, port, tls: false }
+  const redisClient = await RedisCache.initializeClient(redisOpts, logger)
+  return { container, redisClient }
+}
 
 async function tryBeyondLimit(max, client) {
   let counter = 0

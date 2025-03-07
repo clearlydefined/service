@@ -42,7 +42,7 @@ describe('Redis Cache', () => {
       await cache.initialize()
       await cache.set('foo', 'bar')
       const result = await cache.get('foo')
-      assert.equal(result, 'bar')
+      assert.strictEqual(result, 'bar')
     })
 
     it('works well for an object', async () => {
@@ -50,14 +50,14 @@ describe('Redis Cache', () => {
       await cache.initialize()
       await cache.set('foo', { temp: 3 })
       const result = await cache.get('foo')
-      assert.equal(result.temp, 3)
+      assert.strictEqual(result.temp, 3)
     })
 
     it('returns null for missing entry', async () => {
       const cache = redisCache({ logger })
       await cache.initialize()
       const result = await cache.get('bar')
-      assert.equal(result, null)
+      assert.strictEqual(result, null)
     })
 
     it('deletes a key', async () => {
@@ -131,7 +131,7 @@ describe('Redis Cache', () => {
         await new Promise(resolve => setTimeout(resolve, 1010))
         value = await client.get('tee')
         assert.strictEqual(value, null)
-      }).timeout(2000)
+      })
     })
 
     describe('Redis Cache Test', () => {
@@ -150,10 +150,21 @@ describe('Redis Cache', () => {
         assert.strictEqual(value, null)
       })
 
-      it('sets, gets and removes a value', async () => {
+      it('sets, gets and removes a string', async () => {
         await cache.set('foo', 'bar')
         let value = await cache.get('foo')
         assert.strictEqual(value, 'bar')
+        //clear the value
+        await cache.delete('foo')
+        value = await cache.get('foo')
+        assert.strictEqual(value, null)
+      })
+
+      it('sets, gets and removes a object', async () => {
+        const obj = { foo: 'bar' }
+        await cache.set('foo', obj)
+        let value = await cache.get('foo')
+        assert.deepStrictEqual(value, obj)
         //clear the value
         await cache.delete('foo')
         value = await cache.get('foo')
@@ -171,7 +182,7 @@ describe('Redis Cache', () => {
         await new Promise(resolve => setTimeout(resolve, 1010))
         value = await cache.get('wee')
         assert.strictEqual(value, null)
-      }).timeout(2000)
+      })
     })
   })
 })
