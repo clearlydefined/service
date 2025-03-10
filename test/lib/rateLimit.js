@@ -93,7 +93,7 @@ describe('Rate Limiter', () => {
       let container, redisClient, client
 
       before(async function () {
-        this.timeout(10000)
+        this.timeout(15000)
         ;({ container, redisClient } = await setupRedis())
         const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
         const app = await buildApp(rateLimiter)
