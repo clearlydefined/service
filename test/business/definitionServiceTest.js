@@ -344,15 +344,13 @@ describe('Integration test', () => {
   describe('Handle schema version upgrade', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
+    const logger = {
+      debug: () => {},
+      error: () => {},
+      info: () => {}
+    }
 
-    let logger, upgradeHandler
-    beforeEach(() => {
-      logger = {
-        debug: () => {},
-        error: () => {},
-        info: () => {}
-      }
-    })
+    let upgradeHandler
 
     const handleVersionedDefinition = function () {
       describe('verify schema version', () => {
