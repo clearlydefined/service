@@ -131,6 +131,7 @@ function createApp(config) {
   app.use(config.auth.service.middleware())
 
   app.set('trust-proxy', true)
+  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
 
   app.use(setupApiRateLimiterAfterCachingInit(config, cachingService))
 
@@ -147,7 +148,6 @@ function createApp(config) {
 
   app.use(require('./middleware/querystring'))
 
-  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
   const repoAccess = require('./lib/condaRepoAccess')()
