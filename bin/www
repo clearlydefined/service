@@ -3,45 +3,34 @@
 // SPDX-License-Identifier: MIT
 
 const config = require('./config')
-const loggerFactory = require('../providers/logging/logger')
-const createApp = require('../app')
+const app = require('../app')(config)
 const debug = require('debug')('service:server')
 const http = require('http')
 const init = require('express-init')
 
-connect(config).then(resources => {
-  const app = createApp(config, resources)
+/**
+ * Get port from environment and store in Express.
+ */
+const port = normalizePort(process.env.PORT || '4000')
+app.set('port', port)
 
-  /**
-   * Get port from environment and store in Express.
-   */
-  const port = normalizePort(process.env.PORT || '4000')
-  app.set('port', port)
+/**
+ * Create HTTP server.
+ */
+const server = http.createServer(app)
 
-  /**
-   * Create HTTP server.
-   */
-  const server = http.createServer(app)
-
-  /**
-   * Initialize the apps (if they have async init functions) and start listening
-   */
-  init(app, error => {
-    if (error) {
-      console.log('Error initializing the Express app: ' + error)
-      throw new Error(error)
-    }
-    server.listen(port)
-    server.on('error', onError)
-    server.on('listening', () => onListening(server))
-    console.log(`Service listening on port: ${port}`)
-  })
-
-  /**
-   * Handles graceful shutdown
-   */
-  process.on('SIGINT', () => onShutdown(server, resources))
-  process.on('SIGTERM', () => onShutdown(server, resources))
+/**
+ * Initialize the apps (if they have async init functions) and start listening
+ */
+init(app, error => {
+  if (error) {
+    console.log('Error initializing the Express app: ' + error)
+    throw new Error(error)
+  }
+  server.listen(port)
+  server.on('error', onError)
+  server.on('listening', onListening)
+  console.log(`Service listening on port: ${port}`)
 })
 
 /**
@@ -80,47 +69,8 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-function onListening(server) {
+function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
   debug('Listening on ' + bind)
-}
-
-/**
- *
- * Handles gradelful shutdown
- *
- * @param server  - The server instance to be shut down.
- * @param {Object} resources - The resources to be cleaned up during shutdown.
- */
-function onShutdown(server, { cachingService, logger }) {
-  logger.info('Shutdown started')
-  server.close(() => {
-    logger.info('Server closed')
-    Promise.allSettled([cachingService.done()]).then(results => {
-      const errorResults = results.filter(result => result.status === 'rejected')
-      if (errorResults.length === 0) {
-        logger.info('Shutdown complete')
-        process.exit(0)
-      }
-      errorResults.forEach(errorResult => logger.error(errorResult.reason))
-      process.exit(1)
-    })
-  })
-}
-
-/**
- * Connect to the required services and return the resources
- *
- * @param {Object} config - The configuration object
- * @returns {Promise<Object>} - The resources object
- */
-async function connect(config) {
-  const logger = loggerFactory(config.logging.logger())
-  const cachingService = config.caching.service()
-  await Promise.all([cachingService.initialize()]).catch(error => {
-    logger.error('Error connecting to cachingService', error)
-    process.exit(1)
-  })
-  return { cachingService, logger }
 }

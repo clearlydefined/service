@@ -13,8 +13,15 @@ class RedisCache {
     this.logger = options.logger || logger()
   }
 
-  async initialize() {
-    this._client = await RedisCache.initializeClient(this.options, this.logger)
+  // Initialize the Redis client and return a promise
+  initialize() {
+    if (this._client) return Promise.resolve()
+    if (!this._clientReady) {
+      this._clientReady = RedisCache.initializeClient(this.options, this.logger).then(client => {
+        this._client = client
+      })
+    }
+    return this._clientReady
   }
 
   async done() {

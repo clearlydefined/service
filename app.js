@@ -12,14 +12,16 @@ const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
+const loggerFactory = require('./providers/logging/logger')
 const routesVersioning = require('express-routes-versioning')()
-const { createApiLimiter, createBatchApiLimiter } = require('./lib/rateLimit')
+const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } = require('./lib/rateLimit')
 
 const v1 = '1.0.0'
 
-function createApp(config, { logger, cachingService }) {
+function createApp(config) {
   const initializers = []
 
+  const logger = loggerFactory(config.logging.logger())
   process.on('unhandledRejection', exception => logger.error('unhandledRejection', exception))
 
   config.auth.service.permissionsSetup()
@@ -44,6 +46,9 @@ function createApp(config, { logger, cachingService }) {
 
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
+
+  const cachingService = config.caching.service()
+  initializers.push(async () => cachingService.initialize())
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 
@@ -127,7 +132,7 @@ function createApp(config, { logger, cachingService }) {
 
   app.set('trust-proxy', true)
 
-  app.use(createApiLimiter(config, cachingService).middleware)
+  app.use(setupApiRateLimiterAfterCachingInit(config, cachingService))
 
   // Use a (potentially lower) different API limit
   // for batch API request
@@ -135,7 +140,7 @@ function createApp(config, { logger, cachingService }) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = createBatchApiLimiter(config, cachingService).middleware
+  const batchApiLimiter = setupBatchApiRateLimiterAfterCachingInit(config, cachingService)
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
   app.post('/notices', batchApiLimiter)

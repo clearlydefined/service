@@ -78,6 +78,12 @@ describe('Redis Cache', () => {
         assert.strictEqual(error.message, 'Connection failed')
       }
     })
+
+    it('initalizes client only once', async () => {
+      const cache = redisCache({ logger })
+      await Promise.all([cache.initialize(), cache.initialize()])
+      assert.ok(RedisCache.buildRedisClient.calledOnce)
+    })
   })
 
   describe('Integration Test', () => {
