@@ -6,7 +6,6 @@ process.env['CURATION_GITHUB_TOKEN'] = '123'
 process.env['GITLAB_TOKEN'] = 'abc'
 const init = require('express-init')
 const Application = require('../app')
-const logger = require('../providers/logging/logger')
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
     get: name => {
@@ -20,22 +19,9 @@ const config = proxyquire('../bin/config', {
   }
 })
 
-const mockLogger = {
-  info: () => {},
-  error: () => {},
-  debug: () => {}
-}
-
 describe('Application', () => {
-  beforeEach(async () => {
-    logger(mockLogger)
-  })
-
   it.skip('should initialize', done => {
-    const app = Application(config, {
-      logger: mockLogger,
-      cachingService: {}
-    })
+    const app = Application(config)
     init(app, error => {
       if (error) {
         done(error)

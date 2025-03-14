@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const {
-  RateLimiter,
-  RedisBasedRateLimiter,
-  createApiLimiter,
-  createBatchApiLimiter
-} = require('../../lib/rateLimit.js')
+const { RateLimiter, RedisBasedRateLimiter, createApiLimiter, createBatchApiLimiter } = require('../../lib/rateLimit')
 const supertest = require('supertest')
 const express = require('express')
 const sinon = require('sinon')
@@ -134,8 +129,9 @@ describe('Rate Limiter', () => {
     }
 
     describe('Create Rate Limiter without Caching', () => {
+      const options = { config: { limits }, cachingService: undefined, logger }
       it('builds a rate limiter', () => {
-        const rateLimiter = createApiLimiter({ limits }, undefined, logger)
+        const rateLimiter = createApiLimiter(options)
         assert.ok(rateLimiter instanceof RateLimiter)
         const expected = {
           limit: {
@@ -149,7 +145,7 @@ describe('Rate Limiter', () => {
       })
 
       it('builds a batch rate limiter', () => {
-        const batchRateLimiter = createBatchApiLimiter({ limits }, undefined, logger)
+        const batchRateLimiter = createBatchApiLimiter(options)
         assert.ok(batchRateLimiter instanceof RateLimiter)
         const expected = {
           limit: {
@@ -161,13 +157,24 @@ describe('Rate Limiter', () => {
         }
         assert.deepStrictEqual(batchRateLimiter.options, expected)
       })
+
+      it('builds a api rate limiter with default', () => {
+        const batchRateLimiter = createApiLimiter()
+        assert.ok(batchRateLimiter instanceof RateLimiter)
+      })
+
+      it('builds a batch rate limiter with default', () => {
+        const batchRateLimiter = createBatchApiLimiter()
+        assert.ok(batchRateLimiter instanceof RateLimiter)
+      })
     })
 
     describe('Create Rate Limiter with Caching', () => {
-      let caching
+      let options
       beforeEach(() => {
-        caching = new RedisCache({ logger })
-        sinon.stub(caching, 'client').value({})
+        const cachingService = new RedisCache({ logger })
+        sinon.stub(cachingService, 'client').value({})
+        options = { config: { limits }, cachingService, logger }
       })
 
       afterEach(() => {
@@ -175,7 +182,7 @@ describe('Rate Limiter', () => {
       })
 
       it('builds a redis based rate limiter', () => {
-        const rateLimiter = createApiLimiter({ limits }, caching, logger)
+        const rateLimiter = createApiLimiter(options)
         assert.ok(rateLimiter instanceof RedisBasedRateLimiter)
         const expected = {
           limit: {
@@ -192,7 +199,7 @@ describe('Rate Limiter', () => {
       })
 
       it('builds a redis based batch rate limiter', () => {
-        const batchRateLimiter = createBatchApiLimiter({ limits }, caching, logger)
+        const batchRateLimiter = createBatchApiLimiter(options)
         assert.ok(batchRateLimiter instanceof RedisBasedRateLimiter)
         const expected = {
           limit: {
