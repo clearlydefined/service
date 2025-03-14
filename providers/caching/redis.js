@@ -25,7 +25,9 @@ class RedisCache {
   }
 
   async done() {
-    return this._client?.quit()
+    const client = this._client
+    this._client = null
+    return client?.quit()
   }
 
   get client() {

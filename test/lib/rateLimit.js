@@ -2,11 +2,19 @@
 // SPDX-License-Identifier: MIT
 
 const assert = require('assert')
-const { RateLimiter, RedisBasedRateLimiter, createApiLimiter, createBatchApiLimiter } = require('../../lib/rateLimit')
+const {
+  RateLimiter,
+  RedisBasedRateLimiter,
+  createApiLimiter,
+  createBatchApiLimiter,
+  setupApiRateLimiterAfterCachingInit,
+  setupBatchApiRateLimiterAfterCachingInit
+} = require('../../lib/rateLimit')
 const supertest = require('supertest')
 const express = require('express')
 const sinon = require('sinon')
 const { RedisCache } = require('../../providers/caching/redis')
+const MemoryCache = require('../../providers/caching/memory')
 const { GenericContainer } = require('testcontainers')
 
 const logger = {
@@ -18,30 +26,6 @@ const logger = {
 const limit = { windowMs: 1000, max: 1 }
 
 describe('Rate Limiter', () => {
-  describe('Rate Limit Integration Tests', () => {
-    let client
-
-    beforeEach(async () => {
-      const rateLimiter = new RateLimiter({ limit, logger })
-      const app = await buildApp(rateLimiter)
-      client = supertest(app)
-    })
-
-    it('allows requests under the limit', async () => {
-      await client
-        .get('/')
-        .expect(200)
-        .expect('Hello World!')
-        .expect('RateLimit-Limit', '1')
-        .expect('RateLimit-Remaining', '0')
-    })
-
-    it('blocks requests over the limit', async () => {
-      const counter = await tryBeyondLimit(limit.max, client)
-      assert.strictEqual(counter, limit.max, `Counter is ${counter}`)
-    })
-  })
-
   describe('Build Limit Options', () => {
     it('builds rate limit options', () => {
       const options = RateLimiter.buildOptions(limit)
@@ -83,41 +67,6 @@ describe('Rate Limiter', () => {
         assert.strictEqual(error.message, 'Redis client is missing')
       }
     })
-
-    describe('Rate Limit Integration Tests', () => {
-      let container, redisClient, client
-
-      before(async function () {
-        this.timeout(15000)
-        ;({ container, redisClient } = await setupRedis())
-        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
-        const app = await buildApp(rateLimiter)
-        client = supertest(app)
-      })
-
-      after(async () => {
-        await redisClient?.quit()
-        await container?.stop()
-      })
-
-      afterEach(async () => {
-        await new Promise(resolve => setTimeout(resolve, limit.windowMs))
-      })
-
-      it('allows requests under the limit', async () => {
-        await client
-          .get('/')
-          .expect(200)
-          .expect('Hello World!')
-          .expect('RateLimit-Limit', '1')
-          .expect('RateLimit-Remaining', '0')
-      })
-
-      it('blocks requests over the limit', async () => {
-        const counter = await tryBeyondLimit(limit.max, client)
-        assert.strictEqual(counter, limit.max, `Counter is ${counter}`)
-      })
-    })
   })
 
   describe('Create Rate Limiter', () => {
@@ -128,7 +77,7 @@ describe('Rate Limiter', () => {
       batchMax: 10
     }
 
-    describe('Create Rate Limiter without Caching', () => {
+    describe('Memory Based', () => {
       const options = { config: { limits }, cachingService: undefined, logger }
       it('builds a rate limiter', () => {
         const rateLimiter = createApiLimiter(options)
@@ -169,7 +118,7 @@ describe('Rate Limiter', () => {
       })
     })
 
-    describe('Create Rate Limiter with Caching', () => {
+    describe('Redis Based', () => {
       let options
       beforeEach(() => {
         const cachingService = new RedisCache({ logger })
@@ -216,15 +165,117 @@ describe('Rate Limiter', () => {
       })
     })
   })
+
+  describe('Create MiddlewareDelegate', () => {
+    let cachingService
+
+    beforeEach(() => {
+      cachingService = { initialize: sinon.stub().resolves() }
+    })
+
+    it('creates api rate limit middleware function', () => {
+      const middleware = setupApiRateLimiterAfterCachingInit({}, cachingService, logger)
+      assert.equal(typeof middleware, 'function')
+      assert.ok(cachingService.initialize.notCalled)
+    })
+
+    it('creates batch api rate limit middleware function', () => {
+      const middleware = setupBatchApiRateLimiterAfterCachingInit({}, cachingService, logger)
+      assert.equal(typeof middleware, 'function')
+      assert.ok(cachingService.initialize.notCalled)
+    })
+  })
+
+  describe('Rate Limit Integration Test', () => {
+    let client
+
+    afterEach(async () => {
+      await new Promise(resolve => setTimeout(resolve, limit.windowMs))
+    })
+
+    const verifyRateLimiting = function () {
+      it('allows requests under the limit', async () => {
+        await client
+          ?.get('/')
+          .expect(200)
+          .expect('Hello World!')
+          .expect('RateLimit-Limit', '1')
+          .expect('RateLimit-Remaining', '0')
+      })
+
+      it('blocks requests over the limit', async () => {
+        const counter = await tryBeyondLimit(limit.max, client)
+        assert.strictEqual(counter, limit.max, `Counter is ${counter}`)
+      })
+    }
+
+    describe('Memory Based Rate Limiter', () => {
+      before(async () => {
+        const rateLimiter = new RateLimiter({ limit, logger })
+        client = await buildTestAppClient(rateLimiter.middleware)
+      })
+
+      verifyRateLimiting()
+    })
+
+    describe('Redis Based Rate Limiter', () => {
+      let container, redisClient, redisOpts
+
+      before(async function () {
+        this.timeout(15000)
+        ;({ redisOpts, container } = await startRedis())
+        redisClient = await RedisCache.initializeClient(redisOpts, logger)
+        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
+        client = await buildTestAppClient(rateLimiter.middleware)
+      })
+
+      after(async function () {
+        await redisClient.quit()
+        await container.stop()
+      })
+
+      verifyRateLimiting()
+    })
+
+    describe('MiddlewareDelegate - Redis Based', () => {
+      const config = { limits: { windowSeconds: 1, max: 1 } }
+      let container, cachingService, redisOpts
+
+      before(async function () {
+        this.timeout(15000)
+        ;({ container, redisOpts } = await startRedis())
+        cachingService = new RedisCache({ ...redisOpts, logger })
+        const middleware = setupApiRateLimiterAfterCachingInit(config, cachingService, logger)
+        client = await buildTestAppClient(middleware)
+      })
+
+      after(async () => {
+        await cachingService.done()
+        await container.stop()
+      })
+
+      verifyRateLimiting()
+    })
+
+    describe('MiddlewareDelegate - Memory Based', () => {
+      const config = { limits: { windowSeconds: 1, max: 1 } }
+
+      before(async function () {
+        const middleware = setupApiRateLimiterAfterCachingInit(config, MemoryCache(), logger)
+        client = await buildTestAppClient(middleware)
+      })
+
+      verifyRateLimiting()
+    })
+  })
 })
 
-async function setupRedis() {
+async function startRedis() {
   const container = await new GenericContainer('redis').withExposedPorts(6379).start()
   const service = container.getHost()
   const port = container.getMappedPort(6379)
   const redisOpts = { service, port, tls: false }
-  const redisClient = await RedisCache.initializeClient(redisOpts, logger)
-  return { container, redisClient }
+  return { redisOpts, container }
 }
 
 async function tryBeyondLimit(max, client) {
@@ -237,9 +288,9 @@ async function tryBeyondLimit(max, client) {
   return counter
 }
 
-async function buildApp(rateLimiter) {
+async function buildTestAppClient(rateLimiter) {
   const app = express()
-  app.use(rateLimiter.middleware)
+  app.use(rateLimiter)
   app.get('/', (req, res) => res.send('Hello World!'))
-  return app
+  return supertest(app)
 }

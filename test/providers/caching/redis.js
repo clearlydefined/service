@@ -28,7 +28,8 @@ describe('Redis Cache', () => {
           store[key] = null
         },
         connect: async () => Promise.resolve(mockClient),
-        on: () => {}
+        on: () => {},
+        quit: sinon.stub().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
     })
@@ -83,6 +84,13 @@ describe('Redis Cache', () => {
       const cache = redisCache({ logger })
       await Promise.all([cache.initialize(), cache.initialize()])
       assert.ok(RedisCache.buildRedisClient.calledOnce)
+    })
+
+    it('calls client.quit only once', async () => {
+      const cache = redisCache({ logger })
+      await cache.initialize()
+      await Promise.all([cache.done(), cache.done()])
+      assert.ok(mockClient.quit.calledOnce)
     })
   })
 
