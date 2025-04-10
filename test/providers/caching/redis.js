@@ -17,7 +17,7 @@ const logger = {
 describe('Redis Cache', () => {
   describe('get a tool result', () => {
     const store = {}
-    let mockClient
+    let mockClient, cache
     beforeEach(function () {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
@@ -32,6 +32,7 @@ describe('Redis Cache', () => {
         quit: sinon.stub().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
+      cache = redisCache({ logger })
     })
 
     afterEach(function () {
@@ -39,7 +40,6 @@ describe('Redis Cache', () => {
     })
 
     it('works well for a specific tool version', async () => {
-      const cache = redisCache({ logger })
       await cache.initialize()
       await cache.set('foo', 'bar')
       const result = await cache.get('foo')
@@ -47,7 +47,6 @@ describe('Redis Cache', () => {
     })
 
     it('works well for an object', async () => {
-      const cache = redisCache({ logger })
       await cache.initialize()
       await cache.set('foo', { temp: 3 })
       const result = await cache.get('foo')
@@ -55,14 +54,12 @@ describe('Redis Cache', () => {
     })
 
     it('returns null for missing entry', async () => {
-      const cache = redisCache({ logger })
       await cache.initialize()
       const result = await cache.get('bar')
       assert.strictEqual(result, null)
     })
 
     it('deletes a key', async () => {
-      const cache = redisCache({ logger })
       await cache.initialize()
       await cache.set('foo', 'bar')
       await cache.delete('foo')
@@ -72,7 +69,6 @@ describe('Redis Cache', () => {
 
     it('throws error if redis connection fails', async () => {
       mockClient.connect = () => Promise.reject(new Error('Connection failed'))
-      const cache = redisCache({ logger })
       try {
         await cache.initialize()
       } catch (error) {
@@ -81,16 +77,31 @@ describe('Redis Cache', () => {
     })
 
     it('initalizes client only once', async () => {
-      const cache = redisCache({ logger })
       await Promise.all([cache.initialize(), cache.initialize()])
       assert.ok(RedisCache.buildRedisClient.calledOnce)
     })
 
     it('calls client.quit only once', async () => {
-      const cache = redisCache({ logger })
       await cache.initialize()
       await Promise.all([cache.done(), cache.done()])
       assert.ok(mockClient.quit.calledOnce)
+    })
+
+    it('allows initialization to be retried on error', async () => {
+      mockClient.connect = sinon.stub().rejects(new Error('Connection failed')).onSecondCall().resolves(mockClient)
+      // First call to initialize will fail
+      try {
+        await cache.initialize()
+        assert.fail('Expected error was not thrown')
+      } catch (error) {
+        assert.strictEqual(error.message, 'Connection failed')
+      }
+      // Second call to initialize will succeed
+      await cache.initialize()
+      // Verify that the client was built twice
+      assert.ok(cache.client)
+      assert.ok(RedisCache.buildRedisClient.calledTwice)
+      assert.ok(mockClient.connect.calledTwice)
     })
   })
 

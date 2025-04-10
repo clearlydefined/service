@@ -14,12 +14,17 @@ class RedisCache {
   }
 
   // Initialize the Redis client and return a promise
-  initialize() {
+  async initialize() {
     if (this._client) return Promise.resolve()
     if (!this._clientReady) {
-      this._clientReady = RedisCache.initializeClient(this.options, this.logger).then(client => {
-        this._client = client
-      })
+      this._clientReady = RedisCache.initializeClient(this.options, this.logger)
+        .then(client => {
+          this._client = client
+        })
+        .catch(error => {
+          this._clientReady = null
+          throw error
+        })
     }
     return this._clientReady
   }
