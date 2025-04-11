@@ -318,7 +318,7 @@ paths:
           description: List of definitions that have definitions.
   /definitions/{type}/{provider}/{namespace}/{name}/{revision}:
     get:
-      summary: Gets the definition for a component revision.
+      summary: Gets the definition for a component revision and queues the component for harvest if harvest results are unavailable.
       tags:
         - definitions
       parameters:
