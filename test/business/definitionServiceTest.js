@@ -18,7 +18,6 @@ const AggregatorService = require('../../business/aggregator')
 const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
 const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
 const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
-const util = require('util')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -345,15 +344,13 @@ describe('Integration test', () => {
   describe('Handle schema version upgrade', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
+    const logger = {
+      debug: () => {},
+      error: () => {},
+      info: () => {}
+    }
 
-    let logger, upgradeHandler
-    beforeEach(() => {
-      logger = {
-        debug: (format, ...args) => console.debug(util.format(format, ...args)),
-        error: (format, ...args) => console.error(util.format(format, ...args)),
-        info: (format, ...args) => console.info(util.format(format, ...args))
-      }
-    })
+    let upgradeHandler
 
     const handleVersionedDefinition = function () {
       describe('verify schema version', () => {

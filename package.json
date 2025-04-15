@@ -38,7 +38,7 @@
     "debug": "~2.6.9",
     "express": "^4.19.2",
     "express-init": "^1.1.1",
-    "express-rate-limit": "^6.0.4",
+    "express-rate-limit": "^7.5.0",
     "express-routes-versioning": "^1.0.1",
     "extend": "^3.0.2",
     "geit": "0.0.7",
@@ -58,10 +58,10 @@
     "passport-github": "^1.1.0",
     "patch-package": "^6.5.1",
     "promise-retry": "^1.1.1",
-    "rate-limit-redis": "^2.1.0",
+    "rate-limit-redis": "^4.2.0",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
-    "redis": "^3.1.1",
+    "redis": "^4.7.0",
     "request-id": "^0.11.1",
     "semver": "7.6.0",
     "serialize-error": "^2.1.0",
@@ -93,6 +93,8 @@
     "prettier": "3.2.5",
     "proxyquire": "^2.0.1",
     "sinon": "^5.0.0",
+    "supertest": "^7.0.0",
+    "testcontainers": "^10.18.0",
     "typescript": "5.0.4"
   }
 }

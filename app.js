@@ -6,9 +6,6 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const rateLimit = require('express-rate-limit')
-const rateLimitRedisStore = require('rate-limit-redis')
-const redis = require('redis')
 
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
@@ -17,6 +14,8 @@ const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
 const routesVersioning = require('express-routes-versioning')()
+const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } = require('./lib/rateLimit')
+
 const v1 = '1.0.0'
 
 function createApp(config) {
@@ -132,31 +131,9 @@ function createApp(config) {
   app.use(config.auth.service.middleware())
 
   app.set('trust-proxy', true)
+  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
 
-  // If Redis is configured for caching, connect to it
-  const client = config.caching.caching_redis_service
-    ? redis.createClient(6380, config.caching.caching_redis_service, {
-        auth_pass: config.caching.caching_redis_api_key,
-        tls: { servername: config.caching_redis_service }
-      })
-    : undefined
-
-  // rate-limit the remaining routes
-  const apiLimiter = config.caching.caching_redis_service
-    ? rateLimit({
-        store: new rateLimitRedisStore({
-          client: client,
-          prefix: 'api'
-        }),
-        windowMs: config.limits.windowSeconds * 1000,
-        max: config.limits.max
-      })
-    : rateLimit({
-        windowMs: config.limits.windowSeconds * 1000,
-        max: config.limits.max
-      })
-
-  app.use(apiLimiter)
+  app.use(setupApiRateLimiterAfterCachingInit(config, cachingService))
 
   // Use a (potentially lower) different API limit
   // for batch API request
@@ -164,27 +141,13 @@ function createApp(config) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = config.caching.caching_redis_service
-    ? rateLimit({
-        store: new rateLimitRedisStore({
-          client: client,
-          prefix: 'batch-api'
-        }),
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      })
-    : rateLimit({
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      })
-
+  const batchApiLimiter = setupBatchApiRateLimiterAfterCachingInit(config, cachingService)
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
   app.post('/notices', batchApiLimiter)
 
   app.use(require('./middleware/querystring'))
 
-  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
   const repoAccess = require('./lib/condaRepoAccess')()

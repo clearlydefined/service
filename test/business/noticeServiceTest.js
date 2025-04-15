@@ -5,8 +5,19 @@ const { expect } = require('chai')
 const sinon = require('sinon')
 const NoticeService = require('../../business/noticeService')
 const spdxLicenseList = require('spdx-license-list/full')
+const logger = require('../../providers/logging/logger')
+
+const mockLogger = {
+  info: () => {},
+  error: () => {},
+  debug: () => {}
+}
 
 describe('Notice Service', () => {
+  before(() => {
+    logger(mockLogger)
+  })
+
   it('generates simple notice', async () => {
     const { service, coordinates } = setup({
       'npm/npmjs/-/test/1.0.0': {

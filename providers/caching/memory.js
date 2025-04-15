@@ -9,7 +9,8 @@ class MemoryCache {
     this.defaultTtlSeconds = options.defaultTtlSeconds
   }
 
-  initialize() {}
+  async initialize() {}
+  async done() {}
 
   get(item) {
     return this.cache.get(item)
