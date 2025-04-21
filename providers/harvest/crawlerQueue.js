@@ -15,7 +15,7 @@ class CrawlingQueueHarvester {
     for (let entry of entries) {
       let message = JSON.stringify({
         type: entry.tool || 'component',
-        url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
+        url: `cd:/${this.toUrl(entry)}`,
         policy: entry.policy || {
           fetch: 'mutables',
           freshness: 'match',
@@ -26,6 +26,11 @@ class CrawlingQueueHarvester {
       else this.laterQueue.queue(message)
     }
   }
+
+  toUrl(entry) {
+    return entry?.coordinates?.toString().replace(/[/]+/g, '/')
+  }
+
 }
 
 module.exports = options => new CrawlingQueueHarvester(options)

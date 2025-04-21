@@ -17,7 +17,7 @@ class CrawlingHarvester {
     const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
       return {
         type: entry.tool || 'component',
-        url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
+        url: `cd:/${this.toUrl(entry)}`,
         policy: entry.policy
       }
     })
@@ -29,6 +29,10 @@ class CrawlingHarvester {
       headers,
       json: true
     })
+  }
+
+  toUrl(entry) {
+    return entry?.coordinates?.toString().replace(/[/]+/g, '/')
   }
 }
 
