@@ -513,7 +513,7 @@ function setupWithDelegates(
 ) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
-  const harvestService = { harvest: () => sinon.stub() }
+  const harvestService = { harvest: () => sinon.stub(), done: () => Promise.resolve() }
   const service = DefinitionService(
     harvestStore,
     harvestService,
@@ -562,7 +562,7 @@ function setup(definition, coordinateSpec, curation) {
     }
   }
   const harvestStore = { getAllLatest: () => Promise.resolve(null) }
-  const harvestService = { harvest: () => sinon.stub() }
+  const harvestService = { harvest: () => sinon.stub(), done: () => Promise.resolve() }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
   const upgradeHandler = { validate: def => Promise.resolve(def) }

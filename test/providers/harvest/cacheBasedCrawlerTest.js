@@ -3,9 +3,9 @@ const sinon = require('sinon')
 const cacheBasedHarvester = require('../../../providers/harvest/cacheBasedCrawler')
 
 describe('CacheBasedHarvester', () => {
-  const foo = {coordinates: 'pkg/npm/foo/1.0.0'}
+  const foo = { coordinates: 'pkg/npm/foo/1.0.0' }
   const bar = { coordinates: 'pkg/npm/bar/2.0.0' }
-  
+
   const loggerMock = {
     debug: sinon.stub(),
     error: sinon.stub()
@@ -16,15 +16,15 @@ describe('CacheBasedHarvester', () => {
   beforeEach(() => {
     harvesterMock = {
       harvest: sinon.stub(),
-      toUrl: sinon.stub().callsFake((entry) => entry.coordinates)
+      toUrl: sinon.stub().callsFake(entry => entry.coordinates)
     }
-    
+
     cacheMock = {
       store: {},
       async get(key) {
         return this.store[key] || false
       },
-      async set(key, value, ttl) {
+      async set(key, value) {
         this.store[key] = value
       },
       async delete(key) {
@@ -36,7 +36,7 @@ describe('CacheBasedHarvester', () => {
     sinon.spy(cacheMock, 'delete')
 
     crawler = cacheBasedHarvester({
-      cache: cacheMock,
+      cachingService: cacheMock,
       harvester: harvesterMock,
       logger: loggerMock
     })
@@ -49,8 +49,12 @@ describe('CacheBasedHarvester', () => {
 
       assert.strictEqual(cacheMock.get.callCount, 2, 'get should be called twice')
       assert.strictEqual(cacheMock.set.callCount, 2, 'set should be called twice')
-      assert(harvesterMock.harvest.calledOnce,'harvest should be called once')
-      assert.deepStrictEqual(harvesterMock.harvest.args[0][0], [ foo, bar ],  'Expected harvester to be called with the correct entries')
+      assert(harvesterMock.harvest.calledOnce, 'harvest should be called once')
+      assert.deepStrictEqual(
+        harvesterMock.harvest.args[0][0],
+        [foo, bar],
+        'Expected harvester to be called with the correct entries'
+      )
       // Check if the cache was set correctly
       const isFooTracked = await crawler.isTracked(foo)
       assert.ok(isFooTracked, 'Expected cache to be set for foo')
@@ -66,7 +70,11 @@ describe('CacheBasedHarvester', () => {
       cacheMock.store['hrv_pkg/npm/foo/1.0.0'] = true
       await crawler.harvest(spec, false)
 
-      assert.deepStrictEqual(harvesterMock.harvest.args[0][0], [bar], 'Expected harvester to be called with the correct entries')
+      assert.deepStrictEqual(
+        harvesterMock.harvest.args[0][0],
+        [bar],
+        'Expected harvester to be called with the correct entries'
+      )
       //Check if the cache was set correctly
       assert.ok(await crawler.isTracked(foo), 'Expected cache to be set for foo')
       assert.ok(await crawler.isTracked(bar), 'Expected cache to be set for bar')

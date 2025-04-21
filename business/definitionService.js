@@ -278,6 +278,7 @@ class DefinitionService {
   async _store(definition) {
     await this.definitionStore.store(definition)
     await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
+    await this.harvestService.done(definition)
   }
 
   /**

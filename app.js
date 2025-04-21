@@ -28,9 +28,12 @@ function createApp(config) {
 
   const summaryService = require('./business/summarizer')(config.summary)
 
+  const cachingService = config.caching.service()
+  initializers.push(async () => cachingService.initialize())
+
   const harvestStore = config.harvest.store()
   initializers.push(async () => harvestStore.initialize())
-  const harvestService = config.harvest.service()
+  const harvestService = config.harvest.service({ cachingService })
   const harvestRoute = require('./routes/harvest')(harvestService, harvestStore, summaryService)
 
   const aggregatorService = require('./business/aggregator')(config.aggregator)
@@ -46,9 +49,6 @@ function createApp(config) {
 
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
-
-  const cachingService = config.caching.service()
-  initializers.push(async () => cachingService.initialize())
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 

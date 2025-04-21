@@ -10,7 +10,7 @@ const concurrencyLimit = 10
 class CacheBasedHarvester {
   constructor(options) {
     this.logger = options.logger || logger()
-    this._cache = options.cache
+    this._cache = options.cachingService
     this._harvester = options.harvester
     this.concurrencyLimit = options.concurrencyLimit || concurrencyLimit
   }
@@ -18,6 +18,10 @@ class CacheBasedHarvester {
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
     const harvests = await this._filterOutTracked(entries)
+    if (!harvests.length) {
+      this.logger.debug('No new harvests to process.')
+      return
+    }
     this.logger.debug(`Starting harvest for ${harvests.length} entries.`)
     await this._harvester.harvest(harvests, turbo)
     await this._trackHarvests(harvests)
@@ -45,7 +49,8 @@ class CacheBasedHarvester {
     const cacheKey = this._getCacheKey(entry)
     if (!cacheKey) return false
     try {
-      return (await this._cache.get(cacheKey)) || false
+      const cached = await this._cache.get(cacheKey)
+      return cached || false
     } catch (error) {
       this.logger.error(`Error checking tracking status for ${cacheKey}:`, error)
       return false

@@ -30,7 +30,6 @@ class CrawlingQueueHarvester {
   toUrl(entry) {
     return entry?.coordinates?.toString().replace(/[/]+/g, '/')
   }
-
 }
 
 module.exports = options => new CrawlingQueueHarvester(options)
