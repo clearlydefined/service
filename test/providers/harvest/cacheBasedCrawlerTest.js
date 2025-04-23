@@ -1,3 +1,6 @@
+// (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
 const assert = require('assert')
 const sinon = require('sinon')
 const cacheBasedHarvester = require('../../../providers/harvest/cacheBasedCrawler')

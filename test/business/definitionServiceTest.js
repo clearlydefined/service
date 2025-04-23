@@ -457,6 +457,55 @@ describe('Integration test', () => {
       })
     })
   })
+
+  describe('Placeholder definition and Cache', () => {
+    let service, coordinates, harvestService
+
+    describe('placeholder definition', () => {
+      beforeEach(() => {
+        ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, null)))
+        sinon.spy(service, 'compute')
+        sinon.spy(service, '_computePlaceHolder')
+        sinon.spy(harvestService, 'isTracked')
+      })
+
+      it('returns a placeholder definition same as computed', async () => {
+        const computed = await service.get(coordinates)
+        const placeholder = service._computePlaceHolder(coordinates)
+        placeholder._meta.updated = 'ignore_time_stamp'
+        computed._meta.updated = 'ignore_time_stamp'
+        expect(placeholder).to.deep.equal(computed)
+      })
+
+      it('triggers a harvest for a new component', async () => {
+        harvestService.isTracked = sinon.stub().resolves(false)
+        await service.get(coordinates)
+        expect(service.compute.called).to.be.true
+        expect(service._harvest.called).to.be.true
+        expect(service._computePlaceHolder.calledOnce).to.be.false
+        expect(harvestService.isTracked.calledOnce).to.be.true
+        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
+      })
+
+      it('returns a placeholder definition with a tracked harvest', async () => {
+        harvestService.isTracked = sinon.stub().resolves(true)
+        await service.get(coordinates)
+        expect(service._computePlaceHolder.calledOnce).to.be.true
+        expect(service.compute.called).to.be.false
+        expect(service._harvest.called).to.be.false
+        expect(harvestService.isTracked.calledOnce).to.be.true
+        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
+      })
+    })
+
+    it('deletes the tracked in progress harvest after definition is computed', async () => {
+      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      harvestService.done = sinon.stub().resolves(true)
+      await service.computeAndStore(coordinates)
+      expect(harvestService.done.calledOnce).to.be.true
+      expect(harvestService.done.args[0][0]).to.be.deep.equal(coordinates)
+    })
+  })
 })
 
 function createFileHarvestStore() {
@@ -580,7 +629,7 @@ function setup(definition, coordinateSpec, curation) {
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
-  return { coordinates, service }
+  return { coordinates, service, harvestService }
 }
 
 function mockHarvestService() {
