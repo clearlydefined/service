@@ -15,7 +15,7 @@ class CrawlingQueueHarvester {
     for (let entry of entries) {
       let message = JSON.stringify({
         type: entry.tool || 'component',
-        url: `cd:/${this.toUrl(entry)}`,
+        url: `cd:/${this.toUrl(entry.coordinates)}`,
         policy: entry.policy || {
           fetch: 'mutables',
           freshness: 'match',
@@ -27,8 +27,8 @@ class CrawlingQueueHarvester {
     }
   }
 
-  toUrl(entry) {
-    return entry?.coordinates?.toString().replace(/[/]+/g, '/')
+  toUrl(coordinates) {
+    return coordinates?.toString().replace(/[/]+/g, '/')
   }
 }
 

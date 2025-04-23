@@ -78,7 +78,7 @@ class DefinitionService {
     if (result) {
       // Log line used for /status page insights
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
-    } else if (!force && (await this.harvestService.isTracked({ coordinates }))) {
+    } else if (!force && (await this.harvestService.isTracked(coordinates))) {
       this.logger.info('definition harvest in progress', { coordinates: coordinates.toString() })
       return this._computePlaceHolder(coordinates)
     } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
@@ -281,7 +281,7 @@ class DefinitionService {
   async _store(definition) {
     await this.definitionStore.store(definition)
     await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
-    await this.harvestService.done(definition)
+    await this.harvestService.done(definition.coordinates)
   }
 
   /**
