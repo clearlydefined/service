@@ -49,6 +49,30 @@ describe('Harvest queue processing', () => {
     expect(queue.data.length).to.eq(0)
   })
 
+  it('handles processed message from non-clearlydefined tool', async () => {
+    const { queue, definitionService, logger } = setup({
+      _metadata: {
+        links: { self: { href: 'urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2' } }
+      }
+    })
+    definitionService.getStored.resolves({
+      described: {
+        tools: ['scancode/3.2.2']
+      }
+    })
+    await process(queue, definitionService, logger, true)
+
+    expect(definitionService.computeAndStore.calledOnce).to.be.false
+    expect(logger.info.calledTwice).to.be.true
+    expect(logger.info.getCall(0).args[0]).to.eq(
+      'Skip definition computation as the tool result has already been processed'
+    )
+    expect(logger.info.getCall(1).args[0]).to.eq(
+      'Handled Crawler update event for urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2'
+    )
+    expect(queue.data.length).to.eq(0)
+  })
+
   it('handles bogus message', async () => {
     const { queue, definitionService, logger } = setup({ junk: 'here' })
     await process(queue, definitionService, logger, true)
@@ -63,6 +87,7 @@ function setup(data) {
   const queue = memoryQueue()
   queue.queue(JSON.stringify(data))
   const definitionService = {
+    getStored: sinon.stub().resolves(null),
     computeStoreAndCurate: sinon.stub().resolves({}),
     computeAndStore: sinon.stub().resolves({})
   }
