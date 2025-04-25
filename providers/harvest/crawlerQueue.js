@@ -28,7 +28,7 @@ class CrawlingQueueHarvester {
   }
 
   toUrl(coordinates) {
-    return coordinates?.toString().replace(/[/]+/g, '/')
+    return coordinates.toString().replace(/[/]+/g, '/')
   }
 }
 

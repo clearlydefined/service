@@ -30,7 +30,7 @@ const concurrencyLimit = 10
 
 /**
  * @typedef {Object} HarvestEntry
- * @property {Object} coordinates
+ * @property {Coordinates} coordinates
  */
 
 /**
@@ -54,7 +54,8 @@ class CacheBasedHarvester {
    */
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
-    const harvests = await this._filterOutTracked(entries)
+    const uniqueEntries = this._filterOutDuplicates(entries)
+    const harvests = await this._filterOutTracked(uniqueEntries)
     if (!harvests.length) {
       this.logger.debug('No new harvests to process.')
       return
@@ -95,6 +96,20 @@ class CacheBasedHarvester {
     )
     //@ts-ignore
     return filteredEntries.filter(e => e !== null)
+  }
+
+  /**
+   * @param {HarvestEntry[]} entries - Array of entries to filter.
+   * @returns {HarvestEntry[]} - An array of entries with unique coordinates.
+   */
+  _filterOutDuplicates(entries) {
+    if (entries.length === 0) return []
+    const uniqueEntries = new Map()
+    for (const entry of entries) {
+      const key = this._getCacheKey(entry?.coordinates)
+      if (key) uniqueEntries.set(key, entry)
+    }
+    return Array.from(uniqueEntries.values())
   }
 
   /**
@@ -146,7 +161,7 @@ class CacheBasedHarvester {
    * @returns {string} - The cache key.
    */
   _getCacheKey(coordinates) {
-    const url = this._harvester.toUrl(coordinates)
+    const url = coordinates && this._harvester.toUrl(coordinates)
     return url && `hrv_${url}`
   }
 }

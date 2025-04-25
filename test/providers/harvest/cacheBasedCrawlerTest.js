@@ -76,6 +76,18 @@ describe('CacheBasedHarvester', () => {
       assert.strictEqual(cacheMock.store[cacheKeyBar], true, 'Expected cache to be set for bar')
     })
 
+    it('removes duplicates before harvest', async () => {
+      await crawler.harvest([foo, foo], false)
+      assert.strictEqual(cacheMock.get.callCount, 1, 'get should be called once')
+      assert.strictEqual(cacheMock.set.callCount, 1, 'set should be called once')
+      assert.ok(harvesterMock.harvest.calledOnce, 'harvest should be called once')
+      assert.deepStrictEqual(
+        harvesterMock.harvest.args[0][0],
+        [foo],
+        'Expected harvester to be called with the correct entries'
+      )
+    })
+
     it('filters out tracked entries and calls harvester', async () => {
       cacheMock.store[cacheKeyFoo] = true
       await crawler.harvest(spec, false)
