@@ -11,7 +11,7 @@ const concurrencyLimit = 10
 /**
  *  @typedef {Object} Harvester
  *  @property {function} harvest - Function to harvest entries.
- *  @property {function} toHarvestItem - Function to convert entry to URL.
+ *  @property {function} toHarvestItem - Function to convert entry to message body for external api call.
  */
 
 /**
@@ -27,6 +27,7 @@ const concurrencyLimit = 10
  * @property {CachingService} cachingService - Caching service instance.
  * @property {Harvester} harvester - Harvester instance.
  * @property {number} [concurrencyLimit] - Optional concurrency limit.
+ * @property {number} [cacheTTLInSeconds] - Optional cache TTL in seconds.
  */
 
 /**
@@ -36,6 +37,16 @@ const concurrencyLimit = 10
 
 /**
  * @typedef {Object} Coordinates
+ */
+
+/**
+ * @typedef {Object} CacheEntry
+ * @property {string} key
+ * @property {HarvestCallItem[]} harvests
+ */
+
+/**
+ * @typedef {Object} HarvestCallItem
  */
 
 class CacheBasedHarvester {
@@ -95,6 +106,11 @@ class CacheBasedHarvester {
     return filteredEntries.filter(e => e)
   }
 
+  /**
+   *
+   * @param {HarvestEntry} entry
+   * @returns {Promise<boolean>} whether the harvest entry has been tracked
+   */
   async _isTrackedHarvest(entry) {
     const newHarvest = this._getHarvest(entry)
     const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(entry.coordinates)
@@ -117,16 +133,26 @@ class CacheBasedHarvester {
    * @returns {Promise<boolean>} - A promise that resolves to true if the coordinates is tracked, false otherwise.
    */
   async isTracked(coordinates) {
-    const { harvests: trackedHarvests }  = await this._getTrackedForCoordinates(coordinates)
+    const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(coordinates)
     return trackedHarvests.length > 0
   }
 
+  /**
+   *
+   * @param {Coordinates} coordinates
+   * @returns {Promise<CacheEntry>}
+   */
   async _getTrackedForCoordinates(coordinates) {
     const key = this._getCacheKey(coordinates)
     const harvests = await this._getCached(key)
     return { key, harvests }
   }
 
+  /**
+   *
+   * @param {string} key
+   * @returns {Promise<HarvestCallItem[]} tracked harvests
+   */
   async _getCached(key) {
     if (!key) return []
     try {
@@ -178,6 +204,11 @@ class CacheBasedHarvester {
     return coordinates && `hrv_${coordinates.toString().toLowerCase()}`
   }
 
+  /**
+   *
+   * @param {HarvestEntry} entry
+   * @returns {HarvestCallItem} - The harvest item.
+   */
   _getHarvest(entry) {
     return entry && this._harvester.toHarvestItem(entry)
   }

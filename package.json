@@ -77,6 +77,7 @@
   },
   "devDependencies": {
     "@types/express": "4.17.17",
+    "@types/lodash": "4.17.16",
     "@types/mocha": "8.2.3",
     "@types/node": "18.15.11",
     "chai": "^4.1.2",
