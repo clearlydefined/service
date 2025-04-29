@@ -13,22 +13,22 @@ class CrawlingQueueHarvester {
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
     for (let entry of entries) {
-      let message = JSON.stringify({
-        type: entry.tool || 'component',
-        url: `cd:/${this.toUrl(entry.coordinates)}`,
-        policy: entry.policy || {
-          fetch: 'mutables',
-          freshness: 'match',
-          map: { name: entry.tool || 'component', path: '/' }
-        }
-      })
+      let message = JSON.stringify(this.toHarvestItem(entry))
       if (turbo) this.normalQueue.queue(message)
       else this.laterQueue.queue(message)
     }
   }
 
-  toUrl(coordinates) {
-    return coordinates.toString().replace(/[/]+/g, '/')
+  toHarvestItem(entry) {
+    return {
+      type: entry.tool || 'component',
+      url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
+      policy: entry.policy || {
+        fetch: 'mutables',
+        freshness: 'match',
+        map: { name: entry.tool || 'component', path: '/' }
+      }
+    }
   }
 }
 

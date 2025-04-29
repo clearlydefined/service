@@ -14,13 +14,7 @@ class CrawlingHarvester {
     const headers = {
       'X-token': this.options.authToken
     }
-    const body = (Array.isArray(spec) ? spec : [spec]).map(entry => {
-      return {
-        type: entry.tool || 'component',
-        url: `cd:/${this.toUrl(entry.coordinates)}`,
-        policy: entry.policy
-      }
-    })
+    const body = (Array.isArray(spec) ? spec : [spec]).map(entry => this.toHarvestItem(entry))
     const url = turbo ? `${this.options.url}/requests` : `${this.options.url}/requests/later`
     return requestPromise({
       url,
@@ -31,8 +25,12 @@ class CrawlingHarvester {
     })
   }
 
-  toUrl(coordinates) {
-    return coordinates.toString().replace(/[/]+/g, '/')
+  toHarvestItem(entry) {
+    return {
+      type: entry.tool || 'component',
+      url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
+      policy: entry.policy
+    }
   }
 }
 
