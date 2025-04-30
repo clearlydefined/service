@@ -79,19 +79,12 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry[]} harvestEntries - Array of items to track.
+   * @param {HarvestEntry[]} entries - Array of entries to filter.
+   * @returns {HarvestEntry[]} - An array of entries with unique coordinates.
    */
-  async _trackHarvests(harvestEntries) {
-    const results = await Promise.allSettled(
-      harvestEntries.map(
-        throat(this.concurrencyLimit, async entry => {
-          await this._track(entry)
-        })
-      )
-    )
-    results.forEach(result => {
-      if (result.status === 'rejected') this.logger.error(result.reason)
-    })
+  _filterOutDuplicatedCoordinates(entries) {
+    const validEntries = entries.filter(entry => entry?.coordinates)
+    return uniqBy(validEntries, entry => this._getCacheKey(entry.coordinates))
   }
 
   /**
@@ -120,15 +113,6 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry[]} entries - Array of entries to filter.
-   * @returns {HarvestEntry[]} - An array of entries with unique coordinates.
-   */
-  _filterOutDuplicatedCoordinates(entries) {
-    const validEntries = entries.filter(entry => entry?.coordinates)
-    return uniqBy(validEntries, entry => this._getCacheKey(entry?.coordinates))
-  }
-
-  /**
    * @param {Coordinates} coordinates - The coordinates to check.
    * @returns {Promise<boolean>} - A promise that resolves to true if the coordinates is tracked, false otherwise.
    */
@@ -146,6 +130,22 @@ class CacheBasedHarvester {
     const key = this._getCacheKey(coordinates)
     const harvests = await this._getCached(key)
     return { key, harvests }
+  }
+
+  /**
+   * @param {HarvestEntry[]} harvestEntries - Array of items to track.
+   */
+  async _trackHarvests(harvestEntries) {
+    const results = await Promise.allSettled(
+      harvestEntries.map(
+        throat(this.concurrencyLimit, async entry => {
+          await this._track(entry)
+        })
+      )
+    )
+    results.forEach(result => {
+      if (result.status === 'rejected') this.logger.error(result.reason)
+    })
   }
 
   /**
