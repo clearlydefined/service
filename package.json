@@ -94,7 +94,7 @@
     "proxyquire": "^2.0.1",
     "sinon": "^5.0.0",
     "supertest": "^7.0.0",
-    "testcontainers": "^10.18.0",
+    "testcontainers": "^10.25.0",
     "typescript": "5.0.4"
   }
 }
