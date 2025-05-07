@@ -4,6 +4,7 @@
 const config = require('painless-config')
 const AzureStorageQueue = require('../queueing/azureStorageQueue')
 const crawler = require('./crawlerQueue')
+const cacheBasedCrawler = require('./cacheBasedCrawler')
 
 function later(options) {
   const realOptions = options || {
@@ -22,13 +23,14 @@ function normal(options) {
 }
 
 function serviceFactory(options) {
-  const realOptions = options || {
-    later: later(),
-    normal: normal()
+  const crawlerOptions = {
+    later: options?.later || later(),
+    normal: options?.normal || normal()
   }
-  realOptions.later.initialize()
-  realOptions.normal.initialize()
-  return crawler(realOptions)
+  crawlerOptions.later.initialize()
+  crawlerOptions.normal.initialize()
+  const harvester = crawler(crawlerOptions)
+  return cacheBasedCrawler({ ...options, harvester })
 }
 
 module.exports = serviceFactory
