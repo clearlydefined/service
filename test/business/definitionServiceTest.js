@@ -186,6 +186,94 @@ describe('Definition Service', () => {
       })
     })
   })
+
+  describe('computeAndStoreIfNecessary', () => {
+    let service, coordinates
+    beforeEach(() => {
+      ;({ service, coordinates } = setup())
+      service.getStored = sinon.stub().resolves({
+        described: {
+          tools: ['scancode/3.2.2', 'licensee/3.2.2']
+        }
+      })
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes if definition does not exist', async () => {
+      service.getStored = sinon.stub().resolves(undefined)
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('computes if tools array is undefined', async () => {
+      service.getStored = sinon.stub().resolves({ described: {} })
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+    })
+
+    it('computes if the tool result is not included in definition', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('skips compute if existing definition contains the tool result', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.notCalled).to.be.true
+    })
+
+    it('handles two computes for the same coordinates: computes the first and skip the second', async () => {
+      await Promise.all([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+
+      //verfiy the calls are in sequence to ensure that locking works
+      expect(service.compute.getCall(0).calledAfter(service.getStored.getCall(0))).to.be.true
+      expect(service.compute.getCall(0).calledBefore(service.getStored.getCall(1))).to.be.true
+    })
+
+    it('releases the lock upon failure', async () => {
+      service.getStored = sinon
+        .stub()
+        .onFirstCall()
+        .rejects(new Error('test error'))
+        .onSecondCall()
+        .resolves({ described: {} })
+
+      const results = await Promise.allSettled([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+
+      expect(results[0].status).to.eq('rejected')
+      expect(results[0].reason.message).to.eq('test error')
+      expect(results[1].status).to.eq('fulfilled')
+
+      //lock is released after the first call
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {
