@@ -248,6 +248,31 @@ class DefinitionService {
     }
   }
 
+  async computeAndStoreIfNecessary(coordinates, tool, toolRevision) {
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    try {
+      computeLock.set(coordinates.toString(), true)
+      if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
+        this.logger.info('Skip definition computation: tool result processed', {
+          coordinates: coordinates.toString(),
+          tool,
+          toolRevision
+        })
+        return
+      }
+      return await this._computeAndStore(coordinates)
+    } finally {
+      computeLock.delete(coordinates.toString())
+    }
+  }
+
+  async _isToolResultNew(coordinates, tool, toolRevision) {
+    const definitionFound = await this.getStored(coordinates)
+    const toolVersionToAdd = `${tool}/${toolRevision}`
+    const tools = definitionFound?.described?.tools || []
+    return !tools.includes(toolVersionToAdd)
+  }
+
   async _computeAndStore(coordinates) {
     const definition = await this.compute(coordinates)
     // If no tools participated in the creation of the definition then don't bother storing.

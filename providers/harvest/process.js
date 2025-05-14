@@ -24,11 +24,11 @@ async function processMessage(message) {
   const urn = get(message, 'data._metadata.links.self.href')
   if (!urn) return
   const coordinates = EntityCoordinates.fromUrn(urn)
-  const { tool } = parseUrn(urn)
+  const { tool, toolRevision } = parseUrn(urn)
   if (tool === 'clearlydefined') {
     await definitionService.computeStoreAndCurate(coordinates)
   } else {
-    await definitionService.computeAndStore(coordinates)
+    await definitionService.computeAndStoreIfNecessary(coordinates, tool, toolRevision)
   }
   await queue.delete(message)
   logger.info(`Handled Crawler update event for ${urn}`)
