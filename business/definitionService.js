@@ -253,7 +253,7 @@ class DefinitionService {
     try {
       computeLock.set(coordinates.toString(), true)
       if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
-        this.logger.info('Skip definition computation: tool result processed', {
+        this.logger.info('definition computation skipped: tool result processed', {
           coordinates: coordinates.toString(),
           tool,
           toolRevision
