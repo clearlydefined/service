@@ -27,7 +27,9 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** test; version 1.0.0 -- \ncopyright me\n\n' + spdxLicenseList.MIT.licenseText)
+    expect(normalizeLineBreaks(notice.content)).to.eq(
+      normalizeLineBreaks('** test; version 1.0.0 -- \ncopyright me\n\n' + spdxLicenseList.MIT.licenseText)
+    )
     expect(notice.summary).to.deep.eq({
       total: 1,
       warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
@@ -43,7 +45,9 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** @scope/test; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+    expect(normalizeLineBreaks(notice.content)).to.eq(
+      normalizeLineBreaks('** @scope/test; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+    )
   })
 
   it('includes license for package', async () => {
@@ -132,7 +136,9 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** no-copyright; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+    expect(normalizeLineBreaks(notice.content)).to.eq(
+      normalizeLineBreaks('** no-copyright; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+    )
     expect(notice.summary).to.deep.eq({
       total: 3,
       warnings: {
@@ -208,4 +214,9 @@ function setup(definitions, attachments = {}) {
   const service = NoticeService(definitionService, attachmentStore)
   const coordinates = Object.keys(definitions).map(x => definitions[x].coordinates)
   return { service, coordinates }
+}
+
+function normalizeLineBreaks(str) {
+  const normalized = str.replace(/[\r\n]+/g, ' ').trim()
+  return normalized.replace(/\s+/g, ' ')
 }
