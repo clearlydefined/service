@@ -21,16 +21,13 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@clearlydefined'
 
-      - name: Configure npm credentials
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ github.token }}" >> .npmrc
-          echo "@clearlydefined:registry=https://npm.pkg.github.com" >> .npmrc
-
       - name: Upload package-lock.json
         uses: actions/upload-artifact@v4
         with:
           name: package-lock.json
           path: package-lock.json
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
 
   build-and-deploy-prod:
     needs: upload-package-lock-json

@@ -28,13 +28,10 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@clearlydefined'
 
-      - name: Configure npm credentials
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ github.token }}" >> .npmrc
-          echo "@clearlydefined:registry=https://npm.pkg.github.com" >> .npmrc
-
       - name: Install dependencies
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
 
       - name: Run tests
         run: npm test
@@ -45,10 +42,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure Docker build credentials
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ github.token }}" >> .npmrc
-          echo "@clearlydefined:registry=https://npm.pkg.github.com" >> .npmrc
-
       - name: Docker build
         run: docker build .
+        env:
+          DOCKER_BUILDKIT: 1
+          NODE_AUTH_TOKEN: ${{ github.token }}
