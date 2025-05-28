@@ -6,9 +6,6 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const rateLimit = require('express-rate-limit')
-const rateLimitRedisStore = require('rate-limit-redis')
-const redis = require('redis')
 
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
@@ -17,6 +14,8 @@ const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
 const routesVersioning = require('express-routes-versioning')()
+const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } = require('./lib/rateLimit')
+
 const v1 = '1.0.0'
 
 function createApp(config) {
@@ -29,9 +28,12 @@ function createApp(config) {
 
   const summaryService = require('./business/summarizer')(config.summary)
 
+  const cachingService = config.caching.service()
+  initializers.push(async () => cachingService.initialize())
+
   const harvestStore = config.harvest.store()
   initializers.push(async () => harvestStore.initialize())
-  const harvestService = config.harvest.service()
+  const harvestService = config.harvest.service({ cachingService })
   const harvestRoute = require('./routes/harvest')(harvestService, harvestStore, summaryService)
 
   const aggregatorService = require('./business/aggregator')(config.aggregator)
@@ -48,9 +50,6 @@ function createApp(config) {
   const searchService = config.search.service()
   initializers.push(async () => searchService.initialize())
 
-  const cachingService = config.caching.service()
-  initializers.push(async () => cachingService.initialize())
-
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 
   const curationQueue = config.curation.queue()
@@ -58,6 +57,9 @@ function createApp(config) {
 
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
+
+  const upgradeHandler = config.upgrade.service({ queue: config.upgrade.queue })
+  initializers.push(async () => upgradeHandler.initialize())
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
@@ -67,7 +69,8 @@ function createApp(config) {
     curationService,
     definitionStore,
     searchService,
-    cachingService
+    cachingService,
+    upgradeHandler
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
@@ -100,6 +103,10 @@ function createApp(config) {
     crawlerSecret
   )
 
+  // enable heap stats logging at an interval if configured
+  const trySetHeapLoggingAtInterval = require('./lib/heapLogger')
+  trySetHeapLoggingAtInterval(config, logger)
+
   const app = express()
   app.use(cors())
   app.options('*', cors())
@@ -124,31 +131,9 @@ function createApp(config) {
   app.use(config.auth.service.middleware())
 
   app.set('trust-proxy', true)
+  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
 
-  // If Redis is configured for caching, connect to it
-  const client = config.caching.caching_redis_service
-    ? redis.createClient(6380, config.caching.caching_redis_service, {
-        auth_pass: config.caching.caching_redis_api_key,
-        tls: { servername: config.caching_redis_service }
-      })
-    : undefined
-
-  // rate-limit the remaining routes
-  const apiLimiter = config.caching.caching_redis_service
-    ? rateLimit({
-        store: new rateLimitRedisStore({
-          client: client,
-          prefix: 'api'
-        }),
-        windowMs: config.limits.windowSeconds * 1000,
-        max: config.limits.max
-      })
-    : rateLimit({
-        windowMs: config.limits.windowSeconds * 1000,
-        max: config.limits.max
-      })
-
-  app.use(apiLimiter)
+  app.use(setupApiRateLimiterAfterCachingInit(config, cachingService))
 
   // Use a (potentially lower) different API limit
   // for batch API request
@@ -156,30 +141,18 @@ function createApp(config) {
   // * POST /definitions
   // * POST /curations
   // * POST /notices
-  const batchApiLimiter = config.caching.caching_redis_service
-    ? rateLimit({
-        store: new rateLimitRedisStore({
-          client: client,
-          prefix: 'batch-api'
-        }),
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      })
-    : rateLimit({
-        windowMs: config.limits.batchWindowSeconds * 1000,
-        max: config.limits.batchMax
-      })
-
+  const batchApiLimiter = setupBatchApiRateLimiterAfterCachingInit(config, cachingService)
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
   app.post('/notices', batchApiLimiter)
 
   app.use(require('./middleware/querystring'))
 
-  app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
-  app.use('/origins/conda', require('./routes/originConda')())
+  const repoAccess = require('./lib/condaRepoAccess')()
+  app.use('/origins/condaforge', require('./routes/originCondaforge')(repoAccess))
+  app.use('/origins/conda', require('./routes/originConda')(repoAccess))
   app.use('/origins/pod', require('./routes/originPod')())
   app.use('/origins/npm', require('./routes/originNpm')())
   app.use('/origins/maven', require('./routes/originMaven')())
@@ -230,6 +203,7 @@ function createApp(config) {
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
         require('./providers/harvest/process')(harvestQueue, definitionService, logger)
+        upgradeHandler.setupProcessing(definitionService, logger)
 
         // Signal system is up and ok (no error)
         callback()

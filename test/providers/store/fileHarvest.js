@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 const sinon = require('sinon')
-const { expect } = require('chai')
+const deepEqualInAnyOrder = require('deep-equal-in-any-order')
+const chai = require('chai')
+chai.use(deepEqualInAnyOrder)
+const expect = chai.expect
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 const FileStore = require('../../../providers/stores/fileHarvestStore')
@@ -76,3 +79,85 @@ describe('FileHarvestStore list tool results', () => {
     expect(result).to.equalInAnyOrder(expected)
   })
 })
+
+describe('getAll and getAllLatest', () => {
+  const allFiles = [
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.3.1.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/licensee/9.18.1.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.1.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.2.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/scancode/30.3.0.json',
+    '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/scancode/32.3.0.json'
+  ]
+  let fileStore
+
+  beforeEach(() => {
+    fileStore = createFileHarvestStore()
+  })
+
+  it('should return all harvest results', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+    const result = await fileStore.getAll(coordinates)
+    const tools = Object.getOwnPropertyNames(result)
+    expect(tools.length).to.eq(5)
+    const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
+    expect(clearlydefinedVersions).to.equalInAnyOrder(['1', '1.1.2', '1.3.4'])
+    const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
+    expect(scancodeVersions).to.equalInAnyOrder(['2.2.1', '2.9.0+b1', '30.3.0'])
+    const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
+    expect(licenseeVersions).to.equalInAnyOrder(['9.12.1', '9.14.0'])
+    const reuseVersions = Object.getOwnPropertyNames(result.reuse)
+    expect(reuseVersions).to.equalInAnyOrder(['1.3.0', '3.2.1'])
+    const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
+    expect(fossologyVersions).to.equalInAnyOrder(['3.3.0', '3.6.0'])
+  })
+
+  it('should return all latest harvest results', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+    const result = await fileStore.getAllLatest(coordinates)
+    const tools = Object.getOwnPropertyNames(result)
+    expect(tools.length).to.eq(5)
+    const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
+    expect(clearlydefinedVersions).to.equalInAnyOrder(['1.3.4'])
+    const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
+    expect(scancodeVersions).to.equalInAnyOrder(['30.3.0'])
+    const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
+    expect(licenseeVersions).to.equalInAnyOrder(['9.14.0'])
+    const reuseVersions = Object.getOwnPropertyNames(result.reuse)
+    expect(reuseVersions).to.equalInAnyOrder(['3.2.1'])
+    const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
+    expect(fossologyVersions).to.equalInAnyOrder(['3.6.0'])
+  })
+
+  it('should get latest files', () => {
+    const result = fileStore._getListOfLatestFiles(allFiles)
+    expect(result.length).to.eq(4)
+    expect(Array.from(result)).to.equalInAnyOrder([
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/licensee/9.18.1.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.2.json',
+      '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/scancode/32.3.0.json'
+    ])
+  })
+
+  it('should handle error', () => {
+    fileStore._getLatestToolVersions = sinon.stub().throws(new Error('test error'))
+    fileStore.logger.error = sinon.stub()
+    const result = fileStore._getListOfLatestFiles(allFiles)
+    expect(fileStore.logger.error.calledOnce).to.be.true
+    expect(result.length).to.eq(allFiles.length)
+    expect(Array.from(result)).to.equalInAnyOrder(allFiles)
+  })
+})
+
+function createFileHarvestStore() {
+  const options = {
+    location: 'test/fixtures/store',
+    logger: {
+      error: () => {},
+      debug: () => {}
+    }
+  }
+  return FileStore(options)
+}

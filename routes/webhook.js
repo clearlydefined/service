@@ -7,6 +7,7 @@ const crypto = require('crypto')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { get } = require('lodash')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
+const { parseUrn } = require('../lib/utils')
 
 const validPrActions = ['opened', 'reopened', 'synchronize', 'closed']
 let githubSecret = null
@@ -62,7 +63,12 @@ async function handleCrawlerCall(request, response) {
   if (!urn) return info(request, response, 400, 'Missing or invalid "self" link')
   const coordinates = EntityCoordinates.fromUrn(urn)
   // TODO validate the coordinates are complete
-  await definitionService.computeStoreAndCurate(coordinates)
+  const { tool, toolRevision } = parseUrn(urn)
+  if (tool === 'clearlydefined') {
+    await definitionService.computeStoreAndCurate(coordinates)
+  } else {
+    await definitionService.computeAndStoreIfNecessary(coordinates, tool, toolRevision)
+  }
   logger.info(`Handled Crawler update event for ${urn}`)
   response.status(200).end()
 }

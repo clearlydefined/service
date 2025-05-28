@@ -39,7 +39,7 @@ const currentSchema = '1.7.0'
 const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
 
 class DefinitionService {
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, upgradeHandler) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -48,7 +48,13 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
     this.cache = cache
+    this.upgradeHandler = upgradeHandler
+    if (this.upgradeHandler) this.upgradeHandler.currentSchema = currentSchema
     this.logger = logger()
+  }
+
+  get currentSchema() {
+    return currentSchema
   }
 
   /**
@@ -68,11 +74,13 @@ class DefinitionService {
       return this.compute(coordinates, curation)
     }
     const existing = await this._cacheExistingAside(coordinates, force)
-    let result
-    if (get(existing, '_meta.schemaVersion') === currentSchema) {
+    let result = await this.upgradeHandler.validate(existing)
+    if (result) {
       // Log line used for /status page insights
       this.logger.info('computed definition available', { coordinates: coordinates.toString() })
-      result = existing
+    } else if (!force && (await this.harvestService.isTracked(coordinates))) {
+      this.logger.info('definition harvest in progress', { coordinates: coordinates.toString() })
+      return this._computePlaceHolder(coordinates)
     } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
     return this._trimDefinition(this._cast(result), expand)
   }
@@ -240,6 +248,31 @@ class DefinitionService {
     }
   }
 
+  async computeAndStoreIfNecessary(coordinates, tool, toolRevision) {
+    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    try {
+      computeLock.set(coordinates.toString(), true)
+      if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
+        this.logger.info('definition computation skipped: tool result processed', {
+          coordinates: coordinates.toString(),
+          tool,
+          toolRevision
+        })
+        return
+      }
+      return await this._computeAndStore(coordinates)
+    } finally {
+      computeLock.delete(coordinates.toString())
+    }
+  }
+
+  async _isToolResultNew(coordinates, tool, toolRevision) {
+    const definitionFound = await this.getStored(coordinates)
+    const toolVersionToAdd = `${tool}/${toolRevision}`
+    const tools = definitionFound?.described?.tools || []
+    return !tools.includes(toolVersionToAdd)
+  }
+
   async _computeAndStore(coordinates) {
     const definition = await this.compute(coordinates)
     // If no tools participated in the creation of the definition then don't bother storing.
@@ -273,6 +306,7 @@ class DefinitionService {
   async _store(definition) {
     await this.definitionStore.store(definition)
     await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
+    await this.harvestService.done(definition.coordinates)
   }
 
   /**
@@ -286,7 +320,7 @@ class DefinitionService {
    */
   async compute(coordinates, curationSpec) {
     this.logger.debug('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    const raw = await this.harvestStore.getAll(coordinates)
+    const raw = await this.harvestStore.getAllLatest(coordinates)
     this.logger.debug('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     coordinates = this._getCasedCoordinates(raw, coordinates)
     this.logger.debug('5:compute:summarize:start', {
@@ -303,6 +337,11 @@ class DefinitionService {
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, aggregatedDefinition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    this._calculateValidate(coordinates, definition)
+    return definition
+  }
+
+  _calculateValidate(coordinates, definition) {
     this.logger.debug('9:compute:calculate:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
@@ -314,6 +353,13 @@ class DefinitionService {
     this._ensureNoNulls(definition)
     this._validate(definition)
     this.logger.debug('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+  }
+
+  _computePlaceHolder(givenCoordinates) {
+    const coordinates = this._getCasedCoordinates({}, givenCoordinates)
+    const definition = { coordinates }
+    this._ensureToolScores(coordinates, definition)
+    this._calculateValidate(coordinates, definition)
     return definition
   }
 
@@ -598,5 +644,15 @@ class DefinitionService {
   }
 }
 
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache) =>
-  new DefinitionService(harvestStore, harvestService, summary, aggregator, curation, store, search, cache)
+module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, versionHandler) =>
+  new DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curation,
+    store,
+    search,
+    cache,
+    versionHandler
+  )

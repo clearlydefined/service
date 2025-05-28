@@ -12,6 +12,12 @@ const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
+const FileHarvestStore = require('../../providers/stores/fileHarvestStore')
+const SummaryService = require('../../business/summarizer')
+const AggregatorService = require('../../business/aggregator')
+const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
+const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
+const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -180,6 +186,94 @@ describe('Definition Service', () => {
       })
     })
   })
+
+  describe('computeAndStoreIfNecessary', () => {
+    let service, coordinates
+    beforeEach(() => {
+      ;({ service, coordinates } = setup())
+      service.getStored = sinon.stub().resolves({
+        described: {
+          tools: ['scancode/3.2.2', 'licensee/3.2.2']
+        }
+      })
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes if definition does not exist', async () => {
+      service.getStored = sinon.stub().resolves(undefined)
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('computes if tools array is undefined', async () => {
+      service.getStored = sinon.stub().resolves({ described: {} })
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+    })
+
+    it('computes if the tool result is not included in definition', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('skips compute if existing definition contains the tool result', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.notCalled).to.be.true
+    })
+
+    it('handles two computes for the same coordinates: computes the first and skip the second', async () => {
+      await Promise.all([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+
+      //verfiy the calls are in sequence to ensure that locking works
+      expect(service.compute.getCall(0).calledAfter(service.getStored.getCall(0))).to.be.true
+      expect(service.compute.getCall(0).calledBefore(service.getStored.getCall(1))).to.be.true
+    })
+
+    it('releases the lock upon failure', async () => {
+      service.getStored = sinon
+        .stub()
+        .onFirstCall()
+        .rejects(new Error('test error'))
+        .onSecondCall()
+        .resolves({ described: {} })
+
+      const results = await Promise.allSettled([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+
+      expect(results[0].status).to.eq('rejected')
+      expect(results[0].reason.message).to.eq('test error')
+      expect(results[1].status).to.eq('fulfilled')
+
+      //lock is released after the first call
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {
@@ -310,6 +404,268 @@ describe('Definition Service Facet management', () => {
   })
 })
 
+describe('Integration test', () => {
+  describe('compute', () => {
+    let fileHarvestStore
+    beforeEach(() => {
+      fileHarvestStore = createFileHarvestStore()
+    })
+
+    it('computes the same definition with latest harvest data', async () => {
+      const coordinates = EntityCoordinates.fromString('npm/npmjs/-/debug/3.1.0')
+      const allHarvestData = await fileHarvestStore.getAll(coordinates)
+      delete allHarvestData['scancode']['2.9.0+b1'] //remove invalid scancode version
+      let service = setupServiceToCalculateDefinition(allHarvestData)
+      const baseline_def = await service.compute(coordinates)
+
+      const latestHarvestData = await fileHarvestStore.getAllLatest(coordinates)
+      service = setupServiceToCalculateDefinition(latestHarvestData)
+      const comparison_def = await service.compute(coordinates)
+
+      //updated timestamp is not deterministic
+      expect(comparison_def._meta.updated).to.not.equal(baseline_def._meta.updated)
+      comparison_def._meta.updated = baseline_def._meta.updated
+      expect(comparison_def).to.deep.equal(baseline_def)
+    })
+  })
+
+  describe('Handle schema version upgrade', () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
+    const logger = {
+      debug: () => {},
+      error: () => {},
+      info: () => {}
+    }
+
+    let upgradeHandler
+
+    const handleVersionedDefinition = function () {
+      describe('verify schema version', () => {
+        it('logs and harvests new definitions with empty tools', async () => {
+          const { service } = setupServiceForUpgrade(null, upgradeHandler)
+          service._harvest = sinon.stub()
+          await service.get(coordinates)
+          expect(service._harvest.calledOnce).to.be.true
+          expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
+        })
+
+        it('computes if definition does not exist', async () => {
+          const { service } = setupServiceForUpgrade(null, upgradeHandler)
+          service.computeStoreAndCurate = sinon.stub().resolves(definition)
+          await service.get(coordinates)
+          expect(service.computeStoreAndCurate.calledOnce).to.be.true
+          expect(service.computeStoreAndCurate.getCall(0).args[0]).to.eq(coordinates)
+        })
+
+        it('returns the up-to-date definition', async () => {
+          const { service } = setupServiceForUpgrade(definition, upgradeHandler)
+          service.computeStoreAndCurate = sinon.stub()
+          const result = await service.get(coordinates)
+          expect(service.computeStoreAndCurate.called).to.be.false
+          expect(result).to.deep.equal(definition)
+        })
+      })
+    }
+
+    describe('schema version check', () => {
+      beforeEach(async () => {
+        upgradeHandler = new DefinitionVersionChecker({ logger })
+        await upgradeHandler.initialize()
+      })
+
+      handleVersionedDefinition()
+
+      context('with stale definitions', () => {
+        it('recomputes a definition with the updated schema version', async () => {
+          const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
+          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const result = await service.get(coordinates)
+          expect(result._meta.schemaVersion).to.eq('1.7.0')
+          expect(result.coordinates).to.deep.equal(coordinates)
+          expect(store.store.calledOnce).to.be.true
+        })
+      })
+    })
+
+    describe('queueing schema version updates', () => {
+      let queue, staleDef
+      beforeEach(async () => {
+        queue = memoryQueue()
+        const queueFactory = sinon.stub().returns(queue)
+        upgradeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
+        await upgradeHandler.initialize()
+        staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
+      })
+
+      handleVersionedDefinition()
+
+      context('with stale definitions', () => {
+        it('returns a stale definition, queues update, recomputes and retrieves the updated definition', async () => {
+          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const result = await service.get(coordinates)
+          expect(result).to.deep.equal(staleDef)
+          expect(queue.data.length).to.eq(1)
+          await upgradeHandler.setupProcessing(service, logger, true)
+          const newResult = await service.get(coordinates)
+          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
+          expect(store.store.calledOnce).to.be.true
+          expect(queue.data.length).to.eq(0)
+        })
+
+        it('computes once when the same coordinates is queued twice', async () => {
+          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          await service.get(coordinates)
+          const result = await service.get(coordinates)
+          expect(result).to.deep.equal(staleDef)
+          expect(queue.data.length).to.eq(2)
+          await upgradeHandler.setupProcessing(service, logger, true)
+          expect(queue.data.length).to.eq(1)
+          await upgradeHandler.setupProcessing(service, logger, true)
+          const newResult = await service.get(coordinates)
+          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
+          expect(store.store.calledOnce).to.be.true
+          expect(queue.data.length).to.eq(0)
+        })
+
+        it('computes once when the same coordinates is queued twice within one dequeue batch ', async () => {
+          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          await service.get(coordinates)
+          await service.get(coordinates)
+          queue.dequeueMultiple = sinon.stub().callsFake(async () => {
+            const message1 = await queue.dequeue()
+            const message2 = await queue.dequeue()
+            return Promise.resolve([message1, message2])
+          })
+          await upgradeHandler.setupProcessing(service, logger, true)
+          const newResult = await service.get(coordinates)
+          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
+          expect(store.store.calledOnce).to.be.true
+        })
+      })
+    })
+  })
+
+  describe('Placeholder definition and Cache', () => {
+    let service, coordinates, harvestService
+
+    describe('placeholder definition', () => {
+      beforeEach(() => {
+        ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, null)))
+        sinon.spy(service, 'compute')
+        sinon.spy(service, '_computePlaceHolder')
+        sinon.spy(harvestService, 'isTracked')
+      })
+
+      it('returns a placeholder definition same as computed', async () => {
+        const computed = await service.get(coordinates)
+        const placeholder = service._computePlaceHolder(coordinates)
+        placeholder._meta.updated = 'ignore_time_stamp'
+        computed._meta.updated = 'ignore_time_stamp'
+        expect(placeholder).to.deep.equal(computed)
+      })
+
+      it('triggers a harvest for a new component', async () => {
+        harvestService.isTracked = sinon.stub().resolves(false)
+        await service.get(coordinates)
+        expect(service.compute.called).to.be.true
+        expect(service._harvest.called).to.be.true
+        expect(service._computePlaceHolder.calledOnce).to.be.false
+        expect(harvestService.isTracked.calledOnce).to.be.true
+        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
+      })
+
+      it('returns a placeholder definition with a tracked harvest', async () => {
+        harvestService.isTracked = sinon.stub().resolves(true)
+        await service.get(coordinates)
+        expect(service._computePlaceHolder.calledOnce).to.be.true
+        expect(service.compute.called).to.be.false
+        expect(service._harvest.called).to.be.false
+        expect(harvestService.isTracked.calledOnce).to.be.true
+        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
+      })
+    })
+
+    it('deletes the tracked in progress harvest after definition is computed', async () => {
+      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      harvestService.done = sinon.stub().resolves(true)
+      await service.computeAndStore(coordinates)
+      expect(harvestService.done.calledOnce).to.be.true
+      expect(harvestService.done.args[0][0]).to.be.deep.equal(coordinates)
+    })
+  })
+})
+
+function createFileHarvestStore() {
+  const options = {
+    location: 'test/fixtures/store',
+    logger: {
+      error: () => {},
+      debug: () => {}
+    }
+  }
+  return FileHarvestStore(options)
+}
+
+function setupServiceToCalculateDefinition(rawHarvestData) {
+  const harvestStore = { getAllLatest: () => Promise.resolve(rawHarvestData) }
+  const summary = SummaryService({})
+
+  const tools = [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
+  const aggregator = AggregatorService({ precedence: tools })
+  aggregator.logger = { info: sinon.stub() }
+  const curator = {
+    get: () => Promise.resolve(),
+    apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+    autoCurate: () => {}
+  }
+  return setupWithDelegates(curator, harvestStore, summary, aggregator)
+}
+
+function setupServiceForUpgrade(definition, upgradeHandler) {
+  let storedDef = definition && { ...definition }
+  const store = {
+    get: sinon.stub().resolves(storedDef),
+    store: sinon.stub().callsFake(def => (storedDef = def))
+  }
+  const harvestStore = { getAllLatest: () => Promise.resolve(null) }
+  const summary = { summarizeAll: () => Promise.resolve(null) }
+  const aggregator = { process: () => Promise.resolve(definition) }
+  const curator = {
+    get: () => Promise.resolve(),
+    apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+    autoCurate: () => {}
+  }
+  const service = setupWithDelegates(curator, harvestStore, summary, aggregator, store, upgradeHandler)
+  return { service, store }
+}
+
+function setupWithDelegates(
+  curator,
+  harvestStore,
+  summary,
+  aggregator,
+  store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
+  upgradeHandler = { validate: def => Promise.resolve(def) }
+) {
+  const search = { delete: sinon.stub(), store: sinon.stub() }
+  const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
+  const harvestService = mockHarvestService()
+  const service = DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curator,
+    store,
+    search,
+    cache,
+    upgradeHandler
+  )
+  service.logger = { info: sinon.stub(), debug: () => {} }
+  return service
+}
+
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
@@ -342,13 +698,32 @@ function setup(definition, coordinateSpec, curation) {
       return
     }
   }
-  const harvestStore = { getAll: () => Promise.resolve(null) }
-  const harvestService = { harvest: () => sinon.stub() }
+  const harvestStore = { getAllLatest: () => Promise.resolve(null) }
+  const harvestService = mockHarvestService()
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search, cache)
+  const upgradeHandler = { validate: def => Promise.resolve(def) }
+  const service = DefinitionService(
+    harvestStore,
+    harvestService,
+    summary,
+    aggregator,
+    curator,
+    store,
+    search,
+    cache,
+    upgradeHandler
+  )
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
-  return { coordinates, service }
+  return { coordinates, service, harvestService }
+}
+
+function mockHarvestService() {
+  return {
+    harvest: () => sinon.stub(),
+    done: () => Promise.resolve(),
+    isTracked: () => Promise.resolve(false)
+  }
 }

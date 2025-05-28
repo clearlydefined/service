@@ -15,8 +15,8 @@ describe('Webhook Route for Crawler calls', () => {
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
-    expect(service.computeStoreAndCurate.calledOnce).to.be.true
-    expect(service.computeStoreAndCurate.getCall(0).args[0].name).to.be.eq('test')
+    expect(service.computeAndStoreIfNecessary.calledOnce).to.be.true
+    expect(service.computeAndStoreIfNecessary.getCall(0).args[0].name).to.be.eq('test')
   })
 
   it('handles missing self', () => {
@@ -52,7 +52,8 @@ function createLogger() {
 
 function createDefinitionService() {
   return {
-    computeStoreAndCurate: sinon.stub()
+    computeStoreAndCurate: sinon.stub(),
+    computeAndStoreIfNecessary: sinon.stub()
   }
 }
 

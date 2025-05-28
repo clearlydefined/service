@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: MIT
 
 const { expect, assert } = require('chai')
-const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
-const originCondaRoutes = require('../../routes/originConda')
 const proxyquire = require('proxyquire')
 const fs = require('fs')
+const httpMocks = require('node-mocks-http')
 const originMavenRoutes = require('../../routes/originMaven')
+const originCondaRoutes = require('../../routes/originConda')
 
 describe('Pypi origin routes', () => {
   let router
@@ -91,66 +91,126 @@ describe('Maven Origin routes', () => {
   }
 })
 
+describe('Conda Origin Routes', () => {
+  let condaRepoAccess
+  let cacheMock
+
+  const requestPromiseStub = sinon.stub()
+  const fetchModuleStub = {
+    callFetch: requestPromiseStub
+  }
+
+  const createCondaRepoAccess = proxyquire('../../lib/condaRepoAccess', {
+    './fetch': fetchModuleStub
+  })
+
+  const channelData = {
+    packages: {
+      tensorflow: { subdirs: ['linux-64'] }
+    },
+    subdirs: ['linux-64']
+  }
+
+  const repoData = {
+    packages: {
+      'pkg-2': { name: 'tensorflow', version: '2.15.0', build: 'cuda120py39hb94c71b_3' }
+    }
+  }
+
+  beforeEach(() => {
+    cacheMock = {
+      get: sinon.stub(),
+      set: sinon.stub()
+    }
+
+    condaRepoAccess = createCondaRepoAccess(cacheMock)
+  })
+
+  afterEach(() => {
+    sinon.restore()
+    requestPromiseStub.resetHistory()
+  })
+
+  it('handles a valid GET request for revisions', async () => {
+    requestPromiseStub.onFirstCall().resolves(channelData)
+    requestPromiseStub.onSecondCall().resolves(repoData)
+    const request = createGetOriginCondaRevisionsRequest('tensorflow')
+    const response = httpMocks.createResponse()
+
+    const router = initializeRoutes()
+    await router._getOriginCondaRevisions(request, response)
+    assert.strictEqual(response.statusCode, 200)
+    assert.deepEqual(response._getData(), ['linux-64:2.15.0-cuda120py39hb94c71b_3'])
+    assert.isTrue(requestPromiseStub.calledTwice)
+  })
+
+  it('handles a valid GET request for package listings', async () => {
+    requestPromiseStub.onFirstCall().resolves(channelData)
+    const request = createGetOriginCondaRequest('conda-forge')
+    const response = httpMocks.createResponse()
+
+    const router = initializeRoutes()
+    await router._getOriginConda(request, response)
+    assert.strictEqual(response.statusCode, 200)
+    assert.deepEqual(response._getData(), [{ id: 'tensorflow' }])
+    assert.isTrue(requestPromiseStub.called)
+  })
+
+  it('returns a 404 error for a non-existent channel', async () => {
+    requestPromiseStub.onFirstCall().resolves(channelData)
+    const request = createGetOriginCondaRequest('tensor')
+    const response = httpMocks.createResponse()
+
+    const router = initializeRoutes()
+    await router._getOriginConda(request, response)
+    assert.strictEqual(response.statusCode, 404)
+    assert.strictEqual(response._getData(), 'Unrecognized Conda channel tensor')
+  })
+
+  it('returns a 404 error for a non-existent package in revisions', async () => {
+    requestPromiseStub.onFirstCall().resolves(channelData)
+    requestPromiseStub.onSecondCall().resolves(repoData)
+    const request = createGetOriginCondaRevisionsRequest('tensorflow1212')
+    const response = httpMocks.createResponse()
+
+    const router = initializeRoutes()
+    await router._getOriginCondaRevisions(request, response)
+    assert.strictEqual(response.statusCode, 404)
+    assert.strictEqual(response._getData(), 'Package tensorflow1212 not found in channel conda-forge')
+    assert.isTrue(requestPromiseStub.calledOnce)
+  })
+
+  function createGetOriginCondaRevisionsRequest(name) {
+    return httpMocks.createRequest({
+      method: 'GET',
+      url: `/origins/conda/'conda-forge'/linux-64/${name}/revisions`,
+      baseUrl: 'https://dev.clearlydefined.io',
+      params: {
+        channel: 'conda-forge',
+        subdir: 'linux-64',
+        name: name
+      }
+    })
+  }
+
+  function createGetOriginCondaRequest(channel) {
+    return httpMocks.createRequest({
+      method: 'GET',
+      url: `/origins/conda/${channel}/tensorflow/`,
+      baseUrl: 'https://dev.clearlydefined.io',
+      params: {
+        channel: channel,
+        name: 'tensorflow'
+      }
+    })
+  }
+
+  function initializeRoutes() {
+    return originCondaRoutes(condaRepoAccess, true)
+  }
+})
+
 function loadFixture(path) {
   const body = fs.readFileSync(path)
   return JSON.parse(body)
-}
-
-describe('Conda origin routes', () => {
-  it('accepts a good revisions GET request', async () => {
-    const request = createGetOriginCondaRevisionsRequest()
-    const response = httpMocks.createResponse()
-    const stubCondaCache = createStubCondaCache({
-      'conda-forge-linux-64-repoData': {
-        packages: [
-          {
-            name: 'tensorflow',
-            version: '2.15.0',
-            build: 'cuda120py39hb94c71b_3'
-          }
-        ],
-        subdirs: ['linux-64']
-      },
-      'conda-forge-channelData': {
-        packages: {
-          tensorflow: {}
-        },
-        subdirs: ['linux-64']
-      }
-    })
-    const router = createRoutes(stubCondaCache)
-    await router._getOriginCondaRevisions(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(response._getData()).to.be.deep.equal(['linux-64:2.15.0-cuda120py39hb94c71b_3'])
-    expect(stubCondaCache.get.calledTwice).to.be.true
-  })
-})
-
-function createGetOriginCondaRevisionsRequest() {
-  return httpMocks.createRequest({
-    method: 'GET',
-    url: 'origins/conda/conda-forge/linux-64/tensorflow/revisions',
-    baseUrl: 'https://dev.clearlydefined.io',
-    params: {
-      channel: 'conda-forge',
-      subdir: 'linux-64',
-      name: 'tensorflow'
-    }
-  })
-}
-
-function createRoutes(condaCache) {
-  return originCondaRoutes(condaCache, true)
-}
-
-function createStubCondaCache(cacheData) {
-  let getStub = sinon.stub()
-
-  for (const [key, value] of Object.entries(cacheData)) {
-    getStub.withArgs(key).returns(value)
-  }
-
-  return {
-    get: getStub
-  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "service",
-  "version": "2.0.1",
+  "version": "2.2.0",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "npm run mocha && npm run lint",
@@ -12,7 +12,7 @@
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www",
+    "start": "node --max-old-space-size=8192 ./bin/www",
     "postinstall": "patch-package"
   },
   "license": "MIT",
@@ -21,13 +21,13 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
-    "@clearlydefined/spdx": "0.1.9",
+    "@clearlydefined/spdx": "0.1.10",
     "@gitbeaker/node": "^29.2.4",
     "@octokit/rest": "^14.0.9",
     "ajv": "^6.12.3",
     "ajv-errors": "^1.0.0",
     "applicationinsights": "^1.5.0",
-    "axios": "^1.6.0",
+    "axios": "^1.9.0",
     "azure-storage": "^2.10.2",
     "base-64": "^0.1.0",
     "body-parser": "~1.18.2",
@@ -38,7 +38,7 @@
     "debug": "~2.6.9",
     "express": "^4.19.2",
     "express-init": "^1.1.1",
-    "express-rate-limit": "^6.0.4",
+    "express-rate-limit": "^7.5.0",
     "express-routes-versioning": "^1.0.1",
     "extend": "^3.0.2",
     "geit": "0.0.7",
@@ -58,15 +58,15 @@
     "passport-github": "^1.1.0",
     "patch-package": "^6.5.1",
     "promise-retry": "^1.1.1",
-    "rate-limit-redis": "^2.1.0",
+    "rate-limit-redis": "^4.2.0",
     "readdirp": "^2.1.0",
     "recursive-readdir": "^2.2.1",
-    "redis": "^3.1.1",
+    "redis": "^4.7.0",
     "request-id": "^0.11.1",
     "semver": "7.6.0",
     "serialize-error": "^2.1.0",
     "spdx-expression-parse": "github:clearlydefined/spdx-expression-parse.js#fork",
-    "spdx-license-list": "^6.9.0",
+    "spdx-license-list": "^6.10.0",
     "swagger-ui-express": "^4.0.1",
     "throat": "^4.1.0",
     "tiny-attribution-generator": "0.1.2",
@@ -77,6 +77,7 @@
   },
   "devDependencies": {
     "@types/express": "4.17.17",
+    "@types/lodash": "4.17.16",
     "@types/mocha": "8.2.3",
     "@types/node": "18.15.11",
     "chai": "^4.1.2",
@@ -93,6 +94,8 @@
     "prettier": "3.2.5",
     "proxyquire": "^2.0.1",
     "sinon": "^5.0.0",
+    "supertest": "^7.0.0",
+    "testcontainers": "^10.25.0",
     "typescript": "5.0.4"
   }
 }
