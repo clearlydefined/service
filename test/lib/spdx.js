@@ -229,7 +229,9 @@ describe('SPDX utility functions', () => {
       'LGPL-2.1-only OR MIT OR BSD-3-Clause': 'LGPL-2.1-only OR MIT OR BSD-3-Clause',
       'LGPL-2.1-only OR BSD-3-Clause AND MIT': 'LGPL-2.1-only OR BSD-3-Clause AND MIT',
       ' ': null,
-      null: null
+      null: null,
+      'DUMB': 'NOASSERTION',
+      'net-snmp': 'Net-SNMP'
     }
     for (let input of Object.keys(data)) {
       if (input === 'null') input = null
