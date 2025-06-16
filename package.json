@@ -1,6 +1,6 @@
 {
   "name": "service",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Service side of clearlydefined.io.",
   "scripts": {
     "test": "npm run mocha && npm run lint",
