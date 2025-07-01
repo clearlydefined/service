@@ -186,6 +186,7 @@ function createApp(config) {
       url: req.url
     })
     const err = new Error('Not Found')
+    // @ts-ignore - Express error convention
     err.status = 404
     next(err)
   }
