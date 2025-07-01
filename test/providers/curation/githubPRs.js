@@ -191,7 +191,7 @@ describe('Curation service pr events', () => {
             expect(ref).to.eq('branch')
             return Promise.resolve()
           },
-          blob: () => Promise.resolve(new Buffer.alloc(0))
+          blob: () => Promise.resolve(Buffer.alloc(0))
         }
       }
     })
@@ -227,7 +227,7 @@ revisions:
           },
           blob: ref => {
             expect(ref).to.eq('thisisasha')
-            return Promise.resolve(new Buffer.from(theYaml))
+            return Promise.resolve(Buffer.from(theYaml))
           }
         }
       }
@@ -257,7 +257,7 @@ revisions:
             expect(ref).to.eq('refs/pull/123/head')
             return Promise.resolve()
           },
-          blob: () => Promise.resolve(new Buffer.alloc(0))
+          blob: () => Promise.resolve(Buffer.alloc(0))
         }
       }
     })
@@ -286,7 +286,7 @@ function createService({ failsCompute = false, geitStubOverride = null }) {
     (() => {
       return {
         tree: () => Promise.resolve(),
-        blob: () => Promise.resolve(new Buffer.alloc(0))
+        blob: () => Promise.resolve(Buffer.alloc(0))
       }
     })
   const service = proxyquire('../../../providers/curation/github', { geit: geitStub })(
