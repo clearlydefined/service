@@ -14,6 +14,7 @@ function permissionsCheck(permission) {
     const intersection = requiredTeams.filter(t => (userTeams || []).includes(t))
     if (requiredTeams.length !== 0 && intersection.length == 0) {
       const error = new Error(`No permission to '${permission}' (needs team membership)`)
+      // @ts-ignore - Express error convention
       error.status = 401
       next(error)
     } else {
