@@ -97,6 +97,6 @@
     "sinon": "^5.0.0",
     "supertest": "^7.0.0",
     "testcontainers": "^10.25.0",
-    "typescript": "5.0.4"
+    "typescript": "5.8.3"
   }
 }
