@@ -12,10 +12,7 @@
     "types": ["node"] // Include node type definitions.
   },
   // "include": ["**/*.js", "bin/www"],
-  "include": [
-    "providers/harvest/cacheBasedCrawler.js",
-    "bin/www"
-  ],
+  "include": ["providers/harvest/cacheBasedCrawler.js", "bin/www"],
   "exclude": [
     "node_modules", // Exclude 'node_modules' to avoid unnecessary type-checking.
     "docs",
