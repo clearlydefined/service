@@ -22,7 +22,6 @@ ENV APP_VERSION=$APP_VERSION
 ARG BUILD_SHA="UNKNOWN"
 ENV BUILD_SHA=$BUILD_SHA
 
-COPY patches /tmp/patches
 COPY .npmrc package*.json /tmp/
 RUN cd /tmp && npm install --production
 RUN mkdir -p "${APPDIR}" && cp -a /tmp/node_modules "${APPDIR}"
