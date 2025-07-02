@@ -287,6 +287,6 @@ describe('ScanCodeLegacySummarizer fixtures', () => {
 function getHarvestData(version, test) {
   const fileName = path.join(__dirname, `../../../fixtures/scancode/${version}/${test}.json`)
   if (fs.existsSync(fileName)) {
-    return JSON.parse(fs.readFileSync(fileName))
+    return JSON.parse(fs.readFileSync(fileName, 'utf8'))
   }
 }
