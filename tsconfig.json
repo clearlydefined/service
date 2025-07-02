@@ -5,8 +5,22 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "allowJs": true,
-    "checkJs": true
+    "allowJs": true, // Allow JavaScript files to be compiled.
+    "checkJs": true, // Enable type checking on JavaScript files.
+    "noEmit": true, // Do not generate any files.
+    "strict": true, // Enable all strict type checking options.
+    "types": ["node"] // Include node type definitions.
   },
-  "include": ["**/*.js", "bin/www"]
+  // "include": ["**/*.js", "bin/www"],
+  "include": [
+    "providers/harvest/cacheBasedCrawler.js",
+    "bin/www"
+  ],
+  "exclude": [
+    "node_modules", // Exclude 'node_modules' to avoid unnecessary type-checking.
+    "docs",
+    "data",
+    "dev-scripts",
+    "patches"
+  ]
 }

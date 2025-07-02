@@ -5,10 +5,11 @@
   "scripts": {
     "test": "npm run mocha && npm run lint",
     "mocha": "nyc mocha --exit \"test/**/*.js\"",
-    "lint": "npm run prettier:check && npm run eslint",
-    "lint:fix": "npm run prettier:write && npm run eslint:fix",
+    "lint": "npm run tsc && npm run eslint && npm run prettier:check",
+    "lint:fix": "npm run eslint:fix && npm run prettier:write",
     "eslint": "eslint .",
     "eslint:fix": "eslint . --fix",
+    "tsc": "tsc",
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "dev": "nodemon ./bin/www",

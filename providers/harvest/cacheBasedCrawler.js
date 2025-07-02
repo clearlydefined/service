@@ -151,7 +151,7 @@ class CacheBasedHarvester {
   /**
    *
    * @param {string} key
-   * @returns {Promise<HarvestCallItem[]} tracked harvests
+   * @returns {Promise<HarvestCallItem[]>} tracked harvests
    */
   async _getCached(key) {
     if (!key) return []
