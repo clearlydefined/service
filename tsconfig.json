@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "checkJs": true
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true
   },
-  "include": ["**/*.js", "bin/www"]
+  "include": ["providers/harvest/cacheBasedCrawler.js", "bin/www"]
 }
