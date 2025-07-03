@@ -1,14 +1,9 @@
 {
+  "extends": ["@tsconfig/node18/tsconfig.json"],
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "moduleResolution": "node",
     "allowJs": true,
     "checkJs": true,
-    "noEmit": true,
-    "strict": true
+    "noEmit": true
   },
   "include": ["providers/harvest/cacheBasedCrawler.js", "bin/www"]
 }
