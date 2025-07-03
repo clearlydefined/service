@@ -1,57 +1,26 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 // @ts-check
+
 const logger = require('../logging/logger')
 const throat = require('throat')
 const { uniqBy, isEqual } = require('lodash')
 
-const cacheTTLInSeconds = 60 * 60 * 24 /* 1d */
+/** Default cache TTL: 1 day in seconds */
+const cacheTTLInSeconds = 60 * 60 * 24
+/** Default concurrency limit for parallel operations */
 const concurrencyLimit = 10
 
 /**
- *  @typedef {Object} Harvester
- *  @property {function} harvest - Function to harvest entries.
- *  @property {function} toHarvestItem - Function to convert entry to message body for external api call.
+ * Cache-based harvester that tracks and filters harvest operations to avoid duplicates. This class provides efficient
+ * harvesting by caching previously processed entries and filtering out duplicates before sending them to the underlying
+ * harvester.
  */
-
-/**
- * @typedef {Object} CachingService
- * @property {function} get - Function to get a value from the cache.
- * @property {function} set - Function to set a value in the cache.
- * @property {function} delete - Function to delete a value from the cache.
- */
-
-/**
- * @typedef {Object} Options
- * @property {Object} [logger] - Optional logger instance.
- * @property {CachingService} cachingService - Caching service instance.
- * @property {Harvester} harvester - Harvester instance.
- * @property {number} [concurrencyLimit] - Optional concurrency limit.
- * @property {number} [cacheTTLInSeconds] - Optional cache TTL in seconds.
- */
-
-/**
- * @typedef {Object} HarvestEntry
- * @property {Coordinates} coordinates
- */
-
-/**
- * @typedef {Object} Coordinates
- */
-
-/**
- * @typedef {Object} CacheEntry
- * @property {string} key
- * @property {HarvestCallItem[]} harvests
- */
-
-/**
- * @typedef {Object} HarvestCallItem
- */
-
 class CacheBasedHarvester {
   /**
-   * @param {Options} options
+   * Creates a new CacheBasedHarvester instance.
+   *
+   * @param {import('./cacheBasedCrawler').Options} options - Configuration options for the harvester
    */
   constructor(options) {
     this.logger = options.logger || logger()
@@ -62,8 +31,13 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {*} spec - The spec to harvest. Can be a single entry or an array of entries.
-   * @param {boolean} turbo - If true, harvest in turbo mode.
+   * Harvests the specified entries after filtering out duplicates and already tracked items. This method ensures that
+   * only new, unique entries are processed by the underlying harvester.
+   *
+   * @param {import('./cacheBasedCrawler').HarvestEntry | import('./cacheBasedCrawler').HarvestEntry[]} spec - The spec
+   *   to harvest. Can be a single entry or an array of entries
+   * @param {boolean} [turbo] - If true, harvest in turbo mode for faster processing
+   * @returns {Promise<void>} Promise that resolves when harvesting is complete
    */
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
@@ -79,8 +53,11 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry[]} entries - Array of entries to filter.
-   * @returns {HarvestEntry[]} - An array of entries with unique coordinates.
+   * Filters out entries with duplicate coordinates, keeping only unique entries. Uses coordinates string representation
+   * as the uniqueness key.
+   *
+   * @param {import('./cacheBasedCrawler').HarvestEntry[]} entries - Array of entries to filter
+   * @returns {import('./cacheBasedCrawler').HarvestEntry[]} Array of entries with unique coordinates
    */
   _filterOutDuplicatedCoordinates(entries) {
     const validEntries = entries.filter(entry => entry?.coordinates)
@@ -88,8 +65,12 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry[]} entries - Array of entries to filter.
-   * @returns {Promise<HarvestEntry[]>} - A promise that resolves to an array of entries that are not tracked.
+   * Filters out entries that are already being tracked in the cache. Uses concurrency limiting to avoid overwhelming
+   * the cache service.
+   *
+   * @param {import('./cacheBasedCrawler').HarvestEntry[]} entries - Array of entries to filter
+   * @returns {Promise<import('./cacheBasedCrawler').HarvestEntry[]>} Promise resolving to array of entries that are not
+   *   tracked
    */
   async _filterOutTracked(entries) {
     const filteredEntries = await Promise.all(
@@ -100,9 +81,11 @@ class CacheBasedHarvester {
   }
 
   /**
+   * Checks if a harvest entry is already being tracked by comparing with cached harvest items. Uses deep equality
+   * comparison to determine if the harvest is already tracked.
    *
-   * @param {HarvestEntry} entry
-   * @returns {Promise<boolean>} whether the harvest entry has been tracked
+   * @param {import('./cacheBasedCrawler').HarvestEntry} entry - The harvest entry to check
+   * @returns {Promise<boolean>} Promise resolving to true if the harvest entry is tracked, false otherwise
    */
   async _isTrackedHarvest(entry) {
     const newHarvest = this._getHarvest(entry)
@@ -113,8 +96,10 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {Coordinates} coordinates - The coordinates to check.
-   * @returns {Promise<boolean>} - A promise that resolves to true if the coordinates is tracked, false otherwise.
+   * Checks if the given coordinates are already being tracked in the cache.
+   *
+   * @param {import('./cacheBasedCrawler').Coordinates} coordinates - The coordinates to check
+   * @returns {Promise<boolean>} Promise resolving to true if the coordinates are tracked, false otherwise
    */
   async isTracked(coordinates) {
     const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(coordinates)
@@ -122,9 +107,11 @@ class CacheBasedHarvester {
   }
 
   /**
+   * Retrieves the tracked harvest information for the given coordinates.
    *
-   * @param {Coordinates} coordinates
-   * @returns {Promise<CacheEntry>}
+   * @param {import('./cacheBasedCrawler').Coordinates} coordinates - The coordinates to get tracked information for
+   * @returns {Promise<import('./cacheBasedCrawler').CacheEntry>} Promise resolving to cache entry with key and tracked
+   *   harvests
    */
   async _getTrackedForCoordinates(coordinates) {
     const key = this._getCacheKey(coordinates)
@@ -133,7 +120,11 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry[]} harvestEntries - Array of items to track.
+   * Tracks multiple harvest entries in parallel with concurrency limiting. Logs any errors that occur during the
+   * tracking process.
+   *
+   * @param {import('./cacheBasedCrawler').HarvestEntry[]} harvestEntries - Array of harvest entries to track
+   * @returns {Promise<void>} Promise that resolves when all entries are tracked
    */
   async _trackHarvests(harvestEntries) {
     const results = await Promise.allSettled(
@@ -149,9 +140,12 @@ class CacheBasedHarvester {
   }
 
   /**
+   * Retrieves cached harvest items for the given key. Returns an empty array if the key is invalid or if an error
+   * occurs.
    *
-   * @param {string} key
-   * @returns {Promise<HarvestCallItem[]>} tracked harvests
+   * @param {string} key - The cache key to retrieve harvests for
+   * @returns {Promise<import('./cacheBasedCrawler').HarvestCallItem[]>} Promise resolving to array of tracked harvest
+   *   items
    */
   async _getCached(key) {
     if (!key) return []
@@ -165,8 +159,11 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {HarvestEntry} entry - The entry to track.
-   * @returns {Promise<void>} - A promise that resolves when the cache is set.
+   * Tracks a single harvest entry by adding it to the cached harvest list. Creates a new harvest item and appends it to
+   * existing tracked harvests.
+   *
+   * @param {import('./cacheBasedCrawler').HarvestEntry} entry - The harvest entry to track
+   * @returns {Promise<void>} Promise that resolves when the entry is successfully tracked
    */
   async _track(entry) {
     const newHarvest = this._getHarvest(entry)
@@ -181,8 +178,11 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {Coordinates} coordinates - The entry to remove from the cache.
-   * @returns {Promise<void>} - A promise that resolves when the cache is removed.
+   * Marks harvesting as complete for the given coordinates by removing the cache entry. This should be called when
+   * harvesting is finished to clean up tracking data.
+   *
+   * @param {import('./cacheBasedCrawler').Coordinates} coordinates - The coordinates to mark as complete
+   * @returns {Promise<void>} Promise that resolves when the cache entry is removed
    */
   async done(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
@@ -196,8 +196,11 @@ class CacheBasedHarvester {
   }
 
   /**
-   * @param {Coordinates} coordinates - The coordinates to generate a cache key for.
-   * @returns {string} - The cache key.
+   * Generates a cache key for the given coordinates. The cache key format matches the one used in the definition
+   * service for consistency.
+   *
+   * @param {import('./cacheBasedCrawler').Coordinates} coordinates - The coordinates to generate a cache key for
+   * @returns {string} The generated cache key, or empty string if coordinates are invalid
    */
   _getCacheKey(coordinates) {
     //Cache key is generated from the coordinates, same as in definition service.
@@ -205,9 +208,10 @@ class CacheBasedHarvester {
   }
 
   /**
+   * Converts a harvest entry to a harvest call item using the configured harvester.
    *
-   * @param {HarvestEntry} entry
-   * @returns {HarvestCallItem} - The harvest item.
+   * @param {import('./cacheBasedCrawler').HarvestEntry} entry - The harvest entry to convert
+   * @returns {import('./cacheBasedCrawler').HarvestCallItem} The harvest call item suitable for external API calls
    */
   _getHarvest(entry) {
     return entry && this._harvester.toHarvestItem(entry)
@@ -215,6 +219,10 @@ class CacheBasedHarvester {
 }
 
 /**
- * @param {Options} options
+ * Factory function to create a new CacheBasedHarvester instance. This is the main export of the module and provides a
+ * convenient way to create a new harvester with the specified configuration options.
+ *
+ * @param {import('./cacheBasedCrawler').Options} options - Configuration options for the harvester
+ * @returns {CacheBasedHarvester} A new CacheBasedHarvester instance
  */
 module.exports = options => new CacheBasedHarvester(options)
