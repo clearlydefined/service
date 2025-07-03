@@ -4,7 +4,6 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "strict": true
   },
   "include": ["providers/harvest/cacheBasedCrawler.js", "bin/www"]
 }
