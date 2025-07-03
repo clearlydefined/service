@@ -5,5 +5,10 @@
     "checkJs": true,
     "noEmit": true
   },
-  "include": ["providers/harvest/cacheBasedCrawler.js", "bin/www"]
+  "include": [
+    "bin/www",
+    "lib/entityCoordinates.js",
+    "lib/entityCoordinates.d.ts",
+    "providers/harvest/cacheBasedCrawler.js"
+  ]
 }
