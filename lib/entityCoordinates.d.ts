@@ -10,29 +10,6 @@ export interface EntityCoordinatesSpec {
   revision?: string
 }
 
-/** Supported providers that have specific normalization rules */
-export type SupportedProvider = 'github' | 'pypi'
-
-/** Property flags used for normalization bitmasks */
-export type PropertyFlag = 0x1 | 0x2 | 0x4
-
-/** Map of providers to their normalization rules */
-export interface ToLowerCaseMap {
-  [key: string]: number
-  github: number
-  pypi: number
-}
-
-/**
- * Normalizes a value based on provider-specific rules
- *
- * @param value - The value to normalize
- * @param provider - The provider name
- * @param property - The property flag to check against
- * @returns The normalized value or the original value if no normalization is needed
- */
-declare function normalize(value: string | undefined, provider: string, property: PropertyFlag): string | undefined
-
 /** Represents entity coordinates for a software component */
 declare class EntityCoordinates {
   /** The type of the entity (e.g., 'npm', 'maven', 'git') */
