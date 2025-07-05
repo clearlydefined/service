@@ -1,14 +1,46 @@
 {
-  "extends": ["@tsconfig/node18/tsconfig.json"],
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node18/tsconfig.json"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "noEmit": true
+    "noEmit": true,
+    "strictNullChecks": false,
+    "exactOptionalPropertyTypes": false
   },
   "include": [
+    "types/**/*",
     "bin/www",
-    "lib/entityCoordinates.js",
     "lib/entityCoordinates.d.ts",
-    "providers/harvest/cacheBasedCrawler.js"
+    "lib/entityCoordinates.js",
+    "lib/resultCoordinates.d.ts",
+    "lib/resultCoordinates.js",
+    "lib/condaRepoAccess.d.ts",
+    "lib/condaRepoAccess.js",
+    "lib/fetch.d.ts",
+    "lib/fetch.js",
+    "lib/github.d.ts",
+    "lib/github.js",
+    "lib/gitlab.d.ts",
+    "lib/gitlab.js",
+    "lib/gradleCoordinatesMapper.d.ts",
+    "lib/gradleCoordinatesMapper.js",
+    "lib/mockInsights.d.ts",
+    "lib/mockInsights.js",
+    "lib/pypiCoordinatesMapper.d.ts",
+    "lib/pypiCoordinatesMapper.js",
+    "lib/rateLimit.d.ts",
+    "lib/rateLimit.js",
+    "providers/caching/memory.d.ts",
+    "providers/caching/memory.js",
+    "providers/caching/redis.d.ts",
+    "providers/caching/redis.js",
+    "providers/caching/redisConfig.d.ts",
+    "providers/caching/redisConfig.js",
+    "providers/harvest/cacheBasedCrawler.d.ts",
+    "providers/harvest/cacheBasedCrawler.js",
+    "providers/logging/logger.d.ts",
+    "providers/logging/logger.js",
+    "providers/logging/winstonConfig.d.ts",
+    "providers/logging/winstonConfig.js"
   ]
 }

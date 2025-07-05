@@ -7,6 +7,14 @@ const aiLogger = require('winston-azure-application-insights').AzureApplicationI
 const winston = require('winston')
 const mockInsights = require('../../lib/mockInsights')
 
+/** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
+
+/**
+ * Factory function that creates a Winston logger instance configured with Application Insights.
+ *
+ * @param {WinstonLoggerOptions} [options] - Configuration options for the logger
+ * @returns {winston.LoggerInstance} A configured Winston logger instance with Application Insights transport
+ */
 function factory(options) {
   const realOptions = options || {
     key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
