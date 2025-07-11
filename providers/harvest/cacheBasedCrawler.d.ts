@@ -1,16 +1,12 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Logger } from '../logging/logger'
-
-/** Represents coordinates for a component */
-export interface Coordinates {
-  toString(): string
-}
+import { Logger } from '../logging'
+import EntityCoordinates from '../../lib/entityCoordinates'
 
 /** A harvest entry containing coordinates and related metadata */
 export interface HarvestEntry {
-  coordinates: Coordinates
+  coordinates: EntityCoordinates
 }
 
 /** An item representing a harvest call with associated metadata */
@@ -109,7 +105,7 @@ export declare class CacheBasedHarvester {
    * @param coordinates - The coordinates to check
    * @returns Promise resolving to true if tracked, false otherwise
    */
-  isTracked(coordinates: Coordinates): Promise<boolean>
+  isTracked(coordinates: EntityCoordinates): Promise<boolean>
 
   /**
    * Marks harvesting as complete for the given coordinates and removes from cache
@@ -117,7 +113,7 @@ export declare class CacheBasedHarvester {
    * @param coordinates - The coordinates to mark as done
    * @returns Promise that resolves when the operation is complete
    */
-  done(coordinates: Coordinates): Promise<void>
+  done(coordinates: EntityCoordinates): Promise<void>
 }
 
 /**

@@ -11,7 +11,7 @@ export interface EntityCoordinatesSpec {
 }
 
 /** Represents entity coordinates for a software component */
-declare class EntityCoordinates {
+export declare class EntityCoordinates implements EntityCoordinatesSpec {
   /** The type of the entity (e.g., 'npm', 'maven', 'git') */
   type?: string
 
@@ -85,3 +85,4 @@ declare class EntityCoordinates {
 }
 
 export default EntityCoordinates
+export = EntityCoordinates
