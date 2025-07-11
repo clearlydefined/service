@@ -1,15 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { EntityCoordinates } from './entityCoordinates'
+import { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
 
 /** Represents the specification object used to create ResultCoordinates */
-export interface ResultCoordinatesSpec {
-  type?: string
-  provider?: string
-  namespace?: string
-  name?: string
-  revision?: string
+export interface ResultCoordinatesSpec extends EntityCoordinatesSpec {
   tool?: string
   toolVersion?: string
 }

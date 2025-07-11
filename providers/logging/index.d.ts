@@ -1,3 +1,6 @@
+// (c) Copyright 2025, Microsoft Corporation and ClearlyDefined contributors. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
 /**
  * Generic logger interface that represents the logging functionality expected by the application. This interface is
  * typically implemented by Winston logger instances.

@@ -3,7 +3,7 @@
 
 import { TelemetryClient, Contracts } from 'applicationinsights'
 
-/** Mock implementation of Application Insights client for testing and development */
+/** Application Insights abstraction layer that provides a consistent interface for telemetry operations */
 declare class MockInsights {
   /** The underlying Application Insights client, if any */
   client: TelemetryClient | null
@@ -16,10 +16,10 @@ declare class MockInsights {
   constructor(client?: TelemetryClient | null)
 
   /**
-   * Sets up the mock insights client or configures Application Insights
+   * Sets up the Application Insights abstraction layer
    *
-   * @param key - Application Insights instrumentation key or 'mock' for testing
-   * @param echo - Whether to echo telemetry to both mock and real client
+   * @param key - Application Insights instrumentation key. If null, undefined, or 'mock', uses console-based logging
+   * @param echo - Whether to echo telemetry to both console and Application Insights client when both are available
    */
   static setup(key?: string | null, echo?: boolean): void
 
