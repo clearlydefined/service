@@ -1,11 +1,8 @@
 # Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
 
-# FROM node:8-alpine
-FROM node:18
+FROM docker.io/library/node:18
 ENV APPDIR=/opt/service
-# RUN apk update && apk upgrade && \
-#    apk add --no-cache bash git openssh
 
 ## get SSH server running
 # RUN apt-get update \
