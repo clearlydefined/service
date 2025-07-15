@@ -85,7 +85,9 @@ class RedisCache {
   async get(item) {
     const cacheItem = await this._client.get(item)
     if (!cacheItem) return null
-    const result = pako.inflate(cacheItem, { to: 'string' })
+    // const result = pako.inflate(cacheItem, { to: 'string' })
+    const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
+    const result = pako.inflate(buffer, { to: 'string' })
     if (!result.startsWith(objectPrefix)) return result
     try {
       return JSON.parse(result.substring(4))
@@ -105,7 +107,8 @@ class RedisCache {
    */
   async set(item, value, ttlSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
-    const data = pako.deflate(value, { to: 'string' })
+    const deflated = pako.deflate(value)
+    const data = Buffer.from(deflated).toString('base64')
     if (ttlSeconds) await this._client.set(item, data, { EX: ttlSeconds })
     else await this._client.set(item, data)
   }
