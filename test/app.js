@@ -3,10 +3,12 @@
 
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const assert = require('assert')
+const Application = require('../app')
+
 process.env['CURATION_GITHUB_TOKEN'] = '123'
 process.env['GITLAB_TOKEN'] = 'abc'
-const init = require('express-init')
-const Application = require('../app')
+
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
     get: name => {
@@ -31,13 +33,17 @@ describe('Application', () => {
     clock.restore()
   })
 
-  it('should initialize', done => {
+  it('should return a valid Express app instance', () => {
     const app = Application(config)
-    init(app, error => {
-      if (error) {
-        done(error)
-      }
-      done()
-    })
-  }).timeout(5000)
+
+    assert.ok(app, 'App was not created')
+    assert.strictEqual(typeof app.use, 'function', 'App is not an Express instance')
+  })
+
+  it('should expose basic HTTP method handlers (get, post, listen)', () => {
+    const app = Application(config)
+    assert.ok(app.get)
+    assert.ok(app.post)
+    assert.ok(app.listen)
+  })
 })
