@@ -285,7 +285,7 @@ class GitHubCurationService {
       revisions: get(currentContent, 'revisions') || {}
     }
     forIn(newContent, (value, key) => (result.revisions[key] = merge(result.revisions[key] || {}, value)))
-    return yaml.safeDump(result, { sortKeys: true, lineWidth: 150 })
+    return yaml.dump(result, { sortKeys: true, lineWidth: 150 })
   }
 
   async _writePatch(userGithub, serviceGithub, info, patch, branch) {
@@ -701,7 +701,7 @@ ${this._formatDefinitions(patch.patches)}`
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
-    const content = yaml.safeLoad(data.toString())
+    const content = yaml.load(data.toString())
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
     return content
@@ -748,6 +748,10 @@ ${this._formatDefinitions(patch.patches)}`
     const { owner, repo } = this.options
     try {
       const response = await this.github.rest.repos.getContent({ owner, repo, ref, path })
+      if (!response.data || !response.data.content) {
+        this.logger.info(`No content found for ${owner}/${repo}/${ref}/${path}.`)
+        return null
+      }
       return Buffer.from(response.data.content, 'base64').toString('utf8')
     } catch (error) {
       if (error.code === 404) {

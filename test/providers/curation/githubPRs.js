@@ -311,7 +311,7 @@ function createService({ failsCompute = false, geitStubOverride = null }) {
         return {
           data: {
             sha: files[path].sha,
-            content: base64.encode(yaml.safeDump(files[path].content, { sortKeys: true, lineWidth: 150 }))
+            content: base64.encode(yaml.dump(files[path].content, { sortKeys: true, lineWidth: 150 }))
           }
         }
       }
