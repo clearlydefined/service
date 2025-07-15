@@ -316,9 +316,9 @@ class GitHubCurationService {
       fileBody.committer = { name: info.name || info.login, email: info.email }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = currentContent._origin.sha
-      return serviceGithub.repos.updateFile(fileBody)
+      return serviceGithub.rest.repos.createOrUpdateFileContents(fileBody)
     }
-    return serviceGithub.repos.createFile(fileBody)
+    return serviceGithub.rest.repos.createOrUpdateFileContents(fileBody)
   }
 
   async _getUserInfo(githubCli) {
@@ -532,17 +532,17 @@ class GitHubCurationService {
 
   async _addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { owner, repo, branch } = this.options
-    const masterBranch = await serviceGithub.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
+    const masterBranch = await serviceGithub.rest.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
     const prBranch = this._getBranchName(info)
-    await serviceGithub.gitdata.createReference({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
+    await serviceGithub.rest.git.createRef({ owner, repo, ref: `refs/heads/${prBranch}`, sha })
 
     await Promise.all(
       // Throat value MUST be kept at 1, otherwise GitHub will write concurrent patches
       patch.patches.map(throat(1, component => this._writePatch(userGithub, serviceGithub, info, component, prBranch)))
     )
 
-    const result = await (userGithub || serviceGithub).pullRequests.create({
+    const result = await (userGithub || serviceGithub).rest.pulls.create({
       owner,
       repo,
       title: patch.contributionInfo.summary,
@@ -554,10 +554,10 @@ class GitHubCurationService {
     const comment = {
       owner,
       repo,
-      number,
+      issue_number: number,
       body: `You can review the change introduced to the full definition at [ClearlyDefined](${this._getCurationReviewUrl(number)}).`
     }
-    await serviceGithub.issues.createComment(comment)
+    await serviceGithub.rest.issues.createComment(comment)
     return result
   }
 
@@ -747,7 +747,7 @@ ${this._formatDefinitions(patch.patches)}`
   async _getContent(ref, path) {
     const { owner, repo } = this.options
     try {
-      const response = await this.github.repos.getContent({ owner, repo, ref, path })
+      const response = await this.github.rest.repos.getContent({ owner, repo, ref, path })
       return Buffer.from(response.data.content, 'base64').toString('utf8')
     } catch (error) {
       if (error.code === 404) {
@@ -762,7 +762,7 @@ ${this._formatDefinitions(patch.patches)}`
     const { owner, repo } = this.options
     const target_url = this._getCurationReviewUrl(number)
     try {
-      return this.github.repos.createStatus({
+      return this.github.rest.repos.createCommitStatus({
         owner,
         repo,
         sha,
@@ -783,10 +783,10 @@ ${this._formatDefinitions(patch.patches)}`
   async _postErrorsComment(number, body) {
     const { owner, repo } = this.options
     try {
-      return this.github.issues.createComment({
+      return this.github.rest.issues.createComment({
         owner,
         repo,
-        number,
+        issue_number: number,
         body
       })
     } catch (error) {
@@ -836,7 +836,7 @@ ${this._formatDefinitions(patch.patches)}`
   async _getPrFiles(number) {
     const { owner, repo } = this.options
     try {
-      const response = await this.github.pullRequests.getFiles({ owner, repo, number })
+      const response = await this.github.rest.pulls.listFiles({ owner, repo, pull_number: number })
       return response.data
     } catch (error) {
       if (error.code === 404) throw error
