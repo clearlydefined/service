@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
 
-FROM docker.io/library/node:18
+FROM docker.io/library/node:20-bullseye
 ENV APPDIR=/opt/service
 
 ## get SSH server running

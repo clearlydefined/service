@@ -2,6 +2,9 @@
   "name": "service",
   "version": "2.3.0",
   "description": "Service side of clearlydefined.io.",
+  "engines": {
+    "node": "18 || 20"
+  },
   "scripts": {
     "test": "npm run mocha && npm run lint",
     "mocha": "nyc mocha --exit \"test/**/*.js\"",
@@ -13,7 +16,8 @@
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "dev": "nodemon ./bin/www",
-    "start": "node --max-old-space-size=8192 ./bin/www"
+    "start": "node --max-old-space-size=8192 ./bin/www",
+    "debug": "node --inspect=0.0.0.0:9228 --max-old-space-size=8192 ./bin/www"
   },
   "license": "MIT",
   "repository": {
@@ -75,7 +79,7 @@
     "winston-azure-application-insights": "^1.5.0"
   },
   "devDependencies": {
-    "@tsconfig/node18": "18.2.4",
+    "@tsconfig/node20": "20.1.6",
     "@tsconfig/strictest": "2.0.5",
     "@types/chai": "4.3.3",
     "@types/deep-equal-in-any-order": "1.0.4",
@@ -83,7 +87,7 @@
     "@types/lodash": "4.17.16",
     "@types/memory-cache": "0.2.6",
     "@types/mocha": "8.2.3",
-    "@types/node": "18.15.11",
+    "@types/node": "24.0.10",
     "@types/pako": "1.0.1",
     "@types/sinon": "5.0.7",
     "@types/winston": "2.3.9",
