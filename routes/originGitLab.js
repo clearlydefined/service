@@ -41,7 +41,7 @@ router.get(
 )
 
 router.get(
-  '/:namespace/:project?',
+  '/:namespace{/:project}',
   asyncMiddleware(async (request, response) => {
     const { namespace, project } = request.params
 

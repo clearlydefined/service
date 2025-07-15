@@ -66,7 +66,7 @@ async function getAll(request, response) {
 }
 
 // Get a list of the harvested data that we have that matches the url as a prefix
-router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(list))
+router.get('{/:type}{/:provider}{/:namespace}{/:name}{/:revision}{/:tool}', asyncMiddleware(list))
 
 async function list(request, response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)

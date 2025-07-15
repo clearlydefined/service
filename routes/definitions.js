@@ -20,7 +20,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 // go/golang/github.com/gorilla/mux/v1.7.3
 // which causes routing errors unless we allow for additional fields
 // We currently allow up to three extra fields (that means up to three slashes in the namespace)
-router.get('/:type/:provider/:namespace/:name/:revision/:extra1?/:extra2?/:extra3?', asyncMiddleware(getDefinition))
+router.get('/:type/:provider/:namespace/:name/:revision{/:extra1}{/:extra2}{/:extra3}', asyncMiddleware(getDefinition))
 
 async function getDefinition(request, response) {
   const log = logger()
@@ -67,7 +67,7 @@ async function getDefinition(request, response) {
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
-router.get('', asyncMiddleware(getDefinitions))
+router.get('/', asyncMiddleware(getDefinitions))
 async function getDefinitions(request, response) {
   // TODO temporary endpoint to trigger reloading the index or definitions
   if (request.query.reload) {
