@@ -86,17 +86,41 @@ class AbstractFileStore {
       )
     ).filter(definition => {
       if (!definition) return false
-      if (query.type && definition.coordinates.type !== query.type) return false
-      if (query.provider && definition.coordinates.provider !== query.provider) return false
-      if (query.name && definition.coordinates.name !== query.name) return false
-      if (query.namespace && definition.coordinates.namespace !== query.namespace) return false
-      if (query.license && definition.licensed.declared !== query.license) return false
-      if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return false
-      if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return false
-      if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return false
-      if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return false
-      if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return false
-      if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return false
+      if (query.type && (!definition.coordinates || definition.coordinates.type !== query.type)) return false
+      if (query.provider && (!definition.coordinates || definition.coordinates.provider !== query.provider))
+        return false
+      if (query.name && (!definition.coordinates || definition.coordinates.name !== query.name)) return false
+      if (query.namespace && (!definition.coordinates || definition.coordinates.namespace !== query.namespace))
+        return false
+      if (query.license && (!definition.licensed || definition.licensed.declared !== query.license)) return false
+      if (query.releasedAfter && (!definition.described || definition.described.releaseDate < query.releasedAfter))
+        return false
+      if (query.releasedBefore && (!definition.described || definition.described.releaseDate > query.releasedBefore))
+        return false
+      if (
+        query.minLicensedScore &&
+        (!definition.licensed || !definition.licensed.score || definition.licensed.score.total < query.minLicensedScore)
+      )
+        return false
+      if (
+        query.maxLicensedScore &&
+        (!definition.licensed || !definition.licensed.score || definition.licensed.score.total > query.maxLicensedScore)
+      )
+        return false
+      if (
+        query.minDescribedScore &&
+        (!definition.described ||
+          !definition.described.score ||
+          definition.described.score.total < query.minDescribedScore)
+      )
+        return false
+      if (
+        query.maxDescribedScore &&
+        (!definition.described ||
+          !definition.described.score ||
+          definition.described.score.total > query.maxDescribedScore)
+      )
+        return false
       return true
     })
   }
