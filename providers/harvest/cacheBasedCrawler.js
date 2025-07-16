@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const logger = require('../logging/logger')
-const throat = require('throat')
+const throat = require('throat').default
 const { uniqBy, isEqual } = require('lodash')
 
 /**
@@ -81,9 +81,14 @@ class CacheBasedHarvester {
    * @param {HarvestEntry[]} entries - Array of entries to filter
    * @returns {Promise<HarvestEntry[]>} Promise resolving to array of entries that are not tracked
    */
+
   async _filterOutTracked(entries) {
     const filteredEntries = await Promise.all(
-      entries.map(throat(this.concurrencyLimit, async entry => ((await this._isTrackedHarvest(entry)) ? null : entry)))
+      entries.map(
+        throat(this.concurrencyLimit, async (/** @type {import("./cacheBasedCrawler").HarvestEntry} */ entry) =>
+          (await this._isTrackedHarvest(entry)) ? null : entry
+        )
+      )
     )
     return filteredEntries.filter(e => e)
   }
