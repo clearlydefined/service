@@ -136,7 +136,7 @@ class CacheBasedHarvester {
   async _trackHarvests(harvestEntries) {
     const results = await Promise.allSettled(
       harvestEntries.map(
-        throat(this.concurrencyLimit, async entry => {
+        throat(this.concurrencyLimit, async (/** @type {import("./cacheBasedCrawler").HarvestEntry} */ entry) => {
           await this._track(entry)
         })
       )
