@@ -16,6 +16,8 @@
     "lib/resultCoordinates.js",
     "lib/condaRepoAccess.d.ts",
     "lib/condaRepoAccess.js",
+    "lib/coordinatesMapper.d.ts",
+    "lib/coordinatesMapper.js",
     "lib/fetch.d.ts",
     "lib/fetch.js",
     "lib/github.d.ts",
