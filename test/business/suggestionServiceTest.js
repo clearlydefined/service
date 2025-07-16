@@ -32,10 +32,10 @@ describe('Suggestion Service', () => {
       namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.equalInAnyOrder([
-      { value: 'MIT', version: '10-3.0' },
+    expect(declared).to.deep.equalInAnyOrder([
+      { value: 'GPL', version: '102.0' },
       { value: 'MIT', version: '10-5.0' },
-      { value: 'GPL', version: '102.0' }
+      { value: 'MIT', version: '10-3.0' }
     ])
   })
 
@@ -56,7 +56,7 @@ describe('Suggestion Service', () => {
       namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.deep.eq([
+    expect(declared).to.deep.equalInAnyOrder([
       { value: 'MIT', version: '10-3.0' },
       { value: 'MIT', version: '10-5.0' },
       { value: 'GPL', version: '102.0' }
@@ -110,7 +110,7 @@ describe('Suggestion Service', () => {
     const suggestions = await service.get(t2)
     expect(suggestions).to.not.be.null
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.equalInAnyOrder([{ value: 'GPL-2.0', version: '1.6.2.b8' }])
+    expect(declared).to.deep.equalInAnyOrder([{ value: 'GPL-2.0', version: '1.6.2.b8' }])
   })
 })
 

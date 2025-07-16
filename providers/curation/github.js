@@ -322,7 +322,7 @@ class GitHubCurationService {
   }
 
   async _getUserInfo(githubCli) {
-    const user = await githubCli.users.get()
+    const user = await githubCli.rest.users.get()
     const name = get(user, 'data.name')
     const email = get(user, 'data.email')
     const login = get(user, 'data.login')
