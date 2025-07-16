@@ -2,8 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 const Ajv = require('ajv')
-const ajv = new Ajv({ allErrors: true, jsonPointers: true })
-require('ajv-errors')(ajv)
+const ajvErrors = require('ajv-errors')
+const addFormats = require('ajv-formats')
+
+// Create AJV instance with options
+const ajv = new Ajv({ allErrors: true, strict: false })
+
+// Add formats and error messages support
+addFormats(ajv)
+ajvErrors(ajv)
+
+// Register JSON schemas
 ajv.addSchema(require('./curations-1.0'), 'curations')
 ajv.addSchema(require('./curation-1.0'), 'curation')
 ajv.addSchema(require('./definition-1.0'), 'definition')

@@ -85,7 +85,9 @@ class RedisCache {
   async get(item) {
     const cacheItem = await this._client.get(item)
     if (!cacheItem) return null
-    const result = pako.inflate(cacheItem, { to: 'string' })
+    // const result = pako.inflate(cacheItem, { to: 'string' })
+    const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
+    const result = pako.inflate(buffer, { to: 'string' })
     if (!result.startsWith(objectPrefix)) return result
     try {
       return JSON.parse(result.substring(4))
@@ -105,7 +107,8 @@ class RedisCache {
    */
   async set(item, value, ttlSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
-    const data = pako.deflate(value, { to: 'string' })
+    const deflated = pako.deflate(value)
+    const data = Buffer.from(deflated).toString('base64')
     if (ttlSeconds) await this._client.set(item, data, { EX: ttlSeconds })
     else await this._client.set(item, data)
   }
@@ -125,12 +128,19 @@ class RedisCache {
    *
    * @param {RedisCacheOptions} options - Redis connection configuration
    * @returns {RedisClientType} A new Redis client instance
-   */
+  //  */
   static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
+    const socketOptions = { host: service, port }
+
+    if (tls) {
+      // @ts-ignore
+      socketOptions.tls = true // This will be the literal value 'true'
+    }
+
     return createClient({
       username: 'default',
       password: apiKey,
-      socket: { host: service, port, tls },
+      socket: socketOptions,
       pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
     })
   }

@@ -13,10 +13,18 @@ const { permissionsCheck } = require('../middleware/permissions')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getChangesForCoordinatesInPr))
 
 async function getChangesForCoordinatesInPr(request, response) {
-  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-  const result = await curationService.get(coordinates, request.params.pr)
-  if (result) return response.status(200).send(result)
-  response.sendStatus(404)
+  try {
+    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
+    const result = await curationService.get(coordinates, request.params.pr)
+    if (result) return response.status(200).send(result)
+    return response.status(404).send({ error: 'No curation found for this PR or coordinates.' })
+  } catch (err) {
+    if (err.message && err.message.includes('no such branch or tag')) {
+      return response.status(404).send({ error: 'No such PR branch or tag exists on the curation repository.' })
+    }
+
+    return response.status(500).send({ error: 'Internal server error', details: err.message })
+  }
 }
 
 // Get data needed by review UI
@@ -45,25 +53,58 @@ async function getCurationForCoordinates(request, response) {
 }
 
 // Search for any patches related to the given path, as much as is given
-router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(listCurations))
+router.get('{/:type}{/:provider}{/:namespace}{/:name}', asyncMiddleware(listCurations))
 
 async function listCurations(request, response) {
-  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-  const result = await curationService.list(coordinates)
-  if (!result || !result.contributions.length) return response.sendStatus(404)
-  return response.status(200).send(result)
+  try {
+    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
+    const result = await curationService.list(coordinates)
+    if (!result || !Array.isArray(result.contributions) || result.contributions.length === 0) {
+      return response.status(404).send({ error: 'No curations found for the specified coordinates.' })
+    }
+    return response.status(200).send(result)
+  } catch (err) {
+    return response.status(500).send({
+      error: 'Internal server error',
+      details: err.message
+    })
+  }
 }
 
 router.post('/', asyncMiddleware(listAllCurations))
 
 async function listAllCurations(request, response) {
-  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
-  if (coordinatesList.length > 1000)
-    return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
-  const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
+  try {
+    if (!Array.isArray(request.body)) {
+      return response.status(400).send({ error: 'Request body must be an array of coordinate strings.' })
+    }
 
-  const result = await curationService.listAll(normalizedCoordinatesList)
-  response.send(result)
+    const coordinatesList = []
+    for (const entry of request.body) {
+      try {
+        coordinatesList.push(EntityCoordinates.fromString(entry))
+      } catch (err) {
+        return response.status(400).send({ error: `Invalid coordinate: ${entry}`, details: err.message })
+      }
+    }
+
+    if (coordinatesList.length > 1000) {
+      return response.status(400).send({ error: `Body contains too many coordinates: ${coordinatesList.length}` })
+    }
+
+    const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
+
+    const result = await curationService.listAll(normalizedCoordinatesList)
+    if (!result || Object.keys(result).length === 0) {
+      return response.status(404).send({ error: 'No curations found for the specified coordinates.' })
+    }
+    response.status(200).send(result)
+  } catch (err) {
+    response.status(500).send({
+      error: 'Internal server error',
+      details: err.message
+    })
+  }
 }
 
 router.patch('', asyncMiddleware(updateCurations))

@@ -55,7 +55,7 @@ router.get(
 )
 
 router.get(
-  '/:login/:repo?',
+  '/:login{/:repo}',
   asyncMiddleware(async (request, response) => {
     const { login, repo } = request.params
     const github = getClient(request)

@@ -84,7 +84,7 @@ describe('AbstractFileStore lists entries ', () => {
       '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool1/2.0.json',
       '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json'
     ]
-    expect(result.map(entry => entry.path)).to.equalInAnyOrder(expected)
+    expect(result.map(entry => entry.path)).to.deep.equalInAnyOrder(expected)
   })
 })
 
@@ -210,7 +210,7 @@ describe('getLatestToolVersions', () => {
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder([
+    expect(Array.from(latest)).to.deep.equalInAnyOrder([
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
       'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
@@ -226,7 +226,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json',
       'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder([
+    expect(Array.from(latest)).to.deep.equalInAnyOrder([
       'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
       'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'
     ])
@@ -243,7 +243,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/3.2.2.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder([
+    expect(Array.from(latest)).to.deep.equalInAnyOrder([
       'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
     ])
@@ -254,7 +254,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
+    expect(Array.from(latest)).to.deep.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
   })
 
   it('should ignore invalid semver, invalid sermver last', () => {
@@ -262,7 +262,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
+    expect(Array.from(latest)).to.deep.equalInAnyOrder(['npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.1.json'])
   })
 
   it('should return at least the first tool version', () => {
@@ -270,7 +270,7 @@ describe('getLatestToolVersions', () => {
       'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
     ])
-    expect(Array.from(latest)).to.equalInAnyOrder([
+    expect(Array.from(latest)).to.deep.equalInAnyOrder([
       'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
       'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
     ])

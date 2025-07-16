@@ -16,6 +16,10 @@ class CrawlingHarvester {
     }
     const body = (Array.isArray(spec) ? spec : [spec]).map(entry => this.toHarvestItem(entry))
     const url = turbo ? `${this.options.url}/requests` : `${this.options.url}/requests/later`
+    this.logger.info(`CrawlingHarvester: Harvesting ${url} with ${JSON.stringify(body)}`)
+    this.logger.debug(`CrawlingHarvester: Harvesting ${url} with ${JSON.stringify(body)}`)
+    this.logger.debug(`CrawlingHarvester: Harvesting ${url} with ${JSON.stringify(headers)}`)
+    this.logger.debug(`CrawlingHarvester: Harvesting ${turbo}`)
     return requestPromise({
       url,
       method: 'POST',

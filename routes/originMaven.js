@@ -28,7 +28,7 @@ router.get(
 
 // Search
 router.get(
-  '/:group/:artifact?',
+  '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
     const { group, artifact } = request.params
     if (request.path.indexOf('/', 1) > 0) {

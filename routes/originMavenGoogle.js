@@ -30,7 +30,7 @@ router.get(
 
 // Search
 router.get(
-  '/:group/:artifact?',
+  '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
     return response.status(404).send('Search not supported. Please specify group and artifact IDs.')
   })

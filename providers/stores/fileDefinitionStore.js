@@ -3,7 +3,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const mkdirp = require('mkdirp')
+const { mkdirp } = require('mkdirp')
 const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
@@ -28,7 +28,7 @@ class FileDefinitionStore extends AbstractFileStore {
     const { coordinates } = definition
     const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
     const dirName = path.dirname(filePath)
-    await promisify(mkdirp)(dirName)
+    await mkdirp(dirName)
     return promisify(fs.writeFile)(filePath, JSON.stringify(definition, null, 2), 'utf8')
   }
 
