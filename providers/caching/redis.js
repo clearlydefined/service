@@ -141,10 +141,9 @@ class RedisCache {
       username: 'default',
       password: apiKey,
       socket: socketOptions,
-      pingInterval: 5 * 60 * 1000
+      pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
     })
   }
-
 
   /**
    * Initializes a Redis client with connection and error handling
