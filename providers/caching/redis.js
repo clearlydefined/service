@@ -128,15 +128,23 @@ class RedisCache {
    *
    * @param {RedisCacheOptions} options - Redis connection configuration
    * @returns {RedisClientType} A new Redis client instance
-   */
+  //  */
   static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
+    const socketOptions = { host: service, port }
+
+    if (tls) {
+      // @ts-ignore
+      socketOptions.tls = true // This will be the literal value 'true'
+    }
+
     return createClient({
       username: 'default',
       password: apiKey,
-      socket: { host: service, port, tls },
-      pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
+      socket: socketOptions,
+      pingInterval: 5 * 60 * 1000
     })
   }
+
 
   /**
    * Initializes a Redis client with connection and error handling
