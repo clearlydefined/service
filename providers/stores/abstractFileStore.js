@@ -55,6 +55,7 @@ class AbstractFileStore {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result)
     } catch (error) {
+      this.logger.debug(`Error reading file at ${filePath}: ${error.message}`)
       if (error.code === 'ENOENT') return null
       throw error
     }

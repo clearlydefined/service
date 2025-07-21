@@ -25,7 +25,7 @@ router.get(
 
       return response.status(200).send(result)
     } catch (error) {
-      return response.status(404).send('No revisions found')
+      return response.status(404).send(`No revisions found. Error ${error.message}`)
     }
   })
 )

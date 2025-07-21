@@ -104,7 +104,7 @@ class CacheBasedHarvester {
     const newHarvest = this._getHarvest(entry)
     const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(entry.coordinates)
     const isTracked = trackedHarvests.some(harvest => isEqual(harvest, newHarvest))
-    if (isTracked) this.logger.debug('Entry with coordinates %s is already tracked.', entry.coordinates)
+    if (isTracked) this.logger.debug(`Entry with coordinates ${entry.coordinates.toString()} is already tracked.`)
     return isTracked
   }
 

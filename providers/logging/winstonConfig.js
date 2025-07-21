@@ -17,7 +17,7 @@ const mockInsights = require('../../lib/mockInsights')
 function factory(options) {
   const realOptions = {
     key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
-    echo: config.get('LOGGER_LOG_TO_CONSOLE') == 'true' ? true : false || false,
+    echo: config.get('LOGGER_LOG_TO_CONSOLE') == 'true' ? true : false,
     level: config.get('APPINSIGHTS_EXPORT_LOG_LEVEL') || 'info',
     ...options
   }
