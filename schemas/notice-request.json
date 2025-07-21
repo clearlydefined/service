@@ -24,13 +24,15 @@
     "options": {
       "type": "object",
       "description": "Options to be given to the renderer",
+      "maxProperties": 20,
       "errorMessage": {
-        "type": "options must be an object"
+        "type": "options must be an object",
+        "maxProperties": "Too many options provided (max: 20)"
       }
     }
   },
   "errorMessage": {
     "type": "A notice request must be an object",
-    "additionalProperties": "A notice request can only contain coordinates array and template string"
+    "additionalProperties": "A notice request can only contain coordinates, renderer, and options"
   }
 }
