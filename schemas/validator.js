@@ -1,12 +1,12 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Ajv = require('ajv')
+const Ajv = require('ajv').default
 const ajvErrors = require('ajv-errors')
 const addFormats = require('ajv-formats')
 
 // Create AJV instance with options
-const ajv = new Ajv({ allErrors: true, strict: false })
+const ajv = new Ajv({ allErrors: true, strict: 'log', useDefaults: true })
 
 // Add formats and error messages support
 addFormats(ajv)
