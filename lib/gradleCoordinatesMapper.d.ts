@@ -150,3 +150,4 @@ export declare class GradleCoordinatesMapper {
 }
 
 export default GradleCoordinatesMapper
+export = GradleCoordinatesMapper
