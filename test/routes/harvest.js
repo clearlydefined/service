@@ -25,7 +25,11 @@ describe('Harvest route', () => {
     const router = createRoutes()
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(400)
-    expect(response._getData()).to.be.eq('data/0 must NOT have additional properties')
+
+    const responseData = JSON.parse(response._getData())
+    expect(responseData).to.have.property('error', 'Validation failed')
+    expect(responseData.details).to.be.an('array')
+    expect(responseData.details[0].message).to.eq('must NOT have additional properties')
   })
 
   it('rejects wrong value POST', async () => {
@@ -33,8 +37,13 @@ describe('Harvest route', () => {
     const response = httpMocks.createResponse()
     const router = createRoutes()
     await router._queue(request, response)
+
+    const responseData = JSON.parse(response._getData())
+
     expect(response.statusCode).to.be.eq(400)
-    expect(response._getData()).to.be.eq('data/0/tool must be string')
+    expect(responseData).to.have.property('error', 'Validation failed')
+    expect(responseData.details).to.be.an('array')
+    expect(responseData.details[0].message).to.eq('must be string')
   })
 
   it('accepts good queuing POST', async () => {
