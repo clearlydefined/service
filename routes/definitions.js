@@ -77,7 +77,10 @@ async function getDefinitions(request, response) {
   }
   const pattern = request.query.pattern
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
-  if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
+  if (!validator.validate('definitions-find', request.query)) {
+    return response.status(400).json({ error: 'Invalid request', details: validator.errors })
+  }
+
   const normalizedCoordinates = await utils.toNormalizedEntityCoordinates(request.query)
   const result = await definitionService.find({ ...request.query, ...normalizedCoordinates })
   response.send(result)
@@ -94,9 +97,24 @@ async function reload(request, response) {
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (request, response) => {
-    if (!request.query.preview)
+    if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body)) {
+      return response.status(400).send('Invalid request body format')
+    }
+
+    if (!request.query.preview) {
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
+    }
+
+    if (!validator.validate('curation', request.body)) {
+      // Limit the number of errors returned to prevent DoS
+      const MAX_ERRORS = 10
+      const limitedErrors = Array.isArray(validator.errors) ? validator.errors.slice(0, MAX_ERRORS) : validator.errors
+      return response.status(400).json({
+        error: 'Invalid request body',
+        details: limitedErrors
+      })
+    }
+
     const coordinates = await utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)
@@ -118,15 +136,17 @@ async function listDefinitions(request, response) {
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
-    // Tempoarily adding this verbose logging to find perf issues
+    // Temporarily adding this verbose logging to find perf issues
     log.debug('POSTing to /definitions', {
       ts: new Date().toISOString(),
       requestParams: request.params,
       normalizedCoordinates,
-      coordinateCount: coordinatesList.length,
+      coordinateCount: Array.isArray(normalizedCoordinates) ? normalizedCoordinates.length : 0,
       force,
       expand,
-      userAgent: request.get('User-Agent')
+      userAgent: Array.isArray(request.get('User-Agent'))
+        ? request.get('User-Agent').join(', ')
+        : request.get('User-Agent')
     })
     let result = await definitionService.getAll(normalizedCoordinates, force, expand)
 
@@ -135,12 +155,18 @@ async function listDefinitions(request, response) {
     result = adaptResultKeys(result, request.body, coordinatesLookup, matchCasing)
     response.send(result)
   } catch (err) {
-    response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
+    log.error('Error fetching coordinates', err)
+    response.status(500).send('An internal error occurred while processing your request.')
   }
 }
 
 function mapCoordinates(request, normalizedCoordinates) {
   const coordinatesLookup = new Map()
+
+  if (!Array.isArray(request.body) || !request.body.every(item => typeof item === 'string')) {
+    return coordinatesLookup // or throw new Error("Invalid input format")
+  }
+
   for (let i = 0; i < request.body.length; i++) {
     const requestedKey = request.body[i]
     const normalizedKey = normalizedCoordinates[i]?.toString()

@@ -112,6 +112,7 @@ function createApp(config) {
   app.use(cors())
   // new express v5 matching syntax: https://expressjs.com/en/guide/migrating-5.html#path-syntax
   app.options('*splat', cors())
+  app.use(express.json({ limit: '100kb' }))
   app.use(cookieParser())
   app.use(helmet.default())
   app.use(requestId())
