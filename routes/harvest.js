@@ -79,8 +79,15 @@ router.post('/', bodyParser.json({ limit: '1mb' }), asyncMiddleware(queue))
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
-  if (requests.length > 1000) return response.status(400).send(`Too many coordinates: ${requests.length}`)
-  if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
+
+  if (requests.length > 1000) {
+    return response.status(400).json({ error: 'Too many coordinates', count: requests.length })
+  }
+
+  if (!validator.validate('harvest', requests)) {
+    return response.status(400).json({ error: 'Validation failed', details: validator.errors })
+  }
+
   const normalizedBody = await normalizeCoordinates(requests)
 
   await harvestService.harvest(normalizedBody, request.query.turbo)
