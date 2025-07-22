@@ -469,7 +469,7 @@ class DefinitionService {
       parse(get(definition, 'licensed.declared')) // use strict spdx-expression-parse
       return weights.spdx
     } catch (e) {
-      this.logger.debug(`Could not parse declared license expression. Error: ${e.message}`)
+      this.logger.debug('Could not parse declared license expression.', { error: e })
       return 0
     }
   }

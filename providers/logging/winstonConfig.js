@@ -58,7 +58,7 @@ function factory(options) {
     const aiClient = appInsights.defaultClient
 
     // Pipe Winston logs to Application Insights
-    logger.on('data', info => {
+    logger.on('logged', info => {
       if (info.level === 'error') {
         if (info.stack) {
           aiClient.trackException({ exception: new Error(info.message), properties: info })

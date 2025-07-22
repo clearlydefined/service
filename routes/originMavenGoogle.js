@@ -22,8 +22,8 @@ router.get(
       const result = JSON.parse(JSON.stringify(answerJson))
       const revisions = JSON.stringify(result[`${group}`][`${artifact}`][0]['$']['versions'])
       return response.status(200).send(JSON.parse(revisions).split(','))
-    } catch (error) {
-      return response.status(404).send(`No revisions found. Error ${error.message}`)
+    } catch {
+      return response.status(404).send('No revisions found due to an internal error.')
     }
   })
 )

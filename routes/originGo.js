@@ -24,8 +24,8 @@ router.get(
       result.pop()
 
       return response.status(200).send(result)
-    } catch (error) {
-      return response.status(404).send(`No revisions found. Error ${error.message}`)
+    } catch {
+      return response.status(404).send('No revisions found due to an internal error.')
     }
   })
 )

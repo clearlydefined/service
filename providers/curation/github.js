@@ -776,7 +776,9 @@ ${this._formatDefinitions(patch.patches)}`
         context: 'ClearlyDefined'
       })
     } catch (error) {
-      this.logger.info(`Failed to create status for PR #${number}. Error ${error.message}`)
+      this.logger.info(
+        `Failed to create status for PR #${number}. Error: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
+      )
     }
   }
 
