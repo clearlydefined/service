@@ -110,16 +110,29 @@ async function listAllCurations(request, response) {
 router.patch('', asyncMiddleware(updateCurations))
 
 async function updateCurations(request, response) {
-  const serviceGithub = request.app.locals.service.github.client
-  const userGithub = request.app.locals.user.github.client
-  const info = await request.app.locals.user.github.getInfo()
+  const patches = request.body?.patches
+
+  if (!Array.isArray(patches) || patches.length > 1000) {
+    return response.status(400).send({ error: 'Invalid or excessive patches array' })
+  }
+
   let curationErrors = []
   let patchesInError = []
-  request.body.patches.forEach(entry => {
+
+  for (const entry of patches) {
+    if (typeof entry !== 'object' || entry === null) {
+      curationErrors.push([{ message: 'Patch entry must be an object' }])
+      patchesInError.push(entry)
+      continue
+    }
+
     const curation = new Curation(entry)
-    if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
-    patchesInError.push(entry)
-  })
+    if (curation.errors.length > 0) {
+      curationErrors.push(curation.errors)
+      patchesInError.push(entry)
+    }
+  }
+
   if (curationErrors.length > 0) {
     const errorData = { errors: curationErrors, patchesInError }
     logger.error('intended curations are invalid', errorData)
@@ -127,12 +140,18 @@ async function updateCurations(request, response) {
   }
 
   const normalizedPatches = await Promise.all(
-    request.body.patches.map(async entry => {
-      return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
-    })
+    patches.map(async entry => ({
+      ...entry,
+      coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates)
+    }))
   )
+
   const normalizedBody = { ...request.body, patches: normalizedPatches }
+  const serviceGithub = request.app.locals.service.github.client
+  const userGithub = request.app.locals.user.github.client
+  const info = await request.app.locals.user.github.getInfo()
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
+
   response.status(200).send({
     prNumber: result.data.number,
     url: curationService.getCurationUrl(result.data.number)
