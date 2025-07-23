@@ -6,7 +6,15 @@ const ajvErrors = require('ajv-errors')
 const addFormats = require('ajv-formats')
 
 // Create AJV instance with options
-const ajv = new Ajv({ allErrors: true, strict: 'log', useDefaults: true })
+const ajv = new Ajv({
+  allErrors: true,
+  strict: 'log',
+  useDefaults: true,
+  maxItems: 1000, 
+  maxProperties: 100,
+  maxLength: 10000, 
+  maxErrors: 10 
+})
 
 // Add formats and error messages support
 addFormats(ajv)
