@@ -15,6 +15,7 @@ const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
 const routesVersioning = require('express-routes-versioning')()
 const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } = require('./lib/rateLimit')
+const inputPrevalidation = require('./middleware/inputPrevalidation')
 
 const v1 = '1.0.0'
 
@@ -169,7 +170,8 @@ function createApp(config) {
   app.use('/origins/gitlab', require('./routes/originGitLab')())
   app.use('/origins/go', require('./routes/originGo')())
   app.use('/harvest', harvestRoute)
-  app.use(bodyParser.json())
+  app.use(bodyParser.json({ limit: '1mb' }))
+  app.use(inputPrevalidation) 
   app.use('/curations', curationsRoute)
   app.use('/definitions', routesVersioning({ [v1]: definitionsRouteV1 }, definitionsRoute))
   app.use('/notices', noticesRoute)
