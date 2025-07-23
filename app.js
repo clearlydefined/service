@@ -171,7 +171,7 @@ function createApp(config) {
   app.use('/origins/go', require('./routes/originGo')())
   app.use('/harvest', harvestRoute)
   app.use(bodyParser.json({ limit: '1mb' }))
-  app.use(inputPrevalidation) 
+  app.use(inputPrevalidation)
   app.use('/curations', curationsRoute)
   app.use('/definitions', routesVersioning({ [v1]: definitionsRouteV1 }, definitionsRoute))
   app.use('/notices', noticesRoute)

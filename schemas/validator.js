@@ -10,10 +10,10 @@ const ajv = new Ajv({
   allErrors: true,
   strict: 'log',
   useDefaults: true,
-  maxItems: 1000, 
+  maxItems: 1000,
   maxProperties: 100,
-  maxLength: 10000, 
-  maxErrors: 10 
+  maxLength: 10000,
+  maxErrors: 10
 })
 
 // Add formats and error messages support

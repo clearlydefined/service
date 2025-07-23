@@ -14,12 +14,11 @@ class MongoStore extends AbstractMongoDefinitionStore {
    * @returns A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   async list(coordinates) {
-    
     const id = escapeRegExp(this.getId(coordinates))
     const list = await this.collection.find(
-    { '_mongo.partitionKey': new RegExp(`^${id}`), '_mongo.page': 1 },
-    { projection: { _id: 1 } }
-  )
+      { '_mongo.partitionKey': new RegExp(`^${id}`), '_mongo.page': 1 },
+      { projection: { _id: 1 } }
+    )
 
     return (await list.toArray()).map(entry => entry._id)
   }

@@ -71,5 +71,4 @@ function escapeHTML(str = '') {
     .replace(/'/g, '&#039;')
 }
 
-
 module.exports = setup
