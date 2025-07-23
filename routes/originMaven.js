@@ -35,12 +35,12 @@ router.get(
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
       const result = getSuggestions(answer, group)
-      return response.status(200).send(result)
+      return response.status(200).json(result)
     }
     const url = `https://search.maven.org/solrsearch/select?q=${group}&rows=100&wt=json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = getSuggestions(answer)
-    return response.status(200).send(result)
+    return response.status(200).json(result)
   })
 )
 
@@ -48,16 +48,28 @@ function getSuggestions(answer, group) {
   const docs = answer.response.docs
   if (docs.length)
     return docs.map(item => {
-      return { id: item.id }
+      return { id: escapeHTML(item.id) }
     })
   const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
-  return group ? result.map(entry => `${group}:${entry}`) : result
+  return group
+    ? result.map(entry => `${escapeHTML(group)}:${escapeHTML(entry)}`)
+    : result.map(entry => escapeHTML(entry))
 }
 
 function setup(testFlag = false) {
   if (testFlag) router._getSuggestions = getSuggestions
   return router
 }
+
+function escapeHTML(str = '') {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 
 module.exports = setup
