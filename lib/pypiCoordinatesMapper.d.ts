@@ -108,3 +108,4 @@ export declare class PypiCoordinatesMapper {
 }
 
 export default PypiCoordinatesMapper
+export = PypiCoordinatesMapper
