@@ -4,10 +4,11 @@
 const Ajv = require('ajv').default
 const ajvErrors = require('ajv-errors')
 const addFormats = require('ajv-formats')
+const config = require('painless-config')
 
 // Create AJV instance with options
 const ajv = new Ajv({
-  allErrors: true,
+  allErrors: config.get('REST_DEBUG') == 'true' ? true : false,
   strict: 'log',
   useDefaults: true,
   maxItems: 1000,
@@ -18,7 +19,9 @@ const ajv = new Ajv({
 
 // Add formats and error messages support
 addFormats(ajv)
-ajvErrors(ajv)
+if (config.get('REST_DEBUG') == 'true') {
+  ajvErrors(ajv)
+}
 
 // Register JSON schemas
 ajv.addSchema(require('./curations-1.0'), 'curations')
