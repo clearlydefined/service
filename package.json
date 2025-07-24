@@ -6,7 +6,7 @@
     "node": "18 || 20"
   },
   "scripts": {
-    "test": "npm run mocha && npm run lint",
+    "test": "REST_DEBUG=true npm run mocha && npm run lint",
     "mocha": "nyc mocha --exit \"test/**/*.js\"",
     "lint": "npm run tsc && npm run eslint && npm run prettier:check",
     "lint:fix": "npm run eslint:fix && npm run prettier:write",
