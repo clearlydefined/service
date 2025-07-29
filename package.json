@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Service side of clearlydefined.io.",
   "engines": {
-    "node": "18 || 20"
+    "node": "18 || 24"
   },
   "scripts": {
     "test": "REST_DEBUG=true npm run mocha && npm run lint",
