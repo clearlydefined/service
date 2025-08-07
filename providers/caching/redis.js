@@ -11,6 +11,8 @@ const logger = require('../logging/logger')
  * @typedef {import('redis').RedisClientType} RedisClientType
  *
  * @typedef {import('../logging').Logger} Logger
+ *
+ * @typedef {import('redis').RedisClientOptions['socket']} RedisSocketOptions
  */
 
 /** Prefix used to identify serialized objects in cache */
@@ -127,15 +129,23 @@ class RedisCache {
    *
    * @param {RedisCacheOptions} options - Redis connection configuration
    * @returns {RedisClientType} A new Redis client instance
-  //  */
-  static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
-    const socketOptions = { host: service, port }
+   */
+  static buildRedisClient({ apiKey, service, port = 6380, tls }) {
+    /** @type {RedisSocketOptions} Socket configuration options for Redis connection */
+    let socketOptions
 
-    if (tls) {
-      // @ts-ignore
-      socketOptions.tls = true // This will be the literal value 'true'
+    if (tls === true) {
+      socketOptions = {
+        host: service,
+        port,
+        tls
+      }
+    } else {
+      socketOptions = {
+        host: service,
+        port
+      }
     }
-
     return createClient({
       username: 'default',
       password: apiKey,
