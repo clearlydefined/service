@@ -166,7 +166,7 @@ class RedisCache {
     const client = this.buildRedisClient(options)
     try {
       await client.connect()
-      logger.info(`Done connecting to redis: %${options.service}`)
+      logger.info('Connecting to redis', { service: options.service })
       client.on('error', error => {
         logger.error(`Redis client error: ${error}`)
       })
