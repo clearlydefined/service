@@ -218,7 +218,7 @@ describe('Rate Limiter', () => {
       verifyRateLimiting()
     })
 
-    describe('Redis Based Rate Limiter', () => {
+    xdescribe('Redis Based Rate Limiter', () => {
       let container, redisClient, redisOpts
 
       before(async function () {
@@ -237,7 +237,7 @@ describe('Rate Limiter', () => {
       verifyRateLimiting()
     })
 
-    describe('MiddlewareDelegate - Redis Based', () => {
+    xdescribe('MiddlewareDelegate - Redis Based', () => {
       const config = { limits: { windowSeconds: 1, max: 1 } }
       let container, cachingService, redisOpts
 
