@@ -5,6 +5,9 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const { callFetch: requestPromise } = require('../lib/fetch')
 const { deCodeSlashes } = require('../lib/utils')
+const logger = require('../providers/logging/logger')
+
+const log = logger()
 
 // Get versions
 router.get(
@@ -24,7 +27,8 @@ router.get(
       result.pop()
 
       return response.status(200).send(result)
-    } catch {
+    } catch (error) {
+      log.error({ err: error, params: request.params }, 'Error fetching Go module revisions')
       return response.status(404).send('No revisions found due to an internal error.')
     }
   })
