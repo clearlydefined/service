@@ -10,10 +10,10 @@ const mockInsights = require('../../lib/mockInsights')
 
 /**
  * Factory function to create a Winston logger instance.
- * @param {Object} [options] - Configuration options for the logger.
- * @param {boolean} [options.echo] - Whether to echo logs to the console.
- * @param {string} [options.level] - Log level (e.g., 'debug', 'info').
+ * @param {WinstonLoggerOptions} [options] - Configuration options for the logger.
+ * @returns {winston.Logger} A configured Winston logger instance with Application Insights transport.
  */
+
 function factory(options) {
   const realOptions = {
     key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
@@ -78,28 +78,22 @@ function factory(options) {
   return logger
 }
 
+const levelMap = new Map([
+  ['error', appInsights.Contracts.SeverityLevel.Error],
+  ['warn', appInsights.Contracts.SeverityLevel.Warning],
+  ['info', appInsights.Contracts.SeverityLevel.Information],
+  ['verbose', appInsights.Contracts.SeverityLevel.Verbose],
+  ['debug', appInsights.Contracts.SeverityLevel.Verbose],
+  ['silly', appInsights.Contracts.SeverityLevel.Verbose]
+])
+
 /**
  * Maps Winston log levels to Application Insights severity levels
  * @param {string} level - The Winston log level
  * @returns {number} - The corresponding Application Insights severity level
  */
 function mapLevel(level) {
-  switch (level) {
-    case 'error':
-      return appInsights.Contracts.SeverityLevel.Error
-    case 'warn':
-      return appInsights.Contracts.SeverityLevel.Warning
-    case 'info':
-      return appInsights.Contracts.SeverityLevel.Information
-    case 'verbose':
-      return appInsights.Contracts.SeverityLevel.Verbose
-    case 'debug':
-      return appInsights.Contracts.SeverityLevel.Verbose
-    case 'silly':
-      return appInsights.Contracts.SeverityLevel.Verbose
-    default:
-      return appInsights.Contracts.SeverityLevel.Information
-  }
+  return levelMap.get(level) ?? appInsights.Contracts.SeverityLevel.Information
 }
 
 module.exports = factory
