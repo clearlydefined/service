@@ -27,8 +27,10 @@ router.get(
       result.pop()
 
       return response.status(200).send(result)
-    } catch (error) {
-      log.error({ err: error, params: request.params }, 'Error fetching Go module revisions')
+    } catch (e) {
+      log.error('Error fetching Go module revisions.', {
+        errorMessage: e.message
+      })
       return response.status(404).send('No revisions found due to an internal error.')
     }
   })
