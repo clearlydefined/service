@@ -25,6 +25,14 @@ startServer()
  */
 async function startServer() {
   try {
+    if (typeof app.init === 'function') {
+      await new Promise((resolve, reject) => {
+        app.init(app, err => {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    }
     server.listen(port)
     server.on('error', onError)
     server.on('listening', onListening)

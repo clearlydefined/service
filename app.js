@@ -220,6 +220,8 @@ function createApp(config) {
     )
   }
 
+  app.init = requestHandler.init
+
   // error handler
   app.use((error, request, response, next) => {
     if (response.headersSent) return next(error)
