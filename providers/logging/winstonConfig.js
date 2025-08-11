@@ -17,7 +17,7 @@ const mockInsights = require('../../lib/mockInsights')
 function factory(options) {
   const realOptions = {
     key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
-    echo: config.get('LOGGER_LOG_TO_CONSOLE') == 'true' ? true : false,
+    echo: config.get('LOGGER_LOG_TO_CONSOLE') === 'true',
     level: config.get('APPINSIGHTS_EXPORT_LOG_LEVEL') || 'info',
     ...options
   }
@@ -52,28 +52,24 @@ function factory(options) {
     ]
   })
 
-  if (realOptions.key && realOptions.key !== 'mock') {
-    appInsights.setup(realOptions.key).setAutoCollectConsole(false).setAutoCollectExceptions(false).start()
+  const aiClient = appInsights.defaultClient
 
-    const aiClient = appInsights.defaultClient
-
-    // Pipe Winston logs to Application Insights
-    logger.on('logged', info => {
-      if (info.level === 'error') {
-        if (info.stack) {
-          aiClient.trackException({ exception: new Error(info.message), properties: info })
-        } else {
-          aiClient.trackTrace({
-            message: info.message,
-            severity: appInsights.Contracts.SeverityLevel.Error,
-            properties: info
-          })
-        }
+  // Pipe Winston logs to Application Insights
+  logger.on('logged', info => {
+    if (info.level === 'error') {
+      if (info.stack) {
+        aiClient.trackException({ exception: new Error(info.message), properties: info })
       } else {
-        aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties: info })
+        aiClient.trackTrace({
+          message: info.message,
+          severity: appInsights.Contracts.SeverityLevel.Error,
+          properties: info
+        })
       }
-    })
-  }
+    } else {
+      aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties: info })
+    }
+  })
 
   return logger
 }
