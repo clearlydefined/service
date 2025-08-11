@@ -1,7 +1,7 @@
 const { isTooDeepOrLarge } = require('../lib/utils')
 
 const MAX_DEPTH = 10
-const MAX_ARRAY_LENGTH = 1000
+const MAX_ARRAY_LENGTH = 500
 
 module.exports = function inputPrevalidation(req, res, next) {
   // Only check JSON bodies
