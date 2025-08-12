@@ -13,18 +13,10 @@ const { permissionsCheck } = require('../middleware/permissions')
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getChangesForCoordinatesInPr))
 
 async function getChangesForCoordinatesInPr(request, response) {
-  try {
-    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-    const result = await curationService.get(coordinates, request.params.pr)
-    if (result) return response.status(200).send(result)
-    return response.status(404).send({ error: 'No curation found for this PR or coordinates.' })
-  } catch (err) {
-    if (err.message && err.message.includes('no such branch or tag')) {
-      return response.status(404).send({ error: 'No such PR branch or tag exists on the curation repository.' })
-    }
-
-    return response.status(500).send({ error: 'Internal server error', details: err.message })
-  }
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
+  const result = await curationService.get(coordinates, request.params.pr)
+  if (result) return response.status(200).send(result)
+  response.sendStatus(404)
 }
 
 // Get data needed by review UI
@@ -56,83 +48,37 @@ async function getCurationForCoordinates(request, response) {
 router.get('{/:type}{/:provider}{/:namespace}{/:name}', asyncMiddleware(listCurations))
 
 async function listCurations(request, response) {
-  try {
-    const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-    const result = await curationService.list(coordinates)
-    if (!result || !Array.isArray(result.contributions) || result.contributions.length === 0) {
-      return response.status(404).send({ error: 'No curations found for the specified coordinates.' })
-    }
-    return response.status(200).send(result)
-  } catch (err) {
-    return response.status(500).send({
-      error: 'Internal server error',
-      details: err.message
-    })
-  }
+  const coordinates = await utils.toEntityCoordinatesFromRequest(request)
+  const result = await curationService.list(coordinates)
+  if (!result || !result.contributions.length) return response.sendStatus(404)
+  return response.status(200).send(result)
 }
 
 router.post('/', asyncMiddleware(listAllCurations))
 
 async function listAllCurations(request, response) {
-  try {
-    if (!Array.isArray(request.body)) {
-      return response.status(400).send({ error: 'Request body must be an array of coordinate strings.' })
-    }
+  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
+  if (coordinatesList.length > 1000)
+    return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
 
-    const coordinatesList = []
-    for (const entry of request.body) {
-      try {
-        coordinatesList.push(EntityCoordinates.fromString(entry))
-      } catch (err) {
-        return response.status(400).send({ error: `Invalid coordinate: ${entry}`, details: err.message })
-      }
-    }
-
-    if (coordinatesList.length > 1000) {
-      return response.status(400).send({ error: `Body contains too many coordinates: ${coordinatesList.length}` })
-    }
-
-    const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
-
-    const result = await curationService.listAll(normalizedCoordinatesList)
-    if (!result || Object.keys(result).length === 0) {
-      return response.status(404).send({ error: 'No curations found for the specified coordinates.' })
-    }
-    response.status(200).send(result)
-  } catch (err) {
-    response.status(500).send({
-      error: 'Internal server error',
-      details: err.message
-    })
-  }
+  const result = await curationService.listAll(normalizedCoordinatesList)
+  response.send(result)
 }
 
 router.patch('', asyncMiddleware(updateCurations))
 
 async function updateCurations(request, response) {
-  const patches = request.body?.patches
-
-  if (!Array.isArray(patches) || patches.length > 1000) {
-    return response.status(400).send({ error: 'Invalid or excessive patches array' })
-  }
-
+  const serviceGithub = request.app.locals.service.github.client
+  const userGithub = request.app.locals.user.github.client
+  const info = await request.app.locals.user.github.getInfo()
   let curationErrors = []
   let patchesInError = []
-
-  for (const entry of patches) {
-    if (typeof entry !== 'object' || entry === null) {
-      curationErrors.push([{ message: 'Patch entry must be an object' }])
-      patchesInError.push(entry)
-      continue
-    }
-
+  request.body.patches.forEach(entry => {
     const curation = new Curation(entry)
-    if (curation.errors.length > 0) {
-      curationErrors.push(curation.errors)
-      patchesInError.push(entry)
-    }
-  }
-
+    if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
+    patchesInError.push(entry)
+  })
   if (curationErrors.length > 0) {
     const errorData = { errors: curationErrors, patchesInError }
     logger.error('intended curations are invalid', errorData)
@@ -140,18 +86,13 @@ async function updateCurations(request, response) {
   }
 
   const normalizedPatches = await Promise.all(
-    patches.map(async entry => ({
-      ...entry,
-      coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates)
-    }))
+    request.body.patches.map(async entry => {
+      return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
+    })
   )
-
   const normalizedBody = { ...request.body, patches: normalizedPatches }
-  const serviceGithub = request.app.locals.service.github.client
-  const userGithub = request.app.locals.user.github.client
-  const info = await request.app.locals.user.github.getInfo()
-  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
 
+  const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
   response.status(200).send({
     prNumber: result.data.number,
     url: curationService.getCurationUrl(result.data.number)
