@@ -77,10 +77,7 @@ async function getDefinitions(request, response) {
   }
   const pattern = request.query.pattern
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
-  if (!validator.validate('definitions-find', request.query)) {
-    return response.status(400).json({ error: 'Invalid request', details: validator.errors })
-  }
-
+  if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
   const normalizedCoordinates = await utils.toNormalizedEntityCoordinates(request.query)
   const result = await definitionService.find({ ...request.query, ...normalizedCoordinates })
   response.send(result)
@@ -97,24 +94,9 @@ async function reload(request, response) {
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (request, response) => {
-    if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body)) {
-      return response.status(400).send('Invalid request body format')
-    }
-
-    if (!request.query.preview) {
+    if (!request.query.preview)
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    }
-
-    if (!validator.validate('curation', request.body)) {
-      // Limit the number of errors returned to prevent DoS
-      const MAX_ERRORS = 10
-      const limitedErrors = Array.isArray(validator.errors) ? validator.errors.slice(0, MAX_ERRORS) : validator.errors
-      return response.status(400).json({
-        error: 'Invalid request body',
-        details: limitedErrors
-      })
-    }
-
+    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = await utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     response.status(200).send(result)
@@ -155,14 +137,12 @@ async function listDefinitions(request, response) {
     result = adaptResultKeys(result, request.body, coordinatesLookup, matchCasing)
     response.send(result)
   } catch (err) {
-    log.error('Error fetching coordinates', err)
-    response.status(500).send('An internal error occurred while processing your request.')
+    response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
   }
 }
 
 function mapCoordinates(request, normalizedCoordinates) {
   const coordinatesLookup = new Map()
-
   if (!Array.isArray(request.body) || !request.body.every(item => typeof item === 'string')) {
     return coordinatesLookup // or throw new Error("Invalid input format")
   }
