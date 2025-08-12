@@ -11,7 +11,8 @@ const { uniq } = require('lodash')
 const dbOptions = {
   dbName: 'clearlydefined',
   logger: {
-    debug: () => {}
+    debug: () => {},
+    info: () => {}
   }
 }
 
