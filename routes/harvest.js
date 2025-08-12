@@ -81,11 +81,11 @@ async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
 
   if (requests.length > 1000) {
-    return response.status(400).json({ error: 'Too many coordinates', count: requests.length })
+    return response.status(400).send({ error: 'Too many coordinates', count: requests.length })
   }
 
   if (!validator.validate('harvest', requests)) {
-    return response.status(400).json({ error: 'Validation failed', details: validator.errors })
+    return response.status(400).send({ error: 'Validation failed', details: validator.errors })
   }
 
   const normalizedBody = await normalizeCoordinates(requests)

@@ -35,12 +35,12 @@ router.get(
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
       const result = getSuggestions(answer, group)
-      return response.status(200).json(result)
+      return response.status(200).send(result)
     }
     const url = `https://search.maven.org/solrsearch/select?q=${group}&rows=100&wt=json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = getSuggestions(answer)
-    return response.status(200).json(result)
+    return response.status(200).send(result)
   })
 )
 
