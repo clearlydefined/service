@@ -146,9 +146,22 @@ function createApp(config) {
   // * POST /curations
   // * POST /notices
   const batchApiLimiter = setupBatchApiRateLimiterAfterCachingInit(config, cachingService)
+  const noticeApiLimiter = setupBatchApiRateLimiterAfterCachingInit(
+    {
+      // Temporary override of rate limit settings for notices (5x the standard API limits)
+      ...config,
+      limits: {
+        windowSeconds: 300,
+        max: 10000,
+        batchWindowSeconds: 300,
+        batchMax: 1250
+      }
+    },
+    cachingService
+  )
   app.post('/definitions', batchApiLimiter)
   app.post('/curations', batchApiLimiter)
-  app.post('/notices', batchApiLimiter)
+  app.post('/notices', noticeApiLimiter)
 
   app.use(require('./middleware/querystring'))
 

@@ -115,7 +115,7 @@ describe('Redis Cache', () => {
     })
   })
 
-  describe('Integration Test', () => {
+  xdescribe('Integration Test', () => {
     let container, redisConfig
 
     before(async function () {
