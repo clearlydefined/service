@@ -87,8 +87,30 @@ class RedisCache {
   async get(item) {
     const cacheItem = await this._client.get(item)
     if (!cacheItem) return null
-    const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
-    const result = pako.inflate(buffer, { to: 'string' })
+
+    let result
+    try {
+      const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
+      result = pako.inflate(buffer, { to: 'string' })
+    } catch {
+      // Fallback to old format (raw compressed data) for backwards compatibility
+      this.logger.debug('Attempting to read legacy compressed data format')
+      try {
+        result = pako.inflate(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), { to: 'string' })
+      } catch {
+        this.logger.debug('Attempting to read uncompressed data format')
+        result = typeof cacheItem === 'string' ? cacheItem : cacheItem.toString()
+
+        if (!result.startsWith(objectPrefix)) {
+          try {
+            return JSON.parse(result)
+          } catch {
+            return result
+          }
+        }
+      }
+    }
+
     if (!result.startsWith(objectPrefix)) return result
     try {
       return JSON.parse(result.substring(4))

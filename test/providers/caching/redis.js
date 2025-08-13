@@ -103,6 +103,16 @@ describe('Redis Cache', () => {
       assert.ok(RedisCache.buildRedisClient.calledTwice)
       assert.ok(mockClient.connect.calledTwice)
     })
+
+    it('reads existing cached data from old pako version', async () => {
+      const oldCacheValue = JSON.stringify({ legacy: true })
+      store['legacyKey'] = oldCacheValue
+
+      await cache.initialize()
+      const result = await cache.get('legacyKey')
+
+      assert.deepStrictEqual(result, { legacy: true })
+    })
   })
 
   describe('Integration Test', () => {
@@ -145,7 +155,7 @@ describe('Redis Cache', () => {
         assert.strictEqual(value, null)
       })
 
-      it('sets value and exipres', async () => {
+      it('sets value and expires', async () => {
         let value = await client.get('tee')
         assert.strictEqual(value, null)
 
