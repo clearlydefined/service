@@ -26,7 +26,7 @@ describe('Harvest route', () => {
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(400)
 
-    const responseData = JSON.parse(response._getData())
+    const responseData = response._getData()
     expect(responseData).to.have.property('error', 'Validation failed')
     expect(responseData.details).to.be.an('array')
     expect(responseData.details[0].message).to.eq('must NOT have additional properties')
@@ -38,7 +38,7 @@ describe('Harvest route', () => {
     const router = createRoutes()
     await router._queue(request, response)
 
-    const responseData = JSON.parse(response._getData())
+    const responseData = response._getData()
 
     expect(response.statusCode).to.be.eq(400)
     expect(responseData).to.have.property('error', 'Validation failed')
