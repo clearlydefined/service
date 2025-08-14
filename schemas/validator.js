@@ -6,20 +6,24 @@ const ajvErrors = require('ajv-errors')
 const addFormats = require('ajv-formats')
 const config = require('painless-config')
 
-// Create AJV instance with options
-const ajv = new Ajv({
-  allErrors: config.get('REST_DEBUG') == 'true' ? true : false,
+const restDebug = process.env.ENABLE_REST_VALIDATION_ERRORS || config.get('ENABLE_REST_VALIDATION_ERRORS')
+const allErrorsEnabled = restDebug === 'true'
+
+const ajvOptions = {
+  allErrors: allErrorsEnabled,
   strict: 'log',
   useDefaults: true,
   maxItems: 1000,
   maxProperties: 100,
   maxLength: 10000,
   maxErrors: 10
-})
+}
+
+const ajv = new Ajv(ajvOptions)
 
 // Add formats and error messages support
 addFormats(ajv)
-if (config.get('REST_DEBUG') == 'true') {
+if (allErrorsEnabled) {
   ajvErrors(ajv)
 }
 
