@@ -15,7 +15,6 @@ const swaggerUi = require('swagger-ui-express')
 const loggerFactory = require('./providers/logging/logger')
 const routesVersioning = require('express-routes-versioning')()
 const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } = require('./lib/rateLimit')
-const { appVersion } = require('./bin/config')
 
 const v1 = '1.0.0'
 
@@ -215,7 +214,7 @@ function createApp(config) {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         // Commenting out because I believe this is broken
         // if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
-        logger.info('Service initialized', { appVersion })
+        logger.info('Service initialized', { appVersion: process.env.APP_VERSION })
 
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
