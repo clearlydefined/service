@@ -38,7 +38,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.0'))
-    expect(result).to.equalInAnyOrder(['npm/npmjs/-/co/4.6.0'])
+    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/co/4.6.0'])
   })
 
   it('should list coordinates preserving case from blob metadata', async () => {
@@ -48,7 +48,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
-    expect(result).to.equalInAnyOrder(['npm/npmjs/-/Co/4.6.1'])
+    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.1'])
   })
 
   it('list coordinates with partial coordinates', async () => {
@@ -58,7 +58,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co'))
-    expect(result).to.equalInAnyOrder(['npm/npmjs/-/Co/4.6.0', 'npm/npmjs/-/Co/4.6.1'])
+    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.0', 'npm/npmjs/-/Co/4.6.1'])
   })
 
   it('stores a definition', async () => {
