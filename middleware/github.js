@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const crypto = require('crypto')
-const GitHubApi = require('@octokit/rest')
+const { Octokit } = require('@octokit/rest')
 const asyncMiddleware = require('./asyncMiddleware')
 const Github = require('../lib/github')
 const { defaultHeaders } = require('../lib/fetch')
@@ -54,6 +54,7 @@ const middleware = asyncMiddleware(async (req, res, next) => {
 // Create and configure a GitHub user client and attach it to the request
 async function setupServiceClient(req, token) {
   const client = Github.getClient({ token })
+  if (!client) throw new Error('GitHub client could not be created. Please check your configuration.')
   req.app.locals.service = { github: { client } }
   return client
 }
@@ -65,8 +66,10 @@ async function setupUserClient(req, token) {
     return null
   }
   // constructor and authenticate are inexpensive (just sets local state)
-  const client = new GitHubApi({ headers: defaultHeaders })
-  client.authenticate({ type: 'token', token })
+  const client = new Octokit({
+    auth: token,
+    headers: defaultHeaders
+  })
   req.app.locals.user = { github: { client } }
   return client
 }
@@ -75,7 +78,7 @@ async function setupUserClient(req, token) {
 async function setupInfo(req, cacheKey, client) {
   let info = await cache.get(cacheKey)
   if (!info) {
-    info = await client.users.get({})
+    info = await client.rest.users.getAuthenticated()
     info = { name: info.data.name, login: info.data.login, email: info.data.email }
     await cache.set(cacheKey, info)
   }

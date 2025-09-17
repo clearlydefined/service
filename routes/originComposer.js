@@ -8,7 +8,7 @@ const { uniq } = require('lodash')
 
 // Packagist API Documentation https://packagist.org/apidoc
 router.get(
-  '/:namespace?/:name/revisions',
+  '{/:namespace}/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const { namespace, name } = request.params
     const fullName = namespace ? `${namespace}/${name}` : name
@@ -24,7 +24,7 @@ router.get(
 )
 
 router.get(
-  '/:namespace/:name?',
+  '/:namespace{/:name}',
   asyncMiddleware(async (request, response) => {
     const { namespace, name } = request.params
     const searchTerm = name ? `${namespace}/${name}` : namespace

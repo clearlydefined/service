@@ -62,7 +62,7 @@ describe('FileDefinitionStore list definitions', () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'))
     const expected = ['npm/npmjs/-/test/1.0']
-    expect(result).to.equalInAnyOrder(expected)
+    expect(result).to.deep.equalInAnyOrder(expected)
   })
 
   it('lists multiple definitions ', async () => {
@@ -70,6 +70,6 @@ describe('FileDefinitionStore list definitions', () => {
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test'))
     // Note that revision 0.0 is skipped because it is empty
     const expected = ['npm/npmjs/-/test/1.0', 'npm/npmjs/-/test/2.0']
-    expect(result).to.equalInAnyOrder(expected)
+    expect(result).to.deep.equalInAnyOrder(expected)
   })
 })
