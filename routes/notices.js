@@ -7,6 +7,7 @@ const router = express.Router()
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
 const logger = require('../providers/logging/logger')
+const bodyParser = require('body-parser')
 
 
 // Post a (set of) component to be included in a single NOTICE file
