@@ -45,7 +45,7 @@ async function getCurationForCoordinates(request, response) {
 }
 
 // Search for any patches related to the given path, as much as is given
-router.get('/:type?/:provider?/:namespace?/:name?', asyncMiddleware(listCurations))
+router.get('{/:type}{/:provider}{/:namespace}{/:name}', asyncMiddleware(listCurations))
 
 async function listCurations(request, response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
@@ -91,6 +91,7 @@ async function updateCurations(request, response) {
     })
   )
   const normalizedBody = { ...request.body, patches: normalizedPatches }
+
   const result = await curationService.addOrUpdate(userGithub, serviceGithub, info, normalizedBody)
   response.status(200).send({
     prNumber: result.data.number,

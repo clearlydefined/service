@@ -107,6 +107,7 @@
     },
     "revisions": {
       "type": "object",
+      "maxProperties": 50,
       "additionalProperties": false,
       "patternProperties": {
         "^.+$": {

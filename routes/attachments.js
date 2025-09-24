@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
-const router = express.Router()
+const router = require('express').Router()
 
 // Get a proposed patch for a specific revision of a component
 router.get('/:id', asyncMiddleware(getAttachment))

@@ -22,15 +22,15 @@ router.get(
       const result = JSON.parse(JSON.stringify(answerJson))
       const revisions = JSON.stringify(result[`${group}`][`${artifact}`][0]['$']['versions'])
       return response.status(200).send(JSON.parse(revisions).split(','))
-    } catch (error) {
-      return response.status(404).send('No revisions found')
+    } catch {
+      return response.status(404).send('No revisions found due to an internal error.')
     }
   })
 )
 
 // Search
 router.get(
-  '/:group/:artifact?',
+  '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
     return response.status(404).send('Search not supported. Please specify group and artifact IDs.')
   })
