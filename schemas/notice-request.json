@@ -8,7 +8,7 @@
   "properties": {
     "coordinates": {
       "type": "array",
-      "maxItems": 5000,
+      "maxItems": 15000,
       "items": { "type": "string" },
       "errorMessage": {
         "type": "coordinates type must be an array"
