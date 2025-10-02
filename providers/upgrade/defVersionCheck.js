@@ -23,9 +23,9 @@ class DefinitionVersionChecker {
   async validate(definition) {
     if (!this._currentSchema) throw new Error('Current schema version is not set')
     const defSchemaVersion = get(definition, '_meta.schemaVersion')
-    this.logger.debug(`Definition version: %s, Current schema version: %s `, defSchemaVersion, this._currentSchema, {
-      coordinates: DefinitionVersionChecker.getCoordinates(definition)
-    })
+    this.logger.debug(
+      `Definition version: ${defSchemaVersion}, Current schema version: ${this._currentSchema}, Coordinates: ${DefinitionVersionChecker.getCoordinates(definition)}`
+    )
     if (defSchemaVersion && gte(defSchemaVersion, this._currentSchema)) return definition
   }
 
