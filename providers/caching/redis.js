@@ -92,23 +92,10 @@ class RedisCache {
     try {
       const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
       result = pako.inflate(buffer, { to: 'string' })
-    } catch {
-      // Fallback to old format (raw compressed data) for backwards compatibility
-      this.logger.debug('Attempting to read legacy compressed data format')
-      try {
-        result = pako.inflate(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), { to: 'string' })
-      } catch {
-        this.logger.debug('Attempting to read uncompressed data format')
-        result = typeof cacheItem === 'string' ? cacheItem : cacheItem.toString()
-
-        if (!result.startsWith(objectPrefix)) {
-          try {
-            return JSON.parse(result)
-          } catch {
-            return result
-          }
-        }
-      }
+    } catch (err) {
+      // Disregard decompression errors gracefully as cache may be stored in an older format, missing or expired.
+      this.logger.debug(`Failed to fetch cache item: ${item}`, err)
+      return null
     }
 
     if (!result.startsWith(objectPrefix)) return result
