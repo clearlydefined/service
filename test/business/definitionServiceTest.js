@@ -649,9 +649,7 @@ function setupServiceForUpgrade(definition, upgradeHandler) {
   const curator = {
     get: () => Promise.resolve(),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
-    autoCurate: () => {
-      return
-    }
+    autoCurate: () => {}
   }
   const service = setupWithDelegates(curator, harvestStore, summary, aggregator, store, upgradeHandler)
   return { service, store }
