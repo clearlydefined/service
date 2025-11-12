@@ -20,7 +20,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 // go/golang/github.com/gorilla/mux/v1.7.3
 // which causes routing errors unless we allow for additional fields
 // We currently allow up to three extra fields (that means up to three slashes in the namespace)
-router.get('/:type/:provider/:namespace/:name/:revision/:extra1?/:extra2?/:extra3?', asyncMiddleware(getDefinition))
+router.get('/:type/:provider/:namespace/:name/:revision{/:extra1}{/:extra2}{/:extra3}', asyncMiddleware(getDefinition))
 
 async function getDefinition(request, response) {
   const log = logger()
@@ -67,7 +67,7 @@ async function getDefinition(request, response) {
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
-router.get('', asyncMiddleware(getDefinitions))
+router.get('/', asyncMiddleware(getDefinitions))
 async function getDefinitions(request, response) {
   // TODO temporary endpoint to trigger reloading the index or definitions
   if (request.query.reload) {
@@ -118,15 +118,17 @@ async function listDefinitions(request, response) {
   const force = request.hostname.includes('localhost') ? request.query.force || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
-    // Tempoarily adding this verbose logging to find perf issues
+    // Temporarily adding this verbose logging to find perf issues
     log.debug('POSTing to /definitions', {
       ts: new Date().toISOString(),
       requestParams: request.params,
       normalizedCoordinates,
-      coordinateCount: coordinatesList.length,
+      coordinateCount: Array.isArray(normalizedCoordinates) ? normalizedCoordinates.length : 0,
       force,
       expand,
-      userAgent: request.get('User-Agent')
+      userAgent: Array.isArray(request.get('User-Agent'))
+        ? request.get('User-Agent').join(', ')
+        : request.get('User-Agent')
     })
     let result = await definitionService.getAll(normalizedCoordinates, force, expand)
 
@@ -141,6 +143,10 @@ async function listDefinitions(request, response) {
 
 function mapCoordinates(request, normalizedCoordinates) {
   const coordinatesLookup = new Map()
+  if (!Array.isArray(request.body) || !request.body.every(item => typeof item === 'string')) {
+    return coordinatesLookup // or throw new Error("Invalid input format")
+  }
+
   for (let i = 0; i < request.body.length; i++) {
     const requestedKey = request.body[i]
     const normalizedKey = normalizedCoordinates[i]?.toString()

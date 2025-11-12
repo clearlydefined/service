@@ -55,6 +55,7 @@ class AbstractFileStore {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result)
     } catch (error) {
+      this.logger.debug(`Error reading file at ${filePath}: ${error.message}`)
       if (error.code === 'ENOENT') return null
       throw error
     }
@@ -86,17 +87,18 @@ class AbstractFileStore {
       )
     ).filter(definition => {
       if (!definition) return false
-      if (query.type && definition.coordinates.type !== query.type) return false
-      if (query.provider && definition.coordinates.provider !== query.provider) return false
-      if (query.name && definition.coordinates.name !== query.name) return false
-      if (query.namespace && definition.coordinates.namespace !== query.namespace) return false
-      if (query.license && definition.licensed.declared !== query.license) return false
-      if (query.releasedAfter && definition.described.releaseDate < query.releasedAfter) return false
-      if (query.releasedBefore && definition.described.releaseDate > query.releasedBefore) return false
-      if (query.minLicensedScore && definition.licensed.score.total < query.minLicensedScore) return false
-      if (query.maxLicensedScore && definition.licensed.score.total > query.maxLicensedScore) return false
-      if (query.minDescribedScore && definition.described.score.total < query.minDescribedScore) return false
-      if (query.maxDescribedScore && definition.described.score.total > query.maxDescribedScore) return false
+      if (query.type && definition.coordinates?.type !== query.type) return false
+      if (query.provider && definition.coordinates?.provider !== query.provider) return false
+      if (query.name && definition.coordinates?.name !== query.name) return false
+      if (query.namespace && definition.coordinates?.namespace !== query.namespace) return false
+      if (query.license && definition.licensed?.declared !== query.license) return false
+      if (query.releasedAfter && definition.described?.releaseDate < query.releasedAfter) return false
+      if (query.releasedBefore && definition.described?.releaseDate > query.releasedBefore) return false
+      if (query.minLicensedScore && definition.licensed?.score?.total < query.minLicensedScore) return false
+      if (query.maxLicensedScore && definition.licensed?.score?.total > query.maxLicensedScore) return false
+
+      if (query.minDescribedScore && definition.described?.score?.total < query.minDescribedScore) return false
+      if (query.maxDescribedScore && definition.described?.score?.total > query.maxDescribedScore) return false
       return true
     })
   }

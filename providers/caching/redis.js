@@ -11,6 +11,8 @@ const logger = require('../logging/logger')
  * @typedef {import('redis').RedisClientType} RedisClientType
  *
  * @typedef {import('../logging').Logger} Logger
+ *
+ * @typedef {import('redis').RedisClientOptions['socket']} RedisSocketOptions
  */
 
 /** Prefix used to identify serialized objects in cache */
@@ -85,12 +87,22 @@ class RedisCache {
   async get(item) {
     const cacheItem = await this._client.get(item)
     if (!cacheItem) return null
-    const result = pako.inflate(cacheItem, { to: 'string' })
+
+    let result
+    try {
+      const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
+      result = pako.inflate(buffer, { to: 'string' })
+    } catch (err) {
+      // Disregard decompression errors gracefully as cache may be stored in an older format, missing or expired.
+      this.logger.debug(`Failed to fetch cache item: ${item}`, err)
+      return null
+    }
+
     if (!result.startsWith(objectPrefix)) return result
     try {
       return JSON.parse(result.substring(4))
     } catch (error) {
-      this.logger.error('Error parsing cached item: %s', error)
+      this.logger.error(`Error parsing cached item: ${error}`)
       return null
     }
   }
@@ -105,7 +117,8 @@ class RedisCache {
    */
   async set(item, value, ttlSeconds) {
     if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
-    const data = pako.deflate(value, { to: 'string' })
+    const deflated = pako.deflate(value)
+    const data = Buffer.from(deflated).toString('base64')
     if (ttlSeconds) await this._client.set(item, data, { EX: ttlSeconds })
     else await this._client.set(item, data)
   }
@@ -126,11 +139,26 @@ class RedisCache {
    * @param {RedisCacheOptions} options - Redis connection configuration
    * @returns {RedisClientType} A new Redis client instance
    */
-  static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
+  static buildRedisClient({ apiKey, service, port = 6380, tls }) {
+    /** @type {RedisSocketOptions} Socket configuration options for Redis connection */
+    let socketOptions
+
+    if (tls === true) {
+      socketOptions = {
+        host: service,
+        port,
+        tls
+      }
+    } else {
+      socketOptions = {
+        host: service,
+        port
+      }
+    }
     return createClient({
       username: 'default',
       password: apiKey,
-      socket: { host: service, port, tls },
+      socket: socketOptions,
       pingInterval: 5 * 60 * 1000 // https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
     })
   }
@@ -147,13 +175,13 @@ class RedisCache {
     const client = this.buildRedisClient(options)
     try {
       await client.connect()
-      logger.info('Done connecting to redis: %s', options.service)
+      logger.info('Connecting to redis', { service: options.service })
       client.on('error', error => {
         logger.error(`Redis client error: ${error}`)
       })
       return client
     } catch (error) {
-      logger.error('Error connecting to redis: %s', error)
+      logger.error(`Error connecting to redis: ${error}`)
       throw error
     }
   }
