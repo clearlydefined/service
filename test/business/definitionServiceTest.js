@@ -120,6 +120,21 @@ describe('Definition Service', () => {
     expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
 
+  it('returns undefined if coordinates has no revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test') // no revision
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition if coordinates has revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    const result = await service.get(coordinates)
+    expect(result).to.not.be.undefined
+    expect(result.coordinates.revision).to.eq('1.0')
+  })
+
   describe('Build source location', () => {
     const data = new Map([
       [
