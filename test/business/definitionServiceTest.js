@@ -205,7 +205,7 @@ describe('Definition Service', () => {
   describe('computeAndStoreIfNecessary', () => {
     let service, coordinates
     beforeEach(() => {
-      ; ({ service, coordinates } = setup())
+      ;({ service, coordinates } = setup())
       service.getStored = sinon.stub().resolves({
         described: {
           tools: ['scancode/3.2.2', 'licensee/3.2.2']
@@ -448,9 +448,9 @@ describe('Integration test', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
     const logger = {
-      debug: () => { },
-      error: () => { },
-      info: () => { }
+      debug: () => {},
+      error: () => {},
+      info: () => {}
     }
 
     let upgradeHandler
@@ -566,7 +566,7 @@ describe('Integration test', () => {
 
     describe('placeholder definition', () => {
       beforeEach(() => {
-        ; ({ service, coordinates, harvestService } = setup(createDefinition(null, null, null)))
+        ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, null)))
         sinon.spy(service, 'compute')
         sinon.spy(service, '_computePlaceHolder')
         sinon.spy(harvestService, 'isTracked')
@@ -602,7 +602,7 @@ describe('Integration test', () => {
     })
 
     it('deletes the tracked in progress harvest after definition is computed', async () => {
-      ; ({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
       harvestService.done = sinon.stub().resolves(true)
       await service.computeAndStore(coordinates)
       expect(harvestService.done.calledOnce).to.be.true
@@ -615,8 +615,8 @@ function createFileHarvestStore() {
   const options = {
     location: 'test/fixtures/store',
     logger: {
-      error: () => { },
-      debug: () => { }
+      error: () => {},
+      debug: () => {}
     }
   }
   return FileHarvestStore(options)
@@ -632,7 +632,7 @@ function setupServiceToCalculateDefinition(rawHarvestData) {
   const curator = {
     get: () => Promise.resolve(),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
-    autoCurate: () => { }
+    autoCurate: () => {}
   }
   return setupWithDelegates(curator, harvestStore, summary, aggregator)
 }
@@ -679,7 +679,7 @@ function setupWithDelegates(
     cache,
     upgradeHandler
   )
-  service.logger = { info: sinon.stub(), debug: () => { } }
+  service.logger = { info: sinon.stub(), debug: () => {} }
   return service
 }
 
