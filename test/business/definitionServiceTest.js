@@ -545,6 +545,18 @@ describe('Integration test', () => {
       })
     })
   })
+
+  describe('Harvest Cache', () => {
+    let service, coordinates, harvestService
+
+    it('deletes the tracked in progress harvest after definition is computed', async () => {
+      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      harvestService.done = sinon.stub().resolves(true)
+      await service.computeAndStore(coordinates)
+      expect(harvestService.done.calledOnce).to.be.true
+      expect(harvestService.done.args[0][0]).to.be.deep.equal(coordinates)
+    })
+  })
 })
 
 function createFileHarvestStore() {
