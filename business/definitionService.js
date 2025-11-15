@@ -76,11 +76,7 @@ class DefinitionService {
     const existing = await this._cacheExistingAside(coordinates, force)
     let result = await this.upgradeHandler.validate(existing)
     if (result) {
-      // Log line used for /status page insights
-      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
-    } else if (!force && (await this.harvestService.isTracked(coordinates))) {
-      this.logger.info('definition harvest in progress', { coordinates: coordinates.toString() })
-      return this._computePlaceHolder(coordinates)
+      this._logDefinitionStatus(result, coordinates)
     } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
     return this._trimDefinition(this._cast(result), expand)
   }
@@ -99,6 +95,15 @@ class DefinitionService {
     const stored = await this.definitionStore.get(coordinates)
     if (stored) this._setDefinitionInCache(cacheKey, stored)
     return stored
+  }
+
+  _logDefinitionStatus(definition, coordinates) {
+    if (this._isEmpty(definition)) {
+      this.logger.info('definition harvest in progress', { coordinates: coordinates.toString() })
+    } else {
+      // Log line used for /status page insights
+      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
+    }
   }
 
   async _cacheExistingAside(coordinates, force) {
@@ -276,12 +281,13 @@ class DefinitionService {
   async _computeAndStore(coordinates) {
     const definition = await this.compute(coordinates)
     // If no tools participated in the creation of the definition then don't bother storing.
-    // Note that curation is a tool so no tools really means there the definition is effectively empty.
-    const tools = get(definition, 'described.tools')
-    if (!tools || tools.length === 0) {
+    if (this._isEmpty(definition)) {
       // Log line used for /status page insights
       this.logger.info('definition not available', { coordinates: coordinates.toString() })
       this._harvest(coordinates) // fire and forget
+      // cache the computed empty definition to avoid repeated recompute attempts
+      const cacheKey = this._getCacheKey(coordinates)
+      await this._setDefinitionInCache(cacheKey, definition)
       return definition
     }
     // Log line used for /status page insights
@@ -353,14 +359,6 @@ class DefinitionService {
     this._ensureNoNulls(definition)
     this._validate(definition)
     this.logger.debug('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-  }
-
-  _computePlaceHolder(givenCoordinates) {
-    const coordinates = this._getCasedCoordinates({}, givenCoordinates)
-    const definition = { coordinates }
-    this._ensureToolScores(coordinates, definition)
-    this._calculateValidate(coordinates, definition)
-    return definition
   }
 
   _getCasedCoordinates(raw, coordinates) {
@@ -637,6 +635,12 @@ class DefinitionService {
 
   _getDefinitionCoordinates(coordinates) {
     return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
+  }
+
+  // Note that curation is a tool so no tools really means there the definition is effectively empty.
+  _isEmpty(definition) {
+    const tools = get(definition, 'described.tools')
+    return !tools || tools.length === 0
   }
 
   _getCacheKey(coordinates) {
