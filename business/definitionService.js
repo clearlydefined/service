@@ -69,7 +69,7 @@ class DefinitionService {
    * @returns {Definition} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
-    if (!coordinates.revision) return
+    if (!validator.validate('coordinates-1.0', coordinates)) return
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
