@@ -135,6 +135,26 @@ describe('Definition Service', () => {
     expect(result.coordinates.revision).to.eq('1.0')
   })
 
+  it('returns undefined if coordinates does not have revision and name', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition for only valid coordinates in getAll function', async () => {
+    const { service } = setup()
+    const coordinates = [
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    ]
+    const result = await service.getAll(coordinates)
+    expect(result).to.not.be.undefined
+    expect(Object.keys(result)).to.deep.equal(['maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'])
+    expect(Object.keys(result).length).to.eq(1)
+  })
+
   describe('Build source location', () => {
     const data = new Map([
       [
