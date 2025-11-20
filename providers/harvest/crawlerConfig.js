@@ -3,13 +3,17 @@
 
 const config = require('painless-config')
 const crawler = require('./crawler')
+const cacheBasedCrawler = require('./cacheBasedCrawler')
+
+const defaultOpts = {
+  authToken: config.get('CRAWLER_API_AUTH_TOKEN'),
+  url: config.get('CRAWLER_API_URL') || 'http://localhost:5000'
+}
 
 function serviceFactory(options) {
-  const realOptions = options || {
-    authToken: config.get('CRAWLER_API_AUTH_TOKEN'),
-    url: config.get('CRAWLER_API_URL') || 'http://localhost:5000'
-  }
-  return crawler(realOptions)
+  const crawlerOptions = { ...defaultOpts, ...options }
+  const harvester = crawler(crawlerOptions)
+  return cacheBasedCrawler({ ...options, harvester })
 }
 
 module.exports = serviceFactory

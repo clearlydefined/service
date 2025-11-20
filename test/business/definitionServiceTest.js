@@ -18,7 +18,6 @@ const AggregatorService = require('../../business/aggregator')
 const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
 const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
 const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
-const util = require('util')
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -121,6 +120,41 @@ describe('Definition Service', () => {
     expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
 
+  it('returns undefined if coordinates has no revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test') // no revision
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition if coordinates has revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    const result = await service.get(coordinates)
+    expect(result).to.not.be.undefined
+    expect(result.coordinates.revision).to.eq('1.0')
+  })
+
+  it('returns undefined if coordinates does not have revision and name', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition for only valid coordinates in getAll function', async () => {
+    const { service } = setup()
+    const coordinates = [
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    ]
+    const result = await service.getAll(coordinates)
+    expect(result).to.not.be.undefined
+    expect(Object.keys(result)).to.deep.equal(['maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'])
+    expect(Object.keys(result).length).to.eq(1)
+  })
+
   describe('Build source location', () => {
     const data = new Map([
       [
@@ -185,6 +219,94 @@ describe('Definition Service', () => {
         const definition = await service.compute(coordinates)
         expect(definition.described.sourceLocation).to.be.deep.equal(expected)
       })
+    })
+  })
+
+  describe('computeAndStoreIfNecessary', () => {
+    let service, coordinates
+    beforeEach(() => {
+      ;({ service, coordinates } = setup())
+      service.getStored = sinon.stub().resolves({
+        described: {
+          tools: ['scancode/3.2.2', 'licensee/3.2.2']
+        }
+      })
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes if definition does not exist', async () => {
+      service.getStored = sinon.stub().resolves(undefined)
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('computes if tools array is undefined', async () => {
+      service.getStored = sinon.stub().resolves({ described: {} })
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+    })
+
+    it('computes if the tool result is not included in definition', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+    })
+
+    it('skips compute if existing definition contains the tool result', async () => {
+      await service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      expect(service.getStored.calledOnce).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.compute.notCalled).to.be.true
+    })
+
+    it('handles two computes for the same coordinates: computes the first and skip the second', async () => {
+      await Promise.all([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+
+      //verfiy the calls are in sequence to ensure that locking works
+      expect(service.compute.getCall(0).calledAfter(service.getStored.getCall(0))).to.be.true
+      expect(service.compute.getCall(0).calledBefore(service.getStored.getCall(1))).to.be.true
+    })
+
+    it('releases the lock upon failure', async () => {
+      service.getStored = sinon
+        .stub()
+        .onFirstCall()
+        .rejects(new Error('test error'))
+        .onSecondCall()
+        .resolves({ described: {} })
+
+      const results = await Promise.allSettled([
+        service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
+        service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
+      ])
+
+      expect(results[0].status).to.eq('rejected')
+      expect(results[0].reason.message).to.eq('test error')
+      expect(results[1].status).to.eq('fulfilled')
+
+      //lock is released after the first call
+      expect(service.getStored.calledTwice).to.be.true
+      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
+      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+
+      expect(service.compute.calledOnce).to.be.true
+      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
     })
   })
 })
@@ -345,15 +467,13 @@ describe('Integration test', () => {
   describe('Handle schema version upgrade', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
+    const logger = {
+      debug: () => {},
+      error: () => {},
+      info: () => {}
+    }
 
-    let logger, upgradeHandler
-    beforeEach(() => {
-      logger = {
-        debug: (format, ...args) => console.debug(util.format(format, ...args)),
-        error: (format, ...args) => console.error(util.format(format, ...args)),
-        info: (format, ...args) => console.info(util.format(format, ...args))
-      }
-    })
+    let upgradeHandler
 
     const handleVersionedDefinition = function () {
       describe('verify schema version', () => {
@@ -460,6 +580,18 @@ describe('Integration test', () => {
       })
     })
   })
+
+  describe('Harvest Cache', () => {
+    let service, coordinates, harvestService
+
+    it('deletes the tracked in progress harvest after definition is computed', async () => {
+      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      harvestService.done = sinon.stub().resolves(true)
+      await service.computeAndStore(coordinates)
+      expect(harvestService.done.calledOnce).to.be.true
+      expect(harvestService.done.args[0][0]).to.be.deep.equal(coordinates)
+    })
+  })
 })
 
 function createFileHarvestStore() {
@@ -516,7 +648,7 @@ function setupWithDelegates(
 ) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
-  const harvestService = { harvest: () => sinon.stub() }
+  const harvestService = mockHarvestService()
   const service = DefinitionService(
     harvestStore,
     harvestService,
@@ -565,7 +697,7 @@ function setup(definition, coordinateSpec, curation) {
     }
   }
   const harvestStore = { getAllLatest: () => Promise.resolve(null) }
-  const harvestService = { harvest: () => sinon.stub() }
+  const harvestService = mockHarvestService()
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
   const upgradeHandler = { validate: def => Promise.resolve(def) }
@@ -583,5 +715,12 @@ function setup(definition, coordinateSpec, curation) {
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
-  return { coordinates, service }
+  return { coordinates, service, harvestService }
+}
+
+function mockHarvestService() {
+  return {
+    harvest: () => sinon.stub(),
+    done: () => Promise.resolve()
+  }
 }

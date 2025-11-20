@@ -7,8 +7,10 @@ const router = express.Router()
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
 const logger = require('../providers/logging/logger')
+const bodyParser = require('body-parser')
 
-router.post('/', asyncMiddleware(generateNotices))
+// Post a (set of) component to be included in a single NOTICE file
+router.post('/', bodyParser.json({ limit: '0.6mb' }), asyncMiddleware(generateNotices))
 
 /**
  *
