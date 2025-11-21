@@ -2,6 +2,9 @@
   "name": "service",
   "version": "2.3.0",
   "description": "Service side of clearlydefined.io.",
+  "engines": {
+    "node": "24"
+  },
   "scripts": {
     "test": "npm run mocha && npm run lint",
     "mocha": "nyc mocha --exit \"test/**/*.js\"",
@@ -75,7 +78,7 @@
     "winston-azure-application-insights": "^1.5.0"
   },
   "devDependencies": {
-    "@tsconfig/node18": "18.2.4",
+    "@tsconfig/node24": "24.0.2",
     "@tsconfig/strictest": "2.0.5",
     "@types/chai": "4.3.3",
     "@types/deep-equal-in-any-order": "1.0.4",
