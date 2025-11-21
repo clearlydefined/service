@@ -221,7 +221,7 @@ paths:
       tags:
         - definitions
       requestBody:
-        description: A list of components to operate on. Each entry is a path describing a component, potentially with a version.
+        description: A list of components to operate on. Each entry is a path describing a component with a mandatory version.
         content:
           application/json:
             schema:
