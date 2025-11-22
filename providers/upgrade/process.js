@@ -72,9 +72,9 @@ class DefinitionUpgrader {
       let result = await this._defVersionChecker.validate(existing)
       if (!result) {
         await this._definitionService.computeStoreAndCurate(coordinates)
-        this.logger.info('Handled definition upgrade for %s', coordinates)
+        this.logger.info('Handled definition upgrade', { coordinates })
       } else {
-        this.logger.debug('Skipped definition upgrade for %s', coordinates)
+        this.logger.debug('Skipped definition upgrade', { coordinates })
       }
     } catch (error) {
       const context = `Error handling definition upgrade for ${coordinates.toString()}`

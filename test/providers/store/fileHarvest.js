@@ -65,7 +65,7 @@ describe('FileHarvestStore list tool results', () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), 'result')
     const expected = ['npm/npmjs/-/test/1.0/testtool/2.0']
-    expect(result).to.equalInAnyOrder(expected)
+    expect(result).to.deep.equalInAnyOrder(expected)
   })
 
   it('lists multiple results', async () => {
@@ -76,7 +76,7 @@ describe('FileHarvestStore list tool results', () => {
       'npm/npmjs/-/test/2.0/testtool1/2.0',
       'npm/npmjs/-/test/2.0/testtool2/3.0'
     ]
-    expect(result).to.equalInAnyOrder(expected)
+    expect(result).to.deep.equalInAnyOrder(expected)
   })
 })
 
@@ -102,15 +102,15 @@ describe('getAll and getAllLatest', () => {
     const tools = Object.getOwnPropertyNames(result)
     expect(tools.length).to.eq(5)
     const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-    expect(clearlydefinedVersions).to.equalInAnyOrder(['1', '1.1.2', '1.3.4'])
+    expect(clearlydefinedVersions).to.deep.equalInAnyOrder(['1', '1.1.2', '1.3.4'])
     const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-    expect(scancodeVersions).to.equalInAnyOrder(['2.2.1', '2.9.0+b1', '30.3.0'])
+    expect(scancodeVersions).to.deep.equalInAnyOrder(['2.2.1', '2.9.0+b1', '30.3.0'])
     const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
-    expect(licenseeVersions).to.equalInAnyOrder(['9.12.1', '9.14.0'])
+    expect(licenseeVersions).to.deep.equalInAnyOrder(['9.12.1', '9.14.0'])
     const reuseVersions = Object.getOwnPropertyNames(result.reuse)
-    expect(reuseVersions).to.equalInAnyOrder(['1.3.0', '3.2.1'])
+    expect(reuseVersions).to.deep.equalInAnyOrder(['1.3.0', '3.2.1'])
     const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
-    expect(fossologyVersions).to.equalInAnyOrder(['3.3.0', '3.6.0'])
+    expect(fossologyVersions).to.deep.equalInAnyOrder(['3.3.0', '3.6.0'])
   })
 
   it('should return all latest harvest results', async () => {
@@ -119,21 +119,21 @@ describe('getAll and getAllLatest', () => {
     const tools = Object.getOwnPropertyNames(result)
     expect(tools.length).to.eq(5)
     const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-    expect(clearlydefinedVersions).to.equalInAnyOrder(['1.3.4'])
+    expect(clearlydefinedVersions).to.deep.equalInAnyOrder(['1.3.4'])
     const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-    expect(scancodeVersions).to.equalInAnyOrder(['30.3.0'])
+    expect(scancodeVersions).to.deep.equalInAnyOrder(['30.3.0'])
     const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
-    expect(licenseeVersions).to.equalInAnyOrder(['9.14.0'])
+    expect(licenseeVersions).to.deep.equalInAnyOrder(['9.14.0'])
     const reuseVersions = Object.getOwnPropertyNames(result.reuse)
-    expect(reuseVersions).to.equalInAnyOrder(['3.2.1'])
+    expect(reuseVersions).to.deep.equalInAnyOrder(['3.2.1'])
     const fossologyVersions = Object.getOwnPropertyNames(result.fossology)
-    expect(fossologyVersions).to.equalInAnyOrder(['3.6.0'])
+    expect(fossologyVersions).to.deep.equalInAnyOrder(['3.6.0'])
   })
 
   it('should get latest files', () => {
     const result = fileStore._getListOfLatestFiles(allFiles)
     expect(result.length).to.eq(4)
-    expect(Array.from(result)).to.equalInAnyOrder([
+    expect(Array.from(result)).to.deep.equalInAnyOrder([
       '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/clearlydefined/1.4.1.json',
       '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/licensee/9.18.1.json',
       '/tmp/harvested_data/pypi/pypi/-/platformdirs/revision/4.2.0/tool/reuse/3.2.2.json',
@@ -147,7 +147,7 @@ describe('getAll and getAllLatest', () => {
     const result = fileStore._getListOfLatestFiles(allFiles)
     expect(fileStore.logger.error.calledOnce).to.be.true
     expect(result.length).to.eq(allFiles.length)
-    expect(Array.from(result)).to.equalInAnyOrder(allFiles)
+    expect(Array.from(result)).to.deep.equalInAnyOrder(allFiles)
   })
 })
 

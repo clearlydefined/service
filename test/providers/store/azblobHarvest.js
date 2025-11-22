@@ -31,7 +31,7 @@ describe('azblob Harvest store', () => {
         revision: '4.6.0'
       })
       const expected = ['npm/npmjs/-/co/4.6.0/clearlydefined/1', 'npm/npmjs/-/co/4.6.0/scancode/2.2.1']
-      expect(result).to.equalInAnyOrder(expected)
+      expect(result).to.deep.equalInAnyOrder(expected)
     })
 
     it('should list results preserving case from blob metadata', async () => {
@@ -64,7 +64,7 @@ describe('azblob Harvest store', () => {
         name: 'jsonstream',
         revision: '1.3.4'
       })
-      expect(resultCased).to.equalInAnyOrder(expected)
+      expect(resultCased).to.deep.equalInAnyOrder(expected)
     })
 
     it('list results with partial coordinates', async () => {
@@ -100,7 +100,7 @@ describe('azblob Harvest store', () => {
         'npm/npmjs/-/co/4.6.0/clearlydefined/1',
         'npm/npmjs/-/co/4.6.0/scancode/2.2.1'
       ]
-      expect(result).to.equalInAnyOrder(expected)
+      expect(result).to.deep.equalInAnyOrder(expected)
     })
   })
 
@@ -132,11 +132,11 @@ describe('azblob Harvest store', () => {
       expect(clearlydefinedVersions[0]).to.eq('1.5.0')
       expect(clearlydefinedVersions.length).to.eq(1)
       const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions).to.equalInAnyOrder(['32.3.0', '30.3.0'])
+      expect(scancodeVersions).to.deep.equalInAnyOrder(['32.3.0', '30.3.0'])
       const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
-      expect(licenseeVersions).to.equalInAnyOrder(['9.18.1', '9.14.0'])
+      expect(licenseeVersions).to.deep.equalInAnyOrder(['9.18.1', '9.14.0'])
       const reuseVersions = Object.getOwnPropertyNames(result.reuse)
-      expect(reuseVersions).to.equalInAnyOrder(['3.2.1', '3.2.2'])
+      expect(reuseVersions).to.deep.equalInAnyOrder(['3.2.1', '3.2.2'])
     })
 
     it('handles unversioned tool output', async () => {
@@ -181,7 +181,7 @@ describe('azblob Harvest store', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
       ])
-      expect(Array.from(latest)).to.equalInAnyOrder([
+      expect(Array.from(latest)).to.deep.equalInAnyOrder([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',

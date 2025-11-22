@@ -145,7 +145,7 @@ describe('Redis Cache', () => {
         assert.strictEqual(value, null)
       })
 
-      it('sets value and exipres', async () => {
+      it('sets value and expires', async () => {
         let value = await client.get('tee')
         assert.strictEqual(value, null)
 
