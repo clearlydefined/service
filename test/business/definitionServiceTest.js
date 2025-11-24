@@ -120,6 +120,41 @@ describe('Definition Service', () => {
     expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
 
+  it('returns undefined if coordinates has no revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test') // no revision
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition if coordinates has revision', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    const result = await service.get(coordinates)
+    expect(result).to.not.be.undefined
+    expect(result.coordinates.revision).to.eq('1.0')
+  })
+
+  it('returns undefined if coordinates does not have revision and name', async () => {
+    const { service } = setup()
+    const coordinates = EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    const result = await service.get(coordinates)
+    expect(result).to.be.undefined
+  })
+
+  it('returns definition for only valid coordinates in getAll function', async () => {
+    const { service } = setup()
+    const coordinates = [
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents/httpcore'),
+      EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
+    ]
+    const result = await service.getAll(coordinates)
+    expect(result).to.not.be.undefined
+    expect(Object.keys(result)).to.deep.equal(['maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'])
+    expect(Object.keys(result).length).to.eq(1)
+  })
+
   describe('Build source location', () => {
     const data = new Map([
       [
@@ -546,45 +581,8 @@ describe('Integration test', () => {
     })
   })
 
-  describe('Placeholder definition and Cache', () => {
+  describe('Harvest Cache', () => {
     let service, coordinates, harvestService
-
-    describe('placeholder definition', () => {
-      beforeEach(() => {
-        ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, null)))
-        sinon.spy(service, 'compute')
-        sinon.spy(service, '_computePlaceHolder')
-        sinon.spy(harvestService, 'isTracked')
-      })
-
-      it('returns a placeholder definition same as computed', async () => {
-        const computed = await service.get(coordinates)
-        const placeholder = service._computePlaceHolder(coordinates)
-        placeholder._meta.updated = 'ignore_time_stamp'
-        computed._meta.updated = 'ignore_time_stamp'
-        expect(placeholder).to.deep.equal(computed)
-      })
-
-      it('triggers a harvest for a new component', async () => {
-        harvestService.isTracked = sinon.stub().resolves(false)
-        await service.get(coordinates)
-        expect(service.compute.called).to.be.true
-        expect(service._harvest.called).to.be.true
-        expect(service._computePlaceHolder.calledOnce).to.be.false
-        expect(harvestService.isTracked.calledOnce).to.be.true
-        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
-      })
-
-      it('returns a placeholder definition with a tracked harvest', async () => {
-        harvestService.isTracked = sinon.stub().resolves(true)
-        await service.get(coordinates)
-        expect(service._computePlaceHolder.calledOnce).to.be.true
-        expect(service.compute.called).to.be.false
-        expect(service._harvest.called).to.be.false
-        expect(harvestService.isTracked.calledOnce).to.be.true
-        expect(harvestService.isTracked.args[0][0]).to.be.deep.equal(coordinates)
-      })
-    })
 
     it('deletes the tracked in progress harvest after definition is computed', async () => {
       ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
@@ -723,7 +721,6 @@ function setup(definition, coordinateSpec, curation) {
 function mockHarvestService() {
   return {
     harvest: () => sinon.stub(),
-    done: () => Promise.resolve(),
-    isTracked: () => Promise.resolve(false)
+    done: () => Promise.resolve()
   }
 }
