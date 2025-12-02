@@ -5,7 +5,7 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const express = require('express')
 const router = express.Router()
 
-router.get('', (request, response) => {
+router.get('/', (_request, response) => {
   response.send(statusService.list())
 })
 
