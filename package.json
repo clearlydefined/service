@@ -54,7 +54,7 @@
     "morgan": "^1.9.1",
     "painless-config": "^0.1.0",
     "pako": "^1.0.8",
-    "passport": "^0.4.0",
+    "passport": "^0.6.0",
     "passport-github": "^1.1.0",
     "promise-retry": "^1.1.1",
     "rate-limit-redis": "^4.2.0",
