@@ -35,7 +35,6 @@ class StatusService {
   _getStatusLookup() {
     return {
       requestcount: this._requestCount,
-      definitionavailability: this._definitionAvailability,
       processedperday: this._processedPerDay,
       recentlycrawled: this._recentlyCrawled,
       crawlbreakdown: this._crawlbreakdown,
@@ -50,20 +49,6 @@ class StatusService {
       | where timestamp > ago(90d)
       | summarize count() by bin(timestamp, 1d)
       | order by timestamp asc`)
-    )
-    return data.tables[0].rows.reduce((result, row) => {
-      result[row[0]] = row[1]
-      return result
-    }, {})
-  }
-
-  async _definitionAvailability() {
-    const data = await requestPromise(
-      this._serviceQuery(`
-      traces
-      | where timestamp > ago(90d)
-      | where message == "recomputed definition available" or message == "definition not available"  or message == "computed definition available"
-      | summarize count() by message`)
     )
     return data.tables[0].rows.reduce((result, row) => {
       result[row[0]] = row[1]
