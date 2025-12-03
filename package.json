@@ -51,7 +51,7 @@
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
     "mongodb": "^3.1.13",
-    "morgan": "^1.9.1",
+    "morgan": "^1.10.1",
     "painless-config": "^0.1.0",
     "pako": "^1.0.8",
     "passport": "^0.4.0",
