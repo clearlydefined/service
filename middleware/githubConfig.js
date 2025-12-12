@@ -17,13 +17,13 @@ const defaultOptions = {
     curate: [config.get('AUTH_CURATION_TEAM'), 'curation-dev']
   }
 }
+const defaultCache = memoryCache({ defaultTtlSeconds: 10 * 60 /* 10 mins */ })
 
 class GitHubConfig {
-  defaultCache = memoryCache({ defaultTtlSeconds: 10 * 60 /* 10 mins */ })
 
   middleware(options, cache) {
     const realOptions = options || defaultOptions
-    const realCache = cache || this.defaultCache
+    const realCache = cache || defaultCache
     return githubMiddleware(realOptions, realCache)
   }
 

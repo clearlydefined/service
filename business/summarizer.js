@@ -14,7 +14,7 @@ class SummaryService {
   /**
    * Summarize the data for each of the supplied data points for different versions of an
    * identified tool.
-   * @param {import('../lib/entityCoordinates').EntityCoordinatesSpec} coordinates the component being summarized
+   * @param {EntityCoordinates} coordinates the component being summarized
    * @param {string} tool the name of the tool whose output is being summarized
    * @param {any} data the data to summarize
    */
@@ -29,7 +29,7 @@ class SummaryService {
 
   /**
    * Summarize all of the data for the identified component.
-   * @param {import('../lib/entityCoordinates').EntityCoordinatesSpec} coordinates the component being summarized
+   * @param {EntityCoordinates} coordinates the component being summarized
    * @param {any} data the data to summarize
    * @returns {any} the summarized data
    */

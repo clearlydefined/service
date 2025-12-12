@@ -12,7 +12,6 @@ const logger = require('../logging/logger')
 
 class AbstractFileStore {
   /**
-   * 
    * @param {any} options 
    */
   constructor(options) {
@@ -25,7 +24,7 @@ class AbstractFileStore {
   /**
    * Visit all of the files associated with the given coordinates.
    *
-   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates - Accepts partial coordinates.
+   * @param {import('../../lib/entityCoordinates').EntityCoordinates} coordinates - Accepts partial coordinates.
    * @param {(entry: any) => any} visitor
    * @returns The collection of results returned by the visitor
    */
@@ -51,7 +50,7 @@ class AbstractFileStore {
   /**
    * Get and return the object at the given coordinates.
    *
-   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates - The coordinates of the object to get
+   * @param {import('../../lib/entityCoordinates').EntityCoordinates} coordinates - The coordinates of the object to get
    * @returns {Promise<any>} The loaded object
    */
   async get(coordinates) {
@@ -66,8 +65,7 @@ class AbstractFileStore {
   }
 
   /**
-   * 
-   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates
+   * @param {import('../../lib/entityCoordinates').EntityCoordinates} coordinates
    * @returns {Promise<any>}
    */
   async getAll(coordinates)
@@ -117,7 +115,6 @@ class AbstractFileStore {
   }
 
   /**
-   * 
    * @param {string} entry 
    * @returns {boolean}
    */
@@ -126,8 +123,7 @@ class AbstractFileStore {
   }
 
   /**
-   * 
-   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates 
+   * @param {import('../../lib/entityCoordinates').EntityCoordinates} coordinates 
    * @returns {string}
    */
   _toStoragePathFromCoordinates(coordinates) {
@@ -183,7 +179,7 @@ class AbstractFileStore {
 
   /**
    * Convert coordinates to a storage path.
-   * @param {ResultCoordinates|import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates 
+   * @param {ResultCoordinates|import('../../lib/entityCoordinates').EntityCoordinates} coordinates 
    * @returns {string}
    */
   static toStoragePathFromCoordinates(coordinates) {

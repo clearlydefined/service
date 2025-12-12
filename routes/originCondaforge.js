@@ -49,7 +49,6 @@ async function getPackages(req, res)
 }
 
 /**
- *
  * @param {import('../lib/condaRepoAccess').CondaRepoAccess} condaForgeRepoAccess
  * @returns {express.Router}
  */

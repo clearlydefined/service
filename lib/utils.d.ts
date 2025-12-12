@@ -7,6 +7,19 @@ import { EntityCoordinates } from './entityCoordinates'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { DateTime } from 'luxon'
 
+export interface URN {
+  scheme: string
+  type: string
+  provider: string
+  namespace: string
+  name: string
+  revToken: string
+  revision: string
+  toolToken: string
+  tool: string
+  toolRevision: string
+}
+
 export function toResultCoordinatesFromRequest(request: Request): Promise<ResultCoordinates>
 export function toEntityCoordinatesFromRequest(request: Request): Promise<EntityCoordinates>
 export function toNormalizedEntityCoordinates(spec: EntityCoordinates | ParamsDictionary): Promise<EntityCoordinates>
@@ -33,4 +46,4 @@ export function goLicenseLocation(coordinates: EntityCoordinates): string
 export function debsrcLicenseLocations(packages: any[]): string[]
 export function joinExpressions(expressions: Iterable<any>): string|null
 export function normalizeLicenseExpression(rawLicenseExpression: string, logger: any, licenseRefLookup: (licenseRef: string) => string | null) : string|null
-export function parseUrn(urn: string): {schema: string, type: string, provider: string, namespace: string, name: string, revToken: string, revision: string, toolToken: string, tool: string, toolRevision: string}|null
+export function parseUrn(urn: string): URN|null

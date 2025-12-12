@@ -3,7 +3,6 @@
 const config = require('painless-config')
 const { get } = require('lodash')
 const providers = require('../providers')
-const winston = require('winston')
 
 /**
  * Loads the given factory for the indicated namespace. The namespace can be a subcomponent
@@ -51,7 +50,7 @@ module.exports = {
     store: loadFactory(config.get('CURATION_STORE_PROVIDER') || 'memory', 'curation.store')
   },
   harvest: {
-    /** @type {(() => IQueue)|((config: any) => IQueue)} */ queue: loadFactory(config.get('HARVEST_QUEUE_PROVIDER') || 'memory', 'harvest.queue'),
+    queue: loadFactory(config.get('HARVEST_QUEUE_PROVIDER') || 'memory', 'harvest.queue'),
     service: loadFactory(config.get('HARVESTER_PROVIDER') || 'crawler', 'harvest.service'),
     store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store')
   },

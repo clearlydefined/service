@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { EntityCoordinates } from '../../lib/entityCoordinates'
+
 const fs = require('fs')
 const recursive = require('recursive-readdir')
 const AbstractFileStore = require('./abstractFileStore')
@@ -42,7 +44,7 @@ class FileHarvestStore extends AbstractFileStore {
   /**
    * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
    * to a revision.
-   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates - The component revision to report on
+   * @param {EntityCoordinates} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
    * @override
    */

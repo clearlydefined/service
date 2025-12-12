@@ -199,7 +199,8 @@ function createApp(config) {
   // catch 404 and forward to error handler
   const requestHandler = (/** @type {import('express').Request} */ req, /** @type {import('express').Response} */ res, /** @type {import('express').NextFunction} */ next) => {
     logger.info('Error when handling a request', {
-      rawUrl: req.originalUrl,
+      // @ts-ignore
+      rawUrl: req._parsedUrl._raw,
       baseUrl: req.baseUrl,
       originalUrl: req.originalUrl,
       params: req.params,
