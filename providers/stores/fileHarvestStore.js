@@ -42,8 +42,9 @@ class FileHarvestStore extends AbstractFileStore {
   /**
    * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
    * to a revision.
-   * @param {EntityCoordinates} coordinates - The component revision to report on
+   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates - The component revision to report on
    * @returns An object with a property for each tool and tool version
+   * @override
    */
   async getAll(coordinates) {
     // TODO validate/enforce that the coordinates are down to the component revision

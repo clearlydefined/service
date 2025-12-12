@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-
+const config = require('./bin/config')
 const helmet = require('helmet')
 const serializeError = require('serialize-error')
 const requestId = require('request-id/express')
@@ -18,7 +18,15 @@ const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachin
 
 const v1 = '1.0.0'
 
+/**
+ * 
+ * @param {config} config 
+ * @returns {express.Express}
+ */
 function createApp(config) {
+  /**
+   * @type {{ (): Promise<void>}[]}
+   */
   const initializers = []
 
   const logger = loggerFactory(config.logging.logger())
@@ -189,9 +197,9 @@ function createApp(config) {
   app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
-  const requestHandler = (req, res, next) => {
+  const requestHandler = (/** @type {import('express').Request} */ req, /** @type {import('express').Response} */ res, /** @type {import('express').NextFunction} */ next) => {
     logger.info('Error when handling a request', {
-      rawUrl: req._parsedUrl._raw,
+      rawUrl: req.originalUrl,
       baseUrl: req.baseUrl,
       originalUrl: req.originalUrl,
       params: req.params,
@@ -206,13 +214,13 @@ function createApp(config) {
   app.use(requestHandler)
 
   // Attach the init code to any request handler
-  requestHandler.init = async (app, callback) => {
+  requestHandler.init = async (/** @type {any} */ app, /** @type {(arg0: undefined) => void} */ callback) => {
     Promise.all(initializers.map(init => init())).then(
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
         // Commenting out because I believe this is broken
         // if (searchService.constructor.name === 'MemorySearch') await definitionService.reload('definitions')
-        logger.info('Service initialized', { appVersion: process.env.APP_VERSION })
+        logger.info('Service initialized', { appVersion: process.env['APP_VERSION'] })
 
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
@@ -230,7 +238,11 @@ function createApp(config) {
   }
 
   // error handler
-  app.use((error, request, response, next) => {
+  app.use((
+    /** @type {any} */ error, 
+    /** @type { import('express').Request} */ request, 
+    /** @type { import('express').Response} */ response, 
+    /** @type {(arg0: any) => any} */ next) => {
     if (response.headersSent) return next(error)
 
     // Don't log Azure robot liveness checks
@@ -239,8 +251,8 @@ function createApp(config) {
       logger.error('SvcRequestFailure: ' + request.url, error)
 
     // set locals, only providing error in development
-    response.locals.message = error.message
-    response.locals.error = request.app.get('env') === 'development' ? error : {}
+    response.locals['message'] = error.message
+    response.locals['error'] = request.app.get('env') === 'development' ? error : {}
     const status = typeof error.status === 'number' ? error.status : 500
     // return the error
     response
@@ -250,7 +262,7 @@ function createApp(config) {
         error: {
           code: status.toString(),
           message: 'An error has occurred',
-          innererror: serializeError(response.locals.error)
+          innererror: serializeError(response.locals['error'])
         }
       })
   })

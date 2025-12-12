@@ -4,6 +4,9 @@
 const summarizers = require('../providers/summary')
 
 class SummaryService {
+  /**
+   * @param {any} options
+   */
   constructor(options) {
     this.options = options
   }
@@ -11,10 +14,9 @@ class SummaryService {
   /**
    * Summarize the data for each of the supplied data points for different versions of an
    * identified tool.
-   *
-   * @param {EntityCoordinates} coordinates the component being summarized
+   * @param {import('../lib/entityCoordinates').EntityCoordinatesSpec} coordinates the component being summarized
    * @param {string} tool the name of the tool whose output is being summarized
-   * @param {*} data the data to summarize
+   * @param {any} data the data to summarize
    */
   _summarizeTool(coordinates, tool, data) {
     if (!summarizers[tool]) return data
@@ -27,9 +29,9 @@ class SummaryService {
 
   /**
    * Summarize all of the data for the identified component.
-   *
-   * @param {} coordinates the component being summarized
-   * @param {*} data the data to summarize
+   * @param {import('../lib/entityCoordinates').EntityCoordinatesSpec} coordinates the component being summarized
+   * @param {any} data the data to summarize
+   * @returns {any} the summarized data
    */
   summarizeAll(coordinates, data) {
     return Object.getOwnPropertyNames(data || {}).reduce((result, tool) => {
@@ -39,4 +41,4 @@ class SummaryService {
   }
 }
 
-module.exports = options => new SummaryService(options)
+module.exports = (/** @type {any} */ options) => new SummaryService(options)

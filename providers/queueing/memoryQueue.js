@@ -3,6 +3,9 @@
 
 const logger = require('../logging/logger')
 
+/**
+ * @implements {IQueue}
+ */
 class MemoryQueue {
   constructor(options) {
     this.options = options
@@ -18,6 +21,7 @@ class MemoryQueue {
    * Add a message to the queue. Any encoding/stringifying is up to the caller
    *
    * @param {string} message
+   * @returns {Promise<void>}
    */
   async queue(message) {
     this.data.push({ messageText: message, dequeueCount: 0, messageId: ++this.messageId })
@@ -28,7 +32,7 @@ class MemoryQueue {
    * If processing is successful, the caller is expected to call delete()
    * Returns null if the queue is empty
    *
-   * @returns {object} - { original: message, data: "JSON parsed, base64 decoded message" }
+   * @returns {IQueueMessage | null} - { original: message, data: "JSON parsed, base64 decoded message" }
    */
   async dequeue() {
     const message = this.data[0]
@@ -44,6 +48,10 @@ class MemoryQueue {
   }
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
+  /**
+   * Similar to dequeue() but returns an array instead.
+   * @returns { Array<IQueueMessage> }
+   */
   async dequeueMultiple() {
     const message = await this.dequeue()
     return message ? [message] : []
@@ -53,7 +61,7 @@ class MemoryQueue {
    * Delete a recently DQ'd message from the queue
    * pass dequeue() result as the message to delete
    *
-   * @param {object} message
+   * @param {IQueueMessage} message
    */
   async delete(message) {
     const newData = []

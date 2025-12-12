@@ -5,12 +5,22 @@ const azure = require('azure-storage')
 const logger = require('../logging/logger')
 const { promisify } = require('util')
 
+/**
+ * @implements {IQueue}
+ */
 class AzureStorageQueue {
+  /**
+   * @param {any} options 
+   */
   constructor(options) {
     this.options = options
     this.logger = logger()
   }
 
+  /**
+   * Initialize the Azure Storage Queue
+   * @returns {Promise<void>}
+   */
   async initialize() {
     this.queueService = azure
       .createQueueService(this.options.connectionString)
@@ -34,18 +44,25 @@ class AzureStorageQueue {
    * Returns null if the queue is empty
    * If DQ count exceeds 5 the message will be deleted and the next message will be returned
    *
-   * @returns {object} - { original: message, data: "JSON parsed, base64 decoded message" }
+   * @returns {IQueueMessage | null} 
    */
   async dequeue() {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
     if (!message) return null
     if (message.dequeueCount <= 5)
       return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
-    await this.delete({ original: message })
-    return this.dequeue()
+    else
+    {
+      await this.delete({ original: message })
+      return this.dequeue()
+    }
   }
 
   /** Similar to dequeue() but returns multiple messages to improve performance */
+  /**
+   * Similar to dequeue() but returns an array instead.
+   * @returns { Array<IQueueMessage> }
+   */
   async dequeueMultiple() {
     const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
       this.options.queueName,

@@ -47,7 +47,7 @@ export interface CondaPackageMatch {
 }
 
 /** Main class for accessing Conda repository data */
-declare class CondaRepoAccess {
+export declare class CondaRepoAccess {
   /** Cache instance for storing fetched data */
   private cache: ICache
 
