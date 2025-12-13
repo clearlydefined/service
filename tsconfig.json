@@ -55,6 +55,8 @@
     "providers/logging/winstonConfig.d.ts",
     "providers/logging/winstonConfig.js",
     "providers/queueing/queue.d.ts",
+    "providers/queueing/memoryQueue.d.ts",
+    "providers/queueing/memoryQueue.js",
     "providers/summary/summarizer.d.ts",
     "app.js"
   ]

@@ -7,9 +7,15 @@ const logger = require('../logging/logger')
  * @implements {IQueue}
  */
 class MemoryQueue {
+  /**
+   * @param {any} options 
+   */
   constructor(options) {
     this.options = options
     this.logger = logger()
+    /**
+     * @type {import('./queue').IQueueObject[]}
+     */
     this.data = []
     this.messageId = 0
     this.decoder = options.decoder
@@ -32,25 +38,30 @@ class MemoryQueue {
    * If processing is successful, the caller is expected to call delete()
    * Returns null if the queue is empty
    *
-   * @returns {IQueueMessage | null} - { original: message, data: "JSON parsed, base64 decoded message" }
+   * @returns {Promise<import('./queue').IQueueMessage|null>} - { original: message, data: "JSON parsed, base64 decoded message" }
    */
   async dequeue() {
     const message = this.data[0]
     if (!message) return null
     this.data[0].dequeueCount++
     if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: this._parseData(message) })
-    await this.delete({ original: message })
+    await this.delete({ original: message, data: null })
     return this.dequeue()
   }
 
-  _parseData({ messageText }) {
-    return JSON.parse(this.decoder(messageText))
+  /**
+   * 
+   * @param {import('./queue').IQueueObject} message 
+   * @returns {any}
+   */
+  _parseData(message) {
+    return JSON.parse(this.decoder(message.messageText))
   }
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
   /**
    * Similar to dequeue() but returns an array instead.
-   * @returns { Array<IQueueMessage> }
+   * @returns { Promise<import('./queue').IQueueMessage[]> }
    */
   async dequeueMultiple() {
     const message = await this.dequeue()
@@ -61,7 +72,7 @@ class MemoryQueue {
    * Delete a recently DQ'd message from the queue
    * pass dequeue() result as the message to delete
    *
-   * @param {IQueueMessage} message
+   * @param {import('./queue').IQueueMessage} message
    */
   async delete(message) {
     const newData = []
@@ -74,7 +85,7 @@ class MemoryQueue {
 
 const factory = (opts = {}) => {
   const defaultOpts = {
-    decoder: text => text
+    decoder: (/** @type {string} */ text) => text
   }
   const mergedOpts = { ...defaultOpts, ...opts }
   return new MemoryQueue(mergedOpts)

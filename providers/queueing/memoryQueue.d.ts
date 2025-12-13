@@ -1,21 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-export interface IQueueMessage
-{
-  original: any;
-  data: any;
-}
+import { IQueue, IQueueMessage } from './queue'
 
-export interface IQueueObject
+export class MemoryQueue implements IQueue 
 {
-  messageText: string;
-  dequeueCount: number;
-  messageId: number;
-}
-
-export interface IQueue 
-{
+  constructor(options: any);
   initialize(): Promise<void>;
   queue(message: string): Promise<void>;
   dequeue(): Promise<IQueueMessage | null>;

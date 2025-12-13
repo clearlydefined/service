@@ -44,7 +44,7 @@ class AzureStorageQueue {
    * Returns null if the queue is empty
    * If DQ count exceeds 5 the message will be deleted and the next message will be returned
    *
-   * @returns {IQueueMessage | null} 
+   * @returns {Promise<import('./queue').IQueueMessage | null>} 
    */
   async dequeue() {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
@@ -61,7 +61,7 @@ class AzureStorageQueue {
   /** Similar to dequeue() but returns multiple messages to improve performance */
   /**
    * Similar to dequeue() but returns an array instead.
-   * @returns { Array<IQueueMessage> }
+   * @returns { Promise<import('./queue').IQueueMessage[]> }
    */
   async dequeueMultiple() {
     const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
@@ -86,7 +86,7 @@ class AzureStorageQueue {
    * Delete a recently DQ'd message from the queue
    * pass dequeue().original as the message to delete
    *
-   * @param {object} message
+   * @param {import('./queue').IQueueMessage} message
    */
   async delete(message) {
     await promisify(this.queueService.deleteMessage).bind(this.queueService)(
