@@ -10,10 +10,9 @@ const providers = require('../providers')
  * file, memory, mongo) and an optional object path within that module that leads to the
  * desired factory.
  * Dispatch to multiple with + (e.g. spec=dispatch+mongo+azblob)
- * @param {*} spec - indicator of the module and factory to load
- * @param {*} namespace - an optional place to look for built in factories
+ * @param {string} spec - indicator of the module and factory to load
+ * @param {string} namespace - an optional place to look for built in factories
  */
-
 function loadFactory(spec, namespace) {
   const names = spec.split('+')
   const factory = loadOne(names[0], namespace)
@@ -24,6 +23,10 @@ function loadFactory(spec, namespace) {
   return factory
 }
 
+/**
+ * @param {string} spec - indicator of the module and factory to load
+ * @param {string} namespace - an optional place to look for built in factories
+ */
 function loadOne(spec, namespace) {
   const [requirePath, objectPath] = spec.split('|')
   const getPath = (namespace ? namespace + '.' : '') + requirePath

@@ -7,7 +7,13 @@ const { get, uniq } = require('lodash')
 
 const noOpLicenseIds = new Set(['No_license_found', 'See-file', 'See-URL'])
 
+/**
+ * @implements {import('../../providers/summary/summarizer').ISummarizer}
+ */
 class FOSSologySummarizer {
+  /**
+   * @param {any} options 
+   */
   constructor(options) {
     this.options = options
   }
@@ -15,9 +21,9 @@ class FOSSologySummarizer {
   /**
    * Summarize the raw information related to the given coordinates.
    *
-   * @param {EntitySpec} coordinates - The entity for which we are summarizing
-   * @param {*} harvested - the set of raw tool outputs related to the identified entity
-   * @returns {Definition} - a summary of the given raw information
+   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates The entity for which we are summarizing
+   * @param {any} harvested the set of raw tool outputs related to the identified entity
+   * @returns {any} a summary of the given raw information
    */
   summarize(coordinates, harvested) {
     const result = {}
@@ -27,12 +33,13 @@ class FOSSologySummarizer {
     // we should resolve this merging problem but it's likely to be hard in general.
     this._summarizeMonk(result, harvested)
     this._summarizeNomos(result, harvested)
-    this._summarizeCopyright(result, harvested)
+    //this._summarizeCopyright(result, harvested)
     this._declareLicense(coordinates, result)
     return result
   }
 
   _summarizeNomos(result, output) {
+    /** @type{string} */
     const content = get(output, 'nomos.output.content')
     if (!content) return
     const files = content
@@ -90,6 +97,11 @@ class FOSSologySummarizer {
     // mergeDefinitions(result, { files })
   }
 
+  /**
+   * @param {import('../../lib/entityCoordinates').EntityCoordinatesSpec} coordinates
+   * @param {any} result 
+   * @returns {void}
+   */
   _declareLicense(coordinates, result) {
     if (!result.files) return
     // if we know this is a license file by the name of it and it has a license detected in it

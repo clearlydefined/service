@@ -12,6 +12,12 @@ module.exports = router
 
 let version
 let sha
+
+/** 
+ * @param {string} buildsha
+ * @param {string} appVersion
+ * @returns {express.Router} express app with routes configured
+ */
 function setup(buildsha, appVersion) {
   version = appVersion
   sha = buildsha

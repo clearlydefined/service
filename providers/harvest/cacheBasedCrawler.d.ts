@@ -86,8 +86,19 @@ export interface Options {
   cacheTTLInSeconds?: number
 }
 
+export interface IHarvester {
+  /**
+   * Harvests the specified entries, filtering out duplicates and already tracked items
+   *
+   * @param spec - The spec to harvest. Can be a single entry or an array of entries
+   * @param turbo - If true, harvest in turbo mode for faster processing
+   * @returns Promise that resolves when harvesting is complete
+   */
+  harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void>
+}
+
 /** Main class for cache-based harvesting operations */
-export declare class CacheBasedHarvester {
+export declare class CacheBasedHarvester implements IHarvester {
   constructor(options: Options)
 
   /**
