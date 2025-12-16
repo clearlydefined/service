@@ -133,7 +133,7 @@ function createApp(config) {
   app.use('/auth', auth.router)
   app.use(config.auth.service.middleware())
 
-  app.set('trust-proxy', true)
+  app.set('trust proxy', true)
   app.use('/', require('./routes/index')(config.buildsha, config.appVersion))
 
   app.use(setupApiRateLimiterAfterCachingInit(config, cachingService))
