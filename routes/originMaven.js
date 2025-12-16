@@ -28,7 +28,7 @@ router.get(
 
 // Search
 router.get(
-  '/:group/:artifact?',
+  '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
     const { group, artifact } = request.params
     if (request.path.indexOf('/', 1) > 0) {
@@ -48,16 +48,27 @@ function getSuggestions(answer, group) {
   const docs = answer.response.docs
   if (docs.length)
     return docs.map(item => {
-      return { id: item.id }
+      return { id: escapeHTML(item.id) }
     })
   const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
-  return group ? result.map(entry => `${group}:${entry}`) : result
+  return group
+    ? result.map(entry => `${escapeHTML(group)}:${escapeHTML(entry)}`)
+    : result.map(entry => escapeHTML(entry))
 }
 
 function setup(testFlag = false) {
   if (testFlag) router._getSuggestions = getSuggestions
   return router
+}
+
+function escapeHTML(str = '') {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }
 
 module.exports = setup

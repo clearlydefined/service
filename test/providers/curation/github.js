@@ -18,6 +18,13 @@ const expect = chai.expect
 const assert = chai.assert
 
 describe('Github Curation Service', () => {
+  beforeEach(() => {
+    require('../../../providers/logging/logger')({
+      error: sinon.stub(),
+      info: sinon.stub(),
+      debug: sinon.stub()
+    })
+  })
   it('invalidates coordinates when handling merge', async () => {
     const service = createService()
     sinon.stub(service, 'getContributedCurations').callsFake(() => {
@@ -209,7 +216,7 @@ describe('Github Curation Service', () => {
 
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
-    expect(gitHubService.github.issues.createComment.getCall(0).args[0].body).to.contain(
+    expect(gitHubService.github.rest.issues.createComment.getCall(0).args[0].body).to.contain(
       '(http://localhost:3000/curations/143)'
     )
   })
@@ -305,10 +312,9 @@ describe('Github Curation Service', () => {
       const startMatchingSpy = sinon.spy(gitHubService, '_startMatching')
       const calculateMatchingRevisionAndReasonSpy = sinon.spy(gitHubService, '_calculateMatchingRevisionAndReason')
       const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
-
       const result = await gitHubService.addByMergedCuration(pr)
       expect(result).to.be.deep.equal({ data: { number: 143 } })
-      expect(gitHubService.github.issues.createComment.getCall(0).args[0].body).to.contain(
+      expect(gitHubService.github.rest.issues.createComment.getCall(0).args[0].body).to.contain(
         '(http://localhost:3000/curations/143)'
       )
 
@@ -320,8 +326,18 @@ describe('Github Curation Service', () => {
           EntityCoordinates.fromString('npm/npmjs/-/test/1.4')
         ])
       )
-      assert(calculateMatchingRevisionAndReasonSpy.calledWith(curatedCoordinates))
       assert(formatRevisionsSpy.calledWith(expectedResults))
+      assert(
+        calculateMatchingRevisionAndReasonSpy.calledWith(
+          sinon.match(
+            obj =>
+              obj.type === curatedCoordinates.type &&
+              obj.provider === curatedCoordinates.provider &&
+              obj.name === curatedCoordinates.name &&
+              obj.revision === curatedCoordinates.revision
+          )
+        )
+      )
     })
   })
 
@@ -351,7 +367,7 @@ describe('Github Curation Service', () => {
       gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
       // TODO: Should not stub private functions and private properties
       sinon.stub(gitHubService, 'github').value({
-        users: { get: sinon.stub() }
+        rest: { users: { get: sinon.stub() } }
       })
       sinon.stub(gitHubService, '_addOrUpdate').resolves({
         data: { number: 1 }
@@ -415,9 +431,11 @@ describe('Github Curation Service', () => {
       }
       gitHubService = createService(definitionService, licenseMatcher, harvestStore, {}, store)
       gitHubService.github = {
-        users: { get: () => ({ name: 'clearlydefined-bot' }) },
-        pullRequests: { create: sinon.stub() },
-        issues: { createComment: sinon.stub() }
+        rest: {
+          users: { get: () => ({ name: 'clearlydefined-bot' }) },
+          pullRequests: { create: sinon.stub() },
+          issues: { createComment: sinon.stub() }
+        }
       }
       // TODO: it's not optimal to mock private functions. But the GitHubCurationService
       // is so complicated now. And it could be refactored to two smaller classes. The lower
@@ -538,6 +556,7 @@ function createService(
     {
       owner: 'foobar',
       branch: 'foobar',
+      repo: 'foobar',
       token: 'foobar',
       multiversionCurationFeatureFlag: true
     },
@@ -549,27 +568,31 @@ function createService(
     licenseMatcher
   )
   service.github = {
-    repos: {
-      getBranch: () =>
-        Promise.resolve({
-          data: {
-            commit: {
-              sha: '7fd1a60b01f91b314f59955a4e4d4e80d8edf11d'
+    rest: {
+      repos: {
+        getBranch: () =>
+          Promise.resolve({
+            data: {
+              commit: {
+                sha: '7fd1a60b01f91b314f59955a4e4d4e80d8edf11d'
+              }
             }
-          }
-        })
-    },
-    gitdata: { createReference: sinon.stub() },
-    issues: { createComment: sinon.stub() },
-    pullRequests: {
-      create: () =>
-        Promise.resolve({
-          data: {
-            number: 143
-          }
-        })
-    },
-    users: { get: () => ({ name: 'clearlydefined-bot' }) }
+          })
+      },
+      git: {
+        createRef: sinon.stub()
+      },
+      issues: { createComment: sinon.stub() },
+      pulls: {
+        create: () =>
+          Promise.resolve({
+            data: {
+              number: 143
+            }
+          })
+      },
+      users: { get: () => ({ name: 'clearlydefined-bot' }) }
+    }
   }
   return service
 }

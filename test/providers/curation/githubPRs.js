@@ -60,6 +60,14 @@ const defaultCurations = {
 }
 
 describe('Curation service pr events', () => {
+  before(function () {
+    require('../../../providers/logging/logger')({
+      error: sinon.stub(),
+      info: sinon.stub(),
+      debug: sinon.stub()
+    })
+  })
+
   afterEach(function () {
     sandbox.restore()
   })
@@ -74,7 +82,7 @@ describe('Curation service pr events', () => {
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.deep.equalInAnyOrder([
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
@@ -90,7 +98,7 @@ describe('Curation service pr events', () => {
     expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.deep.equalInAnyOrder([
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
@@ -117,7 +125,7 @@ describe('Curation service pr events', () => {
 
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.deep.equalInAnyOrder([
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
@@ -135,7 +143,7 @@ describe('Curation service pr events', () => {
     expect(updateSpy.args[0][0].number).to.be.equal(12)
     const cacheDeleteSpy = service.cache.delete
     expect(cacheDeleteSpy.calledTwice).to.be.true
-    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.equalInAnyOrder([
+    expect([cacheDeleteSpy.args[0][0], cacheDeleteSpy.args[1][0]]).to.deep.equalInAnyOrder([
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
@@ -289,6 +297,13 @@ function createService({ failsCompute = false, geitStubOverride = null }) {
         blob: () => Promise.resolve(Buffer.alloc(0))
       }
     })
+
+  require('../../../providers/logging/logger')({
+    error: sinon.stub(),
+    info: sinon.stub(),
+    debug: sinon.stub()
+  })
+
   const service = proxyquire('../../../providers/curation/github', { geit: geitStub })(
     { owner: 'owner', repo: 'repo', branch: 'branch', token: 'token' },
     store,
@@ -297,21 +312,23 @@ function createService({ failsCompute = false, geitStubOverride = null }) {
     cache
   )
   service.github = {
-    pullRequests: {
-      getFiles: ({ number }) => {
-        return { data: prs[number].files }
+    rest: {
+      pulls: {
+        listFiles: ({ pull_number: number }) => {
+          return { data: prs[number].files }
+        },
+        get: ({ number }) => {
+          return { data: { head: prs[number].head } }
+        }
       },
-      get: ({ number }) => {
-        return { data: { head: prs[number].head } }
-      }
-    },
-    repos: {
-      createStatus: sinon.stub(),
-      getContent: ({ path }) => {
-        return {
-          data: {
-            sha: files[path].sha,
-            content: base64.encode(yaml.safeDump(files[path].content, { sortKeys: true, lineWidth: 150 }))
+      repos: {
+        createStatus: sinon.stub(),
+        getContent: ({ path }) => {
+          return {
+            data: {
+              sha: files[path].sha,
+              content: base64.encode(yaml.dump(files[path].content, { sortKeys: true, lineWidth: 150 }))
+            }
           }
         }
       }

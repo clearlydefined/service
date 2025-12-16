@@ -40,7 +40,11 @@ class AbstractMongoDefinitionStore {
   initialize() {
     return promiseRetry(async retry => {
       try {
-        this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
+        this.client = await MongoClient.connect(this.options.connectionString)
+        this.logger.info('MongoDB connection initialized', {
+          database: this.options.dbName,
+          collection: this.options.collectionName
+        })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
         this._createIndexes()

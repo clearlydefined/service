@@ -32,6 +32,6 @@ export interface WinstonLoggerOptions {
  * @param options - Configuration options for the logger
  * @returns A configured Winston logger instance
  */
-declare function factory(options?: WinstonLoggerOptions): winston.LoggerInstance
+declare function factory(options?: WinstonLoggerOptions): winston.Logger
 
 export = factory

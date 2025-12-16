@@ -6,7 +6,6 @@ const config = require('./config')
 const app = require('../app')(config)
 const debug = require('debug')('service:server')
 const http = require('http')
-const init = require('express-init')
 
 /**
  * Get port from environment and store in Express.
@@ -19,19 +18,30 @@ app.set('port', port)
  */
 const server = http.createServer(app)
 
+startServer()
+
 /**
  * Initialize the apps (if they have async init functions) and start listening
  */
-init(app, error => {
-  if (error) {
-    console.log('Error initializing the Express app: ' + error)
-    throw new Error(error)
+async function startServer() {
+  try {
+    if (typeof app.init === 'function') {
+      await new Promise((resolve, reject) => {
+        app.init(app, err => {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    }
+    server.listen(port)
+    server.on('error', onError)
+    server.on('listening', onListening)
+    console.log(`Service listening on port: ${port}`)
+  } catch (error) {
+    console.error('Error initializing the Express app:', error)
+    process.exit(1)
   }
-  server.listen(port)
-  server.on('error', onError)
-  server.on('listening', onListening)
-  console.log(`Service listening on port: ${port}`)
-})
+}
 
 /**
  * Normalize a port into a number, string, or false.
@@ -56,11 +66,9 @@ function onError(error) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges')
       process.exit(1)
-      break
     case 'EADDRINUSE':
       console.error(bind + ' is already in use')
       process.exit(1)
-      break
     default:
       throw error
   }
