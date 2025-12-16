@@ -69,12 +69,6 @@ async function getDefinition(request, response) {
 // and match the given query
 router.get('/', asyncMiddleware(getDefinitions))
 async function getDefinitions(request, response) {
-  // TODO temporary endpoint to trigger reloading the index or definitions
-  if (request.query.reload) {
-    // TODO purposely do not await this call. This is a fire and forget long running operation for now.
-    reload(request, response)
-    return response.sendStatus(200)
-  }
   const pattern = request.query.pattern
   if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
@@ -84,6 +78,7 @@ async function getDefinitions(request, response) {
 }
 
 // TODO temporary method used to trigger the reloading of the search index
+// eslint-disable-next-line no-unused-vars
 async function reload(request, response) {
   await definitionService.reload(request.query.reload)
   response.status(200).end()
