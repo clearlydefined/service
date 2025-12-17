@@ -139,7 +139,7 @@ class RedisCache {
    * @param {RedisCacheOptions} options - Redis connection configuration
    * @returns {RedisClientType} A new Redis client instance
    */
-  static buildRedisClient({ apiKey, service, port = 6380, tls }) {
+  static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
     /** @type {RedisSocketOptions} Socket configuration options for Redis connection */
     let socketOptions
 
