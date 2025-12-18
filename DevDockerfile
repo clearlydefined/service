@@ -27,5 +27,6 @@ WORKDIR "${APPDIR}"
 COPY . "${APPDIR}"
 
 ENV PORT 4000
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 EXPOSE 4000 2222
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["node", "./bin/www"]
