@@ -49,6 +49,7 @@ class AbstractMongoDefinitionStore {
         this.collection = this.db.collection(this.options.collectionName)
         this._createIndexes()
       } catch (error) {
+        this.logger.info(`retrying mongo connection: ${error.message}`)
         retry(error)
       }
     })
