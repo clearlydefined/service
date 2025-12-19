@@ -101,10 +101,10 @@ class DefinitionService {
 
   _logDefinitionStatus(definition, coordinates) {
     if (this._isEmpty(definition)) {
-      this.logger.info('definition harvest in progress', { coordinates: coordinates.toString() })
+      this.logger.debug('definition harvest in progress', { coordinates: coordinates.toString() })
     } else {
       // Log line used for /status page insights
-      this.logger.info('computed definition available', { coordinates: coordinates.toString() })
+      this.logger.debug('computed definition available', { coordinates: coordinates.toString() })
     }
   }
 
