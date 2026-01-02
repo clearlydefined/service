@@ -24,7 +24,49 @@ function factory(options) {
 
   mockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
 
+  const sanitizeMeta = winston.format(info => {
+    // Summarize HTTP request
+    if (info['req'] && typeof info['req'] === 'object') {
+      const req = /** @type {any} */ (info['req'])
+      info['req'] = {
+        method: req['method'],
+        url: req['originalUrl'] || req['url'],
+        requestId: req['id'],
+        correlationId: req['headers'] && req['headers']['x-correlation-id']
+      }
+    }
+
+    // Summarize HTTP response
+    if (info['res'] && typeof info['res'] === 'object') {
+      const res = /** @type {any} */ (info['res'])
+      info['res'] = {
+        statusCode: res['statusCode']
+      }
+    }
+
+    // Handle generic aliases
+    if (info['request'] && !info['req']) {
+      info['request'] = '[request omitted]'
+    }
+    if (info['response'] && !info['res']) {
+      info['response'] = '[response omitted]'
+    }
+
+    // Summarize Axios config
+    if (info['config'] && typeof info['config'] === 'object') {
+      const cfg = /** @type {any} */ (info['config'])
+      info['config'] = {
+        method: cfg.method,
+        url: cfg.url,
+        headers: { 'X-Api-Key': cfg.headers?.['X-Api-Key'] }
+      }
+    }
+
+    return info
+  })
+
   const logFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
     winston.format.printf(
@@ -34,6 +76,7 @@ function factory(options) {
   )
 
   const consoleFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.colorize(),
     winston.format.printf(
       ({ timestamp, level, message, ...meta }) =>
