@@ -90,7 +90,23 @@ class RedisCache {
 
     let result
     try {
-      const buffer = Buffer.from(typeof cacheItem === 'string' ? cacheItem : cacheItem.toString(), 'base64')
+      // Ensure cacheItem is treated as a string
+      const dataString = typeof cacheItem === 'string' ? cacheItem : String(cacheItem)
+
+      // Detect format: base64 (new) vs binary string (old)
+      // Base64 only contains A-Z, a-z, 0-9, +, /, and optional = padding
+      const isBase64 = /^[A-Za-z0-9+/]+=*$/.test(dataString)
+
+      let buffer
+      if (isBase64) {
+        // NEW format: base64 encoded (written by Pako 2.1.0)
+        buffer = Buffer.from(dataString, 'base64')
+      } else {
+        // OLD format: binary string (written by Pako 1.0.8 with { to: 'string' })
+        // Use 'binary' encoding to preserve byte values
+        buffer = Buffer.from(dataString, 'binary')
+      }
+
       result = pako.inflate(buffer, { to: 'string' })
     } catch (err) {
       // Disregard decompression errors gracefully as cache may be stored in an older format, missing or expired.
