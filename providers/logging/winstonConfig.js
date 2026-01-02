@@ -5,6 +5,7 @@ const config = require('painless-config')
 const appInsights = require('applicationinsights')
 const winston = require('winston')
 const mockInsights = require('../../lib/mockInsights')
+const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
 /** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
 
@@ -23,6 +24,13 @@ function factory(options) {
   }
 
   mockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
+
+  const sanitizeHeaders = (headers = {}) =>
+    Object.fromEntries(
+      Object.entries(headers).map(([key, value]) =>
+        SENSITIVE_HEADERS.includes(key.toLowerCase()) ? [key, '<REDACTED>'] : [key, value]
+      )
+    )
 
   const sanitizeMeta = winston.format(info => {
     // Summarize HTTP request
@@ -58,11 +66,7 @@ function factory(options) {
       info['config'] = {
         method: cfg.method,
         url: cfg.url,
-        headers: Object.fromEntries(
-          Object.entries(cfg.headers || {}).map(([key, value]) =>
-            key.toLowerCase() === 'x-api-key' ? [key, '<REDACTED>'] : [key, value]
-          )
-        )
+        headers: sanitizeHeaders(cfg.headers)
       }
     }
 
