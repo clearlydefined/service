@@ -163,8 +163,6 @@ function createApp(config) {
   app.post('/curations', batchApiLimiter)
   app.post('/notices', noticeApiLimiter)
 
-  app.use(require('./middleware/querystring'))
-
   app.use('/origins/github', require('./routes/originGitHub')())
   app.use('/origins/crate', require('./routes/originCrate')())
   const repoAccess = require('./lib/condaRepoAccess')()
