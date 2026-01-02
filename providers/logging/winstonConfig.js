@@ -58,7 +58,11 @@ function factory(options) {
       info['config'] = {
         method: cfg.method,
         url: cfg.url,
-        headers: { 'X-Api-Key': cfg.headers?.['X-Api-Key'] }
+        headers: Object.fromEntries(
+          Object.entries(cfg.headers || {}).map(([key, value]) =>
+            key.toLowerCase() === 'x-api-key' ? [key, '<REDACTED>'] : [key, value]
+          )
+        )
       }
     }
 
