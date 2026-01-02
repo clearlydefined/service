@@ -69,19 +69,21 @@ function factory(options) {
     sanitizeMeta(),
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const consoleFormat = winston.format.combine(
     sanitizeMeta(),
     winston.format.colorize(),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const logger = winston.createLogger({
