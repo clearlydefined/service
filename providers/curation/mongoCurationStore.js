@@ -17,11 +17,15 @@ class MongoCurationStore {
   initialize() {
     return promiseRetry(async retry => {
       try {
-        this.client = await MongoClient.connect(this.options.connectionString, { useNewUrlParser: true })
+        this.client = await MongoClient.connect(this.options.connectionString)
+        this.logger.info('MongoDB connection initialized', {
+          database: this.options.dbName,
+          collection: this.options.collectionName
+        })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
       } catch (error) {
-        this.logger.info('retrying mongo connection')
+        this.logger.info(`retrying mongo connection: ${error.message}`)
         retry(error)
       }
     })
@@ -91,8 +95,16 @@ class MongoCurationStore {
     if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates.asRevisionless())
     if (!pattern) return null
+    const safePattern = this._escapeRegex(pattern)
+    // Limit the length of the pattern to prevent ReDoS and ensure it's a string
+    const maxPatternLength = 256
+    const limitedPattern = typeof safePattern === 'string' ? safePattern.substring(0, maxPatternLength) : ''
+    if (!limitedPattern) {
+      return null
+    }
+    const regex = new RegExp('^' + limitedPattern)
     const curations = await this.collection
-      .find({ _id: new RegExp('^' + pattern) })
+      .find({ _id: regex })
       .project({ _id: 0 })
       .toArray()
       .then(this._formatCurations)
@@ -131,6 +143,9 @@ class MongoCurationStore {
 
   _lowercaseCoordinates(input) {
     return EntityCoordinates.fromString(EntityCoordinates.fromObject(input).toString().toLowerCase())
+  }
+  _escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
 }
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const logger = require('../logging/logger')
-const throat = require('throat')
+const throat = require('throat').default
 const { uniqBy, isEqual } = require('lodash')
 
 /**
@@ -81,9 +81,14 @@ class CacheBasedHarvester {
    * @param {HarvestEntry[]} entries - Array of entries to filter
    * @returns {Promise<HarvestEntry[]>} Promise resolving to array of entries that are not tracked
    */
+
   async _filterOutTracked(entries) {
     const filteredEntries = await Promise.all(
-      entries.map(throat(this.concurrencyLimit, async entry => ((await this._isTrackedHarvest(entry)) ? null : entry)))
+      entries.map(
+        throat(this.concurrencyLimit, async (/** @type {import("./cacheBasedCrawler").HarvestEntry} */ entry) =>
+          (await this._isTrackedHarvest(entry)) ? null : entry
+        )
+      )
     )
     return filteredEntries.filter(e => e)
   }
@@ -99,7 +104,7 @@ class CacheBasedHarvester {
     const newHarvest = this._getHarvest(entry)
     const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(entry.coordinates)
     const isTracked = trackedHarvests.some(harvest => isEqual(harvest, newHarvest))
-    if (isTracked) this.logger.debug('Entry with coordinates %s is already tracked.', entry.coordinates)
+    if (isTracked) this.logger.debug(`Entry with coordinates ${entry.coordinates.toString()} is already tracked.`)
     return isTracked
   }
 
@@ -136,7 +141,7 @@ class CacheBasedHarvester {
   async _trackHarvests(harvestEntries) {
     const results = await Promise.allSettled(
       harvestEntries.map(
-        throat(this.concurrencyLimit, async entry => {
+        throat(this.concurrencyLimit, async (/** @type {import("./cacheBasedCrawler").HarvestEntry} */ entry) => {
           await this._track(entry)
         })
       )

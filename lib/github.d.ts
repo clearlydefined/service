@@ -5,7 +5,7 @@
  * GitHub API client instance from @octokit/rest package. This represents the authenticated GitHub client with all
  * available API methods.
  */
-export type GitHubClient = import('@octokit/rest')
+export type GitHubClient = import('@octokit/rest').Octokit
 
 /** Options for configuring GitHub client authentication. */
 export interface GitHubClientOptions {

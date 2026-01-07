@@ -5,7 +5,7 @@ const express = require('express')
 const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
 const { URL } = require('url')
-const GitHubApi = require('@octokit/rest')
+const { Octokit } = require('@octokit/rest')
 const { defaultHeaders } = require('../lib/fetch')
 
 const router = express.Router()
@@ -81,9 +81,10 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
  * @returns {Promise<Array<string>>} - list of permission names
  */
 async function getUserDetails(token, org) {
-  const options = { headers: defaultHeaders }
-  const client = new GitHubApi(options)
-  token && client.authenticate({ type: 'token', token })
+  const client = new Octokit({
+    auth: token,
+    headers: defaultHeaders
+  })
 
   try {
     const emails = await client.users.getEmails()

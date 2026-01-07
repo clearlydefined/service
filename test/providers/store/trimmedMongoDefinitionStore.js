@@ -15,7 +15,8 @@ const dbOptions = {
   dbName: 'clearlydefined',
   collectionName: 'definitions-trimmed',
   logger: {
-    debug: () => {}
+    debug: () => {},
+    info: () => {}
   }
 }
 

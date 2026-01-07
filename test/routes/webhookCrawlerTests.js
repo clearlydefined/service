@@ -21,7 +21,9 @@ describe('Webhook Route for Crawler calls', () => {
 
   it('handles missing self', () => {
     const request = createRequest()
-    const response = httpMocks.createResponse(null, null)
+    const response = httpMocks.createResponse()
+    expect(response.statusCode).to.be.eq(200)
+    expect(response._getData()).to.be.empty
     const logger = createLogger()
     const service = createDefinitionService()
     const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)

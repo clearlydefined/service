@@ -22,7 +22,8 @@ const config = require('painless-config')
 function serviceFactory(options) {
   const realOptions = options || {
     service: config.get('CACHING_REDIS_SERVICE'),
-    apiKey: config.get('CACHING_REDIS_API_KEY')
+    apiKey: config.get('CACHING_REDIS_API_KEY'),
+    port: Number(config.get('CACHING_REDIS_PORT')) || 6380
   }
   return redis(realOptions)
 }

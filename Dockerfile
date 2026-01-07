@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
 
-FROM docker.io/library/node:18
+FROM docker.io/library/node:24-bullseye
 ENV APPDIR=/opt/service
 
 ## get SSH server running
@@ -27,5 +27,6 @@ WORKDIR "${APPDIR}"
 COPY . "${APPDIR}"
 
 ENV PORT 4000
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 EXPOSE 4000 2222
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["node", "./bin/www"]

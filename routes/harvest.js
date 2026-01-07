@@ -66,7 +66,7 @@ async function getAll(request, response) {
 }
 
 // Get a list of the harvested data that we have that matches the url as a prefix
-router.get('/:type?/:provider?/:namespace?/:name?/:revision?/:tool?', asyncMiddleware(list))
+router.get('{/:type}{/:provider}{/:namespace}{/:name}{/:revision}{/:tool}', asyncMiddleware(list))
 
 async function list(request, response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)
@@ -79,8 +79,15 @@ router.post('/', bodyParser.json({ limit: '1mb' }), asyncMiddleware(queue))
 
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
-  if (requests.length > 1000) return response.status(400).send(`Too many coordinates: ${requests.length}`)
-  if (!validator.validate('harvest', requests)) return response.status(400).send(validator.errorsText())
+
+  if (requests.length > 1000) {
+    return response.status(400).send({ error: 'Too many coordinates', count: requests.length })
+  }
+
+  if (!validator.validate('harvest', requests)) {
+    return response.status(400).send({ error: 'Validation failed', details: validator.errors })
+  }
+
   const normalizedBody = await normalizeCoordinates(requests)
 
   await harvestService.harvest(normalizedBody, request.query.turbo)

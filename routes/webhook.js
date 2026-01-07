@@ -58,7 +58,12 @@ async function handleGitHubCall(request, response) {
 
 async function handleCrawlerCall(request, response) {
   if (request.headers['x-crawler'] !== crawlerSecret) return info(request, response, 400, 'Invalid token')
-  const body = JSON.parse(request.body)
+  let body = request.body
+  if (Buffer.isBuffer(body)) {
+    body = JSON.parse(body.toString('utf8'))
+  } else if (typeof body === 'string') {
+    body = JSON.parse(body)
+  }
   const urn = get(body, '_metadata.links.self.href')
   if (!urn) return info(request, response, 400, 'Missing or invalid "self" link')
   const coordinates = EntityCoordinates.fromUrn(urn)
@@ -88,7 +93,13 @@ function validateGitHubSignature(request, response) {
 
 function validateGitHubCall(request, response) {
   if (!validateGitHubSignature(request, response)) return false
-  const body = JSON.parse(request.body)
+  let body = request.body
+  if (Buffer.isBuffer(body)) {
+    body = JSON.parse(body.toString('utf8'))
+  } else if (typeof body === 'string') {
+    body = JSON.parse(body)
+  }
+
   const isValidPullRequest = body.pull_request && validPrActions.includes(body.action)
   if (!isValidPullRequest) return info(request, response, 200)
   return body
