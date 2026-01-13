@@ -88,18 +88,20 @@ async function queue(request, response) {
     return response.status(400).send({ error: 'Validation failed', details: validator.errors })
   }
 
-  const normalizedBody = await normalizeCoordinates(requests)
+  const filtered = await normalizeThrottleCoordinates(requests, harvestThrottler)
+  if (!filtered.length) return response.sendStatus(204) //TODO
 
-  await harvestService.harvest(normalizedBody, request.query.turbo)
+  await harvestService.harvest(filtered, request.query.turbo)
   response.sendStatus(201)
 }
 
-async function normalizeCoordinates(requests) {
+async function normalizeThrottleCoordinates(requests, throttler) {
   const normalizedBody = await Promise.all(
     requests.map(async entry => {
       const coordinates = EntityCoordinates.fromString(entry?.coordinates)
       if (!coordinates) return null
       const mapped = await utils.toNormalizedEntityCoordinates(coordinates)
+      if (throttler.isBlocked(mapped)) return null
       return { ...entry, coordinates: mapped.toString() }
     })
   )
@@ -109,15 +111,17 @@ async function normalizeCoordinates(requests) {
 let harvestService
 let harvestStore
 let summarizeService
+let harvestThrottler
 
-function setup(harvester, store, summarizer, testFlag = false) {
+function setup(harvester, store, summarizer, throttler, testFlag = false) {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer
+  harvestThrottler = throttler
   if (testFlag) {
     router._queue = queue
     router._get = get
-    router._normalizeCoordinates = normalizeCoordinates
+    router._normalizeCoordinates = normalizeThrottleCoordinates
   }
   return router
 }

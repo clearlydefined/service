@@ -49,7 +49,8 @@ function createApp(config) {
   initializers.push(async () => cachingService.initialize())
 
   const harvestService = config.harvest.service({ cachingService })
-  const harvestRoute = require('./routes/harvest')(harvestService, harvestStore, summaryService)
+  const harvestThrottler = config.harvest.throttler()
+  const harvestRoute = require('./routes/harvest')(harvestService, harvestStore, summaryService, harvestThrottler)
 
   const curationService = config.curation.service(null, curationStore, config.endpoints, cachingService, harvestStore)
 

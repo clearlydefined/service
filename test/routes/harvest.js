@@ -6,6 +6,7 @@ const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const harvestRoutes = require('../../routes/harvest')
+const ListBasedFilter = require('../../providers/harvest/throttling/listBasedFilter')
 const utils = require('../../lib/utils')
 
 describe('Harvest route', () => {
@@ -86,10 +87,37 @@ describe('Harvest route', () => {
     await router._get(request, response)
     expect(response.statusCode).to.be.eq(200)
   })
+
+  it('uses throttler to filter all entries (204)', async () => {
+    const request = createRequest({ tool: 'test', coordinates: '1/2/3/4' })
+    const response = httpMocks.createResponse()
+    const harvester = { harvest: sinon.stub() }
+    const throttler = { filter: async list => list.filter(x => x.coordinates !== '1/2/3/4') }
+    const router = harvestRoutes(harvester, undefined, undefined, throttler, true)
+    await router._queue(request, response)
+    expect(response.statusCode).to.be.eq(204)
+    expect(harvester.harvest.called).to.be.false
+  })
+
+  it('uses throttler to filter some entries (201)', async () => {
+    const entries = [
+      { tool: 'test', coordinates: '1/2/3/4' },
+      { tool: 'test', coordinates: '5/6/7/8' }
+    ]
+    const request = createRequest(entries)
+    const response = httpMocks.createResponse()
+    const harvester = { harvest: sinon.stub() }
+    const throttler = { filter: async list => list.filter(x => x.coordinates !== '1/2/3/4') }
+    const router = harvestRoutes(harvester, undefined, undefined, throttler, true)
+    await router._queue(request, response)
+    expect(response.statusCode).to.be.eq(201)
+    expect(harvester.harvest.calledOnce).to.be.true
+    expect(harvester.harvest.firstCall.args[0]).to.deep.equal([{ tool: 'test', coordinates: '5/6/7/8' }])
+  })
 })
 
 function createRoutes(harvester, harvestStore, summarizer) {
-  return harvestRoutes(harvester, harvestStore, summarizer, true)
+  return harvestRoutes(harvester, harvestStore, summarizer, new ListBasedFilter({ blacklist: [] }), true)
 }
 
 function createRequest(entries) {
