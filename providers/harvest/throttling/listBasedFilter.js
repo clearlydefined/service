@@ -10,7 +10,10 @@ class ListBasedFilter {
     this.logger = options.logger || loggerFactory()
     const raw = options.blacklist || []
     // Normalize blacklist entries to versionless coordinates for broad matching
-    this.blacklist = new Set(raw.map(c => this._toVersionless(c)).filter(Boolean))
+    const versionlessCoordinates = raw.map(c => this._toVersionless(c)).filter(Boolean)
+    // Store as a Set for quick type lookup
+    this._targetTypes = new Set(versionlessCoordinates.map(c => c.type))
+    this._blacklist = new Set(versionlessCoordinates.map(c => c.toString()))
   }
 
   /**
@@ -20,9 +23,10 @@ class ListBasedFilter {
    * @returns {boolean} true if blocked
    */
   isBlocked(coord) {
-    if (!coord || this.blacklist.size === 0) return false
+    if (!coord || this._blacklist.size === 0) return false
+    if (!this._targetTypes.has(coord.type)) return false
     const versionless = coord.asRevisionless().toString()
-    return this.blacklist.has(versionless)
+    return this._blacklist.has(versionless)
   }
 
   // Convert "type/provider/namespace/name[/revision]" -> "type/provider/namespace/name"
@@ -30,12 +34,11 @@ class ListBasedFilter {
     try {
       const coordinates = EntityCoordinates.fromString(coordString)
       if (coordinates.type === undefined || coordinates.provider === undefined || coordinates.name === undefined) {
-        this.logger.error(`Incomplete coordinates in blacklist: ${coordString}`)
-        return null
+        throw new Error('Incomplete coordinates')
       }
-      return coordinates.asRevisionless().toString()
+      return coordinates.asRevisionless()
     } catch (e) {
-      this.logger.error(`Invalid coordinates in blacklist: ${coordString}`)
+      this.logger.error(`Invalid coordinates in blacklist: ${coordString}, ${e.message}`)
       return null
     }
   }
