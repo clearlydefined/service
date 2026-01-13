@@ -88,20 +88,24 @@ async function queue(request, response) {
     return response.status(400).send({ error: 'Validation failed', details: validator.errors })
   }
 
-  const filtered = await normalizeFilterCoordinates(requests, harvestThrottler)
-  if (!filtered.length) return response.sendStatus(204) //TODO
+  let normalized
+  try {
+    normalized = await normalizeFilterCoordinates(requests)
+  } catch (error) {
+    return response.status(422).send({ error: error.message })
+  }
 
-  await harvestService.harvest(filtered, request.query.turbo)
+  await harvestService.harvest(normalized, request.query.turbo)
   response.sendStatus(201)
 }
 
-async function normalizeFilterCoordinates(requests, throttler) {
+async function normalizeFilterCoordinates(requests) {
   const normalizedBody = await Promise.all(
     requests.map(async entry => {
       const coordinates = EntityCoordinates.fromString(entry?.coordinates)
       if (!coordinates) return null
       const normalized = await utils.toNormalizedEntityCoordinates(coordinates)
-      if (throttler.isBlocked(normalized)) return null
+      if (harvestThrottler.isBlocked(normalized)) throw new Error(`Harvest throttled for ${normalized.toString()}`)
       return { ...entry, coordinates: normalized.toString() }
     })
   )
