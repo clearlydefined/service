@@ -24,13 +24,22 @@ const config = proxyquire('../bin/config', {
 
 describe('Application', () => {
   let clock
+  let originalUnhandledListeners
 
   beforeEach(() => {
+    // Save original listeners before setting up fake timers
+    originalUnhandledListeners = process.listeners('unhandledRejection').slice()
     clock = sinon.useFakeTimers()
   })
 
   afterEach(() => {
     clock.restore()
+    // Clean up any new listeners added during the test
+    process.removeAllListeners('unhandledRejection')
+    // Restore original listeners
+    originalUnhandledListeners.forEach(listener => {
+      process.on('unhandledRejection', listener)
+    })
   })
 
   it('should return a valid Express app instance', () => {

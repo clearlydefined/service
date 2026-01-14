@@ -18,6 +18,7 @@ const dbOptions = {
 
 const shouldPaginateSearchCorrectly = function () {
   describe('Mongo Definition Store: search pagination', function () {
+    this.timeout(10000)
     const mongoServer = new MongoMemoryServer()
     let mongoStore
 
