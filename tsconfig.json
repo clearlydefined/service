@@ -32,6 +32,8 @@
     "lib/pypiCoordinatesMapper.js",
     "lib/rateLimit.d.ts",
     "lib/rateLimit.js",
+    "lib/scancodeMap.d.ts",
+    "lib/scancodeMap.js",
     "providers/caching/memory.d.ts",
     "providers/caching/memory.js",
     "providers/caching/redis.d.ts",
