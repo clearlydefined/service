@@ -12,7 +12,7 @@ function parseListEnv(value, logger) {
     if (!Array.isArray(parsed)) throw new Error('Not an array')
     return parsed
   } catch (e) {
-    logger.error('Blacklist is not valid JSON array; ignoring')
+    logger.error(`Blacklist is not valid JSON array; ignoring, ${e.message}`)
   }
 }
 
