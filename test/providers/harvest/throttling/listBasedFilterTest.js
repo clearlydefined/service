@@ -7,7 +7,8 @@ const EntityCoordinates = require('../../../../lib/entityCoordinates')
 
 const mockLogger = {
   debug: () => {},
-  error: () => {}
+  error: () => {},
+  warn: () => {}
 }
 describe('listBasedFilter', () => {
   it('isBlocked returns false when blacklist empty', () => {

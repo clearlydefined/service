@@ -8,7 +8,8 @@ const proxyquire = require('proxyquire')
 const factory = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
   '../../logging/logger': () => ({
     debug: () => {},
-    error: () => {}
+    error: () => {},
+    warn: () => {}
   })
 })
 
