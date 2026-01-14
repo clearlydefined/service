@@ -4,7 +4,17 @@
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const loggerFactory = require('../../logging/logger')
 
+/**
+ * @typedef {import('./listBasedFilter.d.ts').ListBasedFilterOptions} ListBasedFilterOptions
+ *
+ * @typedef {import('../../logging').Logger} Logger
+ */
+
 class ListBasedFilter {
+  /**
+   * Creates a new ListBasedFilter instance
+   * @param {ListBasedFilterOptions} [options={}] - Configuration options including blacklist and logger
+   */
   constructor(options = {}) {
     this.options = options
     this.logger = options.logger || loggerFactory()
@@ -29,7 +39,12 @@ class ListBasedFilter {
     return this._blacklist.has(versionless)
   }
 
-  // Convert "type/provider/namespace/name[/revision]" -> "type/provider/namespace/name"
+  /**
+   * Convert coordinate string to versionless form
+   * Transforms "type/provider/namespace/name[/revision]" -> "type/provider/namespace/name"
+   * @param {string} coordString - The coordinate string to convert
+   * @returns {EntityCoordinates|null} The versionless EntityCoordinates or null if invalid
+   */
   _toVersionless(coordString) {
     try {
       const coordinates = EntityCoordinates.fromString(coordString)
@@ -38,7 +53,9 @@ class ListBasedFilter {
       }
       return coordinates.asRevisionless()
     } catch (e) {
-      this.logger.error(`Invalid coordinates in blacklist: ${coordString}, ${e.message}`)
+      this.logger.warn(
+        `Invalid coordinates in blacklist, ignoring: ${coordString}, ${e instanceof Error ? e.message : String(e)}`
+      )
       return null
     }
   }
