@@ -24,7 +24,8 @@ describe('Trimmed Mongo Definition store', () => {
   const mongoServer = new MongoMemoryServer()
   let mongoStore
 
-  before('setup database', async () => {
+  before('setup database', async function () {
+    this.timeout(10000)
     await mongoServer.start()
     const uri = await mongoServer.getUri()
     const options = {
@@ -35,7 +36,8 @@ describe('Trimmed Mongo Definition store', () => {
     await mongoStore.initialize()
   })
 
-  after('cleanup database', async () => {
+  after('cleanup database', async function () {
+    this.timeout(10000)
     await mongoStore.close()
     await mongoServer.stop()
   })
