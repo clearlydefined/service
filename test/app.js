@@ -24,22 +24,18 @@ const config = proxyquire('../bin/config', {
 
 describe('Application', () => {
   let clock
-  let originalUnhandledListeners
+  let sandbox
 
   beforeEach(() => {
-    // Save original listeners before setting up fake timers
-    originalUnhandledListeners = process.listeners('unhandledRejection').slice()
+    sandbox = sinon.createSandbox()
+    // Stub process.on to prevent the Application from adding unhandledRejection listeners during tests
+    sandbox.stub(process, 'on')
     clock = sinon.useFakeTimers()
   })
 
   afterEach(() => {
     clock.restore()
-    // Clean up any new listeners added during the test
-    process.removeAllListeners('unhandledRejection')
-    // Restore original listeners
-    originalUnhandledListeners.forEach(listener => {
-      process.on('unhandledRejection', listener)
-    })
+    sandbox.restore()
   })
 
   it('should return a valid Express app instance', () => {
@@ -47,6 +43,11 @@ describe('Application', () => {
 
     assert.ok(app, 'App was not created')
     assert.strictEqual(typeof app.use, 'function', 'App is not an Express instance')
+    // Verify that process.on was called to add unhandledRejection listener
+    assert.ok(
+      process.on.calledWithMatch('unhandledRejection'),
+      'Application should attempt to add unhandledRejection listener'
+    )
   })
 
   it('should expose basic HTTP method handlers (get, post, listen)', () => {
