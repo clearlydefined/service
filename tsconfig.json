@@ -5,7 +5,8 @@
     "checkJs": true,
     "noEmit": true,
     "strictNullChecks": false,
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    "resolveJsonModule": true
   },
   "include": [
     "types/**/*",
@@ -34,6 +35,14 @@
     "lib/rateLimit.js",
     "lib/scancodeMap.d.ts",
     "lib/scancodeMap.js",
+    "lib/utils.d.ts",
+    "lib/utils.js",
+    "lib/curation.d.ts",
+    "lib/curation.js",
+    "lib/licenseMatcher.d.ts",
+    "lib/licenseMatcher.js",
+    "lib/heapLogger.d.ts",
+    "lib/heapLogger.js",
     "providers/caching/memory.d.ts",
     "providers/caching/memory.js",
     "providers/caching/redis.d.ts",
@@ -45,6 +54,7 @@
     "providers/logging/logger.d.ts",
     "providers/logging/logger.js",
     "providers/logging/winstonConfig.d.ts",
-    "providers/logging/winstonConfig.js"
+    "providers/logging/winstonConfig.js",
+    "schemas/validator.js"
   ]
 }
