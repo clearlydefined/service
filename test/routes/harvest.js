@@ -9,6 +9,13 @@ const harvestRoutes = require('../../routes/harvest')
 const ListBasedFilter = require('../../providers/harvest/throttling/listBasedFilter')
 const utils = require('../../lib/utils')
 
+// Shared noop logger for tests
+const logger = {
+  debug: () => {},
+  error: () => {},
+  warn: () => {}
+}
+
 describe('Harvest route', () => {
   afterEach(() => sinon.restore())
 
@@ -88,15 +95,15 @@ describe('Harvest route', () => {
     expect(response.statusCode).to.be.eq(200)
   })
 
-  it('uses throttler to filter some entries (422)', async () => {
-    const entries = [
-      { tool: 'test', coordinates: '1/2/3/4' },
-      { tool: 'test', coordinates: '5/6/7/8' }
-    ]
+  it('throttles via ListBasedFilter (422)', async () => {
+    const entries = [{ tool: 'test', coordinates: 'git/github/Org/Name/1.0.0' }]
     const request = createRequest(entries)
     const response = httpMocks.createResponse()
     const harvester = { harvest: sinon.stub() }
-    const throttler = { filter: async list => list.filter(x => x.coordinates !== '1/2/3/4') }
+    const throttler = new ListBasedFilter({ blacklist: ['git/github/org/name'], logger })
+    sinon
+      .stub(utils, 'toNormalizedEntityCoordinates')
+      .resolves(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
     const router = harvestRoutes(harvester, undefined, undefined, throttler, true)
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(422)
@@ -105,10 +112,6 @@ describe('Harvest route', () => {
 })
 
 function createRoutes(harvester, harvestStore, summarizer) {
-  const logger = {
-    debug: () => {},
-    error: () => {}
-  }
   return harvestRoutes(harvester, harvestStore, summarizer, new ListBasedFilter({ blacklist: [], logger }), true)
 }
 

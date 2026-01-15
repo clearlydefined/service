@@ -16,9 +16,9 @@ declare function parseListEnv(value: string | undefined, logger: Logger): string
 /**
  * Factory function that creates a ListBasedFilter instance from configuration
  *
- * @param listOpts - Optional override for the blacklist configuration
+ * @param listSpec - Optional override for the blacklist configuration
  * @returns A configured ListBasedFilter instance
  */
-declare function throttlerFactory(listOpts?: string): ListBasedFilter
+declare function throttlerFactory(listSpec?: string): ListBasedFilter
 
 export = throttlerFactory

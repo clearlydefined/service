@@ -82,5 +82,43 @@ describe('ListBasedFilterConfig', () => {
         expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
       })
     })
+
+    describe('with mixed-type array', () => {
+      it('filters out non-string entries and blocks only string coordinates', () => {
+        const factory = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
+          '../../logging/logger': () => ({
+            debug: () => {},
+            error: () => {},
+            warn: () => {}
+          })
+        })
+
+        const mixed = JSON.stringify(['npm/npmjs/-/left-pad', 123, null, {}, 'git/github/org/name'])
+        const filter = factory(mixed)
+
+        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
+        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.true
+        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+      })
+    })
+
+    describe('environment config', () => {
+      it('reads HARVEST_THROTTLER_BLACKLIST from config and blocks', () => {
+        const factoryFromEnv = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
+          'painless-config': {
+            get: key => (key === 'HARVEST_THROTTLER_BLACKLIST' ? JSON.stringify(['git/github/org/name']) : undefined)
+          },
+          '../../logging/logger': () => ({
+            debug: () => {},
+            error: () => {},
+            warn: () => {}
+          })
+        })
+
+        const filter = factoryFromEnv()
+        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
+        expect(filter.isBlocked(createCoord('git/github/org/other/1.0.0'))).to.be.false
+      })
+    })
   })
 })
