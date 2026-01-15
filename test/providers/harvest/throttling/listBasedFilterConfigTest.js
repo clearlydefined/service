@@ -24,9 +24,11 @@ describe('listBasedFilterConfig', () => {
 
   it('applies blacklist entries when given a JSON array string', async () => {
     const filter = factory(JSON.stringify(['npm/npmjs/-/left-pad', 'git/github/org/name']))
-    const blocked = EntityCoordinates.fromString('git/github/org/name/1.0.0')
+    const blocked1 = EntityCoordinates.fromString('git/github/org/name/1.0.0')
+    const blocked2 = EntityCoordinates.fromString('npm/npmjs/-/left-pad/1.3.0')
     const allowed = EntityCoordinates.fromString('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')
-    expect(filter.isBlocked(blocked)).to.equal(true)
+    expect(filter.isBlocked(blocked1)).to.equal(true)
+    expect(filter.isBlocked(blocked2)).to.equal(true)
     expect(filter.isBlocked(allowed)).to.equal(false)
   })
 

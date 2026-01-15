@@ -29,11 +29,11 @@ function parseListEnv(value, logger) {
 
 /**
  * Factory function that creates a ListBasedFilter instance from configuration
- * @param {string} [listOpts] - Optional override for the blacklist configuration
+ * @param {string} [listSpec] - Optional override for the blacklist configuration
  * @returns {ListBasedFilter} A configured ListBasedFilter instance
  */
-function throttlerFactory(listOpts) {
-  const listEnv = listOpts || config.get('HARVEST_THROTTLER_BLACKLIST')
+function throttlerFactory(listSpec) {
+  const listEnv = listSpec || config.get('HARVEST_THROTTLER_BLACKLIST')
   const logger = loggerFactory()
   const blacklist = parseListEnv(listEnv, logger)
   return new ListBasedFilter({ blacklist, logger })

@@ -88,14 +88,14 @@ async function queue(request, response) {
     return response.status(400).send({ error: 'Validation failed', details: validator.errors })
   }
 
-  let normalized
+  let normalizedBody
   try {
-    normalized = await normalizeFilterCoordinates(requests)
+    normalizedBody = await normalizeFilterCoordinates(requests)
   } catch (error) {
     return response.status(422).send({ error: error.message })
   }
 
-  await harvestService.harvest(normalized, request.query.turbo)
+  await harvestService.harvest(normalizedBody, request.query.turbo)
   response.sendStatus(201)
 }
 
