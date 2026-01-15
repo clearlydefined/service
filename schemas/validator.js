@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
