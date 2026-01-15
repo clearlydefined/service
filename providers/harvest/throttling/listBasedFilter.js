@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const EntityCoordinates = require('../../../lib/entityCoordinates')
+const validator = require('../../../schemas/validator')
 const loggerFactory = require('../../logging/logger')
 
 /**
@@ -48,8 +49,9 @@ class ListBasedFilter {
   _toVersionless(coordString) {
     try {
       const coordinates = EntityCoordinates.fromString(coordString)
-      if (coordinates.type === undefined || coordinates.provider === undefined || coordinates.name === undefined) {
-        throw new Error('Incomplete coordinates')
+      if (!validator.validate('versionless-coordinates-1.0', coordinates)) {
+        const errorMessage = validator.errors.map(e => `${e.instancePath} ${e.message}`).join(', ')
+        throw new Error(errorMessage)
       }
       return coordinates.asRevisionless()
     } catch (e) {

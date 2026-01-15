@@ -36,5 +36,6 @@ ajv.addSchema(require('./notice-request'), 'notice-request')
 ajv.addSchema(require('./definitions-find'), 'definitions-find')
 ajv.addSchema(require('./definitions-get-dto-1.0'), 'definitions-get-dto')
 ajv.addSchema(require('./coordinates-1.0'), 'coordinates-1.0')
+ajv.addSchema(require('./versionless-coordinates-1.0'), 'versionless-coordinates-1.0')
 
 module.exports = ajv
