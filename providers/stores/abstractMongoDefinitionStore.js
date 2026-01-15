@@ -47,7 +47,7 @@ class AbstractMongoDefinitionStore {
         })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
-        this._createIndexes()
+        await this._createIndexes()
       } catch (error) {
         this.logger.info(`retrying mongo connection: ${error.message}`)
         retry(error)
@@ -55,37 +55,44 @@ class AbstractMongoDefinitionStore {
     })
   }
 
-  _createIndexes() {
-    //This is for documentation purpose only.
-    this.collection.createIndex({ '_meta.updated': 1 })
-
+  async _createIndexes() {
     const coordinatesKey = this.getCoordinatesKey()
-    this.collection.createIndex({ [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'coordinates.type': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'coordinates.provider': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({
-      'coordinates.namespace': 1,
-      'coordinates.name': 1,
-      'coordinates.revision': 1,
-      [coordinatesKey]: 1
-    })
-    this.collection.createIndex({ 'coordinates.revision': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'licensed.declared': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'described.releaseDate': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'licensed.score.total': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'scores.effective': 1, [coordinatesKey]: 1 })
-    this.collection.createIndex({ 'scores.tool': 1, [coordinatesKey]: 1 })
 
-    //Single field indexes are used for filtering in Cosmo DB
-    //https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/troubleshoot-query-performance#include-necessary-indexes)
-    this.collection.createIndex({ 'coordinates.name': 1 })
-    this.collection.createIndex({ 'coordinates.revision': 1 })
-    this.collection.createIndex({ 'coordinates.type': 1 })
-    this.collection.createIndex({ 'described.releaseDate': 1 })
-    this.collection.createIndex({ 'licensed.declared': 1 })
-    this.collection.createIndex({ 'scores.effective': 1 })
+    // Wrap all createIndex operations in Promise.all to handle them properly
+    return Promise.all([
+      //This is for documentation purpose only.
+      this.collection.createIndex({ '_meta.updated': 1 }),
+
+      this.collection.createIndex({ [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'coordinates.type': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'coordinates.provider': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'coordinates.name': 1, 'coordinates.revision': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({
+        'coordinates.namespace': 1,
+        'coordinates.name': 1,
+        'coordinates.revision': 1,
+        [coordinatesKey]: 1
+      }),
+      this.collection.createIndex({ 'coordinates.revision': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'licensed.declared': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'described.releaseDate': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'licensed.score.total': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'described.score.total': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'scores.effective': 1, [coordinatesKey]: 1 }),
+      this.collection.createIndex({ 'scores.tool': 1, [coordinatesKey]: 1 }),
+
+      //Single field indexes are used for filtering in Cosmo DB
+      //https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/troubleshoot-query-performance#include-necessary-indexes)
+      this.collection.createIndex({ 'coordinates.name': 1 }),
+      this.collection.createIndex({ 'coordinates.revision': 1 }),
+      this.collection.createIndex({ 'coordinates.type': 1 }),
+      this.collection.createIndex({ 'described.releaseDate': 1 }),
+      this.collection.createIndex({ 'licensed.declared': 1 }),
+      this.collection.createIndex({ 'scores.effective': 1 })
+    ]).catch(error => {
+      // Log the error but don't fail initialization if indexes can't be created
+      this.logger.warn('Failed to create some indexes', { error: error.message })
+    })
   }
 
   async close() {

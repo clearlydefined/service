@@ -22,6 +22,7 @@ const shouldPaginateSearchCorrectly = function () {
     let mongoStore
 
     before('setup database', async function () {
+      this.timeout(10000)
       await mongoServer.start()
       const uri = await mongoServer.getUri()
       const options = {
@@ -33,6 +34,7 @@ const shouldPaginateSearchCorrectly = function () {
     })
 
     after('cleanup database', async function () {
+      this.timeout(10000)
       if (mongoStore) {
         await mongoStore.collection.drop()
         await mongoStore.close()

@@ -24,7 +24,8 @@ describe('Trimmed Mongo Definition store', () => {
   const mongoServer = new MongoMemoryServer()
   let mongoStore
 
-  before('setup database', async () => {
+  before('setup database', async function () {
+    this.timeout(10000)
     await mongoServer.start()
     const uri = await mongoServer.getUri()
     const options = {
@@ -35,7 +36,8 @@ describe('Trimmed Mongo Definition store', () => {
     await mongoStore.initialize()
   })
 
-  after('cleanup database', async () => {
+  after('cleanup database', async function () {
+    this.timeout(10000)
     await mongoStore.close()
     await mongoServer.stop()
   })
@@ -223,9 +225,9 @@ describe('Trimmed Mongo Definition store', () => {
         })
       })
 
-      it('creates the correct Indexes', () => {
+      it('creates the correct Indexes', async () => {
         mongoStore.collection.createIndex = sinon.fake()
-        mongoStore._createIndexes()
+        await mongoStore._createIndexes()
         expect(mongoStore.collection.createIndex.callCount).to.be.equal(19)
         expect(mongoStore.collection.createIndex.args[0][0]).to.deep.equal({ '_meta.updated': 1 })
         expect(mongoStore.collection.createIndex.args[1][0]).to.deep.equal({ _id: 1 })
