@@ -88,19 +88,25 @@ async function queue(request, response) {
     return response.status(400).send({ error: 'Validation failed', details: validator.errors })
   }
 
-  const normalizedBody = await normalizeCoordinates(requests)
+  let normalizedBody
+  try {
+    normalizedBody = await normalizeFilterCoordinates(requests)
+  } catch (error) {
+    return response.status(422).send({ error: error.message })
+  }
 
   await harvestService.harvest(normalizedBody, request.query.turbo)
   response.sendStatus(201)
 }
 
-async function normalizeCoordinates(requests) {
+async function normalizeFilterCoordinates(requests) {
   const normalizedBody = await Promise.all(
     requests.map(async entry => {
       const coordinates = EntityCoordinates.fromString(entry?.coordinates)
       if (!coordinates) return null
-      const mapped = await utils.toNormalizedEntityCoordinates(coordinates)
-      return { ...entry, coordinates: mapped.toString() }
+      const normalized = await utils.toNormalizedEntityCoordinates(coordinates)
+      if (harvestThrottler.isBlocked(normalized)) throw new Error(`Harvest throttled for ${normalized.toString()}`)
+      return { ...entry, coordinates: normalized.toString() }
     })
   )
   return normalizedBody.filter(entry => entry && entry.coordinates)
@@ -109,15 +115,17 @@ async function normalizeCoordinates(requests) {
 let harvestService
 let harvestStore
 let summarizeService
+let harvestThrottler
 
-function setup(harvester, store, summarizer, testFlag = false) {
+function setup(harvester, store, summarizer, throttler, testFlag = false) {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer
+  harvestThrottler = throttler
   if (testFlag) {
     router._queue = queue
     router._get = get
-    router._normalizeCoordinates = normalizeCoordinates
+    router._normalizeCoordinates = normalizeFilterCoordinates
   }
   return router
 }
