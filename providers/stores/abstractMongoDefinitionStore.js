@@ -55,7 +55,7 @@ class AbstractMongoDefinitionStore {
     })
   }
 
-  _createIndexes() {
+  async _createIndexes() {
     const coordinatesKey = this.getCoordinatesKey()
 
     // Wrap all createIndex operations in Promise.all to handle them properly
