@@ -45,6 +45,8 @@ export interface FileEntry {
 /** Described section of a definition */
 export interface DescribedSection {
   releaseDate?: string
+  projectWebsite?: string
+  urls?: Record<string, string>
   sourceLocation?: SourceLocationSpec
   facets?: Record<string, string[]>
   hashes?: Record<string, string>
@@ -248,12 +250,13 @@ export function normalizeLicenseExpression(
  * @param base - Base definition to merge onto
  * @param proposed - Proposed changes to merge
  * @param override - If true, proposed values override rather than merge
+ * @returns The proposed definition if base is null/undefined, otherwise void (base is modified in place)
  */
 export function mergeDefinitions(
   base: Definition | null | undefined,
   proposed: Partial<Definition> | null | undefined,
   override?: boolean
-): void
+): Partial<Definition> | null | undefined | void
 
 /**
  * Builds a source URL for the given coordinates

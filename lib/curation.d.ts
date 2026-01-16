@@ -32,6 +32,8 @@ export interface CurationRevision {
   }
   described?: {
     releaseDate?: string
+    projectWebsite?: string
+    facets?: Record<string, string[]>
     sourceLocation?: {
       type?: string
       provider?: string
