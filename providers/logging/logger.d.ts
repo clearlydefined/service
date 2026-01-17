@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Logger } from '.'
+
 /**
  * Logger factory function type that creates or returns a logger instance. If no logger is provided and one already
  * exists, returns the existing logger. If a logger is provided and none exists, sets and returns the provided logger.
