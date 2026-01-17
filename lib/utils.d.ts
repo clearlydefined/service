@@ -113,7 +113,7 @@ export interface Definition {
 /** Package info for debsrc license locations */
 export interface PackageInfo {
   type?: string
-  name: string
+  name?: string
   version?: string
 }
 
