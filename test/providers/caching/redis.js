@@ -7,6 +7,8 @@ const assert = require('assert')
 const redisCache = require('../../../providers/caching/redis')
 const { RedisCache } = require('../../../providers/caching/redis')
 const { GenericContainer } = require('testcontainers')
+const pako1 = require('pako-1')
+const pako2 = require('pako')
 
 const logger = {
   info: () => {},
@@ -105,6 +107,195 @@ describe('Redis Cache', () => {
     })
   })
 
+  describe('backward compatibility (pako 1.x -> pako 2.x)', () => {
+    const objectPrefix = '*!~%'
+    let mockClient, cache
+    const store = {}
+
+    beforeEach(function () {
+      mockClient = {
+        get: async key => Promise.resolve(store[key]),
+        set: async (key, value) => {
+          store[key] = value
+        },
+        del: async key => {
+          store[key] = null
+        },
+        connect: async () => Promise.resolve(mockClient),
+        on: () => {},
+        quit: sinon.stub().resolves()
+      }
+      sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
+      cache = redisCache({ logger })
+    })
+
+    afterEach(function () {
+      sandbox.restore()
+      // Clear store
+      Object.keys(store).forEach(key => delete store[key])
+    })
+
+    describe('Format Detection', () => {
+      it('should detect old binary string format correctly', () => {
+        const oldData = 'xÚ+JMÉ,V°ª5´³0²ä\u0002\u0000\u0011î\u0003ê'
+        const isBase64 = /^[A-Za-z0-9+/]+=*$/.test(oldData)
+        assert.strictEqual(isBase64, false)
+      })
+
+      it('should detect new base64 format correctly', () => {
+        const newData = 'eJwrSszLLEnVUUpKLAIAESID6g=='
+        const isBase64 = /^[A-Za-z0-9+/]+=*$/.test(newData)
+        assert.strictEqual(isBase64, true)
+      })
+    })
+
+    describe('Reading OLD format data (pako 1.x binary string)', () => {
+      it('should read definition data (def_* key pattern)', async () => {
+        await cache.initialize()
+
+        const originalValue = {
+          coordinates: {
+            type: 'nuget',
+            provider: 'nuget',
+            namespace: null,
+            name: 'xunit.core',
+            revision: '2.1.0'
+          },
+          described: {
+            releaseDate: '2015-11-08T00:00:00.000Z',
+            urls: {
+              registry: 'https://www.nuget.org/packages/xunit.core/2.1.0',
+              download: 'https://www.nuget.org/api/v2/package/xunit.core/2.1.0'
+            }
+          },
+          licensed: {
+            declared: 'Apache-2.0 OR MIT'
+          },
+          files: 87,
+          _meta: {
+            schemaVersion: '1.6.1',
+            updated: '2015-11-08T12:00:00.000Z'
+          }
+        }
+
+        const serialized = objectPrefix + JSON.stringify(originalValue)
+
+        // compress with pako v1.x using binary string format (old format)
+        const oldFormatData = pako1.deflate(serialized, { to: 'string' })
+
+        // verify it's NOT base64 (binary string format)
+        assert.strictEqual(/^[A-Za-z0-9+/]+=*$/.test(oldFormatData), false)
+
+        store['def_nuget/nuget/-/xunit.core/2.1.0'] = oldFormatData
+
+        // read with NEW code (uses pako v2.x with format detection)
+        const result = await cache.get('def_nuget/nuget/-/xunit.core/2.1.0')
+
+        assert.deepStrictEqual(result, originalValue)
+        assert.strictEqual(result.coordinates.name, 'xunit.core')
+        assert.strictEqual(result.licensed.declared, 'Apache-2.0 OR MIT')
+      })
+
+      it('should read harvest data (hrv_* key pattern)', async () => {
+        await cache.initialize()
+
+        const originalValue = [
+          {
+            type: 'component',
+            url: 'cd:/pypi/pypi/-/backports.ssl_match_hostname/3.7.0.2'
+          }
+        ]
+
+        const serialized = objectPrefix + JSON.stringify(originalValue)
+
+        // compress with pako v1.x using binary string format (old format)
+        const oldFormatData = pako1.deflate(serialized, { to: 'string' })
+
+        store['hrv_pypi/pypi/-/backports.ssl_match_hostname/3.7.0.2'] = oldFormatData
+
+        // read with NEW code (uses pako v2.x with format detection)
+        const result = await cache.get('hrv_pypi/pypi/-/backports.ssl_match_hostname/3.7.0.2')
+
+        assert.deepStrictEqual(result, originalValue)
+        assert.strictEqual(result.length, 1)
+        assert.strictEqual(result[0].type, 'component')
+        assert.strictEqual(result[0].url, 'cd:/pypi/pypi/-/backports.ssl_match_hostname/3.7.0.2')
+      })
+    })
+
+    describe('Reading NEW format data (pako 2.x base64)', () => {
+      it('should read definition data (def_* key pattern)', async () => {
+        await cache.initialize()
+
+        const originalValue = {
+          coordinates: {
+            type: 'npm',
+            provider: 'npmjs',
+            namespace: null,
+            name: 'lodash',
+            revision: '4.17.21'
+          },
+          described: {
+            releaseDate: '2021-02-20T00:00:00.000Z',
+            urls: {
+              registry: 'https://www.npmjs.com/package/lodash',
+              download: 'https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz'
+            }
+          },
+          licensed: {
+            declared: 'MIT'
+          },
+          files: 1054,
+          _meta: {
+            schemaVersion: '1.6.1',
+            updated: '2021-02-20T12:00:00.000Z'
+          }
+        }
+
+        const serialized = objectPrefix + JSON.stringify(originalValue)
+
+        // compress with pako v2.x using base64 format (new format)
+        const deflated = pako2.deflate(serialized)
+        const newFormatData = Buffer.from(deflated).toString('base64')
+
+        // verify it IS base64
+        assert.strictEqual(/^[A-Za-z0-9+/]+=*$/.test(newFormatData), true)
+
+        store['def_npm/npmjs/-/lodash/4.17.21'] = newFormatData
+
+        // read with NEW code (uses pako v2.x with format detection)
+        const result = await cache.get('def_npm/npmjs/-/lodash/4.17.21')
+
+        assert.deepStrictEqual(result, originalValue)
+        assert.strictEqual(result.coordinates.name, 'lodash')
+        assert.strictEqual(result.licensed.declared, 'MIT')
+      })
+
+      it('should read harvest data (hrv_* key pattern)', async () => {
+        await cache.initialize()
+
+        const originalValue = [
+          { type: 'component', url: 'cd:/npm/npmjs/-/express/4.18.0' },
+          { type: 'component', url: 'cd:/npm/npmjs/-/axios/1.6.0' }
+        ]
+
+        const serialized = objectPrefix + JSON.stringify(originalValue)
+
+        // compress with pako v2.x using base64 format (new format)
+        const deflated = pako2.deflate(serialized)
+        const newFormatData = Buffer.from(deflated).toString('base64')
+
+        store['hrv_npm/npmjs/-/my-package/1.0.0'] = newFormatData
+
+        // read with NEW code (uses pako v2.x with format detection)
+        const result = await cache.get('hrv_npm/npmjs/-/my-package/1.0.0')
+
+        assert.deepStrictEqual(result, originalValue)
+        assert.strictEqual(result.length, 2)
+        assert.strictEqual(result[0].url, 'cd:/npm/npmjs/-/express/4.18.0')
+      })
+    })
+  })
   xdescribe('Integration Test', () => {
     let container, redisConfig
 
