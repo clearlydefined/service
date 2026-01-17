@@ -5,6 +5,7 @@ const config = require('painless-config')
 const appInsights = require('applicationinsights')
 const winston = require('winston')
 const mockInsights = require('../../lib/mockInsights')
+const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
 /** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
 
@@ -24,21 +25,73 @@ function factory(options) {
 
   mockInsights.setup(realOptions.key || 'mock', realOptions.echo)
 
+  const sanitizeHeaders = (headers = {}) =>
+    Object.fromEntries(
+      Object.entries(headers).map(([key, value]) =>
+        SENSITIVE_HEADERS.includes(key.toLowerCase()) ? [key, '<REDACTED>'] : [key, value]
+      )
+    )
+
+  const sanitizeMeta = winston.format(info => {
+    // Summarize HTTP request
+    if (info['req'] && typeof info['req'] === 'object') {
+      const req = /** @type {any} */ (info['req'])
+      info['req'] = {
+        method: req['method'],
+        url: req['originalUrl'] || req['url'],
+        requestId: req['id'],
+        correlationId: req['headers'] && req['headers']['x-correlation-id']
+      }
+    }
+
+    // Summarize HTTP response
+    if (info['res'] && typeof info['res'] === 'object') {
+      const res = /** @type {any} */ (info['res'])
+      info['res'] = {
+        statusCode: res['statusCode']
+      }
+    }
+
+    // Handle generic aliases
+    if (info['request'] && !info['req']) {
+      info['request'] = '[request omitted]'
+    }
+    if (info['response'] && !info['res']) {
+      info['response'] = '[response omitted]'
+    }
+
+    // Summarize Axios config
+    if (info['config'] && typeof info['config'] === 'object') {
+      const cfg = /** @type {any} */ (info['config'])
+      info['config'] = {
+        method: cfg.method,
+        url: cfg.url,
+        headers: sanitizeHeaders(cfg.headers)
+      }
+    }
+
+    return info
+  })
+
   const logFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const consoleFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.colorize(),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const logger = winston.createLogger({
