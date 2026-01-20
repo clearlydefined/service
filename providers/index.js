@@ -60,6 +60,9 @@ module.exports = {
     store: {
       azure: require('../providers/stores/azblobConfig').harvest,
       file: require('../providers/stores/fileConfig').harvest
+    },
+    throttler: {
+      filter: require('./harvest/throttling/listBasedFilterConfig')
     }
   }
 }
