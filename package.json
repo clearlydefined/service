@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@clearlydefined/spdx": "github:clearlydefined/spdx#v0.1.10",
-    "@gitbeaker/rest": "^42.4.1",
+    "@gitbeaker/rest": "^43.8.0",
     "@octokit/rest": "^22.0.0",
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
