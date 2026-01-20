@@ -6,9 +6,6 @@ const AbstractFileStore = require('./abstractFileStore')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 const { sortedUniq } = require('lodash')
 
-const resultOrError = (resolve, reject) => (error, result) => (error ? reject(error) : resolve(result))
-const responseOrError = (resolve, reject) => (error, result, response) => (error ? reject(error) : resolve(response))
-
 class AzHarvestBlobStore extends AbstractAzBlobStore {
   /**
    * List all of the results for the given coordinates.
@@ -32,12 +29,16 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    * @param {ResultCoordinates} coordinates - The coordinates of the content to access
    * @param {WriteStream} [stream] - The stream onto which the output is written
    */
-  stream(coordinates, stream) {
+  async stream(coordinates, stream) {
     let name = this._toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) name += '.json'
-    return new Promise((resolve, reject) =>
-      this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject))
-    )
+    const blobClient = this.containerClient.getBlobClient(name)
+    const downloadResponse = await blobClient.download()
+    return new Promise((resolve, reject) => {
+      downloadResponse.readableStreamBody.pipe(stream)
+      downloadResponse.readableStreamBody.on('end', () => resolve(downloadResponse))
+      downloadResponse.readableStreamBody.on('error', reject)
+    })
   }
 
   /**
@@ -54,42 +55,42 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
     return await this._getContent(allFilesList)
   }
 
-  _getListOfAllFiles(coordinates) {
+  async _getListOfAllFiles(coordinates) {
     const name = this._toStoragePathFromCoordinates(coordinates)
-    return new Promise((resolve, reject) =>
-      this.blobService.listBlobsSegmentedWithPrefix(this.containerName, name, null, resultOrError(resolve, reject))
-    ).then(files =>
-      files.entries.filter(file => {
-        return (
-          file.name.length === name.length || // either an exact match, or
-          (file.name.length > name.length && // a longer string
-            (file.name[name.length] === '/' || // where the next character starts extra tool indications
-              file.name.substr(name.length) === '.json'))
-        )
-      })
-    )
+    const files = []
+
+    for await (const blob of this.containerClient.listBlobsFlat({ prefix: name })) {
+      if (
+        blob.name.length === name.length || // either an exact match, or
+        (blob.name.length > name.length && // a longer string
+          (blob.name[name.length] === '/' || // where the next character starts extra tool indications
+            blob.name.substring(name.length) === '.json'))
+      ) {
+        files.push({ name: blob.name })
+      }
+    }
+    return files
   }
 
-  _getContent(files) {
-    const contents = Promise.all(
-      files.map(file => {
-        return new Promise((resolve, reject) =>
-          this.blobService.getBlobToText(this.containerName, file.name, resultOrError(resolve, reject))
-        ).then(result => {
-          return { name: file.name, content: JSON.parse(result) }
-        })
+  async _getContent(files) {
+    const entries = await Promise.all(
+      files.map(async file => {
+        const blobClient = this.containerClient.getBlobClient(file.name)
+        const downloadResponse = await blobClient.download()
+        const content = await this._streamToString(downloadResponse.readableStreamBody)
+        return { name: file.name, content: JSON.parse(content) }
       })
     )
-    return contents.then(entries => {
-      return entries.reduce((result, entry) => {
-        const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
-        // TODO: LOG HERE THERE IF THERE ARE SOME BOGUS FILES HANGING AROUND
-        if (!tool || !toolVersion) return result
-        const current = (result[tool] = result[tool] || {})
-        current[toolVersion] = entry.content
-        return result
-      }, {})
-    })
+
+    return entries.reduce((result, entry) => {
+      const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
+      // TODO: LOG HERE THERE IF THERE ARE SOME BOGUS FILES HANGING AROUND
+      if (!tool || !toolVersion) return result
+      const current = result[tool] || {}
+      result[tool] = current
+      current[toolVersion] = entry.content
+      return result
+    }, {})
   }
 
   /**

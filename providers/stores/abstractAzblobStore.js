@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const azure = require('azure-storage')
+const { BlobServiceClient } = require('@azure/storage-blob')
 const AbstractFileStore = require('./abstractFileStore')
 const logger = require('../logging/logger')
-
-const { promisify } = require('util')
 
 /**
  * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
@@ -40,10 +38,9 @@ class AbstractAzBlobStore {
    * @returns {Promise<void>} Promise that resolves when initialization is complete
    */
   async initialize() {
-    this.blobService = azure
-      .createBlobService(this.options.connectionString)
-      .withFilter(new azure.LinearRetryPolicyFilter())
-    return promisify(this.blobService.createContainerIfNotExists).bind(this.blobService)(this.containerName)
+    this.blobServiceClient = BlobServiceClient.fromConnectionString(this.options.connectionString)
+    this.containerClient = this.blobServiceClient.getContainerClient(this.containerName)
+    await this.containerClient.createIfNotExists()
   }
 
   /**
@@ -57,27 +54,20 @@ class AbstractAzBlobStore {
   async list(coordinates, visitor) {
     /** @type {any[]} */
     const list = []
-    let continuation = null
-    do {
-      const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
-      // @ts-ignore - azure-storage promisify signature differs from standard promisify
-      const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
-        this.containerName,
-        name,
-        continuation,
-        // @ts-ignore - azure-storage expects 4 args for this operation
-        {
-          include: azure.BlobUtilities.BlobListingDetails.METADATA
-        }
-      )
-      continuation = result.continuationToken
-      result.entries.forEach(
-        /** @param {BlobEntry} entry */ entry => {
-          const visitResult = visitor(entry)
-          if (visitResult !== null) list.push(visitResult)
-        }
-      )
-    } while (continuation)
+    const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
+    const listOptions = {
+      prefix: name,
+      includeMetadata: true
+    }
+
+    for await (const blob of this.containerClient.listBlobsFlat(listOptions)) {
+      const entry = {
+        name: blob.name,
+        metadata: blob.metadata || {}
+      }
+      const visitResult = visitor(entry)
+      if (visitResult !== null) list.push(visitResult)
+    }
     return list
   }
 
@@ -91,8 +81,10 @@ class AbstractAzBlobStore {
     let name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) name += '.json'
     try {
-      const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
-      return JSON.parse(result)
+      const blobClient = this.containerClient.getBlobClient(name)
+      const downloadResponse = await blobClient.download()
+      const content = await this._streamToString(downloadResponse.readableStreamBody)
+      return JSON.parse(content)
     } catch (error) {
       const azureError = /** @type {{statusCode?: number}} */ (error)
       if (azureError.statusCode === 404) return null
@@ -129,6 +121,22 @@ class AbstractAzBlobStore {
    */
   _toResultCoordinatesFromStoragePath(path) {
     return AbstractFileStore.toResultCoordinatesFromStoragePath(path)
+  }
+
+  /**
+   * Helper to convert a readable stream to a string
+   *
+   * @protected
+   * @param {NodeJS.ReadableStream} readableStream - The stream to convert
+   * @returns {Promise<string>} The string content
+   */
+  async _streamToString(readableStream) {
+    /** @type {Buffer[]} */
+    const chunks = []
+    for await (const chunk of readableStream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+    }
+    return Buffer.concat(chunks).toString('utf8')
   }
 }
 

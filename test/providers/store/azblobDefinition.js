@@ -6,6 +6,14 @@ const sinon = require('sinon')
 const { expect } = require('chai')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 
+// Initialize logger for tests
+const loggerFactory = require('../../../providers/logging/logger')
+try {
+  loggerFactory({ info: () => {}, error: () => {}, warn: () => {}, debug: () => {} })
+} catch {
+  // Logger already initialized
+}
+
 describe('azblob Definition store', () => {
   it('throws original error', async () => {
     const data = {
@@ -65,22 +73,22 @@ describe('azblob Definition store', () => {
     const definition = createDefinition('npm/npmjs/-/foo/1.0')
     const store = createStore()
     await store.store(definition)
-    expect(store.blobService.createBlockBlobFromText.callCount).to.eq(1)
-    expect(store.blobService.createBlockBlobFromText.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    expect(store._uploadStub.callCount).to.eq(1)
+    expect(store._uploadBlobName).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    expect(store._deleteStub.callCount).to.eq(1)
+    expect(store._deleteBlobName).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('does not throw deleting missing definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
+    expect(store._deleteStub.callCount).to.eq(1)
+    expect(store._deleteBlobName).to.eq('npm/npmjs/-/missing/revision/1.0.json')
   })
 
   it('gets a definition', async () => {
@@ -103,37 +111,86 @@ function createDefinitionJson(coordinates) {
   return JSON.stringify(createDefinition(coordinates))
 }
 
-function createStore(data) {
-  const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsFake(async (container, name, continuation, metadata, callback) => {
-      name = name.toLowerCase()
-      if (name.includes('error')) return callback(new Error('test error'))
-      callback(null, {
-        continuationToken: null,
-        entries: Object.keys(data)
-          .map(key => (key.startsWith(name) ? data[key] : null))
-          .filter(e => e)
-      })
-    }),
-    createBlockBlobFromText: sinon.stub().callsFake(async (container, name, content, metadata, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
-      callback()
-    }),
-    deleteBlob: sinon.stub().callsFake(async (container, name, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
-      if (name.includes('missing')) return callback({ code: 'BlobNotFound' })
-      callback()
-    }),
-    getBlobToText: sinon.stub().callsFake(async (container, name, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
-      name = name.toLowerCase()
-      if (data[name]) return callback(null, data[name])
+function createStore(data = {}) {
+  const store = Store({})
+
+  // Track blob names for assertions
+  store._uploadBlobName = null
+  store._deleteBlobName = null
+
+  // Create stubs
+  store._uploadStub = sinon.stub().resolves()
+  store._deleteStub = sinon.stub().callsFake(async () => {
+    const blobName = store._deleteBlobName
+    if (blobName && blobName.includes('error')) throw new Error('test error')
+    if (blobName && blobName.includes('missing')) {
       const error = new Error('not found')
-      error.code = 'BlobNotFound'
-      callback(error)
+      error.statusCode = 404
+      throw error
+    }
+  })
+
+  // Create async iterator for listBlobsFlat
+  const createAsyncIterator = prefix => {
+    const prefixLower = prefix.toLowerCase()
+    const matchingBlobs = Object.keys(data)
+      .filter(key => key.toLowerCase().startsWith(prefixLower))
+      .map(key => ({ name: key, metadata: data[key].metadata }))
+
+    if (prefixLower.includes('error')) {
+      return {
+        [Symbol.asyncIterator]() {
+          return {
+            next() {
+              return Promise.reject(new Error('test error'))
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      async *[Symbol.asyncIterator]() {
+        for (const blob of matchingBlobs) {
+          yield blob
+        }
+      }
+    }
+  }
+
+  // Mock containerClient
+  store.containerClient = {
+    listBlobsFlat: sinon.stub().callsFake(options => createAsyncIterator(options.prefix)),
+    getBlockBlobClient: sinon.stub().callsFake(blobName => {
+      store._uploadBlobName = blobName
+      return {
+        upload: store._uploadStub
+      }
+    }),
+    getBlobClient: sinon.stub().callsFake(blobName => {
+      store._deleteBlobName = blobName
+      const blobNameLower = blobName.toLowerCase()
+      return {
+        delete: store._deleteStub,
+        download: sinon.stub().callsFake(async () => {
+          if (blobName.includes('error')) throw new Error('test error')
+          if (data[blobNameLower]) {
+            const content =
+              typeof data[blobNameLower] === 'string' ? data[blobNameLower] : JSON.stringify(data[blobNameLower])
+            return { readableStreamBody: createReadableStream(content) }
+          }
+          const error = new Error('not found')
+          error.statusCode = 404
+          throw error
+        })
+      }
     })
   }
-  const store = Store({})
-  store.blobService = blobServiceStub
+
   return store
+}
+
+function createReadableStream(content) {
+  const { Readable } = require('stream')
+  return Readable.from([Buffer.from(content)])
 }

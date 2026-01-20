@@ -25,6 +25,8 @@
     "url": "git+https://github.com/clearlydefined/service.git"
   },
   "dependencies": {
+    "@azure/storage-blob": "12.30.0",
+    "@azure/storage-queue": "12.29.0",
     "@clearlydefined/spdx": "github:clearlydefined/spdx#v0.1.10",
     "@gitbeaker/rest": "^43.8.0",
     "@octokit/rest": "^22.0.0",
@@ -33,7 +35,6 @@
     "ajv-formats": "3.0.1",
     "applicationinsights": "^3.13.0",
     "axios": "^1.10.0",
-    "azure-storage": "^2.10.2",
     "base-64": "^1.0.0",
     "body-parser": "^2.2.0",
     "bottleneck": "^2.15.3",

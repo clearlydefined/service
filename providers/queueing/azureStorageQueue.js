@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const azure = require('azure-storage')
+const { QueueServiceClient } = require('@azure/storage-queue')
 const logger = require('../logging/logger')
-const { promisify } = require('util')
 
 class AzureStorageQueue {
   constructor(options) {
@@ -12,10 +11,9 @@ class AzureStorageQueue {
   }
 
   async initialize() {
-    this.queueService = azure
-      .createQueueService(this.options.connectionString)
-      .withFilter(new azure.LinearRetryPolicyFilter())
-    await promisify(this.queueService.createQueueIfNotExists).bind(this.queueService)(this.options.queueName)
+    this.queueServiceClient = QueueServiceClient.fromConnectionString(this.options.connectionString)
+    this.queueClient = this.queueServiceClient.getQueueClient(this.options.queueName)
+    await this.queueClient.createIfNotExists()
   }
 
   /**
@@ -25,7 +23,9 @@ class AzureStorageQueue {
    * @param {string} message
    */
   async queue(message) {
-    await promisify(this.queueService.createMessage).bind(this.queueService)(this.options.queueName, message)
+    // The new SDK expects base64 encoded messages by default for compatibility
+    const encodedMessage = Buffer.from(message).toString('base64')
+    await this.queueClient.sendMessage(encodedMessage)
   }
 
   /**
@@ -37,32 +37,42 @@ class AzureStorageQueue {
    * @returns {object} - { original: message, data: "JSON parsed, base64 decoded message" }
    */
   async dequeue() {
-    const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
-    if (!message) return null
-    if (message.dequeueCount <= 5)
-      return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
+    const response = await this.queueClient.receiveMessages({ numberOfMessages: 1 })
+    if (!response.receivedMessageItems || response.receivedMessageItems.length === 0) return null
+
+    const message = response.receivedMessageItems[0]
+    if (message.dequeueCount <= 5) {
+      return {
+        original: message,
+        data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8'))
+      }
+    }
     await this.delete({ original: message })
     return this.dequeue()
   }
 
   /** Similar to dequeue() but returns multiple messages to improve performance */
   async dequeueMultiple() {
-    const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
-      this.options.queueName,
-      this.options.dequeueOptions
-    )
-    if (!messages || messages.length === 0) return []
-    for (const i in messages) {
-      if (messages[i].dequeueCount <= 5) {
-        messages[i] = {
-          original: messages[i],
-          data: JSON.parse(Buffer.from(messages[i].messageText, 'base64').toString('utf8'))
-        }
+    const options = this.options.dequeueOptions || {}
+    const response = await this.queueClient.receiveMessages({
+      numberOfMessages: options.numOfMessages || 32,
+      visibilityTimeout: options.visibilityTimeout
+    })
+
+    if (!response.receivedMessageItems || response.receivedMessageItems.length === 0) return []
+
+    const results = []
+    for (const message of response.receivedMessageItems) {
+      if (message.dequeueCount <= 5) {
+        results.push({
+          original: message,
+          data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8'))
+        })
       } else {
-        await this.delete({ original: messages[i] })
+        await this.delete({ original: message })
       }
     }
-    return messages
+    return results
   }
 
   /**
@@ -72,11 +82,7 @@ class AzureStorageQueue {
    * @param {object} message
    */
   async delete(message) {
-    await promisify(this.queueService.deleteMessage).bind(this.queueService)(
-      this.options.queueName,
-      message.original.messageId,
-      message.original.popReceipt
-    )
+    await this.queueClient.deleteMessage(message.original.messageId, message.original.popReceipt)
   }
 }
 

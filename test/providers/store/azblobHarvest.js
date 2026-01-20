@@ -8,6 +8,14 @@ const chai = require('chai')
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
+// Initialize logger for tests
+const loggerFactory = require('../../../providers/logging/logger')
+try {
+  loggerFactory({ info: () => {}, error: () => {}, warn: () => {}, debug: () => {} })
+} catch {
+  // Logger already initialized
+}
+
 describe('azblob Harvest store', () => {
   describe('list', () => {
     it('should list results', async () => {
@@ -21,7 +29,7 @@ describe('azblob Harvest store', () => {
           metadata: { urn: 'urn:npm:npmjs:-:co:revision:4.6.0:tool:scancode:2.2.1' }
         }
       ]
-      const store = createAzBlobStore(data, true)
+      const store = createAzBlobStore(data)
 
       const result = await store.list({
         type: 'npm',
@@ -45,7 +53,7 @@ describe('azblob Harvest store', () => {
           metadata: { urn: 'urn:npm:npmjs:-:JSONStream:revision:1.3.4:tool:scancode:2.2.1' }
         }
       ]
-      const store = createAzBlobStore(data, true)
+      const store = createAzBlobStore(data)
 
       const result = await store.list({
         type: 'npm',
@@ -86,7 +94,7 @@ describe('azblob Harvest store', () => {
           metadata: { urn: 'urn:npm:npmjs:-:co:revision:3.6.0:tool:scancode:1.2.1' }
         }
       ]
-      const store = createAzBlobStore(data, true)
+      const store = createAzBlobStore(data)
 
       const result = await store.list({
         type: 'npm',
@@ -270,14 +278,35 @@ function createEntries(names) {
   return names.map(name => ({ name }))
 }
 
-function createAzBlobStore(entries, withMetadata) {
-  const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
-    getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
-    createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
+function createAzBlobStore(entries) {
+  // Create async iterator for listBlobsFlat
+  const createAsyncIterator = (allEntries, prefix) => {
+    const matchingBlobs = allEntries.filter(e => e.name.startsWith(prefix))
+    return {
+      async *[Symbol.asyncIterator]() {
+        for (const blob of matchingBlobs) {
+          yield blob
+        }
+      }
+    }
   }
-  blobServiceStub.withFilter = sinon.stub().returns(blobServiceStub)
+
   const store = Store({})
-  store.blobService = blobServiceStub
+
+  // Mock containerClient
+  store.containerClient = {
+    listBlobsFlat: sinon.stub().callsFake(options => createAsyncIterator(entries, options.prefix || '')),
+    getBlobClient: sinon.stub().callsFake(() => ({
+      download: sinon.stub().resolves({
+        readableStreamBody: createReadableStream('{}')
+      })
+    }))
+  }
+
   return store
+}
+
+function createReadableStream(content) {
+  const { Readable } = require('stream')
+  return Readable.from([Buffer.from(content)])
 }
