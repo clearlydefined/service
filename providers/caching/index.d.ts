@@ -1,7 +1,7 @@
 // (c) Copyright 2025, Microsoft Corporation and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Logger } from '../../providers/logging'
+import type { Logger } from '../../providers/logging'
 
 /** Base configuration options common to all cache implementations */
 export interface BaseCacheOptions {

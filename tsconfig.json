@@ -5,7 +5,8 @@
     "checkJs": true,
     "noEmit": true,
     "strictNullChecks": false,
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    "resolveJsonModule": true
   },
   "include": [
     "types/**/*",
@@ -34,12 +35,21 @@
     "lib/rateLimit.js",
     "lib/scancodeMap.d.ts",
     "lib/scancodeMap.js",
+    "lib/utils.d.ts",
+    "lib/utils.js",
+    "lib/curation.d.ts",
+    "lib/curation.js",
+    "lib/licenseMatcher.d.ts",
+    "lib/licenseMatcher.js",
+    "lib/heapLogger.d.ts",
+    "lib/heapLogger.js",
     "providers/caching/memory.d.ts",
     "providers/caching/memory.js",
     "providers/caching/redis.d.ts",
     "providers/caching/redis.js",
     "providers/caching/redisConfig.d.ts",
     "providers/caching/redisConfig.js",
+    "providers/caching/index.d.ts",
     "providers/harvest/cacheBasedCrawler.d.ts",
     "providers/harvest/cacheBasedCrawler.js",
     "providers/harvest/throttling/listBasedFilter.d.ts",
@@ -49,6 +59,15 @@
     "providers/logging/logger.d.ts",
     "providers/logging/logger.js",
     "providers/logging/winstonConfig.d.ts",
-    "providers/logging/winstonConfig.js"
+    "providers/logging/winstonConfig.js",
+    "providers/logging/index.d.ts",
+    "providers/index.d.ts",
+    "providers/stores/abstractFileStore.d.ts",
+    "providers/stores/abstractFileStore.js",
+    "providers/stores/abstractAzblobStore.d.ts",
+    "providers/stores/abstractAzblobStore.js",
+    "providers/stores/abstractMongoDefinitionStore.d.ts",
+    "providers/stores/abstractMongoDefinitionStore.js",
+    "schemas/validator.js"
   ]
 }
