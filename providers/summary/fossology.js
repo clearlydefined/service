@@ -102,12 +102,13 @@ class FOSSologySummarizer {
   }
 
   /**
-   * Summarizes copyright scanner output (currently a no-op due to FOSSology issue)
+   * Summarizes copyright information (currently disabled)
    * @param {FossologySummaryResult} _result - The result object to modify
    * @param {FossologyHarvestedData} _output - The harvested data
    * @see https://github.com/fossology/fossology/issues/1292
    * @private
    */
+  // eslint-disable-next-line no-unused-vars
   _summarizeCopyright(_result, _output) {
     // see https://github.com/fossology/fossology/issues/1292
     return
