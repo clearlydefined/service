@@ -137,7 +137,7 @@ class ScanCodeLegacySummarizer {
     const licenseExpression = /** @type {string | undefined} */ (
       get(harvested, 'content.summary.packages[0].license_expression')
     )
-    const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger)
+    const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger, null)
     return result?.includes('NOASSERTION') ? null : result
   }
 
