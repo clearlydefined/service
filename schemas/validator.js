@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -37,6 +36,6 @@ ajv.addSchema(require('./notice-request.json'), 'notice-request')
 ajv.addSchema(require('./definitions-find.json'), 'definitions-find')
 ajv.addSchema(require('./definitions-get-dto-1.0.json'), 'definitions-get-dto')
 ajv.addSchema(require('./coordinates-1.0.json'), 'coordinates-1.0')
-ajv.addSchema(require('./versionless-coordinates-1.0'), 'versionless-coordinates-1.0')
+ajv.addSchema(require('./versionless-coordinates-1.0.json'), 'versionless-coordinates-1.0')
 
 module.exports = ajv
