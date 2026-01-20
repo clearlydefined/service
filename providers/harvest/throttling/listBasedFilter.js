@@ -25,6 +25,11 @@ class ListBasedFilter {
     // Store as a Set for quick type lookup
     this._targetTypes = new Set(versionlessCoordinates.map(c => c.type))
     this._blacklist = new Set(versionlessCoordinates.map(c => c.toString()))
+    this.logger.info('ListBasedFilter initialized', {
+      blockedCount: this._blacklist.size,
+      blockedCoordinates: [...this._blacklist].sort(),
+      targetTypes: [...this._targetTypes].sort()
+    })
   }
 
   /**
