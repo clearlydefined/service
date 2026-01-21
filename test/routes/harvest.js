@@ -11,6 +11,7 @@ const utils = require('../../lib/utils')
 
 // Shared noop logger for tests
 const logger = {
+  info: () => {},
   debug: () => {},
   error: () => {},
   warn: () => {}

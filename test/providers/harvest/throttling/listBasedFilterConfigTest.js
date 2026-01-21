@@ -6,14 +6,20 @@ const EntityCoordinates = require('../../../../lib/entityCoordinates')
 const proxyquire = require('proxyquire')
 
 describe('ListBasedFilterConfig', () => {
-  // Stub the logger used by the module to avoid initialization issues
-  const factory = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
-    '../../logging/logger': () => ({
-      debug: () => {},
-      error: () => {},
-      warn: () => {}
+  // Helper to create a factory with shared logger stub and optional overrides
+  const makeFactory = overrides =>
+    proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
+      '../../logging/logger': () => ({
+        info: () => {},
+        debug: () => {},
+        error: () => {},
+        warn: () => {}
+      }),
+      ...(overrides || {})
     })
-  })
+
+  // Stub the logger used by the module to avoid initialization issues
+  const factory = makeFactory()
 
   function createCoord(coordString) {
     return EntityCoordinates.fromString(coordString)
@@ -85,14 +91,6 @@ describe('ListBasedFilterConfig', () => {
 
     describe('with mixed-type array', () => {
       it('filters out non-string entries and blocks only string coordinates', () => {
-        const factory = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
-          '../../logging/logger': () => ({
-            debug: () => {},
-            error: () => {},
-            warn: () => {}
-          })
-        })
-
         const mixed = JSON.stringify(['npm/npmjs/-/left-pad', 123, null, {}, 'git/github/org/name'])
         const filter = factory(mixed)
 
@@ -104,15 +102,10 @@ describe('ListBasedFilterConfig', () => {
 
     describe('environment config', () => {
       it('reads HARVEST_THROTTLER_BLACKLIST from config and blocks', () => {
-        const factoryFromEnv = proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
+        const factoryFromEnv = makeFactory({
           'painless-config': {
             get: key => (key === 'HARVEST_THROTTLER_BLACKLIST' ? JSON.stringify(['git/github/org/name']) : undefined)
-          },
-          '../../logging/logger': () => ({
-            debug: () => {},
-            error: () => {},
-            warn: () => {}
-          })
+          }
         })
 
         const filter = factoryFromEnv()

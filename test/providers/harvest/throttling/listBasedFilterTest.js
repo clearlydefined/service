@@ -7,6 +7,7 @@ const EntityCoordinates = require('../../../../lib/entityCoordinates')
 
 describe('ListBasedFilter', () => {
   const logger = {
+    info: () => {},
     debug: () => {},
     error: () => {},
     warn: () => {}
@@ -116,6 +117,7 @@ describe('ListBasedFilter', () => {
       it('should log warnings for invalid coordinates', () => {
         const warnings = []
         const mockLogger = {
+          info: () => {},
           debug: () => {},
           error: () => {},
           warn: msg => warnings.push(msg)
