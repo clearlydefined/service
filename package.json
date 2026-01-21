@@ -107,7 +107,6 @@
     "@types/spdx-expression-parse": "3.0.5",
     "@types/swagger-ui-express": "4.1.8",
     "@types/tmp": "0.2.6",
-    "@types/winston": "2.4.4",
     "@types/xml2js": "0.4.14",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
