@@ -143,9 +143,7 @@ async function setupTeams(req, cacheKey, client) {
 async function getTeams(client, org) {
   try {
     const resp = await client.teams.listForAuthenticatedUser()
-    return resp.data
-      .filter((entry) => entry.organization.login === org)
-      .map((entry) => entry.name)
+    return resp.data.filter(entry => entry.organization.login === org).map(entry => entry.name)
   } catch (err) {
     const error = /** @type {Error & { code?: number; status?: number }} */ (err)
     if (error.status === 404 || error.code === 404) {
