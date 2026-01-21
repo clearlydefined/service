@@ -100,6 +100,18 @@
     "providers/summary/fossology.js",
     "providers/summary/cdsource.d.ts",
     "providers/summary/cdsource.js",
+    "middleware/asyncMiddleware.d.ts",
+    "middleware/asyncMiddleware.js",
+    "middleware/querystring.d.ts",
+    "middleware/querystring.js",
+    "middleware/permissions.d.ts",
+    "middleware/permissions.js",
+    "middleware/github.d.ts",
+    "middleware/github.js",
+    "middleware/githubConfig.d.ts",
+    "middleware/githubConfig.js",
+    "routes/auth.d.ts",
+    "routes/auth.js",
     "schemas/validator.js"
   ]
 }

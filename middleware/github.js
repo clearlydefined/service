@@ -1,19 +1,32 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/** @typedef {import('express').Request} Request */
+/** @typedef {import('express').Response} Response */
+/** @typedef {import('express').NextFunction} NextFunction */
+/** @typedef {import('express').RequestHandler} RequestHandler */
+/** @typedef {import('@octokit/rest').Octokit} OctokitType */
+/** @typedef {import('../providers/caching').ICache} ICache */
+/** @typedef {import('./github').GitHubMiddlewareOptions} GitHubMiddlewareOptions */
+/** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
+
 const crypto = require('crypto')
 const { Octokit } = require('@octokit/rest')
 const asyncMiddleware = require('./asyncMiddleware')
 const Github = require('../lib/github')
 const { defaultHeaders } = require('../lib/fetch')
 
+/** @type {GitHubMiddlewareOptions | null} */
 let options = null
+/** @type {ICache | null} */
 let cache = null
 
 /**
  * GitHub convenience middleware that injects a client into the request object
  * that is pre-configured for the current user. Also injects a cached copy
  * of relevant teams the user is a member of.
+ *
+ * @type {RequestHandler}
  */
 const middleware = asyncMiddleware(async (req, res, next) => {
   const authHeader = req.get('authorization')
@@ -51,7 +64,12 @@ const middleware = asyncMiddleware(async (req, res, next) => {
   next()
 })
 
-// Create and configure a GitHub user client and attach it to the request
+// Create and configure a GitHub service client and attach it to the request
+/**
+ * @param {Request} req - Express request object
+ * @param {string} token - GitHub token
+ * @returns {Promise<OctokitType>} The authenticated GitHub client
+ */
 async function setupServiceClient(req, token) {
   const client = Github.getClient({ token })
   if (!client) throw new Error('GitHub client could not be created. Please check your configuration.')
@@ -60,6 +78,11 @@ async function setupServiceClient(req, token) {
 }
 
 // Create and configure a GitHub user client and attach it to the request
+/**
+ * @param {Request} req - Express request object
+ * @param {string | null} token - GitHub user token, or null for anonymous
+ * @returns {Promise<OctokitType | null>} The authenticated GitHub client, or null if no token
+ */
 async function setupUserClient(req, token) {
   if (!token) {
     req.app.locals.user = { github: { client: null } }
@@ -75,6 +98,12 @@ async function setupUserClient(req, token) {
 }
 
 // Get GitHub user info and attach it to the request
+/**
+ * @param {Request} req - Express request object
+ * @param {string} cacheKey - Cache key for user info
+ * @param {OctokitType} client - GitHub client
+ * @returns {Promise<void>}
+ */
 async function setupInfo(req, cacheKey, client) {
   let info = await cache.get(cacheKey)
   if (!info) {
@@ -85,7 +114,13 @@ async function setupInfo(req, cacheKey, client) {
   req.app.locals.user.github._info = info
 }
 
-// get the user's teams (from GitHub or the cache) and attach them to the request
+// Get the user's teams (from GitHub or the cache) and attach them to the request
+/**
+ * @param {Request} req - Express request object
+ * @param {string | null} cacheKey - Cache key for team data
+ * @param {OctokitType | null} client - GitHub client
+ * @returns {Promise<void>}
+ */
 async function setupTeams(req, cacheKey, client) {
   // anonymous users are not members of any team
   if (!cacheKey || !client) return null
@@ -99,22 +134,26 @@ async function setupTeams(req, cacheKey, client) {
 }
 
 /**
- * Fetch a list of teams a user belogs to filtered for the given org.
- * @param {object} client - GitHubApi client
+ * Fetch a list of teams a user belongs to filtered for the given org.
+ *
+ * @param {OctokitType} client - GitHubApi client
  * @param {string} org - org name to filter teams
- * @returns {Promise<Array<string>>} - list of teams
+ * @returns {Promise<string[]>} - list of teams
  */
 async function getTeams(client, org) {
   try {
-    const resp = await client.users.getTeams()
-    return resp.data.filter(entry => entry.organization.login === org).map(entry => entry.name)
+    const resp = await client.teams.listForAuthenticatedUser()
+    return resp.data
+      .filter((entry) => entry.organization.login === org)
+      .map((entry) => entry.name)
   } catch (err) {
-    if (err.code === 404) {
+    const error = /** @type {Error & { code?: number; status?: number }} */ (err)
+    if (error.status === 404 || error.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
           'You probably need to re-configure your CURATION_GITHUB_TOKEN token with the `read:org` scope. (This only affects local development.)'
       )
-    } else if (err.code === 401 && err.message === 'Bad credentials') {
+    } else if ((error.status === 401 || error.code === 401) && error.message === 'Bad credentials') {
       // the token was bad. trickle up the problem so the user can fix
       throw err
     } else {
@@ -126,11 +165,25 @@ async function getTeams(client, org) {
   }
 }
 
+/**
+ * Creates a cache key by hashing a token.
+ *
+ * @param {string} prefix - Prefix for the cache key
+ * @param {string} token - Token to hash
+ * @returns {Promise<string>} Cache key
+ */
 async function getCacheKey(prefix, token) {
   const hashedToken = await crypto.createHash('sha256').update(token).digest('hex')
   return `${prefix}.${hashedToken}`
 }
 
+/**
+ * Factory function that creates the GitHub middleware.
+ *
+ * @param {GitHubMiddlewareOptions} authOptions - Configuration options including token and org
+ * @param {ICache} authCache - Cache instance for storing user info and team data
+ * @returns {RequestHandler} Express middleware
+ */
 module.exports = (authOptions, authCache) => {
   options = authOptions
   cache = authCache
