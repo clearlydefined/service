@@ -8,8 +8,13 @@ import type { ReuseSummarizer } from './reuse'
 import type { FOSSologySummarizer } from './fossology'
 import type { CdSourceSummarizer } from './cdsource'
 
+/** Base interface for all summarizers */
+export interface BaseSummarizer {
+  summarize(coordinates: unknown, data: unknown): unknown
+}
+
 /** Factory function that creates a summarizer instance */
-export type SummarizerFactory<T> = (options?: SummarizerOptions) => T
+export type SummarizerFactory<T extends BaseSummarizer = BaseSummarizer> = (options?: SummarizerOptions) => T
 
 /** Options passed to summarizer constructors */
 export interface SummarizerOptions {
@@ -24,6 +29,7 @@ export interface SummaryProviders {
   fossology: SummarizerFactory<FOSSologySummarizer>
   clearlydefined: SummarizerFactory<Summarizer>
   cdsource: SummarizerFactory<CdSourceSummarizer>
+  [key: string]: SummarizerFactory | undefined
 }
 
 declare const summaryProviders: SummaryProviders

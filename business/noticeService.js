@@ -1,6 +1,19 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
+ * @typedef {import('./definitionService').DefinitionService} DefinitionService
+ * @typedef {import('./definitionService').Definition} Definition
+ * @typedef {import('./noticeService').NoticeOutputFormat} NoticeOutputFormat
+ * @typedef {import('./noticeService').NoticeOptions} NoticeOptions
+ * @typedef {import('./noticeService').NoticeResult} NoticeResult
+ * @typedef {import('./noticeService').NoticePackage} NoticePackage
+ * @typedef {import('./noticeService').PackagesResult} PackagesResult
+ * @typedef {import('./noticeService').AttachmentStore} AttachmentStore
+ * @typedef {import('../providers/logging').Logger} Logger
+ */
+
 const { isDeclaredLicense } = require('../lib/utils')
 const { get } = require('lodash')
 const DocBuilder = require('tiny-attribution-generator/lib/docbuilder').default
@@ -11,13 +24,33 @@ const JsonRenderer = require('tiny-attribution-generator/lib/outputs/json').defa
 const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
 const logger = require('../providers/logging/logger')
 
+/**
+ * Service for generating attribution notices from definitions.
+ * Supports multiple output formats including text, HTML, and JSON.
+ */
 class NoticeService {
+  /**
+   * Creates a new NoticeService instance
+   *
+   * @param {DefinitionService} definitionService - Service for retrieving definitions
+   * @param {AttachmentStore} attachmentStore - Store for retrieving license text attachments
+   */
   constructor(definitionService, attachmentStore) {
     this.definitionService = definitionService
     this.attachmentStore = attachmentStore
+    /** @type {Logger} */
     this.logger = logger()
   }
 
+  /**
+   * Generate an attribution notice for the given components.
+   *
+   * @param {EntityCoordinates[]} coordinates - Array of component coordinates to include
+   * @param {NoticeOutputFormat | null} [output] - Output format ('text', 'html', 'template', 'json')
+   * @param {NoticeOptions | null} [options] - Additional options for generation
+   * @returns {Promise<NoticeResult>} The generated notice and summary
+   * @throws {Error} if template renderer is used without a template option
+   */
   async generate(coordinates, output, options) {
     options = options || {}
     this.logger.info('1:notice_generate:get_definitions:start', {
@@ -49,34 +82,56 @@ class NoticeService {
     }
   }
 
+  /**
+   * Get packages from definitions for notice generation
+   *
+   * @param {Record<string, Definition>} definitions - Map of definition IDs to definitions
+   * @returns {Promise<PackagesResult>} The packages and warning lists
+   * @private
+   */
   async _getPackages(definitions) {
+    /** @type {string[]} */
     const noDefinition = []
+    /** @type {string[]} */
     const noLicense = []
+    /** @type {string[]} */
     const noCopyright = []
-    const packages = (
-      await Promise.all(
-        Object.keys(definitions).map(async id => {
-          const definition = definitions[id]
-          if (!get(definition, 'described.tools[0]')) {
-            noDefinition.push(id)
-            return
-          }
-          if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
-          if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
-          return {
-            name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
-            version: get(definition, 'coordinates.revision'),
-            license: get(definition, 'licensed.declared'),
-            copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
-            website: get(definition, 'described.projectWebsite') || '',
-            text: await this._getPackageText(definition)
-          }
-        })
-      )
-    ).filter(x => x && isDeclaredLicense(x.license))
+    const packages = /** @type {NoticePackage[]} */ (
+      (
+        await Promise.all(
+          Object.keys(definitions).map(async id => {
+            const definition = definitions[id]
+            if (!get(definition, 'described.tools[0]')) {
+              noDefinition.push(id)
+              return undefined
+            }
+            if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
+            if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
+            return {
+              name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
+              version: get(definition, 'coordinates.revision'),
+              license: get(definition, 'licensed.declared'),
+              copyrights: get(definition, 'licensed.facets.core.attribution.parties'),
+              website: get(definition, 'described.projectWebsite') || '',
+              text: await this._getPackageText(definition)
+            }
+          })
+        )
+      ).filter(x => x && isDeclaredLicense(x.license))
+    )
     return { packages, noDefinition, noLicense, noCopyright }
   }
 
+  /**
+   * Get the appropriate renderer for the output format
+   *
+   * @param {NoticeOutputFormat | null | undefined} name - The output format name
+   * @param {NoticeOptions} options - Renderer options
+   * @returns {*} The renderer instance
+   * @throws {Error} if template renderer is used without a template option
+   * @throws {Error} if an unsupported renderer is requested
+   * @private
+   */
   _getRenderer(name, options) {
     if (!name) return new TextRenderer()
     switch (name) {
@@ -94,6 +149,13 @@ class NoticeService {
     }
   }
 
+  /**
+   * Get the license text content for a package
+   *
+   * @param {Definition} definition - The definition to get license text for
+   * @returns {Promise<string>} The combined license texts
+   * @private
+   */
   async _getPackageText(definition) {
     if (!definition.files) return ''
     this.logger.info('2:1:notice_generate:get_single_package_files:start', {
@@ -111,7 +173,7 @@ class NoticeService {
             (file.path.indexOf('/') === -1 ||
               (definition.coordinates.type === 'npm' && file.path.startsWith('package/')))
         )
-        .map(file => this.attachmentStore.get(file.token))
+        .map(file => this.attachmentStore.get(/** @type {string} */ (file.token)))
     )
     this.logger.info('2:1:notice_generate:get_single_package_files:end', {
       ts: new Date().toISOString(),
@@ -122,4 +184,11 @@ class NoticeService {
   }
 }
 
+/**
+ * Factory function to create a NoticeService instance
+ *
+ * @param {DefinitionService} definitionService - Service for retrieving definitions
+ * @param {AttachmentStore} attachmentStore - Store for retrieving license text attachments
+ * @returns {NoticeService} A new NoticeService instance
+ */
 module.exports = (definitionService, attachmentStore) => new NoticeService(definitionService, attachmentStore)

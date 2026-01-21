@@ -29,23 +29,49 @@
 // The function should return a summary schema.
 //
 
+/**
+ * @typedef {import('./aggregator').AggregationServiceOptions} AggregationServiceOptions
+ * @typedef {import('./aggregator').SummarizedData} SummarizedData
+ * @typedef {import('./aggregator').ToolDataResult} ToolDataResult
+ * @typedef {import('./definitionService').Definition} Definition
+ * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
+ * @typedef {import('../providers/logging').Logger} Logger
+ */
+
 const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
 const { flattenDeep, get, set, intersectionBy } = require('lodash')
 const logger = require('../providers/logging/logger')
 const { setIfValue } = require('../lib/utils')
 
+/**
+ * Service for aggregating summarized tool output into a single definition.
+ * Handles tool precedence and merging of data from multiple sources.
+ */
 class AggregationService {
+  /**
+   * Creates a new AggregationService instance
+   * @param {AggregationServiceOptions} options - Configuration options including tool precedence
+   */
   constructor(options) {
     this.options = options
     // we take the configured precedence expected to be highest first
     this.workingPrecedence =
       options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
+    /** @type {Logger} */
     this.logger = logger()
   }
 
+  /**
+   * Process summarized data from multiple tools into a single definition.
+   * @param {SummarizedData} summarized - Summarized data from all tools
+   * @param {EntityCoordinates} coordinates - The component coordinates
+   * @returns {Partial<Definition> | null} The aggregated partial definition, or null if no tools contributed
+   */
   process(summarized, coordinates) {
+    /** @type {Partial<Definition>} */
     const result = {}
     const order = this.workingPrecedence || []
+    /** @type {string[]} */
     const tools = []
     order.forEach(tool => {
       const data = this._findData(tool, summarized)
@@ -62,6 +88,13 @@ class AggregationService {
     return result
   }
 
+  /**
+   * Override declared license for certain component types based on ClearlyDefined data
+   * @param {Partial<Definition>} result - The aggregated result
+   * @param {ToolDataResult | null} cdSummarized - ClearlyDefined summarized data
+   * @param {EntityCoordinates} coordinates - The component coordinates
+   * @private
+   */
   _overrideDeclaredLicense(result, cdSummarized, coordinates) {
     const declaredByCD = cdSummarized?.summary?.licensed?.declared
     const isCrateComponent = get(coordinates, 'type') === 'crate'
@@ -71,7 +104,13 @@ class AggregationService {
     }
   }
 
-  // search the summarized data for an entry that best matches the given tool spec
+  /**
+   * Search the summarized data for an entry that best matches the given tool spec
+   * @param {string} toolSpec - The tool specification (e.g., "scancode/3.0" or "scancode")
+   * @param {SummarizedData} summarized - The summarized data
+   * @returns {ToolDataResult | null} The matching tool data or null if not found
+   * @private
+   */
   _findData(toolSpec, summarized) {
     const [tool, toolVersion] = toolSpec.split('/')
     if (!summarized[tool]) return null
@@ -82,14 +121,18 @@ class AggregationService {
     return latest ? { toolSpec: `${tool}/${latest}`, summary: summarized[tool][latest] } : null
   }
 
-  /*
+  /**
    * Take the clearlydefined tool as the source of truth for file paths as it is just a recursive dir
    * Intersect the summarized file list with the clearlydefined file list by path
+   * @param {Partial<Definition>} result - The aggregated result
+   * @param {ToolDataResult | null} cdSummarized - ClearlyDefined summarized data
+   * @param {EntityCoordinates} coordinates - The component coordinates
+   * @private
    */
   _normalizeFiles(result, cdSummarized, coordinates) {
     const cdFiles = get(cdSummarized, 'summary.files')
     if (!cdFiles || !cdFiles.length) return
-    const difference = result.files.length - cdFiles.length
+    const difference = (result.files?.length || 0) - cdFiles.length
     if (!difference) return
     this.logger.info('difference between summary file count and cd file count', {
       count: difference,
@@ -99,4 +142,9 @@ class AggregationService {
   }
 }
 
+/**
+ * Factory function to create an AggregationService instance
+ * @param {AggregationServiceOptions} options - Configuration options including tool precedence
+ * @returns {AggregationService} A new AggregationService instance
+ */
 module.exports = options => new AggregationService(options)
