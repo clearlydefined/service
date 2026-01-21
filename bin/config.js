@@ -49,7 +49,8 @@ module.exports = {
   harvest: {
     queue: loadFactory(config.get('HARVEST_QUEUE_PROVIDER') || 'memory', 'harvest.queue'),
     service: loadFactory(config.get('HARVESTER_PROVIDER') || 'crawler', 'harvest.service'),
-    store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store')
+    store: loadFactory(config.get('HARVEST_STORE_PROVIDER') || 'file', 'harvest.store'),
+    throttler: loadFactory(config.get('HARVEST_THROTTLER_PROVIDER') || 'filter', 'harvest.throttler')
   },
   aggregator: {
     precedence: [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
