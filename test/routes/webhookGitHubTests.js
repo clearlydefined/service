@@ -7,6 +7,16 @@ const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 
 describe('Webhook Route for GitHub calls', () => {
+  let clock
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+  })
+
+  afterEach(() => {
+    clock.restore()
+  })
+
   it('handles invalid action', async () => {
     const request = createRequest('yeah, right')
     const response = httpMocks.createResponse()
@@ -65,13 +75,14 @@ describe('Webhook Route for GitHub calls', () => {
   // })
 
   it('skips closed event that is not merged', async function () {
-    this.timeout(12000)
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
-    await router._handlePost(request, response)
+    const promise = router._handlePost(request, response)
+    await clock.runAllAsync()
+    await promise
     expect(response.statusCode).to.be.eq(200)
     expect(service.validateContributions.calledOnce).to.be.false
     expect(service.addByMergedCuration.calledOnce).to.be.true
@@ -82,13 +93,14 @@ describe('Webhook Route for GitHub calls', () => {
   })
 
   it('calls valid for PR changes', async function () {
-    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
-    await router._handlePost(request, response)
+    const promise = router._handlePost(request, response)
+    await clock.runAllAsync()
+    await promise
     expect(response.statusCode).to.be.eq(200)
     expect(service.validateContributions.calledOnce).to.be.true
     expect(service.updateContribution.calledOnce).to.be.true
@@ -97,13 +109,14 @@ describe('Webhook Route for GitHub calls', () => {
   })
 
   it('calls missing for PR changes', async function () {
-    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
-    await router._handlePost(request, response)
+    const promise = router._handlePost(request, response)
+    await clock.runAllAsync()
+    await promise
     expect(response.statusCode).to.be.eq(200)
     expect(service.validateContributions.calledOnce).to.be.true
     expect(service.updateContribution.calledOnce).to.be.true
@@ -112,24 +125,26 @@ describe('Webhook Route for GitHub calls', () => {
   })
 
   it('validates the curation when a PR is opened', async function () {
-    this.timeout(12000)
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
-    await router._handlePost(request, response)
+    const promise = router._handlePost(request, response)
+    await clock.runAllAsync()
+    await promise
     expect(service.validateContributions.calledOnce).to.be.true
   })
 
   it('validates the curation when a PR is reopened', async function () {
-    this.timeout(12000)
     const request = createRequest('reopened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
     const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
-    await router._handlePost(request, response)
+    const promise = router._handlePost(request, response)
+    await clock.runAllAsync()
+    await promise
     expect(service.validateContributions.calledOnce).to.be.true
   })
 })
