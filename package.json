@@ -62,7 +62,7 @@
     "passport-github": "^1.1.0",
     "promise-retry": "^2.0.1",
     "rate-limit-redis": "^4.2.1",
-    "readdirp": "^4.1.2",
+    "readdirp": "^5.0.0",
     "recursive-readdir": "^2.2.1",
     "redis": "^5.6.0",
     "request-id": "^0.11.1",
