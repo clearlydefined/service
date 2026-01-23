@@ -16,13 +16,13 @@ const mockInsights = require('../../lib/mockInsights')
 
 function factory(options) {
   const realOptions = {
-    key: config.get('APPINSIGHTS_INSTRUMENTATIONKEY'),
+    connectionString: config.get('APPLICATIONINSIGHTS_CONNECTION_STRING'),
     echo: config.get('LOGGER_LOG_TO_CONSOLE') === 'true',
     level: config.get('APPINSIGHTS_EXPORT_LOG_LEVEL') || 'info',
     ...options
   }
 
-  mockInsights.setup(realOptions.key || 'mock', realOptions.echo)
+  mockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
 
   const logFormat = winston.format.combine(
     winston.format.timestamp(),

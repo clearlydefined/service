@@ -6,10 +6,10 @@ import * as winston from 'winston'
 /** Configuration options for creating a Winston logger instance. */
 export interface WinstonLoggerOptions {
   /**
-   * Application Insights instrumentation key for logging. If not provided, uses APPINSIGHTS_INSTRUMENTATIONKEY from
-   * config.
+   * Application Insights connection string for logging. If not provided, uses APPLICATIONINSIGHTS_CONNECTION_STRING
+   * from config.
    */
-  key?: string
+  connectionString?: string
 
   /**
    * Whether to echo log messages to the console.
