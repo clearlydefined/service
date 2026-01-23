@@ -32,7 +32,7 @@ class AzureStorageQueue {
    * Returns null if the queue is empty
    * If DQ count exceeds 5 the message will be deleted and the next message will be returned
    *
-   * @returns {object} - { original: message, data: "JSON parsed, base64 decoded message" }
+   * @returns {object} - { original: message, data: "JSON parsed message" }
    */
   async dequeue() {
     const response = await this.queueClient.receiveMessages({ numberOfMessages: 1 })
@@ -42,7 +42,7 @@ class AzureStorageQueue {
     if (message.dequeueCount <= 5) {
       return {
         original: message,
-        data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8'))
+        data: JSON.parse(message.messageText)
       }
     }
     await this.delete({ original: message })
@@ -64,7 +64,7 @@ class AzureStorageQueue {
       if (message.dequeueCount <= 5) {
         results.push({
           original: message,
-          data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8'))
+          data: JSON.parse(message.messageText)
         })
       } else {
         await this.delete({ original: message })
