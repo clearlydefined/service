@@ -52,7 +52,7 @@ function factory(options) {
     ]
   })
 
-  const aiClient = appInsights.defaultClient
+  const aiClient = mockInsights.getClient()
 
   // Pipe Winston logs to Application Insights
   logger.on('data', info => {
@@ -62,7 +62,7 @@ function factory(options) {
       } else {
         aiClient.trackTrace({
           message: info.message,
-          severity: appInsights.Contracts.SeverityLevel.Error,
+          severity: appInsights.KnownSeverityLevel.Error,
           properties: info
         })
       }
@@ -75,21 +75,21 @@ function factory(options) {
 }
 
 const levelMap = new Map([
-  ['error', appInsights.Contracts.SeverityLevel.Error],
-  ['warn', appInsights.Contracts.SeverityLevel.Warning],
-  ['info', appInsights.Contracts.SeverityLevel.Information],
-  ['verbose', appInsights.Contracts.SeverityLevel.Verbose],
-  ['debug', appInsights.Contracts.SeverityLevel.Verbose],
-  ['silly', appInsights.Contracts.SeverityLevel.Verbose]
+  ['error', appInsights.KnownSeverityLevel.Error],
+  ['warn', appInsights.KnownSeverityLevel.Warning],
+  ['info', appInsights.KnownSeverityLevel.Information],
+  ['verbose', appInsights.KnownSeverityLevel.Verbose],
+  ['debug', appInsights.KnownSeverityLevel.Verbose],
+  ['silly', appInsights.KnownSeverityLevel.Verbose]
 ])
 
 /**
  * Maps Winston log levels to Application Insights severity levels
  * @param {string} level - The Winston log level
- * @returns {number} - The corresponding Application Insights severity level
+ * @returns {string} - The corresponding Application Insights severity level
  */
 function mapLevel(level) {
-  return levelMap.get(level) ?? appInsights.Contracts.SeverityLevel.Information
+  return levelMap.get(level) ?? appInsights.KnownSeverityLevel.Information
 }
 
 module.exports = factory
