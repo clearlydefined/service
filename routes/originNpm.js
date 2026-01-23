@@ -13,7 +13,7 @@ router.get(
     const baseUrl = 'https://registry.npmjs.com'
     const { namespace, name } = request.params
     const fullName = namespace ? `${namespace}/${name}` : name
-    const url = `${baseUrl}/${encodeURIComponent(fullName).replace('%40', '@')}` // npmjs doesn't handle the escaped version
+    const url = `${baseUrl}/${encodeURIComponent(fullName).replace(/%40/g, '@')}` // npmjs doesn't handle the escaped version
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = Object.getOwnPropertyNames(answer.versions).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
