@@ -13,7 +13,7 @@ const extend = require('extend')
 const { find } = require('lodash')
 const { DateTime } = require('luxon')
 
-chai.use(chaiAsPromised)
+chai.use(chaiAsPromised.default)
 const expect = chai.expect
 const assert = chai.assert
 

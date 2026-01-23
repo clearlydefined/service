@@ -3,7 +3,7 @@
 
 const chaiAsPromised = require('chai-as-promised')
 const chai = require('chai')
-chai.use(chaiAsPromised)
+chai.use(chaiAsPromised.default)
 const { expect } = require('chai')
 const sinon = require('sinon')
 const { QueueHandler, DefinitionUpgrader } = require('../../../providers/upgrade/process')
