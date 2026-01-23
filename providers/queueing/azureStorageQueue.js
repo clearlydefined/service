@@ -23,9 +23,7 @@ class AzureStorageQueue {
    * @param {string} message
    */
   async queue(message) {
-    // The new SDK expects base64 encoded messages by default for compatibility
-    const encodedMessage = Buffer.from(message).toString('base64')
-    await this.queueClient.sendMessage(encodedMessage)
+    await this.queueClient.sendMessage(message)
   }
 
   /**
