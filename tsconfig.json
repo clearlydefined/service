@@ -6,7 +6,8 @@
     "noEmit": true,
     "strictNullChecks": false,
     "exactOptionalPropertyTypes": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false
   },
   "include": [
     "types/**/*",
@@ -138,6 +139,7 @@
     "middleware/githubConfig.js",
     "routes/auth.d.ts",
     "routes/auth.js",
-    "schemas/validator.js"
+    "schemas/validator.js",
+    "test/**/*.ts"
   ]
 }

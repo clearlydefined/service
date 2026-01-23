@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from "chai";
+import { expect } from 'chai'
 import ResultCoordinates from '../../lib/resultCoordinates.js'
 
 describe('ResultCoordinates', () => {
@@ -19,7 +19,7 @@ describe('ResultCoordinates', () => {
       'urn:npm:npmjs:-:JSONStream:revision:1.3.5:tool:clearlydefined:1.1.0': new ResultCoordinates(
         'npm',
         'npmjs',
-        undefined,
+        null,
         'JSONStream',
         '1.3.5',
         'clearlydefined',

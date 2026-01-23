@@ -70,7 +70,7 @@ export declare class ResultCoordinates {
   constructor(
     type?: string,
     provider?: string,
-    namespace?: string,
+    namespace?: string | null,
     name?: string,
     revision?: string,
     tool?: string,
