@@ -16,12 +16,19 @@ declare class MockInsights {
   constructor(client?: TelemetryClient | null)
 
   /**
+   * Gets the configured telemetry client
+   *
+   * @returns The configured client or null if not set up
+   */
+  static getClient(): TelemetryClient | MockInsights | null
+
+  /**
    * Sets up the Application Insights abstraction layer
    *
-   * @param key - Application Insights instrumentation key. If null, undefined, or 'mock', uses console-based logging
+   * @param connectionString - Application Insights connection string. If null, undefined, or 'mock', uses console-based logging
    * @param echo - Whether to echo telemetry to both console and Application Insights client when both are available
    */
-  static setup(key?: string | null, echo?: boolean): void
+  static setup(connectionString?: string | null, echo?: boolean): void
 
   /**
    * Tracks an exception

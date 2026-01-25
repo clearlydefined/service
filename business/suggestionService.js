@@ -1,10 +1,27 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @typedef {import('./suggestionService').Suggestion} Suggestion
+ * @typedef {import('./suggestionService').SuggestionValue<string>} SuggestionValueString
+ * @typedef {import('./suggestionService').RelatedDefinitions} RelatedDefinitions
+ * @typedef {import('./definitionService').DefinitionService} DefinitionService
+ * @typedef {import('./definitionService').Definition} Definition
+ * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
+ */
+
 const { get } = require('lodash')
 const { isDeclaredLicense, setIfValue, compareDates } = require('../lib/utils')
 
+/**
+ * Service for generating suggestions to improve definitions.
+ * Analyzes related versions and discovered data to suggest curations.
+ */
 class SuggestionService {
+  /**
+   * Creates a new SuggestionService instance
+   * @param {DefinitionService} definitionService - The definition service to use for lookups
+   */
   constructor(definitionService) {
     this.definitionService = definitionService
   }
@@ -13,13 +30,14 @@ class SuggestionService {
    * Get suggestions for the given coordinates.
    *
    * @param {EntityCoordinates} coordinates - The entity for which we are looking for suggestions
-   * @returns {Suggestion} A set of suggested fixes for the definition at the given coordinates.
+   * @returns {Promise<Suggestion | null>} A set of suggested fixes for the definition at the given coordinates.
    * `null` is returned if no such coordinates are found.
    */
   async get(coordinates) {
     const definitions = await this._getRelatedDefinitions(coordinates)
     if (!definitions) return null
     let hasSuggested = false
+    /** @type {Suggestion} */
     const suggestion = { coordinates }
     if (Array.isArray(definitions.related) && definitions.related.length > 0) {
       hasSuggested = this._collectSuggestionsForField(
@@ -28,7 +46,8 @@ class SuggestionService {
         'licensed.declared',
         (definition, field) => isDeclaredLicense(get(definition, field))
       )
-      hasSuggested |= this._collectSuggestionsForField(definitions, suggestion, 'described.sourceLocation')
+      hasSuggested =
+        hasSuggested || this._collectSuggestionsForField(definitions, suggestion, 'described.sourceLocation')
     }
 
     if (!isDeclaredLicense(get(definitions.original, 'licensed.declared'))) {
@@ -38,11 +57,13 @@ class SuggestionService {
           return { value, version: get(definitions.original, 'coordinates.revision') }
         })
         let suggestedSoFar = get(suggestion, 'licensed.declared') || []
-        hasSuggested |= setIfValue(
-          suggestion,
-          'licensed.declared',
-          appendDeclared.concat(suggestedSoFar).filter((v, i, a) => a.indexOf(v) === i)
-        )
+        hasSuggested =
+          hasSuggested ||
+          setIfValue(
+            suggestion,
+            'licensed.declared',
+            appendDeclared.concat(suggestedSoFar).filter((v, i, a) => a.indexOf(v) === i)
+          )
       }
     }
 
@@ -54,6 +75,8 @@ class SuggestionService {
    * Related here means other definitions for the same component with different revisions
    *
    * @param {EntityCoordinates} coordinates - The entity we are looking for related definitions to
+   * @returns {Promise<RelatedDefinitions | null>} Related definitions or null if not found
+   * @private
    */
   async _getRelatedDefinitions(coordinates) {
     const query = coordinates.asRevisionless()
@@ -75,6 +98,12 @@ class SuggestionService {
   /**
    * Collect Suggestions for a given related definition and field
    * Only give suggestions if they are valid
+   * @param {RelatedDefinitions} definitions - The related definitions
+   * @param {Suggestion} suggestion - The suggestion object to populate
+   * @param {string} field - The field path to collect suggestions for
+   * @param {(definition: any, field: string) => any} [isValid] - Validator function
+   * @returns {boolean} True if suggestions were added
+   * @private
    */
   _collectSuggestionsForField(definitions, suggestion, field, isValid = get) {
     if (isValid(definitions.original, field)) return false
@@ -90,4 +119,9 @@ class SuggestionService {
   }
 }
 
+/**
+ * Factory function to create a SuggestionService instance
+ * @param {DefinitionService} definitionService - The definition service to use
+ * @returns {SuggestionService} A new SuggestionService instance
+ */
 module.exports = definitionService => new SuggestionService(definitionService)

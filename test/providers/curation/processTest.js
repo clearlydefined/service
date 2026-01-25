@@ -7,10 +7,21 @@ const memoryQueue = require('../../../providers/queueing/memoryQueue')
 const sinon = require('sinon')
 
 describe('Curation queue processing', () => {
+  let clock
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+  })
+
+  afterEach(() => {
+    clock.restore()
+  })
+
   it('handles opened message', async function () {
-    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'opened' })
-    await process(queue, curationService, logger, true)
+    const promise = process(queue, curationService, logger, true)
+    await clock.runAllAsync()
+    await promise
 
     expect(curationService.getContributedCurations.calledOnce).to.be.true
     expect(curationService.validateContributions.calledOnce).to.be.true
@@ -21,9 +32,10 @@ describe('Curation queue processing', () => {
   })
 
   it('handles synchronize message', async function () {
-    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'synchronize' })
-    await process(queue, curationService, logger, true)
+    const promise = process(queue, curationService, logger, true)
+    await clock.runAllAsync()
+    await promise
 
     expect(curationService.getContributedCurations.calledOnce).to.be.true
     expect(curationService.validateContributions.calledOnce).to.be.true
@@ -34,9 +46,10 @@ describe('Curation queue processing', () => {
   })
 
   it('handles closed message', async function () {
-    this.timeout(12000)
     const { queue, curationService, logger } = setup({ action: 'closed' })
-    await process(queue, curationService, logger, true)
+    const promise = process(queue, curationService, logger, true)
+    await clock.runAllAsync()
+    await promise
 
     expect(curationService.getContributedCurations.calledOnce).to.be.false
     expect(curationService.validateContributions.calledOnce).to.be.false
