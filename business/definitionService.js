@@ -117,6 +117,8 @@ class DefinitionService {
     // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
     if (itemToStore.files && itemToStore.files.length > 1000) {
       this.logger.debug('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
+      // remove any previously cached (now stale) value
+      await this.cache.delete(cacheKey)
       return
     }
 
