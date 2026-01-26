@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const azure = require('azure-storage')
-const { promisify } = require('util')
+const { BlobServiceClient } = require('@azure/storage-blob')
 const Bottleneck = require('bottleneck').default
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 const logger = require('../logging/logger')
@@ -15,10 +14,9 @@ class AzBlobAttachmentStore {
   }
 
   async initialize() {
-    this.blobService = azure
-      .createBlobService(this.options.connectionString)
-      .withFilter(new azure.LinearRetryPolicyFilter())
-    return promisify(this.blobService.createContainerIfNotExists).bind(this.blobService)(this.containerName)
+    this.blobServiceClient = BlobServiceClient.fromConnectionString(this.options.connectionString)
+    this.containerClient = this.blobServiceClient.getContainerClient(this.containerName)
+    await this.containerClient.createIfNotExists()
   }
 
   /**
@@ -32,14 +30,32 @@ class AzBlobAttachmentStore {
       try {
         const name = 'attachment/' + key + '.json'
         this.logger.info('2:1:1:notice_generate:get_single_file:start', { ts: new Date().toISOString(), file: key })
-        const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
+        const blobClient = this.containerClient.getBlobClient(name)
+        const downloadResponse = await blobClient.download()
+        const content = await this._streamToString(downloadResponse.readableStreamBody)
         this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString(), file: key })
-        return JSON.parse(result).attachment
+        return JSON.parse(content).attachment
       } catch (error) {
         if (error.statusCode === 404) return null
         throw error
       }
     })()
+  }
+
+  /**
+   * Helper to convert a readable stream to a string
+   *
+   * @private
+   * @param {NodeJS.ReadableStream} readableStream - The stream to convert
+   * @returns {Promise<string>} The string content
+   */
+  async _streamToString(readableStream) {
+    /** @type {Buffer[]} */
+    const chunks = []
+    for await (const chunk of readableStream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+    }
+    return Buffer.concat(chunks).toString('utf8')
   }
 }
 

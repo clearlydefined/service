@@ -5,6 +5,14 @@ const sinon = require('sinon')
 const { expect } = require('chai')
 const Store = require('../../../providers/stores/azblobAttachmentStore')
 
+// Initialize logger for tests
+const loggerFactory = require('../../../providers/logging/logger')
+try {
+  loggerFactory({ info: () => {}, error: () => {}, warn: () => {}, debug: () => {} })
+} catch {
+  // Logger already initialized
+}
+
 describe('AzureAttachmentStore list definitions', () => {
   it('throws original error when not ENOENT', async () => {
     const store = createStore()
@@ -36,16 +44,27 @@ const data = {
 }
 
 function createStore() {
-  const blobServiceStub = {
-    getBlobToText: sinon.stub().callsFake((container, path, cb) => {
-      if (path.includes('error')) return cb(new Error('test error'))
-      if (data[path]) return cb(null, data[path])
-      const error = new Error('not found')
-      error.statusCode = 404
-      cb(error)
-    })
-  }
   const store = Store({})
-  store.blobService = blobServiceStub
+
+  // Mock containerClient
+  store.containerClient = {
+    getBlobClient: sinon.stub().callsFake(path => ({
+      download: sinon.stub().callsFake(async () => {
+        if (path.includes('error')) throw new Error('test error')
+        if (data[path]) {
+          return { readableStreamBody: createReadableStream(data[path]) }
+        }
+        const error = new Error('not found')
+        error.statusCode = 404
+        throw error
+      })
+    }))
+  }
+
   return store
+}
+
+function createReadableStream(content) {
+  const { Readable } = require('stream')
+  return Readable.from([Buffer.from(content)])
 }
