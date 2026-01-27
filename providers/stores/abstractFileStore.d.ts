@@ -46,7 +46,7 @@ export type FileStoreVisitor<T> = (data: any) => T | null
  * Abstract base class for file-based storage implementations.
  * Provides common functionality for reading and writing JSON files to disk.
  */
-export declare class AbstractFileStore {
+declare class AbstractFileStore {
   /** Configuration options for the store */
   protected options: FileStoreOptions
 
@@ -74,7 +74,7 @@ export declare class AbstractFileStore {
    * @param visitor - Function to apply to each file's parsed JSON content
    * @returns The collection of results returned by the visitor
    */
-  list<T>(coordinates: EntityCoordinates, visitor: FileStoreVisitor<T>): Promise<T[]>
+  list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: FileStoreVisitor<T>): Promise<T[]>
 
   /**
    * Get and return the object at the given coordinates.
@@ -82,7 +82,7 @@ export declare class AbstractFileStore {
    * @param coordinates - The coordinates of the object to get
    * @returns The loaded object or null if not found
    */
-  get(coordinates: EntityCoordinates): Promise<any>
+  get(coordinates: EntityCoordinates | ResultCoordinates): Promise<any>
 
   /**
    * Query and return the objects based on the query
@@ -106,7 +106,7 @@ export declare class AbstractFileStore {
    * @param coordinates - The coordinates to convert
    * @returns The storage path
    */
-  protected _toStoragePathFromCoordinates(coordinates: EntityCoordinates): string
+  protected _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string
 
   /**
    * Converts a storage path to ResultCoordinates
@@ -160,5 +160,4 @@ export declare class AbstractFileStore {
   static getLatestToolPaths(paths: string[], toResultCoordinates?: (path: string) => ResultCoordinates): Set<string>
 }
 
-export default AbstractFileStore
 export = AbstractFileStore
