@@ -67,7 +67,7 @@ export interface FindResult<T = any> {
  * Abstract base class for MongoDB-based definition store implementations.
  * Provides common functionality for querying and storing definitions in MongoDB.
  */
-export declare class AbstractMongoDefinitionStore {
+declare class AbstractMongoDefinitionStore {
   /** Configuration options for the store */
   protected options: MongoDefinitionStoreOptions
 
@@ -256,4 +256,4 @@ export declare class AbstractMongoDefinitionStore {
   protected _getContinuationToken(pageSize: number, data: any[], sortClause: Sort): string
 }
 
-export default AbstractMongoDefinitionStore
+export = AbstractMongoDefinitionStore
