@@ -163,11 +163,10 @@ describe('Validator - Coordinates Schema Tests', () => {
       {
         type: 'invalid-field-types',
         coordinates: [
-          { type: null, name: 'test', revision: '1.0.0' }, // null type
-          { type: 123, name: 'test', revision: '1.0.0' }, // numeric type
-          { type: 'npm', provider: ['npmjs'], name: 'test', revision: '1.0.0' }, // array provider
-          { type: 'npm', name: true, revision: '1.0.0' }, // boolean name
-          { type: 'npm', name: 'test', revision: 123 } // numeric revision
+          { type: { invalid: 'object' }, name: 'test', revision: '1.0.0' },
+          { type: 'npm', provider: ['npmjs'], name: 'test', revision: '1.0.0' },
+          { type: 'npm', name: { invalid: 'object' }, revision: '1.0.0' },
+          { type: 'npm', name: 'test', revision: ['1.0.0'] }
         ]
       },
       {

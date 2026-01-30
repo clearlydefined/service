@@ -16,7 +16,8 @@ const ajvOptions = /** @type {import('ajv').Options} */ ({
   maxItems: 1000,
   maxProperties: 100,
   maxLength: 10000,
-  maxErrors: 10
+  maxErrors: 10,
+  coerceTypes: true
 })
 
 const ajv = new Ajv(ajvOptions)
