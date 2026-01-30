@@ -7,6 +7,7 @@ revisions:
   4.17.4:
     described:
       sourceLocation:
+        name: "async"
         provider: "github"
         revision: "ba6ed320e350f8b2eae4eb9683302ddac0ddf66f"
         type: "git"

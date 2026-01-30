@@ -42,7 +42,7 @@ describe('Harvest route', () => {
   })
 
   it('rejects wrong value POST', async () => {
-    const request = createRequest({ tool: 1, coordinates: '/2/3/4' })
+    const request = createRequest({ tool: { invalid: 'object' }, coordinates: '/2/3/4' })
     const response = httpMocks.createResponse()
     const router = createRoutes()
     await router._queue(request, response)

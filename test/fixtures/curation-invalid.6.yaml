@@ -7,7 +7,9 @@ revisions:
   4.17.4:
     described:
       sourceLocation:
+        name: "async"
         provider: "github"
-        revision: null
+        revision:
+          invalid: "object"
         type: "git"
         url: "https://github.com/caolan/async"
