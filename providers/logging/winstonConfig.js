@@ -5,15 +5,72 @@ const config = require('painless-config')
 const appInsights = require('applicationinsights')
 const winston = require('winston')
 const mockInsights = require('../../lib/mockInsights')
+const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
 /** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
+
+/**
+ * Sanitizes headers by redacting sensitive values.
+ * @param {Record<string, string> | null | undefined} headers
+ * @returns {Record<string, string>}
+ */
+const sanitizeHeaders = headers =>
+  Object.fromEntries(
+    Object.entries(headers || {}).map(([key, value]) =>
+      SENSITIVE_HEADERS.includes(key.toLowerCase()) ? [key, '<REDACTED>'] : [key, value]
+    )
+  )
+
+/**
+ * Winston format that sanitizes metadata to prevent circular JSON errors.
+ * Summarizes HTTP request/response objects and Axios configs.
+ */
+const sanitizeMeta = winston.format(info => {
+  // Summarize HTTP request
+  if (info['req'] && typeof info['req'] === 'object') {
+    const req = /** @type {any} */ (info['req'])
+    info['req'] = {
+      method: req['method'],
+      url: req['originalUrl'] || req['url'],
+      requestId: req['id'],
+      correlationId: req['headers'] && req['headers']['x-correlation-id']
+    }
+  }
+
+  // Summarize HTTP response
+  if (info['res'] && typeof info['res'] === 'object') {
+    const res = /** @type {any} */ (info['res'])
+    info['res'] = {
+      statusCode: res['statusCode']
+    }
+  }
+
+  // Handle generic aliases
+  if (info['request'] && !info['req']) {
+    info['request'] = '[request omitted]'
+  }
+  if (info['response'] && !info['res']) {
+    info['response'] = '[response omitted]'
+  }
+
+  // Summarize Axios config
+  if (info['config'] && typeof info['config'] === 'object') {
+    const cfg = /** @type {any} */ (info['config'])
+    info['config'] = {
+      method: cfg.method,
+      url: cfg.url,
+      headers: sanitizeHeaders(cfg.headers)
+    }
+  }
+
+  return info
+})
 
 /**
  * Factory function to create a Winston logger instance.
  * @param {WinstonLoggerOptions} [options] - Configuration options for the logger.
  * @returns {winston.Logger} A configured Winston logger instance with Application Insights transport.
  */
-
 function factory(options) {
   const realOptions = {
     connectionString: config.get('APPLICATIONINSIGHTS_CONNECTION_STRING'),
@@ -25,20 +82,24 @@ function factory(options) {
   mockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
 
   const logFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const consoleFormat = winston.format.combine(
+    sanitizeMeta(),
     winston.format.colorize(),
-    winston.format.printf(
-      ({ timestamp, level, message, ...meta }) =>
-        `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`
-    )
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaKeys = Object.keys(meta)
+      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      return `${timestamp} [${level}]: ${message}${metaString}`
+    })
   )
 
   const logger = winston.createLogger({
@@ -93,3 +154,5 @@ function mapLevel(level) {
 }
 
 module.exports = factory
+module.exports.sanitizeHeaders = sanitizeHeaders
+module.exports.sanitizeMeta = sanitizeMeta
