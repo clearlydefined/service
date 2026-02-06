@@ -65,7 +65,7 @@
     "recursive-readdir": "2.2.3",
     "redis": "5.10.0",
     "request-id": "0.11.1",
-    "semver": "7.7.3",
+    "semver": "7.7.4",
     "serialize-error": "13.0.1",
     "spdx-expression-parse": "github:clearlydefined/spdx-expression-parse.js#fork",
     "spdx-license-list": "6.11.0",
