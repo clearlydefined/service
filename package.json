@@ -32,7 +32,7 @@
     "ajv-errors": "3.0.0",
     "ajv-formats": "3.0.1",
     "applicationinsights": "3.13.0",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "azure-storage": "2.10.7",
     "base-64": "1.0.0",
     "body-parser": "2.2.2",
