@@ -32,7 +32,7 @@ function loadOne(spec, namespace) {
     if (!target) target = require(requirePath)
     return objectPath ? get(target, objectPath) : target
   } catch (e) {
-    throw new Error(`could not load provider for ${requirePath}. Error ${e.message}`)
+    throw new Error(`could not load provider for ${requirePath}. Error ${e.message}`, { cause: e })
   }
 }
 
