@@ -30,7 +30,7 @@ export type BlobStoreVisitor<T> = (entry: BlobEntry) => T | null
  * Abstract base class for Azure Blob Storage implementations.
  * Provides common functionality for reading and writing JSON to Azure Blob Storage.
  */
-export declare class AbstractAzBlobStore {
+declare class AbstractAzBlobStore {
   /** Configuration options for the store */
   protected options: AzBlobStoreOptions
 
@@ -64,7 +64,7 @@ export declare class AbstractAzBlobStore {
    * @param visitor - Function to apply to each blob entry
    * @returns The collection of results returned by the visitor
    */
-  list<T>(coordinates: EntityCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]>
+  list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]>
 
   /**
    * Get and return the object at the given coordinates.
@@ -72,7 +72,7 @@ export declare class AbstractAzBlobStore {
    * @param coordinates - The coordinates of the object to get
    * @returns The loaded object or null if not found
    */
-  get(coordinates: EntityCoordinates): Promise<any>
+  get(coordinates: EntityCoordinates | ResultCoordinates): Promise<any>
 
   /**
    * Unsupported. The Blob definition store is not queryable.
@@ -87,7 +87,7 @@ export declare class AbstractAzBlobStore {
    * @param coordinates - The coordinates to convert
    * @returns The storage path
    */
-  protected _toStoragePathFromCoordinates(coordinates: EntityCoordinates): string
+  protected _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string
 
   /**
    * Converts a storage path to ResultCoordinates
@@ -98,4 +98,4 @@ export declare class AbstractAzBlobStore {
   protected _toResultCoordinatesFromStoragePath(path: string): ResultCoordinates
 }
 
-export default AbstractAzBlobStore
+export = AbstractAzBlobStore
