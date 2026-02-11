@@ -15,7 +15,7 @@ const gradleHelper = new GradleCoordinatesMapper()
 router.get(
   '/:pluginId/revisions',
   asyncMiddleware(async (request, response) => {
-    const { pluginId } = request.params
+    const pluginId = /** @type {string} */ (request.params.pluginId)
     const answer = await gradleHelper.getMavenMetadata(pluginId)
     const meta = answer && (await parseXml(answer))
     const result = get(meta, 'metadata.versioning.0.versions.0.version') || []
@@ -28,7 +28,7 @@ router.get(
 router.get(
   '/:pluginId',
   asyncMiddleware(async (request, response) => {
-    const { pluginId } = request.params
+    const pluginId = /** @type {string} */ (request.params.pluginId)
     const isValid = await gradleHelper.getMavenMetadata(pluginId)
     const result = isValid ? [{ id: pluginId }] : []
     return response.status(200).send(result)

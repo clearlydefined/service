@@ -13,7 +13,7 @@ router.get(
     const { name } = request.params
     const url = `https://rubygems.org/api/v1/versions/${name}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.map(entry => entry.number)
+    const result = answer.map(/** @param {any} entry */ entry => entry.number)
     return response.status(200).send(uniq(result))
   })
 )
@@ -24,9 +24,11 @@ router.get(
     const { name } = request.params
     const url = `https://rubygems.org/api/v1/search.json?query=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.map(entry => {
-      return { id: entry.name }
-    })
+    const result = answer.map(
+      /** @param {any} entry */ entry => {
+        return { id: entry.name }
+      }
+    )
     return response.status(200).send(result)
   })
 )

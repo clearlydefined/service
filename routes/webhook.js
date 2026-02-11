@@ -9,20 +9,36 @@ const { get } = require('lodash')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const { parseUrn } = require('../lib/utils')
 
+/** @typedef {import('express').Request} Request */
+/** @typedef {import('express').Response} Response */
+
 const validPrActions = ['opened', 'reopened', 'synchronize', 'closed']
+/** @type {string | null} */
 let githubSecret = null
+/** @type {string | null} */
 let crawlerSecret = null
+/** @type {any} */
 let logger = null
+/** @type {any} */
 let curationService
+/** @type {any} */
 let definitionService
 let test = false
 
 router.post('/', asyncMiddleware(handlePost))
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 function handlePost(request, response) {
   if (request.headers['x-crawler']) return handleCrawlerCall(request, response)
   return handleGitHubCall(request, response)
 }
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
   if (!body) return
@@ -49,15 +65,24 @@ async function handleGitHubCall(request, response) {
     }
     logger.info(`Handled GitHub event "${body.action}" for PR#${pr.number}`)
   } catch (exception) {
-    if (exception.code === 404)
-      return info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
-    else logger.error(exception)
+    const ex = /** @type {Error & {code?: number}} */ (exception)
+    if (ex.code === 404) {
+      info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
+      return
+    } else logger.error(ex)
   }
   response.status(200).end()
 }
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function handleCrawlerCall(request, response) {
-  if (request.headers['x-crawler'] !== crawlerSecret) return info(request, response, 400, 'Invalid token')
+  if (request.headers['x-crawler'] !== crawlerSecret) {
+    info(request, response, 400, 'Invalid token')
+    return
+  }
   let body = request.body
   if (Buffer.isBuffer(body)) {
     body = JSON.parse(body.toString('utf8'))
@@ -65,7 +90,10 @@ async function handleCrawlerCall(request, response) {
     body = JSON.parse(body)
   }
   const urn = get(body, '_metadata.links.self.href')
-  if (!urn) return info(request, response, 400, 'Missing or invalid "self" link')
+  if (!urn) {
+    info(request, response, 400, 'Missing or invalid "self" link')
+    return
+  }
   const coordinates = EntityCoordinates.fromUrn(urn)
   // TODO validate the coordinates are complete
   const { tool, toolRevision } = parseUrn(urn)
@@ -78,10 +106,15 @@ async function handleCrawlerCall(request, response) {
   response.status(200).end()
 }
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ * @returns {boolean}
+ */
 function validateGitHubSignature(request, response) {
   if (request.hostname && request.hostname.includes('localhost')) return true
   const isGithubEvent = request.headers['x-github-event']
-  const signature = request.headers['x-hub-signature']
+  const signature = /** @type {string} */ (request.headers['x-hub-signature'])
   if (!isGithubEvent || !signature)
     return info(request, response, 400, 'Missing signature or event type on GitHub webhook')
 
@@ -91,6 +124,11 @@ function validateGitHubSignature(request, response) {
   return true
 }
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ * @returns {any}
+ */
 function validateGitHubCall(request, response) {
   if (!validateGitHubSignature(request, response)) return false
   let body = request.body
@@ -105,7 +143,14 @@ function validateGitHubCall(request, response) {
   return body
 }
 
-function info(request, response, code, error = null) {
+/**
+ * @param {Request} _request
+ * @param {Response} response
+ * @param {number} code
+ * @param {string | null} [error]
+ * @returns {false}
+ */
+function info(_request, response, code, error = null) {
   error && logger.info(`Fatal webhook error: ${error}`)
   response.status(code)
   response.setHeader('content-type', 'text/plain')
@@ -113,6 +158,14 @@ function info(request, response, code, error = null) {
   return false
 }
 
+/**
+ * @param {any} curation
+ * @param {any} definition
+ * @param {any} appLogger
+ * @param {string} githubToken
+ * @param {string} crawlerToken
+ * @param {boolean} [testFlag]
+ */
 function setup(curation, definition, appLogger, githubToken, crawlerToken, testFlag = false) {
   curationService = curation
   definitionService = definition
@@ -121,8 +174,9 @@ function setup(curation, definition, appLogger, githubToken, crawlerToken, testF
   logger = appLogger
   test = testFlag
   if (test) {
-    router._handlePost = handlePost
-    router._validateGitHubCall = validateGitHubCall
+    const _router = /** @type {any} */ (router)
+    _router._handlePost = handlePost
+    _router._validateGitHubCall = validateGitHubCall
   }
   return router
 }

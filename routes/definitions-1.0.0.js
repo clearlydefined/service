@@ -8,11 +8,20 @@ const utils = require('../lib/utils')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
 
+/** @typedef {import('express').Request} Request */
+/** @typedef {import('express').Response} Response */
+
 router.get('/', asyncMiddleware(getDefinition))
 
+/**
+ * @param {Request} req
+ * @param {Response} resp
+ */
 async function getDefinition(req, resp) {
-  const { coordinates, pr, expand } = req.query
-  const force = req.query.force === true || req.query.force === 'true'
+  const coordinates = /** @type {string} */ (req.query.coordinates)
+  const pr = req.query.pr
+  const expand = /** @type {string|undefined} */ (req.query.expand)
+  const force = /** @type {string} */ (req.query.force) === 'true'
   let coordinatesEntity = EntityCoordinates.fromString(coordinates)
   const isValid = validator.validate('definitions-get-dto', {
     coordinates: coordinatesEntity || undefined,
@@ -33,13 +42,18 @@ async function getDefinition(req, resp) {
   return resp.status(200).send(result)
 }
 
+/** @type {any} */
 let definitionService
 
+/**
+ * @param {any} definition
+ * @param {boolean} [testFlag]
+ */
 function setup(definition, testFlag = false) {
   definitionService = definition
 
   if (testFlag) {
-    router._getDefinition = getDefinition
+    (router)._getDefinition = getDefinition
   }
   return router
 }

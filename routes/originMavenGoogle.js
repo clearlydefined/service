@@ -14,7 +14,8 @@ router.get(
   '/:group/:artifact/revisions',
   asyncMiddleware(async (request, response) => {
     try {
-      const { group, artifact } = request.params
+      const group = /** @type {string} */ (request.params.group)
+      const { artifact } = request.params
       const groupFullPath = `${group.replace(/\./g, '/')}`
       const url = `https://dl.google.com/android/maven2/${groupFullPath}/group-index.xml`
       const answerXml = await requestPromise({ url, method: 'GET', json: false })
@@ -31,7 +32,7 @@ router.get(
 // Search
 router.get(
   '/:group{/:artifact}',
-  asyncMiddleware(async (request, response) => {
+  asyncMiddleware(async (_request, response) => {
     return response.status(404).send('Search not supported. Please specify group and artifact IDs.')
   })
 )
