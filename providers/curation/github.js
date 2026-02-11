@@ -846,7 +846,7 @@ ${this._formatDefinitions(patch.patches)}`
       return response.data
     } catch (error) {
       if (error.code === 404) throw error
-      throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`)
+      throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`, { cause: error })
     }
   }
 

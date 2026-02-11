@@ -1,5 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+
+/**
+ * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
+ * @typedef {import('./azblobAttachmentStore').AzBlobAttachmentStoreOptions} AzBlobAttachmentStoreOptions
+ */
+
 const config = require('painless-config')
 
 const harvestConnectionString = config.get('HARVEST_AZBLOB_CONNECTION_STRING')
@@ -9,6 +15,12 @@ const definitionContainerName = config.get('DEFINITION_AZBLOB_CONTAINER_NAME') |
 const attachmentConnectionString = config.get('ATTACHMENT_AZBLOB_CONNECTION_STRING') || harvestConnectionString
 const attachmentContainerName = config.get('ATTACHMENT_AZBLOB_CONTAINER_NAME') || harvestContainerName
 
+/**
+ * Creates an Azure Blob harvest store with the given options or default configuration.
+ *
+ * @param {AzBlobStoreOptions} [options] - Optional configuration options for the store
+ * @returns {ReturnType<typeof import('./azblobHarvestStore')>} A new AzHarvestBlobStore instance
+ */
 function harvest(options) {
   return require('./azblobHarvestStore')(
     options || {
@@ -18,6 +30,12 @@ function harvest(options) {
   )
 }
 
+/**
+ * Creates an Azure Blob definition store with the given options or default configuration.
+ *
+ * @param {AzBlobStoreOptions} [options] - Optional configuration options for the store
+ * @returns {ReturnType<typeof import('./azblobDefinitionStore')>} A new AzBlobDefinitionStore instance
+ */
 function definition(options) {
   return require('./azblobDefinitionStore')(
     options || {
@@ -27,6 +45,12 @@ function definition(options) {
   )
 }
 
+/**
+ * Creates an Azure Blob attachment store with the given options or default configuration.
+ *
+ * @param {AzBlobAttachmentStoreOptions} [options] - Optional configuration options for the store
+ * @returns {ReturnType<typeof import('./azblobAttachmentStore')>} A new AzBlobAttachmentStore instance
+ */
 function attachment(options) {
   return require('./azblobAttachmentStore')(
     options || {
