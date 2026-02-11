@@ -54,7 +54,7 @@ class StatsService {
       return result
     } catch (error) {
       this.logger.error(`Stat service failed for ${statKey}`, error)
-      throw new Error('unexpected error')
+      throw new Error('unexpected error', { cause: error })
     }
   }
 
