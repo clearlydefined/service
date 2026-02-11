@@ -14,7 +14,8 @@ router.get(
   '/:namespace/:name/revisions',
   asyncMiddleware(async (request, response) => {
     try {
-      const { name, namespace } = request.params
+      const { name } = request.params
+      const namespace = /** @type {string} */ (request.params.namespace)
       const namespacePath = `${deCodeSlashes(namespace)}`
       const url = `https://proxy.golang.org/${namespacePath}/${name}/@v/list`
       const answer = await requestPromise({ url, method: 'GET', json: true })
@@ -28,8 +29,9 @@ router.get(
 
       return response.status(200).send(result)
     } catch (e) {
+      const error = /** @type {Error} */ (e)
       log.error('Error fetching Go module revisions.', {
-        errorMessage: e.message
+        errorMessage: error.message
       })
       return response.status(404).send('No revisions found due to an internal error.')
     }
@@ -39,7 +41,7 @@ router.get(
 // Search
 router.get(
   '/:namespace/:name',
-  asyncMiddleware(async (request, response) => {
+  asyncMiddleware(async (_request, response) => {
     return response.status(404).send('Search not supported. Please specify a namespace and name to get revisions')
   })
 )

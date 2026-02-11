@@ -13,7 +13,7 @@ router.get(
     const { name } = request.params
     const url = `https://crates.io/api/v1/crates/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(x => x.num)))
+    return response.status(200).send(uniq(answer.versions.map(/** @param {any} x */ x => x.num)))
   })
 )
 
@@ -23,9 +23,11 @@ router.get(
     const { name } = request.params
     const url = `https://crates.io/api/v1/crates?per_page=100&q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.crates.map(x => {
-      return { id: x.name }
-    })
+    const result = answer.crates.map(
+      /** @param {any} x */ x => {
+        return { id: x.name }
+      }
+    )
     return response.status(200).send(result)
   })
 )
