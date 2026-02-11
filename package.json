@@ -77,6 +77,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
     "@types/base-64": "1.0.2",
@@ -112,6 +113,7 @@
     "deep-equal-in-any-order": "2.1.0",
     "eslint": "10.0.0",
     "eslint-config-prettier": "10.1.8",
+    "globals": "17.3.0",
     "mocha": "11.7.5",
     "mockttp": "4.2.1",
     "mongodb-memory-server": "11.0.1",
