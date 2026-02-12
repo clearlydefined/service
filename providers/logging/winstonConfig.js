@@ -67,6 +67,33 @@ const sanitizeMeta = winston.format(info => {
 })
 
 /**
+ * Builds safe properties to avoid AppInsight shim crashes
+ * @param {Record<string, any>} info
+ * @returns {Record<string, any>}
+ */
+function buildProperties(info) {
+  return Object.fromEntries(
+    Object.entries(info || {}).map(([key, value]) => {
+      // Fix null-prototype objects
+      if (value && typeof value === 'object' && Object.getPrototypeOf(value) === null) {
+        // Rehydrate into a plain object with normal prototype
+        try {
+          value = Object.assign({}, value)
+        } catch {
+          // As a last resort, stringify
+          try {
+            value = JSON.stringify(value)
+          } catch {
+            value = '[unserializable object]'
+          }
+        }
+      }
+      return [key, value]
+    })
+  )
+}
+
+/**
  * Factory function to create a Winston logger instance.
  * @param {WinstonLoggerOptions} [options] - Configuration options for the logger.
  * @returns {winston.Logger} A configured Winston logger instance with Application Insights transport.
@@ -117,18 +144,19 @@ function factory(options) {
 
   // Pipe Winston logs to Application Insights
   logger.on('data', info => {
+    const properties = buildProperties(info)
     if (info.level === 'error') {
       if (info.stack) {
-        aiClient.trackException({ exception: new Error(info.message), properties: info })
+        aiClient.trackException({ exception: new Error(info.message), properties })
       } else {
         aiClient.trackTrace({
           message: info.message,
           severity: appInsights.KnownSeverityLevel.Error,
-          properties: info
+          properties
         })
       }
     } else {
-      aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties: info })
+      aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties })
     }
   })
 
