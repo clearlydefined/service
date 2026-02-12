@@ -77,13 +77,6 @@ async function getDefinitions(request, response) {
   response.send(result)
 }
 
-// TODO temporary method used to trigger the reloading of the search index
-// eslint-disable-next-line no-unused-vars
-async function reload(request, response) {
-  await definitionService.reload(request.query.reload)
-  response.status(200).end()
-}
-
 // Previews the definition for a component aggregated and with the POST'd curation applied.
 // Typically used by a UI to preview the effect of a patch
 router.post(
