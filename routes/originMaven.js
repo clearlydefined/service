@@ -16,9 +16,10 @@ router.get(
       const { group, artifact } = request.params
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&core=gav&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
-      const result = answer.response.docs.map(item => item.v)
+      const result = answer.response.docs.map((/** @type {any} */ item) => item.v)
       return response.status(200).send(uniq(result))
-    } catch (error) {
+    } catch (e) {
+      const error = /** @type {any} */ (e)
       if (error.code === 404) return response.status(200).send([])
       // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
       return response.status(200).send([])
@@ -30,7 +31,8 @@ router.get(
 router.get(
   '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
-    const { group, artifact } = request.params
+    const group = /** @type {string} */ (request.params.group)
+    const artifact = request.params.artifact
     if (request.path.indexOf('/', 1) > 0) {
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
@@ -44,21 +46,28 @@ router.get(
   })
 )
 
+/**
+ * @param {any} answer
+ * @param {string} [group]
+ */
 function getSuggestions(answer, group) {
   const docs = answer.response.docs
   if (docs.length)
-    return docs.map(item => {
+    return docs.map((/** @type {any} */ item) => {
       return { id: escapeHTML(item.id) }
     })
   const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
   return group
-    ? result.map(entry => `${escapeHTML(group)}:${escapeHTML(entry)}`)
-    : result.map(entry => escapeHTML(entry))
+    ? result.map((/** @type {any} */ entry) => `${escapeHTML(group)}:${escapeHTML(entry)}`)
+    : result.map((/** @type {any} */ entry) => escapeHTML(entry))
 }
 
 function setup(testFlag = false) {
-  if (testFlag) router._getSuggestions = getSuggestions
+  if (testFlag) {
+    const _router = /** @type {any} */ (router)
+    _router._getSuggestions = getSuggestions
+  }
   return router
 }
 

@@ -13,7 +13,7 @@ router.get(
     const { name } = request.params
     const url = `https://trunk.cocoapods.org/api/v1/pods/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(x => x.name)))
+    return response.status(200).send(uniq(answer.versions.map(/** @param {any} x */ x => x.name)))
   })
 )
 
@@ -34,9 +34,11 @@ router.get(
       },
       json: true
     })
-    const result = answer.hits.map(x => {
-      return { id: x.name }
-    })
+    const result = answer.hits.map(
+      /** @param {any} x */ x => {
+        return { id: x.name }
+      }
+    )
     return response.status(200).send(result)
   })
 )

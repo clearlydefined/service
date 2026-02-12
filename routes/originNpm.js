@@ -11,7 +11,8 @@ router.get(
   '{/:namespace}/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const baseUrl = 'https://registry.npmjs.com'
-    const { namespace, name } = request.params
+    const namespace = /** @type {string} */ (request.params.namespace)
+    const name = /** @type {string} */ (request.params.name)
     const fullName = namespace ? `${namespace}/${name}` : name
     const url = `${baseUrl}/${encodeURIComponent(fullName).replace(/%40/g, '@')}` // npmjs doesn't handle the escaped version
     const answer = await requestPromise({ url, method: 'GET', json: true })
@@ -28,9 +29,11 @@ router.get(
     const searchTerm = name ? `${namespace}/${name}` : namespace
     const url = `https://api.npms.io/v2/search?q=${searchTerm}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.map(entry => {
-      return { id: entry.package.name }
-    })
+    const result = answer.results.map(
+      /** @param {any} entry */ entry => {
+        return { id: entry.package.name }
+      }
+    )
     return response.status(200).send(result)
   })
 )

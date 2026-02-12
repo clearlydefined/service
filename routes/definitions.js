@@ -9,6 +9,9 @@ const EntityCoordinates = require('../lib/entityCoordinates')
 const validator = require('../schemas/validator')
 const logger = require('../providers/logging/logger')
 
+/** @typedef {import('express').Request} Request */
+/** @typedef {import('express').Response} Response */
+
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getDefinition))
@@ -22,6 +25,10 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 // We currently allow up to three extra fields (that means up to three slashes in the namespace)
 router.get('/:type/:provider/:namespace/:name/:revision{/:extra1}{/:extra2}{/:extra3}', asyncMiddleware(getDefinition))
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function getDefinition(request, response) {
   const log = logger()
   log.info('getDefinition route hit', { ts: new Date().toISOString(), requestParams: request.params })
@@ -63,11 +70,16 @@ async function getDefinition(request, response) {
   log.debug('get_definition:prepared', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
   response.status(200).send(result)
   log.debug('get_definition:sent', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+  return
 }
 
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
 router.get('/', asyncMiddleware(getDefinitions))
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function getDefinitions(request, response) {
   // TODO temporary endpoint to trigger reloading the index or definitions
   if (request.query.reload) {
@@ -80,10 +92,14 @@ async function getDefinitions(request, response) {
   if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
   const normalizedCoordinates = await utils.toNormalizedEntityCoordinates(request.query)
   const result = await definitionService.find({ ...request.query, ...normalizedCoordinates })
-  response.send(result)
+  return response.send(result)
 }
 
 // TODO temporary method used to trigger the reloading of the search index
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function reload(request, response) {
   await definitionService.reload(request.query.reload)
   response.status(200).end()
@@ -93,22 +109,26 @@ async function reload(request, response) {
 // Typically used by a UI to preview the effect of a patch
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
-  asyncMiddleware(async (request, response) => {
+  asyncMiddleware(async (/** @type {Request} */ request, /** @type {Response} */ response) => {
     if (!request.query.preview)
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
     if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
     const coordinates = await utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
-    response.status(200).send(result)
+    return response.status(200).send(result)
   })
 )
 
 // POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(listDefinitions))
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function listDefinitions(request, response) {
   const log = logger()
-  const coordinatesList = request.body.map(entry => EntityCoordinates.fromString(entry))
+  const coordinatesList = request.body.map((/** @type {any} */ entry) => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500)
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   const normalizedCoordinates = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
@@ -126,21 +146,26 @@ async function listDefinitions(request, response) {
       coordinateCount: Array.isArray(normalizedCoordinates) ? normalizedCoordinates.length : 0,
       force,
       expand,
-      userAgent: Array.isArray(request.get('User-Agent'))
-        ? request.get('User-Agent').join(', ')
-        : request.get('User-Agent')
+      userAgent: request.get('User-Agent')
     })
     let result = await definitionService.getAll(normalizedCoordinates, force, expand)
 
-    const matchCasing = !(request.query.matchCasing === 'false' || request.query.matchCasing === false)
+    const matchCasing = !(request.query.matchCasing === 'false')
     // enforce request casing on keys as per issue #589
     result = adaptResultKeys(result, request.body, coordinatesLookup, matchCasing)
-    response.send(result)
+    return response.send(result)
   } catch (err) {
-    response.send(`An error occurred when trying to fetch coordinates for one of the components: ${err.message}`)
+    const error = /** @type {Error} */ (err)
+    return response.send(
+      `An error occurred when trying to fetch coordinates for one of the components: ${error.message}`
+    )
   }
 }
 
+/**
+ * @param {Request} request
+ * @param {any[]} normalizedCoordinates
+ */
 function mapCoordinates(request, normalizedCoordinates) {
   const coordinatesLookup = new Map()
   if (!Array.isArray(request.body) || !request.body.every(item => typeof item === 'string')) {
@@ -156,6 +181,12 @@ function mapCoordinates(request, normalizedCoordinates) {
   return coordinatesLookup
 }
 
+/**
+ * @param {Record<string, any>} result
+ * @param {string[]} requestedKeys
+ * @param {Map<string, string>} coordinatesLookup
+ * @param {boolean} matchCase
+ */
 function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
   const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
   if (!shouldAdaptKeys) return result
@@ -167,17 +198,23 @@ function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
     const value = result[resultKey]
     if (value) total[mapped ? requested : resultKey] = value
     return total
-  }, {})
+  }, /** @type {Record<string, any>} */ ({}))
 }
 
+/** @type {any} */
 let definitionService
 
+/**
+ * @param {any} definition
+ * @param {boolean} [testFlag]
+ */
 function setup(definition, testFlag = false) {
   definitionService = definition
 
   if (testFlag) {
-    router._getDefinition = getDefinition
-    router._adaptResultKeys = adaptResultKeys
+    const _router = /** @type {any} */ (router)
+    _router._getDefinition = getDefinition
+    _router._adaptResultKeys = adaptResultKeys
   }
   return router
 }

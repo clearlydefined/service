@@ -13,7 +13,7 @@ router.get(
     const { name } = request.params
     const url = `https://sources.debian.org/api/src/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.versions.map(version => version.version)
+    const result = answer.versions.map(/** @param {any} version */ version => version.version)
     return response.send(uniq(result))
   })
 )
@@ -24,9 +24,11 @@ router.get(
     const { name } = request.params
     const url = `https://sources.debian.org/api/search/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.other.map(entry => {
-      return { id: entry.name }
-    })
+    const result = answer.results.other.map(
+      /** @param {any} entry */ entry => {
+        return { id: entry.name }
+      }
+    )
     if (answer.results.exact) {
       result.unshift({ id: answer.results.exact.name })
     }
