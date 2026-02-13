@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 const { expect } = require('chai')
-const { sanitizeHeaders, sanitizeMeta } = require('../../../providers/logging/winstonConfig')
+const { sanitizeHeaders, sanitizeMeta, buildProperties } = require('../../../providers/logging/winstonConfig')
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {
@@ -322,5 +322,55 @@ describe('sanitizeMeta', () => {
       expect(result.error).to.equal('Something went wrong')
       expect(result.userId).to.equal('user-123')
     })
+  })
+})
+
+describe('buildProperties', () => {
+  const createNullProtoDict = (entries = {}) => Object.assign(Object.create(null), entries)
+  const withThrowingGetter = (dict = createNullProtoDict()) => {
+    const getter = () => {
+      throw new Error('nope')
+    }
+    Object.defineProperty(dict, 'x', { enumerable: true, get: getter })
+    return dict
+  }
+
+  it('rehydrates null-prototype dictionary to plain object', () => {
+    const info = { requestParams: createNullProtoDict({ foo: 'bar' }) }
+    const result = buildProperties(info)
+    expect(result.requestParams).to.deep.equal({ foo: 'bar' })
+    expect(Object.getPrototypeOf(result.requestParams)).to.equal(Object.prototype)
+  })
+
+  it('leaves plain objects unchanged (by reference)', () => {
+    const obj = { a: 1, b: 'x' }
+    const result = buildProperties({ meta: obj })
+    expect(result.meta).to.equal(obj)
+  })
+
+  it('passes through arrays and primitives', () => {
+    const info = { list: [1, 2, 3], s: 'str', n: 42, b: true, u: undefined, nl: null }
+    const result = buildProperties(info)
+    expect(result).to.deep.equal(info)
+  })
+
+  it('falls back to "[unserializable object]" when getter throws on null-prototype', () => {
+    const dict = withThrowingGetter()
+    const result = buildProperties({ requestParams: dict })
+    expect(result.requestParams).to.equal('[unserializable object]')
+  })
+
+  it('uses JSON.stringify via toJSON when assign fails but stringify succeeds', () => {
+    const dict = withThrowingGetter()
+    Object.defineProperty(dict, 'toJSON', { value: () => ({ safe: 'ok' }) })
+    const result = buildProperties({ requestParams: dict })
+    expect(result.requestParams).to.equal(JSON.stringify({ safe: 'ok' }))
+  })
+
+  it('does not process nested null-prototype objects (shallow only)', () => {
+    const nested = createNullProtoDict({ a: 'b' })
+    const parent = { child: nested }
+    const result = buildProperties({ parent })
+    expect(result.parent.child).to.equal(nested)
   })
 })
