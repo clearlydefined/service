@@ -67,7 +67,10 @@ const sanitizeMeta = winston.format(info => {
 })
 
 /**
- * Builds safe properties to avoid AppInsight shim crashes
+ * AppInsights v3 internally accesses value.constructor.name when converting
+ * telemetry properties to log records. Objects with a null prototype (e.g.,
+ * Express req.params via Object.create(null)) lack .constructor, causing
+ * TypeError. This function rehydrates such objects into plain Objects.
  * @param {Record<string, any>} info
  * @returns {Record<string, any>}
  */
@@ -80,6 +83,7 @@ function buildProperties(info) {
         try {
           value = Object.assign({}, value)
         } catch {
+          // It is possible to have null‑prototype objects with throwing getters.
           // As a last resort, stringify
           try {
             value = JSON.stringify(value)
@@ -184,3 +188,4 @@ function mapLevel(level) {
 module.exports = factory
 module.exports.sanitizeHeaders = sanitizeHeaders
 module.exports.sanitizeMeta = sanitizeMeta
+module.exports.buildProperties = buildProperties
