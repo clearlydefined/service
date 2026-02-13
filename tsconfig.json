@@ -1,12 +1,13 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node24/tsconfig.json"],
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node24/tsconfig.json", "@tsconfig/node-ts/tsconfig.json"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
     "strictNullChecks": false,
     "exactOptionalPropertyTypes": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false
   },
   "include": [
     "types/**/*",
@@ -138,6 +139,7 @@
     "middleware/githubConfig.js",
     "routes/auth.d.ts",
     "routes/auth.js",
-    "schemas/validator.js"
+    "schemas/validator.js",
+    "test/**/*.ts"
   ]
 }

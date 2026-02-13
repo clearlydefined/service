@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "ENABLE_REST_VALIDATION_ERRORS=true npm run mocha && npm run lint",
-    "mocha": "nyc mocha --exit \"test/**/*.js\"",
+    "mocha": "nyc mocha --exit \"test/**/*.js\" \"test/**/*.ts\"",
     "lint": "npm run tsc && npm run eslint && npm run prettier:check",
     "lint:fix": "npm run eslint:fix && npm run prettier:write",
     "eslint": "eslint .",
@@ -78,6 +78,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@tsconfig/node-ts": "23.6.2",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
     "@types/base-64": "1.0.2",
