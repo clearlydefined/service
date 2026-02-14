@@ -181,7 +181,6 @@ function createApp(config) {
   app.use('/origins/gitlab', require('./routes/originGitLab')())
   app.use('/origins/go', require('./routes/originGo')())
   app.use('/harvest', harvestRoute)
-  app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
   app.use('/definitions', routesVersioning({ [v1]: definitionsRouteV1 }, definitionsRoute))
   app.use('/notices', noticesRoute)
