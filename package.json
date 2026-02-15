@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@tsconfig/node-ts": "23.6.2",
+    "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
     "@types/base-64": "1.0.2",
@@ -97,7 +97,7 @@
     "@types/memory-cache": "0.2.6",
     "@types/mocha": "10.0.10",
     "@types/morgan": "1.9.10",
-    "@types/node": "24.10.12",
+    "@types/node": "24.10.13",
     "@types/pako": "2.0.4",
     "@types/passport": "1.0.17",
     "@types/passport-github": "1.1.13",
