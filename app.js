@@ -113,7 +113,6 @@ function createApp(config) {
   app.use(cors())
   // new express v5 matching syntax: https://expressjs.com/en/guide/migrating-5.html#path-syntax
   app.options('*splat', cors())
-  app.use(express.json({ limit: '100kb' }))
   app.use(cookieParser())
   app.use(helmet.default())
   app.use(requestId())
@@ -124,6 +123,7 @@ function createApp(config) {
   const swaggerOptions = { swaggerUrl: `${config.endpoints.service}/schemas/swagger.yaml` }
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, swaggerOptions))
   app.use('/webhook', bodyParser.raw({ limit: '10mb', type: '*/*' }), webhookRoute)
+  app.use(express.json({ limit: '100kb' }))
 
   // OAuth app initialization; skip if not configured (middleware can cope)
   const auth = config.auth.service.route(null, config.endpoints)
@@ -181,7 +181,6 @@ function createApp(config) {
   app.use('/origins/gitlab', require('./routes/originGitLab')())
   app.use('/origins/go', require('./routes/originGo')())
   app.use('/harvest', harvestRoute)
-  app.use(bodyParser.json())
   app.use('/curations', curationsRoute)
   app.use('/definitions', routesVersioning({ [v1]: definitionsRouteV1 }, definitionsRoute))
   app.use('/notices', noticesRoute)
