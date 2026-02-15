@@ -30,7 +30,9 @@ function serviceFactory(options) {
   crawlerOptions.later.initialize()
   crawlerOptions.normal.initialize()
   const harvester = crawler(crawlerOptions)
-  return cacheBasedCrawler({ ...options, harvester })
+  const cacheTTLSeconds = parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS'), 10)
+  const cacheTTLInSeconds = Number.isFinite(cacheTTLSeconds) && cacheTTLSeconds > 0 ? cacheTTLSeconds : undefined
+  return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester })
 }
 
 module.exports = serviceFactory
