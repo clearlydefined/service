@@ -52,7 +52,7 @@
     "lodash": "4.17.23",
     "luxon": "3.7.2",
     "memory-cache": "0.2.0",
-    "minimatch": "10.1.2",
+    "minimatch": "10.2.0",
     "mkdirp": "3.0.1",
     "mongodb": "6.16.0",
     "morgan": "1.10.1",
