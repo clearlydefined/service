@@ -28,7 +28,7 @@
     "@clearlydefined/spdx": "github:clearlydefined/spdx#v0.1.10",
     "@gitbeaker/rest": "43.8.0",
     "@octokit/rest": "22.0.1",
-    "ajv": "8.17.1",
+    "ajv": "8.18.0",
     "ajv-errors": "3.0.0",
     "ajv-formats": "3.0.1",
     "applicationinsights": "3.13.0",
