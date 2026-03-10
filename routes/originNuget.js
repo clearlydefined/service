@@ -25,9 +25,11 @@ router.get(
     const { name } = request.params
     const url = `${baseUrl}/query?q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.data.map(entry => {
-      return { id: entry.id }
-    })
+    const result = answer.data.map(
+      /** @param {any} entry */ entry => {
+        return { id: entry.id }
+      }
+    )
     return response.status(200).send(result)
   })
 )

@@ -6,8 +6,9 @@ import type { Request, Response, NextFunction, RequestHandler } from 'express'
 /**
  * Async function that can be wrapped by asyncMiddleware.
  * Can be a standard middleware function or a route handler.
+ * Returns Promise<any> to allow route handlers that return response.send() etc.
  */
-export type AsyncMiddlewareFunction = (request: Request, response: Response, next: NextFunction) => Promise<void>
+export type AsyncMiddlewareFunction = (request: Request, response: Response, next: NextFunction) => Promise<any>
 
 /**
  * Wraps an async middleware function to properly catch and forward errors.

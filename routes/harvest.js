@@ -8,12 +8,19 @@ const bodyParser = require('body-parser')
 const validator = require('../schemas/validator')
 const EntityCoordinates = require('../lib/entityCoordinates')
 
+/** @typedef {import('express').Request} Request */
+/** @typedef {import('express').Response} Response */
+
 // Gets a given harvested file
 router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asyncMiddleware(get))
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function get(request, response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)
-  switch ((request.query.form || 'summary').toLowerCase()) {
+  switch (/** @type {string} */ (request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
       const result = await harvestStore.get(coordinates, response)
@@ -43,9 +50,13 @@ async function get(request, response) {
 // Gets ALL the harvested data for a given component revision
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getAll))
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function getAll(request, response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-  switch ((request.query.form || 'summary').toLowerCase()) {
+  switch (/** @type {string} */ (request.query.form || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
       const result = await harvestStore.getAll(coordinates)
@@ -68,6 +79,10 @@ async function getAll(request, response) {
 // Get a list of the harvested data that we have that matches the url as a prefix
 router.get('{/:type}{/:provider}{/:namespace}{/:name}{/:revision}{/:tool}', asyncMiddleware(list))
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function list(request, response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)
   const result = await harvestStore.list(coordinates)
@@ -77,6 +92,10 @@ async function list(request, response) {
 // Post a (set of) component to be harvested
 router.post('/', bodyParser.json({ limit: '1mb' }), asyncMiddleware(queue))
 
+/**
+ * @param {Request} request
+ * @param {Response} response
+ */
 async function queue(request, response) {
   const requests = Array.isArray(request.body) ? request.body : [request.body]
 
@@ -92,13 +111,17 @@ async function queue(request, response) {
   try {
     normalizedBody = await normalizeFilterCoordinates(requests)
   } catch (error) {
-    return response.status(422).send({ error: error.message })
+    const err = /** @type {Error} */ (error)
+    return response.status(422).send({ error: err.message })
   }
 
   await harvestService.harvest(normalizedBody, request.query.turbo)
-  response.sendStatus(201)
+  return response.sendStatus(201)
 }
 
+/**
+ * @param {any[]} requests
+ */
 async function normalizeFilterCoordinates(requests) {
   const normalizedBody = await Promise.all(
     requests.map(async entry => {
@@ -112,20 +135,32 @@ async function normalizeFilterCoordinates(requests) {
   return normalizedBody.filter(entry => entry && entry.coordinates)
 }
 
+/** @type {any} */
 let harvestService
+/** @type {any} */
 let harvestStore
+/** @type {any} */
 let summarizeService
+/** @type {any} */
 let harvestThrottler
 
+/**
+ * @param {any} harvester
+ * @param {any} store
+ * @param {any} summarizer
+ * @param {any} throttler
+ * @param {boolean} [testFlag]
+ */
 function setup(harvester, store, summarizer, throttler, testFlag = false) {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer
   harvestThrottler = throttler
   if (testFlag) {
-    router._queue = queue
-    router._get = get
-    router._normalizeCoordinates = normalizeFilterCoordinates
+    const _router = /** @type {any} */ (router)
+    _router._queue = queue
+    _router._get = get
+    _router._normalizeCoordinates = normalizeFilterCoordinates
   }
   return router
 }

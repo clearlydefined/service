@@ -10,7 +10,7 @@ const { uniq } = require('lodash')
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const { name } = request.params
+    const name = /** @type {string} */ (request.params.name)
     const answer = await getPypiData(name)
     const result = answer && answer.releases ? Object.keys(answer.releases) : []
     result.reverse()
@@ -21,23 +21,28 @@ router.get(
 router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
-    const { name } = request.params
+    const name = /** @type {string} */ (request.params.name)
     const answer = await getPypiData(name)
     const result = answer && answer.info ? [{ id: answer.info.name }] : []
     return response.status(200).send(result)
   })
 )
+/** @param {string} name */
 async function getPypiData(name) {
   const url = `https://pypi.org/pypi/${encodeURIComponent(name)}/json`
   try {
     return await requestPromise({ url, method: 'GET', json: true })
-  } catch (error) {
+  } catch (e) {
+    const error = /** @type {any} */ (e)
     if (error.statusCode === 404) return {}
     throw error
   }
 }
 function setup(testflag = false) {
-  if (testflag) router._getPypiData = getPypiData
+  if (testflag) {
+    const _router = /** @type {any} */ (router)
+    _router._getPypiData = getPypiData
+  }
   return router
 }
 
