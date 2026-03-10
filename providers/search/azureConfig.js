@@ -4,6 +4,9 @@
 const config = require('painless-config')
 const search = require('./azureSearch')
 
+/**
+ * @param {import('./azureSearch').AzureSearchOptions} [options]
+ */
 function serviceFactory(options) {
   const realOptions = options || {
     service: config.get('SEARCH_AZURE_SERVICE'),
