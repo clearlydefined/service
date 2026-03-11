@@ -4,12 +4,23 @@
 const { callFetch: requestPromise } = require('../../lib/fetch')
 const logger = require('../logging/logger')
 
+/**
+ * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
+ * @typedef {import('./cacheBasedCrawler').HarvestEntry} HarvestEntry
+ * @typedef {import('./cacheBasedCrawler').HarvestCallItem} HarvestCallItem
+ */
+
 class CrawlingHarvester {
+  /** @param {CrawlerOptions} options */
   constructor(options) {
     this.logger = logger()
     this.options = options
   }
 
+  /**
+   * @param {HarvestEntry | HarvestEntry[]} spec
+   * @param {boolean} [turbo]
+   */
   async harvest(spec, turbo) {
     const headers = {
       'X-token': this.options.authToken
@@ -28,6 +39,10 @@ class CrawlingHarvester {
     })
   }
 
+  /**
+   * @param {HarvestEntry} entry
+   * @returns {HarvestCallItem}
+   */
   toHarvestItem(entry) {
     return {
       type: entry.tool || 'component',
@@ -37,4 +52,4 @@ class CrawlingHarvester {
   }
 }
 
-module.exports = options => new CrawlingHarvester(options)
+module.exports = /** @param {CrawlerOptions} options */ options => new CrawlingHarvester(options)

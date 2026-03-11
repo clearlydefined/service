@@ -5,11 +5,20 @@ const config = require('painless-config')
 const crawler = require('./crawler')
 const cacheBasedCrawler = require('./cacheBasedCrawler')
 
+/**
+ * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
+ * @typedef {import('./crawlerConfig').CrawlerConfigOptions} CrawlerConfigOptions
+ */
+
 const crawlerConfig = {
   authToken: config.get('CRAWLER_API_AUTH_TOKEN'),
   url: config.get('CRAWLER_API_URL') || 'http://localhost:5000'
 }
 
+/**
+ * @param {CrawlerConfigOptions} [options]
+ * @returns {import('./cacheBasedCrawler').CacheBasedHarvester}
+ */
 function serviceFactory(options) {
   const crawlerOptions = { ...crawlerConfig, ...options }
   const harvester = crawler(crawlerOptions)
