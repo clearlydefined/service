@@ -472,4 +472,4 @@ class AzureSearch extends AbstractSearch {
   }
 }
 
-module.exports = /** @param {any} options */ options => new AzureSearch(options)
+module.exports = /** @param {import('./azureSearch').AzureSearchOptions} options */ options => new AzureSearch(options)

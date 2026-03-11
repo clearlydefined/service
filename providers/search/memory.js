@@ -81,4 +81,4 @@ class MemorySearch extends AbstractSearch {
   }
 }
 
-module.exports = /** @param {any} options */ options => new MemorySearch(options)
+module.exports = /** @param {import('./abstractSearch').SearchOptions} options */ options => new MemorySearch(options)
