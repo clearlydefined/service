@@ -3,10 +3,17 @@
 
 const logger = require('../logging/logger')
 
+/** @typedef {import('.').QueueMessage} QueueMessage */
+/** @typedef {import('.').DequeuedMessage} DequeuedMessage */
+
 class MemoryQueue {
+  /**
+   * @param {import('./memoryQueue').MemoryQueueOptions} options
+   */
   constructor(options) {
     this.options = options
     this.logger = logger()
+    /** @type {QueueMessage[]} */
     this.data = []
     this.messageId = 0
     this.decoder = options.decoder
@@ -28,17 +35,21 @@ class MemoryQueue {
    * If processing is successful, the caller is expected to call delete()
    * Returns null if the queue is empty
    *
-   * @returns {object} - { original: message, data: "JSON parsed, base64 decoded message" }
+   * @returns {Promise<DequeuedMessage | null>}
    */
   async dequeue() {
     const message = this.data[0]
     if (!message) return null
     this.data[0].dequeueCount++
     if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: this._parseData(message) })
+    // @ts-ignore - internal delete only needs original
     await this.delete({ original: message })
     return this.dequeue()
   }
 
+  /**
+   * @param {QueueMessage} message
+   */
   _parseData({ messageText }) {
     return JSON.parse(this.decoder(messageText))
   }
@@ -53,7 +64,7 @@ class MemoryQueue {
    * Delete a recently DQ'd message from the queue
    * pass dequeue() result as the message to delete
    *
-   * @param {object} message
+   * @param {DequeuedMessage} message
    */
   async delete(message) {
     const newData = []
@@ -66,7 +77,7 @@ class MemoryQueue {
 
 const factory = (opts = {}) => {
   const defaultOpts = {
-    decoder: text => text
+    decoder: /** @param {string} text */ text => text
   }
   const mergedOpts = { ...defaultOpts, ...opts }
   return new MemoryQueue(mergedOpts)
