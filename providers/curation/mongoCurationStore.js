@@ -1,6 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/** @typedef {import('../../lib/entityCoordinates').EntityCoordinatesSpec} EntityCoordinatesSpec */
+/** @typedef {import('../../lib/curation')} Curation */
+/** @typedef {import('../../lib/curation').CurationData} CurationData */
+/** @typedef {import('../../lib/curation').CurationRevision} CurationRevision */
+/** @typedef {import('.').MongoCurationStoreOptions} MongoCurationStoreOptions */
+/** @typedef {import('.').ContributionPR} ContributionPR */
+/** @typedef {import('mongodb').MongoClient} MongoClientType */
+/** @typedef {import('mongodb').Db} Db */
+/** @typedef {import('mongodb').Collection<{ _id: string | number, [key: string]: unknown }>} CurationCollection */
+
 const MongoClient = require('mongodb').MongoClient
 const promiseRetry = require('promise-retry')
 const EntityCoordinates = require('../../lib/entityCoordinates')
@@ -9,9 +19,16 @@ const { get } = require('lodash')
 const logger = require('../logging/logger')
 
 class MongoCurationStore {
+  /** @param {MongoCurationStoreOptions} options */
   constructor(options) {
     this.logger = logger()
     this.options = options
+    /** @type {MongoClientType} */
+    this.client = /** @type {*} */ (undefined)
+    /** @type {Db} */
+    this.db = /** @type {*} */ (undefined)
+    /** @type {CurationCollection} */
+    this.collection = /** @type {*} */ (undefined)
   }
 
   initialize() {
@@ -24,7 +41,7 @@ class MongoCurationStore {
         })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
-      } catch (error) {
+      } catch (/** @type {*} */ error) {
         this.logger.info(`retrying mongo connection: ${error.message}`)
         retry(error)
       }
@@ -34,7 +51,8 @@ class MongoCurationStore {
   /**
    * Store the given set of curations overwriting any previous content. This effectively replicates the
    * content of the files in the GitHub curation repo.
-   * @param {[Curation]} curations
+   * @param {Curation[]} curations
+   * @returns {Promise<null>}
    */
   async updateCurations(curations) {
     await Promise.all(
@@ -61,8 +79,8 @@ class MongoCurationStore {
    * Update the contribution entry for the given PR and record the associated curations -- the
    * actual file content in the PR. If the curations are not provided, just the PR data is updated,
    * any existing curation data is preserved.
-   * @param {*} pr - the PR object as provided by GitHub
-   * @param {[Curation]} curations? - The set of actual proposed changes.
+   * @param {ContributionPR} pr - the PR object as provided by GitHub
+   * @param {Curation[] | null} [curations] - The set of actual proposed changes.
    */
   updateContribution(pr, curations = null) {
     if (!curations || !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions')))
@@ -116,12 +134,15 @@ class MongoCurationStore {
     return { curations, contributions }
   }
 
+  /** @param {EntityCoordinatesSpec} coordinates */
   _getCurationId(coordinates) {
     if (!coordinates) return ''
     return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
+  /** @param {EntityCoordinates} coordinates */
   _buildContributionQuery(coordinates) {
+    /** @type {Record<string, string>} */
     const result = {}
     if (coordinates.type) result['files.coordinates.type'] = coordinates.type.toLowerCase()
     if (coordinates.provider) result['files.coordinates.provider'] = coordinates.provider.toLowerCase()
@@ -131,8 +152,12 @@ class MongoCurationStore {
     return result
   }
 
+  /**
+   * @param {CurationData[]} curations
+   * @returns {Record<string, CurationRevision>}
+   */
   _formatCurations(curations) {
-    return curations.reduce((result, entry) => {
+    return curations.reduce((/** @type {Record<string, CurationRevision>} */ result, entry) => {
       Object.keys(entry.revisions).forEach(revision => {
         let coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
         result[coordinates] = entry.revisions[revision]
@@ -141,12 +166,14 @@ class MongoCurationStore {
     }, {})
   }
 
+  /** @param {EntityCoordinatesSpec} input */
   _lowercaseCoordinates(input) {
     return EntityCoordinates.fromString(EntityCoordinates.fromObject(input).toString().toLowerCase())
   }
+  /** @param {string} string */
   _escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
 }
 
-module.exports = options => new MongoCurationStore(options)
+module.exports = /** @param {MongoCurationStoreOptions} options */ options => new MongoCurationStore(options)

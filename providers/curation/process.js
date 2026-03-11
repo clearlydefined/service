@@ -1,8 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/** @typedef {import('../queueing').IQueue<CurationWebhookPayload>} CurationQueue */
+/** @typedef {import('./process').CurationWebhookPayload} CurationWebhookPayload */
+/** @typedef {import('./process').CurationProcessService} CurationProcessService */
+/** @typedef {import('../logging').Logger} Logger */
+
 const { get } = require('lodash')
 
+/** @param {boolean} once */
 async function work(once) {
   try {
     let message = await queue.dequeue()
@@ -29,17 +35,26 @@ async function work(once) {
     }
     logger.info(`Handled GitHub event "${action}" for PR#${pr.number}`)
     await queue.delete(message)
-  } catch (error) {
+  } catch (/** @type {*} */ error) {
     logger.error(error)
   } finally {
     if (!once) setTimeout(work, 30000, once)
   }
 }
 
+/** @type {CurationQueue} */
 let queue
+/** @type {CurationProcessService} */
 let curationService
+/** @type {Logger} */
 let logger
 
+/**
+ * @param {CurationQueue} _queue
+ * @param {CurationProcessService} _curationService
+ * @param {Logger} _logger
+ * @param {boolean} [once]
+ */
 function setup(_queue, _curationService, _logger, once = false) {
   queue = _queue
   curationService = _curationService

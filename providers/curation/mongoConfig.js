@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/** @typedef {import('.').MongoCurationStoreOptions} MongoCurationStoreOptions */
+
 const config = require('painless-config')
 const storeFactory = require('./mongoCurationStore')
 
+/** @param {MongoCurationStoreOptions} [options] */
 function store(options) {
   const realOptions = options || {
     connectionString: config.get('CURATION_MONGO_CONNECTION_STRING'),
