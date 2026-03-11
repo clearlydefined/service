@@ -1,115 +1,77 @@
-# TypeScript Migration Strategy
+# TypeScript migration
 
-This document outlines our current TypeScript migration strategy for the ClearlyDefined service.
-We are taking a gradual, incremental approach to improve type safety while maintaining backward compatibility.
+We're gradually adding TypeScript to the ClearlyDefined service. The approach: use `tsc` to type-check our existing JavaScript, write `.d.ts` files for type information, and avoid a build step. Nobody is rewriting the whole thing.
 
-## Current State
+## Where we are
 
-### What We Have
+We run TypeScript as a linter, not a compiler. `tsc` checks JavaScript files via `allowJs` and `checkJs`, and `noEmit` means it never produces output. This runs as part of `npm run lint`.
 
-- **TypeScript Compiler Configuration**: We use TypeScript primarily for type checking JavaScript files via `tsconfig.json`
-- **Type Definition Files**: `.d.ts` files provide type information
-- **JSDoc Type Annotations**: Many JavaScript files include JSDoc comments for better IDE support and basic type checking
-- **TypeScript Checking**: The `tsc` command runs as part of our lint process to catch type errors
+Type information comes from three places:
 
-### Current TypeScript Configuration
+- `.d.ts` files sitting next to their corresponding `.js` modules
+- JSDoc annotations in the JavaScript itself
+- custom type definitions in `types/` for third-party packages that don't ship their own types and aren't covered by DefinitelyTyped (`@types/` packages)
 
-See [`tsconfig.json`][tsconfig] for the current configuration.
+Tests can be `.ts` files. Mocha runs both `test/**/*.js` and `test/**/*.ts`, and the tsconfig includes the `.ts` glob. There's one TypeScript test file so far.
 
-**Key aspects of our current setup:**
+### tsconfig.json
 
-- **Extends strictest TypeScript configuration**: Uses [`@tsconfig/strictest`][tsconfig-strictest] for maximum type safety, with [`@tsconfig/node18`][tsconfig-node18] for Node.js compatibility
-- **JavaScript type checking**: `allowJs: true` and `checkJs: true` enable TypeScript to analyze JavaScript files
-- **No compilation**: `noEmit: true` means we only do type checking, no compilation to JavaScript
-- **Selective strictness**: `strictNullChecks: false` and `exactOptionalPropertyTypes: false` are disabled as they're difficult to enforce in JavaScript
-- **Expanding coverage**: The `include` array covers many core library files and their type definitions
+The config extends three bases:
 
-## How to Add New Types
+- [`@tsconfig/strictest`][tsconfig-strictest] — strict defaults
+- [`@tsconfig/node24`][tsconfig-node24] — Node 24 target and lib settings
+- [`@tsconfig/node-ts`][tsconfig-node-ts] — enables `erasableSyntaxOnly` for Node's native type stripping
 
-### 1. Create Type Definition Files
+We override a few strict options because they don't play well with JavaScript:
 
-For JavaScript modules that need types, create corresponding `.d.ts` files
+- `strictNullChecks: false`
+- `exactOptionalPropertyTypes: false`
+- `noPropertyAccessFromIndexSignature: false`
 
-### 2. Add JSDoc Type Annotations
+We also set `verbatimModuleSyntax: false`, overriding the `node-ts` default. Without this, all our CommonJS `require()` calls would be errors. Once we migrate imports, we can flip it back.
 
-For existing JavaScript files, add JSDoc comments with type information
+Other settings: `resolveJsonModule: true` (we import JSON in a few places).
 
-### 3. Extend TypeScript Checking
+## Adding types
 
-To include new files in TypeScript checking, add them to the `include` array in [`tsconfig.json`][tsconfig]:
+Write a `.d.ts` file next to the JavaScript module. Add JSDoc annotations to the `.js` file where they help. Then add both to the `include` array in [`tsconfig.json`][tsconfig]:
 
 ```json
-{
-  "include": [
-    // Existing files
-    // ...
-    "your/new/file.js" // Add new files here
-  ]
-}
+{ "include": ["your/new/file.d.ts", "your/new/file.js"] }
 ```
 
-## Future Migration Path
+Run `npm run tsc` to check your work.
 
-### Near-term
+New tests can just be `.ts` files in `test/`. They're picked up automatically.
 
-1. **Expand Type Coverage**: Add `.d.ts` files for more JavaScript modules
-1. **Enhanced JSDoc**: Improve existing JSDoc annotations across the codebase
-1. **Incremental TypeScript Checking**: Gradually add more files to the `include` list
+## What's next
 
-### Medium-term
+### Native TypeScript in Node.js
 
-We have several options for deeper TypeScript integration:
+Most of the groundwork is done. Node 24 runs `.ts` files natively by stripping types at import time, no build needed. The tsconfig already has `erasableSyntaxOnly` enabled via `@tsconfig/node-ts`.
 
-#### Option 1: Node.js Native TypeScript Support
+Before we can write source files (not just tests) in `.ts`, we need to:
 
-Node.js 22.6+ offers native TypeScript support with type stripping:
+1. Sort out `verbatimModuleSyntax` — either migrate existing imports to use `import type` or keep the override
+2. Pick a convention for file extensions in imports (`import './foo.ts'` is required with type stripping)
+3. Decide what to do with `bin/www` — update the entry point or let Node handle it
 
-**Advantages:**
+Type stripping has restrictions: no enums, no namespaces with runtime code, no parameter properties. For this codebase that's probably fine since we don't use any of those.
 
-- No build step required
-- Lightweight type stripping only
-- Compatible with existing tooling
+### Build-based TypeScript (the other option)
 
-**Requirements:**
+A traditional `tsc` build step would remove the syntax restrictions and give us enums, decorators, and everything else. The cost is adding a build to the deployment pipeline and dealing with source maps. We haven't needed this yet.
 
-- [Node.js 22.6+ with `--experimental-strip-types` flag or Node.js 23.6+][node-typescript], or
-- [TypeScript 5.8+ with `erasableSyntaxOnly` enabled][ts-node-native]
+## Getting started
 
-**Limitations:**
-
-- Only erasable TypeScript syntax (no enums, namespaces with runtime code, parameter properties)
-- Must use explicit `import type` syntax
-- File extensions required in imports (e.g., `import './file.ts'`)
-
-#### Option 2: Build-based TypeScript
-
-Traditional TypeScript compilation with a build step:
-
-**Advantages:**
-
-- Full TypeScript feature support
-- Better IDE integration
-- Stronger type checking
-
-**Requirements:**
-
-- Add build process to deployment pipeline
-- Update package.json scripts
-- Handle source maps and debugging
-
-## Getting Started
-
-To contribute type definitions:
-
-1. Identify a JavaScript module that would benefit from types
-1. Create a corresponding `.d.ts` file with appropriate interfaces and type definitions
-1. Use the types in JSDoc comments or import them in JavaScript files
-1. Add the file to the TypeScript `include` configuration in [`tsconfig.json`][tsconfig] if it's not already covered
-1. Test the types by running `npm run tsc`
-1. Update this document as we learn and evolve our approach
+1. Find a `.js` file that doesn't have a `.d.ts` yet
+2. Write the type definitions
+3. Add both files to `tsconfig.json`'s `include` list
+4. Run `npm run tsc`
+5. If something in this doc is wrong, fix it
 
 [tsconfig]: ../tsconfig.json
 [tsconfig-strictest]: https://www.npmjs.com/package/@tsconfig/strictest
-[tsconfig-node18]: https://www.npmjs.com/package/@tsconfig/node18
-[node-typescript]: https://nodejs.org/api/cli.html#cli_node_experimental_strip_types
-[ts-node-native]: https://devblogs.microsoft.com/typescript/announcing-typescript-5-8-beta/#the---erasablesyntaxonly-option
+[tsconfig-node24]: https://www.npmjs.com/package/@tsconfig/node24
+[tsconfig-node-ts]: https://www.npmjs.com/package/@tsconfig/node-ts
+[node-typescript]: https://nodejs.org/api/typescript.html
