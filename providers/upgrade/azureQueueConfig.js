@@ -4,6 +4,8 @@
 const config = require('painless-config')
 const AzureStorageQueue = require('../queueing/azureStorageQueue')
 
+/** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
+
 const defaultOptions = {
   connectionString:
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
@@ -14,6 +16,10 @@ const defaultOptions = {
   }
 }
 
+/**
+ * @param {AzureStorageQueueOptions} [options]
+ * @returns {import('../queueing/azureStorageQueue')}
+ */
 function azure(options) {
   const realOptions = options || defaultOptions
   return new AzureStorageQueue(realOptions)

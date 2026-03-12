@@ -6,13 +6,28 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 const { factory } = require('./defVersionCheck')
 const Cache = require('../caching/memory')
 
+/**
+ * @typedef {import('../queueing').IQueue} IQueue
+ * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage
+ * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
+ * @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler
+ * @typedef {import('../logging').Logger} Logger
+ * @typedef {import('../caching').ICache} ICache
+ */
+
 class QueueHandler {
+  /**
+   * @param {IQueue} queue
+   * @param {Logger} logger
+   * @param {import('./process').MessageHandler} [messageHandler]
+   */
   constructor(queue, logger, messageHandler = { processMessage: async () => {} }) {
     this._queue = queue
     this.logger = logger
     this._messageHandler = messageHandler
   }
 
+  /** @param {boolean} [once] */
   async work(once) {
     let isQueueEmpty = true
     try {
@@ -26,7 +41,7 @@ class QueueHandler {
       )
       results.filter(result => result.status === 'rejected').forEach(result => this.logger.error(result.reason))
     } catch (error) {
-      this.logger.error(error)
+      this.logger.error(error instanceof Error ? error.message : String(error))
     } finally {
       if (!once) setTimeout(this.work.bind(this), isQueueEmpty ? 10000 : 0)
     }
@@ -37,6 +52,12 @@ class DefinitionUpgrader {
   static defaultTtlSeconds = 60 * 5 /* 5 mins */
   static delayInMSeconds = 500
 
+  /**
+   * @param {DefinitionService} definitionService
+   * @param {Logger} logger
+   * @param {UpgradeHandler} defVersionChecker
+   * @param {ICache} [cache]
+   */
   constructor(
     definitionService,
     logger,
@@ -50,6 +71,7 @@ class DefinitionUpgrader {
     this._upgradeLock = cache
   }
 
+  /** @param {DequeuedMessage} message */
   async processMessage(message) {
     let coordinates = get(message, 'data.coordinates')
     if (!coordinates) return
@@ -66,6 +88,7 @@ class DefinitionUpgrader {
     }
   }
 
+  /** @param {import('../../lib/entityCoordinates')} coordinates */
   async _upgradeIfNecessary(coordinates) {
     try {
       const existing = await this._definitionService.getStored(coordinates)
@@ -78,13 +101,21 @@ class DefinitionUpgrader {
       }
     } catch (error) {
       const context = `Error handling definition upgrade for ${coordinates.toString()}`
-      const newError = new Error(`${context}: ${error.message}`)
-      newError.stack = error.stack
+      const originalError = error instanceof Error ? error : new Error(String(error))
+      const newError = new Error(`${context}: ${originalError.message}`)
+      newError.stack = originalError.stack
       throw newError
     }
   }
 }
 
+/**
+ * @param {IQueue} _queue
+ * @param {DefinitionService} _definitionService
+ * @param {Logger} _logger
+ * @param {boolean} [once]
+ * @param {UpgradeHandler} [_defVersionChecker]
+ */
 function setup(_queue, _definitionService, _logger, once = false, _defVersionChecker = factory({ logger: _logger })) {
   const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _defVersionChecker)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
