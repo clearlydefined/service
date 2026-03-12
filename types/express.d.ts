@@ -52,6 +52,11 @@ interface GitHubAuthUser {
 
 declare global {
   namespace Express {
+    interface Request {
+      /** Internal parsed URL object set by Node.js HTTP parser */
+      _parsedUrl?: { _raw?: string }
+    }
+
     interface Locals {
       /** User-level context including GitHub client and methods */
       user: {
