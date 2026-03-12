@@ -19,6 +19,7 @@
 /** @typedef {import('.').CurationListResult} CurationListResult */
 /** @typedef {import('.').MatchingRevisionAndReason} MatchingRevisionAndReason */
 /** @typedef {import('.').MatchingProperty} MatchingProperty */
+/** @typedef {import('./github').CommitStatusState} CommitStatusState */
 
 const {
   concat,
@@ -199,7 +200,7 @@ class GitHubCurationService {
   async validateContributions(number, sha, curations) {
     await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const invalidCurations = curations.filter(x => !x.isValid)
-    /** @type {"error" | "failure" | "pending" | "success"} */
+    /** @type {CommitStatusState} */
     let state = 'success'
     let description = 'All curations are valid'
     if (invalidCurations.length) {
@@ -885,7 +886,7 @@ ${this._formatDefinitions(patch.patches)}`
   /**
    * @param {string} sha
    * @param {number} number
-   * @param {import('./github').CommitStatusState} state
+   * @param {CommitStatusState} state
    * @param {string} description
    */
   async _postCommitStatus(sha, number, state, description) {
