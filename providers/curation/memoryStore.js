@@ -54,6 +54,7 @@ class MemoryStore {
 
   /** @param {EntityCoordinates} coordinates */
   list(coordinates) {
+    if (!coordinates) throw new Error('must specify coordinates to list')
     const pattern = this._getCurationId(coordinates)
     return Object.keys(this.curations)
       .filter(key => key.startsWith(pattern))

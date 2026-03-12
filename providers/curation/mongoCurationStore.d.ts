@@ -1,11 +1,21 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICurationStore, Contribution, ContributionPR, CurationListResult, MongoCurationStoreOptions } from '.'
+import type { ICurationStore, Contribution, ContributionPR, CurationListResult } from '.'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type Curation from '../../lib/curation'
 import type { Logger } from '../logging'
 import type { MongoClient, Db, Collection } from 'mongodb'
+
+/** Options for MongoDB-backed curation store */
+export interface MongoCurationStoreOptions {
+  /** MongoDB connection string */
+  connectionString: string
+  /** Database name */
+  dbName: string
+  /** Collection name */
+  collectionName: string
+}
 
 /**
  * MongoDB-backed curation store. Stores curations and contributions in a single collection.

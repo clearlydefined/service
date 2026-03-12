@@ -12,6 +12,7 @@
 /** @typedef {import('.').CurationDefinitionService} CurationDefinitionService */
 /** @typedef {import('.').CurationHarvestStore} CurationHarvestStore */
 /** @typedef {import('.').GitHubPR} GitHubPR */
+/** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
 /** @typedef {import('.').ContributionInfo} ContributionInfo */
 /** @typedef {import('.').CurationPatch} CurationPatch */
 /** @typedef {import('.').CurationPatchEntry} CurationPatchEntry */
@@ -353,7 +354,7 @@ class GitHubCurationService {
   /**
    * @param {GitHubClient | null} userGithub
    * @param {GitHubClient} serviceGithub
-   * @param {{ login?: string, name?: string, email?: string }} info
+   * @param {GitHubUserInfo} info
    * @param {CurationPatchEntry} patch
    * @param {string} branch
    */
@@ -624,7 +625,7 @@ class GitHubCurationService {
   /**
    * @param {GitHubClient | null} userGithub
    * @param {GitHubClient} serviceGithub
-   * @param {{ login?: string, name?: string, email?: string }} info
+   * @param {GitHubUserInfo} info
    * @param {CurationPatch} patch
    */
   async _addOrUpdate(userGithub, serviceGithub, info, patch) {
@@ -884,7 +885,7 @@ ${this._formatDefinitions(patch.patches)}`
   /**
    * @param {string} sha
    * @param {number} number
-   * @param {"error" | "failure" | "pending" | "success"} state
+   * @param {import('./github').CommitStatusState} state
    * @param {string} description
    */
   async _postCommitStatus(sha, number, state, description) {

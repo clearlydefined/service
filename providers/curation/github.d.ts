@@ -28,10 +28,13 @@ import type {
 
 /** User info returned from the GitHub API */
 export interface GitHubUserInfo {
-  name: string | null
-  email: string | null
-  login: string | null
+  name?: string | null
+  email?: string | null
+  login?: string | null
 }
+
+/** GitHub commit status state values */
+export type CommitStatusState = 'error' | 'failure' | 'pending' | 'success'
 
 /**
  * Manages curation patches in a GitHub repository.

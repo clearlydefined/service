@@ -60,19 +60,8 @@ export interface GitHubPR {
   base: { sha: string; repo?: { id: number } }
 }
 
-/** The PR shape persisted in the contribution store (picked subset of GitHubPR) */
-export interface ContributionPR {
-  number: number
-  id: number
-  state: string
-  title: string
-  body: string
-  created_at: string
-  updated_at: string
-  closed_at: string | null
-  merged_at: string | null
-  merge_commit_sha: string | null
-  user: { login: string }
+/** The PR shape persisted in the contribution store (like GitHubPR but without html_url; repo is always present) */
+export interface ContributionPR extends Omit<GitHubPR, 'html_url' | 'head' | 'base'> {
   head: { sha: string; repo: { id?: number } }
   base: { sha: string; repo: { id?: number } }
 }
@@ -148,16 +137,6 @@ export interface MatchingProperty {
   file?: string
   propPath?: string
   value?: unknown
-}
-
-/** Options for MongoDB-backed curation store */
-export interface MongoCurationStoreOptions {
-  /** MongoDB connection string */
-  connectionString: string
-  /** Database name */
-  dbName: string
-  /** Collection name */
-  collectionName: string
 }
 
 /**

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { GitHubCurationOptions, ICurationStore, Endpoints } from '.'
+import type { GitHubCurationOptions, ICurationStore, Endpoints, CurationHarvestStore } from '.'
 import type { GitHubCurationService } from './github'
 import type { ICache } from '../caching'
 
@@ -22,9 +22,7 @@ declare function github(
   store: ICurationStore,
   endpoints: Endpoints,
   cache: ICache,
-  harvestStore: {
-    getAll(coordinates: import('../../lib/entityCoordinates')): Promise<Record<string, Record<string, unknown>>>
-  }
+  harvestStore: CurationHarvestStore
 ): GitHubCurationService
 
 export = github

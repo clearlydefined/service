@@ -5,7 +5,7 @@
 /** @typedef {import('../../lib/curation')} Curation */
 /** @typedef {import('../../lib/curation').CurationData} CurationData */
 /** @typedef {import('../../lib/curation').CurationRevision} CurationRevision */
-/** @typedef {import('.').MongoCurationStoreOptions} MongoCurationStoreOptions */
+/** @typedef {import('./mongoCurationStore').MongoCurationStoreOptions} MongoCurationStoreOptions */
 /** @typedef {import('.').ContributionPR} ContributionPR */
 /** @typedef {import('mongodb').MongoClient} MongoClientType */
 /** @typedef {import('mongodb').Db} Db */
