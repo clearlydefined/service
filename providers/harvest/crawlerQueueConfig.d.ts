@@ -1,16 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { IQueue } from '../queueing'
 import { ICache } from '../caching'
 import { CacheBasedHarvester } from './cacheBasedCrawler'
+import { CrawlerQueueOptions } from './crawlerQueue'
 
 /** Configuration options for the queue-based crawler service factory */
-export interface CrawlerQueueConfigOptions {
-  /** Optional override for the deferred queue. Defaults to an Azure Storage queue from environment config */
-  later?: IQueue
-  /** Optional override for the immediate queue. Defaults to an Azure Storage queue from environment config */
-  normal?: IQueue
+export interface CrawlerQueueConfigOptions extends Partial<CrawlerQueueOptions> {
   /** Caching service instance passed through to the CacheBasedHarvester */
   cachingService: ICache
 }
