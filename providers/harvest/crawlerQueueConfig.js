@@ -6,6 +6,15 @@ const AzureStorageQueue = require('../queueing/azureStorageQueue')
 const crawler = require('./crawlerQueue')
 const cacheBasedCrawler = require('./cacheBasedCrawler')
 
+/**
+ * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions
+ * @typedef {import('./crawlerQueueConfig').CrawlerQueueConfigOptions} CrawlerQueueConfigOptions
+ */
+
+/**
+ * @param {AzureStorageQueueOptions} [options]
+ * @returns {AzureStorageQueue}
+ */
 function later(options) {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
@@ -14,6 +23,10 @@ function later(options) {
   return new AzureStorageQueue(realOptions)
 }
 
+/**
+ * @param {AzureStorageQueueOptions} [options]
+ * @returns {AzureStorageQueue}
+ */
 function normal(options) {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
@@ -22,6 +35,10 @@ function normal(options) {
   return new AzureStorageQueue(realOptions)
 }
 
+/**
+ * @param {CrawlerQueueConfigOptions} [options]
+ * @returns {import('./cacheBasedCrawler').CacheBasedHarvester}
+ */
 function serviceFactory(options) {
   const crawlerOptions = {
     later: options?.later || later(),

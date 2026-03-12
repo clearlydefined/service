@@ -5,6 +5,16 @@ const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { parseUrn } = require('../../lib/utils')
 
+/**
+ * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage
+ * @typedef {import('../queueing').IQueue} IQueue
+ * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
+ * @typedef {import('../logging').Logger} Logger
+ */
+
+/**
+ * @param {boolean} [once]
+ */
 async function work(once) {
   let isQueueEmpty = true
   try {
@@ -12,7 +22,7 @@ async function work(once) {
     if (messages && messages.length > 0) isQueueEmpty = false
     await Promise.all(messages.map(message => processMessage(message)))
   } catch (error) {
-    logger.error(error)
+    logger.error(error instanceof Error ? error.message : String(error))
   } finally {
     if (!once) {
       setTimeout(work, isQueueEmpty ? 10000 : 0)
@@ -20,6 +30,9 @@ async function work(once) {
   }
 }
 
+/**
+ * @param {DequeuedMessage} message
+ */
 async function processMessage(message) {
   const urn = get(message, 'data._metadata.links.self.href')
   if (!urn) return
@@ -34,10 +47,19 @@ async function processMessage(message) {
   logger.info(`Handled Crawler update event for ${urn}`)
 }
 
+/** @type {IQueue} */
 let queue
+/** @type {DefinitionService} */
 let definitionService
+/** @type {Logger} */
 let logger
 
+/**
+ * @param {IQueue} _queue
+ * @param {DefinitionService} _definitionService
+ * @param {Logger} _logger
+ * @param {boolean} [once]
+ */
 function setup(_queue, _definitionService, _logger, once = false) {
   queue = _queue
   definitionService = _definitionService

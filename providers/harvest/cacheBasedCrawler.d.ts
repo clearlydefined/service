@@ -2,17 +2,33 @@
 // SPDX-License-Identifier: MIT
 
 import { Logger } from '../logging'
+import { ICache } from '../caching'
 import EntityCoordinates from '../../lib/entityCoordinates'
+
+/** Policy configuration for a harvest operation */
+export interface HarvestPolicy {
+  fetch?: string
+  freshness?: string
+  map?: { name: string; path: string }
+}
 
 /** A harvest entry containing coordinates and related metadata */
 export interface HarvestEntry {
   coordinates: EntityCoordinates
+  /** Tool identifier (e.g., 'component', 'scancode'). Defaults to 'component' when absent */
+  tool?: string
+  /** Harvest policy configuration */
+  policy?: HarvestPolicy
 }
 
 /** An item representing a harvest call with associated metadata */
 export interface HarvestCallItem {
-  // Properties will be defined by the specific implementation
-  [key: string]: any
+  /** Tool or component type for the harvest (e.g., 'component') */
+  type: string
+  /** ClearlyDefined URL for the component (e.g., 'cd:/npm/npmjs/-/lodash/4.17.21') */
+  url: string
+  /** Harvest policy configuration */
+  policy?: HarvestPolicy
 }
 
 /** Cache entry storing harvest information for specific coordinates */
@@ -21,35 +37,6 @@ export interface CacheEntry {
   key: string
   /** Array of harvest call items associated with this cache entry */
   harvests: HarvestCallItem[]
-}
-
-/** Service for caching operations */
-export interface CachingService {
-  /**
-   * Retrieves a value from the cache
-   *
-   * @param key - The cache key
-   * @returns Promise resolving to the cached value or undefined
-   */
-  get(key: string): Promise<any>
-
-  /**
-   * Sets a value in the cache
-   *
-   * @param key - The cache key
-   * @param value - The value to cache
-   * @param ttl - Time to live in seconds (optional)
-   * @returns Promise that resolves when the value is set
-   */
-  set(key: string, value: any, ttl?: number): Promise<void>
-
-  /**
-   * Deletes a value from the cache
-   *
-   * @param key - The cache key
-   * @returns Promise that resolves when the value is deleted
-   */
-  delete(key: string): Promise<void>
 }
 
 /** Service for harvesting component data */
@@ -77,7 +64,7 @@ export interface Options {
   /** Optional logger instance. If not provided, a default logger will be used */
   logger?: Logger
   /** Caching service instance for storing harvest tracking data */
-  cachingService: CachingService
+  cachingService: ICache
   /** Harvester instance for processing harvest operations */
   harvester: Harvester
   /** Optional concurrency limit for parallel operations. Defaults to 10 */
@@ -125,3 +112,4 @@ export declare class CacheBasedHarvester {
 declare function createCacheBasedHarvester(options: Options): CacheBasedHarvester
 
 export default createCacheBasedHarvester
+export = createCacheBasedHarvester

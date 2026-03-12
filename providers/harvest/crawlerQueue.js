@@ -3,13 +3,24 @@
 
 const logger = require('../logging/logger')
 
+/**
+ * @typedef {import('./crawlerQueue').CrawlerQueueOptions} CrawlerQueueOptions
+ * @typedef {import('./cacheBasedCrawler').HarvestEntry} HarvestEntry
+ * @typedef {import('./cacheBasedCrawler').HarvestCallItem} HarvestCallItem
+ */
+
 class CrawlingQueueHarvester {
+  /** @param {CrawlerQueueOptions} options */
   constructor(options) {
     this.logger = logger()
     this.normalQueue = options.normal
     this.laterQueue = options.later
   }
 
+  /**
+   * @param {HarvestEntry | HarvestEntry[]} spec
+   * @param {boolean} [turbo]
+   */
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
     for (let entry of entries) {
@@ -19,6 +30,10 @@ class CrawlingQueueHarvester {
     }
   }
 
+  /**
+   * @param {HarvestEntry} entry
+   * @returns {HarvestCallItem}
+   */
   toHarvestItem(entry) {
     return {
       type: entry.tool || 'component',
@@ -32,4 +47,4 @@ class CrawlingQueueHarvester {
   }
 }
 
-module.exports = options => new CrawlingQueueHarvester(options)
+module.exports = /** @param {CrawlerQueueOptions} options */ options => new CrawlingQueueHarvester(options)
