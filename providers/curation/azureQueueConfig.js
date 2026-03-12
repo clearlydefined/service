@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+/** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
+
 const config = require('painless-config')
 const AzureStorageQueue = require('../queueing/azureStorageQueue')
 
+/** @param {AzureStorageQueueOptions} [options] */
 function azure(options) {
   const realOptions = options || {
     connectionString: config.get('CURATION_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
