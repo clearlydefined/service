@@ -4,6 +4,10 @@
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const memory = require('../queueing/memoryQueue')
 
+/**
+ * @param {Partial<import('./defUpgradeQueue').DefinitionQueueUpgraderOptions>} [options]
+ * @returns {import('./defUpgradeQueue')}
+ */
 function serviceFactory(options = {}) {
   const mergedOptions = { queue: memory, ...options }
   return new DefinitionQueueUpgrader(mergedOptions)

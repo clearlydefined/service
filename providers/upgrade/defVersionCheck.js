@@ -6,20 +6,32 @@ const { gte } = require('semver')
 const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 
+/**
+ * @typedef {import('../logging').Logger} Logger
+ * @typedef {import('../../business/definitionService').Definition} Definition
+ */
+
 class DefinitionVersionChecker {
+  /** @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options] */
   constructor(options = {}) {
     this.options = options
     this.logger = this.options.logger || logger()
   }
 
+  /** @param {string} schemaVersion */
   set currentSchema(schemaVersion) {
     this._currentSchema = schemaVersion
   }
 
+  /** @returns {string} */
   get currentSchema() {
     return this._currentSchema
   }
 
+  /**
+   * @param {Definition | null} definition
+   * @returns {Promise<Definition | undefined>}
+   */
   async validate(definition) {
     if (!this._currentSchema) throw new Error('Current schema version is not set')
     const defSchemaVersion = get(definition, '_meta.schemaVersion')
@@ -27,6 +39,7 @@ class DefinitionVersionChecker {
       `Definition version: ${defSchemaVersion}, Current schema version: ${this._currentSchema}, Coordinates: ${DefinitionVersionChecker.getCoordinates(definition)}`
     )
     if (defSchemaVersion && gte(defSchemaVersion, this._currentSchema)) return definition
+    return undefined
   }
 
   async initialize() {
@@ -37,11 +50,19 @@ class DefinitionVersionChecker {
     //do nothing for set up processing
   }
 
+  /**
+   * @param {Definition} definition
+   * @returns {string | undefined}
+   */
   static getCoordinates(definition) {
     return definition?.coordinates && EntityCoordinates.fromObject(definition.coordinates).toString()
   }
 }
 
+/**
+ * @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options]
+ * @returns {DefinitionVersionChecker}
+ */
 const factory = options => new DefinitionVersionChecker(options)
 
 module.exports = { DefinitionVersionChecker, factory }

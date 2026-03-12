@@ -3,9 +3,15 @@
 
 const MemoryQueue = require('../queueing/memoryQueue')
 
+/** @typedef {import('../queueing/memoryQueue').MemoryQueueOptions} MemoryQueueOptions */
+
+/**
+ * @param {MemoryQueueOptions} [opts]
+ * @returns {import('../queueing/memoryQueue').MemoryQueue}
+ */
 const encodedMessageQueueFactory = opts => {
   const defaultOpts = {
-    decoder: text => Buffer.from(text, 'base64').toString('utf8')
+    decoder: (/** @type {string} */ text) => Buffer.from(text, 'base64').toString('utf8')
   }
   const mergedOpts = { ...defaultOpts, ...opts }
   return MemoryQueue(mergedOpts)

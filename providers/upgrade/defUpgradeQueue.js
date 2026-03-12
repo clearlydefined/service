@@ -4,9 +4,20 @@
 const { DefinitionVersionChecker } = require('./defVersionCheck')
 const { setup } = require('./process')
 
+/**
+ * @typedef {import('../../business/definitionService').Definition} Definition
+ * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
+ * @typedef {import('../logging').Logger} Logger
+ */
+
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
+  /**
+   * @override
+   * @param {Definition | null} definition
+   * @returns {Promise<Definition | undefined>}
+   */
   async validate(definition) {
-    if (!definition) return
+    if (!definition) return undefined
     const result = await super.validate(definition)
     if (result) return result
 
@@ -14,6 +25,7 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     return definition
   }
 
+  /** @param {Definition} definition */
   async _queueUpgrade(definition) {
     if (!this._upgrade) throw new Error('Upgrade queue is not set')
     try {
@@ -24,24 +36,37 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
       })
     } catch (error) {
       //continue if queueing fails and requeue at the next request.
-      this.logger.error(`Error queueing for definition upgrade ${error.message}`, {
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error(`Error queueing for definition upgrade ${message}`, {
         error,
         coordinates: DefinitionVersionChecker.getCoordinates(definition)
       })
     }
   }
 
+  /**
+   * @param {Definition} definition
+   * @returns {string}
+   */
   _constructMessage(definition) {
     const { coordinates, _meta } = definition
     const content = { coordinates, _meta }
     return Buffer.from(JSON.stringify(content)).toString('base64')
   }
 
+  /** @override */
   async initialize() {
-    this._upgrade = this.options.queue()
+    const options = /** @type {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} */ (this.options)
+    this._upgrade = options.queue()
     return this._upgrade.initialize()
   }
 
+  /**
+   * @override
+   * @param {DefinitionService} definitionService
+   * @param {Logger} logger
+   * @param {boolean} [once]
+   */
   setupProcessing(definitionService, logger, once) {
     return setup(this._upgrade, definitionService, logger, once)
   }
