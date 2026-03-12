@@ -18,7 +18,9 @@ const { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachin
 
 const v1 = '1.0.0'
 
+/** @param {import('./bin/config').AppConfig} config */
 function createApp(config) {
+  /** @type {(() => Promise<void>)[]} */
   const initializers = []
 
   const logger = loggerFactory(config.logging.logger())
@@ -190,7 +192,8 @@ function createApp(config) {
   app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
-  const requestHandler = (req, res, next) => {
+  /** @param {import('express').Request} req @param {import('express').Response} _res @param {import('express').NextFunction} next */
+  const requestHandler = (req, _res, next) => {
     logger.info('Error when handling a request', {
       rawUrl: req._parsedUrl._raw,
       baseUrl: req.baseUrl,
@@ -199,14 +202,14 @@ function createApp(config) {
       route: req.route,
       url: req.url
     })
-    const err = new Error('Not Found')
+    const err = /** @type {Error & { status?: number }} */ (new Error('Not Found'))
     err.status = 404
     next(err)
   }
   app.use(requestHandler)
 
-  // Attach the init code to any request handler
-  requestHandler.init = async (app, callback) => {
+  /** @param {unknown} _app @param {(error?: Error) => void} callback */
+  requestHandler.init = async (_app, callback) => {
     Promise.all(initializers.map(init => init())).then(
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
@@ -228,36 +231,41 @@ function createApp(config) {
       }
     )
   }
+  const appAsUnknown = /** @type {unknown} */ (app)
+  /** @type {import('./app').App} */
+  const appWithInit = /** @type {import('./app').App} */ (appAsUnknown)
+  appWithInit.init = requestHandler.init
 
-  app.init = requestHandler.init
+  /** @param {Error & {status?: number}} error @param {import('express').Request} request @param {import('express').Response} response @param {import('express').NextFunction} next */
+  const errorHandler = (error, request, response, next) => {
+    if (response.headersSent) {
+      next(error)
+    } else {
+      // Don't log Azure robot liveness checks
+      // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
+      if (!(request && request.url && request.url.includes('robots933456.txt')))
+        logger.error('SvcRequestFailure: ' + request.url, error)
 
-  // error handler
-  app.use((error, request, response, next) => {
-    if (response.headersSent) return next(error)
+      // set locals, only providing error in development
+      response.locals.message = error.message
+      response.locals.error = request.app.get('env') === 'development' ? error : {}
+      const status = typeof error.status === 'number' ? error.status : 500
+      // return the error
+      response
+        .status(status)
+        .type('application/json')
+        .send({
+          error: {
+            code: status.toString(),
+            message: 'An error has occurred',
+            innererror: serializeError.serializeError(response.locals.error)
+          }
+        })
+    }
+  }
+  app.use(errorHandler)
 
-    // Don't log Azure robot liveness checks
-    // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
-    if (!(request && request.url && request.url.includes('robots933456.txt')))
-      logger.error('SvcRequestFailure: ' + request.url, error)
-
-    // set locals, only providing error in development
-    response.locals.message = error.message
-    response.locals.error = request.app.get('env') === 'development' ? error : {}
-    const status = typeof error.status === 'number' ? error.status : 500
-    // return the error
-    response
-      .status(status)
-      .type('application/json')
-      .send({
-        error: {
-          code: status.toString(),
-          message: 'An error has occurred',
-          innererror: serializeError.serializeError(response.locals.error)
-        }
-      })
-  })
-
-  return app
+  return appWithInit
 }
 
 module.exports = createApp

@@ -217,10 +217,7 @@ export interface SummaryService {
 /** Aggregation service interface */
 export interface AggregationService {
   /** Process summarized data into a single definition */
-  process(
-    summarized: Record<string, Record<string, any>>,
-    coordinates: EntityCoordinates
-  ): Promise<Partial<Definition> | null>
+  process(summarized: Record<string, Record<string, any>>, coordinates: EntityCoordinates): Partial<Definition> | null
 }
 
 /** Curation service interface */
