@@ -262,6 +262,16 @@ export interface UpgradeHandler {
   validate(definition: Definition | null): Promise<Definition | null>
 }
 
+/** Unified recompute handler interface (upgrade + non-force compute fallback) */
+export interface RecomputeHandler extends UpgradeHandler {
+  initialize(): Promise<void> | void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
+  compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
+}
+
+/** Compute-on-get handler implementation contract */
+export interface ComputeOnGetHandler extends RecomputeHandler {}
+
 /**
  * Service for managing component definitions.
  * Handles computation, caching, storage, and retrieval of definitions.
@@ -283,8 +293,8 @@ export declare class DefinitionService {
   protected search: SearchService
   /** Cache instance */
   protected cache: ICache
-  /** Upgrade handler instance */
-  protected upgradeHandler: UpgradeHandler
+  /** Recompute handler instance */
+  protected recomputeHandler: RecomputeHandler
   /** Logger instance */
   protected logger: Logger
 
@@ -299,7 +309,7 @@ export declare class DefinitionService {
    * @param store - Store for definitions
    * @param search - Service for searching definitions
    * @param cache - Cache for definitions
-   * @param upgradeHandler - Handler for schema upgrades
+   * @param recomputeHandler - Handler for schema upgrades and non-force recompute fallback
    */
   constructor(
     harvestStore: HarvestStore,
@@ -310,7 +320,7 @@ export declare class DefinitionService {
     store: DefinitionStore,
     search: SearchService,
     cache: ICache,
-    upgradeHandler: UpgradeHandler
+    recomputeHandler: RecomputeHandler
   )
 
   /** Get the current schema version */
