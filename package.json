@@ -31,7 +31,7 @@
     "ajv": "8.18.0",
     "ajv-errors": "3.0.0",
     "ajv-formats": "3.0.1",
-    "applicationinsights": "3.13.0",
+    "applicationinsights": "3.14.0",
     "axios": "1.13.5",
     "azure-storage": "2.10.7",
     "base-64": "1.0.0",
