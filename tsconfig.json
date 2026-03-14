@@ -187,7 +187,6 @@
     "providers/upgrade/memoryQueueConfig.js",
     "middleware/asyncMiddleware.d.ts",
     "middleware/asyncMiddleware.js",
-    "middleware/querystring.d.ts",
     "middleware/permissions.d.ts",
     "middleware/permissions.js",
     "middleware/github.d.ts",
