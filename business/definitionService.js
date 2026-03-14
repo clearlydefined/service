@@ -18,7 +18,7 @@
  * @typedef {import('./definitionService').CurationService} CurationService
  * @typedef {import('./definitionService').DefinitionStore} DefinitionStore
  * @typedef {import('./definitionService').SearchService} SearchService
- * @typedef {import('./definitionService').UpgradeHandler} UpgradeHandler
+ * @typedef {import('./definitionService').RecomputeHandler} RecomputeHandler
  * @typedef {import('./definitionService').DescribedScore} DescribedScore
  * @typedef {import('./definitionService').LicensedScore} LicensedScore
  * @typedef {import('./definitionService').FacetInfo} FacetInfo
@@ -80,9 +80,9 @@ class DefinitionService {
    * @param {DefinitionStore} store - Store for definitions
    * @param {SearchService} search - Service for searching definitions
    * @param {ICache} cache - Cache for definitions
-   * @param {UpgradeHandler} upgradeHandler - Handler for schema upgrades
+   * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
    */
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, upgradeHandler) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, recomputeHandler) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -91,8 +91,8 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
     this.cache = cache
-    this.upgradeHandler = upgradeHandler
-    if (this.upgradeHandler) this.upgradeHandler.currentSchema = currentSchema
+    this.recomputeHandler = recomputeHandler
+    if (this.recomputeHandler) this.recomputeHandler.currentSchema = currentSchema
     this.logger = logger()
   }
 
@@ -118,10 +118,14 @@ class DefinitionService {
     }
 
     const existing = await this._cacheExistingAside(coordinates, force)
-    let result = await this.upgradeHandler.validate(existing)
+    let result = await this.recomputeHandler.validate(existing)
     if (result) {
       this._logDefinitionStatus(result, coordinates)
-    } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
+    } else if (force) {
+      result = await this.computeAndStore(coordinates)
+    } else {
+      result = await this.recomputeHandler.compute(/** @type {any} */ (this), coordinates)
+    }
     return this._trimDefinition(this._cast(result), expand)
   }
 
@@ -967,10 +971,20 @@ class DefinitionService {
  * @param {DefinitionStore} store - Store for definitions
  * @param {SearchService} search - Service for searching definitions
  * @param {ICache} cache - Cache for definitions
- * @param {UpgradeHandler} versionHandler - Handler for schema upgrades
+ * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
  * @returns {DefinitionService} A new DefinitionService instance
  */
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, versionHandler) =>
+module.exports = (
+  harvestStore,
+  harvestService,
+  summary,
+  aggregator,
+  curation,
+  store,
+  search,
+  cache,
+  recomputeHandler
+) =>
   new DefinitionService(
     harvestStore,
     harvestService,
@@ -980,5 +994,5 @@ module.exports = (harvestStore, harvestService, summary, aggregator, curation, s
     store,
     search,
     cache,
-    versionHandler
+    recomputeHandler
   )

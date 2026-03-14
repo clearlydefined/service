@@ -473,12 +473,12 @@ describe('Integration test', () => {
       info: () => {}
     }
 
-    let upgradeHandler
+    let recomputeHandler
 
     const handleVersionedDefinition = function () {
       describe('verify schema version', () => {
         it('logs and harvests new definitions with empty tools', async () => {
-          const { service } = setupServiceForUpgrade(null, upgradeHandler)
+          const { service } = setupServiceForUpgrade(null, recomputeHandler)
           service._harvest = sinon.stub()
           await service.get(coordinates)
           expect(service._harvest.calledOnce).to.be.true
@@ -486,7 +486,7 @@ describe('Integration test', () => {
         })
 
         it('computes if definition does not exist', async () => {
-          const { service } = setupServiceForUpgrade(null, upgradeHandler)
+          const { service } = setupServiceForUpgrade(null, recomputeHandler)
           service.computeStoreAndCurate = sinon.stub().resolves(definition)
           await service.get(coordinates)
           expect(service.computeStoreAndCurate.calledOnce).to.be.true
@@ -494,7 +494,7 @@ describe('Integration test', () => {
         })
 
         it('returns the up-to-date definition', async () => {
-          const { service } = setupServiceForUpgrade(definition, upgradeHandler)
+          const { service } = setupServiceForUpgrade(definition, recomputeHandler)
           service.computeStoreAndCurate = sinon.stub()
           const result = await service.get(coordinates)
           expect(service.computeStoreAndCurate.called).to.be.false
@@ -505,8 +505,10 @@ describe('Integration test', () => {
 
     describe('schema version check', () => {
       beforeEach(async () => {
-        upgradeHandler = new DefinitionVersionChecker({ logger })
-        await upgradeHandler.initialize()
+        recomputeHandler = new DefinitionVersionChecker({ logger })
+        await recomputeHandler.initialize()
+        recomputeHandler.compute = (definitionService, recomputeCoordinates) =>
+          definitionService.computeStoreAndCurate(recomputeCoordinates)
       })
 
       handleVersionedDefinition()
@@ -514,7 +516,7 @@ describe('Integration test', () => {
       context('with stale definitions', () => {
         it('recomputes a definition with the updated schema version', async () => {
           const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
-          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const { service, store } = setupServiceForUpgrade(staleDef, recomputeHandler)
           const result = await service.get(coordinates)
           expect(result._meta.schemaVersion).to.eq('1.7.0')
           expect(result.coordinates).to.deep.equal(coordinates)
@@ -528,8 +530,10 @@ describe('Integration test', () => {
       beforeEach(async () => {
         queue = memoryQueue()
         const queueFactory = sinon.stub().returns(queue)
-        upgradeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
-        await upgradeHandler.initialize()
+        recomputeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
+        await recomputeHandler.initialize()
+        recomputeHandler.compute = (definitionService, recomputeCoordinates) =>
+          definitionService.computeStoreAndCurate(recomputeCoordinates)
         staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
       })
 
@@ -537,11 +541,11 @@ describe('Integration test', () => {
 
       context('with stale definitions', () => {
         it('returns a stale definition, queues update, recomputes and retrieves the updated definition', async () => {
-          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const { service, store } = setupServiceForUpgrade(staleDef, recomputeHandler)
           const result = await service.get(coordinates)
           expect(result).to.deep.equal(staleDef)
           expect(queue.data.length).to.eq(1)
-          await upgradeHandler.setupProcessing(service, logger, true)
+          await recomputeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
           expect(newResult._meta.schemaVersion).to.eq('1.7.0')
           expect(store.store.calledOnce).to.be.true
@@ -549,14 +553,14 @@ describe('Integration test', () => {
         })
 
         it('computes once when the same coordinates is queued twice', async () => {
-          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const { service, store } = setupServiceForUpgrade(staleDef, recomputeHandler)
           await service.get(coordinates)
           const result = await service.get(coordinates)
           expect(result).to.deep.equal(staleDef)
           expect(queue.data.length).to.eq(2)
-          await upgradeHandler.setupProcessing(service, logger, true)
+          await recomputeHandler.setupProcessing(service, logger, true)
           expect(queue.data.length).to.eq(1)
-          await upgradeHandler.setupProcessing(service, logger, true)
+          await recomputeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
           expect(newResult._meta.schemaVersion).to.eq('1.7.0')
           expect(store.store.calledOnce).to.be.true
@@ -564,7 +568,7 @@ describe('Integration test', () => {
         })
 
         it('computes once when the same coordinates is queued twice within one dequeue batch ', async () => {
-          const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
+          const { service, store } = setupServiceForUpgrade(staleDef, recomputeHandler)
           await service.get(coordinates)
           await service.get(coordinates)
           queue.dequeueMultiple = sinon.stub().callsFake(async () => {
@@ -572,7 +576,7 @@ describe('Integration test', () => {
             const message2 = await queue.dequeue()
             return Promise.resolve([message1, message2])
           })
-          await upgradeHandler.setupProcessing(service, logger, true)
+          await recomputeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
           expect(newResult._meta.schemaVersion).to.eq('1.7.0')
           expect(store.store.calledOnce).to.be.true
@@ -620,7 +624,7 @@ function setupServiceToCalculateDefinition(rawHarvestData) {
   return setupWithDelegates(curator, harvestStore, summary, aggregator)
 }
 
-function setupServiceForUpgrade(definition, upgradeHandler) {
+function setupServiceForUpgrade(definition, recomputeHandler) {
   let storedDef = definition && { ...definition }
   const store = {
     get: sinon.stub().resolves(storedDef),
@@ -634,7 +638,7 @@ function setupServiceForUpgrade(definition, upgradeHandler) {
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
     autoCurate: () => {}
   }
-  const service = setupWithDelegates(curator, harvestStore, summary, aggregator, store, upgradeHandler)
+  const service = setupWithDelegates(curator, harvestStore, summary, aggregator, store, recomputeHandler)
   return { service, store }
 }
 
@@ -644,7 +648,12 @@ function setupWithDelegates(
   summary,
   aggregator,
   store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
-  upgradeHandler = { validate: def => Promise.resolve(def) }
+  recomputeHandler = {
+    validate: def => Promise.resolve(def),
+    initialize: () => Promise.resolve(),
+    setupProcessing: () => Promise.resolve(),
+    compute: (definitionService, recomputeCoordinates) => definitionService.computeStoreAndCurate(recomputeCoordinates)
+  }
 ) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
@@ -658,7 +667,7 @@ function setupWithDelegates(
     store,
     search,
     cache,
-    upgradeHandler
+    recomputeHandler
   )
   service.logger = { info: sinon.stub(), debug: () => {} }
   return service
@@ -700,7 +709,12 @@ function setup(definition, coordinateSpec, curation) {
   const harvestService = mockHarvestService()
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const upgradeHandler = { validate: def => Promise.resolve(def) }
+  const recomputeHandler = {
+    validate: def => Promise.resolve(def),
+    initialize: () => Promise.resolve(),
+    setupProcessing: () => Promise.resolve(),
+    compute: (definitionService, recomputeCoordinates) => definitionService.computeStoreAndCurate(recomputeCoordinates)
+  }
   const service = DefinitionService(
     harvestStore,
     harvestService,
@@ -710,7 +724,7 @@ function setup(definition, coordinateSpec, curation) {
     store,
     search,
     cache,
-    upgradeHandler
+    recomputeHandler
   )
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
