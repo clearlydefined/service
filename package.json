@@ -116,7 +116,7 @@
     "eslint-config-prettier": "10.1.8",
     "globals": "17.4.0",
     "mocha": "11.7.5",
-    "mockttp": "4.2.2",
+    "mockttp": "4.2.3",
     "mongodb-memory-server": "11.0.1",
     "node-mocks-http": "1.17.2",
     "nodemon": "3.1.14",
