@@ -1,4 +1,4 @@
-// (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
+// (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 import type { Logger } from '../logging'
@@ -22,7 +22,7 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 
   initialize(): Promise<void>
 
-  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void>
 
   compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
