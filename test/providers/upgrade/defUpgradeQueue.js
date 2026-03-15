@@ -112,7 +112,7 @@ describe('DefinitionQueueUpgrader', () => {
     let queue, upgrader
 
     beforeEach(async () => {
-      queue = MemoryQueue()
+      queue = MemoryQueue.upgrade()
       upgrader = new DefinitionQueueUpgrader({ logger, queue: sinon.stub().returns(queue) })
       await upgrader.initialize()
       upgrader.currentSchema = '1.0.0'

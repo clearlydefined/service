@@ -5,11 +5,13 @@ const { factory: versionCheckFactory } = require('./defVersionCheck')
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
 const { createDelayedComputePolicy } = require('./queueComputePolicy')
+const memoryQueueConfig = require('./memoryQueueConfig')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
 /** @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler */
 /** @typedef {import('../logging').Logger} Logger */
+/** @typedef {import('../queueing').IQueue} IQueue */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('./computePolicy').MissingDefinitionComputePolicy} MissingDefinitionComputePolicy */
 
@@ -21,6 +23,13 @@ const { createDelayedComputePolicy } = require('./queueComputePolicy')
  */
 
 /** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy?: MissingDefinitionComputePolicy }} RecomputeHandlerOptions */
+
+/**
+ * @typedef {{
+ *   queue?: { upgrade?: () => IQueue, compute?: () => IQueue },
+ *   logger?: Logger
+ * }} DelayedFactoryOptions
+ */
 
 class RecomputeHandler {
   /** @param {RecomputeHandlerOptions} options */
@@ -82,14 +91,24 @@ function defaultFactory(options = {}) {
 
 /**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=upgradeQueue.
- * @param {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} [options]
+ * @param {DelayedFactoryOptions} [options]
  */
-function delayedFactory(
-  options = /** @type {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })
-) {
+function delayedFactory(options = {}) {
+  const shared = {
+    logger: options.logger
+  }
+  const upgradeOptions = {
+    ...shared,
+    queue: options.queue?.upgrade || memoryQueueConfig.upgrade
+  }
+  const computeOptions = {
+    ...shared,
+    queue: options.queue?.compute || memoryQueueConfig.compute
+  }
+
   return new RecomputeHandler({
-    upgradePolicy: new DefinitionQueueUpgrader(options),
-    computePolicy: createDelayedComputePolicy(options)
+    upgradePolicy: new DefinitionQueueUpgrader(upgradeOptions),
+    computePolicy: createDelayedComputePolicy(computeOptions)
   })
 }
 

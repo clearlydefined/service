@@ -528,7 +528,7 @@ describe('Integration test', () => {
     describe('queueing schema version updates', () => {
       let queue, staleDef
       beforeEach(async () => {
-        queue = memoryQueue()
+        queue = memoryQueue.upgrade()
         const queueFactory = sinon.stub().returns(queue)
         recomputeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
         await recomputeHandler.initialize()

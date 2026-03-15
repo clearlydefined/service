@@ -6,7 +6,7 @@ const AzureStorageQueue = require('../queueing/azureStorageQueue')
 
 /** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
 
-const defaultOptions = {
+const upgradeDefaultOptions = {
   connectionString:
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
   queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
@@ -16,13 +16,36 @@ const defaultOptions = {
   }
 }
 
+const computeDefaultOptions = {
+  connectionString:
+    config.get('DEFINITION_COMPUTE_QUEUE_CONNECTION_STRING') ||
+    config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') ||
+    config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+  queueName: config.get('DEFINITION_COMPUTE_QUEUE_NAME') || 'recompute',
+  dequeueOptions: {
+    numOfMessages:
+      config.get('DEFINITION_COMPUTE_DEQUEUE_BATCH_SIZE') || config.get('DEFINITION_UPGRADE_DEQUEUE_BATCH_SIZE') || 16,
+    visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
+  }
+}
+
 /**
  * @param {AzureStorageQueueOptions} [options]
  * @returns {import('../queueing/azureStorageQueue')}
  */
 function azure(options) {
-  const realOptions = options || defaultOptions
-  return new AzureStorageQueue(realOptions)
+  return new AzureStorageQueue(options || upgradeDefaultOptions)
 }
 
-module.exports = azure
+/**
+ * @param {AzureStorageQueueOptions} [options]
+ * @returns {import('../queueing/azureStorageQueue')}
+ */
+function computeQueueFactory(options) {
+  return new AzureStorageQueue(options || computeDefaultOptions)
+}
+
+module.exports = {
+  upgrade: azure,
+  compute: computeQueueFactory
+}

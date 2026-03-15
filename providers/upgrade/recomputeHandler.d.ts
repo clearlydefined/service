@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Logger } from '../logging'
+import type { IQueue } from '../queueing'
 import type {
   Definition,
   DefinitionService,
@@ -9,9 +10,16 @@ import type {
   UpgradeHandler
 } from '../../business/definitionService'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { DefinitionVersionCheckerOptions } from './defVersionCheck'
-import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
 import type { MissingDefinitionComputePolicy } from './computePolicy'
+import type { DefinitionVersionCheckerOptions } from './defVersionCheck'
+
+export interface DelayedFactoryOptions {
+  queue?: {
+    upgrade?: () => IQueue
+    compute?: () => IQueue
+  }
+  logger?: Logger
+}
 
 export declare class RecomputeHandler implements IRecomputeHandler {
   currentSchema?: string
@@ -31,4 +39,4 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 export declare function defaultFactory(options?: DefinitionVersionCheckerOptions): RecomputeHandler
 
 /** Compatibility alias for DEFINITION_UPGRADE_PROVIDER=upgradeQueue */
-export declare function delayedFactory(options?: DefinitionQueueUpgraderOptions): RecomputeHandler
+export declare function delayedFactory(options?: DelayedFactoryOptions): RecomputeHandler
