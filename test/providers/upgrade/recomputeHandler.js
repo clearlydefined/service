@@ -68,18 +68,29 @@ describe('RecomputeHandler compute policies', () => {
   })
 
   it('delayedFactory wires delayed compute policy to queue upgrader', async () => {
-    const queue = {
+    const upgradeQueue = {
+      queue: sinon.stub().resolves(),
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([]),
+      delete: sinon.stub().resolves()
+    }
+    const computeQueue = {
       queue: sinon.stub().resolves(),
       initialize: sinon.stub().resolves()
     }
-    const handler = delayedFactory({ logger: { info: sinon.stub(), error: sinon.stub() }, queue: () => queue })
+    const handler = delayedFactory({
+      logger: { info: sinon.stub(), error: sinon.stub(), debug: sinon.stub() },
+      queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
+    })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
     const definitionService = { currentSchema: '1.7.0' }
 
     await handler.initialize()
     const result = await handler.compute(definitionService, coordinates)
 
-    expect(queue.queue.calledOnce).to.be.true
+    expect(upgradeQueue.initialize.calledOnce).to.be.true
+    expect(computeQueue.initialize.calledOnce).to.be.true
+    expect(computeQueue.queue.calledOnce).to.be.true
     expect(result.coordinates).to.deep.equal(coordinates)
     expect(result.described.tools).to.deep.equal([])
     expect(result._meta.schemaVersion).to.equal('1.7.0')

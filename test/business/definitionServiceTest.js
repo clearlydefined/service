@@ -532,7 +532,7 @@ describe('Integration test', () => {
       let queue
       let staleDef
       beforeEach(async () => {
-        queue = memoryQueue()
+        queue = memoryQueue.upgrade()
         const queueFactory = sinon.stub().returns(queue)
         recomputeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
         await recomputeHandler.initialize()

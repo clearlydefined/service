@@ -33,7 +33,7 @@ module.exports = {
       memory: require('../providers/upgrade/memoryQueueConfig')
     },
     service: {
-      omDemand: require('../providers/upgrade/recomputeHandler').defaultFactory,
+      onDemand: require('../providers/upgrade/recomputeHandler').defaultFactory,
       versionCheck: require('../providers/upgrade/recomputeHandler').defaultFactory,
       upgradeQueue: require('../providers/upgrade/recomputeHandler').delayedFactory
     }

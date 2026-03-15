@@ -17,4 +17,7 @@ const encodedMessageQueueFactory = opts => {
   return MemoryQueue(mergedOpts)
 }
 
-module.exports = encodedMessageQueueFactory
+module.exports = {
+  upgrade: encodedMessageQueueFactory,
+  compute: encodedMessageQueueFactory
+}
