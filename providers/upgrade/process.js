@@ -61,19 +61,19 @@ class DefinitionUpgrader {
   /**
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
-   * @param {UpgradeHandler} defVersionChecker
+   * @param {UpgradeHandler} upgradePolicy
    * @param {ICache} [cache]
    */
   constructor(
     definitionService,
     logger,
-    defVersionChecker,
+    upgradePolicy,
     cache = Cache({ defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds })
   ) {
     this.logger = logger
     this._definitionService = definitionService
-    this._defVersionChecker = defVersionChecker
-    this._defVersionChecker.currentSchema = definitionService.currentSchema
+    this._upgradePolicy = upgradePolicy
+    this._upgradePolicy.currentSchema = definitionService.currentSchema
     this._upgradeLock = cache
   }
 
@@ -100,7 +100,7 @@ class DefinitionUpgrader {
   async _upgradeIfNecessary(coordinates) {
     try {
       const existing = await this._definitionService.getStored(coordinates)
-      const result = await this._defVersionChecker.validate(existing)
+      let result = await this._upgradePolicy.validate(existing)
       if (!result) {
         await this._definitionService.computeStoreAndCurate(coordinates)
         this.logger.info('Handled definition upgrade', { coordinates })
@@ -122,10 +122,10 @@ class DefinitionUpgrader {
  * @param {DefinitionService} _definitionService
  * @param {Logger} _logger
  * @param {boolean} [once]
- * @param {UpgradeHandler} [_defVersionChecker]
+ * @param {UpgradeHandler} [_upgradePolicy]
  */
-function setup(_queue, _definitionService, _logger, once = false, _defVersionChecker = factory({ logger: _logger })) {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _defVersionChecker)
+function setup(_queue, _definitionService, _logger, once = false, _upgradePolicy = factory({ logger: _logger })) {
+  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
 }
