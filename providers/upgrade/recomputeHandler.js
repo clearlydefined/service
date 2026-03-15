@@ -1,4 +1,4 @@
-// (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
+// (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 const { factory: versionCheckFactory } = require('./defVersionCheck')
@@ -6,31 +6,24 @@ const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
 const { createDelayedComputePolicy } = require('./queueComputePolicy')
 
+/** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
+/** @typedef {import('../../business/definitionService').Definition} Definition */
+/** @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler */
+/** @typedef {import('../logging').Logger} Logger */
+/** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
+/** @typedef {import('./computePolicy').MissingDefinitionComputePolicy} MissingDefinitionComputePolicy */
+
+/**
+ * @typedef {UpgradeHandler & {
+ *   initialize?: () => Promise<void> | void,
+ *   setupProcessing?: (definitionService?: DefinitionService, logger?: Logger, once?: boolean) => Promise<void> | void
+ * }} UpgradePolicy
+ */
+
+/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy?: MissingDefinitionComputePolicy }} RecomputeHandlerOptions */
+
 class RecomputeHandler {
-  /**
-   * @param {{
-   *   upgradePolicy: import('../../business/definitionService').UpgradeHandler & {
-   *     initialize?: () => Promise<void> | void,
-   *     setupProcessing?: (
-   *       definitionService?: import('../../business/definitionService').DefinitionService,
-   *       logger?: import('../logging').Logger,
-   *       once?: boolean
-   *     ) => Promise<void> | void
-   *   },
-   *   computePolicy?: {
-   *     initialize?: () => Promise<void> | void,
-   *     setupProcessing?: (
-   *       definitionService?: import('../../business/definitionService').DefinitionService,
-   *       logger?: import('../logging').Logger,
-   *       once?: boolean
-   *     ) => Promise<void> | void,
-   *     compute: (
-   *       definitionService: import('../../business/definitionService').DefinitionService,
-   *       coordinates: import('../../lib/entityCoordinates')
-   *     ) => Promise<import('../../business/definitionService').Definition | undefined>
-   *   }
-   * }} options
-   */
+  /** @param {RecomputeHandlerOptions} options */
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy || createOnDemandComputePolicy()
@@ -46,29 +39,30 @@ class RecomputeHandler {
     return this._upgradePolicy.currentSchema
   }
 
-  /** @param {import('../../business/definitionService').Definition | null} definition */
+  /** @param {Definition | null} definition */
   async validate(definition) {
     return this._upgradePolicy.validate(definition)
   }
 
   async initialize() {
-    if (this._upgradePolicy.initialize) await this._upgradePolicy.initialize()
-    if (this._computePolicy.initialize) await this._computePolicy.initialize()
+    await Promise.all([this._upgradePolicy.initialize?.(), this._computePolicy.initialize?.()])
   }
 
   /**
-   * @param {import('../../business/definitionService').DefinitionService} [definitionService]
-   * @param {import('../logging').Logger} [logger]
+   * @param {DefinitionService} [definitionService]
+   * @param {Logger} [logger]
    * @param {boolean} [once]
    */
-  setupProcessing(definitionService, logger, once) {
-    if (this._upgradePolicy.setupProcessing) this._upgradePolicy.setupProcessing(definitionService, logger, once)
-    if (this._computePolicy.setupProcessing) this._computePolicy.setupProcessing(definitionService, logger, once)
+  async setupProcessing(definitionService, logger, once) {
+    await Promise.all([
+      this._upgradePolicy.setupProcessing?.(definitionService, logger, once),
+      this._computePolicy.setupProcessing?.(definitionService, logger, once)
+    ])
   }
 
   /**
-   * @param {import('../../business/definitionService').DefinitionService} definitionService
-   * @param {import('../../lib/entityCoordinates')} coordinates
+   * @param {DefinitionService} definitionService
+   * @param {EntityCoordinates} coordinates
    */
   async compute(definitionService, coordinates) {
     return this._computePolicy.compute(definitionService, coordinates)
@@ -93,9 +87,8 @@ function defaultFactory(options = {}) {
 function delayedFactory(
   options = /** @type {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })
 ) {
-  const upgradePolicy = new DefinitionQueueUpgrader(options)
   return new RecomputeHandler({
-    upgradePolicy,
+    upgradePolicy: new DefinitionQueueUpgrader(options),
     computePolicy: createDelayedComputePolicy(options)
   })
 }
