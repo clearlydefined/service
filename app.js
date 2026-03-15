@@ -62,8 +62,8 @@ function createApp(config) {
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
 
-  const upgradeHandler = config.upgrade.service({ queue: config.upgrade.queue })
-  initializers.push(async () => upgradeHandler.initialize())
+  const recomputeHandler = config.upgrade.service({ queue: config.upgrade.queue })
+  initializers.push(async () => recomputeHandler.initialize())
 
   const definitionService = require('./business/definitionService')(
     harvestStore,
@@ -74,7 +74,7 @@ function createApp(config) {
     definitionStore,
     searchService,
     cachingService,
-    upgradeHandler
+    recomputeHandler
   )
   // Circular dependency. Reach in and set the curationService's definitionService. Sigh.
   curationService.definitionService = definitionService
@@ -220,7 +220,7 @@ function createApp(config) {
         // kick off the queue processors
         require('./providers/curation/process')(curationQueue, curationService, logger)
         require('./providers/harvest/process')(harvestQueue, definitionService, logger)
-        upgradeHandler.setupProcessing(definitionService, logger)
+        recomputeHandler.setupProcessing(definitionService, logger)
 
         // Signal system is up and ok (no error)
         callback()

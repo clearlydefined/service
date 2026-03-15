@@ -269,9 +269,6 @@ export interface RecomputeHandler extends UpgradeHandler {
   compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
 
-/** Compute-on-get handler implementation contract */
-export interface ComputeOnGetHandler extends RecomputeHandler {}
-
 /**
  * Service for managing component definitions.
  * Handles computation, caching, storage, and retrieval of definitions.
@@ -480,7 +477,7 @@ export declare class DefinitionService {
  * @param store - Store for definitions
  * @param search - Service for searching definitions
  * @param cache - Cache for definitions
- * @param versionHandler - Handler for schema upgrades
+ * @param recomputeHandler - Handler for schema upgrades and non-force recompute fallback
  * @returns A new DefinitionService instance
  */
 declare function createDefinitionService(
@@ -492,7 +489,7 @@ declare function createDefinitionService(
   store: DefinitionStore,
   search: SearchService,
   cache: ICache,
-  versionHandler: UpgradeHandler
+  recomputeHandler: RecomputeHandler
 ): DefinitionService
 
 export default createDefinitionService
