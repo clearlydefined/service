@@ -11,17 +11,12 @@ import type {
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { DefinitionVersionCheckerOptions } from './defVersionCheck'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
-
-export interface ComputePolicy {
-  initialize?(): Promise<void> | void
-  setupProcessing?(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
-  compute?(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
-}
+import type { MissingDefinitionComputePolicy } from './computePolicy'
 
 export declare class RecomputeHandler implements IRecomputeHandler {
   currentSchema?: string
 
-  constructor(options: { upgradePolicy: UpgradeHandler; computePolicy?: ComputePolicy })
+  constructor(options: { upgradePolicy: UpgradeHandler; computePolicy?: MissingDefinitionComputePolicy })
 
   validate(definition: Definition | null): Promise<Definition | null>
 
@@ -31,8 +26,6 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 
   compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
-
-export declare function createOnDemandComputePolicy(): ComputePolicy
 
 /** Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck */
 export declare function defaultFactory(options?: DefinitionVersionCheckerOptions): RecomputeHandler
