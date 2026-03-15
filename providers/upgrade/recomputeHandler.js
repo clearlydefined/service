@@ -3,6 +3,8 @@
 
 const { factory: versionCheckFactory } = require('./defVersionCheck')
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
+const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
+const { createDelayedComputePolicy } = require('./queueComputePolicy')
 
 class RecomputeHandler {
   /**
@@ -22,7 +24,7 @@ class RecomputeHandler {
    *       logger?: import('../logging').Logger,
    *       once?: boolean
    *     ) => Promise<void> | void,
-   *     compute?: (
+   *     compute: (
    *       definitionService: import('../../business/definitionService').DefinitionService,
    *       coordinates: import('../../lib/entityCoordinates')
    *     ) => Promise<import('../../business/definitionService').Definition | undefined>
@@ -74,32 +76,14 @@ class RecomputeHandler {
 }
 
 /**
- * Default compute policy used by recompute handlers.
- * @returns {{
- *   initialize: () => Promise<void>,
- *   setupProcessing: () => void,
- *   compute: (
- *     definitionService: import('../../business/definitionService').DefinitionService,
- *     coordinates: import('../../lib/entityCoordinates')
- *   ) => Promise<import('../../business/definitionService').Definition | undefined>
- * }}
- */
-function createOnDemandComputePolicy() {
-  return {
-    async initialize() {},
-    setupProcessing() {},
-    async compute(definitionService, coordinates) {
-      return definitionService.computeStoreAndCurate(coordinates)
-    }
-  }
-}
-
-/**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
  * @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options]
  */
 function defaultFactory(options = {}) {
-  return new RecomputeHandler({ upgradePolicy: versionCheckFactory(options) })
+  return new RecomputeHandler({
+    upgradePolicy: versionCheckFactory(options),
+    computePolicy: createOnDemandComputePolicy()
+  })
 }
 
 /**
@@ -109,12 +93,15 @@ function defaultFactory(options = {}) {
 function delayedFactory(
   options = /** @type {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })
 ) {
-  return new RecomputeHandler({ upgradePolicy: new DefinitionQueueUpgrader(options) })
+  const upgradePolicy = new DefinitionQueueUpgrader(options)
+  return new RecomputeHandler({
+    upgradePolicy,
+    computePolicy: createDelayedComputePolicy(options)
+  })
 }
 
 module.exports = {
   RecomputeHandler,
-  createOnDemandComputePolicy,
   defaultFactory,
   delayedFactory
 }
