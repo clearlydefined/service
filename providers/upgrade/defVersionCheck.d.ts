@@ -1,8 +1,9 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService'
 import type { Logger } from '../logging'
+import type { ICache } from '../caching'
+import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService'
 
 /** Configuration options for DefinitionVersionChecker */
 export interface DefinitionVersionCheckerOptions {
@@ -36,7 +37,7 @@ export declare class DefinitionVersionChecker implements UpgradeHandler {
   initialize(): Promise<void>
 
   /** No-op setup (exists for interface compatibility with subclass overrides) */
-  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean, sharedCache?: ICache): void
 
   /**
    * Extracts a string representation of coordinates from a definition.

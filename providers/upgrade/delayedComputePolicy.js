@@ -10,6 +10,7 @@ const { factory: existingDefinitionPolicyFactory } = require('./existingDefiniti
 /** @typedef {import('../../business/definitionService').Definition} Definition */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('../logging').Logger} Logger */
+/** @typedef {import('../caching').ICache} ICache */
 
 class DelayedComputePolicy {
   /** @param {DefinitionQueueUpgraderOptions} [options] */
@@ -28,9 +29,11 @@ class DelayedComputePolicy {
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {boolean} [once]
+   * @param {ICache} [sharedCache]
    */
-  setupProcessing(definitionService, logger, once) {
-    return setup(this._compute, definitionService, logger, once, existingDefinitionPolicyFactory())
+  setupProcessing(definitionService, logger, once, sharedCache) {
+    const upgradePolicy = existingDefinitionPolicyFactory()
+    return setup(this._compute, definitionService, logger, once, upgradePolicy, sharedCache)
   }
 
   /**

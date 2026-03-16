@@ -4,6 +4,7 @@
 import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { Logger } from '../logging'
+import type { ICache } from '../caching'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
 import type { MissingDefinitionComputePolicy } from './computePolicy'
 
@@ -15,7 +16,12 @@ export declare class DelayedComputePolicy implements MissingDefinitionComputePol
 
   initialize(): Promise<void>
 
-  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void>
+  setupProcessing(
+    definitionService: DefinitionService,
+    logger: Logger,
+    once?: boolean,
+    sharedCache?: ICache
+  ): Promise<void>
 
   compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
 

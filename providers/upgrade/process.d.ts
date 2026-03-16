@@ -70,11 +70,13 @@ export declare class DefinitionUpgrader implements MessageHandler {
  * @param logger - Logger instance
  * @param once - If true, processes one batch and stops
  * @param upgradePolicy - Upgrade policy (defaults to a new DefinitionVersionChecker)
+ * @param sharedCache - Optional shared lock cache used across queue processors
  */
 export declare function setup(
   queue: IQueue,
   definitionService: DefinitionService,
   logger: Logger,
   once?: boolean,
-  upgradePolicy?: UpgradeHandler
+  upgradePolicy?: UpgradeHandler,
+  sharedCache?: ICache
 ): Promise<void>

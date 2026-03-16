@@ -1,10 +1,11 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { IQueue } from '../queueing'
+import type { Logger } from '../logging'
+import type { ICache } from '../caching'
 import type { Definition } from '../../business/definitionService'
 import type { DefinitionService } from '../../business/definitionService'
-import type { Logger } from '../logging'
-import type { IQueue } from '../queueing'
 import { DefinitionVersionChecker, type DefinitionVersionCheckerOptions } from './defVersionCheck'
 
 /** Configuration options for DefinitionQueueUpgrader */
@@ -43,8 +44,14 @@ declare class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param definitionService - The service used to recompute definitions
    * @param logger - Logger instance
    * @param once - If true, process one batch and stop (for testing)
+   * @param sharedCache - Optional shared lock cache used across queue processors
    */
-  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void>
+  setupProcessing(
+    definitionService: DefinitionService,
+    logger: Logger,
+    once?: boolean,
+    sharedCache?: ICache
+  ): Promise<void>
 }
 
 export default DefinitionQueueUpgrader
