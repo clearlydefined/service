@@ -4,7 +4,7 @@
 const { factory: versionCheckFactory } = require('./defVersionCheck')
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
-const { createDelayedComputePolicy } = require('./queueComputePolicy')
+const { createDelayedComputePolicy } = require('./delayedComputePolicy')
 const memoryQueueConfig = require('./memoryQueueConfig')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */

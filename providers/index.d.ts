@@ -60,7 +60,8 @@ export interface UpgradeQueueProviders {
 export interface UpgradeServiceProviders {
   onDemand: ProviderFactory
   versionCheck: ProviderFactory //deprecated, to be removed in favor of onDemand
-  upgradeQueue: ProviderFactory
+  delayed: ProviderFactory
+  upgradeQueue: ProviderFactory //deprecated, to be removed in favor of delayed
 }
 
 /** Provider configuration for upgrade */
