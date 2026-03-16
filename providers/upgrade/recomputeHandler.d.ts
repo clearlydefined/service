@@ -6,6 +6,7 @@ import type { IQueue } from '../queueing'
 import type {
   Definition,
   DefinitionService,
+  RecomputeContext,
   RecomputeHandler as IRecomputeHandler,
   UpgradeHandler
 } from '../../business/definitionService'
@@ -32,7 +33,7 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 
   setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void>
 
-  compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
 
 /** Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck */

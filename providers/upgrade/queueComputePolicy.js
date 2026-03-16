@@ -38,15 +38,7 @@ class QueueComputePolicy {
    * @returns {Promise<Definition>}
    */
   async compute(definitionService, coordinates) {
-    /** @type {Definition} */
-    const placeholder = {
-      coordinates,
-      described: { tools: /** @type {string[]} */ ([]) },
-      _meta: {
-        schemaVersion: definitionService.currentSchema,
-        updated: new Date().toISOString()
-      }
-    }
+    const placeholder = definitionService.buildEmptyDefinition(coordinates)
     await this._queueCompute(coordinates)
     return placeholder
   }

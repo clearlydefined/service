@@ -51,7 +51,14 @@ describe('RecomputeHandler compute policies', () => {
       queue: () => queue
     })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
-    const definitionService = { currentSchema: '1.7.0' }
+    const definitionService = {
+      currentSchema: '1.7.0',
+      buildEmptyDefinition: c => ({
+        coordinates: c,
+        described: { tools: [] },
+        _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+      })
+    }
 
     await policy.initialize()
     const result = await policy.compute(definitionService, coordinates)
@@ -83,7 +90,14 @@ describe('RecomputeHandler compute policies', () => {
       queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
     })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
-    const definitionService = { currentSchema: '1.7.0' }
+    const definitionService = {
+      currentSchema: '1.7.0',
+      buildEmptyDefinition: c => ({
+        coordinates: c,
+        described: { tools: [] },
+        _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+      })
+    }
 
     await handler.initialize()
     const result = await handler.compute(definitionService, coordinates)

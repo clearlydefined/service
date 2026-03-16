@@ -66,6 +66,16 @@ describe('Definition Service', () => {
     expect(fullDefinition.files).to.deep.eq([{ path: 'path/to/file' }])
   })
 
+  it('builds a valid empty definition from coordinates', () => {
+    const { service, coordinates } = setup()
+    const definition = service.buildEmptyDefinition(coordinates)
+
+    expect(definition.coordinates.toString()).to.eq(coordinates.toString())
+    expect(definition._meta.schemaVersion).to.eq(service.currentSchema)
+    expect(definition._meta.updated).to.be.a('string')
+    expect(validator.validate('definition', definition)).to.be.true
+  })
+
   it('logs and harvest new definitions with empty tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, []))
     await service.get(coordinates)

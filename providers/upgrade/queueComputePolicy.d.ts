@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition, DefinitionService } from '../../business/definitionService'
+import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { Logger } from '../logging'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
@@ -17,7 +17,7 @@ export declare class QueueComputePolicy implements MissingDefinitionComputePolic
 
   setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void>
 
-  compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition>
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
 
   protected _queueCompute(coordinates: EntityCoordinates): Promise<void>
 
