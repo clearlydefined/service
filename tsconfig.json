@@ -181,6 +181,8 @@
     "providers/upgrade/defUpgradeQueueConfig.d.ts",
     "providers/upgrade/defUpgradeQueueConfig.js",
     "providers/upgrade/computePolicy.d.ts",
+    "providers/upgrade/existingDefinitionPolicy.d.ts",
+    "providers/upgrade/existingDefinitionPolicy.js",
     "providers/upgrade/onDemandComputePolicy.d.ts",
     "providers/upgrade/onDemandComputePolicy.js",
     "providers/upgrade/delayedComputePolicy.d.ts",

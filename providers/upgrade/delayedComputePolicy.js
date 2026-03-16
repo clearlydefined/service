@@ -3,6 +3,7 @@
 
 const logger = require('../logging/logger')
 const { setup } = require('./process')
+const { factory: existingDefinitionPolicyFactory } = require('./existingDefinitionPolicy')
 
 /** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
@@ -29,7 +30,7 @@ class DelayedComputePolicy {
    * @param {boolean} [once]
    */
   setupProcessing(definitionService, logger, once) {
-    return setup(this._compute, definitionService, logger, once)
+    return setup(this._compute, definitionService, logger, once, existingDefinitionPolicyFactory())
   }
 
   /**
