@@ -8,6 +8,7 @@ const { setup } = require('./process')
  * @typedef {import('../../business/definitionService').Definition} Definition
  * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
  * @typedef {import('../logging').Logger} Logger
+ * @typedef {import('../caching').ICache} ICache
  */
 
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
@@ -66,9 +67,10 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {boolean} [once]
+   * @param {ICache} [sharedCache]
    */
-  setupProcessing(definitionService, logger, once) {
-    return setup(this._upgrade, definitionService, logger, once)
+  setupProcessing(definitionService, logger, once, sharedCache) {
+    return setup(this._upgrade, definitionService, logger, once, undefined, sharedCache)
   }
 }
 

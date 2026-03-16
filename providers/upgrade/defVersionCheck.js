@@ -9,6 +9,7 @@ const EntityCoordinates = require('../../lib/entityCoordinates')
 /**
  * @typedef {import('../logging').Logger} Logger
  * @typedef {import('../../business/definitionService').Definition} Definition
+ * @typedef {import('../caching').ICache} ICache
  */
 
 class DefinitionVersionChecker {
@@ -46,7 +47,14 @@ class DefinitionVersionChecker {
     //do nothing for initialization
   }
 
-  setupProcessing() {
+  /**
+   * @param {import('../../business/definitionService').DefinitionService} [_definitionService]
+   * @param {Logger} [_logger]
+   * @param {boolean} [_once]
+   * @param {ICache} [_sharedCache]
+   */
+  setupProcessing(_definitionService, _logger, _once, _sharedCache) {
+    void [_definitionService, _logger, _once, _sharedCache]
     //do nothing for set up processing
   }
 

@@ -115,9 +115,17 @@ class DefinitionUpgrader {
  * @param {Logger} _logger
  * @param {boolean} [once]
  * @param {UpgradeHandler} [_upgradePolicy]
+ * @param {ICache} [sharedCache]
  */
-function setup(_queue, _definitionService, _logger, once = false, _upgradePolicy = factory({ logger: _logger })) {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy)
+function setup(
+  _queue,
+  _definitionService,
+  _logger,
+  once = false,
+  _upgradePolicy = factory({ logger: _logger }),
+  sharedCache
+) {
+  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy, sharedCache)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
 }

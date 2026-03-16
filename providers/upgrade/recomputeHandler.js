@@ -6,19 +6,22 @@ const DefinitionQueueUpgrader = require('./defUpgradeQueue')
 const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
 const { createDelayedComputePolicy } = require('./delayedComputePolicy')
 const memoryQueueConfig = require('./memoryQueueConfig')
+const Cache = require('../caching/memory')
+const { DefinitionUpgrader } = require('./process')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
 /** @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler */
 /** @typedef {import('../logging').Logger} Logger */
 /** @typedef {import('../queueing').IQueue} IQueue */
+/** @typedef {import('../caching').ICache} ICache */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('./computePolicy').MissingDefinitionComputePolicy} MissingDefinitionComputePolicy */
 
 /**
  * @typedef {UpgradeHandler & {
  *   initialize?: () => Promise<void> | void,
- *   setupProcessing?: (definitionService?: DefinitionService, logger?: Logger, once?: boolean) => Promise<void> | void
+ *   setupProcessing?: (definitionService?: DefinitionService, logger?: Logger, once?: boolean, cache?: ICache) => Promise<void> | void
  * }} UpgradePolicy
  */
 
@@ -36,6 +39,9 @@ class RecomputeHandler {
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy || createOnDemandComputePolicy()
+    this._sharedCache = Cache({
+      defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds
+    })
   }
 
   /** @param {string} schemaVersion */
@@ -64,8 +70,8 @@ class RecomputeHandler {
    */
   async setupProcessing(definitionService, logger, once) {
     await Promise.all([
-      this._upgradePolicy.setupProcessing?.(definitionService, logger, once),
-      this._computePolicy.setupProcessing?.(definitionService, logger, once)
+      this._upgradePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache),
+      this._computePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache)
     ])
   }
 
