@@ -74,6 +74,72 @@ describe('RecomputeHandler compute policies', () => {
     expect(result._meta.updated).to.be.a('string')
   })
 
+  it('DelayedComputePolicy setupProcessing skips recompute when definition already exists', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const computeQueue = {
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([{ data: { coordinates } }]),
+      delete: sinon.stub().resolves(),
+      queue: sinon.stub().resolves()
+    }
+    const queueLogger = {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+    const policy = new DelayedComputePolicy({
+      logger: queueLogger,
+      queue: () => computeQueue
+    })
+    const existingDefinition = {
+      coordinates,
+      _meta: { schemaVersion: '0.0.1' }
+    }
+    const definitionService = {
+      currentSchema: '1.7.0',
+      getStored: sinon.stub().resolves(existingDefinition),
+      computeStoreAndCurate: sinon.stub().resolves()
+    }
+
+    await policy.initialize()
+    await policy.setupProcessing(definitionService, queueLogger, true)
+
+    expect(definitionService.getStored.calledOnce).to.be.true
+    expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+    expect(computeQueue.delete.calledOnce).to.be.true
+  })
+
+  it('DelayedComputePolicy setupProcessing recomputes when definition is missing', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const computeQueue = {
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([{ data: { coordinates } }]),
+      delete: sinon.stub().resolves(),
+      queue: sinon.stub().resolves()
+    }
+    const queueLogger = {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+    const policy = new DelayedComputePolicy({
+      logger: queueLogger,
+      queue: () => computeQueue
+    })
+    const definitionService = {
+      currentSchema: '1.7.0',
+      getStored: sinon.stub().resolves(undefined),
+      computeStoreAndCurate: sinon.stub().resolves()
+    }
+
+    await policy.initialize()
+    await policy.setupProcessing(definitionService, queueLogger, true)
+
+    expect(definitionService.getStored.calledOnce).to.be.true
+    expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+    expect(computeQueue.delete.calledOnce).to.be.true
+  })
+
   it('delayedFactory wires delayed compute policy to queue upgrader', async () => {
     const upgradeQueue = {
       queue: sinon.stub().resolves(),
