@@ -7,7 +7,7 @@ import type { Logger } from '../logging'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
 import type { MissingDefinitionComputePolicy } from './computePolicy'
 
-export declare class QueueComputePolicy implements MissingDefinitionComputePolicy {
+export declare class DelayedComputePolicy implements MissingDefinitionComputePolicy {
   options: DefinitionQueueUpgraderOptions
   logger: Logger
 
@@ -24,4 +24,4 @@ export declare class QueueComputePolicy implements MissingDefinitionComputePolic
   protected _constructMessage(coordinates: EntityCoordinates): string
 }
 
-export declare function createDelayedComputePolicy(options?: DefinitionQueueUpgraderOptions): QueueComputePolicy
+export declare function createDelayedComputePolicy(options?: DefinitionQueueUpgraderOptions): DelayedComputePolicy

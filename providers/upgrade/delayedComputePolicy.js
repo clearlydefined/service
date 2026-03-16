@@ -10,7 +10,7 @@ const { setup } = require('./process')
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('../logging').Logger} Logger */
 
-class QueueComputePolicy {
+class DelayedComputePolicy {
   /** @param {DefinitionQueueUpgraderOptions} [options] */
   constructor(options = /** @type {DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })) {
     this.options = options
@@ -72,13 +72,13 @@ class QueueComputePolicy {
 
 /**
  * @param {DefinitionQueueUpgraderOptions} [options]
- * @returns {QueueComputePolicy}
+ * @returns {DelayedComputePolicy}
  */
 function createDelayedComputePolicy(options = /** @type {DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })) {
-  return new QueueComputePolicy(options)
+  return new DelayedComputePolicy(options)
 }
 
 module.exports = {
-  QueueComputePolicy,
+  DelayedComputePolicy,
   createDelayedComputePolicy
 }

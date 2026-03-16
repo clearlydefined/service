@@ -35,6 +35,7 @@ module.exports = {
     service: {
       onDemand: require('../providers/upgrade/recomputeHandler').defaultFactory,
       versionCheck: require('../providers/upgrade/recomputeHandler').defaultFactory,
+      delayed: require('../providers/upgrade/recomputeHandler').delayedFactory,
       upgradeQueue: require('../providers/upgrade/recomputeHandler').delayedFactory
     }
   },

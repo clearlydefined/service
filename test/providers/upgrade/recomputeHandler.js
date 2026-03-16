@@ -7,7 +7,7 @@ const sinon = require('sinon')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const { delayedFactory } = require('../../../providers/upgrade/recomputeHandler')
 const { createOnDemandComputePolicy } = require('../../../providers/upgrade/onDemandComputePolicy')
-const { QueueComputePolicy, createDelayedComputePolicy } = require('../../../providers/upgrade/queueComputePolicy')
+const { DelayedComputePolicy, createDelayedComputePolicy } = require('../../../providers/upgrade/delayedComputePolicy')
 
 describe('RecomputeHandler compute policies', () => {
   it('on-demand compute policy delegates to computeStoreAndCurate', async () => {
@@ -28,7 +28,7 @@ describe('RecomputeHandler compute policies', () => {
     expect(result).to.deep.equal(definition)
   })
 
-  it('delayed compute policy factory creates QueueComputePolicy', async () => {
+  it('delayed compute policy factory creates DelayedComputePolicy', async () => {
     const queue = {
       queue: sinon.stub().resolves(),
       initialize: sinon.stub().resolves()
@@ -38,15 +38,15 @@ describe('RecomputeHandler compute policies', () => {
       queue: () => queue
     })
 
-    expect(policy).to.be.instanceOf(QueueComputePolicy)
+    expect(policy).to.be.instanceOf(DelayedComputePolicy)
   })
 
-  it('QueueComputePolicy queues and returns a valid placeholder definition', async () => {
+  it('DelayedComputePolicy queues and returns a valid placeholder definition', async () => {
     const queue = {
       queue: sinon.stub().resolves(),
       initialize: sinon.stub().resolves()
     }
-    const policy = new QueueComputePolicy({
+    const policy = new DelayedComputePolicy({
       logger: { info: sinon.stub(), error: sinon.stub() },
       queue: () => queue
     })
