@@ -124,7 +124,7 @@ class DefinitionService {
     } else if (force) {
       result = await this.computeAndStore(coordinates)
     } else {
-      result = await this.recomputeHandler.compute(/** @type {any} */ (this), coordinates)
+      result = await this.recomputeHandler.compute(this, coordinates)
     }
     return this._trimDefinition(this._cast(result), expand)
   }
@@ -483,6 +483,20 @@ class DefinitionService {
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, /** @type {Definition} */ (aggregatedDefinition))
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    this._calculateValidate(coordinates, definition)
+    return definition
+  }
+
+  /**
+   * Build a valid empty definition for the provided coordinates.
+   *
+   * @param {EntityCoordinates} givenCoordinates
+   * @returns {Definition}
+   */
+  buildEmptyDefinition(givenCoordinates) {
+    const coordinates = this._getCasedCoordinates({}, givenCoordinates)
+    const definition = { coordinates }
+    this._ensureToolScores(coordinates, definition)
     this._calculateValidate(coordinates, definition)
     return definition
   }

@@ -265,11 +265,17 @@ export interface UpgradeHandler {
   validate(definition: Definition | null): Promise<Definition | null>
 }
 
+/** Minimal DefinitionService shape required by recompute compute policies */
+export type RecomputeContext = Pick<
+  DefinitionService,
+  'currentSchema' | 'computeStoreAndCurate' | 'buildEmptyDefinition'
+>
+
 /** Unified recompute handler interface (upgrade + non-force compute fallback) */
 export interface RecomputeHandler extends UpgradeHandler {
   initialize(): Promise<void> | void
   setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
-  compute(definitionService: DefinitionService, coordinates: EntityCoordinates): Promise<Definition | undefined>
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
 
 /**
@@ -435,6 +441,14 @@ export declare class DefinitionService {
    * @returns The fully rendered definition
    */
   compute(coordinates: EntityCoordinates, curationSpec?: any): Promise<Definition>
+
+  /**
+   * Build a valid empty definition for the provided coordinates
+   *
+   * @param givenCoordinates - Coordinates for the placeholder definition
+   * @returns A validated empty definition
+   */
+  buildEmptyDefinition(givenCoordinates: EntityCoordinates): Definition
 
   /**
    * Suggest a set of definition coordinates that match the given pattern
