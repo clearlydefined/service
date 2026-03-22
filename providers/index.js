@@ -33,8 +33,10 @@ module.exports = {
       memory: require('../providers/upgrade/memoryQueueConfig')
     },
     service: {
-      versionCheck: require('../providers/upgrade/defVersionCheck').factory,
-      upgradeQueue: require('../providers/upgrade/defUpgradeQueueConfig')
+      onDemand: require('../providers/upgrade/recomputeHandler').defaultFactory,
+      versionCheck: require('../providers/upgrade/recomputeHandler').defaultFactory,
+      delayed: require('../providers/upgrade/recomputeHandler').delayedFactory,
+      upgradeQueue: require('../providers/upgrade/recomputeHandler').delayedFactory
     }
   },
   curation: {

@@ -265,6 +265,19 @@ export interface UpgradeHandler {
   validate(definition: Definition | null): Promise<Definition | null>
 }
 
+/** Minimal DefinitionService shape required by recompute compute policies */
+export type RecomputeContext = Pick<
+  DefinitionService,
+  'currentSchema' | 'computeStoreAndCurate' | 'buildEmptyDefinition'
+>
+
+/** Unified recompute handler interface (upgrade + non-force compute fallback) */
+export interface RecomputeHandler extends UpgradeHandler {
+  initialize(): Promise<void> | void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
+}
+
 /**
  * Service for managing component definitions.
  * Handles computation, caching, storage, and retrieval of definitions.
@@ -286,8 +299,8 @@ export declare class DefinitionService {
   protected search: SearchService
   /** Cache instance */
   protected cache: ICache
-  /** Upgrade handler instance */
-  protected upgradeHandler: UpgradeHandler
+  /** Recompute handler instance */
+  protected recomputeHandler: RecomputeHandler
   /** Logger instance */
   protected logger: Logger
 
@@ -302,7 +315,7 @@ export declare class DefinitionService {
    * @param store - Store for definitions
    * @param search - Service for searching definitions
    * @param cache - Cache for definitions
-   * @param upgradeHandler - Handler for schema upgrades
+   * @param recomputeHandler - Handler for schema upgrades and non-force recompute fallback
    */
   constructor(
     harvestStore: HarvestStore,
@@ -313,7 +326,7 @@ export declare class DefinitionService {
     store: DefinitionStore,
     search: SearchService,
     cache: ICache,
-    upgradeHandler: UpgradeHandler
+    recomputeHandler: RecomputeHandler
   )
 
   /** Get the current schema version */
@@ -430,6 +443,14 @@ export declare class DefinitionService {
   compute(coordinates: EntityCoordinates, curationSpec?: any): Promise<Definition>
 
   /**
+   * Build a valid empty definition for the provided coordinates
+   *
+   * @param givenCoordinates - Coordinates for the placeholder definition
+   * @returns A validated empty definition
+   */
+  buildEmptyDefinition(givenCoordinates: EntityCoordinates): Definition
+
+  /**
    * Suggest a set of definition coordinates that match the given pattern
    *
    * @param pattern - A pattern to look for in the coordinates
@@ -473,7 +494,7 @@ export declare class DefinitionService {
  * @param store - Store for definitions
  * @param search - Service for searching definitions
  * @param cache - Cache for definitions
- * @param versionHandler - Handler for schema upgrades
+ * @param recomputeHandler - Handler for schema upgrades and non-force recompute fallback
  * @returns A new DefinitionService instance
  */
 declare function createDefinitionService(
@@ -485,7 +506,7 @@ declare function createDefinitionService(
   store: DefinitionStore,
   search: SearchService,
   cache: ICache,
-  versionHandler: UpgradeHandler
+  recomputeHandler: RecomputeHandler
 ): DefinitionService
 
 export default createDefinitionService

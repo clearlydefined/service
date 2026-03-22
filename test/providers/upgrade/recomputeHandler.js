@@ -1,0 +1,178 @@
+// (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
+// SPDX-License-Identifier: MIT
+
+const { expect } = require('chai')
+const sinon = require('sinon')
+
+const EntityCoordinates = require('../../../lib/entityCoordinates')
+const { delayedFactory } = require('../../../providers/upgrade/recomputeHandler')
+const { createOnDemandComputePolicy } = require('../../../providers/upgrade/onDemandComputePolicy')
+const { DelayedComputePolicy, createDelayedComputePolicy } = require('../../../providers/upgrade/delayedComputePolicy')
+
+describe('RecomputeHandler compute policies', () => {
+  it('on-demand compute policy delegates to computeStoreAndCurate', async () => {
+    const policy = createOnDemandComputePolicy()
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const definition = {
+      coordinates,
+      described: { tools: ['component'] },
+      _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+    }
+    const definitionService = {
+      computeStoreAndCurate: sinon.stub().resolves(definition)
+    }
+
+    const result = await policy.compute(definitionService, coordinates)
+
+    expect(definitionService.computeStoreAndCurate.calledOnceWithExactly(coordinates)).to.be.true
+    expect(result).to.deep.equal(definition)
+  })
+
+  it('delayed compute policy factory creates DelayedComputePolicy', async () => {
+    const queue = {
+      queue: sinon.stub().resolves(),
+      initialize: sinon.stub().resolves()
+    }
+    const policy = createDelayedComputePolicy({
+      logger: { info: sinon.stub(), error: sinon.stub() },
+      queue: () => queue
+    })
+
+    expect(policy).to.be.instanceOf(DelayedComputePolicy)
+  })
+
+  it('DelayedComputePolicy queues and returns a valid placeholder definition', async () => {
+    const queue = {
+      queue: sinon.stub().resolves(),
+      initialize: sinon.stub().resolves()
+    }
+    const policy = new DelayedComputePolicy({
+      logger: { info: sinon.stub(), error: sinon.stub() },
+      queue: () => queue
+    })
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const definitionService = {
+      currentSchema: '1.7.0',
+      buildEmptyDefinition: c => ({
+        coordinates: c,
+        described: { tools: [] },
+        _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+      })
+    }
+
+    await policy.initialize()
+    const result = await policy.compute(definitionService, coordinates)
+    const queuedMessage = queue.queue.getCall(0).args[0]
+    const queuedData = JSON.parse(Buffer.from(queuedMessage, 'base64').toString())
+
+    expect(queue.queue.calledOnce).to.be.true
+    expect(EntityCoordinates.fromObject(queuedData.coordinates).toString()).to.equal(coordinates.toString())
+    expect(queuedData._meta).to.deep.equal({})
+    expect(result.coordinates).to.deep.equal(coordinates)
+    expect(result.described.tools).to.deep.equal([])
+    expect(result._meta.schemaVersion).to.equal('1.7.0')
+    expect(result._meta.updated).to.be.a('string')
+  })
+
+  it('DelayedComputePolicy setupProcessing skips recompute when definition already exists', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const computeQueue = {
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([{ data: { coordinates } }]),
+      delete: sinon.stub().resolves(),
+      queue: sinon.stub().resolves()
+    }
+    const queueLogger = {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+    const policy = new DelayedComputePolicy({
+      logger: queueLogger,
+      queue: () => computeQueue
+    })
+    const existingDefinition = {
+      coordinates,
+      _meta: { schemaVersion: '0.0.1' }
+    }
+    const definitionService = {
+      currentSchema: '1.7.0',
+      getStored: sinon.stub().resolves(existingDefinition),
+      computeStoreAndCurate: sinon.stub().resolves()
+    }
+
+    await policy.initialize()
+    await policy.setupProcessing(definitionService, queueLogger, true)
+
+    expect(definitionService.getStored.calledOnce).to.be.true
+    expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+    expect(computeQueue.delete.calledOnce).to.be.true
+  })
+
+  it('DelayedComputePolicy setupProcessing recomputes when definition is missing', async () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const computeQueue = {
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([{ data: { coordinates } }]),
+      delete: sinon.stub().resolves(),
+      queue: sinon.stub().resolves()
+    }
+    const queueLogger = {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+    const policy = new DelayedComputePolicy({
+      logger: queueLogger,
+      queue: () => computeQueue
+    })
+    const definitionService = {
+      currentSchema: '1.7.0',
+      getStored: sinon.stub().resolves(undefined),
+      computeStoreAndCurate: sinon.stub().resolves()
+    }
+
+    await policy.initialize()
+    await policy.setupProcessing(definitionService, queueLogger, true)
+
+    expect(definitionService.getStored.calledOnce).to.be.true
+    expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+    expect(computeQueue.delete.calledOnce).to.be.true
+  })
+
+  it('delayedFactory wires delayed compute policy to queue upgrader', async () => {
+    const upgradeQueue = {
+      queue: sinon.stub().resolves(),
+      initialize: sinon.stub().resolves(),
+      dequeueMultiple: sinon.stub().resolves([]),
+      delete: sinon.stub().resolves()
+    }
+    const computeQueue = {
+      queue: sinon.stub().resolves(),
+      initialize: sinon.stub().resolves()
+    }
+    const handler = delayedFactory({
+      logger: { info: sinon.stub(), error: sinon.stub(), debug: sinon.stub() },
+      queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
+    })
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const definitionService = {
+      currentSchema: '1.7.0',
+      buildEmptyDefinition: c => ({
+        coordinates: c,
+        described: { tools: [] },
+        _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+      })
+    }
+
+    await handler.initialize()
+    const result = await handler.compute(definitionService, coordinates)
+
+    expect(upgradeQueue.initialize.calledOnce).to.be.true
+    expect(computeQueue.initialize.calledOnce).to.be.true
+    expect(computeQueue.queue.calledOnce).to.be.true
+    expect(result.coordinates).to.deep.equal(coordinates)
+    expect(result.described.tools).to.deep.equal([])
+    expect(result._meta.schemaVersion).to.equal('1.7.0')
+  })
+})

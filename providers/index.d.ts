@@ -44,16 +44,24 @@ export interface AuthProviders {
   github: ProviderFactory
 }
 
+/** Paired queue factories used by recompute handlers */
+export interface RecomputeQueueFactories {
+  upgrade: ProviderFactory
+  compute: ProviderFactory
+}
+
 /** Provider configuration for upgrade queue */
 export interface UpgradeQueueProviders {
-  azure: ProviderFactory
-  memory: ProviderFactory
+  azure: RecomputeQueueFactories
+  memory: RecomputeQueueFactories
 }
 
 /** Provider configuration for upgrade service */
 export interface UpgradeServiceProviders {
-  versionCheck: ProviderFactory
-  upgradeQueue: ProviderFactory
+  onDemand: ProviderFactory
+  versionCheck: ProviderFactory //deprecated, to be removed in favor of onDemand
+  delayed: ProviderFactory
+  upgradeQueue: ProviderFactory //deprecated, to be removed in favor of delayed
 }
 
 /** Provider configuration for upgrade */

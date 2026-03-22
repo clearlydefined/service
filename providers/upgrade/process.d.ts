@@ -49,10 +49,10 @@ export declare class DefinitionUpgrader implements MessageHandler {
   /**
    * @param definitionService - Service for fetching and recomputing definitions
    * @param logger - Logger instance
-   * @param defVersionChecker - Checker that validates definition schema versions
+   * @param upgradePolicy - Policy that validates whether stored definitions need upgrade
    * @param cache - Cache used as an upgrade lock (defaults to in-memory with 5 min TTL)
    */
-  constructor(definitionService: DefinitionService, logger: Logger, defVersionChecker: UpgradeHandler, cache?: ICache)
+  constructor(definitionService: DefinitionService, logger: Logger, upgradePolicy: UpgradeHandler, cache?: ICache)
 
   /**
    * Processes a single dequeued upgrade message.
@@ -69,12 +69,14 @@ export declare class DefinitionUpgrader implements MessageHandler {
  * @param definitionService - Service for computing and storing definitions
  * @param logger - Logger instance
  * @param once - If true, processes one batch and stops
- * @param defVersionChecker - Version checker (defaults to a new DefinitionVersionChecker)
+ * @param upgradePolicy - Upgrade policy (defaults to a new DefinitionVersionChecker)
+ * @param sharedCache - Optional shared lock cache used across queue processors
  */
 export declare function setup(
   queue: IQueue,
   definitionService: DefinitionService,
   logger: Logger,
   once?: boolean,
-  defVersionChecker?: UpgradeHandler
+  upgradePolicy?: UpgradeHandler,
+  sharedCache?: ICache
 ): Promise<void>
