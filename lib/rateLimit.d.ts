@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Request, Response, NextFunction } from 'express'
-import { Store } from 'express-rate-limit'
+import type { NextFunction, Request, Response } from 'express'
+import type { Store } from 'express-rate-limit'
 import { RedisClientType } from 'redis'
-import { Logger } from '../providers/logging'
-import { ICache } from '../providers/caching'
+import type { ICache } from '../providers/caching'
+import type { Logger } from '../providers/logging'
 
 /** Configuration options for rate limiting window and maximum requests */
 export interface RateLimitConfig {
@@ -273,11 +273,11 @@ export {
   createBatchApiLimiter,
   setupApiRateLimiterAfterCachingInit,
   setupBatchApiRateLimiterAfterCachingInit,
-  RateLimitConfig,
-  LegacyRateLimitConfig,
-  ExtendedRateLimitConfig,
-  RedisRateLimitConfig,
-  RateLimiterOptions,
-  RateLimiterFactoryOptions,
-  RateLimitMiddleware
+  type RateLimitConfig,
+  type LegacyRateLimitConfig,
+  type ExtendedRateLimitConfig,
+  type RedisRateLimitConfig,
+  type RateLimiterOptions,
+  type RateLimiterFactoryOptions,
+  type RateLimitMiddleware
 }

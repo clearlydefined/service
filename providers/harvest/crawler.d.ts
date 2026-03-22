@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Logger } from '../logging'
-import { HarvestEntry, HarvestCallItem, Harvester } from './cacheBasedCrawler'
+import type { Logger } from '../logging'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler'
 
 /** Configuration options for CrawlingHarvester */
 export interface CrawlerOptions {

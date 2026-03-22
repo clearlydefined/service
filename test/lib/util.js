@@ -589,11 +589,11 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
     }
   }
 
-  before(function () {
+  before(() => {
     sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
   })
 
-  after(function () {
+  after(() => {
     sinon.restore()
   })
 
@@ -672,11 +672,11 @@ describe('Utils getLicenseLocations', () => {
     }
   }
 
-  before(function () {
+  before(() => {
     sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
   })
 
-  after(function () {
+  after(() => {
     sinon.restore()
   })
 

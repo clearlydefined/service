@@ -51,13 +51,13 @@ describe('Trimmed Mongo Definition store', () => {
     await mongoStore.collection.drop()
   })
 
-  it('should return falsy for get', async function () {
+  it('should return falsy for get', async () => {
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics/7.1.1')
     const defs = await mongoStore.get(coordinate)
     expect(defs).to.be.not.ok
   })
 
-  it('should return falsy for list', async function () {
+  it('should return falsy for list', async () => {
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics')
     const defs = await mongoStore.list(coordinate)
     expect(defs).to.be.not.ok

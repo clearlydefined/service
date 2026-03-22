@@ -23,8 +23,8 @@ class CrawlingQueueHarvester {
    */
   async harvest(spec, turbo) {
     const entries = Array.isArray(spec) ? spec : [spec]
-    for (let entry of entries) {
-      let message = JSON.stringify(this.toHarvestItem(entry))
+    for (const entry of entries) {
+      const message = JSON.stringify(this.toHarvestItem(entry))
       if (turbo) this.normalQueue.queue(message)
       else this.laterQueue.queue(message)
     }

@@ -239,7 +239,7 @@ describe('sanitizeMeta', () => {
             authorization: 'Bearer secret'
           },
           data: { payload: 'data' },
-          transformRequest: [function () {}]
+          transformRequest: [() => {}]
         }
       }
 

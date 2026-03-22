@@ -67,5 +67,3 @@ declare global {
     interface User extends GitHubAuthUser {}
   }
 }
-
-export {}

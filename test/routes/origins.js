@@ -20,7 +20,7 @@ describe('Pypi origin routes', () => {
     router = createRoute(true)
   })
 
-  afterEach(function () {
+  afterEach(() => {
     sinon.restore()
   })
 

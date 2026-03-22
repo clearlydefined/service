@@ -11,7 +11,7 @@ const { get } = require('lodash')
 /** @param {boolean} once */
 async function work(once) {
   try {
-    let message = await queue.dequeue()
+    const message = await queue.dequeue()
     if (!get(message, 'data.pull_request') || !get(message, 'data.action')) return
     const pr = message.data.pull_request
     const action = message.data.action

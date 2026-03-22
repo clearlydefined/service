@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type EntityCoordinates from '../../../lib/entityCoordinates'
-import type { Logger } from '../../logging'
 import type { FileEntry } from '../../../lib/utils'
+import type { Logger } from '../../logging'
 import type { SummarizerOptions } from '../index'
-import type { ScanCodeFile, ScanCodeHarvestedData, ScanCodeSummaryResult, ScanCodePackage } from '../scancode'
+import type { ScanCodeFile, ScanCodeHarvestedData, ScanCodePackage, ScanCodeSummaryResult } from '../scancode'
 
 /**
  * ScanCode New summarizer class that processes harvested data from newer

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { TelemetryClient, Contracts } from 'applicationinsights'
+import type { Contracts, TelemetryClient } from 'applicationinsights'
 
 /** Application Insights abstraction layer that provides a consistent interface for telemetry operations */
 declare class MockInsights {

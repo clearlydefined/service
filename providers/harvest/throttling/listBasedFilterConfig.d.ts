@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import ListBasedFilter from './listBasedFilter'
-import { Logger } from '../../logging'
+import type { Logger } from '../../logging'
+import type ListBasedFilter from './listBasedFilter'
 
 /**
  * Parses a JSON array string from environment variable

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue, DequeuedMessage } from '.'
+import type { DequeuedMessage, IQueue } from '.'
 import type { Logger } from '../logging'
 
 export interface AzureStorageQueueOptions {

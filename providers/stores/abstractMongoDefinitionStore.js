@@ -35,10 +35,10 @@ const sortOptions = {
 
 /** @type {Record<string, (value: any) => number | undefined>} */
 const valueTransformers = {
-  'licensed.score.total': value => value && parseInt(value),
-  'described.score.total': value => value && parseInt(value),
-  'scores.effective': value => value && parseInt(value),
-  'scores.tool': value => value && parseInt(value)
+  'licensed.score.total': value => value && Number.parseInt(value),
+  'described.score.total': value => value && Number.parseInt(value),
+  'scores.effective': value => value && Number.parseInt(value),
+  'scores.tool': value => value && Number.parseInt(value)
 }
 
 const SEPARATOR = '&'
@@ -239,19 +239,19 @@ class AbstractMongoDefinitionStore {
     if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
     if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
     if (parameters.minEffectiveScore)
-      filter['scores.effective'] = { $gt: parseInt(String(parameters.minEffectiveScore)) }
+      filter['scores.effective'] = { $gt: Number.parseInt(String(parameters.minEffectiveScore)) }
     if (parameters.maxEffectiveScore)
-      filter['scores.effective'] = { $lt: parseInt(String(parameters.maxEffectiveScore)) }
-    if (parameters.minToolScore) filter['scores.tool'] = { $gt: parseInt(String(parameters.minToolScore)) }
-    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: parseInt(String(parameters.maxToolScore)) }
+      filter['scores.effective'] = { $lt: Number.parseInt(String(parameters.maxEffectiveScore)) }
+    if (parameters.minToolScore) filter['scores.tool'] = { $gt: Number.parseInt(String(parameters.minToolScore)) }
+    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: Number.parseInt(String(parameters.maxToolScore)) }
     if (parameters.minLicensedScore)
-      filter['licensed.score.total'] = { $gt: parseInt(String(parameters.minLicensedScore)) }
+      filter['licensed.score.total'] = { $gt: Number.parseInt(String(parameters.minLicensedScore)) }
     if (parameters.maxLicensedScore)
-      filter['licensed.score.total'] = { $lt: parseInt(String(parameters.maxLicensedScore)) }
+      filter['licensed.score.total'] = { $lt: Number.parseInt(String(parameters.maxLicensedScore)) }
     if (parameters.minDescribedScore)
-      filter['described.score.total'] = { $gt: parseInt(String(parameters.minDescribedScore)) }
+      filter['described.score.total'] = { $gt: Number.parseInt(String(parameters.minDescribedScore)) }
     if (parameters.maxDescribedScore)
-      filter['described.score.total'] = { $lt: parseInt(String(parameters.maxDescribedScore)) }
+      filter['described.score.total'] = { $lt: Number.parseInt(String(parameters.maxDescribedScore)) }
     return filter
   }
 
@@ -343,15 +343,18 @@ class AbstractMongoDefinitionStore {
    * @returns {Record<string, any>} The filter expression
    */
   _buildQueryExpression(sortConditions, sortValues) {
-    return sortConditions.reduce((filter, [sortField, sortDirection], index) => {
-      const transform = valueTransformers[sortField]
-      /** @type {string | number | null | undefined} */
-      let sortValue = sortValues[index]
-      sortValue = transform ? transform(sortValue) : sortValue
-      const isLast = index === sortConditions.length - 1
-      const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
-      return { ...filter, ...filterForSort }
-    }, /** @type {Record<string, any>} */ ({}))
+    return sortConditions.reduce(
+      (filter, [sortField, sortDirection], index) => {
+        const transform = valueTransformers[sortField]
+        /** @type {string | number | null | undefined} */
+        let sortValue = sortValues[index]
+        sortValue = transform ? transform(sortValue) : sortValue
+        const isLast = index === sortConditions.length - 1
+        const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
+        return { ...filter, ...filterForSort }
+      },
+      /** @type {Record<string, any>} */ ({})
+    )
   }
 
   /**

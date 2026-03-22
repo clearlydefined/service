@@ -144,7 +144,7 @@ describe('Mongo Curation store', () => {
     const service = createStore()
     const result = await service.list(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
     expect(service.collection.find.calledTwice).to.be.true
-    expect(service.collection.find.args[0][0]).to.deep.eq({ _id: new RegExp('^npm/npmjs/-/foo') })
+    expect(service.collection.find.args[0][0]).to.deep.eq({ _id: /^npm\/npmjs\/-\/foo/ })
     expect(service.collection.find.args[1][0]).to.deep.eq({
       'files.coordinates.type': 'npm',
       'files.coordinates.provider': 'npmjs',

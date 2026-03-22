@@ -172,7 +172,7 @@ describe('azblob Harvest store', () => {
   describe('getAllLatest', () => {
     it('should get latest tool versions', () => {
       const store = Store({})
-      let latest = store._getLatestToolPaths([
+      const latest = store._getLatestToolPaths([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.14.0.json',

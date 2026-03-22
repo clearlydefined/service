@@ -1,10 +1,10 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
-import { ICache } from '../providers/caching'
-import { PypiCoordinatesMapper } from './pypiCoordinatesMapper'
-import { GradleCoordinatesMapper } from './gradleCoordinatesMapper'
+import type { ICache } from '../providers/caching'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
+import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper'
+import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper'
 
 /** Interface for coordinate mappers that can transform coordinates */
 export interface ICoordinatesMapper {
