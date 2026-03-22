@@ -35,10 +35,13 @@ class SummaryService {
   _summarizeTool(coordinates, tool, data) {
     if (!summarizers[tool]) return data
     const summarizer = summarizers[tool](this.options[tool] || {})
-    return Object.getOwnPropertyNames(data).reduce((result, version) => {
-      result[version] = summarizer.summarize(coordinates, data[version])
-      return result
-    }, /** @type {Record<string, any>} */ ({}))
+    return Object.getOwnPropertyNames(data).reduce(
+      (result, version) => {
+        result[version] = summarizer.summarize(coordinates, data[version])
+        return result
+      },
+      /** @type {Record<string, any>} */ ({})
+    )
   }
 
   /**
@@ -49,10 +52,13 @@ class SummaryService {
    * @returns {SummarizedData} Summarized data for all tools
    */
   summarizeAll(coordinates, data) {
-    return Object.getOwnPropertyNames(data || {}).reduce((result, tool) => {
-      result[tool] = this._summarizeTool(coordinates, tool, data[tool])
-      return result
-    }, /** @type {SummarizedData} */ ({}))
+    return Object.getOwnPropertyNames(data || {}).reduce(
+      (result, tool) => {
+        result[tool] = this._summarizeTool(coordinates, tool, data[tool])
+        return result
+      },
+      /** @type {SummarizedData} */ ({})
+    )
   }
 }
 

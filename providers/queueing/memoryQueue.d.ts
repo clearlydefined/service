@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue, QueueMessage, DequeuedMessage } from '.'
+import type { DequeuedMessage, IQueue, QueueMessage } from '.'
 import type { Logger } from '../logging'
 
 export interface MemoryQueueOptions {

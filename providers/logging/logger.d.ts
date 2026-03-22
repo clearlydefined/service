@@ -14,7 +14,7 @@ import type { Logger } from '.'
 declare function loggerFactory(loggerValue?: Logger): Logger
 
 declare namespace loggerFactory {
-  export { Logger }
+  export type { Logger }
 }
 
 export = loggerFactory

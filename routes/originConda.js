@@ -16,7 +16,7 @@ router.get('/:channel/:subdir/:name/revisions', asyncMiddleware(getOriginCondaRe
  * @param {Response} response
  */
 async function getOriginCondaRevisions(request, response) {
-  let { channel, subdir, name } = request.params
+  const { channel, subdir, name } = request.params
   try {
     const revisions = await repoAccess.getRevisions(channel, subdir, name)
     response.status(200).send(revisions)
@@ -32,7 +32,7 @@ router.get('/:channel/:name', asyncMiddleware(getOriginConda))
  * @param {Response} response
  */
 async function getOriginConda(request, response) {
-  let { channel, name } = request.params
+  const { channel, name } = request.params
   try {
     const matches = await repoAccess.getPackages(channel, name)
     response.status(200).send(matches)

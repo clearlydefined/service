@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Request } from 'express'
-import EntityCoordinates, { EntityCoordinatesSpec } from './entityCoordinates'
-import ResultCoordinates from './resultCoordinates'
+import type { Request } from 'express'
+import type EntityCoordinates from './entityCoordinates'
+import type { EntityCoordinatesSpec } from './entityCoordinates'
+import type ResultCoordinates from './resultCoordinates'
 
 /** Express request with route params for entity coordinates */
 export interface EntityCoordinatesRequest extends Request {

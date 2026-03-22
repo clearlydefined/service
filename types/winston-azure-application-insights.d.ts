@@ -6,8 +6,8 @@
  */
 
 declare module 'winston-azure-application-insights' {
-  import * as winston from 'winston'
-  import * as appInsights from 'applicationinsights'
+  import type * as winston from 'winston'
+  import type * as appInsights from 'applicationinsights'
 
   /** Winston log levels mapped to Application Insights severity levels. */
   type WinstonLevel =

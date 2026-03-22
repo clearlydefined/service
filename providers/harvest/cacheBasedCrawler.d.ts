@@ -1,9 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Logger } from '../logging'
-import { ICache } from '../caching'
-import EntityCoordinates from '../../lib/entityCoordinates'
+import type EntityCoordinates from '../../lib/entityCoordinates'
+import type { ICache } from '../caching'
+import type { Logger } from '../logging'
 
 /** Policy configuration for a harvest operation */
 export interface HarvestPolicy {

@@ -13,7 +13,7 @@ const scancodeVersions = ['2.2.1', '2.9.2', '2.9.8', '3.0.0', '3.0.2', '30.1.0']
 describe('ScanCodeLegacySummarizer basic compatability', () => {
   it('summarizes basic npm', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
-    for (let version of scancodeVersions) {
+    for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-basic')
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
@@ -35,7 +35,7 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     const overrides = {
       '2.9.2': 'BSD-3-Clause AND GPL-2.0-only'
     }
-    for (let version of scancodeVersions) {
+    for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-large')
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
@@ -123,7 +123,7 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
   it('summarizes ruby gems', () => {
     const coordinates = { type: 'gem', provider: 'rubygems' }
     const undefinedOverrides = ['2.9.2', '2.9.8']
-    for (let version of scancodeVersions) {
+    for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'gem')
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
@@ -141,7 +141,7 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
 
   it('summarizes git repos', () => {
     const coordinates = { type: 'git', provider: 'github' }
-    for (let version of scancodeVersions) {
+    for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'git')
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)
@@ -155,7 +155,7 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
 
   it('summarizes pythons', () => {
     const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '3.0.1' }
-    for (let version of scancodeVersions) {
+    for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'python')
       if (!harvestData) continue
       const result = summarizer.summarize(coordinates, harvestData)

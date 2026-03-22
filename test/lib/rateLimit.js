@@ -193,7 +193,7 @@ describe('Rate Limiter', () => {
       await new Promise(resolve => setTimeout(resolve, limit.windowMs))
     })
 
-    const verifyRateLimiting = function () {
+    const verifyRateLimiting = () => {
       it('allows requests under the limit', async () => {
         await client
           ?.get('/')
@@ -229,7 +229,7 @@ describe('Rate Limiter', () => {
         client = await buildTestAppClient(rateLimiter.middleware)
       })
 
-      after(async function () {
+      after(async () => {
         await redisClient.quit()
         await container.stop()
       })
@@ -260,7 +260,7 @@ describe('Rate Limiter', () => {
     describe('MiddlewareDelegate - Memory Based', () => {
       const config = { limits: { windowSeconds: 1, max: 1 } }
 
-      before(async function () {
+      before(async () => {
         const middleware = setupApiRateLimiterAfterCachingInit(config, MemoryCache(), logger)
         client = await buildTestAppClient(middleware)
       })

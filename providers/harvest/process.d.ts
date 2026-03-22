@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { IQueue } from '../queueing'
-import { DefinitionService } from '../../business/definitionService'
-import { Logger } from '../logging'
+import type { DefinitionService } from '../../business/definitionService'
+import type { Logger } from '../logging'
+import type { IQueue } from '../queueing'
 
 /**
  * Sets up and starts the harvest queue processor. Continuously dequeues messages and processes

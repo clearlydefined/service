@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Logger } from '../logging'
-import { IQueue } from '../queueing'
-import { HarvestEntry, HarvestCallItem, Harvester } from './cacheBasedCrawler'
+import type { Logger } from '../logging'
+import type { IQueue } from '../queueing'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler'
 
 /** Configuration options for CrawlingQueueHarvester */
 export interface CrawlerQueueOptions {

@@ -475,7 +475,7 @@ describe('Integration test', () => {
 
     let upgradeHandler
 
-    const handleVersionedDefinition = function () {
+    const handleVersionedDefinition = () => {
       describe('verify schema version', () => {
         it('logs and harvests new definitions with empty tools', async () => {
           const { service } = setupServiceForUpgrade(null, upgradeHandler)

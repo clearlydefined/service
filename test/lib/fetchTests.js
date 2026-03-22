@@ -151,7 +151,7 @@ describe('CallFetch', () => {
       expect(response).to.be.equal('done')
     })
 
-    it('should POST with JSON', async function () {
+    it('should POST with JSON', async () => {
       const path = '/webhook'
       const endpointMock = await mockServer.forPost(path).thenReply(200, 'done')
 
@@ -172,7 +172,7 @@ describe('CallFetch', () => {
       expect(checkDefaultHeaders(requests[0].headers))
     })
 
-    it('should GET with withCredentials set to false', async function () {
+    it('should GET with withCredentials set to false', async () => {
       const path = '/indexes/definitionsindexer/docs/suggest'
       await mockServer.forGet(path).thenReply(200, 'done')
 
@@ -191,7 +191,7 @@ describe('CallFetch', () => {
       expect(response.config.withCredentials).to.be.false
     })
 
-    it('should POST with withCredentials set to false', async function () {
+    it('should POST with withCredentials set to false', async () => {
       const path = '/v1/apps/serviceid/query'
       await mockServer.forPost(path).thenReply(200, 'done')
       const query = `

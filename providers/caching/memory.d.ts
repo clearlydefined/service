@@ -1,7 +1,7 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { BaseCacheOptions, ICache } from '.'
+import type { BaseCacheOptions, ICache } from '.'
 
 /** Configuration options for MemoryCache */
 export interface MemoryCacheOptions extends BaseCacheOptions {}

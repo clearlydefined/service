@@ -92,7 +92,7 @@ class DefinitionUpgrader {
   async _upgradeIfNecessary(coordinates) {
     try {
       const existing = await this._definitionService.getStored(coordinates)
-      let result = await this._defVersionChecker.validate(existing)
+      const result = await this._defVersionChecker.validate(existing)
       if (!result) {
         await this._definitionService.computeStoreAndCurate(coordinates)
         this.logger.info('Handled definition upgrade', { coordinates })

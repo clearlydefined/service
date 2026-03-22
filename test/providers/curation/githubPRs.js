@@ -60,7 +60,7 @@ const defaultCurations = {
 }
 
 describe('Curation service pr events', () => {
-  before(function () {
+  before(() => {
     require('../../../providers/logging/logger')({
       error: sinon.stub(),
       info: sinon.stub(),
@@ -68,7 +68,7 @@ describe('Curation service pr events', () => {
     })
   })
 
-  afterEach(function () {
+  afterEach(() => {
     sandbox.restore()
   })
 

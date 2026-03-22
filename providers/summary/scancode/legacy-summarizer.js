@@ -170,7 +170,7 @@ class ScanCodeLegacySummarizer {
    */
   _findRootFiles(files, roots) {
     return files.filter(file => {
-      for (let root of roots)
+      for (const root of roots)
         if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
       return false
     })
@@ -211,12 +211,15 @@ class ScanCodeLegacySummarizer {
   _getLicenseByIsLicenseText(files) {
     const fullLicenses = files
       .filter(file => file.is_license_text && file.licenses)
-      .reduce((licenses, file) => {
-        file.licenses?.forEach(license => {
-          licenses.add(this._createExpressionFromLicense(license))
-        })
-        return licenses
-      }, /** @type {Set<string | null>} */ (new Set()))
+      .reduce(
+        (licenses, file) => {
+          file.licenses?.forEach(license => {
+            licenses.add(this._createExpressionFromLicense(license))
+          })
+          return licenses
+        },
+        /** @type {Set<string | null>} */ (new Set())
+      )
     return joinExpressions(fullLicenses)
   }
 
@@ -230,12 +233,15 @@ class ScanCodeLegacySummarizer {
   _getLicenseByFileName(files, coordinates) {
     const fullLicenses = files
       .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
-      .reduce((licenses, file) => {
-        file.licenses?.forEach(license => {
-          if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
-        })
-        return licenses
-      }, /** @type {Set<string | null>} */ (new Set()))
+      .reduce(
+        (licenses, file) => {
+          file.licenses?.forEach(license => {
+            if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+          })
+          return licenses
+        },
+        /** @type {Set<string | null>} */ (new Set())
+      )
     return joinExpressions(fullLicenses)
   }
 
@@ -247,7 +253,7 @@ class ScanCodeLegacySummarizer {
    */
   // Create a license expression from all of the package info in the output
   _getLicenseByPackageAssertion(files) {
-    for (let file of files) {
+    for (const file of files) {
       const asserted = /** @type {{ license?: string; spdx_license_key?: string }[] | undefined} */ (
         get(file, 'packages[0].asserted_licenses')
       )

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Request, Response, NextFunction, RequestHandler } from 'express'
+import type { NextFunction, Request, RequestHandler, Response } from 'express'
 
 /**
  * Async function that can be wrapped by asyncMiddleware.

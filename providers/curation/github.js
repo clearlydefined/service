@@ -99,7 +99,7 @@ class GitHubCurationService {
   async syncAllContributions(client) {
     /** @type {string[]} */
     const states = ['open', 'closed']
-    for (let state of states) {
+    for (const state of states) {
       /** @type {*} */
       let prOptions = {
         owner: this.options.owner,
@@ -120,7 +120,7 @@ class GitHubCurationService {
 
   /** @param {GitHubPR[]} prs */
   async _processContributions(prs) {
-    for (let pr of prs) {
+    for (const pr of prs) {
       const storedContribution = await this.store.getContribution(pr.number)
       const storedUpdated = get(storedContribution, 'pr.updated_at')
       if (!storedUpdated || new Date(storedUpdated).getTime() < new Date(pr.updated_at).getTime()) {
@@ -412,7 +412,7 @@ class GitHubCurationService {
   /** @param {CurationPatchEntry[]} patches */
   async _validateDefinitionsExist(patches) {
     const targetCoordinates = patches.reduce((result, patch) => {
-      for (let key in patch.revisions)
+      for (const key in patch.revisions)
         result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
       return result
     }, [])

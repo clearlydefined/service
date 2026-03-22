@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { EntityCoordinates } from '../../../lib/entityCoordinates'
-import { Logger } from '../../logging'
+import type { EntityCoordinates } from '../../../lib/entityCoordinates'
+import type { Logger } from '../../logging'
 
 /** Configuration options for ListBasedFilter */
 export interface ListBasedFilterOptions {

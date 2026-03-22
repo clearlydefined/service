@@ -174,7 +174,7 @@ class ScanCodeNewSummarizer {
   _findRootFiles(files, roots) {
     return files.filter(
       /** @param {ScanCodeFile} file */ file => {
-        for (let root of roots) {
+        for (const root of roots) {
           if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
         }
         return false

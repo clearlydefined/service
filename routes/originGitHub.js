@@ -8,7 +8,7 @@ const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const { get, uniq } = require('lodash')
 
-let logger = require('../providers/logging/logger')()
+const logger = require('../providers/logging/logger')()
 
 /** @param {Request} request */
 function getClient(request) {
