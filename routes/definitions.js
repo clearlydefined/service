@@ -39,8 +39,8 @@ async function getDefinition(request, response) {
   // Unfortunately, it seems the best option without doing a massive
   // rearchitecture of the entire coordinate system
   if (request.params.type === 'go' && request.params.provider === 'golang') {
-    let namespaceNameRevision = utils.parseNamespaceNameRevision(request)
-    let splitString = namespaceNameRevision.split('/')
+    const namespaceNameRevision = utils.parseNamespaceNameRevision(request)
+    const splitString = namespaceNameRevision.split('/')
 
     // Pull off the last part of the string as the revision
     const revision = splitString.pop()
@@ -177,14 +177,17 @@ function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
   const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
   if (!shouldAdaptKeys) return result
   const resultKeyLookup = new Map(Object.keys(result).map(key => [key.toLowerCase(), key]))
-  return requestedKeys.reduce((total, requested) => {
-    let mapped = coordinatesLookup.get(requested)
-    if (matchCase) mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
-    const resultKey = mapped || resultKeyLookup.get(requested.toLowerCase())
-    const value = result[resultKey]
-    if (value) total[mapped ? requested : resultKey] = value
-    return total
-  }, /** @type {Record<string, any>} */ ({}))
+  return requestedKeys.reduce(
+    (total, requested) => {
+      let mapped = coordinatesLookup.get(requested)
+      if (matchCase) mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
+      const resultKey = mapped || resultKeyLookup.get(requested.toLowerCase())
+      const value = result[resultKey]
+      if (value) total[mapped ? requested : resultKey] = value
+      return total
+    },
+    /** @type {Record<string, any>} */ ({})
+  )
 }
 
 /** @type {any} */

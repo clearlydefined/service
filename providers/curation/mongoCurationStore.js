@@ -159,7 +159,7 @@ class MongoCurationStore {
   _formatCurations(curations) {
     return curations.reduce((/** @type {Record<string, CurationRevision>} */ result, entry) => {
       Object.keys(entry.revisions).forEach(revision => {
-        let coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
+        const coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
         result[coordinates] = entry.revisions[revision]
       })
       return result

@@ -105,7 +105,7 @@ async function updateCurations(request, response) {
   /** @type {import('../lib/curation').CurationError[][]} */
   let curationErrors = []
   /** @type {any[]} */
-  let patchesInError = []
+  const patchesInError = []
   request.body.patches.forEach((/** @type {string | import('../lib/curation').CurationData} */ entry) => {
     const curation = new Curation(entry)
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]

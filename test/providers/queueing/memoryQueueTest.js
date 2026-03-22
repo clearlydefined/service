@@ -21,17 +21,17 @@ describe('memory queue operations', () => {
       await memQueue.queue(JSON.stringify({ somekey: 1 }))
       await memQueue.queue(JSON.stringify({ somekey: 2 }))
 
-      let message1 = await memQueue.dequeue()
+      const message1 = await memQueue.dequeue()
       assert.equal(message1.data.somekey, 1)
 
       await memQueue.delete(message1)
 
-      let message2 = await memQueue.dequeue()
+      const message2 = await memQueue.dequeue()
       assert.equal(message2.data.somekey, 2)
 
       await memQueue.delete(message2)
 
-      let message3 = await memQueue.dequeue()
+      const message3 = await memQueue.dequeue()
       assert.equal(message3, null)
     })
 
@@ -72,7 +72,7 @@ describe('memory queue operations', () => {
     })
 
     it('handles dequeueing multiple messages of an empty queue', async () => {
-      let messages = await memQueue.dequeueMultiple()
+      const messages = await memQueue.dequeueMultiple()
       assert.equal(messages.length, 0)
     })
   })

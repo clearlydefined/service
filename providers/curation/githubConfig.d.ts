@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { GitHubCurationOptions, ICurationStore, Endpoints, CurationHarvestStore } from '.'
-import type { GitHubCurationService } from './github'
+import type { CurationHarvestStore, Endpoints, GitHubCurationOptions, ICurationStore } from '.'
 import type { ICache } from '../caching'
+import type { GitHubCurationService } from './github'
 
 /**
  * Factory function that creates a GitHubCurationService configured from the environment.

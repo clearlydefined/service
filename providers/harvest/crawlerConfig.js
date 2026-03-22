@@ -22,7 +22,7 @@ const crawlerConfig = {
 function serviceFactory(options) {
   const crawlerOptions = { ...crawlerConfig, ...options }
   const harvester = crawler(crawlerOptions)
-  const cacheTTLSeconds = parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS'), 10)
+  const cacheTTLSeconds = Number.parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS'), 10)
   const cacheTTLInSeconds = Number.isFinite(cacheTTLSeconds) && cacheTTLSeconds > 0 ? cacheTTLSeconds : undefined
   return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester })
 }

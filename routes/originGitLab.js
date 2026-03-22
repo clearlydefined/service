@@ -3,7 +3,7 @@ const router = require('express').Router()
 const gitLabApi = require('../lib/gitlab.js')
 const config = require('painless-config')
 
-let logger = require('../providers/logging/logger')()
+const logger = require('../providers/logging/logger')()
 
 function gitLabClient() {
   return gitLabApi.getClient(/** @type {any} */ (config.get('GITLAB_TOKEN')))
@@ -52,7 +52,7 @@ router.get(
     const project = /** @type {string | undefined} */ (request.params.project)
 
     if (request.path.indexOf('/', 1) > 0) {
-      let projects = await projectsByProjectName(namespace, project)
+      const projects = await projectsByProjectName(namespace, project)
       return response.status(200).send(projects)
     }
 
@@ -65,13 +65,13 @@ router.get(
     // First, we try the User API, then if that doesn't work we
     // try the Group API
     try {
-      let projects = await getUserProjects(namespace)
+      const projects = await getUserProjects(namespace)
       return response.status(200).send(projects)
     } catch (e) {
       const err = /** @type {any} */ (e)
       logger.info(`Not able to find GitLab user ${namespace}`)
       logger.info(err)
-      let projects = await getGroupProjects(namespace)
+      const projects = await getGroupProjects(namespace)
       return response.status(200).send(projects)
     }
   })
@@ -110,7 +110,7 @@ function getExactProjectMatch(namespace, project, projects) {
 async function projectsByProjectName(_namespace, project) {
   const projects = await gitlab.Projects.search(project)
 
-  let project_names = projects.map((/** @type {any} */ project) => {
+  const project_names = projects.map((/** @type {any} */ project) => {
     return {
       id: project.path_with_namespace
     }
@@ -136,7 +136,7 @@ async function getUserProjects(username) {
 async function getUsers(userName) {
   const users = await gitlab.Users.search(userName)
 
-  let user_names = users.map((/** @type {any} */ user) => {
+  const user_names = users.map((/** @type {any} */ user) => {
     return {
       id: user.id,
       username: user.username
@@ -153,7 +153,7 @@ async function getGroupProjects(groupName) {
 
     const group_projects = await gitlab.Groups.projects(group_response[0])
 
-    let group_project_names = group_projects.map((/** @type {any} */ project) => {
+    const group_project_names = group_projects.map((/** @type {any} */ project) => {
       return project.name
     })
 
@@ -170,7 +170,7 @@ async function getGroupProjects(groupName) {
 async function getGroups(groupName) {
   const groups = await gitlab.Groups.search(groupName)
 
-  let group_names = groups.map((/** @type {any} */ group) => {
+  const group_names = groups.map((/** @type {any} */ group) => {
     return group.id
   })
 

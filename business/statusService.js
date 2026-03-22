@@ -129,7 +129,7 @@ class StatusService {
        * @param {any[]} row
        */
       (result, row) => {
-        let date = row[0]
+        const date = row[0]
         result[date] = result[date] || {}
         result[date][row[1]] = row[2]
         return result
@@ -191,10 +191,10 @@ class StatusService {
        * @param {any[]} row
        */
       (result, row) => {
-        let date = row[0]
-        let tool = row[1]
-        let type = row[2]
-        let count = row[3]
+        const date = row[0]
+        const tool = row[1]
+        const type = row[2]
+        const count = row[3]
         result[date] = result[date] || {}
         result[date][tool] = result[date][tool] || {}
         result[date][tool][type] = count
@@ -230,9 +230,9 @@ class StatusService {
        * @param {any[]} row
        */
       (result, row) => {
-        let date = row[0]
-        let tool = row[1]
-        let count = row[2]
+        const date = row[0]
+        const tool = row[1]
+        const count = row[2]
         result[date] = result[date] || {}
         result[date][tool] = count
         return result

@@ -235,15 +235,18 @@ class AbstractFileStore {
         const { tool, toolVersion } = toResultCoordinates(path)
         return { tool, toolVersion, path }
       })
-      .reduce((latest, { tool, toolVersion, path }) => {
-        if (!tool || !toolVersion) return latest
-        latest[tool] = latest[tool] || { toolVersion: '', path: '' }
-        //if the version is greater than the current version, replace it
-        if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {
-          latest[tool] = { toolVersion, path }
-        }
-        return latest
-      }, /** @type {Record<string, {toolVersion: string, path: string}>} */ ({}))
+      .reduce(
+        (latest, { tool, toolVersion, path }) => {
+          if (!tool || !toolVersion) return latest
+          latest[tool] = latest[tool] || { toolVersion: '', path: '' }
+          //if the version is greater than the current version, replace it
+          if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {
+            latest[tool] = { toolVersion, path }
+          }
+          return latest
+        },
+        /** @type {Record<string, {toolVersion: string, path: string}>} */ ({})
+      )
     const latestPaths = Object.values(entries).map(entry => entry.path)
     return new Set(latestPaths)
   }

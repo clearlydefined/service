@@ -74,7 +74,7 @@ describe('Webhook Route for GitHub calls', () => {
   //   expect(definitionService.computeAndStore.getCall(0).args[0]).to.be.eq(simpleCoords)
   // })
 
-  it('skips closed event that is not merged', async function () {
+  it('skips closed event that is not merged', async () => {
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -92,7 +92,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('calls valid for PR changes', async function () {
+  it('calls valid for PR changes', async () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -108,7 +108,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('calls missing for PR changes', async function () {
+  it('calls missing for PR changes', async () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -124,7 +124,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(logger.error.notCalled).to.be.true
   })
 
-  it('validates the curation when a PR is opened', async function () {
+  it('validates the curation when a PR is opened', async () => {
     const request = createRequest('opened')
     const response = httpMocks.createResponse()
     const logger = createLogger()
@@ -136,7 +136,7 @@ describe('Webhook Route for GitHub calls', () => {
     expect(service.validateContributions.calledOnce).to.be.true
   })
 
-  it('validates the curation when a PR is reopened', async function () {
+  it('validates the curation when a PR is reopened', async () => {
     const request = createRequest('reopened')
     const response = httpMocks.createResponse()
     const logger = createLogger()

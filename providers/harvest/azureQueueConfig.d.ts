@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import AzureStorageQueue, { AzureStorageQueueOptions } from '../queueing/azureStorageQueue'
+import type AzureStorageQueue from '../queueing/azureStorageQueue'
+import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue'
 
 /**
  * Factory function that creates an AzureStorageQueue configured for harvest processing.

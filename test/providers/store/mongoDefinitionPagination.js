@@ -16,8 +16,8 @@ const dbOptions = {
   }
 }
 
-const shouldPaginateSearchCorrectly = function () {
-  describe('Mongo Definition Store: search pagination', function () {
+const shouldPaginateSearchCorrectly = () => {
+  describe('Mongo Definition Store: search pagination', () => {
     const mongoServer = new MongoMemoryServer()
     let mongoStore
 
@@ -43,7 +43,7 @@ const shouldPaginateSearchCorrectly = function () {
       await mongoServer.stop()
     })
 
-    it('should fetch records without sort continuously', async function () {
+    it('should fetch records without sort continuously', async () => {
       const expected = [
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
         'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
@@ -58,7 +58,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should sort ascending on releaseDate and find 1 page of records', async function () {
+    it('should sort ascending on releaseDate and find 1 page of records', async () => {
       const expected = ['maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5']
       const query = {
         sort: 'releaseDate',
@@ -70,7 +70,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should sort ascending on releaseDate and handle null and non null values in continuation', async function () {
+    it('should sort ascending on releaseDate and handle null and non null values in continuation', async () => {
       const expected = [
         'maven/mavencentral/org.apache.httpcomponents/httpcore/4.0-alpha5',
         'maven/mavencentral/org.flywaydb/flyway-maven-plugin/5.0.7',
@@ -92,7 +92,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should sort descending on releaseDate and handle null and non null values in continuation', async function () {
+    it('should sort descending on releaseDate and handle null and non null values in continuation', async () => {
       const query = {
         sort: 'releaseDate',
         sortDesc: true
@@ -102,7 +102,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyUniqueCoordinates(defs)
     })
 
-    it('should sort ascending on license and handle null and non null values in continuation ', async function () {
+    it('should sort ascending on license and handle null and non null values in continuation ', async () => {
       const expected = [
         'npm/npmjs/@sinclair/typebox/0.24.45',
         'maven/mavencentral/io.jenetics/jenetics/7.1.1',
@@ -123,7 +123,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should sort descending on license and handle null and non null values in continuation ', async function () {
+    it('should sort descending on license and handle null and non null values in continuation ', async () => {
       const query = {
         sort: 'license',
         sortDesc: true
@@ -133,7 +133,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyUniqueCoordinates(defs)
     })
 
-    it('should filter and sort ascending on multiple keys and handle null and non null namespace in continuation', async function () {
+    it('should filter and sort ascending on multiple keys and handle null and non null namespace in continuation', async () => {
       const expected = [
         'npm/npmjs/-/angular/1.6.9',
         'npm/npmjs/-/redie/0.3.0',
@@ -154,7 +154,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should filter and sort descending on multiple keys in continuation', async function () {
+    it('should filter and sort descending on multiple keys in continuation', async () => {
       const expected = [
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',
         'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
@@ -173,7 +173,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should filter and sort on numerical scores and fetch continuously', async function () {
+    it('should filter and sort on numerical scores and fetch continuously', async () => {
       const expected = [
         'maven/mavencentral/com.azure/azure-storage-blob/12.20.0',
         'npm/npmjs/-/angular/1.6.9',
@@ -196,7 +196,7 @@ const shouldPaginateSearchCorrectly = function () {
       verifyExpectedCoordinates(coordinates, expected)
     })
 
-    it('should filter and sort descending on numerical scores and fetch continuously', async function () {
+    it('should filter and sort descending on numerical scores and fetch continuously', async () => {
       const expected = [
         'npm/npmjs/-/redie/0.3.0',
         'git/github/microsoft/redie/194269b5b7010ad6f8dc4ef608c88128615031ca',

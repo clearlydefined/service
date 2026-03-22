@@ -1,11 +1,11 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue } from '../queueing'
-import type { Logger } from '../logging'
 import type { Definition } from '../../business/definitionService'
 import type { DefinitionService } from '../../business/definitionService'
-import { DefinitionVersionChecker, DefinitionVersionCheckerOptions } from './defVersionCheck'
+import type { Logger } from '../logging'
+import type { IQueue } from '../queueing'
+import { DefinitionVersionChecker, type DefinitionVersionCheckerOptions } from './defVersionCheck'
 
 /** Configuration options for DefinitionQueueUpgrader */
 export interface DefinitionQueueUpgraderOptions extends DefinitionVersionCheckerOptions {

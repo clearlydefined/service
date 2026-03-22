@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
-import { FetchFunction } from './fetch'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
+import type { FetchFunction } from './fetch'
 
 /** Response structure from PyPI JSON API */
 export interface PypiApiResponse {

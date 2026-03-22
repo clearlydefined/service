@@ -3,9 +3,9 @@
 
 import type { RequestHandler } from 'express'
 import type { ICache } from '../providers/caching'
+import type authRoute from '../routes/auth'
 import type { GitHubMiddlewareOptions } from './github'
 import type { PermissionsConfig } from './permissions'
-import type authRoute from '../routes/auth'
 
 /**
  * Extended options for GitHub authentication configuration.

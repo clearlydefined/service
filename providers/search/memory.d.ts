@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { SearchOptions, AbstractSearch } from './abstractSearch'
+import type { AbstractSearch, SearchOptions } from './abstractSearch'
 
 /** In-memory search index entry. */
 export interface SearchEntry {

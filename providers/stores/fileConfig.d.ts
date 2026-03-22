@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { FileStoreOptions } from './abstractFileStore'
+import type { FileAttachmentStore, FileAttachmentStoreOptions } from './fileAttachmentStore'
 import type { FileDefinitionStore } from './fileDefinitionStore'
 import type { FileHarvestStore } from './fileHarvestStore'
-import type { FileAttachmentStore, FileAttachmentStoreOptions } from './fileAttachmentStore'
 
 /**
  * Creates a file-based harvest store with the given options or default configuration.
