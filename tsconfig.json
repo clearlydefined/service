@@ -12,7 +12,11 @@
   },
   "include": [
     "types/**/*",
+    "app.d.ts",
+    "app.js",
     "bin/www",
+    "bin/config.d.ts",
+    "bin/config.js",
     "business/definitionService.d.ts",
     "business/definitionService.js",
     "business/summarizer.d.ts",
@@ -95,6 +99,7 @@
     "providers/logging/winstonConfig.js",
     "providers/logging/index.d.ts",
     "providers/index.d.ts",
+    "providers/index.js",
     "providers/search/abstractSearch.d.ts",
     "providers/search/abstractSearch.js",
     "providers/search/memory.d.ts",
@@ -182,8 +187,6 @@
     "providers/upgrade/memoryQueueConfig.js",
     "middleware/asyncMiddleware.d.ts",
     "middleware/asyncMiddleware.js",
-    "middleware/querystring.d.ts",
-    "middleware/querystring.js",
     "middleware/permissions.d.ts",
     "middleware/permissions.js",
     "middleware/github.d.ts",
@@ -246,6 +249,7 @@
     "routes/originConda.js",
     "routes/originCondaforge.d.ts",
     "routes/originCondaforge.js",
+    "schemas/validator.d.ts",
     "schemas/validator.js",
     "test/**/*.ts"
   ]
