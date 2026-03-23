@@ -14,6 +14,10 @@ const providers = require('../providers')
  * @param {*} namespace - an optional place to look for built in factories
  */
 
+/**
+ * @param {string} spec
+ * @param {string} [namespace]
+ */
 function loadFactory(spec, namespace) {
   const names = spec.split('+')
   const factory = loadOne(names[0], namespace)
@@ -24,6 +28,10 @@ function loadFactory(spec, namespace) {
   return factory
 }
 
+/**
+ * @param {string} spec
+ * @param {string} [namespace]
+ */
 function loadOne(spec, namespace) {
   const [requirePath, objectPath] = spec.split('|')
   const getPath = (namespace ? namespace + '.' : '') + requirePath
@@ -32,7 +40,8 @@ function loadOne(spec, namespace) {
     if (!target) target = require(requirePath)
     return objectPath ? get(target, objectPath) : target
   } catch (e) {
-    throw new Error(`could not load provider for ${requirePath}. Error ${e.message}`, { cause: e })
+    const message = e instanceof Error ? e.message : String(e)
+    throw new Error(`could not load provider for ${requirePath}. Error ${message}`, { cause: e })
   }
 }
 
