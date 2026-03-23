@@ -3,23 +3,23 @@
 
 import type { RequestHandler, Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
-import type { Logger } from '../providers/logging'
-import type { ICache } from '../providers/caching'
 import type {
-  HarvestStore,
-  HarvestService,
   CurationService,
-  DefinitionStore,
   DefinitionService,
+  DefinitionStore,
+  HarvestService,
+  HarvestStore,
   SearchService,
   UpgradeHandler
 } from '../business/definitionService'
-import type { ICurationStore, CurationHarvestStore } from '../providers/curation'
-import type { PermissionsConfig } from '../middleware/permissions'
-import type { IQueue } from '../providers/queueing'
 import type { AttachmentStore } from '../business/noticeService'
 import type { StatsSearchService } from '../business/statsService'
+import type { PermissionsConfig } from '../middleware/permissions'
+import type { ICache } from '../providers/caching'
+import type { CurationHarvestStore, ICurationStore } from '../providers/curation'
 import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process'
+import type { Logger } from '../providers/logging'
+import type { IQueue } from '../providers/queueing'
 
 /** Provider instance that supports async initialization */
 interface Initializable {
@@ -119,7 +119,7 @@ interface AppConfig {
   }
 }
 
-export { AppConfig, Initializable, ConfigEndpoints, AuthRouteModule, AuthServiceModule }
+export type { AppConfig, Initializable, ConfigEndpoints, AuthRouteModule, AuthServiceModule }
 
 declare const config: AppConfig
 
