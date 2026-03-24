@@ -351,7 +351,7 @@ class AbstractMongoDefinitionStore {
         sortValue = transform ? transform(sortValue) : sortValue
         const isLast = index === sortConditions.length - 1
         const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
-        return { ...filter, ...filterForSort }
+        return Object.assign(filter, filterForSort)
       },
       /** @type {Record<string, any>} */ ({})
     )

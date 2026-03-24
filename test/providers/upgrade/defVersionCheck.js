@@ -9,7 +9,8 @@ const sinon = require('sinon')
 const { DefinitionVersionChecker, factory } = require('../../../providers/upgrade/defVersionCheck')
 
 describe('DefinitionVersionChecker', () => {
-  let logger, checker
+  let logger
+  let checker
   beforeEach(() => {
     logger = { debug: sinon.stub() }
     checker = new DefinitionVersionChecker({ logger })

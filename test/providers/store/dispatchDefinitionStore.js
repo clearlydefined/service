@@ -6,7 +6,10 @@ const { expect } = require('chai')
 const DispatchDefinitionStore = require('../../../providers/stores/dispatchDefinitionStore')
 
 describe('Dispatch Definition store', () => {
-  let dispatchDefinitionStore, store1, store2, logger
+  let dispatchDefinitionStore
+  let store1
+  let store2
+  let logger
 
   beforeEach(() => {
     store1 = createStore()

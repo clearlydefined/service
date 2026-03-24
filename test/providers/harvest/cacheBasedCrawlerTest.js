@@ -31,7 +31,9 @@ describe('CacheBasedHarvester', () => {
     error: sinon.stub()
   }
 
-  let cacheMock, crawler, harvesterMock
+  let cacheMock
+  let crawler
+  let harvesterMock
 
   beforeEach(() => {
     harvesterMock = {

@@ -223,7 +223,8 @@ describe('Definition Service', () => {
   })
 
   describe('computeAndStoreIfNecessary', () => {
-    let service, coordinates
+    let service
+    let coordinates
     beforeEach(() => {
       ;({ service, coordinates } = setup())
       service.getStored = sinon.stub().resolves({
@@ -524,7 +525,8 @@ describe('Integration test', () => {
     })
 
     describe('queueing schema version updates', () => {
-      let queue, staleDef
+      let queue
+      let staleDef
       beforeEach(async () => {
         queue = memoryQueue()
         const queueFactory = sinon.stub().returns(queue)
@@ -582,7 +584,9 @@ describe('Integration test', () => {
   })
 
   describe('Harvest Cache', () => {
-    let service, coordinates, harvestService
+    let service
+    let coordinates
+    let harvestService
 
     it('deletes the tracked in progress harvest after definition is computed', async () => {
       ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))

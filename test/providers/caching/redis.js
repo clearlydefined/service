@@ -19,7 +19,8 @@ const logger = {
 describe('Redis Cache', () => {
   describe('get a tool result', () => {
     const store = {}
-    let mockClient, cache
+    let mockClient
+    let cache
     beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
@@ -109,7 +110,8 @@ describe('Redis Cache', () => {
 
   describe('backward compatibility (pako 1.x -> pako 2.x)', () => {
     const objectPrefix = '*!~%'
-    let mockClient, cache
+    let mockClient
+    let cache
     const store = {}
 
     beforeEach(() => {
@@ -297,7 +299,8 @@ describe('Redis Cache', () => {
     })
   })
   xdescribe('Integration Test', () => {
-    let container, redisConfig
+    let container
+    let redisConfig
 
     before(async function () {
       this.timeout(10000)

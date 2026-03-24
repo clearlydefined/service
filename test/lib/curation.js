@@ -112,7 +112,8 @@ describe('Curations', () => {
   })
 
   describe('file licenses', () => {
-    let content, licenseToReplace
+    let content
+    let licenseToReplace
     beforeEach(() => {
       content = getFixture('curation-invalid.11.yaml')
       licenseToReplace = 'mit and apache-2.0'

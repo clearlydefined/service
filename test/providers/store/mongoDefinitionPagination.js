@@ -274,8 +274,8 @@ class ContinousFetch {
   }
 
   async fetchUpToNtimes(params, nTime) {
-    let dispatchCounter = 0,
-      fetchedCounter = 0
+    let dispatchCounter = 0
+    let fetchedCounter = 0
     let retrieved = {}
 
     while (dispatchCounter < nTime) {

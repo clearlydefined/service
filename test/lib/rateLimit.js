@@ -219,7 +219,9 @@ describe('Rate Limiter', () => {
     })
 
     xdescribe('Redis Based Rate Limiter', () => {
-      let container, redisClient, redisOpts
+      let container
+      let redisClient
+      let redisOpts
 
       before(async function () {
         this.timeout(15000)
@@ -239,7 +241,9 @@ describe('Rate Limiter', () => {
 
     xdescribe('MiddlewareDelegate - Redis Based', () => {
       const config = { limits: { windowSeconds: 1, max: 1 } }
-      let container, cachingService, redisOpts
+      let container
+      let cachingService
+      let redisOpts
 
       before(async function () {
         this.timeout(15000)
@@ -291,6 +295,6 @@ async function tryBeyondLimit(max, client) {
 async function buildTestAppClient(rateLimiter) {
   const app = express()
   app.use(rateLimiter)
-  app.get('/', (req, res) => res.send('Hello World!'))
+  app.get('/', (_req, res) => res.send('Hello World!'))
   return supertest(app)
 }

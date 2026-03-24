@@ -35,7 +35,6 @@
         "noExplicitAny": "off",
         "noDuplicateTestHooks": "off",
         "noConfusingVoidType": "off",
-        "noMisleadingInstantiator": "off",
         "noConsole": { "level": "off", "options": { "allow": ["log"] } },
         "noVar": "off",
         "useIterableCallbackReturn": "off"
@@ -50,20 +49,16 @@
         "noUselessElse": "off",
         "useNodejsImportProtocol": "off",
         "useTemplate": "off",
-        "useDefaultParameterLast": "off",
-        "useSingleVarDeclarator": "off"
+        "useDefaultParameterLast": "off"
       },
       "complexity": {
         "noForEach": "off",
         "noStaticOnlyClass": "off",
         "noThisInStatic": "off",
-        "noUselessConstructor": "off",
-        "noUselessTernary": "off",
         "useOptionalChain": "off",
         "useLiteralKeys": "off"
       },
       "performance": {
-        "noAccumulatingSpread": "off",
         "noDelete": "off"
       }
     }

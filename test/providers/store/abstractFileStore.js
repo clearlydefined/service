@@ -18,7 +18,8 @@ describe('AbstractFileStore', () => {
   }
 
   describe('AbstractFileStore lists entries ', () => {
-    let FileStore, fileStore
+    let FileStore
+    let fileStore
     const data = {
       '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json': {},
       '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json': {},
@@ -278,7 +279,8 @@ describe('AbstractFileStore', () => {
   })
 
   describe('find(query)', () => {
-    let FileStore, fileStore
+    let FileStore
+    let fileStore
 
     const sampleEntries = [
       {

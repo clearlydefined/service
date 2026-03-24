@@ -37,7 +37,7 @@ const data = {
 
 function createStore() {
   const blobServiceStub = {
-    getBlobToText: sinon.stub().callsFake((container, path, cb) => {
+    getBlobToText: sinon.stub().callsFake((_container, path, cb) => {
       if (path.includes('error')) return cb(new Error('test error'))
       if (data[path]) return cb(null, data[path])
       const error = new Error('not found')
