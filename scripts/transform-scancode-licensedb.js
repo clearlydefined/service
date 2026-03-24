@@ -14,7 +14,7 @@
  * @property {string} license - Relative path to the LICENSE file for the license.
  */
 
-const fs = require('fs')
+const fs = require('node:fs')
 
 // Read the downloaded JSON file
 const rawData = fs.readFileSync('scancode-licensedb.json')

@@ -3,7 +3,7 @@
 
 const sinon = require('sinon')
 const sandbox = sinon.createSandbox()
-const assert = require('assert')
+const assert = require('node:assert')
 const redisCache = require('../../../providers/caching/redis')
 const { RedisCache } = require('../../../providers/caching/redis')
 const { GenericContainer } = require('testcontainers')

@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const summarizer = require('../../../providers/summary/fossology')()
 summarizer.logger = { info: () => {} }
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 describe('FOSSologySummarizer fixtures', () => {
   it('summarizes npm 3.4.0', () => {

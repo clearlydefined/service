@@ -1,7 +1,7 @@
-const { fail } = require('assert')
+const { fail } = require('node:assert')
 const { callFetch, withDefaults, defaultHeaders } = require('../../lib/fetch')
 const { expect } = require('chai')
-const fs = require('fs')
+const fs = require('node:fs')
 const mockttp = require('mockttp')
 
 function checkDefaultHeaders(headers) {

@@ -9,7 +9,7 @@ import type { Definition } from '../../lib/utils'
 /** Subset of DefinitionService methods used by GitHubCurationService */
 export interface CurationDefinitionService {
   getStored(coordinates: EntityCoordinates): Promise<Definition | null>
-  invalidate(coordinateList: EntityCoordinates[]): Promise<void[]>
+  invalidate(coordinateList: EntityCoordinates[]): Promise<undefined[]>
   computeAndStore(coordinates: EntityCoordinates): Promise<Definition>
   list(coordinates: EntityCoordinates): Promise<string[]>
   listAll(coordinatesList: EntityCoordinates[]): Promise<EntityCoordinates[]>
@@ -151,7 +151,7 @@ export interface ICurationStore {
    * Replace the stored curations with the given set.
    * Called when a curation PR is merged.
    */
-  updateCurations(curations: Curation[]): Promise<void | null> | void
+  updateCurations(curations: Curation[]): Promise<undefined | null> | undefined
 
   /**
    * Retrieve the stored contribution for the given PR number.

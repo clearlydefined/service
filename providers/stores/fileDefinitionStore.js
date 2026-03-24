@@ -7,13 +7,13 @@
  * @typedef {import('./fileDefinitionStore').Definition} Definition
  */
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const { mkdirp } = require('mkdirp')
 const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 /**
  * File system implementation for storing component definitions.

@@ -385,7 +385,7 @@ export declare class DefinitionService {
    *
    * @param coordinates - Individual or array of coordinates to invalidate
    */
-  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<void[]>
+  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<undefined[]>
 
   /**
    * Compute and store a definition, then trigger auto-curation
@@ -440,7 +440,7 @@ export declare class DefinitionService {
    * @param mode - 'definitions' to recompute, 'index' to just re-index
    * @param coordinatesList - Optional list of coordinates to reload
    */
-  reload(mode: 'definitions' | 'index', coordinatesList?: string[] | null): Promise<(void | null)[]>
+  reload(mode: 'definitions' | 'index', coordinatesList?: string[] | null): Promise<(undefined | null)[]>
 
   /**
    * Check if a file is in the core facet

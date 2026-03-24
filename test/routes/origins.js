@@ -5,7 +5,7 @@
 const { expect, assert } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
-const fs = require('fs')
+const fs = require('node:fs')
 const httpMocks = require('node-mocks-http')
 const originMavenRoutes = require('../../routes/originMaven')
 const originCondaRoutes = require('../../routes/originConda')
@@ -261,7 +261,7 @@ describe('GitHub origin routes', () => {
       params: { login: 'octocat' },
       app: { locals: { service: { github: { client: githubMock } } } }
     })
-    const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
     await new Promise((resolve, reject) => {
       res.on('end', resolve)
@@ -288,7 +288,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
     await new Promise((resolve, reject) => {
       res.on('end', resolve)
@@ -332,7 +332,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
     await new Promise((resolve, reject) => {
       res.on('end', resolve)
@@ -371,7 +371,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
     await new Promise((resolve, reject) => {
       res.on('finish', resolve)
@@ -401,7 +401,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
     await new Promise((resolve, reject) => {
       res.on('end', resolve)

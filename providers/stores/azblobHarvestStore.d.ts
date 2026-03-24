@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Writable } from 'stream'
+import type { Writable } from 'node:stream'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { ResultCoordinates } from '../../lib/resultCoordinates'
 import type { AzBlobStoreOptions } from './abstractAzblobStore'

@@ -245,9 +245,8 @@ class GitHubCurationService {
             matchingProperties: result.match.map(reason => {
               if (reason.file) {
                 return { file: reason.file }
-              } else {
-                return { propPath: reason.propPath, value: reason.value }
               }
+              return { propPath: reason.propPath, value: reason.value }
             })
           })
         }
@@ -507,12 +506,11 @@ class GitHubCurationService {
             match: result.match
           })
           return
-        } else {
-          this.logger.info('GitHubCurationService.autoCurate.mismatch', {
-            ...logProps,
-            mismatch: result.mismatch
-          })
         }
+        this.logger.info('GitHubCurationService.autoCurate.mismatch', {
+          ...logProps,
+          mismatch: result.mismatch
+        })
       }
     } catch (err) {
       this.logger.error('GitHubCurationService.autoCurate.failed', err)

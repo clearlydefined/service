@@ -12,7 +12,7 @@ const AbstractAzBlobStore = require('./abstractAzblobStore')
 const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 /**
  * Azure Blob Storage implementation for storing component definitions.

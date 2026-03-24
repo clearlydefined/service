@@ -7,7 +7,7 @@
  */
 
 const azure = require('azure-storage')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const Bottleneck = require('bottleneck').default
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 const logger = require('../logging/logger')

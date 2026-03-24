@@ -31,10 +31,8 @@
       "suspicious": {
         "noAssignInExpressions": "off",
         "noDoubleEquals": "off",
-        "noGlobalIsNan": "off",
         "noExplicitAny": "off",
         "noDuplicateTestHooks": "off",
-        "noConfusingVoidType": "off",
         "noConsole": { "level": "off", "options": { "allow": ["log"] } },
         "noVar": "off",
         "useIterableCallbackReturn": "off"
@@ -46,8 +44,6 @@
       },
       "style": {
         "noParameterAssign": "off",
-        "noUselessElse": "off",
-        "useNodejsImportProtocol": "off",
         "useTemplate": "off",
         "useDefaultParameterLast": "off"
       },

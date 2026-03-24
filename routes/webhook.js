@@ -3,7 +3,7 @@
 
 const express = require('express')
 const router = express.Router()
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { get } = require('lodash')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
@@ -69,7 +69,8 @@ async function handleGitHubCall(request, response) {
     if (ex.code === 404) {
       info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
       return
-    } else logger.error(ex)
+    }
+    logger.error(ex)
   }
   response.status(200).end()
 }

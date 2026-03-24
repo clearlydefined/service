@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const recursive = require('recursive-readdir')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 // @ts-expect-error - JSON schema has no type declarations
 const schema = require('../../schemas/definition-1.0')

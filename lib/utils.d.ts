@@ -257,7 +257,7 @@ export function mergeDefinitions(
   base: Definition | null | undefined,
   proposed: Partial<Definition> | null | undefined,
   override?: boolean
-): Partial<Definition> | null | undefined | void
+): Partial<Definition> | null | undefined
 
 /**
  * Builds a source URL for the given coordinates

@@ -6,9 +6,9 @@
  * @typedef {import('./fileAttachmentStore').FileAttachmentStoreOptions} FileAttachmentStoreOptions
  */
 
-const fs = require('fs')
-const path = require('path')
-const { promisify } = require('util')
+const fs = require('node:fs')
+const path = require('node:path')
+const { promisify } = require('node:util')
 const logger = require('../logging/logger')
 
 /**

@@ -435,13 +435,17 @@ class ClearlyDescribedSummarizer {
     const stringObjectArray = value => {
       if (!value) {
         return null
-      } else if (typeof value === 'string') {
+      }
+      if (typeof value === 'string') {
         return value
-      } else if (Array.isArray(value)) {
+      }
+      if (Array.isArray(value)) {
         return value.reduce(combineLicenses, null)
-      } else if (typeof (/** @type {{ type?: unknown }} */ (value).type) == 'string') {
+      }
+      if (typeof (/** @type {{ type?: unknown }} */ (value).type) == 'string') {
         return /** @type {{ type: string }} */ (value).type
-      } else if (Array.isArray(/** @type {{ type?: unknown }} */ (value).type)) {
+      }
+      if (Array.isArray(/** @type {{ type?: unknown }} */ (value).type)) {
         return /** @type {{ type: unknown[] }} */ (value).type.reduce(combineLicenses, null)
       }
       return null

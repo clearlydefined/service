@@ -9,7 +9,7 @@
  * @typedef {import('./fileHarvestStore').ToolOutputs} ToolOutputs
  */
 
-const fs = require('fs')
+const fs = require('node:fs')
 const recursive = require('recursive-readdir')
 const AbstractFileStore = require('./abstractFileStore')
 const ResultCoordinates = require('../../lib/resultCoordinates')

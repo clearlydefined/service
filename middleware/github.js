@@ -10,7 +10,7 @@
 /** @typedef {import('./github').GitHubMiddlewareOptions} GitHubMiddlewareOptions */
 /** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
 
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 const { Octokit } = require('@octokit/rest')
 const asyncMiddleware = require('./asyncMiddleware')
 const Github = require('../lib/github')

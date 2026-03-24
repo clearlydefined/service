@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const summarizer = require('../../../../providers/summary/scancode')({}, { info: () => {} })
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const { compact, uniq, flatten } = require('lodash')
 const { expect } = require('chai')
 
