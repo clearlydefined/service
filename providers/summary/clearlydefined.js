@@ -227,7 +227,7 @@ class ClearlyDescribedSummarizer {
    * @returns {ComponentUrls} Object containing download and registry URLs
    */
   getMavenUrls(coordinates) {
-    var urls = { download: '', registry: '' }
+    const urls = { download: '', registry: '' }
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
     switch (coordinates.provider) {
@@ -442,7 +442,7 @@ class ClearlyDescribedSummarizer {
       if (Array.isArray(value)) {
         return value.reduce(combineLicenses, null)
       }
-      if (typeof (/** @type {{ type?: unknown }} */ (value).type) == 'string') {
+      if (typeof (/** @type {{ type?: unknown }} */ (value).type) === 'string') {
         return /** @type {{ type: string }} */ (value).type
       }
       if (Array.isArray(/** @type {{ type?: unknown }} */ (value).type)) {
@@ -611,7 +611,7 @@ class ClearlyDescribedSummarizer {
    * @returns {ComponentUrls} Object containing download, registry, and version URLs
    */
   getGitUrls(coordinates) {
-    var urls = { download: '', registry: '', version: '' }
+    const urls = { download: '', registry: '', version: '' }
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
     switch (coordinates.provider) {
@@ -722,7 +722,7 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addGoData(result, data, coordinates) {
-    var urls = { download: '', registry: '', version: '' }
+    const urls = { download: '', registry: '', version: '' }
 
     const namespaceAsFolders = coordinates.namespace ? deCodeSlashes(coordinates.namespace) : coordinates.namespace
 

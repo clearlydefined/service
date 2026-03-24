@@ -30,7 +30,6 @@
       "recommended": true,
       "suspicious": {
         "noAssignInExpressions": "off",
-        "noDoubleEquals": "off",
         "noExplicitAny": "off",
         "noDuplicateTestHooks": "off",
         "noConsole": { "level": "off", "options": { "allow": ["log"] } },
@@ -50,7 +49,6 @@
       "complexity": {
         "noForEach": "off",
         "noStaticOnlyClass": "off",
-        "noThisInStatic": "off",
         "useOptionalChain": "off",
         "useLiteralKeys": "off"
       },

@@ -228,7 +228,10 @@ class AbstractFileStore {
    * @param {function(string): ResultCoordinates} [toResultCoordinates] - Optional function to convert paths to coordinates
    * @returns {Set<string>} Set of paths representing the latest tool versions
    */
-  static getLatestToolPaths(paths, toResultCoordinates = path => this.toResultCoordinatesFromStoragePath(path)) {
+  static getLatestToolPaths(
+    paths,
+    toResultCoordinates = path => AbstractFileStore.toResultCoordinatesFromStoragePath(path)
+  ) {
     /** @type {Record<string, {toolVersion: string, path: string}>} */
     const entries = paths
       .map(path => {

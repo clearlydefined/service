@@ -300,7 +300,7 @@ class GitHubCurationService {
     const existingRevisions = this._getRevisionsFromCurations(curations)
 
     const uncuratedMatchingRevisions = matchingRevisionsAndReasons.filter(
-      versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1
+      versionAndReason => existingRevisions.indexOf(versionAndReason.version) === -1
     )
     return uncuratedMatchingRevisions
   }
@@ -403,7 +403,7 @@ class GitHubCurationService {
 
   /** @param {CurationPatchEntry[]} patches */
   _isEligibleForMultiversionCuration(patches) {
-    return patches.length == 1 && Object.keys(patches[0].revisions).length == 1
+    return patches.length === 1 && Object.keys(patches[0].revisions).length === 1
   }
 
   // Return an array of valid patches that exist
@@ -613,6 +613,7 @@ class GitHubCurationService {
       for (const revision of Object.keys(curation.data.revisions)) {
         const current = get(curation, ['data', 'revisions', revision])
         const previous = get(preCuration, ['data', 'revisions', revision])
+        // biome-ignore lint/suspicious/noDoubleEquals: intentional loose equality to catch both null and undefined
         if (current == undefined || isEqual(current, previous)) {
           unset(curation, ['data', 'revisions', revision])
         }
@@ -717,7 +718,7 @@ ${this._formatDefinitions(patch.patches)}`
     const matchingMetadata = {}
     matchingResults.forEach(match => {
       if (match.file) {
-        if (matchingLicenses.indexOf(match.file) == -1) {
+        if (matchingLicenses.indexOf(match.file) === -1) {
           matchingLicenses.push(match.file)
         }
       } else {
@@ -731,7 +732,7 @@ ${this._formatDefinitions(patch.patches)}`
 
     if (Object.keys(matchingMetadata).length > 0) {
       const metadataText =
-        Object.keys(matchingMetadata).length == 1
+        Object.keys(matchingMetadata).length === 1
           ? Object.keys(matchingMetadata).map(
               metadataProp => `${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`
             )
@@ -788,7 +789,7 @@ ${this._formatDefinitions(patch.patches)}`
       coordinates: coordinates.toString()
     })
     const treePath = flatMap(deCodeSlashes(path).split('/'), (current, i, original) =>
-      original.length - 1 != i ? [current, 'children'] : current
+      original.length - 1 !== i ? [current, 'children'] : current
     )
     const blob = get(tree, treePath)
     if (!blob) return null

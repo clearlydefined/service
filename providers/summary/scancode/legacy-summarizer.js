@@ -116,6 +116,7 @@ class ScanCodeLegacySummarizer {
         // Some pypi packages have this value as an object with a license field
         // Example: for pypi/pypi/abseil/absl-py/0.9.0
         // declared_license would be { "license": "Apache 2.0", "classifiers": ["License :: OSI Approved :: Apache Software License"] }
+        // biome-ignore lint/suspicious/noDoubleEquals: intentional loose equality to catch both null and undefined
         if (typeof declared_license != 'string' && declared_license != undefined) {
           declared_license = declared_license.name || declared_license.license
         }

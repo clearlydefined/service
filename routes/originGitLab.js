@@ -95,7 +95,7 @@ function getExactProjectMatch(namespace, project, projects) {
   let exact_match
 
   projects.filter(item => {
-    if (item.path_with_namespace == `${namespace}/${project}`) {
+    if (item.path_with_namespace === `${namespace}/${project}`) {
       exact_match = item
     }
   })
