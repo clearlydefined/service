@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { ICache } from '../caching'
-import { CacheBasedHarvester } from './cacheBasedCrawler'
-import { CrawlerOptions } from './crawler'
+import type { ICache } from '../caching'
+import type { CacheBasedHarvester } from './cacheBasedCrawler'
+import type { CrawlerOptions } from './crawler'
 
 /** Options for the crawler service factory, combining crawler and cache settings */
 export interface CrawlerConfigOptions extends Partial<CrawlerOptions> {

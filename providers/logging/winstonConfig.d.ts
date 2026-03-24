@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as winston from 'winston'
+import type * as winston from 'winston'
 
 /** Configuration options for creating a Winston logger instance. */
 export interface WinstonLoggerOptions {

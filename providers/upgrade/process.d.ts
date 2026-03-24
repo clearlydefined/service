@@ -1,10 +1,10 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue, DequeuedMessage } from '../queueing'
 import type { DefinitionService, UpgradeHandler } from '../../business/definitionService'
-import type { Logger } from '../logging'
 import type { ICache } from '../caching'
+import type { Logger } from '../logging'
+import type { DequeuedMessage, IQueue } from '../queueing'
 
 /** Handler that processes individual dequeued messages */
 export interface MessageHandler {

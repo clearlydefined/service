@@ -1,7 +1,7 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { ICache } from '../providers/caching'
+import type { ICache } from '../providers/caching'
 
 /** Configuration mapping of Conda channel names to their base URLs */
 export interface CondaChannels {

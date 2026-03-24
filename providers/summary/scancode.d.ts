@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { Logger } from '../logging'
 import type { FileEntry } from '../../lib/utils'
+import type { Logger } from '../logging'
 import type { SummarizerOptions } from './index'
 
 /** ScanCode file license information */

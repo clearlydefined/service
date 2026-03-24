@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { CdSourceSummarizer } from './cdsource'
 import type { Summarizer } from './clearlydefined'
-import type { ScanCodeSummarizer } from './scancode'
+import type { FOSSologySummarizer } from './fossology'
 import type { LicenseeSummarizer } from './licensee'
 import type { ReuseSummarizer } from './reuse'
-import type { FOSSologySummarizer } from './fossology'
-import type { CdSourceSummarizer } from './cdsource'
+import type { ScanCodeSummarizer } from './scancode'
 
 /** Base interface for all summarizers */
 export interface BaseSummarizer {

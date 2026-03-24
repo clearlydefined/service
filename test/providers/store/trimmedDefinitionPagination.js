@@ -8,7 +8,7 @@ const dbOptions = {
   collectionName: 'definitions-trimmed'
 }
 
-describe('Mongo Definition Store: Trimmed', function () {
+describe('Mongo Definition Store: Trimmed', () => {
   before('setup store factory', async function () {
     this.createStore = createStore
   })

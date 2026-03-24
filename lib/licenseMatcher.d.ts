@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { Definition } from './utils'
+import type { Definition } from './utils'
 
 /** Harvest data for a coordinate, organized by tool and version */
 export interface CoordinateHarvest {

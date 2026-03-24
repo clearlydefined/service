@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type Curation from '../../lib/curation'
 import type { CurationData, CurationRevision } from '../../lib/curation'
+import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { Definition } from '../../lib/utils'
 
 /** Subset of DefinitionService methods used by GitHubCurationService */

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue, DequeuedMessage } from '../queueing'
 import type { Logger } from '../logging'
+import type { DequeuedMessage, IQueue } from '../queueing'
 
 /** Minimum curation-service shape required by the queue processor */
 export interface CurationProcessService {

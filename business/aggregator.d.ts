@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { EntityCoordinates } from '../lib/entityCoordinates'
-import type { Definition, DefinitionFile } from './definitionService'
 import type { Logger } from '../providers/logging'
+import type { Definition, DefinitionFile } from './definitionService'
 
 /**
  * Tool precedence configuration.

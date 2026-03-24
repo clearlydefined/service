@@ -17,7 +17,7 @@ describe('Curation queue processing', () => {
     clock.restore()
   })
 
-  it('handles opened message', async function () {
+  it('handles opened message', async () => {
     const { queue, curationService, logger } = setup({ action: 'opened' })
     const promise = process(queue, curationService, logger, true)
     await clock.runAllAsync()
@@ -31,7 +31,7 @@ describe('Curation queue processing', () => {
     expect(queue.data.length).to.eq(0)
   })
 
-  it('handles synchronize message', async function () {
+  it('handles synchronize message', async () => {
     const { queue, curationService, logger } = setup({ action: 'synchronize' })
     const promise = process(queue, curationService, logger, true)
     await clock.runAllAsync()
@@ -45,7 +45,7 @@ describe('Curation queue processing', () => {
     expect(queue.data.length).to.eq(0)
   })
 
-  it('handles closed message', async function () {
+  it('handles closed message', async () => {
     const { queue, curationService, logger } = setup({ action: 'closed' })
     const promise = process(queue, curationService, logger, true)
     await clock.runAllAsync()

@@ -2,29 +2,29 @@
 // SPDX-License-Identifier: MIT
 
 import type { CacheClass } from 'memory-cache'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
+import type {
+  ContributionInfo,
+  ContributionPR,
+  CurationDefinitionService,
+  CurationHarvestStore,
+  CurationListResult,
+  CurationPatch,
+  CurationPatchEntry,
+  Endpoints,
+  GitHubCurationOptions,
+  GitHubPR,
+  ICurationStore,
+  MatchingProperty,
+  MatchingRevisionAndReason
+} from '.'
 import type Curation from '../../lib/curation'
-import type { CurationRevision, CurationData } from '../../lib/curation'
+import type { CurationData, CurationRevision } from '../../lib/curation'
+import type { EntityCoordinates } from '../../lib/entityCoordinates'
+import type { GitHubClient } from '../../lib/github'
+import type { LicenseMatchResult, LicenseMatcher } from '../../lib/licenseMatcher'
 import type { Definition } from '../../lib/utils'
 import type { ICache } from '../caching'
 import type { Logger } from '../logging'
-import type { GitHubClient } from '../../lib/github'
-import type { LicenseMatcher, LicenseMatchResult } from '../../lib/licenseMatcher'
-import type {
-  GitHubCurationOptions,
-  Endpoints,
-  GitHubPR,
-  ContributionPR,
-  ContributionInfo,
-  CurationPatch,
-  CurationPatchEntry,
-  CurationListResult,
-  ICurationStore,
-  MatchingRevisionAndReason,
-  MatchingProperty,
-  CurationDefinitionService,
-  CurationHarvestStore
-} from '.'
 
 /** User info returned from the GitHub API */
 export interface GitHubUserInfo {

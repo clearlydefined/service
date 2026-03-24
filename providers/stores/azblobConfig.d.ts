@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { AzBlobStoreOptions } from './abstractAzblobStore'
+import type { AzBlobAttachmentStore, AzBlobAttachmentStoreOptions } from './azblobAttachmentStore'
 import type { AzBlobDefinitionStore } from './azblobDefinitionStore'
 import type { AzHarvestBlobStore } from './azblobHarvestStore'
-import type { AzBlobAttachmentStore, AzBlobAttachmentStoreOptions } from './azblobAttachmentStore'
 
 /**
  * Creates an Azure Blob harvest store with the given options or default configuration.

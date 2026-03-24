@@ -51,12 +51,12 @@ class SuggestionService {
     }
 
     if (!isDeclaredLicense(get(definitions.original, 'licensed.declared'))) {
-      let discoveredExpressions = get(definitions.original, 'licensed.facets.core.discovered.expressions')
+      const discoveredExpressions = get(definitions.original, 'licensed.facets.core.discovered.expressions')
       if (Array.isArray(discoveredExpressions)) {
-        let appendDeclared = discoveredExpressions.filter(isDeclaredLicense).map(value => {
+        const appendDeclared = discoveredExpressions.filter(isDeclaredLicense).map(value => {
           return { value, version: get(definitions.original, 'coordinates.revision') }
         })
-        let suggestedSoFar = get(suggestion, 'licensed.declared') || []
+        const suggestedSoFar = get(suggestion, 'licensed.declared') || []
         hasSuggested =
           hasSuggested ||
           setIfValue(

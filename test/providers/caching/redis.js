@@ -20,7 +20,7 @@ describe('Redis Cache', () => {
   describe('get a tool result', () => {
     const store = {}
     let mockClient, cache
-    beforeEach(function () {
+    beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
         set: async (key, value) => {
@@ -37,7 +37,7 @@ describe('Redis Cache', () => {
       cache = redisCache({ logger })
     })
 
-    afterEach(function () {
+    afterEach(() => {
       sandbox.restore()
     })
 
@@ -112,7 +112,7 @@ describe('Redis Cache', () => {
     let mockClient, cache
     const store = {}
 
-    beforeEach(function () {
+    beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
         set: async (key, value) => {
@@ -129,7 +129,7 @@ describe('Redis Cache', () => {
       cache = redisCache({ logger })
     })
 
-    afterEach(function () {
+    afterEach(() => {
       sandbox.restore()
       // Clear store
       Object.keys(store).forEach(key => delete store[key])

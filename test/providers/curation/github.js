@@ -484,7 +484,7 @@ describe('Github Curation Service', () => {
   })
 
   describe('verify _getBranchName', () => {
-    before(function () {
+    before(() => {
       sinon.replace(
         DateTime,
         'now',
@@ -492,7 +492,7 @@ describe('Github Curation Service', () => {
       )
     })
 
-    after(function () {
+    after(() => {
       sinon.restore()
     })
 
@@ -625,7 +625,7 @@ function createCuration(curation = simpleCuration) {
 }
 
 function createInvalidCuration() {
-  let invalidCuration = new Curation({
+  const invalidCuration = new Curation({
     coordinates: {
       type: 'sdfdsf',
       provider: 'npmjs',

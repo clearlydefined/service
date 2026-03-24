@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICurationStore, Contribution, ContributionPR, CurationListResult } from '.'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
+import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from '.'
 import type Curation from '../../lib/curation'
 import type { CurationData } from '../../lib/curation'
+import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { Logger } from '../logging'
 
 /**
