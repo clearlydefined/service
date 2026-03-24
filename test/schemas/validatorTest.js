@@ -131,15 +131,15 @@ describe('Validator - Coordinates Schema Tests', () => {
     ]
 
     // Test valid coordinate examples for each type
-    validCoordinatesByType.forEach(({ type, coordinates }) => {
+    for (const { type, coordinates } of validCoordinatesByType) {
       it(`validates valid ${type} coordinates`, () => {
-        coordinates.forEach((coord, index) => {
+        for (const [index, coord] of coordinates.entries()) {
           const isValid = validator.validate('coordinates-1.0', coord)
           expect(isValid, `Failed for ${type} coordinate ${index}: ${JSON.stringify(coord)}`).to.be.true
           expect(validator.errors).to.be.null
-        })
+        }
       })
-    })
+    }
   })
 
   describe('Invalid coordinates validation', () => {
@@ -183,17 +183,17 @@ describe('Validator - Coordinates Schema Tests', () => {
     ]
 
     // Test invalid coordinate examples for each error type
-    invalidCoordinatesByType.forEach(({ type, coordinates }) => {
+    for (const { type, coordinates } of invalidCoordinatesByType) {
       it(`rejects coordinates with ${type}`, () => {
-        coordinates.forEach((coord, index) => {
+        for (const [index, coord] of coordinates.entries()) {
           const isValid = validator.validate('coordinates-1.0', coord)
           expect(isValid, `Expected coordinate to be invalid for ${type} case ${index}: ${JSON.stringify(coord)}`).to.be
             .false
           expect(validator.errors).to.not.be.null
           expect(validator.errors).to.be.an('array')
           expect(validator.errors.length).to.be.greaterThan(0)
-        })
+        }
       })
-    })
+    }
   })
 })

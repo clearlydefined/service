@@ -72,7 +72,7 @@ class AbstractFileStore {
    * @returns {Promise<any>} The loaded object or null if not found
    */
   async get(coordinates) {
-    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result.toString())

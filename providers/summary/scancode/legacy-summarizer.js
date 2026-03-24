@@ -214,9 +214,11 @@ class ScanCodeLegacySummarizer {
       .filter(file => file.is_license_text && file.licenses)
       .reduce(
         (licenses, file) => {
-          file.licenses?.forEach(license => {
-            licenses.add(this._createExpressionFromLicense(license))
-          })
+          if (file.licenses) {
+            for (const license of file.licenses) {
+              licenses.add(this._createExpressionFromLicense(license))
+            }
+          }
           return licenses
         },
         /** @type {Set<string | null>} */ (new Set())
@@ -236,9 +238,11 @@ class ScanCodeLegacySummarizer {
       .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
       .reduce(
         (licenses, file) => {
-          file.licenses?.forEach(license => {
-            if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
-          })
+          if (file.licenses) {
+            for (const license of file.licenses) {
+              if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+            }
+          }
           return licenses
         },
         /** @type {Set<string | null>} */ (new Set())

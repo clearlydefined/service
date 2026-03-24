@@ -18,7 +18,7 @@ function serviceFactory(options) {
     dataSourceContainerName:
       config.get('SEARCH_AZURE_DATASOURCE_CONTAINER_NAME') ||
       config.get('DEFINITION_AZBLOB_CONTAINER_NAME') ||
-      config.get('HARVEST_AZBLOB_CONTAINER_NAME') + '-definition'
+      `${config.get('HARVEST_AZBLOB_CONTAINER_NAME')}-definition`
   }
   return search(realOptions)
 }

@@ -237,7 +237,7 @@ function createStore(data) {
   const collectionStub = {
     find: sinon.stub().callsFake(async filter => {
       const partitionKey = filter['_mongo.partitionKey']
-      if (partitionKey && partitionKey.toString().includes('error')) throw new Error('test error')
+      if (partitionKey?.toString().includes('error')) throw new Error('test error')
       // return an object that mimics a Mongo cursor (i.e., has toArray)
       return {
         toArray: () => {
@@ -248,10 +248,10 @@ function createStore(data) {
           return result.filter(e => e)
         },
         forEach: cb => {
-          Object.keys(data).forEach(key => {
+          for (const key of Object.keys(data)) {
             if (typeof partitionKey === 'string' && key.indexOf(partitionKey) > -1) cb(data[key])
-            else if (partitionKey.exec && partitionKey.exec(key)) cb(data[key])
-          })
+            else if (partitionKey.exec?.(key)) cb(data[key])
+          }
         }
       }
     }),

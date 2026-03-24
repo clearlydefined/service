@@ -70,12 +70,10 @@ class AbstractAzBlobStore {
         }
       )
       continuation = result.continuationToken
-      result.entries.forEach(
-        /** @param {BlobEntry} entry */ entry => {
-          const visitResult = visitor(entry)
-          if (visitResult !== null) list.push(visitResult)
-        }
-      )
+      for (const /** @type {BlobEntry} */ entry of result.entries) {
+        const visitResult = visitor(entry)
+        if (visitResult !== null) list.push(visitResult)
+      }
     } while (continuation)
     return list
   }

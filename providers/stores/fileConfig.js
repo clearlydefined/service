@@ -27,7 +27,7 @@ function harvest(options) {
  * @returns {ReturnType<typeof import('./fileDefinitionStore')>} A new FileDefinitionStore instance
  */
 function definition(options) {
-  return require('./fileDefinitionStore')(options || { location: location + '-definition' })
+  return require('./fileDefinitionStore')(options || { location: `${location}-definition` })
 }
 
 /**
@@ -37,7 +37,7 @@ function definition(options) {
  * @returns {ReturnType<typeof import('./fileAttachmentStore')>} A new FileAttachmentStore instance
  */
 function attachment(options) {
-  return require('./fileAttachmentStore')(options || { location: location + '-attachment' })
+  return require('./fileAttachmentStore')(options || { location: `${location}-attachment` })
 }
 
 module.exports = { harvest, definition, attachment }

@@ -43,13 +43,10 @@
       },
       "style": {
         "noParameterAssign": "off",
-        "useTemplate": "off",
         "useDefaultParameterLast": "off"
       },
       "complexity": {
-        "noForEach": "off",
         "noStaticOnlyClass": "off",
-        "useOptionalChain": "off",
         "useLiteralKeys": "off"
       },
       "performance": {

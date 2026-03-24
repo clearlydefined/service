@@ -187,8 +187,8 @@ describe('AbstractFileStore', () => {
         }
       }
     ]
-    data.forEach(input => {
-      it('works well for ' + input.path, () => {
+    for (const input of data) {
+      it(`works well for ${input.path}`, () => {
         const fileStore = new AbstractFileStore({ location: input.location, logger })
         const separator = input.location.includes('/') ? '/' : '\\'
         const result = fileStore._toStoragePathFromCoordinates(input.coordinates)
@@ -197,7 +197,7 @@ describe('AbstractFileStore', () => {
         const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/')
         expect(normalizedResult).to.deep.equal(normalizedInput)
       })
-    })
+    }
   })
 
   describe('getLatestToolVersions', () => {

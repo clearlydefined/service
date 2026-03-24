@@ -73,13 +73,13 @@ class AggregationService {
     const order = this.workingPrecedence || []
     /** @type {string[]} */
     const tools = []
-    order.forEach(tool => {
+    for (const tool of order) {
       const data = this._findData(tool, summarized)
       if (data) {
         tools.push(data.toolSpec)
         mergeDefinitions(result, data.summary)
       }
-    })
+    }
     if (!tools.length) return null
     set(result, 'described.tools', tools.reverse())
     const cdSummarized = this._findData('clearlydefined', summarized)

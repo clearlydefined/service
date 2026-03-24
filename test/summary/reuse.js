@@ -113,7 +113,7 @@ function setup(files, licenses) {
   })
   const matchedLicenses = licenses.map(license => {
     return {
-      filePath: 'LICENSES/' + license + '.txt',
+      filePath: `LICENSES/${license}.txt`,
       spdxId: license
     }
   })

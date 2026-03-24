@@ -134,7 +134,7 @@ describe('Redis Cache', () => {
     afterEach(() => {
       sandbox.restore()
       // Clear store
-      Object.keys(store).forEach(key => delete store[key])
+      for (const key of Object.keys(store)) delete store[key]
     })
 
     describe('Format Detection', () => {

@@ -47,7 +47,7 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
    * @returns {Promise<void>} Promise that resolves when the definition is stored
    */
   store(definition) {
-    const blobName = this._toStoragePathFromCoordinates(definition.coordinates) + '.json'
+    const blobName = `${this._toStoragePathFromCoordinates(definition.coordinates)}.json`
     return promisify(this.blobService.createBlockBlobFromText).bind(this.blobService)(
       this.containerName,
       blobName,
@@ -67,7 +67,7 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
    * @returns {Promise<void>} Promise that resolves when the definition is deleted
    */
   async delete(coordinates) {
-    const blobName = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const blobName = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       await promisify(this.blobService.deleteBlob).bind(this.blobService)(this.containerName, blobName)
     } catch (/** @type {any} */ error) {

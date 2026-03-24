@@ -42,7 +42,7 @@ class FileAttachmentStore {
    */
   async get(key) {
     try {
-      const filePath = path.join(this.options.location, key + '.json')
+      const filePath = path.join(this.options.location, `${key}.json`)
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result.toString()).attachment
     } catch (/** @type {any} */ error) {

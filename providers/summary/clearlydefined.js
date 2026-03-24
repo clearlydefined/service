@@ -173,12 +173,12 @@ class ClearlyDescribedSummarizer {
    */
   addAttachedFiles(result, data, coordinates) {
     if (!data.attachments || !result.files) return
-    data.attachments.forEach(file => {
+    for (const file of data.attachments) {
       const existing = result.files.find(entry => entry.path === file.path)
-      if (!existing) return
+      if (!existing) continue
       existing.token = file.token
       if (isLicenseFile(file.path, coordinates)) existing.natures = uniq((existing.natures || []).concat(['license']))
-    })
+    }
   }
 
   /**
@@ -192,13 +192,11 @@ class ClearlyDescribedSummarizer {
     if (!data.interestingFiles) return
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
-    newFiles.forEach(
-      /** @param {{ license?: string; path: string; natures?: string[] }} file */ file => {
-        file.license = SPDX.normalize(file.license)
-        if (!file.license) delete file.license
-        else if (isLicenseFile(file.path, coordinates)) file.natures = uniq((file.natures || []).concat(['license']))
-      }
-    )
+    for (const /** @type {{ license?: string; path: string; natures?: string[] }} */ file of newFiles) {
+      file.license = SPDX.normalize(file.license)
+      if (!file.license) delete file.license
+      else if (isLicenseFile(file.path, coordinates)) file.natures = uniq((file.natures || []).concat(['license']))
+    }
     set(newDefinition, 'files', newFiles)
     mergeDefinitions(result, newDefinition)
   }
@@ -390,7 +388,7 @@ class ClearlyDescribedSummarizer {
     )
     const licenseUrl = /** @type {string | undefined} */ (get(data, 'manifest.licenseUrl'))
     if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
-    else if (licenseUrl && licenseUrl.trim())
+    else if (licenseUrl?.trim())
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
     setIfValue(result, 'described.urls.registry', `https://nuget.org/packages/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
@@ -424,7 +422,7 @@ class ClearlyDescribedSummarizer {
      */
     const combineLicenses = (exp, license) => {
       if (exp) {
-        return exp + ' ' + (packageType === 'npm' ? 'AND' : 'OR') + ' ' + stringObjectArray(license)
+        return `${exp} ${packageType === 'npm' ? 'AND' : 'OR'} ${stringObjectArray(license)}`
       }
       return stringObjectArray(license)
     }
@@ -470,7 +468,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.registry',
       `https://npmjs.com/package/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+        coordinates.namespace ? `${coordinates.namespace}/${coordinates.name}` : coordinates.name
       }`
     )
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/v/${coordinates.revision}`)
@@ -478,7 +476,7 @@ class ClearlyDescribedSummarizer {
       result,
       'described.urls.download',
       `https://registry.npmjs.com/${
-        coordinates.namespace ? coordinates.namespace + '/' + coordinates.name : coordinates.name
+        coordinates.namespace ? `${coordinates.namespace}/${coordinates.name}` : coordinates.name
       }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = registryData.manifest
@@ -510,13 +508,13 @@ class ClearlyDescribedSummarizer {
     setIfValue(
       result,
       'described.urls.registry',
-      `https://packagist.org/packages/${coordinates.namespace + '/' + coordinates.name}`
+      `https://packagist.org/packages/${`${coordinates.namespace}/${coordinates.name}`}`
     )
     const manifest = registryData.manifest
     if (!manifest) return
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${manifest.version}`)
     setIfValue(result, 'described.projectWebsite', manifest.homepage)
-    if (manifest.dist && manifest.dist.url) {
+    if (manifest.dist?.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
     const expression = this.parseLicenseExpression(manifest, 'composer')
@@ -666,8 +664,7 @@ class ClearlyDescribedSummarizer {
     }
     const architecture = coordinates.revision.split('_')[1]
     const downloadUrl = new URL(
-      'http://ftp.debian.org/debian/' +
-        registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Architecture === architecture).Path
+      `http://ftp.debian.org/debian/${registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Architecture === architecture).Path}`
     ).href
     setIfValue(result, 'described.urls.download', downloadUrl)
     const license = uniq(data.declaredLicenses || []).join(' AND ')
@@ -691,8 +688,7 @@ class ClearlyDescribedSummarizer {
       result.described.sourceLocation = { ...coordinates, url: registryUrl }
     }
     const downloadUrl = new URL(
-      'http://ftp.debian.org/debian/' +
-        registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Path.includes('.orig.tar.')).Path
+      `http://ftp.debian.org/debian/${registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Path.includes('.orig.tar.')).Path}`
     ).href
     // There is also patches URL which is related to sources but it's not part of the schema
     setIfValue(result, 'described.urls.download', downloadUrl)
@@ -710,7 +706,7 @@ class ClearlyDescribedSummarizer {
     if (registryPath) {
       // Example: ./pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz -> http://ftp.debian.org/debian/pool/main/0/0ad
       const pathName = registryPath.split('/').slice(1, 5).join('/')
-      return 'http://ftp.debian.org/debian/' + pathName
+      return `http://ftp.debian.org/debian/${pathName}`
     }
     return null
   }

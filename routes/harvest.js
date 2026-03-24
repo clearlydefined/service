@@ -35,7 +35,7 @@ async function get(request, response) {
         }
       }
       const resultFromTool = await summarizeService.summarizeAll(coordinates, rawFromTool)
-      const result = (resultFromTool[coordinates.tool] || {})[coordinates.toolVersion]
+      const result = resultFromTool[coordinates.tool]?.[coordinates.toolVersion]
       return response.status(200).send(result)
     }
     case 'list': {
@@ -132,7 +132,7 @@ async function normalizeFilterCoordinates(requests) {
       return { ...entry, coordinates: normalized.toString() }
     })
   )
-  return normalizedBody.filter(entry => entry && entry.coordinates)
+  return normalizedBody.filter(entry => entry?.coordinates)
 }
 
 /** @type {any} */

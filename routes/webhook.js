@@ -113,13 +113,13 @@ async function handleCrawlerCall(request, response) {
  * @returns {boolean}
  */
 function validateGitHubSignature(request, response) {
-  if (request.hostname && request.hostname.includes('localhost')) return true
+  if (request.hostname?.includes('localhost')) return true
   const isGithubEvent = request.headers['x-github-event']
   const signature = /** @type {string | undefined} */ (request.headers['x-hub-signature'])
   if (!isGithubEvent || !signature)
     return info(request, response, 400, 'Missing signature or event type on GitHub webhook')
 
-  const computedSignature = 'sha1=' + crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')
+  const computedSignature = `sha1=${crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')}`
   if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature)))
     return info(request, response, 400, 'X-Hub-Signature does not match blob signature')
   return true

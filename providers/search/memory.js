@@ -43,7 +43,7 @@ class MemorySearch extends AbstractSearch {
    */
   store(definitions) {
     const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
-    entries.forEach(/** @param {any} entry */ entry => (this.index[entry.coordinates] = entry))
+    for (const /** @type {any} */ entry of entries) this.index[entry.coordinates] = entry
   }
 
   /**
