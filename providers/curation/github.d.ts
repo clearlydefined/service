@@ -4,24 +4,20 @@
 import type { CacheClass } from 'memory-cache'
 import type {
   ContributionInfo,
-  ContributionPR,
   CurationDefinitionService,
   CurationHarvestStore,
   CurationListResult,
   CurationPatch,
-  CurationPatchEntry,
   Endpoints,
   GitHubCurationOptions,
   GitHubPR,
-  ICurationStore,
-  MatchingProperty,
-  MatchingRevisionAndReason
+  ICurationStore
 } from '.'
 import type Curation from '../../lib/curation'
-import type { CurationData, CurationRevision } from '../../lib/curation'
+import type { CurationRevision } from '../../lib/curation'
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { GitHubClient } from '../../lib/github'
-import type { LicenseMatchResult, LicenseMatcher } from '../../lib/licenseMatcher'
+import type { LicenseMatcher } from '../../lib/licenseMatcher'
 import type { Definition } from '../../lib/utils'
 import type { ICache } from '../caching'
 import type { Logger } from '../logging'

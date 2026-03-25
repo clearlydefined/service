@@ -61,7 +61,7 @@ describe('Rate Limiter', () => {
     it('throws error if redis client is missing', async () => {
       try {
         //eslint-disable-next-line no-unused-vars
-        const middleware = new RedisBasedRateLimiter({ limit, logger }).middleware
+        const _middleware = new RedisBasedRateLimiter({ limit, logger }).middleware
         assert.fail('Should have thrown error')
       } catch (error) {
         assert.strictEqual(error.message, 'Redis client is missing')

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { AzBlobStoreOptions, BlobEntry } from './abstractAzblobStore'
+import type { AzBlobStoreOptions } from './abstractAzblobStore'
 import AbstractAzBlobStore = require('./abstractAzblobStore')
 
 /** Definition object with coordinates */

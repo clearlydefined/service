@@ -45,9 +45,9 @@ class AzureStorageQueue {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
     if (!message) return null
     if (message.dequeueCount <= 5)
-      // @ts-ignore - azure-storage QueueMessageResult is structurally compatible at runtime
+      // @ts-expect-error - azure-storage QueueMessageResult is structurally compatible at runtime
       return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
-    // @ts-ignore - azure-storage QueueMessageResult used as QueueMessage
+    // @ts-expect-error - azure-storage QueueMessageResult used as QueueMessage
     await this.delete({ original: message })
     return this.dequeue()
   }
@@ -60,24 +60,23 @@ class AzureStorageQueue {
   async dequeueMultiple() {
     const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
       this.options.queueName,
-      // @ts-ignore - azure-storage getMessages accepts options as second arg
+      // @ts-expect-error - azure-storage getMessages accepts options as second arg
       this.options.dequeueOptions
     )
     if (!messages || messages.length === 0) return []
     for (const i in messages) {
       if (messages[i].dequeueCount <= 5) {
-        // @ts-ignore - mutating array element from QueueMessageResult to DequeuedMessage
         messages[i] = {
-          // @ts-ignore
+          // @ts-expect-error
           original: messages[i],
           data: JSON.parse(Buffer.from(messages[i].messageText, 'base64').toString('utf8'))
         }
       } else {
-        // @ts-ignore - azure-storage QueueMessageResult used as QueueMessage
+        // @ts-expect-error - azure-storage QueueMessageResult used as QueueMessage
         await this.delete({ original: messages[i] })
       }
     }
-    // @ts-ignore - array has been mutated to DequeuedMessage[]
+    // @ts-expect-error - array has been mutated to DequeuedMessage[]
     return messages
   }
 

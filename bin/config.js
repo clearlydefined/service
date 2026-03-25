@@ -85,10 +85,10 @@ module.exports = {
     website: config.get('WEBSITE_ENDPOINT') || 'http://localhost:3000'
   },
   limits: {
-    windowSeconds: Number.parseInt(config.get('RATE_LIMIT_WINDOW')) || 1,
-    max: Number.parseInt(config.get('RATE_LIMIT_MAX')) || 0,
-    batchWindowSeconds: Number.parseInt(config.get('BATCH_RATE_LIMIT_WINDOW')) || 1,
-    batchMax: Number.parseInt(config.get('BATCH_RATE_LIMIT_MAX')) || 0
+    windowSeconds: Number.parseInt(config.get('RATE_LIMIT_WINDOW'), 10) || 1,
+    max: Number.parseInt(config.get('RATE_LIMIT_MAX'), 10) || 0,
+    batchWindowSeconds: Number.parseInt(config.get('BATCH_RATE_LIMIT_WINDOW'), 10) || 1,
+    batchMax: Number.parseInt(config.get('BATCH_RATE_LIMIT_MAX'), 10) || 0
   },
   webhook: {
     githubSecret:

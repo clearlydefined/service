@@ -42,7 +42,6 @@ class MemoryQueue {
     if (!message) return null
     this.data[0].dequeueCount++
     if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: this._parseData(message) })
-    // @ts-ignore - internal delete only needs original
     await this.delete({ original: message })
     return this.dequeue()
   }

@@ -35,10 +35,10 @@ const sortOptions = {
 
 /** @type {Record<string, (value: any) => number | undefined>} */
 const valueTransformers = {
-  'licensed.score.total': value => value && Number.parseInt(value),
-  'described.score.total': value => value && Number.parseInt(value),
-  'scores.effective': value => value && Number.parseInt(value),
-  'scores.tool': value => value && Number.parseInt(value)
+  'licensed.score.total': value => value && Number.parseInt(value, 10),
+  'described.score.total': value => value && Number.parseInt(value, 10),
+  'scores.effective': value => value && Number.parseInt(value, 10),
+  'scores.tool': value => value && Number.parseInt(value, 10)
 }
 
 const SEPARATOR = '&'
@@ -174,7 +174,7 @@ class AbstractMongoDefinitionStore {
     this.logger.debug(`filter: ${JSON.stringify(combinedFilters)}\nsort: ${JSON.stringify(sort)}`)
     const cursor = this.collection.find(combinedFilters, {
       projection,
-      // @ts-ignore - mongodb types expect strict Sort type but our Record<string, number> is equivalent
+      // @ts-expect-error - mongodb types expect strict Sort type but our Record<string, number> is equivalent
       sort,
       limit: pageSize
     })
@@ -239,19 +239,19 @@ class AbstractMongoDefinitionStore {
     if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
     if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
     if (parameters.minEffectiveScore)
-      filter['scores.effective'] = { $gt: Number.parseInt(String(parameters.minEffectiveScore)) }
+      filter['scores.effective'] = { $gt: Number.parseInt(String(parameters.minEffectiveScore), 10) }
     if (parameters.maxEffectiveScore)
-      filter['scores.effective'] = { $lt: Number.parseInt(String(parameters.maxEffectiveScore)) }
-    if (parameters.minToolScore) filter['scores.tool'] = { $gt: Number.parseInt(String(parameters.minToolScore)) }
-    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: Number.parseInt(String(parameters.maxToolScore)) }
+      filter['scores.effective'] = { $lt: Number.parseInt(String(parameters.maxEffectiveScore), 10) }
+    if (parameters.minToolScore) filter['scores.tool'] = { $gt: Number.parseInt(String(parameters.minToolScore), 10) }
+    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: Number.parseInt(String(parameters.maxToolScore), 10) }
     if (parameters.minLicensedScore)
-      filter['licensed.score.total'] = { $gt: Number.parseInt(String(parameters.minLicensedScore)) }
+      filter['licensed.score.total'] = { $gt: Number.parseInt(String(parameters.minLicensedScore), 10) }
     if (parameters.maxLicensedScore)
-      filter['licensed.score.total'] = { $lt: Number.parseInt(String(parameters.maxLicensedScore)) }
+      filter['licensed.score.total'] = { $lt: Number.parseInt(String(parameters.maxLicensedScore), 10) }
     if (parameters.minDescribedScore)
-      filter['described.score.total'] = { $gt: Number.parseInt(String(parameters.minDescribedScore)) }
+      filter['described.score.total'] = { $gt: Number.parseInt(String(parameters.minDescribedScore), 10) }
     if (parameters.maxDescribedScore)
-      filter['described.score.total'] = { $lt: Number.parseInt(String(parameters.maxDescribedScore)) }
+      filter['described.score.total'] = { $lt: Number.parseInt(String(parameters.maxDescribedScore), 10) }
     return filter
   }
 
