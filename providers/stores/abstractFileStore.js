@@ -6,7 +6,7 @@ const path = require('path')
 const recursive = require('recursive-readdir')
 const { promisify } = require('util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
-// @ts-ignore - JSON schema has no type declarations
+// @ts-expect-error - JSON schema has no type declarations
 const schema = require('../../schemas/definition-1.0')
 const { getLatestVersion } = require('../../lib/utils')
 const logger = require('../logging/logger')

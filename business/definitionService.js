@@ -929,7 +929,7 @@ class DefinitionService {
    * @private
    * @deprecated This method is currently unused
    */
-  // @ts-ignore - unused but kept for API compatibility
+  // @ts-expect-error - unused but kept for API compatibility
   _getDefinitionCoordinates(coordinates) {
     return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
   }

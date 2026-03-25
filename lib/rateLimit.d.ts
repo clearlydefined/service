@@ -3,7 +3,6 @@
 
 import type { NextFunction, Request, Response } from 'express'
 import type { Store } from 'express-rate-limit'
-import { RedisClientType } from 'redis'
 import type { ICache } from '../providers/caching'
 import type { Logger } from '../providers/logging'
 

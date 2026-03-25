@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
-import { FetchFunction, type FetchResponse } from './fetch'
+import { type FetchResponse } from './fetch'
 
 /** Coordinates specific to Gradle plugin resolution */
 export interface GradleCoordinates extends EntityCoordinatesSpec {

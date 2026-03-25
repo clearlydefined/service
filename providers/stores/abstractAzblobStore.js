@@ -60,12 +60,11 @@ class AbstractAzBlobStore {
     let continuation = null
     do {
       const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
-      // @ts-ignore - azure-storage promisify signature differs from standard promisify
       const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
         this.containerName,
         name,
         continuation,
-        // @ts-ignore - azure-storage expects 4 args for this operation
+        // @ts-expect-error - azure-storage expects 4 args for this operation
         {
           include: azure.BlobUtilities.BlobListingDetails.METADATA
         }

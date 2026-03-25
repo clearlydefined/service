@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Logger } from '../logging'
-import type { DequeuedMessage, IQueue } from '../queueing'
+import type { IQueue } from '../queueing'
 
 /** Minimum curation-service shape required by the queue processor */
 export interface CurationProcessService {

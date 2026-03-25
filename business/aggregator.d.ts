@@ -3,7 +3,7 @@
 
 import type { EntityCoordinates } from '../lib/entityCoordinates'
 import type { Logger } from '../providers/logging'
-import type { Definition, DefinitionFile } from './definitionService'
+import type { Definition } from './definitionService'
 
 /**
  * Tool precedence configuration.

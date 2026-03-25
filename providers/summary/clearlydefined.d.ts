@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { Definition, FileEntry, SourceLocationSpec } from '../../lib/utils'
+import type { FileEntry, SourceLocationSpec } from '../../lib/utils'
 import type { SummarizerOptions } from './index'
 
 /** Registry entry for Debian packages */
