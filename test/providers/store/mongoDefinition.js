@@ -252,6 +252,19 @@ function createStore(data) {
             if (typeof partitionKey === 'string' && key.indexOf(partitionKey) > -1) cb(data[key])
             else if (partitionKey.exec?.(key)) cb(data[key])
           }
+        },
+        [Symbol.asyncIterator]() {
+          const keys = Object.keys(data)
+          const matches = keys.filter(key =>
+            typeof partitionKey === 'string' ? key.indexOf(partitionKey) > -1 : partitionKey.exec?.(key)
+          )
+          let i = 0
+          return {
+            next() {
+              if (i < matches.length) return Promise.resolve({ value: data[matches[i++]], done: false })
+              return Promise.resolve({ value: undefined, done: true })
+            }
+          }
         }
       }
     }),

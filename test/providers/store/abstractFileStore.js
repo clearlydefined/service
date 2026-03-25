@@ -46,7 +46,7 @@ describe('AbstractFileStore', () => {
       }
       FileStore = proxyquire('../../../providers/stores/abstractFileStore', {
         'recursive-readdir': recursiveStub,
-        fs: fsStub
+        'node:fs': fsStub
       })
       fileStore = new FileStore({ location: '/foo', logger })
     })
@@ -314,7 +314,7 @@ describe('AbstractFileStore', () => {
             '/foo/npm/npmjs/-/test/revision/2.0/tool/toolB/2.0.json': {},
             '/foo/npm/npmjs/-/test/revision/2.0/tool/toolC/3.0.json': {}
           }).filter(p => p.startsWith(path)),
-        fs: {
+        'node:fs': {
           readFile: (path, cb) => {
             const entry = sampleEntries.find(e => e.path === path)
             if (entry) cb(null, JSON.stringify(entry))
