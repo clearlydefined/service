@@ -688,14 +688,15 @@ ${this._formatDefinitions(patch.patches)}`
   /** @param {MatchingRevisionAndReason[]} multiversionSearchResults */
   _formatMultiversionCuratedRevisions(multiversionSearchResults) {
     let output = ''
-    for (const version of multiversionSearchResults
+    const sortedVersions = multiversionSearchResults
       .map(result => result.version)
       .sort((a, b) => {
         if (semver.valid(a) && semver.valid(b)) {
           return semver.compare(a, b)
         }
         return 0
-      })) {
+      })
+    for (const version of sortedVersions) {
       output += `- ${version}\n`
     }
     const allMatchingProps = union(...multiversionSearchResults.map(m => m.matchingProperties))
