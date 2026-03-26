@@ -235,7 +235,9 @@ describe('SPDX utility functions', () => {
       'net-snmp': 'Net-SNMP'
     }
     for (let input of Object.keys(data)) {
-      if (input === 'null') input = null
+      if (input === 'null') {
+        input = null
+      }
       expect(SPDX.normalize(input)).to.eq(data[input])
     }
   })
@@ -251,7 +253,9 @@ describe('SPDX utility functions', () => {
       null: null
     }
     for (let input of Object.keys(data)) {
-      if (input === 'null') input = null
+      if (input === 'null') {
+        input = null
+      }
       expect(SPDX.lookupByName(input)).to.eq(data[input])
     }
   })

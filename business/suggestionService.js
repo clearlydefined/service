@@ -35,7 +35,9 @@ class SuggestionService {
    */
   async get(coordinates) {
     const definitions = await this._getRelatedDefinitions(coordinates)
-    if (!definitions) return null
+    if (!definitions) {
+      return null
+    }
     let hasSuggested = false
     /** @type {Suggestion} */
     const suggestion = { coordinates }
@@ -86,10 +88,14 @@ class SuggestionService {
       compareDates(get(a, 'described.releaseDate'), get(b, 'described.releaseDate'))
     )
     // If the related array only has one entry then return early
-    if (definitions.length < 1) return null
+    if (definitions.length < 1) {
+      return null
+    }
     // Split the definitions into before supplied coords and those after
     const index = definitions.findIndex(entry => entry.coordinates.revision === coordinates.revision)
-    if (index === -1) return null
+    if (index === -1) {
+      return null
+    }
     const before = definitions.slice(Math.max(index - 3, 0), index).reverse()
     const after = definitions.slice(index + 1, index + 3)
     return { original: definitions[index], related: before.concat(after) }
@@ -106,7 +112,9 @@ class SuggestionService {
    * @private
    */
   _collectSuggestionsForField(definitions, suggestion, field, isValid = get) {
-    if (isValid(definitions.original, field)) return false
+    if (isValid(definitions.original, field)) {
+      return false
+    }
     return setIfValue(
       suggestion,
       field,

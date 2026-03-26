@@ -146,7 +146,9 @@ class ClearlyDescribedSummarizer {
    * @param {ClearlyDefinedHarvestedData} data - The harvested data
    */
   addSourceLocation(result, data) {
-    if (!data.sourceInfo) return
+    if (!data.sourceInfo) {
+      return
+    }
     const spec = data.sourceInfo
     updateSourceLocation(spec)
     spec.url = buildSourceUrl(spec)
@@ -159,7 +161,9 @@ class ClearlyDescribedSummarizer {
    * @param {ClearlyDefinedHarvestedData} data - The harvested data
    */
   addFiles(result, data) {
-    if (!data.files) return
+    if (!data.files) {
+      return
+    }
     result.files = data.files.map(file => {
       return { path: file.path, hashes: file.hashes }
     })
@@ -172,12 +176,18 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addAttachedFiles(result, data, coordinates) {
-    if (!data.attachments || !result.files) return
+    if (!data.attachments || !result.files) {
+      return
+    }
     for (const file of data.attachments) {
       const existing = result.files.find(entry => entry.path === file.path)
-      if (!existing) continue
+      if (!existing) {
+        continue
+      }
       existing.token = file.token
-      if (isLicenseFile(file.path, coordinates)) existing.natures = uniq((existing.natures || []).concat(['license']))
+      if (isLicenseFile(file.path, coordinates)) {
+        existing.natures = uniq((existing.natures || []).concat(['license']))
+      }
     }
   }
 
@@ -189,13 +199,18 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addInterestingFiles(result, data, coordinates) {
-    if (!data.interestingFiles) return
+    if (!data.interestingFiles) {
+      return
+    }
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
     for (const /** @type {{ license?: string; path: string; natures?: string[] }} */ file of newFiles) {
       file.license = SPDX.normalize(file.license)
-      if (!file.license) delete file.license
-      else if (isLicenseFile(file.path, coordinates)) file.natures = uniq((file.natures || []).concat(['license']))
+      if (!file.license) {
+        delete file.license
+      } else if (isLicenseFile(file.path, coordinates)) {
+        file.natures = uniq((file.natures || []).concat(['license']))
+      }
     }
     set(newDefinition, 'files', newFiles)
     mergeDefinitions(result, newDefinition)
@@ -209,7 +224,9 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addLicenseFromFiles(result, data, coordinates) {
-    if (!data.interestingFiles) return
+    if (!data.interestingFiles) {
+      return
+    }
     const licenses = data.interestingFiles
       .map(
         /** @param {{ license?: string; path: string }} file */
@@ -253,7 +270,9 @@ class ClearlyDescribedSummarizer {
     const projectSummaryLicenses = /** @type {MavenLicenseInfo[] | undefined} */ (
       get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses')
     ) // the project layer was removed in 1.2.0
-    if (!projectSummaryLicenses) return undefined
+    if (!projectSummaryLicenses) {
+      return undefined
+    }
     const licenseSummaries = /** @type {MavenLicenseInfo[]} */ (
       flatten(projectSummaryLicenses.map(/** @param {MavenLicenseInfo} x */ x => x.license)).filter(
         /** @param {unknown} x */ x => x
@@ -269,10 +288,11 @@ class ClearlyDescribedSummarizer {
     let licenses = licenseUrls
       .map(/** @param {string} url */ url => extractLicenseFromLicenseUrl(url))
       .filter(/** @param {unknown} x */ x => x)
-    if (!licenses.length)
+    if (!licenses.length) {
       licenses = licenseNames
         .map(/** @param {string} x */ x => SPDX.lookupByName(x) || x)
         .filter(/** @param {unknown} x */ x => x)
+    }
     return licenses
   }
 
@@ -290,7 +310,9 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(result, 'described.urls.download', urls.download)
     const licenses = this.getDeclaredLicenseMaven(data)
-    if (licenses?.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+    if (licenses?.length) {
+      setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+    }
   }
 
   /**
@@ -341,7 +363,9 @@ class ClearlyDescribedSummarizer {
     )
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
     const license = /** @type {string | undefined} */ (get(data, 'registryData.license'))
-    if (license) setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
+    if (license) {
+      setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
+    }
     setIfValue(result, 'described.urls.registry', `https://crates.io/crates/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
@@ -372,7 +396,9 @@ class ClearlyDescribedSummarizer {
       `https://repo1.maven.org/maven2/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     )
     const licenses = this.getDeclaredLicenseMaven(data)
-    if (licenses?.length) setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+    if (licenses?.length) {
+      setIfValue(result, 'licensed.declared', SPDX.normalize(licenses.join(' OR ')))
+    }
   }
 
   /**
@@ -387,9 +413,11 @@ class ClearlyDescribedSummarizer {
       /** @type {string | undefined} */ (get(data, 'manifest.licenseExpression'))
     )
     const licenseUrl = /** @type {string | undefined} */ (get(data, 'manifest.licenseUrl'))
-    if (licenseExpression) set(result, 'licensed.declared', licenseExpression)
-    else if (licenseUrl?.trim())
+    if (licenseExpression) {
+      set(result, 'licensed.declared', licenseExpression)
+    } else if (licenseUrl?.trim()) {
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
+    }
     setIfValue(result, 'described.urls.registry', `https://nuget.org/packages/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     setIfValue(
@@ -398,7 +426,9 @@ class ClearlyDescribedSummarizer {
       `https://nuget.org/api/v2/package/${coordinates.name}/${coordinates.revision}`
     )
     const packageEntries = /** @type {{ fullName: string }[] | undefined} */ (get(data, 'manifest.packageEntries'))
-    if (!packageEntries) return
+    if (!packageEntries) {
+      return
+    }
     const newDefinition = cloneDeep(result)
     newDefinition.files = packageEntries.map(
       /** @param {{ fullName: string }} file */ file => {
@@ -461,7 +491,9 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addNpmData(result, data, coordinates) {
-    if (!data.registryData) return
+    if (!data.registryData) {
+      return
+    }
     const registryData = /** @type {import('./clearlydefined').NpmRegistryData} */ (data.registryData)
     setIfValue(result, 'described.releaseDate', extractDate(registryData.releaseDate))
     setIfValue(
@@ -480,18 +512,28 @@ class ClearlyDescribedSummarizer {
       }/-/${coordinates.name}-${coordinates.revision}.tgz`
     )
     const manifest = registryData.manifest
-    if (!manifest) return
+    if (!manifest) {
+      return
+    }
     let homepage = manifest.homepage
-    if (homepage && isArray(homepage)) homepage = homepage[0]
+    if (homepage && isArray(homepage)) {
+      homepage = homepage[0]
+    }
     setIfValue(result, 'described.projectWebsite', homepage)
     const bugs = manifest.bugs
     if (bugs) {
       if (typeof bugs === 'string') {
-        if (bugs.startsWith('http')) setIfValue(result, 'described.issueTracker', bugs)
-      } else setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
+        if (bugs.startsWith('http')) {
+          setIfValue(result, 'described.issueTracker', bugs)
+        }
+      } else {
+        setIfValue(result, 'described.issueTracker', bugs.url || bugs.email)
+      }
     }
     const expression = this.parseLicenseExpression(manifest, 'npm')
-    if (!expression) return
+    if (!expression) {
+      return
+    }
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
@@ -502,7 +544,9 @@ class ClearlyDescribedSummarizer {
    * @param {EntityCoordinates} coordinates - The entity coordinates
    */
   addComposerData(result, data, coordinates) {
-    if (!data.registryData) return
+    if (!data.registryData) {
+      return
+    }
     const registryData = /** @type {import('./clearlydefined').ComposerRegistryData} */ (data.registryData)
     setIfValue(result, 'described.releaseDate', extractDate(registryData.releaseDate))
     setIfValue(
@@ -511,14 +555,18 @@ class ClearlyDescribedSummarizer {
       `https://packagist.org/packages/${`${coordinates.namespace}/${coordinates.name}`}`
     )
     const manifest = registryData.manifest
-    if (!manifest) return
+    if (!manifest) {
+      return
+    }
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}#${manifest.version}`)
     setIfValue(result, 'described.projectWebsite', manifest.homepage)
     if (manifest.dist?.url) {
       setIfValue(result, 'described.urls.download', manifest.dist.url)
     }
     const expression = this.parseLicenseExpression(manifest, 'composer')
-    if (!expression) return
+    if (!expression) {
+      return
+    }
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
@@ -560,8 +608,9 @@ class ClearlyDescribedSummarizer {
   addGemData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const license = SPDX.normalize(/** @type {string | undefined} */ (get(data, 'registryData.license')))
-    if (license) set(result, 'licensed.declared', license)
-    else {
+    if (license) {
+      set(result, 'licensed.declared', license)
+    } else {
       const gemLicenses = /** @type {string[] | undefined} */ (get(data, 'registryData.licenses')) || []
       const licenses = SPDX.normalize(gemLicenses.join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
@@ -599,7 +648,9 @@ class ClearlyDescribedSummarizer {
       const revision = find(releases[coordinates.revision], revision =>
         revision.filename ? revision.filename.includes('tar.gz') || revision.filename.includes('zip') : false
       )
-      if (revision) setIfValue(result, 'described.urls.download', revision.url)
+      if (revision) {
+        setIfValue(result, 'described.urls.download', revision.url)
+      }
     }
   }
 
@@ -652,7 +703,9 @@ class ClearlyDescribedSummarizer {
    */
   addDebData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    if (!data.registryData) return
+    if (!data.registryData) {
+      return
+    }
     const registryData = /** @type {DebianRegistryEntry[]} */ (data.registryData)
     const registryUrl = this.getDebianRegistryUrl(registryData)
     if (registryUrl) {
@@ -679,7 +732,9 @@ class ClearlyDescribedSummarizer {
    */
   addDebSrcData(result, data, coordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    if (!data.registryData) return
+    if (!data.registryData) {
+      return
+    }
     const registryData = /** @type {DebianRegistryEntry[]} */ (data.registryData)
     const registryUrl = this.getDebianRegistryUrl(registryData)
     if (registryUrl) {

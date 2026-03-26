@@ -37,7 +37,9 @@ class FsfeReuseSummarizer {
    * @throws {Error} If REUSE data is invalid
    */
   summarize(_coordinates, harvested) {
-    if (!harvested || !harvested.reuse || !harvested.reuse.metadata.CreatorTool) throw new Error('Invalid REUSE data')
+    if (!harvested || !harvested.reuse || !harvested.reuse.metadata.CreatorTool) {
+      throw new Error('Invalid REUSE data')
+    }
     const result = {}
 
     setIfValue(result, 'files', this._summarizeFiles(harvested))
@@ -53,7 +55,9 @@ class FsfeReuseSummarizer {
    */
   _summarizeFiles(harvested) {
     const files = /** @type {ReuseFile[] | undefined} */ (get(harvested, 'reuse.files'))
-    if (!files) return null
+    if (!files) {
+      return null
+    }
     /** @type {FileEntry[]} */
     const licenseFiles = []
     const attachments = harvested.attachments || []
@@ -99,7 +103,9 @@ class FsfeReuseSummarizer {
    * @private
    */
   _addLicenseDeclaration(harvested, result) {
-    if (!harvested.reuse.licenses) return
+    if (!harvested.reuse.licenses) {
+      return
+    }
     const declaredLicenses = harvested.reuse.licenses
       .map(license => (isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null))
       .filter(x => x)

@@ -55,8 +55,11 @@ class MongoStore extends AbstractMongoDefinitionStore {
     /** @type {Definition | undefined} */
     let definition
     for await (const page of /** @type {AsyncIterable<any>} */ (cursor)) {
-      if (!definition) definition = page
-      else definition.files = definition.files.concat(page['files'])
+      if (!definition) {
+        definition = page
+      } else {
+        definition.files = definition.files.concat(page['files'])
+      }
     }
     return definition
   }
@@ -100,7 +103,9 @@ class MongoStore extends AbstractMongoDefinitionStore {
         index => {
           if (index === 0) {
             const definitionPage = clone(definition)
-            if (definition.files) definitionPage.files = definition.files.slice(0, pageSize)
+            if (definition.files) {
+              definitionPage.files = definition.files.slice(0, pageSize)
+            }
             return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
           }
           return {

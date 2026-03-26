@@ -51,7 +51,9 @@ class AbstractFileStore {
       return (
         await Promise.all(
           paths.map(async path => {
-            if (!this._isValidPath(path)) return null
+            if (!this._isValidPath(path)) {
+              return null
+            }
             const data = await promisify(fs.readFile)(path)
             return data ? visitor(JSON.parse(data.toString())) : null
           })
@@ -60,7 +62,9 @@ class AbstractFileStore {
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
-      if (nodeError.code === 'ENOENT') return []
+      if (nodeError.code === 'ENOENT') {
+        return []
+      }
       throw error
     }
   }
@@ -79,7 +83,9 @@ class AbstractFileStore {
     } catch (error) {
       const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
       this.logger.debug(`Error reading file at ${filePath}: ${nodeError.message}`)
-      if (nodeError.code === 'ENOENT') return null
+      if (nodeError.code === 'ENOENT') {
+        return null
+      }
       throw error
     }
   }
@@ -96,33 +102,63 @@ class AbstractFileStore {
       await Promise.all(
         paths.map(async path => {
           try {
-            if (!this._isValidPath(path)) return null
+            if (!this._isValidPath(path)) {
+              return null
+            }
             const data = await promisify(fs.readFile)(path)
-            if (!data) return null
+            if (!data) {
+              return null
+            }
             const definition = JSON.parse(data.toString())
             return definition
           } catch (error) {
             // If there is just no entry, that's fine, there is no content.
             const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
-            if (nodeError.code === 'ENOENT') return null
+            if (nodeError.code === 'ENOENT') {
+              return null
+            }
             throw error
           }
         })
       )
     ).filter(definition => {
-      if (!definition) return false
-      if (query.type && definition.coordinates?.type !== query.type) return false
-      if (query.provider && definition.coordinates?.provider !== query.provider) return false
-      if (query.name && definition.coordinates?.name !== query.name) return false
-      if (query.namespace && definition.coordinates?.namespace !== query.namespace) return false
-      if (query.license && definition.licensed?.declared !== query.license) return false
-      if (query.releasedAfter && definition.described?.releaseDate < query.releasedAfter) return false
-      if (query.releasedBefore && definition.described?.releaseDate > query.releasedBefore) return false
-      if (query.minLicensedScore && definition.licensed?.score?.total < query.minLicensedScore) return false
-      if (query.maxLicensedScore && definition.licensed?.score?.total > query.maxLicensedScore) return false
+      if (!definition) {
+        return false
+      }
+      if (query.type && definition.coordinates?.type !== query.type) {
+        return false
+      }
+      if (query.provider && definition.coordinates?.provider !== query.provider) {
+        return false
+      }
+      if (query.name && definition.coordinates?.name !== query.name) {
+        return false
+      }
+      if (query.namespace && definition.coordinates?.namespace !== query.namespace) {
+        return false
+      }
+      if (query.license && definition.licensed?.declared !== query.license) {
+        return false
+      }
+      if (query.releasedAfter && definition.described?.releaseDate < query.releasedAfter) {
+        return false
+      }
+      if (query.releasedBefore && definition.described?.releaseDate > query.releasedBefore) {
+        return false
+      }
+      if (query.minLicensedScore && definition.licensed?.score?.total < query.minLicensedScore) {
+        return false
+      }
+      if (query.maxLicensedScore && definition.licensed?.score?.total > query.maxLicensedScore) {
+        return false
+      }
 
-      if (query.minDescribedScore && definition.described?.score?.total < query.minDescribedScore) return false
-      if (query.maxDescribedScore && definition.described?.score?.total > query.maxDescribedScore) return false
+      if (query.minDescribedScore && definition.described?.score?.total < query.minDescribedScore) {
+        return false
+      }
+      if (query.maxDescribedScore && definition.described?.score?.total > query.maxDescribedScore) {
+        return false
+      }
       return true
     })
   }
@@ -240,7 +276,9 @@ class AbstractFileStore {
       })
       .reduce(
         (latest, { tool, toolVersion, path }) => {
-          if (!tool || !toolVersion) return latest
+          if (!tool || !toolVersion) {
+            return latest
+          }
           latest[tool] = latest[tool] || { toolVersion: '', path: '' }
           //if the version is greater than the current version, replace it
           if (!latest[tool].toolVersion || getLatestVersion([toolVersion, latest[tool].toolVersion]) === toolVersion) {

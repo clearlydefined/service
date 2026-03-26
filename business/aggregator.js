@@ -80,7 +80,9 @@ class AggregationService {
         mergeDefinitions(result, data.summary)
       }
     }
-    if (!tools.length) return null
+    if (!tools.length) {
+      return null
+    }
     set(result, 'described.tools', tools.reverse())
     const cdSummarized = this._findData('clearlydefined', summarized)
     this._overrideDeclaredLicense(result, cdSummarized, coordinates)
@@ -113,8 +115,12 @@ class AggregationService {
    */
   _findData(toolSpec, summarized) {
     const [tool, toolVersion] = toolSpec.split('/')
-    if (!summarized[tool]) return null
-    if (toolVersion) return { toolSpec, summary: summarized[tool][toolVersion] }
+    if (!summarized[tool]) {
+      return null
+    }
+    if (toolVersion) {
+      return { toolSpec, summary: summarized[tool][toolVersion] }
+    }
 
     const versions = Object.getOwnPropertyNames(summarized[tool])
     const latest = getLatestVersion(versions)
@@ -131,9 +137,13 @@ class AggregationService {
    */
   _normalizeFiles(result, cdSummarized, coordinates) {
     const cdFiles = get(cdSummarized, 'summary.files')
-    if (!cdFiles || !cdFiles.length) return
+    if (!cdFiles || !cdFiles.length) {
+      return
+    }
     const difference = (result.files?.length || 0) - cdFiles.length
-    if (!difference) return
+    if (!difference) {
+      return
+    }
     this.logger.info('difference between summary file count and cd file count', {
       count: difference,
       coordinates: coordinates.toString()

@@ -214,7 +214,9 @@ class AbstractMongoDefinitionStore {
    * @returns {string} The ID string (lowercased coordinate string)
    */
   getId(coordinates) {
-    if (!coordinates) return ''
+    if (!coordinates) {
+      return ''
+    }
     return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
@@ -227,31 +229,63 @@ class AbstractMongoDefinitionStore {
   buildQuery(parameters) {
     /** @type {Record<string, any>} */
     const filter = {}
-    if (parameters.type) filter['coordinates.type'] = parameters.type
-    if (parameters.provider) filter['coordinates.provider'] = parameters.provider
-    if (parameters.namespace) filter['coordinates.namespace'] = parameters.namespace
-    if (parameters.name) filter['coordinates.name'] = parameters.name
-    if (parameters.type === null) filter['coordinates.type'] = null
-    if (parameters.provider === null) filter['coordinates.provider'] = null
-    if (parameters.name === null) filter['coordinates.name'] = null
-    if (parameters.namespace === null) filter['coordinates.namespace'] = null
-    if (parameters.license) filter['licensed.declared'] = parameters.license
-    if (parameters.releasedAfter) filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
-    if (parameters.releasedBefore) filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
-    if (parameters.minEffectiveScore)
+    if (parameters.type) {
+      filter['coordinates.type'] = parameters.type
+    }
+    if (parameters.provider) {
+      filter['coordinates.provider'] = parameters.provider
+    }
+    if (parameters.namespace) {
+      filter['coordinates.namespace'] = parameters.namespace
+    }
+    if (parameters.name) {
+      filter['coordinates.name'] = parameters.name
+    }
+    if (parameters.type === null) {
+      filter['coordinates.type'] = null
+    }
+    if (parameters.provider === null) {
+      filter['coordinates.provider'] = null
+    }
+    if (parameters.name === null) {
+      filter['coordinates.name'] = null
+    }
+    if (parameters.namespace === null) {
+      filter['coordinates.namespace'] = null
+    }
+    if (parameters.license) {
+      filter['licensed.declared'] = parameters.license
+    }
+    if (parameters.releasedAfter) {
+      filter['described.releaseDate'] = { $gt: parameters.releasedAfter }
+    }
+    if (parameters.releasedBefore) {
+      filter['described.releaseDate'] = { $lt: parameters.releasedBefore }
+    }
+    if (parameters.minEffectiveScore) {
       filter['scores.effective'] = { $gt: Number.parseInt(String(parameters.minEffectiveScore), 10) }
-    if (parameters.maxEffectiveScore)
+    }
+    if (parameters.maxEffectiveScore) {
       filter['scores.effective'] = { $lt: Number.parseInt(String(parameters.maxEffectiveScore), 10) }
-    if (parameters.minToolScore) filter['scores.tool'] = { $gt: Number.parseInt(String(parameters.minToolScore), 10) }
-    if (parameters.maxToolScore) filter['scores.tool'] = { $lt: Number.parseInt(String(parameters.maxToolScore), 10) }
-    if (parameters.minLicensedScore)
+    }
+    if (parameters.minToolScore) {
+      filter['scores.tool'] = { $gt: Number.parseInt(String(parameters.minToolScore), 10) }
+    }
+    if (parameters.maxToolScore) {
+      filter['scores.tool'] = { $lt: Number.parseInt(String(parameters.maxToolScore), 10) }
+    }
+    if (parameters.minLicensedScore) {
       filter['licensed.score.total'] = { $gt: Number.parseInt(String(parameters.minLicensedScore), 10) }
-    if (parameters.maxLicensedScore)
+    }
+    if (parameters.maxLicensedScore) {
       filter['licensed.score.total'] = { $lt: Number.parseInt(String(parameters.maxLicensedScore), 10) }
-    if (parameters.minDescribedScore)
+    }
+    if (parameters.minDescribedScore) {
       filter['described.score.total'] = { $gt: Number.parseInt(String(parameters.minDescribedScore), 10) }
-    if (parameters.maxDescribedScore)
+    }
+    if (parameters.maxDescribedScore) {
       filter['described.score.total'] = { $lt: Number.parseInt(String(parameters.maxDescribedScore), 10) }
+    }
     return filter
   }
 
@@ -276,7 +310,9 @@ class AbstractMongoDefinitionStore {
     /** @type {Record<string, number>} */
     const clause = {}
     const sortDirection = parameters.sortDesc ? -1 : 1
-    for (const item of sort) clause[item] = sortDirection
+    for (const item of sort) {
+      clause[item] = sortDirection
+    }
     //Always sort on coordinatesKey(_id or partitionKey) for continuation token
     const coordinateKey = this.getCoordinatesKey()
     clause[coordinateKey] = sortDirection
@@ -307,7 +343,9 @@ class AbstractMongoDefinitionStore {
    * @returns {Record<string, any> | undefined} The pagination filter or undefined
    */
   _buildPaginationQuery(continuationToken, sort) {
-    if (!continuationToken.length) return undefined
+    if (!continuationToken.length) {
+      return undefined
+    }
     const queryExpressions = this._buildQueryExpressions(continuationToken, sort)
     return queryExpressions.length <= 1 ? queryExpressions[0] : { $or: [...queryExpressions] }
   }
@@ -397,7 +435,9 @@ class AbstractMongoDefinitionStore {
    * @returns {string} The continuation token or empty string if no more pages
    */
   _getContinuationToken(pageSize, data, sortClause) {
-    if (data.length !== pageSize) return ''
+    if (data.length !== pageSize) {
+      return ''
+    }
     const lastItem = data[data.length - 1]
     const lastValues = Object.keys(sortClause)
       .map(key => get(lastItem, key))

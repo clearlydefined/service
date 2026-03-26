@@ -17,9 +17,13 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @returns {Promise<Definition | undefined>}
    */
   async validate(definition) {
-    if (!definition) return undefined
+    if (!definition) {
+      return undefined
+    }
     const result = await super.validate(definition)
-    if (result) return result
+    if (result) {
+      return result
+    }
 
     await this._queueUpgrade(definition)
     return definition
@@ -27,7 +31,9 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
 
   /** @param {Definition} definition */
   async _queueUpgrade(definition) {
-    if (!this._upgrade) throw new Error('Upgrade queue is not set')
+    if (!this._upgrade) {
+      throw new Error('Upgrade queue is not set')
+    }
     try {
       const message = this._constructMessage(definition)
       await this._upgrade.queue(message)

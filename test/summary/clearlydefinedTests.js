@@ -310,23 +310,27 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     for (const license of Object.keys(data)) {
       const result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: license } } }, npmTestCoordinates)
-      if (data[license])
+      if (data[license]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
 
     for (const license of Object.keys(data)) {
       const result = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
-      if (data[license])
+      if (data[license]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
 
     for (const license of Object.keys(data)) {
@@ -337,7 +341,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      } else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
 
     for (const license of Object.keys(data)) {
@@ -348,7 +354,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
           ...expectedResult,
           licensed: { declared: data[license] }
         })
-      } else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
 
     const licenseArray = ['MIT']
@@ -397,7 +405,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
           urls: expectedUrls
         }
       }
-      if (data[date] !== null) expected.described.releaseDate = data[date]
+      if (data[date] !== null) {
+        expected.described.releaseDate = data[date]
+      }
       assert.deepEqual(result, expected)
     }
   })
@@ -511,12 +521,14 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     for (const licenseExpression of Object.keys(data)) {
       const result = {}
       summarizer.addNuGetData(result, { manifest: { licenseExpression } }, nugetTestCoordinates)
-      if (data[licenseExpression])
+      if (data[licenseExpression]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[licenseExpression] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -534,12 +546,14 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     for (const licenseUrl of Object.keys(data)) {
       const result = {}
       summarizer.addNuGetData(result, { manifest: { licenseUrl } }, nugetTestCoordinates)
-      if (data[licenseUrl])
+      if (data[licenseUrl]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[licenseUrl] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 })
@@ -599,12 +613,14 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testCoordinates
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[url] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -625,14 +641,16 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     data.forEach((expected, licenses) => {
       const result = {}
       summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinates)
-      if (expected)
+      if (expected) {
         assert.deepEqual(result, {
           described: {
             urls: expectedUrls
           },
           licensed: { declared: expected }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     })
   })
 })
@@ -663,12 +681,14 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testCoordinatesMavenGoogle
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[url] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -689,14 +709,16 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     data.forEach((expected, licenses) => {
       const result = {}
       summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinatesMavenGoogle)
-      if (expected)
+      if (expected) {
         assert.deepEqual(result, {
           described: {
             urls: expectedUrls
           },
           licensed: { declared: expected }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     })
   })
 })
@@ -724,12 +746,14 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         sourceArchiveTestCoordinates
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult,
           licensed: { declared: data[url] }
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -763,8 +787,11 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
         { manifest: { summary: { licenses: [{ license }] } } },
         sourceArchiveTestCoordinates
       )
-      if (expected) assert.deepEqual(result, { described: { urls: expectedUrls }, licensed: { declared: expected } })
-      else assert.deepEqual(result, expectedResult)
+      if (expected) {
+        assert.deepEqual(result, { described: { urls: expectedUrls }, licensed: { declared: expected } })
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     })
   })
 })
@@ -809,11 +836,13 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testCoordinatesGit
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -847,11 +876,13 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testCoordinatesGitLab
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 })
@@ -890,11 +921,13 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testCoordinatesGo
       )
-      if (data[url])
+      if (data[url]) {
         assert.deepEqual(result, {
           ...expectedResult
         })
-      else assert.deepEqual(result, expectedResult)
+      } else {
+        assert.deepEqual(result, expectedResult)
+      }
     }
   })
 
@@ -922,11 +955,13 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
         testEncodedCoordinatesGo
       )
-      if (testData[url])
+      if (testData[url]) {
         assert.deepEqual(result, {
           ...expectedDecodedResult
         })
-      else assert.deepEqual(result, expectedDecodedResult)
+      } else {
+        assert.deepEqual(result, expectedDecodedResult)
+      }
     }
   })
 

@@ -267,7 +267,9 @@ describe('GitHub origin routes', () => {
       res.on('end', resolve)
       res.on('error', reject)
       router.handle(req, res, err => {
-        if (err) reject(err)
+        if (err) {
+          reject(err)
+        }
       })
     })
 
@@ -294,7 +296,9 @@ describe('GitHub origin routes', () => {
       res.on('end', resolve)
       res.on('error', reject)
       router.handle(req, res, err => {
-        if (err) reject(err)
+        if (err) {
+          reject(err)
+        }
       })
     })
 
@@ -338,7 +342,9 @@ describe('GitHub origin routes', () => {
       res.on('end', resolve)
       res.on('error', reject)
       router.handle(req, res, err => {
-        if (err) reject(err)
+        if (err) {
+          reject(err)
+        }
       })
     })
 
@@ -377,7 +383,9 @@ describe('GitHub origin routes', () => {
       res.on('finish', resolve)
       res.on('error', reject)
       router.handle(req, res, err => {
-        if (err) reject(err)
+        if (err) {
+          reject(err)
+        }
       })
     })
 
@@ -407,7 +415,9 @@ describe('GitHub origin routes', () => {
       res.on('end', resolve)
       res.on('error', reject)
       router.handle(req, res, err => {
-        if (err) reject(err)
+        if (err) {
+          reject(err)
+        }
       })
     })
 

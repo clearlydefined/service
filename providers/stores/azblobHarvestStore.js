@@ -48,7 +48,9 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
       coordinates,
       /** @param {any} entry */ entry => {
         const urn = entry.metadata.urn
-        if (!urn) return null
+        if (!urn) {
+          return null
+        }
         const entryCoordinates = ResultCoordinates.fromUrn(urn)
         return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
       }
@@ -65,7 +67,9 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
    */
   stream(coordinates, stream) {
     let name = this._toStoragePathFromCoordinates(coordinates)
-    if (!name.endsWith('.json')) name += '.json'
+    if (!name.endsWith('.json')) {
+      name += '.json'
+    }
     return new Promise((resolve, reject) =>
       this.blobService.getBlobToStream(this.containerName, name, stream, responseOrError(resolve, reject))
     )
@@ -134,7 +138,9 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
       return entries.reduce((result, entry) => {
         const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
         // TODO: LOG HERE THERE IF THERE ARE SOME BOGUS FILES HANGING AROUND
-        if (!tool || !toolVersion) return result
+        if (!tool || !toolVersion) {
+          return result
+        }
         const current = (result[tool] = result[tool] || {})
         current[toolVersion] = entry.content
         return result

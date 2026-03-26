@@ -18,8 +18,12 @@ describe('FileAttachmentStore list definitions', () => {
     const fsStub = {
       readFile: (path, cb) => {
         path = path.replace(/\\/g, '/')
-        if (path.includes('error')) return cb(new Error('test error'))
-        if (data[path]) return cb(null, data[path])
+        if (path.includes('error')) {
+          return cb(new Error('test error'))
+        }
+        if (data[path]) {
+          return cb(null, data[path])
+        }
         const error = new Error('not found')
         error.code = 'ENOENT'
         cb(error)

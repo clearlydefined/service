@@ -37,7 +37,9 @@ function loadOne(spec, namespace) {
   const getPath = (namespace ? `${namespace}.` : '') + requirePath
   let target = get(providers, getPath)
   try {
-    if (!target) target = require(requirePath)
+    if (!target) {
+      target = require(requirePath)
+    }
     return objectPath ? get(target, objectPath) : target
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)

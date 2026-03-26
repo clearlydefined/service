@@ -14,7 +14,9 @@
  * @throws {Error} Error if no factories are configured
  */
 function definition(options) {
-  if (!options.factories) throw new Error('no factories configured')
+  if (!options.factories) {
+    throw new Error('no factories configured')
+  }
   const stores = options.factories.map(x => x())
   return require('./dispatchDefinitionStore')({ stores })
 }

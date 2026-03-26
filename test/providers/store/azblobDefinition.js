@@ -109,7 +109,9 @@ function createStore(data) {
       .stub()
       .callsFake(async (_container, name, _continuation, _metadata, callback) => {
         name = name.toLowerCase()
-        if (name.includes('error')) return callback(new Error('test error'))
+        if (name.includes('error')) {
+          return callback(new Error('test error'))
+        }
         callback(null, {
           continuationToken: null,
           entries: Object.keys(data)
@@ -118,18 +120,28 @@ function createStore(data) {
         })
       }),
     createBlockBlobFromText: sinon.stub().callsFake(async (_container, name, _content, _metadata, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
+      if (name.includes('error')) {
+        return callback(new Error('test error'))
+      }
       callback()
     }),
     deleteBlob: sinon.stub().callsFake(async (_container, name, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
-      if (name.includes('missing')) return callback({ code: 'BlobNotFound' })
+      if (name.includes('error')) {
+        return callback(new Error('test error'))
+      }
+      if (name.includes('missing')) {
+        return callback({ code: 'BlobNotFound' })
+      }
       callback()
     }),
     getBlobToText: sinon.stub().callsFake(async (_container, name, callback) => {
-      if (name.includes('error')) return callback(new Error('test error'))
+      if (name.includes('error')) {
+        return callback(new Error('test error'))
+      }
       name = name.toLowerCase()
-      if (data[name]) return callback(null, data[name])
+      if (data[name]) {
+        return callback(null, data[name])
+      }
       const error = new Error('not found')
       error.code = 'BlobNotFound'
       callback(error)

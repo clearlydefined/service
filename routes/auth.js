@@ -64,7 +64,9 @@ router.get('/github', (req, res) => {
   if (referrer) {
     try {
       const url = new URL(referrer)
-      if (url.hostname === 'localhost') res.cookie('localhostOrigin', url.origin)
+      if (url.hostname === 'localhost') {
+        res.cookie('localhostOrigin', url.origin)
+      }
     } catch (err) {
       console.warn('Referrer parsing error, ignoring', err)
     }
@@ -76,7 +78,9 @@ router.get('/github', (req, res) => {
 router.get('/github/start', passportOrPat(), (_req, res) => {
   // this only runs if passport didn't kick in above, but double
   // check for sanity in case upstream changes
-  if (!options.clientId) res.redirect('finalize')
+  if (!options.clientId) {
+    res.redirect('finalize')
+  }
 })
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
@@ -88,7 +92,9 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
   let origin = endpoints.website
-  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) origin = req.cookies.localhostOrigin
+  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
+    origin = req.cookies.localhostOrigin
+  }
 
   // passing in the 'website' endpoint below is very important;
   // using '*' instead means this page will gladly send out a
@@ -153,7 +159,9 @@ async function getUserDetails(token, org) {
 function findPermissions(team) {
   const permissions = options.permissions
   for (const permission in permissions) {
-    if (permissions[permission].includes(team)) return permission
+    if (permissions[permission].includes(team)) {
+      return permission
+    }
   }
   return null
 }

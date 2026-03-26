@@ -43,7 +43,9 @@ class MemorySearch extends AbstractSearch {
    */
   store(definitions) {
     const entries = this._getEntries(Array.isArray(definitions) ? definitions : [definitions])
-    for (const /** @type {any} */ entry of entries) this.index[entry.coordinates] = entry
+    for (const /** @type {any} */ entry of entries) {
+      this.index[entry.coordinates] = entry
+    }
   }
 
   /**
@@ -51,7 +53,9 @@ class MemorySearch extends AbstractSearch {
    * @override
    */
   async query(body) {
-    if (!body.count) throw new Error('unsupported query')
+    if (!body.count) {
+      throw new Error('unsupported query')
+    }
     return { count: Object.keys(this.index).length }
   }
 

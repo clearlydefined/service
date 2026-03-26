@@ -20,7 +20,9 @@ router.get(
 
       const project_info = await gitlab.Projects.search(project)
       const project_match = getExactProjectMatch(namespace, project, project_info)
-      if (!project_match) throw new Error(`No project found for ${namespace}/${project}`)
+      if (!project_match) {
+        throw new Error(`No project found for ${namespace}/${project}`)
+      }
 
       const tags = await gitlab.Tags.all(project_match.id)
 
@@ -38,7 +40,9 @@ router.get(
     } catch (e) {
       const err = /** @type {any} */ (e)
       logger.info(err)
-      if (err.code === 404) return response.status(200).send([])
+      if (err.code === 404) {
+        return response.status(200).send([])
+      }
       // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
       return response.status(200).send([])
     }

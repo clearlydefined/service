@@ -19,7 +19,9 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getSug
 async function getSuggestions(request, response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await suggestionService.get(coordinates)
-  if (result) return response.status(200).send(result)
+  if (result) {
+    return response.status(200).send(result)
+  }
   return response.sendStatus(404)
 }
 

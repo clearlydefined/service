@@ -34,7 +34,9 @@ async function getPypiData(name) {
     return await requestPromise({ url, method: 'GET', json: true })
   } catch (e) {
     const error = /** @type {any} */ (e)
-    if (error.statusCode === 404) return {}
+    if (error.statusCode === 404) {
+      return {}
+    }
     throw error
   }
 }

@@ -267,9 +267,12 @@ describe('ScanCodeLegacySummarizer', () => {
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
-  if (!definition.coordinates)
+  if (!definition.coordinates) {
     definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
+  }
+  if (!validator.validate('definition', definition)) {
+    throw new Error(validator.errorsText())
+  }
 }
 
 function setup(files, coordinateSpec, scancode_version = '30.1.0') {
@@ -283,7 +286,9 @@ function setup(files, coordinateSpec, scancode_version = '30.1.0') {
 
 function buildFile(path, license, holders, score = 100, rule = {}, fileProps = {}) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
-  if (!Array.isArray(license)) license = [license]
+  if (!Array.isArray(license)) {
+    license = [license]
+  }
   return {
     path,
     type: 'file',

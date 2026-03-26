@@ -39,8 +39,12 @@ class ListBasedFilter {
    * @returns {boolean} true if blocked
    */
   isBlocked(coord) {
-    if (!coord || this._blacklist.size === 0) return false
-    if (!this._targetTypes.has(coord.type)) return false
+    if (!coord || this._blacklist.size === 0) {
+      return false
+    }
+    if (!this._targetTypes.has(coord.type)) {
+      return false
+    }
     const versionless = coord.asRevisionless().toString()
     return this._blacklist.has(versionless)
   }

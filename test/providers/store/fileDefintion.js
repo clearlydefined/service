@@ -27,7 +27,9 @@ describe('FileDefinitionStore list definitions', () => {
   before(() => {
     sinon.stub(AbstractFileStore.prototype, 'list').callsFake(async (coordinates, visitor) => {
       const path = coordinates.toString()
-      if (path.includes('error')) throw new Error('test error')
+      if (path.includes('error')) {
+        throw new Error('test error')
+      }
       return Object.keys(data)
         .map(key => (key.startsWith(path) ? visitor(data[key]) : null))
         .filter(e => e)

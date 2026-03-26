@@ -30,7 +30,9 @@ describe('AbstractFileStore', () => {
     beforeEach(() => {
       const recursiveStub = async path => {
         path = path.replace(/\\/g, '/')
-        if (path.includes('error')) throw new Error('test error')
+        if (path.includes('error')) {
+          throw new Error('test error')
+        }
         const result = Object.keys(data).filter(p => p.startsWith(path))
         if (result.length === 0) {
           const error = new Error('test')
@@ -317,8 +319,11 @@ describe('AbstractFileStore', () => {
         'node:fs': {
           readFile: (path, cb) => {
             const entry = sampleEntries.find(e => e.path === path)
-            if (entry) cb(null, JSON.stringify(entry))
-            else cb(new Error('Not found'))
+            if (entry) {
+              cb(null, JSON.stringify(entry))
+            } else {
+              cb(new Error('Not found'))
+            }
           }
         }
       })

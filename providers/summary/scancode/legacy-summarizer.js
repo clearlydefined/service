@@ -68,7 +68,9 @@ class ScanCodeLegacySummarizer {
    */
   addDescribedInfo(result, harvested) {
     const releaseDate = harvested._metadata.releaseDate
-    if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
+    if (releaseDate) {
+      result.described = { releaseDate: extractDate(releaseDate.trim()) }
+    }
   }
 
   /**
@@ -171,8 +173,11 @@ class ScanCodeLegacySummarizer {
    */
   _findRootFiles(files, roots) {
     return files.filter(file => {
-      for (const root of roots)
-        if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
+      for (const root of roots) {
+        if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) {
+          return true
+        }
+      }
       return false
     })
   }
@@ -240,7 +245,9 @@ class ScanCodeLegacySummarizer {
         (licenses, file) => {
           if (file.licenses) {
             for (const license of file.licenses) {
-              if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+              if (license.score && license.score >= 90) {
+                licenses.add(this._createExpressionFromLicense(license))
+              }
             }
           }
           return licenses
@@ -286,7 +293,9 @@ class ScanCodeLegacySummarizer {
   _summarizeFileInfo(files, coordinates) {
     return files
       .map(file => {
-        if (file.type !== 'file') return null
+        if (file.type !== 'file') {
+          return null
+        }
         /** @type {FileEntry} */
         const result = { path: file.path }
         const asserted = /** @type {ScanCodeLicense[] | undefined} */ (get(file, 'packages[0].asserted_licenses'))
@@ -294,17 +303,20 @@ class ScanCodeLegacySummarizer {
         let licenses = new Set(
           fileLicense.map(/** @param {ScanCodeLicense} x */ x => x.license).filter(/** @param {unknown} x */ x => x)
         )
-        if (!licenses.size)
+        if (!licenses.size) {
           licenses = new Set(
             fileLicense
               .filter(/** @param {ScanCodeLicense} x */ x => x.score !== undefined && x.score >= 80)
               .map(/** @param {ScanCodeLicense} x */ x => this._createExpressionFromLicense(x))
           )
+        }
         const licenseExpression = joinExpressions(licenses)
         setIfValue(result, 'license', licenseExpression)
         if (this._getLicenseByIsLicenseText([file]) || this._getLicenseByFileName([file], coordinates)) {
           result.natures = result.natures || []
-          if (!result.natures.includes('license')) result.natures.push('license')
+          if (!result.natures.includes('license')) {
+            result.natures.push('license')
+          }
         }
         setIfValue(
           result,
@@ -333,7 +345,9 @@ class ScanCodeLegacySummarizer {
    */
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
-    if (!rule || !rule.license_expression) return SPDX.normalize(license.spdx_license_key)
+    if (!rule || !rule.license_expression) {
+      return SPDX.normalize(license.spdx_license_key)
+    }
     return normalizeLicenseExpression(rule.license_expression, this.logger, null)
   }
 }

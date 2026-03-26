@@ -43,6 +43,7 @@
       },
       "style": {
         "noParameterAssign": "off",
+        "useBlockStatements": "error",
         "useDefaultParameterLast": "off"
       },
       "complexity": {

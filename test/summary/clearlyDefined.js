@@ -78,7 +78,9 @@ function setupMaven(releaseDate, sourceInfo, projectSummary) {
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.summary.project', projectSummary)
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation(sourceInfo)
+  }
   return { coordinates, harvested }
 }
 
@@ -131,7 +133,9 @@ function setupNuGet({ releaseDate, sourceInfo, packageEntries }) {
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.packageEntries', packageEntries)
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation(sourceInfo)
+  }
   return { coordinates, harvested }
 }
 
@@ -166,7 +170,9 @@ function setupSourceArchive(releaseDate, sourceInfo) {
   const coordinates = EntityCoordinates.fromString('sourcearchive/github/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation(sourceInfo)
+  }
   return { coordinates, harvested }
 }
 
@@ -279,7 +285,9 @@ function setupNpm(releaseDate, license, homepage, bugs, sourceInfo) {
   setIfValue(registryData, 'manifest.homepage', homepage)
   setIfValue(registryData, 'manifest.bugs', bugs)
   const harvested = { registryData }
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation(sourceInfo)
+  }
   const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
   return { coordinates, harvested }
 }
@@ -336,9 +344,14 @@ function setupGem(releaseDate, licenses, sourceInfo) {
   const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')
   const harvested = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
-  if (typeof licenses === 'string') setIfValue(harvested, 'registryData.license', licenses)
-  else setIfValue(harvested, 'registryData.licenses', licenses)
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation(sourceInfo)
+  if (typeof licenses === 'string') {
+    setIfValue(harvested, 'registryData.license', licenses)
+  } else {
+    setIfValue(harvested, 'registryData.licenses', licenses)
+  }
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation(sourceInfo)
+  }
   return { coordinates, harvested }
 }
 
@@ -377,7 +390,9 @@ function setupPypi(releaseDate, license, sourceInfo) {
   setIfValue(harvested, 'registryData.releases', {
     '1.0': [{ filename: 'py-1.7.0.tar.gz', url: 'https://clearlydefined.com' }]
   })
-  if (sourceInfo) harvested.sourceInfo = createSourceLocation()
+  if (sourceInfo) {
+    harvested.sourceInfo = createSourceLocation()
+  }
   return { coordinates, harvested }
 }
 
@@ -653,9 +668,12 @@ function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLic
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
-  if (!definition.coordinates)
+  if (!definition.coordinates) {
     definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
+  }
+  if (!validator.validate('definition', definition)) {
+    throw new Error(validator.errorsText())
+  }
 }
 
 function createSourceLocation() {

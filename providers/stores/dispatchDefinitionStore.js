@@ -107,7 +107,9 @@ class DispatchDefinitionStore {
       try {
         const opResult = await operation(store)
         result = result || opResult
-        if (result && first) return result
+        if (result && first) {
+          return result
+        }
       } catch (error) {
         this.logger.error('DispatchDefinitionStore failure', error)
       }

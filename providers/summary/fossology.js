@@ -56,18 +56,26 @@ class FOSSologySummarizer {
    */
   _summarizeNomos(result, output) {
     const content = /** @type {string | undefined} */ (get(output, 'nomos.output.content'))
-    if (!content) return
+    if (!content) {
+      return
+    }
     const files = content
       .split('\n')
       .map(
         /** @param {string} file */ file => {
           // File package/dist/ajv.min.js contains license(s) No_license_found
           const match = /^File (.*?) contains license\(s\) (.*?)$/.exec(file)
-          if (!match) return null
+          if (!match) {
+            return null
+          }
           const [, path, rawLicense] = match
           const license = noOpLicenseIds.has(rawLicense) ? null : SPDX.normalize(rawLicense)
-          if (path && license) return { path, license }
-          if (path) return { path }
+          if (path && license) {
+            return { path, license }
+          }
+          if (path) {
+            return { path }
+          }
           return null
         }
       )
@@ -83,17 +91,25 @@ class FOSSologySummarizer {
    */
   _summarizeMonk(result, output) {
     const content = /** @type {string | undefined} */ (get(output, 'monk.output.content'))
-    if (!content) return
+    if (!content) {
+      return
+    }
     const files = content
       .split('\n')
       .map(
         /** @param {string} file */ file => {
           const fullMatch = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
-          if (!fullMatch) return null
+          if (!fullMatch) {
+            return null
+          }
           const [, path, rawLicense] = fullMatch
           const license = SPDX.normalize(rawLicense)
-          if (path && license) return { path, license }
-          if (path) return { path }
+          if (path && license) {
+            return { path, license }
+          }
+          if (path) {
+            return { path }
+          }
           return null
         }
       )
@@ -139,7 +155,9 @@ class FOSSologySummarizer {
    * @private
    */
   _declareLicense(coordinates, result) {
-    if (!result.files) return
+    if (!result.files) {
+      return
+    }
     // if we know this is a license file by the name of it and it has a license detected in it
     // then let's declare the license for the component
     const licenses = uniq(

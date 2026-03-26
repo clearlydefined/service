@@ -20,7 +20,9 @@ router.get(
       return response.status(200).send(uniq(result))
     } catch (e) {
       const error = /** @type {any} */ (e)
-      if (error.code === 404) return response.status(200).send([])
+      if (error.code === 404) {
+        return response.status(200).send([])
+      }
       // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
       return response.status(200).send([])
     }
@@ -52,10 +54,11 @@ router.get(
  */
 function getSuggestions(answer, group) {
   const docs = answer.response.docs
-  if (docs.length)
+  if (docs.length) {
     return docs.map((/** @type {any} */ item) => {
       return { id: escapeHTML(item.id) }
     })
+  }
   const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
   return group

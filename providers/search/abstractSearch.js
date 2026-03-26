@@ -39,7 +39,9 @@ class AbstractSearch {
    */
   _getLicenses(definition) {
     const facets = get(definition, 'licensed.facets')
-    if (!facets) return []
+    if (!facets) {
+      return []
+    }
     // TODO probably need to use a better comparison here that compares actual expressions rather than just the strings
     return uniq(
       values(facets).reduce((result, facet) => result.concat(get(facet, 'discovered.expressions')), [])
@@ -51,7 +53,9 @@ class AbstractSearch {
    */
   _getAttributions(definition) {
     const facets = get(definition, 'licensed.facets')
-    if (!facets) return []
+    if (!facets) {
+      return []
+    }
     return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties')), [])).filter(
       e => e
     )

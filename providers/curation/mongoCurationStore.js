@@ -59,7 +59,9 @@ class MongoCurationStore {
       curations.map(
         throat(10, async curation => {
           const _id = this._getCurationId(curation.data.coordinates)
-          if (_id) await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
+          if (_id) {
+            await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
+          }
         })
       )
     )
@@ -83,8 +85,12 @@ class MongoCurationStore {
    * @param {Curation[] | null} [curations] - The set of actual proposed changes.
    */
   updateContribution(pr, curations = null) {
-    if (!curations || !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions')))
+    if (
+      !curations ||
+      !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))
+    ) {
       return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
+    }
     const files = curations
       .filter(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))
       .map(curation => {
@@ -110,9 +116,13 @@ class MongoCurationStore {
    */
   // TODO need to do something about paging
   async list(coordinates) {
-    if (!coordinates) throw new Error('must specify coordinates to list')
+    if (!coordinates) {
+      throw new Error('must specify coordinates to list')
+    }
     const pattern = this._getCurationId(coordinates.asRevisionless())
-    if (!pattern) return null
+    if (!pattern) {
+      return null
+    }
     const safePattern = this._escapeRegex(pattern)
     // Limit the length of the pattern to prevent ReDoS and ensure it's a string
     const maxPatternLength = 256
@@ -136,7 +146,9 @@ class MongoCurationStore {
 
   /** @param {EntityCoordinatesSpec} coordinates */
   _getCurationId(coordinates) {
-    if (!coordinates) return ''
+    if (!coordinates) {
+      return ''
+    }
     return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
@@ -144,11 +156,21 @@ class MongoCurationStore {
   _buildContributionQuery(coordinates) {
     /** @type {Record<string, string>} */
     const result = {}
-    if (coordinates.type) result['files.coordinates.type'] = coordinates.type.toLowerCase()
-    if (coordinates.provider) result['files.coordinates.provider'] = coordinates.provider.toLowerCase()
-    if (coordinates.namespace) result['files.coordinates.namespace'] = coordinates.namespace.toLowerCase()
-    if (coordinates.name) result['files.coordinates.name'] = coordinates.name.toLowerCase()
-    if (coordinates.revision) result['files.revisions.revision'] = coordinates.revision.toLowerCase()
+    if (coordinates.type) {
+      result['files.coordinates.type'] = coordinates.type.toLowerCase()
+    }
+    if (coordinates.provider) {
+      result['files.coordinates.provider'] = coordinates.provider.toLowerCase()
+    }
+    if (coordinates.namespace) {
+      result['files.coordinates.namespace'] = coordinates.namespace.toLowerCase()
+    }
+    if (coordinates.name) {
+      result['files.coordinates.name'] = coordinates.name.toLowerCase()
+    }
+    if (coordinates.revision) {
+      result['files.revisions.revision'] = coordinates.revision.toLowerCase()
+    }
     return result
   }
 

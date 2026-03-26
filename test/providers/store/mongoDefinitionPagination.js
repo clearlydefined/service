@@ -287,7 +287,9 @@ class ContinousFetch {
       fetchedCounter += retrieved.count
       dispatchCounter++
 
-      if (!retrieved.continuationToken) break
+      if (!retrieved.continuationToken) {
+        break
+      }
     }
     return fetchedCounter
   }

@@ -39,9 +39,13 @@ class MemoryQueue {
    */
   async dequeue() {
     const message = this.data[0]
-    if (!message) return null
+    if (!message) {
+      return null
+    }
     this.data[0].dequeueCount++
-    if (message.dequeueCount <= 5) return Promise.resolve({ original: message, data: this._parseData(message) })
+    if (message.dequeueCount <= 5) {
+      return Promise.resolve({ original: message, data: this._parseData(message) })
+    }
     await this.delete({ original: message })
     return this.dequeue()
   }
@@ -68,7 +72,9 @@ class MemoryQueue {
   async delete(message) {
     const newData = []
     for (let i = 0; i < this.data.length; i++) {
-      if (this.data[i].messageId !== message.original.messageId) newData.push(this.data[i])
+      if (this.data[i].messageId !== message.original.messageId) {
+        newData.push(this.data[i])
+      }
     }
     this.data = newData
   }

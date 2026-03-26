@@ -44,13 +44,19 @@ class StatusService {
    */
   async get(key) {
     key = key.toLowerCase()
-    if (!this.statusLookup[key]) throw new Error('Not found')
+    if (!this.statusLookup[key]) {
+      throw new Error('Not found')
+    }
     try {
       const cacheKey = this._getCacheKey(key)
       const cached = await this.cache.get(cacheKey)
-      if (cached) return cached
+      if (cached) {
+        return cached
+      }
       const result = await this.statusLookup[key].bind(this)()
-      if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
+      if (result) {
+        await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
+      }
       return result
     } catch (error) {
       this.logger.error(`Status service failed for ${key}`, error)

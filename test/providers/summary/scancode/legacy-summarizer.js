@@ -15,7 +15,9 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     const coordinates = { type: 'npm', provider: 'npmjs' }
     for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-basic')
-      if (!harvestData) continue
+      if (!harvestData) {
+        continue
+      }
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-05-19', `releaseDate mismatch for version ${version}`)
@@ -37,7 +39,9 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     }
     for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'npm-large')
-      if (!harvestData) continue
+      if (!harvestData) {
+        continue
+      }
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(
         result.licensed.declared,
@@ -125,7 +129,9 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     const undefinedOverrides = ['2.9.2', '2.9.8']
     for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'gem')
-      if (!harvestData) continue
+      if (!harvestData) {
+        continue
+      }
       const result = summarizer.summarize(coordinates, harvestData)
 
       assert.equal(
@@ -143,7 +149,9 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     const coordinates = { type: 'git', provider: 'github' }
     for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'git')
-      if (!harvestData) continue
+      if (!harvestData) {
+        continue
+      }
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'ISC', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2017-02-24', `releaseDate mismatch for version ${version}`)
@@ -157,7 +165,9 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     const coordinates = { type: 'pypi', provider: 'pypi', name: 'redis', revision: '3.0.1' }
     for (const version of scancodeVersions) {
       const harvestData = getHarvestData(version, 'python')
-      if (!harvestData) continue
+      if (!harvestData) {
+        continue
+      }
       const result = summarizer.summarize(coordinates, harvestData)
       assert.equal(result.licensed.declared, 'MIT', `Declared license mismatch for version ${version}`)
       assert.equal(result.described.releaseDate, '2018-11-15', `releaseDate mismatch for version ${version}`)

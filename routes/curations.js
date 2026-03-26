@@ -22,7 +22,9 @@ router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware
 async function getChangesForCoordinatesInPr(request, response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.get(coordinates, request.params.pr)
-  if (result) return response.status(200).send(result)
+  if (result) {
+    return response.status(200).send(result)
+  }
   return response.sendStatus(404)
 }
 
@@ -40,7 +42,9 @@ async function getPr(request, response) {
     return response.status(200).send({ url, changes })
   } catch (exception) {
     const error = /** @type {Error & {code?: number}} */ (exception)
-    if (error.code === 404) return response.sendStatus(404)
+    if (error.code === 404) {
+      return response.sendStatus(404)
+    }
     throw error
   }
 }
@@ -53,10 +57,14 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getCur
  * @param {Response} response
  */
 async function getCurationForCoordinates(request, response) {
-  if (request.query.expand === 'prs') return listCurations(request, response)
+  if (request.query.expand === 'prs') {
+    return listCurations(request, response)
+  }
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.get(coordinates)
-  if (!result) return response.sendStatus(404)
+  if (!result) {
+    return response.sendStatus(404)
+  }
   return response.status(200).send(result)
 }
 
@@ -70,7 +78,9 @@ router.get('{/:type}{/:provider}{/:namespace}{/:name}', asyncMiddleware(listCura
 async function listCurations(request, response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.list(coordinates)
-  if (!result || !result.contributions.length) return response.sendStatus(404)
+  if (!result || !result.contributions.length) {
+    return response.sendStatus(404)
+  }
   return response.status(200).send(result)
 }
 
@@ -84,8 +94,9 @@ async function listAllCurations(request, response) {
   const coordinatesList = request.body.map((/** @type {string | null | undefined} */ entry) =>
     EntityCoordinates.fromString(entry)
   )
-  if (coordinatesList.length > 1000)
+  if (coordinatesList.length > 1000) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  }
   const normalizedCoordinatesList = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
 
   const result = await curationService.listAll(normalizedCoordinatesList)
@@ -108,7 +119,9 @@ async function updateCurations(request, response) {
   const patchesInError = []
   for (const /** @type {string | import('../lib/curation').CurationData} */ entry of request.body.patches) {
     const curation = new Curation(entry)
-    if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
+    if (curation.errors.length > 0) {
+      curationErrors = [...curationErrors, curation.errors]
+    }
     patchesInError.push(entry)
   }
   if (curationErrors.length > 0) {

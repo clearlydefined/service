@@ -44,7 +44,9 @@ class ScanCodeDelegator {
     const scancodeVersion = /** @type {string | undefined} */ (
       get(harvested, 'content.headers[0].tool_version') || get(harvested, 'content.scancode_version')
     )
-    if (!scancodeVersion) throw new Error('Not valid ScanCode data')
+    if (!scancodeVersion) {
+      throw new Error('Not valid ScanCode data')
+    }
 
     if (gte(scancodeVersion, '32.1.0')) {
       return ScanCodeNewSummarizer(this.options, this.logger).summarize(scancodeVersion, coordinates, harvested)

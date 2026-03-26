@@ -104,7 +104,9 @@ class CacheBasedHarvester {
     const newHarvest = this._getHarvest(entry)
     const { harvests: trackedHarvests } = await this._getTrackedForCoordinates(entry.coordinates)
     const isTracked = trackedHarvests.some(harvest => isEqual(harvest, newHarvest))
-    if (isTracked) this.logger.debug(`Entry with coordinates ${entry.coordinates.toString()} is already tracked.`)
+    if (isTracked) {
+      this.logger.debug(`Entry with coordinates ${entry.coordinates.toString()} is already tracked.`)
+    }
     return isTracked
   }
 
@@ -147,7 +149,9 @@ class CacheBasedHarvester {
       )
     )
     for (const result of results) {
-      if (result.status === 'rejected') this.logger.error(result.reason)
+      if (result.status === 'rejected') {
+        this.logger.error(result.reason)
+      }
     }
   }
 
@@ -159,7 +163,9 @@ class CacheBasedHarvester {
    * @returns {Promise<HarvestCallItem[]>} Promise resolving to array of tracked harvest items
    */
   async _getCached(key) {
-    if (!key) return []
+    if (!key) {
+      return []
+    }
     try {
       const harvests = await this._cache.get(key)
       return harvests || []
@@ -197,7 +203,9 @@ class CacheBasedHarvester {
    */
   async done(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
-    if (!cacheKey) return
+    if (!cacheKey) {
+      return
+    }
     try {
       await this._cache.delete(cacheKey)
       this.logger.debug(`Removed cache for ${cacheKey}.`)
