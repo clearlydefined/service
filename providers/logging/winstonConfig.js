@@ -33,7 +33,7 @@ const sanitizeMeta = winston.format(info => {
       method: req['method'],
       url: req['originalUrl'] || req['url'],
       requestId: req['id'],
-      correlationId: req['headers'] && req['headers']['x-correlation-id']
+      correlationId: req['headers']?.['x-correlation-id']
     }
   }
 
@@ -118,7 +118,7 @@ function factory(options) {
     winston.format.errors({ stack: true }),
     winston.format.printf(({ timestamp, level, message, ...meta }) => {
       const metaKeys = Object.keys(meta)
-      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      const metaString = metaKeys.length ? `\n${JSON.stringify(meta, null, 2)}` : ''
       return `${timestamp} [${level}]: ${message}${metaString}`
     })
   )
@@ -128,7 +128,7 @@ function factory(options) {
     winston.format.colorize(),
     winston.format.printf(({ timestamp, level, message, ...meta }) => {
       const metaKeys = Object.keys(meta)
-      const metaString = metaKeys.length ? '\n' + JSON.stringify(meta, null, 2) : ''
+      const metaString = metaKeys.length ? `\n${JSON.stringify(meta, null, 2)}` : ''
       return `${timestamp} [${level}]: ${message}${metaString}`
     })
   )

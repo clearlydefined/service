@@ -191,12 +191,12 @@ describe('SPDX utility functions', () => {
         ]
       ]
     ]
-    data.forEach(input => {
+    for (const input of data) {
       const results = SPDX.expand(input[0])
-      input[1].forEach(expected => {
+      for (const expected of input[1]) {
         expect(results).to.deep.include(expected)
-      })
-    })
+      }
+    }
   })
 
   it('normalizes spdx expressions', () => {

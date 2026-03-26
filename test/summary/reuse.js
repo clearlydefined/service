@@ -1,7 +1,7 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const summarizer = require('../../providers/summary/reuse')()
 
 describe('FsfeReuseSummarizer', () => {
@@ -113,7 +113,7 @@ function setup(files, licenses) {
   })
   const matchedLicenses = licenses.map(license => {
     return {
-      filePath: 'LICENSES/' + license + '.txt',
+      filePath: `LICENSES/${license}.txt`,
       spdxId: license
     }
   })

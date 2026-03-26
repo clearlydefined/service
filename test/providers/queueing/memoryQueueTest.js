@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const MemoryQueue = require('../../../providers/queueing/memoryQueue')
 
 describe('memory queue operations', () => {

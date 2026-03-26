@@ -25,7 +25,7 @@ describe('FileAttachmentStore list definitions', () => {
         cb(error)
       }
     }
-    FileStore = proxyquire('../../../providers/stores/fileAttachmentStore', { fs: fsStub })
+    FileStore = proxyquire('../../../providers/stores/fileAttachmentStore', { 'node:fs': fsStub })
   })
 
   after(() => sandbox.restore())

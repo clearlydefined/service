@@ -27,7 +27,7 @@ describe('Utils latest version', () => {
     }
 
     for (const expected of Object.getOwnPropertyNames(inputs)) {
-      const result = '' + utils.getLatestVersion(inputs[expected])
+      const result = `${utils.getLatestVersion(inputs[expected])}`
       expect(result).to.equal(expected)
     }
   })
@@ -147,11 +147,11 @@ describe('Utils merge Licenses', () => {
       ['MIT OR Apache-2.0', 'MIT AND Apache-2.0', 'Apache-2.0 AND MIT'],
       ['MIT AND Apache-2.0', 'MIT OR Apache-2.0', 'Apache-2.0 AND MIT']
     ]
-    inputs.forEach(input => {
+    for (const input of inputs) {
       const base = { licensed: { declared: input[0] } }
       utils.mergeDefinitions(base, { licensed: { declared: input[1] } })
       expect(base.licensed.declared).to.eq(input[2])
-    })
+    }
   })
 })
 

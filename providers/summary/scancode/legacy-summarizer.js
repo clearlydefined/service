@@ -116,6 +116,7 @@ class ScanCodeLegacySummarizer {
         // Some pypi packages have this value as an object with a license field
         // Example: for pypi/pypi/abseil/absl-py/0.9.0
         // declared_license would be { "license": "Apache 2.0", "classifiers": ["License :: OSI Approved :: Apache Software License"] }
+        // biome-ignore lint/suspicious/noDoubleEquals: intentional loose equality to catch both null and undefined
         if (typeof declared_license != 'string' && declared_license != undefined) {
           declared_license = declared_license.name || declared_license.license
         }
@@ -213,9 +214,11 @@ class ScanCodeLegacySummarizer {
       .filter(file => file.is_license_text && file.licenses)
       .reduce(
         (licenses, file) => {
-          file.licenses?.forEach(license => {
-            licenses.add(this._createExpressionFromLicense(license))
-          })
+          if (file.licenses) {
+            for (const license of file.licenses) {
+              licenses.add(this._createExpressionFromLicense(license))
+            }
+          }
           return licenses
         },
         /** @type {Set<string | null>} */ (new Set())
@@ -235,9 +238,11 @@ class ScanCodeLegacySummarizer {
       .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
       .reduce(
         (licenses, file) => {
-          file.licenses?.forEach(license => {
-            if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
-          })
+          if (file.licenses) {
+            for (const license of file.licenses) {
+              if (license.score && license.score >= 90) licenses.add(this._createExpressionFromLicense(license))
+            }
+          }
           return licenses
         },
         /** @type {Set<string | null>} */ (new Set())

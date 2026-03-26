@@ -3,7 +3,7 @@
 
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
-const assert = require('assert')
+const assert = require('node:assert')
 const Application = require('../app')
 
 process.env['CURATION_GITHUB_TOKEN'] = '123'

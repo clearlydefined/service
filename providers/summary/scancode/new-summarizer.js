@@ -230,22 +230,22 @@ class ScanCodeNewSummarizer {
          * @param {ScanCodeFile} file
          */
         (licenses, file) => {
-          file.license_detections?.forEach(
-            /** @param {ScanCodeLicenseDetection} licenseDetection */ licenseDetection => {
+          if (file.license_detections) {
+            for (const /** @type {ScanCodeLicenseDetection} */ licenseDetection of file.license_detections) {
               if (licenseDetection.license_expression_spdx) {
                 licenses.add(licenseDetection.license_expression_spdx)
-                return
+                continue
               }
-              licenseDetection.matches?.forEach(
-                /** @param {{ score?: number; spdx_license_expression?: string }} match */ match => {
+              if (licenseDetection.matches) {
+                for (const /** @type {{ score?: number; spdx_license_expression?: string }} */ match of licenseDetection.matches) {
                   // Only consider matches with high clarity score of 90 or higher
                   if (match.score >= 90) {
                     licenses.add(match.spdx_license_expression)
                   }
                 }
-              )
+              }
             }
-          )
+          }
           return licenses
         },
         /** @type {Set<string>} */ (new Set())
@@ -269,15 +269,13 @@ class ScanCodeNewSummarizer {
       (licenseExpressions, licenseDetection) => {
         if (licenseDetection.license_expression_spdx) {
           licenseExpressions.add(licenseDetection.license_expression_spdx)
-        } else {
-          licenseDetection.matches?.forEach(
-            /** @param {{ score?: number; spdx_license_expression?: string }} match */ match => {
-              // Only consider matches with a reasonably high score of 80 or higher
-              if (match.score >= 80) {
-                licenseExpressions.add(match.spdx_license_expression)
-              }
+        } else if (licenseDetection.matches) {
+          for (const /** @type {{ score?: number; spdx_license_expression?: string }} */ match of licenseDetection.matches) {
+            // Only consider matches with a reasonably high score of 80 or higher
+            if (match.score >= 80) {
+              licenseExpressions.add(match.spdx_license_expression)
             }
-          )
+          }
         }
         return licenseExpressions
       },

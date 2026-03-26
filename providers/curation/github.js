@@ -245,9 +245,8 @@ class GitHubCurationService {
             matchingProperties: result.match.map(reason => {
               if (reason.file) {
                 return { file: reason.file }
-              } else {
-                return { propPath: reason.propPath, value: reason.value }
               }
+              return { propPath: reason.propPath, value: reason.value }
             })
           })
         }
@@ -262,23 +261,17 @@ class GitHubCurationService {
     /** @type {string[]} */
     let revisions = []
 
-    Object.keys(curations.curations).forEach(coordinate => {
+    for (const coordinate of Object.keys(curations.curations)) {
       const coordinateObject = EntityCoordinates.fromString(coordinate)
       revisions.push(coordinateObject.revision)
-    })
+    }
 
-    curations.contributions.forEach(
-      /** @param {*} contribution */ contribution => {
-        contribution.files.forEach(
-          /** @param {*} file */ file => {
-            const fileRevisions = get(file, 'revisions', {}).map(
-              /** @param {*} revision */ revision => revision.revision
-            )
-            revisions = union(revisions, fileRevisions)
-          }
-        )
+    for (const contribution of /** @type {any[]} */ (curations.contributions)) {
+      for (const file of /** @type {any[]} */ (contribution.files)) {
+        const fileRevisions = get(file, 'revisions', {}).map(/** @param {*} revision */ revision => revision.revision)
+        revisions = union(revisions, fileRevisions)
       }
-    )
+    }
 
     return revisions
   }
@@ -301,7 +294,7 @@ class GitHubCurationService {
     const existingRevisions = this._getRevisionsFromCurations(curations)
 
     const uncuratedMatchingRevisions = matchingRevisionsAndReasons.filter(
-      versionAndReason => existingRevisions.indexOf(versionAndReason.version) == -1
+      versionAndReason => existingRevisions.indexOf(versionAndReason.version) === -1
     )
     return uncuratedMatchingRevisions
   }
@@ -404,7 +397,7 @@ class GitHubCurationService {
 
   /** @param {CurationPatchEntry[]} patches */
   _isEligibleForMultiversionCuration(patches) {
-    return patches.length == 1 && Object.keys(patches[0].revisions).length == 1
+    return patches.length === 1 && Object.keys(patches[0].revisions).length === 1
   }
 
   // Return an array of valid patches that exist
@@ -507,12 +500,11 @@ class GitHubCurationService {
             match: result.match
           })
           return
-        } else {
-          this.logger.info('GitHubCurationService.autoCurate.mismatch', {
-            ...logProps,
-            mismatch: result.mismatch
-          })
         }
+        this.logger.info('GitHubCurationService.autoCurate.mismatch', {
+          ...logProps,
+          mismatch: result.mismatch
+        })
       }
     } catch (err) {
       this.logger.error('GitHubCurationService.autoCurate.failed', err)
@@ -615,6 +607,7 @@ class GitHubCurationService {
       for (const revision of Object.keys(curation.data.revisions)) {
         const current = get(curation, ['data', 'revisions', revision])
         const previous = get(preCuration, ['data', 'revisions', revision])
+        // biome-ignore lint/suspicious/noDoubleEquals: intentional loose equality to catch both null and undefined
         if (current == undefined || isEqual(current, previous)) {
           unset(curation, ['data', 'revisions', revision])
         }
@@ -695,7 +688,7 @@ ${this._formatDefinitions(patch.patches)}`
   /** @param {MatchingRevisionAndReason[]} multiversionSearchResults */
   _formatMultiversionCuratedRevisions(multiversionSearchResults) {
     let output = ''
-    multiversionSearchResults
+    const sortedVersions = multiversionSearchResults
       .map(result => result.version)
       .sort((a, b) => {
         if (semver.valid(a) && semver.valid(b)) {
@@ -703,7 +696,9 @@ ${this._formatDefinitions(patch.patches)}`
         }
         return 0
       })
-      .forEach(version => (output += `- ${version}\n`))
+    for (const version of sortedVersions) {
+      output += `- ${version}\n`
+    }
     const allMatchingProps = union(...multiversionSearchResults.map(m => m.matchingProperties))
     output += this._generateMatchingDescription(allMatchingProps)
 
@@ -717,15 +712,15 @@ ${this._formatDefinitions(patch.patches)}`
     const matchingLicenses = []
     /** @type {Record<string, unknown>} */
     const matchingMetadata = {}
-    matchingResults.forEach(match => {
+    for (const match of matchingResults) {
       if (match.file) {
-        if (matchingLicenses.indexOf(match.file) == -1) {
+        if (matchingLicenses.indexOf(match.file) === -1) {
           matchingLicenses.push(match.file)
         }
       } else {
         matchingMetadata[match.propPath] = match.value
       }
-    })
+    }
 
     if (matchingLicenses.length > 0) {
       output += `\nMatching license file(s): ${matchingLicenses.join(', ')}`
@@ -733,7 +728,7 @@ ${this._formatDefinitions(patch.patches)}`
 
     if (Object.keys(matchingMetadata).length > 0) {
       const metadataText =
-        Object.keys(matchingMetadata).length == 1
+        Object.keys(matchingMetadata).length === 1
           ? Object.keys(matchingMetadata).map(
               metadataProp => `${metadataProp}: ${JSON.stringify(matchingMetadata[metadataProp])}`
             )
@@ -790,7 +785,7 @@ ${this._formatDefinitions(patch.patches)}`
       coordinates: coordinates.toString()
     })
     const treePath = flatMap(deCodeSlashes(path).split('/'), (current, i, original) =>
-      original.length - 1 != i ? [current, 'children'] : current
+      original.length - 1 !== i ? [current, 'children'] : current
     )
     const blob = get(tree, treePath)
     if (!blob) return null
@@ -1009,7 +1004,7 @@ ${this._formatDefinitions(patch.patches)}`
       const changedRevisions = allRevisions.filter(
         revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
       )
-      changedRevisions.forEach(revision => changedCoordinates.push(`${fileName}/${revision}`))
+      for (const revision of changedRevisions) changedCoordinates.push(`${fileName}/${revision}`)
     }
     return changedCoordinates
   }
@@ -1061,9 +1056,9 @@ ${this._formatDefinitions(patch.patches)}`
     /** @type {Record<string, CurationRevision>} */
     /** @type {Record<string, CurationRevision>} */
     const newRevisions = {}
-    matchingRevisionAndReason.forEach(versionAndReason => {
+    for (const versionAndReason of matchingRevisionAndReason) {
       newRevisions[versionAndReason.version] = { licensed: { declared: license } }
-    })
+    }
     const userInfo = await this._getUserInfo(this.github)
     const patch = {
       contributionInfo: info,
@@ -1144,7 +1139,7 @@ ${this._formatDefinitions(patch.patches)}`
         info,
         matchingRevisionAndReason
       )
-      matchingRevisionAndReason.forEach(r => processedRevisions.add(r.version))
+      for (const r of matchingRevisionAndReason) processedRevisions.add(r.version)
       contributions.push({
         coordinates: curatedCoordinates.toString(),
         contribution: get(contribution, 'data.html_url')

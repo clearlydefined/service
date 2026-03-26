@@ -30,9 +30,9 @@ describe('memory search tests', () => {
   })
 
   it('should search successfully', async () => {
-    Object.entries(searches).forEach(async ([key, value]) => {
+    for (const [key, value] of Object.entries(searches)) {
       const result = await memorySearch.suggestCoordinates(key)
       expect(result[0]).to.be.equal(value)
-    })
+    }
   })
 })

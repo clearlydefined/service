@@ -7,7 +7,7 @@
  */
 
 const azure = require('azure-storage')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const Bottleneck = require('bottleneck').default
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 const logger = require('../logging/logger')
@@ -52,7 +52,7 @@ class AzBlobAttachmentStore {
   get(key) {
     return limiter.wrap(async () => {
       try {
-        const name = 'attachment/' + key + '.json'
+        const name = `attachment/${key}.json`
         this.logger.info('2:1:1:notice_generate:get_single_file:start', { ts: new Date().toISOString(), file: key })
         const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
         this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString(), file: key })

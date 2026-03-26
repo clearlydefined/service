@@ -528,10 +528,10 @@ class DefinitionService {
    * @private
    */
   _ensureNoNulls(object) {
-    Object.keys(object).forEach(key => {
+    for (const key of Object.keys(object)) {
       if (object[key] && typeof object[key] === 'object') this._ensureNoNulls(object[key])
       else if (object[key] == null) delete object[key]
-    })
+    }
   }
 
   /**
@@ -713,7 +713,7 @@ class DefinitionService {
     if (declared) referencedExpressions.add(declared)
     /** @type {Set<string>} */
     const result = new Set()
-    referencedExpressions.forEach(expression => this._extractLicensesFromExpression(expression, result))
+    for (const expression of referencedExpressions) this._extractLicensesFromExpression(expression, result)
     return Array.from(result)
   }
 
@@ -726,9 +726,9 @@ class DefinitionService {
   _collectLicenseTexts(definition) {
     /** @type {Set<string>} */
     const result = new Set()
-    definition.files
-      .filter(DefinitionService._isLicenseFile)
-      .forEach(file => this._extractLicensesFromExpression(file.license, result))
+    for (const file of definition.files.filter(DefinitionService._isLicenseFile)) {
+      this._extractLicensesFromExpression(file.license, result)
+    }
     return Array.from(result)
   }
 

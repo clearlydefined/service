@@ -106,11 +106,11 @@ async function updateCurations(request, response) {
   let curationErrors = []
   /** @type {any[]} */
   const patchesInError = []
-  request.body.patches.forEach((/** @type {string | import('../lib/curation').CurationData} */ entry) => {
+  for (const /** @type {string | import('../lib/curation').CurationData} */ entry of request.body.patches) {
     const curation = new Curation(entry)
     if (curation.errors.length > 0) curationErrors = [...curationErrors, curation.errors]
     patchesInError.push(entry)
-  })
+  }
   if (curationErrors.length > 0) {
     const errorData = { errors: curationErrors, patchesInError }
     logger.error('intended curations are invalid', errorData)

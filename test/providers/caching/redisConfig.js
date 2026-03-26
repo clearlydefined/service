@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
 
@@ -37,7 +37,7 @@ describe('redisConfig.serviceFactory', () => {
 
   function expectConfigGetCalled(configSpy, keys) {
     assert.strictEqual(configSpy.callCount, keys.length)
-    keys.forEach(k => assert.ok(configSpy.calledWith(k)))
+    for (const k of keys) assert.ok(configSpy.calledWith(k))
   }
 
   it('uses provided options only', () => {

@@ -146,9 +146,9 @@ class CacheBasedHarvester {
         })
       )
     )
-    results.forEach(result => {
+    for (const result of results) {
       if (result.status === 'rejected') this.logger.error(result.reason)
-    })
+    }
   }
 
   /**

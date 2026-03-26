@@ -28,7 +28,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks('** test; version 1.0.0 -- \ncopyright me\n\n' + spdxLicenseList.MIT.licenseText)
+      normalizeLineBreaks(`** test; version 1.0.0 -- \ncopyright me\n\n${spdxLicenseList.MIT.licenseText}`)
     )
     expect(notice.summary).to.deep.eq({
       total: 1,
@@ -46,7 +46,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks('** @scope/test; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+      normalizeLineBreaks(`** @scope/test; version 1.0.0 -- \n\n${spdxLicenseList.MIT.licenseText}`)
     )
   })
 
@@ -137,7 +137,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks('** no-copyright; version 1.0.0 -- \n\n' + spdxLicenseList.MIT.licenseText)
+      normalizeLineBreaks(`** no-copyright; version 1.0.0 -- \n\n${spdxLicenseList.MIT.licenseText}`)
     )
     expect(notice.summary).to.deep.eq({
       total: 3,

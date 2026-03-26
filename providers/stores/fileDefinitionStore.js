@@ -7,13 +7,13 @@
  * @typedef {import('./fileDefinitionStore').Definition} Definition
  */
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const { mkdirp } = require('mkdirp')
 const AbstractFileStore = require('./abstractFileStore')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { sortedUniq } = require('lodash')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 /**
  * File system implementation for storing component definitions.
@@ -47,7 +47,7 @@ class FileDefinitionStore extends AbstractFileStore {
    */
   async store(definition) {
     const { coordinates } = definition
-    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     const dirName = path.dirname(filePath)
     await mkdirp(dirName)
     return promisify(fs.writeFile)(filePath, JSON.stringify(definition, null, 2), 'utf8')
@@ -60,7 +60,7 @@ class FileDefinitionStore extends AbstractFileStore {
    * @returns {Promise<void>} Promise that resolves when the definition is deleted
    */
   async delete(coordinates) {
-    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       await promisify(fs.unlink)(filePath)
     } catch (/** @type {any} */ error) {

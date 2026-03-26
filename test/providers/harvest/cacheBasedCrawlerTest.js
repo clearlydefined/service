@@ -1,7 +1,7 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const sinon = require('sinon')
 const cacheBasedHarvester = require('../../../providers/harvest/cacheBasedCrawler')
 
@@ -31,7 +31,9 @@ describe('CacheBasedHarvester', () => {
     error: sinon.stub()
   }
 
-  let cacheMock, crawler, harvesterMock
+  let cacheMock
+  let crawler
+  let harvesterMock
 
   beforeEach(() => {
     harvesterMock = {

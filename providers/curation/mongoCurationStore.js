@@ -120,7 +120,7 @@ class MongoCurationStore {
     if (!limitedPattern) {
       return null
     }
-    const regex = new RegExp('^' + limitedPattern)
+    const regex = new RegExp(`^${limitedPattern}`)
     const curations = await this.collection
       .find({ _id: regex })
       .project({ _id: 0 })
@@ -158,10 +158,10 @@ class MongoCurationStore {
    */
   _formatCurations(curations) {
     return curations.reduce((/** @type {Record<string, CurationRevision>} */ result, entry) => {
-      Object.keys(entry.revisions).forEach(revision => {
+      for (const revision of Object.keys(entry.revisions)) {
         const coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
         result[coordinates] = entry.revisions[revision]
-      })
+      }
       return result
     }, {})
   }

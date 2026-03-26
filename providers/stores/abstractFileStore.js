@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const recursive = require('recursive-readdir')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const ResultCoordinates = require('../../lib/resultCoordinates')
 // @ts-expect-error - JSON schema has no type declarations
 const schema = require('../../schemas/definition-1.0')
@@ -72,7 +72,7 @@ class AbstractFileStore {
    * @returns {Promise<any>} The loaded object or null if not found
    */
   async get(coordinates) {
-    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result.toString())
@@ -228,7 +228,10 @@ class AbstractFileStore {
    * @param {function(string): ResultCoordinates} [toResultCoordinates] - Optional function to convert paths to coordinates
    * @returns {Set<string>} Set of paths representing the latest tool versions
    */
-  static getLatestToolPaths(paths, toResultCoordinates = path => this.toResultCoordinatesFromStoragePath(path)) {
+  static getLatestToolPaths(
+    paths,
+    toResultCoordinates = path => AbstractFileStore.toResultCoordinatesFromStoragePath(path)
+  ) {
     /** @type {Record<string, {toolVersion: string, path: string}>} */
     const entries = paths
       .map(path => {

@@ -188,7 +188,7 @@ class RedisCache {
    * @throws {Error} Will throw an error if the connection fails
    */
   static async initializeClient(options, logger) {
-    const client = this.buildRedisClient(options)
+    const client = RedisCache.buildRedisClient(options)
     try {
       await client.connect()
       logger.info('Connected to redis', { service: options.service })

@@ -9,7 +9,7 @@
  * @typedef {import('./fileHarvestStore').ToolOutputs} ToolOutputs
  */
 
-const fs = require('fs')
+const fs = require('node:fs')
 const recursive = require('recursive-readdir')
 const AbstractFileStore = require('./abstractFileStore')
 const ResultCoordinates = require('../../lib/resultCoordinates')
@@ -48,7 +48,7 @@ class FileHarvestStore extends AbstractFileStore {
    * @returns {Promise<null>} Promise that resolves when streaming is complete
    */
   async stream(coordinates, stream) {
-    const filePath = this._toStoragePathFromCoordinates(coordinates) + '.json'
+    const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     return new Promise((resolve, reject) => {
       const read = fs.createReadStream(filePath)
       read.on('end', () => resolve(null))

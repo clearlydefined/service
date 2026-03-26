@@ -59,7 +59,7 @@ class FsfeReuseSummarizer {
     const attachments = harvested.attachments || []
     const licenses = /** @type {ReuseLicense[] | undefined} */ (get(harvested, 'reuse.licenses'))
     if (licenses) {
-      licenses.forEach(license => {
+      for (const license of licenses) {
         const licenseSpdxId = SPDX.normalize(license.spdxId)
         if (license.filePath && isDeclaredLicense(licenseSpdxId)) {
           const attachment = attachments.find(x => x.path === license.filePath)
@@ -68,7 +68,7 @@ class FsfeReuseSummarizer {
           setIfValue(licenseFile, 'token', get(attachment, 'token'))
           licenseFiles.push(licenseFile)
         }
-      })
+      }
     }
     return files
       .map(file => {

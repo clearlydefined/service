@@ -126,9 +126,9 @@ class DispatchDefinitionStore {
   async _performInParallel(operation) {
     const opPromises = this.stores.map(store => operation(store))
     const results = await Promise.allSettled(opPromises)
-    results
-      .filter(result => result.status === 'rejected')
-      .forEach(result => this.logger.error('DispatchDefinitionStore failure', result.reason))
+    for (const result of results.filter(result => result.status === 'rejected')) {
+      this.logger.error('DispatchDefinitionStore failure', result.reason)
+    }
     const fulfilled = results.find(result => result.status === 'fulfilled')
     return fulfilled?.value
   }

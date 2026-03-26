@@ -5,7 +5,7 @@ const azure = require('azure-storage')
 const AbstractFileStore = require('./abstractFileStore')
 const logger = require('../logging/logger')
 
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 /**
  * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
@@ -70,12 +70,10 @@ class AbstractAzBlobStore {
         }
       )
       continuation = result.continuationToken
-      result.entries.forEach(
-        /** @param {BlobEntry} entry */ entry => {
-          const visitResult = visitor(entry)
-          if (visitResult !== null) list.push(visitResult)
-        }
-      )
+      for (const /** @type {BlobEntry} */ entry of result.entries) {
+        const visitResult = visitor(entry)
+        if (visitResult !== null) list.push(visitResult)
+      }
     } while (continuation)
     return list
   }

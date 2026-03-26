@@ -21,7 +21,9 @@ describe('Definition Upgrade Queue Processing', () => {
   })
 
   describe('QueueHandler', () => {
-    let queue, messageHandler, handler
+    let queue
+    let messageHandler
+    let handler
 
     beforeEach(() => {
       queue = {
@@ -87,7 +89,9 @@ describe('Definition Upgrade Queue Processing', () => {
     const coordinates = 'pypi/pypi/-/test/revision'
     const definition = Object.freeze({ coordinates: EntityCoordinates.fromString(coordinates) })
     const message = Object.freeze({ data: { coordinates: definition.coordinates } })
-    let definitionService, versionChecker, upgrader
+    let definitionService
+    let versionChecker
+    let upgrader
 
     beforeEach(() => {
       definitionService = {
@@ -153,7 +157,10 @@ describe('Definition Upgrade Queue Processing', () => {
     })
     const message = Object.freeze({ data: { ...definition } })
 
-    let queue, handler, definitionService, versionChecker
+    let queue
+    let handler
+    let definitionService
+    let versionChecker
     beforeEach(() => {
       let definitionUpgrader
       ;({ definitionService, versionChecker, definitionUpgrader } = setupDefinitionUpgrader(logger))

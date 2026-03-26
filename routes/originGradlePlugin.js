@@ -4,7 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const { get, uniq } = require('lodash')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const parseXml = promisify(require('xml2js').parseString)
 const GradleCoordinatesMapper = require('../lib/gradleCoordinatesMapper')
 

@@ -17,7 +17,8 @@ describe('DefinitionQueueUpgrader', () => {
 
   describe('Unit tests', () => {
     const definition = { coordinates: 'test', _meta: { schemaVersion: '1.0.0' } }
-    let queue, upgrader
+    let queue
+    let upgrader
 
     beforeEach(async () => {
       queue = {
@@ -109,7 +110,8 @@ describe('DefinitionQueueUpgrader', () => {
   })
 
   describe('Integration tests', () => {
-    let queue, upgrader
+    let queue
+    let upgrader
 
     beforeEach(async () => {
       queue = MemoryQueue()

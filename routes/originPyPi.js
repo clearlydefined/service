@@ -12,7 +12,7 @@ router.get(
   asyncMiddleware(async (request, response) => {
     const name = /** @type {string} */ (request.params.name)
     const answer = await getPypiData(name)
-    const result = answer && answer.releases ? Object.keys(answer.releases) : []
+    const result = answer?.releases ? Object.keys(answer.releases) : []
     result.reverse()
     return response.status(200).send(uniq(result))
   })
@@ -23,7 +23,7 @@ router.get(
   asyncMiddleware(async (request, response) => {
     const name = /** @type {string} */ (request.params.name)
     const answer = await getPypiData(name)
-    const result = answer && answer.info ? [{ id: answer.info.name }] : []
+    const result = answer?.info ? [{ id: answer.info.name }] : []
     return response.status(200).send(result)
   })
 )

@@ -3,7 +3,7 @@
 
 const { expect } = require('chai')
 const sinon = require('sinon')
-const fs = require('fs')
+const fs = require('node:fs')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const GradleCoordinatesMapper = require('../../lib/gradleCoordinatesMapper')
 

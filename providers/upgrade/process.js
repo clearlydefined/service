@@ -39,7 +39,7 @@ class QueueHandler {
           await this._queue.delete(message)
         })
       )
-      results.filter(result => result.status === 'rejected').forEach(result => this.logger.error(result.reason))
+      for (const result of results.filter(result => result.status === 'rejected')) this.logger.error(result.reason)
     } catch (error) {
       this.logger.error(error instanceof Error ? error.message : String(error))
     } finally {

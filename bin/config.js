@@ -34,7 +34,7 @@ function loadFactory(spec, namespace) {
  */
 function loadOne(spec, namespace) {
   const [requirePath, objectPath] = spec.split('|')
-  const getPath = (namespace ? namespace + '.' : '') + requirePath
+  const getPath = (namespace ? `${namespace}.` : '') + requirePath
   let target = get(providers, getPath)
   try {
     if (!target) target = require(requirePath)

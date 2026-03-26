@@ -276,7 +276,7 @@ class AbstractMongoDefinitionStore {
     /** @type {Record<string, number>} */
     const clause = {}
     const sortDirection = parameters.sortDesc ? -1 : 1
-    sort.forEach(item => (clause[item] = sortDirection))
+    for (const item of sort) clause[item] = sortDirection
     //Always sort on coordinatesKey(_id or partitionKey) for continuation token
     const coordinateKey = this.getCoordinatesKey()
     clause[coordinateKey] = sortDirection
@@ -351,7 +351,7 @@ class AbstractMongoDefinitionStore {
         sortValue = transform ? transform(sortValue) : sortValue
         const isLast = index === sortConditions.length - 1
         const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
-        return { ...filter, ...filterForSort }
+        return Object.assign(filter, filterForSort)
       },
       /** @type {Record<string, any>} */ ({})
     )

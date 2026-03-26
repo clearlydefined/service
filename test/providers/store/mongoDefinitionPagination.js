@@ -4,8 +4,8 @@
 const { expect } = require('chai')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const { MongoMemoryServer } = require('mongodb-memory-server')
-const fsPromise = require('fs/promises')
-const path = require('path')
+const fsPromise = require('node:fs/promises')
+const path = require('node:path')
 const { uniq } = require('lodash')
 
 const dbOptions = {
@@ -274,8 +274,8 @@ class ContinousFetch {
   }
 
   async fetchUpToNtimes(params, nTime) {
-    let dispatchCounter = 0,
-      fetchedCounter = 0
+    let dispatchCounter = 0
+    let fetchedCounter = 0
     let retrieved = {}
 
     while (dispatchCounter < nTime) {

@@ -3,7 +3,7 @@
 
 const express = require('express')
 const router = express.Router()
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 const EntityCoordinates = require('../lib/entityCoordinates')
 const { get } = require('lodash')
 const asyncMiddleware = require('../middleware/asyncMiddleware')
@@ -69,7 +69,8 @@ async function handleGitHubCall(request, response) {
     if (ex.code === 404) {
       info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
       return
-    } else logger.error(ex)
+    }
+    logger.error(ex)
   }
   response.status(200).end()
 }
@@ -112,13 +113,13 @@ async function handleCrawlerCall(request, response) {
  * @returns {boolean}
  */
 function validateGitHubSignature(request, response) {
-  if (request.hostname && request.hostname.includes('localhost')) return true
+  if (request.hostname?.includes('localhost')) return true
   const isGithubEvent = request.headers['x-github-event']
   const signature = /** @type {string | undefined} */ (request.headers['x-hub-signature'])
   if (!isGithubEvent || !signature)
     return info(request, response, 400, 'Missing signature or event type on GitHub webhook')
 
-  const computedSignature = 'sha1=' + crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')
+  const computedSignature = `sha1=${crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')}`
   if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature)))
     return info(request, response, 400, 'X-Hub-Signature does not match blob signature')
   return true

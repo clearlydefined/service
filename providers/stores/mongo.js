@@ -54,12 +54,10 @@ class MongoStore extends AbstractMongoDefinitionStore {
     )
     /** @type {Definition | undefined} */
     let definition
-    await cursor.forEach(
-      /** @param {any} page */ page => {
-        if (!definition) definition = page
-        else definition.files = definition.files.concat(page['files'])
-      }
-    )
+    for await (const page of /** @type {AsyncIterable<any>} */ (cursor)) {
+      if (!definition) definition = page
+      else definition.files = definition.files.concat(page['files'])
+    }
     return definition
   }
 
@@ -76,9 +74,9 @@ class MongoStore extends AbstractMongoDefinitionStore {
   async find(query, continuationToken = '', pageSize = 100) {
     const projection = { _id: 0, files: 0 }
     const result = await super.find(query, continuationToken, pageSize, projection)
-    result.data.forEach(def => {
+    for (const def of result.data) {
       delete def._mongo
-    })
+    }
     return result
   }
 
@@ -106,7 +104,7 @@ class MongoStore extends AbstractMongoDefinitionStore {
             return { ...definitionPage, _mongo: { partitionKey: definition._id, page: 1, totalPages: pages } }
           }
           return {
-            _id: definition._id + `/${index}`,
+            _id: `${definition._id}/${index}`,
             _mongo: {
               partitionKey: definition._id,
               page: index + 1,

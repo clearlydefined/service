@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('assert')
+const assert = require('node:assert')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
 
@@ -43,22 +43,21 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
 
     // Keys fetched
     assert.strictEqual(configGet.callCount, 3)
-    ;['CRAWLER_API_AUTH_TOKEN', 'CRAWLER_API_URL', 'HARVEST_CACHE_TTL_IN_SECONDS'].forEach(k =>
+    for (const k of ['CRAWLER_API_AUTH_TOKEN', 'CRAWLER_API_URL', 'HARVEST_CACHE_TTL_IN_SECONDS'])
       assert.ok(configGet.calledWith(k))
-    )
 
     // Wrapper received TTL and harvester
     assert.strictEqual(result.received.cacheTTLInSeconds, 120)
     assert.ok(result.received.harvester)
   })
-  ;[
+  for (const { name, envTTL, expected } of [
     { name: 'valid integer', envTTL: '120', expected: 120 },
     { name: 'missing', envTTL: undefined, expected: undefined },
     { name: 'non-numeric', envTTL: 'abc', expected: undefined },
     { name: 'zero', envTTL: '0', expected: undefined },
     { name: 'negative', envTTL: '-5', expected: undefined },
     { name: 'decimal truncated', envTTL: '10.9', expected: 10 }
-  ].forEach(({ name, envTTL, expected }) => {
+  ]) {
     it(`TTL case: ${name}`, () => {
       const configGet = mappingGet({
         CRAWLER_API_AUTH_TOKEN: 'token123',
@@ -74,5 +73,5 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
       assert.ok(cacheBasedCrawlerStub.calledOnce)
       assert.ok(crawlerStub.calledOnce)
     })
-  })
+  }
 })

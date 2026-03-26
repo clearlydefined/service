@@ -105,26 +105,28 @@ function createDefinitionJson(coordinates) {
 
 function createStore(data) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsFake(async (container, name, continuation, metadata, callback) => {
-      name = name.toLowerCase()
-      if (name.includes('error')) return callback(new Error('test error'))
-      callback(null, {
-        continuationToken: null,
-        entries: Object.keys(data)
-          .map(key => (key.startsWith(name) ? data[key] : null))
-          .filter(e => e)
-      })
-    }),
-    createBlockBlobFromText: sinon.stub().callsFake(async (container, name, content, metadata, callback) => {
+    listBlobsSegmentedWithPrefix: sinon
+      .stub()
+      .callsFake(async (_container, name, _continuation, _metadata, callback) => {
+        name = name.toLowerCase()
+        if (name.includes('error')) return callback(new Error('test error'))
+        callback(null, {
+          continuationToken: null,
+          entries: Object.keys(data)
+            .map(key => (key.startsWith(name) ? data[key] : null))
+            .filter(e => e)
+        })
+      }),
+    createBlockBlobFromText: sinon.stub().callsFake(async (_container, name, _content, _metadata, callback) => {
       if (name.includes('error')) return callback(new Error('test error'))
       callback()
     }),
-    deleteBlob: sinon.stub().callsFake(async (container, name, callback) => {
+    deleteBlob: sinon.stub().callsFake(async (_container, name, callback) => {
       if (name.includes('error')) return callback(new Error('test error'))
       if (name.includes('missing')) return callback({ code: 'BlobNotFound' })
       callback()
     }),
-    getBlobToText: sinon.stub().callsFake(async (container, name, callback) => {
+    getBlobToText: sinon.stub().callsFake(async (_container, name, callback) => {
       if (name.includes('error')) return callback(new Error('test error'))
       name = name.toLowerCase()
       if (data[name]) return callback(null, data[name])

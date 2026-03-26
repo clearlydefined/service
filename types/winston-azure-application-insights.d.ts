@@ -85,7 +85,10 @@ declare module 'winston-azure-application-insights' {
 
     /** The formatter function used to modify log data. */
     formatter: FormatterFunction
+  }
 
+  /** Constructor for the Azure Application Insights logger transport. */
+  interface AzureApplicationInsightsLoggerConstructor {
     /**
      * Creates a new Azure Application Insights logger transport.
      *
@@ -113,6 +116,6 @@ declare module 'winston-azure-application-insights' {
   function defaultFormatter(options?: any): string
 
   // Export the transport constructor for use with winston.add()
-  export const AzureApplicationInsightsLogger: AzureApplicationInsightsLoggerInstance
+  export const AzureApplicationInsightsLogger: AzureApplicationInsightsLoggerConstructor
   export { getMessageLevel, defaultFormatter }
 }

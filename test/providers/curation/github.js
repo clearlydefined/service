@@ -648,7 +648,7 @@ function setup(definition, coordinateSpec, curation) {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
-    apply: (coordinates, curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
+    apply: (_coordinates, _curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
   const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }

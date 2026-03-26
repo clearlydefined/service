@@ -3,7 +3,7 @@
 
 const sinon = require('sinon')
 const sandbox = sinon.createSandbox()
-const assert = require('assert')
+const assert = require('node:assert')
 const redisCache = require('../../../providers/caching/redis')
 const { RedisCache } = require('../../../providers/caching/redis')
 const { GenericContainer } = require('testcontainers')
@@ -19,7 +19,8 @@ const logger = {
 describe('Redis Cache', () => {
   describe('get a tool result', () => {
     const store = {}
-    let mockClient, cache
+    let mockClient
+    let cache
     beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
@@ -109,7 +110,8 @@ describe('Redis Cache', () => {
 
   describe('backward compatibility (pako 1.x -> pako 2.x)', () => {
     const objectPrefix = '*!~%'
-    let mockClient, cache
+    let mockClient
+    let cache
     const store = {}
 
     beforeEach(() => {
@@ -132,7 +134,7 @@ describe('Redis Cache', () => {
     afterEach(() => {
       sandbox.restore()
       // Clear store
-      Object.keys(store).forEach(key => delete store[key])
+      for (const key of Object.keys(store)) delete store[key]
     })
 
     describe('Format Detection', () => {
@@ -297,7 +299,8 @@ describe('Redis Cache', () => {
     })
   })
   xdescribe('Integration Test', () => {
-    let container, redisConfig
+    let container
+    let redisConfig
 
     before(async function () {
       this.timeout(10000)

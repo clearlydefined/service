@@ -18,7 +18,8 @@ describe('AbstractFileStore', () => {
   }
 
   describe('AbstractFileStore lists entries ', () => {
-    let FileStore, fileStore
+    let FileStore
+    let fileStore
     const data = {
       '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json': {},
       '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool0/1.0.json': {},
@@ -45,7 +46,7 @@ describe('AbstractFileStore', () => {
       }
       FileStore = proxyquire('../../../providers/stores/abstractFileStore', {
         'recursive-readdir': recursiveStub,
-        fs: fsStub
+        'node:fs': fsStub
       })
       fileStore = new FileStore({ location: '/foo', logger })
     })
@@ -186,8 +187,8 @@ describe('AbstractFileStore', () => {
         }
       }
     ]
-    data.forEach(input => {
-      it('works well for ' + input.path, () => {
+    for (const input of data) {
+      it(`works well for ${input.path}`, () => {
         const fileStore = new AbstractFileStore({ location: input.location, logger })
         const separator = input.location.includes('/') ? '/' : '\\'
         const result = fileStore._toStoragePathFromCoordinates(input.coordinates)
@@ -196,7 +197,7 @@ describe('AbstractFileStore', () => {
         const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/')
         expect(normalizedResult).to.deep.equal(normalizedInput)
       })
-    })
+    }
   })
 
   describe('getLatestToolVersions', () => {
@@ -278,7 +279,8 @@ describe('AbstractFileStore', () => {
   })
 
   describe('find(query)', () => {
-    let FileStore, fileStore
+    let FileStore
+    let fileStore
 
     const sampleEntries = [
       {
@@ -312,7 +314,7 @@ describe('AbstractFileStore', () => {
             '/foo/npm/npmjs/-/test/revision/2.0/tool/toolB/2.0.json': {},
             '/foo/npm/npmjs/-/test/revision/2.0/tool/toolC/3.0.json': {}
           }).filter(p => p.startsWith(path)),
-        fs: {
+        'node:fs': {
           readFile: (path, cb) => {
             const entry = sampleEntries.find(e => e.path === path)
             if (entry) cb(null, JSON.stringify(entry))

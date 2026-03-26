@@ -24,10 +24,10 @@ class MemoryStore {
 
   /** @param {Curation[]} curations */
   updateCurations(curations) {
-    curations.forEach(curation => {
+    for (const curation of curations) {
       const coordinates = EntityCoordinates.fromObject(curation.data.coordinates)
       this.curations[this._getCurationId(coordinates)] = curation.data
-    })
+    }
   }
 
   /** @param {number} prNumber */
@@ -43,7 +43,7 @@ class MemoryStore {
     if (curations) {
       /** @type {Record<string, CurationData>} */
       const files = {}
-      curations.forEach(curation => (files[curation.path] = curation.data))
+      for (const curation of curations) files[curation.path] = curation.data
       this.contributions[pr.number] = { pr, files }
       return
     }
@@ -65,12 +65,12 @@ class MemoryStore {
   listAll(coordinatesList) {
     /** @type {Record<string, CurationData[]>} */
     const result = {}
-    coordinatesList.forEach(coordinates => {
+    for (const coordinates of coordinatesList) {
       const data = this.list(coordinates)
-      if (!data) return
+      if (!data) continue
       const key = coordinates.toString()
       result[key] = data
-    })
+    }
     return result
   }
 

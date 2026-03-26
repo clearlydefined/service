@@ -4,7 +4,7 @@
 const asyncMiddleware = require('../middleware/asyncMiddleware')
 const router = require('express').Router()
 const { callFetch: requestPromise } = require('../lib/fetch')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const parseString = promisify(require('xml2js').parseString)
 
 //Example URL to request XML file with group ID "android.arch.navigation": https://dl.google.com/android/maven2/android/arch/navigation/group-index.xml

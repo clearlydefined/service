@@ -111,7 +111,7 @@ function createGetWithExtraValues(extraValues = []) {
     baseParams[`extra${index + 1}`] = val
   })
 
-  const extraPath = extraValues.length ? '/' + extraValues.join('/') : ''
+  const extraPath = extraValues.length ? `/${extraValues.join('/')}` : ''
 
   return httpMocks.createRequest({
     method: 'GET',

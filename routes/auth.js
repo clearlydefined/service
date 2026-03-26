@@ -15,7 +15,7 @@
 const express = require('express')
 const passport = require('passport')
 const GitHubStrategy = require('passport-github').Strategy
-const { URL } = require('url')
+const { URL } = require('node:url')
 const { Octokit } = require('@octokit/rest')
 const { defaultHeaders } = require('../lib/fetch')
 
