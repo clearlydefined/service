@@ -126,9 +126,13 @@ async function normalizeFilterCoordinates(requests) {
   const normalizedBody = await Promise.all(
     requests.map(async entry => {
       const coordinates = EntityCoordinates.fromString(entry?.coordinates)
-      if (!coordinates) return null
+      if (!coordinates) {
+        return null
+      }
       const normalized = await utils.toNormalizedEntityCoordinates(coordinates)
-      if (harvestThrottler.isBlocked(normalized)) throw new Error(`Harvest throttled for ${normalized.toString()}`)
+      if (harvestThrottler.isBlocked(normalized)) {
+        throw new Error(`Harvest throttled for ${normalized.toString()}`)
+      }
       return { ...entry, coordinates: normalized.toString() }
     })
   )

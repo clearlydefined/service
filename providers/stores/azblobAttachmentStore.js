@@ -58,7 +58,9 @@ class AzBlobAttachmentStore {
         this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString(), file: key })
         return JSON.parse(result).attachment
       } catch (/** @type {any} */ error) {
-        if (error.statusCode === 404) return null
+        if (error.statusCode === 404) {
+          return null
+        }
         throw error
       }
     })()

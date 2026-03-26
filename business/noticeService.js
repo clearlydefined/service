@@ -105,8 +105,12 @@ class NoticeService {
               noDefinition.push(id)
               return undefined
             }
-            if (!isDeclaredLicense(get(definition, 'licensed.declared'))) noLicense.push(id)
-            if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) noCopyright.push(id)
+            if (!isDeclaredLicense(get(definition, 'licensed.declared'))) {
+              noLicense.push(id)
+            }
+            if (!get(definition, 'licensed.facets.core.attribution.parties[0]')) {
+              noCopyright.push(id)
+            }
             return {
               name: [definition.coordinates.namespace, definition.coordinates.name].filter(x => x).join('/'),
               version: get(definition, 'coordinates.revision'),
@@ -133,14 +137,18 @@ class NoticeService {
    * @private
    */
   _getRenderer(name, options) {
-    if (!name) return new TextRenderer()
+    if (!name) {
+      return new TextRenderer()
+    }
     switch (name) {
       case 'text':
         return new TextRenderer()
       case 'html':
         return new HtmlRenderer(options.template)
       case 'template':
-        if (!options.template) throw new Error('options.template is required for template renderer')
+        if (!options.template) {
+          throw new Error('options.template is required for template renderer')
+        }
         return new TemplateRenderer(options.template)
       case 'json':
         return new JsonRenderer()
@@ -157,7 +165,9 @@ class NoticeService {
    * @private
    */
   async _getPackageText(definition) {
-    if (!definition.files) return ''
+    if (!definition.files) {
+      return ''
+    }
     this.logger.info('2:1:notice_generate:get_single_package_files:start', {
       ts: new Date().toISOString(),
       coordinates: definition.coordinates.toString()
@@ -167,8 +177,7 @@ class NoticeService {
         .filter(
           file =>
             file.token &&
-            file.natures &&
-            file.natures.includes('license') &&
+            file.natures?.includes('license') &&
             file.path &&
             (file.path.indexOf('/') === -1 ||
               (definition.coordinates.type === 'npm' && file.path.startsWith('package/')))

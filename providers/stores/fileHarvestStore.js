@@ -33,7 +33,9 @@ class FileHarvestStore extends AbstractFileStore {
       coordinates,
       /** @param {any} entry */ entry => {
         const link = get(entry, '_metadata.links.self.href')
-        if (!link) return null
+        if (!link) {
+          return null
+        }
         return ResultCoordinates.fromUrn(link).toString()
       }
     )
@@ -85,7 +87,9 @@ class FileHarvestStore extends AbstractFileStore {
     try {
       return await recursive(root, ['.DS_Store'])
     } catch (/** @type {any} */ error) {
-      if (error.code === 'ENOENT') return []
+      if (error.code === 'ENOENT') {
+        return []
+      }
       throw error
     }
   }

@@ -51,7 +51,9 @@ class ScanCodeNewSummarizer {
    * @throws {Error} If ScanCode version is not provided
    */
   summarize(scancodeVersion, coordinates, harvestedData) {
-    if (!scancodeVersion) throw new Error('Not valid ScanCode data')
+    if (!scancodeVersion) {
+      throw new Error('Not valid ScanCode data')
+    }
 
     const result = {}
     this.addDescribedInfo(result, harvestedData)
@@ -74,7 +76,9 @@ class ScanCodeNewSummarizer {
    */
   addDescribedInfo(result, harvestedData) {
     const releaseDate = harvestedData._metadata.releaseDate
-    if (releaseDate) result.described = { releaseDate: extractDate(releaseDate.trim()) }
+    if (releaseDate) {
+      result.described = { releaseDate: extractDate(releaseDate.trim()) }
+    }
   }
 
   /**
@@ -123,9 +127,13 @@ class ScanCodeNewSummarizer {
    */
   _readDeclaredLicenseExpressionFromPackage({ content }) {
     const { packages } = content
-    if (!packages) return null
+    if (!packages) {
+      return null
+    }
     const [firstPackage] = packages
-    if (!firstPackage) return null
+    if (!firstPackage) {
+      return null
+    }
 
     const licenseExpression = firstPackage.declared_license_expression_spdx
 
@@ -175,7 +183,9 @@ class ScanCodeNewSummarizer {
     return files.filter(
       /** @param {ScanCodeFile} file */ file => {
         for (const root of roots) {
-          if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) return true
+          if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) {
+            return true
+          }
         }
         return false
       }
@@ -260,7 +270,9 @@ class ScanCodeNewSummarizer {
    * @private
    */
   _getLicenseExpressionFromFileLicenseDetections(file) {
-    if (!file.license_detections) return null
+    if (!file.license_detections) {
+      return null
+    }
     const licenseExpressions = file.license_detections.reduce(
       /**
        * @param {Set<string>} licenseExpressions
@@ -295,7 +307,9 @@ class ScanCodeNewSummarizer {
     return files
       .map(
         /** @param {ScanCodeFile} file */ file => {
-          if (file.type !== 'file') return null
+          if (file.type !== 'file') {
+            return null
+          }
 
           /** @type {FileEntry} */
           const result = { path: file.path }
@@ -309,7 +323,9 @@ class ScanCodeNewSummarizer {
             this._getClosestLicenseMatchByFileName([file], coordinates)
           ) {
             result.natures = result.natures || []
-            if (!result.natures.includes('license')) result.natures.push('license')
+            if (!result.natures.includes('license')) {
+              result.natures.push('license')
+            }
           }
 
           setIfValue(

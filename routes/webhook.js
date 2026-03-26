@@ -31,7 +31,9 @@ router.post('/', asyncMiddleware(handlePost))
  * @param {Response} response
  */
 function handlePost(request, response) {
-  if (request.headers['x-crawler']) return handleCrawlerCall(request, response)
+  if (request.headers['x-crawler']) {
+    return handleCrawlerCall(request, response)
+  }
   return handleGitHubCall(request, response)
 }
 
@@ -41,7 +43,9 @@ function handlePost(request, response) {
  */
 async function handleGitHubCall(request, response) {
   const body = validateGitHubCall(request, response)
-  if (!body) return
+  if (!body) {
+    return
+  }
   const pr = body.pull_request
   try {
     switch (body.action) {
@@ -113,15 +117,19 @@ async function handleCrawlerCall(request, response) {
  * @returns {boolean}
  */
 function validateGitHubSignature(request, response) {
-  if (request.hostname?.includes('localhost')) return true
+  if (request.hostname?.includes('localhost')) {
+    return true
+  }
   const isGithubEvent = request.headers['x-github-event']
   const signature = /** @type {string | undefined} */ (request.headers['x-hub-signature'])
-  if (!isGithubEvent || !signature)
+  if (!isGithubEvent || !signature) {
     return info(request, response, 400, 'Missing signature or event type on GitHub webhook')
+  }
 
   const computedSignature = `sha1=${crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')}`
-  if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature)))
+  if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature))) {
     return info(request, response, 400, 'X-Hub-Signature does not match blob signature')
+  }
   return true
 }
 
@@ -131,7 +139,9 @@ function validateGitHubSignature(request, response) {
  * @returns {any}
  */
 function validateGitHubCall(request, response) {
-  if (!validateGitHubSignature(request, response)) return false
+  if (!validateGitHubSignature(request, response)) {
+    return false
+  }
   let body = request.body
   if (Buffer.isBuffer(body)) {
     body = JSON.parse(body.toString('utf8'))
@@ -140,7 +150,9 @@ function validateGitHubCall(request, response) {
   }
 
   const isValidPullRequest = body.pull_request && validPrActions.includes(body.action)
-  if (!isValidPullRequest) return info(request, response, 200)
+  if (!isValidPullRequest) {
+    return info(request, response, 200)
+  }
   return body
 }
 

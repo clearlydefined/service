@@ -33,7 +33,9 @@ let logger
  * @throws {Error} If no logger has been initialized and none is provided
  */
 module.exports = loggerValue => {
-  if (loggerValue && !logger) logger = loggerValue
+  if (loggerValue && !logger) {
+    logger = loggerValue
+  }
   if (!logger) {
     throw new Error('Logger not initialized. Please provide a logger instance on first call.')
   }

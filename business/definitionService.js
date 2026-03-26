@@ -92,7 +92,9 @@ class DefinitionService {
     this.search = search
     this.cache = cache
     this.upgradeHandler = upgradeHandler
-    if (this.upgradeHandler) this.upgradeHandler.currentSchema = currentSchema
+    if (this.upgradeHandler) {
+      this.upgradeHandler.currentSchema = currentSchema
+    }
     this.logger = logger()
   }
 
@@ -111,7 +113,9 @@ class DefinitionService {
    * @returns {Promise<Definition | undefined>} The fully rendered definition
    */
   async get(coordinates, pr = null, force = false, expand = null) {
-    if (!validator.validate('coordinates-1.0', coordinates)) return undefined
+    if (!validator.validate('coordinates-1.0', coordinates)) {
+      return undefined
+    }
     if (pr) {
       const curation = this.curationService.get(coordinates, pr)
       return this.compute(coordinates, curation)
@@ -121,7 +125,9 @@ class DefinitionService {
     let result = await this.upgradeHandler.validate(existing)
     if (result) {
       this._logDefinitionStatus(result, coordinates)
-    } else result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
+    } else {
+      result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
+    }
     return this._trimDefinition(this._cast(result), expand)
   }
 
@@ -134,10 +140,14 @@ class DefinitionService {
     const cacheKey = this._getCacheKey(coordinates)
     this.logger.debug('1:Redis:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const cached = await this.cache.get(cacheKey)
-    if (cached) return cached
+    if (cached) {
+      return cached
+    }
     this.logger.debug('2:blob+mongoDB:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
     const stored = await this.definitionStore.get(coordinates)
-    if (stored) this._setDefinitionInCache(cacheKey, stored)
+    if (stored) {
+      this._setDefinitionInCache(cacheKey, stored)
+    }
     return stored
   }
 
@@ -164,7 +174,9 @@ class DefinitionService {
    * @private
    */
   async _cacheExistingAside(coordinates, force) {
-    if (force) return null
+    if (force) {
+      return null
+    }
     return await this.getStored(coordinates)
   }
 
@@ -195,7 +207,9 @@ class DefinitionService {
    * @private
    */
   _trimDefinition(definition, expand) {
-    if (expand === '-files') return omit(definition, 'files')
+    if (expand === '-files') {
+      return omit(definition, 'files')
+    }
     return definition
   }
 
@@ -227,7 +241,9 @@ class DefinitionService {
         this.logger.debug(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
         const definition = await this.get(coordinates, null, force, expand)
         this.logger.debug(`1:1:notice_generate:get_single_end:${coordinates}`, { ts: new Date().toISOString() })
-        if (!definition) return
+        if (!definition) {
+          return
+        }
         const key = definition.coordinates.toString()
         result[key] = definition
       })
@@ -243,7 +259,9 @@ class DefinitionService {
    * @returns {Promise<string[]>} the list of all coordinates for all discovered definitions
    */
   async list(coordinates, recompute = false) {
-    if (!recompute) return this.definitionStore.list(coordinates)
+    if (!recompute) {
+      return this.definitionStore.list(coordinates)
+    }
     const curated = (await this.curationService.list(coordinates)).map(c => c.toString())
     const tools = await this.harvestStore.list(coordinates)
     const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
@@ -318,7 +336,9 @@ class DefinitionService {
    * @private
    */
   _validate(definition) {
-    if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
+    if (!validator.validate('definition', definition)) {
+      throw new Error(validator.errorsText())
+    }
   }
 
   /**
@@ -329,7 +349,9 @@ class DefinitionService {
   async computeStoreAndCurate(coordinates) {
     // one coordinate a time through this method so no duplicate auto curation will be created.
     this.logger.debug('3:memory_lock:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500))
+    while (computeLock.get(coordinates.toString())) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
     try {
       computeLock.set(coordinates.toString(), true)
       const definition = await this._computeAndStore(coordinates)
@@ -346,7 +368,9 @@ class DefinitionService {
    * @returns {Promise<Definition>} The computed definition
    */
   async computeAndStore(coordinates) {
-    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    while (computeLock.get(coordinates.toString())) {
+      await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    }
     try {
       computeLock.set(coordinates.toString(), true)
       return await this._computeAndStore(coordinates)
@@ -363,7 +387,9 @@ class DefinitionService {
    * @returns {Promise<Definition | undefined>} The computed definition or undefined if skipped
    */
   async computeAndStoreIfNecessary(coordinates, tool, toolRevision) {
-    while (computeLock.get(coordinates.toString())) await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    while (computeLock.get(coordinates.toString())) {
+      await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
+    }
     try {
       computeLock.set(coordinates.toString(), true)
       if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
@@ -511,11 +537,15 @@ class DefinitionService {
    * @private
    */
   _getCasedCoordinates(raw, coordinates) {
-    if (!raw || !Object.keys(raw).length) return coordinates
+    if (!raw || !Object.keys(raw).length) {
+      return coordinates
+    }
     for (const tool in raw) {
       for (const version in raw[tool]) {
         const cased = get(raw[tool][version], '_metadata.links.self.href')
-        if (cased) return EntityCoordinates.fromUrn(cased)
+        if (cased) {
+          return EntityCoordinates.fromUrn(cased)
+        }
       }
     }
     throw new Error('unable to find self link')
@@ -529,8 +559,11 @@ class DefinitionService {
    */
   _ensureNoNulls(object) {
     for (const key of Object.keys(object)) {
-      if (object[key] && typeof object[key] === 'object') this._ensureNoNulls(object[key])
-      else if (object[key] == null) delete object[key]
+      if (object[key] && typeof object[key] === 'object') {
+        this._ensureNoNulls(object[key])
+      } else if (object[key] == null) {
+        delete object[key]
+      }
     }
   }
 
@@ -644,10 +677,14 @@ class DefinitionService {
    * @private
    */
   _computeDiscoveredScore(definition) {
-    if (!definition.files) return 0
+    if (!definition.files) {
+      return 0
+    }
     const coreFiles = definition.files.filter(DefinitionService._isInCoreFacet)
-    if (!coreFiles.length) return 0
-    const completeFiles = coreFiles.filter(file => file.license && file.attributions && file.attributions.length)
+    if (!coreFiles.length) {
+      return 0
+    }
+    const completeFiles = coreFiles.filter(file => file.license && file.attributions?.length)
     return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
   }
 
@@ -662,7 +699,9 @@ class DefinitionService {
     // Note here that we are saying that every discovered license is satisfied by the declared
     // license. If there are no discovered licenses then all is good.
     const discovered = get(definition, 'licensed.facets.core.discovered.expressions') || []
-    if (!declared || !discovered) return 0
+    if (!declared || !discovered) {
+      return 0
+    }
     return discovered.every(expression => SPDX.satisfies(expression, declared)) ? weights.consistency : 0
   }
   /**
@@ -690,11 +729,17 @@ class DefinitionService {
    * @private
    */
   _computeTextsScore(definition) {
-    if (!definition.files || !definition.files.length) return 0
+    if (!definition.files || !definition.files.length) {
+      return 0
+    }
     const includedTexts = this._collectLicenseTexts(definition)
-    if (!includedTexts.length) return 0
+    if (!includedTexts.length) {
+      return 0
+    }
     const referencedLicenses = this._collectReferencedLicenses(definition)
-    if (!referencedLicenses.length) return 0
+    if (!referencedLicenses.length) {
+      return 0
+    }
 
     // check that all the referenced licenses have texts
     const found = intersection(referencedLicenses, includedTexts)
@@ -710,10 +755,14 @@ class DefinitionService {
   _collectReferencedLicenses(definition) {
     const referencedExpressions = new Set(get(definition, 'licensed.facets.core.discovered.expressions') || [])
     const declared = get(definition, 'licensed.declared')
-    if (declared) referencedExpressions.add(declared)
+    if (declared) {
+      referencedExpressions.add(declared)
+    }
     /** @type {Set<string>} */
     const result = new Set()
-    for (const expression of referencedExpressions) this._extractLicensesFromExpression(expression, result)
+    for (const expression of referencedExpressions) {
+      this._extractLicensesFromExpression(expression, result)
+    }
     return Array.from(result)
   }
 
@@ -740,7 +789,9 @@ class DefinitionService {
    * @private
    */
   _extractLicensesFromExpression(expression, seen) {
-    if (!expression) return
+    if (!expression) {
+      return
+    }
     /** @type {SpdxExpression} */
     const parsed = typeof expression === 'string' ? SPDX.parse(expression) : expression
     if (parsed.license) {
@@ -796,8 +847,12 @@ class DefinitionService {
         throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
           try {
             const definition = await this.get(coordinates, null, recompute)
-            if (recompute) return Promise.resolve(null)
-            if (this.search.store) return this.search.store(definition)
+            if (recompute) {
+              return Promise.resolve(null)
+            }
+            if (this.search.store) {
+              return this.search.store(definition)
+            }
           } catch (error) {
             this.logger.info('failed to reload in definition service', {
               error,
@@ -815,10 +870,13 @@ class DefinitionService {
    * @private
    */
   _ensureFacets(definition) {
-    if (!definition.files) return
+    if (!definition.files) {
+      return
+    }
     const facetFiles = this._computeFacetFiles([...definition.files], get(definition, 'described.facets'))
-    for (const facet in facetFiles)
+    for (const facet in facetFiles) {
       setIfValue(definition, `licensed.facets.${facet}`, this._summarizeFacetInfo(facet, facetFiles[facet]))
+    }
   }
 
   /**
@@ -831,13 +889,17 @@ class DefinitionService {
   _computeFacetFiles(files, facets = {}) {
     const facetList = Object.getOwnPropertyNames(facets)
     remove(facetList, 'core')
-    if (facetList.length === 0) return { core: files }
+    if (facetList.length === 0) {
+      return { core: files }
+    }
     /** @type {Record<string, DefinitionFile[]>} */
     const result = { core: [...files] }
     for (const facet in facetList) {
       const facetKey = facetList[facet]
       const filters = facets[facetKey]
-      if (!filters || filters.length === 0) break
+      if (!filters || filters.length === 0) {
+        break
+      }
       result[facetKey] = files.filter(file => filters.some(filter => minimatch(file.path, filter)))
       pullAllWith(result['core'], result[facetKey], isEqual)
     }
@@ -853,7 +915,9 @@ class DefinitionService {
    * @private
    */
   _summarizeFacetInfo(facet, facetFiles) {
-    if (!facetFiles || facetFiles.length === 0) return null
+    if (!facetFiles || facetFiles.length === 0) {
+      return null
+    }
     /** @type {Set<string>} */
     const attributions = new Set()
     /** @type {Set<string>} */
@@ -903,7 +967,9 @@ class DefinitionService {
    * @private
    */
   _ensureSourceLocation(coordinates, definition) {
-    if (get(definition, 'described.sourceLocation')) return updateSourceLocation(definition.described.sourceLocation)
+    if (get(definition, 'described.sourceLocation')) {
+      return updateSourceLocation(definition.described.sourceLocation)
+    }
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition
     switch (coordinates.type) {
@@ -912,7 +978,9 @@ class DefinitionService {
       case 'sourcearchive':
       case 'pypi': {
         const url = buildSourceUrl(coordinates)
-        if (!url) return
+        if (!url) {
+          return
+        }
         this._ensureDescribed(definition)
         definition.described.sourceLocation = { ...coordinates, url }
         break

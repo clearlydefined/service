@@ -43,8 +43,9 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
 
     // Keys fetched
     assert.strictEqual(configGet.callCount, 3)
-    for (const k of ['CRAWLER_API_AUTH_TOKEN', 'CRAWLER_API_URL', 'HARVEST_CACHE_TTL_IN_SECONDS'])
+    for (const k of ['CRAWLER_API_AUTH_TOKEN', 'CRAWLER_API_URL', 'HARVEST_CACHE_TTL_IN_SECONDS']) {
       assert.ok(configGet.calledWith(k))
+    }
 
     // Wrapper received TTL and harvester
     assert.strictEqual(result.received.cacheTTLInSeconds, 120)

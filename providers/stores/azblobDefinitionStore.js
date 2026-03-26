@@ -32,7 +32,9 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
       coordinates,
       /** @param {BlobEntry} entry */ entry => {
         const path = entry.metadata['id']
-        if (!path) return null
+        if (!path) {
+          return null
+        }
         const entryCoordinates = EntityCoordinates.fromString(path)
         return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? path : null
       }
@@ -71,7 +73,9 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
     try {
       await promisify(this.blobService.deleteBlob).bind(this.blobService)(this.containerName, blobName)
     } catch (/** @type {any} */ error) {
-      if (error.code !== 'BlobNotFound') throw error
+      if (error.code !== 'BlobNotFound') {
+        throw error
+      }
     }
   }
 }

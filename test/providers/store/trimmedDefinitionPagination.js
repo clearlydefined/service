@@ -19,7 +19,9 @@ describe('Mongo Definition Store: Trimmed', () => {
 async function createStore(options, defs) {
   const mongoStore = Store({ ...options, ...dbOptions })
   await mongoStore.initialize()
-  for (const def of defs) delete def._mongo
+  for (const def of defs) {
+    delete def._mongo
+  }
   await mongoStore.collection.insertMany(defs)
   return mongoStore
 }

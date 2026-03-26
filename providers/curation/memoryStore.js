@@ -43,7 +43,9 @@ class MemoryStore {
     if (curations) {
       /** @type {Record<string, CurationData>} */
       const files = {}
-      for (const curation of curations) files[curation.path] = curation.data
+      for (const curation of curations) {
+        files[curation.path] = curation.data
+      }
       this.contributions[pr.number] = { pr, files }
       return
     }
@@ -54,7 +56,9 @@ class MemoryStore {
 
   /** @param {EntityCoordinates} coordinates */
   list(coordinates) {
-    if (!coordinates) throw new Error('must specify coordinates to list')
+    if (!coordinates) {
+      throw new Error('must specify coordinates to list')
+    }
     const pattern = this._getCurationId(coordinates)
     return Object.keys(this.curations)
       .filter(key => key.startsWith(pattern))
@@ -67,7 +71,9 @@ class MemoryStore {
     const result = {}
     for (const coordinates of coordinatesList) {
       const data = this.list(coordinates)
-      if (!data) continue
+      if (!data) {
+        continue
+      }
       const key = coordinates.toString()
       result[key] = data
     }
@@ -76,7 +82,9 @@ class MemoryStore {
 
   /** @param {EntityCoordinates} coordinates */
   _getCurationId(coordinates) {
-    if (!coordinates) return ''
+    if (!coordinates) {
+      return ''
+    }
     return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 }

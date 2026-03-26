@@ -243,7 +243,9 @@ function createApp(config) {
     } else {
       // Don't log Azure robot liveness checks
       // https://feedback.azure.com/forums/169385-web-apps/suggestions/32120617-document-healthcheck-url-requirement-for-custom-co
-      if (!request?.url?.includes('robots933456.txt')) logger.error(`SvcRequestFailure: ${request.url}`, error)
+      if (!request?.url?.includes('robots933456.txt')) {
+        logger.error(`SvcRequestFailure: ${request.url}`, error)
+      }
 
       // set locals, only providing error in development
       response.locals.message = error.message

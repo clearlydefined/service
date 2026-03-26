@@ -19,7 +19,9 @@ async function work(once) {
   let isQueueEmpty = true
   try {
     const messages = await queue.dequeueMultiple()
-    if (messages && messages.length > 0) isQueueEmpty = false
+    if (messages && messages.length > 0) {
+      isQueueEmpty = false
+    }
     await Promise.all(messages.map(message => processMessage(message)))
   } catch (error) {
     logger.error(error instanceof Error ? error.message : String(error))
@@ -35,7 +37,9 @@ async function work(once) {
  */
 async function processMessage(message) {
   const urn = get(message, 'data._metadata.links.self.href')
-  if (!urn) return
+  if (!urn) {
+    return
+  }
   const coordinates = EntityCoordinates.fromUrn(urn)
   const { tool, toolRevision } = parseUrn(urn)
   if (tool === 'clearlydefined') {

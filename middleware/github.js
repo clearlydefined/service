@@ -72,7 +72,9 @@ const middleware = asyncMiddleware(async (req, res, next) => {
  */
 async function setupServiceClient(req, token) {
   const client = Github.getClient({ token })
-  if (!client) throw new Error('GitHub client could not be created. Please check your configuration.')
+  if (!client) {
+    throw new Error('GitHub client could not be created. Please check your configuration.')
+  }
   req.app.locals.service = { github: { client } }
   return client
 }
@@ -123,7 +125,9 @@ async function setupInfo(req, cacheKey, client) {
  */
 async function setupTeams(req, cacheKey, client) {
   // anonymous users are not members of any team
-  if (!cacheKey || !client) return null
+  if (!cacheKey || !client) {
+    return null
+  }
   // check cache for team data; hash the token so we're not storing them raw
   let teams = await cache.get(cacheKey)
   if (!teams) {

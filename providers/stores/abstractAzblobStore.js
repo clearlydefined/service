@@ -72,7 +72,9 @@ class AbstractAzBlobStore {
       continuation = result.continuationToken
       for (const /** @type {BlobEntry} */ entry of result.entries) {
         const visitResult = visitor(entry)
-        if (visitResult !== null) list.push(visitResult)
+        if (visitResult !== null) {
+          list.push(visitResult)
+        }
       }
     } while (continuation)
     return list
@@ -86,13 +88,17 @@ class AbstractAzBlobStore {
    */
   async get(coordinates) {
     let name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
-    if (!name.endsWith('.json')) name += '.json'
+    if (!name.endsWith('.json')) {
+      name += '.json'
+    }
     try {
       const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
       return JSON.parse(result)
     } catch (error) {
       const azureError = /** @type {{statusCode?: number}} */ (error)
-      if (azureError.statusCode === 404) return null
+      if (azureError.statusCode === 404) {
+        return null
+      }
       throw error
     }
   }

@@ -168,9 +168,12 @@ describe('Mixed summarization', () => {
 
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
-  if (!definition.coordinates)
+  if (!definition.coordinates) {
     definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
+  }
+  if (!validator.validate('definition', definition)) {
+    throw new Error(validator.errorsText())
+  }
 }
 
 function setup(files, coordinateSpec) {
@@ -184,7 +187,9 @@ function setup(files, coordinateSpec) {
 }
 
 function setupNomos(result, data) {
-  if (!data) return
+  if (!data) {
+    return
+  }
   const licenses = data.map(file => file.licenses).filter(e => e)
   result.nomos = {
     version: '3.4.0',
@@ -196,7 +201,9 @@ function setupNomos(result, data) {
 }
 
 function setupMonk(result, data) {
-  if (!data) return
+  if (!data) {
+    return
+  }
   const files = data.map(x => x.output).filter(x => x)
   result.monk = {
     version: '3.4.0',
@@ -205,7 +212,9 @@ function setupMonk(result, data) {
 }
 
 function setupCopyright(result, data) {
-  if (!data) return
+  if (!data) {
+    return
+  }
   const content = stripType(data)
   result.copyright = {
     version: '3.4.0',
@@ -226,11 +235,12 @@ function buildNomosFile(path, license) {
 }
 
 function buildMonkFile(path, license, type = 'full') {
-  if (type === 'full')
+  if (type === 'full') {
     return {
       type: 'monk',
       output: `found full match between \\"${path}\\" and \\"${license}\\" (rf_pk=311); matched: 61+1022`
     }
+  }
 }
 
 function buildCopyrightFile(path, parties) {

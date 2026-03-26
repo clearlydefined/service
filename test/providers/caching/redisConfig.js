@@ -37,7 +37,9 @@ describe('redisConfig.serviceFactory', () => {
 
   function expectConfigGetCalled(configSpy, keys) {
     assert.strictEqual(configSpy.callCount, keys.length)
-    for (const k of keys) assert.ok(configSpy.calledWith(k))
+    for (const k of keys) {
+      assert.ok(configSpy.calledWith(k))
+    }
   }
 
   it('uses provided options only', () => {

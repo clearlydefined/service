@@ -12,7 +12,9 @@ const { get } = require('lodash')
 async function work(once) {
   try {
     const message = await queue.dequeue()
-    if (!get(message, 'data.pull_request') || !get(message, 'data.action')) return
+    if (!get(message, 'data.pull_request') || !get(message, 'data.action')) {
+      return
+    }
     const pr = message.data.pull_request
     const action = message.data.action
     switch (action) {
@@ -38,7 +40,9 @@ async function work(once) {
   } catch (/** @type {*} */ error) {
     logger.error(error)
   } finally {
-    if (!once) setTimeout(work, 30000, once)
+    if (!once) {
+      setTimeout(work, 30000, once)
+    }
   }
 }
 

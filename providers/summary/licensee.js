@@ -36,7 +36,9 @@ class LicenseeSummarizer {
    * @throws {Error} If Licensee data is invalid
    */
   summarize(coordinates, harvested) {
-    if (!harvested || !harvested.licensee || !harvested.licensee.version) throw new Error('Invalid Licensee data')
+    if (!harvested || !harvested.licensee || !harvested.licensee.version) {
+      throw new Error('Invalid Licensee data')
+    }
     const result = {}
     setIfValue(result, 'files', this._summarizeFiles(harvested))
     this._addLicenseFromFiles(result, coordinates)
@@ -54,11 +56,17 @@ class LicenseeSummarizer {
       get(harvested, 'licensee.output.content.matched_files')
     )
     const attachments = harvested.attachments || []
-    if (!files) return null
+    if (!files) {
+      return null
+    }
     return files
       .map(file => {
-        if (get(file, 'matcher.name') !== 'exact') return null
-        if (80 > +get(file, 'matcher.confidence')) return null
+        if (get(file, 'matcher.name') !== 'exact') {
+          return null
+        }
+        if (80 > +get(file, 'matcher.confidence')) {
+          return null
+        }
         const path = file.filename
         const attachment = attachments.find(x => x.path === path)
         const license = SPDX.normalize(file.matched_license)
@@ -80,7 +88,9 @@ class LicenseeSummarizer {
    * @private
    */
   _addLicenseFromFiles(result, coordinates) {
-    if (!result.files) return
+    if (!result.files) {
+      return
+    }
     const licenses = result.files
       .map(file => (isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null))
       .filter(x => x)

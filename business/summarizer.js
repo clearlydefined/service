@@ -33,7 +33,9 @@ class SummaryService {
    * @private
    */
   _summarizeTool(coordinates, tool, data) {
-    if (!summarizers[tool]) return data
+    if (!summarizers[tool]) {
+      return data
+    }
     const summarizer = summarizers[tool](this.options[tool] || {})
     return Object.getOwnPropertyNames(data).reduce(
       (result, version) => {

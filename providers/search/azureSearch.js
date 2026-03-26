@@ -14,9 +14,15 @@ class AzureSearch extends AbstractSearch {
   /** @override */
   async initialize() {
     super.initialize()
-    if (!(await this._hasIndex(definitionsIndexName))) await this._createIndex(this._buildDefinitionsIndex())
-    if (!(await this._hasDataSource(definitionsDataSourceName))) await this._createDataSource(this._buildDataSource())
-    if (!(await this._hasIndexer(definitionsIndexerName))) await this._createIndexer(this._buildIndexer())
+    if (!(await this._hasIndex(definitionsIndexName))) {
+      await this._createIndex(this._buildDefinitionsIndex())
+    }
+    if (!(await this._hasDataSource(definitionsDataSourceName))) {
+      await this._createDataSource(this._buildDataSource())
+    }
+    if (!(await this._hasIndexer(definitionsIndexerName))) {
+      await this._createIndexer(this._buildIndexer())
+    }
   }
 
   /**

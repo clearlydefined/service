@@ -43,10 +43,13 @@ class AzureStorageQueue {
    */
   async dequeue() {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
-    if (!message) return null
-    if (message.dequeueCount <= 5)
+    if (!message) {
+      return null
+    }
+    if (message.dequeueCount <= 5) {
       // @ts-expect-error - azure-storage QueueMessageResult is structurally compatible at runtime
       return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
+    }
     // @ts-expect-error - azure-storage QueueMessageResult used as QueueMessage
     await this.delete({ original: message })
     return this.dequeue()
@@ -63,7 +66,9 @@ class AzureStorageQueue {
       // @ts-expect-error - azure-storage getMessages accepts options as second arg
       this.options.dequeueOptions
     )
-    if (!messages || messages.length === 0) return []
+    if (!messages || messages.length === 0) {
+      return []
+    }
     for (const i in messages) {
       if (messages[i].dequeueCount <= 5) {
         messages[i] = {

@@ -64,7 +64,9 @@ class FileDefinitionStore extends AbstractFileStore {
     try {
       await promisify(fs.unlink)(filePath)
     } catch (/** @type {any} */ error) {
-      if (error.code !== 'ENOENT') throw error
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
     }
   }
 }

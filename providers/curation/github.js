@@ -108,7 +108,9 @@ class GitHubCurationService {
         state
       }
       //See https://docs.github.com/en/rest/reference/pulls#list-pull-requests
-      if (state === 'closed') prOptions = { ...prOptions, sort: 'updated', direction: 'asc' }
+      if (state === 'closed') {
+        prOptions = { ...prOptions, sort: 'updated', direction: 'asc' }
+      }
       let response = await client.pullRequests.getAll(prOptions)
       this._processContributions(response.data)
       while (/** @type {*} */ (this.github).hasNextPage(response)) {
@@ -163,7 +165,9 @@ class GitHubCurationService {
     await Promise.all(
       toBeCleaned.map(throat(10, async coordinates => this.cache.delete(this._getCacheKey(coordinates))))
     )
-    if (data.merged_at) await this._prMerged(curations)
+    if (data.merged_at) {
+      await this._prMerged(curations)
+    }
   }
 
   /**
@@ -373,12 +377,15 @@ class GitHubCurationService {
 
     if (userGithub) {
       const { name, email } = await this._getUserInfo(userGithub)
-      if (name && email) fileBody.committer = { name, email }
+      if (name && email) {
+        fileBody.committer = { name, email }
+      }
     }
 
     // Github requires name/email to set committer
-    if ((info.name || info.login) && info.email)
+    if ((info.name || info.login) && info.email) {
       fileBody.committer = { name: info.name || info.login, email: info.email }
+    }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = /** @type {*} */ (currentContent)._origin.sha
       return serviceGithub.rest.repos.createOrUpdateFileContents(fileBody)
@@ -405,8 +412,9 @@ class GitHubCurationService {
   /** @param {CurationPatchEntry[]} patches */
   async _validateDefinitionsExist(patches) {
     const targetCoordinates = patches.reduce((result, patch) => {
-      for (const key in patch.revisions)
+      for (const key in patch.revisions) {
         result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+      }
       return result
     }, [])
     const validDefinitions = await this.definitionService.listAll(targetCoordinates)
@@ -541,8 +549,9 @@ class GitHubCurationService {
    */
   async addOrUpdate(userGithub, serviceGithub, info, patch) {
     const { missing } = await this._validateDefinitionsExist(patch.patches)
-    if (missing.length > 0)
+    if (missing.length > 0) {
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
+    }
     return this._addOrUpdate(userGithub, serviceGithub, info, patch)
   }
 
@@ -752,15 +761,22 @@ ${this._formatDefinitions(patch.patches)}`
    * @returns {Promise<CurationRevision | null>} The requested curation revision data, or null
    */
   async get(coordinates, curation = null) {
-    if (!coordinates.revision)
+    if (!coordinates.revision) {
       throw new Error(
         `Coordinates ${coordinates.toString()} appear to be malformed. Are they missing a namespace or revision?`
       )
-    if (curation && typeof curation !== 'number' && typeof curation !== 'string') return curation
+    }
+    if (curation && typeof curation !== 'number' && typeof curation !== 'string') {
+      return curation
+    }
     const all = await this._getCurations(coordinates, /** @type {number | string | null} */ (curation))
-    if (!all || !all.revisions) return null
+    if (!all || !all.revisions) {
+      return null
+    }
     const result = all.revisions[coordinates.revision]
-    if (!result) return null
+    if (!result) {
+      return null
+    }
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(result, '_origin', { value: all._origin, enumerable: false })
     return result
@@ -788,7 +804,9 @@ ${this._formatDefinitions(patch.patches)}`
       original.length - 1 !== i ? [current, 'children'] : current
     )
     const blob = get(tree, treePath)
-    if (!blob) return null
+    if (!blob) {
+      return null
+    }
     this.logger.debug('8:compute:curation_blob:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
@@ -821,7 +839,9 @@ ${this._formatDefinitions(patch.patches)}`
       curationFilenames.map(
         throat(10, async path => {
           const content = await this._getContent(sha, path)
-          if (!content) return undefined
+          if (!content) {
+            return undefined
+          }
           return new Curation(content, path)
         })
       )
@@ -846,8 +866,12 @@ ${this._formatDefinitions(patch.patches)}`
    * @param {CurationRevision} curation
    */
   _ensureCurationInfo(definition, curation) {
-    if (!curation) return
-    if (Object.getOwnPropertyNames(curation).length === 0) return
+    if (!curation) {
+      return
+    }
+    if (Object.getOwnPropertyNames(curation).length === 0) {
+      return
+    }
     const origin = get(curation, '_origin.sha')
     definition.described = definition.described || {}
     definition.described.tools = definition.described.tools || []
@@ -937,9 +961,13 @@ ${this._formatDefinitions(patch.patches)}`
   async list(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
     const existing = await this.cache.get(cacheKey)
-    if (existing) return existing
+    if (existing) {
+      return existing
+    }
     const data = await this.store.list(coordinates)
-    if (data) await this.cache.set(cacheKey, data, 60 * 60 * 24)
+    if (data) {
+      await this.cache.set(cacheKey, data, 60 * 60 * 24)
+    }
     return data
   }
 
@@ -955,7 +983,9 @@ ${this._formatDefinitions(patch.patches)}`
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
         const data = await this.list(coordinates)
-        if (!data) return
+        if (!data) {
+          return
+        }
         const key = coordinates.toString()
         result[key] = /** @type {CurationListResult} */ (data)
       })
@@ -977,7 +1007,9 @@ ${this._formatDefinitions(patch.patches)}`
       const response = await this.github.rest.pulls.listFiles({ owner, repo, pull_number: number })
       return response.data
     } catch (/** @type {*} */ error) {
-      if (error.code === 404) throw error
+      if (error.code === 404) {
+        throw error
+      }
       throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`, { cause: error })
     }
   }
@@ -1004,7 +1036,9 @@ ${this._formatDefinitions(patch.patches)}`
       const changedRevisions = allRevisions.filter(
         revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
       )
-      for (const revision of changedRevisions) changedCoordinates.push(`${fileName}/${revision}`)
+      for (const revision of changedRevisions) {
+        changedCoordinates.push(`${fileName}/${revision}`)
+      }
     }
     return changedCoordinates
   }
@@ -1108,7 +1142,9 @@ ${this._formatDefinitions(patch.patches)}`
     const contributions = []
     coordinates = coordinates.asRevisionless()
     const { curations } = /** @type {CurationListResult} */ (await this.list(coordinates))
-    if (!curations || Object.keys(curations).length === 0) return undefined
+    if (!curations || Object.keys(curations).length === 0) {
+      return undefined
+    }
     const processedRevisions = new Set()
     for (const [curatedCoordinatesStr, curation] of Object.entries(curations)) {
       const curatedCoordinates = EntityCoordinates.fromString(curatedCoordinatesStr)
@@ -1139,7 +1175,9 @@ ${this._formatDefinitions(patch.patches)}`
         info,
         matchingRevisionAndReason
       )
-      for (const r of matchingRevisionAndReason) processedRevisions.add(r.version)
+      for (const r of matchingRevisionAndReason) {
+        processedRevisions.add(r.version)
+      }
       contributions.push({
         coordinates: curatedCoordinates.toString(),
         contribution: get(contribution, 'data.html_url')
@@ -1157,7 +1195,9 @@ ${this._formatDefinitions(patch.patches)}`
   async _getCurationTree(pr) {
     const key = this._generateCurationTreeKey(pr)
     const cached = this.treeCache.get(key)
-    if (cached) return cached
+    if (cached) {
+      return cached
+    }
     const tree = await this.smartGit.tree(pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch)
     // Since these trees are used very often and not changed frequently, it should be cached but not be kept in Redis.
     // In case webhook event failed to trigger cache clean, set ttl to a day

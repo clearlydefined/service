@@ -32,18 +32,24 @@ class QueueHandler {
     let isQueueEmpty = true
     try {
       const messages = await this._queue.dequeueMultiple()
-      if (messages && messages.length > 0) isQueueEmpty = false
+      if (messages && messages.length > 0) {
+        isQueueEmpty = false
+      }
       const results = await Promise.allSettled(
         messages.map(async message => {
           await this._messageHandler.processMessage(message)
           await this._queue.delete(message)
         })
       )
-      for (const result of results.filter(result => result.status === 'rejected')) this.logger.error(result.reason)
+      for (const result of results.filter(result => result.status === 'rejected')) {
+        this.logger.error(result.reason)
+      }
     } catch (error) {
       this.logger.error(error instanceof Error ? error.message : String(error))
     } finally {
-      if (!once) setTimeout(this.work.bind(this), isQueueEmpty ? 10000 : 0)
+      if (!once) {
+        setTimeout(this.work.bind(this), isQueueEmpty ? 10000 : 0)
+      }
     }
   }
 }
@@ -74,7 +80,9 @@ class DefinitionUpgrader {
   /** @param {DequeuedMessage} message */
   async processMessage(message) {
     let coordinates = get(message, 'data.coordinates')
-    if (!coordinates) return
+    if (!coordinates) {
+      return
+    }
     coordinates = EntityCoordinates.fromObject(coordinates)
 
     while (this._upgradeLock.get(coordinates.toString())) {

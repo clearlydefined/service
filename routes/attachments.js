@@ -17,7 +17,9 @@ router.get('/:id', asyncMiddleware(getAttachment))
  */
 async function getAttachment(request, response) {
   const result = await attachmentStore.get(/** @type {string} */ (request.params.id))
-  if (!result) return response.sendStatus(404)
+  if (!result) {
+    return response.sendStatus(404)
+  }
   return response.status(200).send(result)
 }
 

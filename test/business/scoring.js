@@ -164,7 +164,9 @@ function createDefinition(declared, files) {
     // collect up the flie license expressions
     const expressions = Array.from(
       files.reduce((list, file) => {
-        if (!file.facets || file.facets.includes('core')) list.add(file.license)
+        if (!file.facets || file.facets.includes('core')) {
+          list.add(file.license)
+        }
         return list
       }, new Set())
     ).filter(e => e)

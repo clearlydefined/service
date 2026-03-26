@@ -82,8 +82,12 @@ router.get('/', asyncMiddleware(getDefinitions))
  */
 async function getDefinitions(request, response) {
   const pattern = request.query.pattern
-  if (pattern) return response.send(await definitionService.suggestCoordinates(pattern))
-  if (!validator.validate('definitions-find', request.query)) return response.status(400).send(validator.errorsText())
+  if (pattern) {
+    return response.send(await definitionService.suggestCoordinates(pattern))
+  }
+  if (!validator.validate('definitions-find', request.query)) {
+    return response.status(400).send(validator.errorsText())
+  }
   const normalizedCoordinates = await utils.toNormalizedEntityCoordinates(request.query)
   const result = await definitionService.find({ ...request.query, ...normalizedCoordinates })
   return response.send(result)
@@ -94,9 +98,12 @@ async function getDefinitions(request, response) {
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
   asyncMiddleware(async (/** @type {Request} */ request, /** @type {Response} */ response) => {
-    if (!request.query.preview)
+    if (!request.query.preview) {
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
-    if (!validator.validate('curation', request.body)) return response.status(400).send(validator.errorsText())
+    }
+    if (!validator.validate('curation', request.body)) {
+      return response.status(400).send(validator.errorsText())
+    }
     const coordinates = await utils.toEntityCoordinatesFromRequest(request)
     const result = await definitionService.compute(coordinates, request.body)
     return response.status(200).send(result)
@@ -115,8 +122,9 @@ async function listDefinitions(request, response) {
   const coordinatesList = request.body.map((/** @type {string | null | undefined} */ entry) =>
     EntityCoordinates.fromString(entry)
   )
-  if (coordinatesList.length > 500)
+  if (coordinatesList.length > 500) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
+  }
   const normalizedCoordinates = await Promise.all(coordinatesList.map(utils.toNormalizedEntityCoordinates))
   const coordinatesLookup = mapCoordinates(request, normalizedCoordinates)
 
@@ -161,8 +169,9 @@ function mapCoordinates(request, normalizedCoordinates) {
   for (let i = 0; i < request.body.length; i++) {
     const requestedKey = request.body[i]
     const normalizedKey = normalizedCoordinates[i]?.toString()
-    if (requestedKey && normalizedKey && requestedKey.toLowerCase() !== normalizedKey.toLowerCase())
+    if (requestedKey && normalizedKey && requestedKey.toLowerCase() !== normalizedKey.toLowerCase()) {
       coordinatesLookup.set(requestedKey, normalizedKey)
+    }
   }
   return coordinatesLookup
 }
@@ -175,15 +184,21 @@ function mapCoordinates(request, normalizedCoordinates) {
  */
 function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
   const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
-  if (!shouldAdaptKeys) return result
+  if (!shouldAdaptKeys) {
+    return result
+  }
   const resultKeyLookup = new Map(Object.keys(result).map(key => [key.toLowerCase(), key]))
   return requestedKeys.reduce(
     (total, requested) => {
       let mapped = coordinatesLookup.get(requested)
-      if (matchCase) mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
+      if (matchCase) {
+        mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
+      }
       const resultKey = mapped || resultKeyLookup.get(requested.toLowerCase())
       const value = result[resultKey]
-      if (value) total[mapped ? requested : resultKey] = value
+      if (value) {
+        total[mapped ? requested : resultKey] = value
+      }
       return total
     },
     /** @type {Record<string, any>} */ ({})

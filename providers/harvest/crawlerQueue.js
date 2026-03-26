@@ -25,8 +25,11 @@ class CrawlingQueueHarvester {
     const entries = Array.isArray(spec) ? spec : [spec]
     for (const entry of entries) {
       const message = JSON.stringify(this.toHarvestItem(entry))
-      if (turbo) this.normalQueue.queue(message)
-      else this.laterQueue.queue(message)
+      if (turbo) {
+        this.normalQueue.queue(message)
+      } else {
+        this.laterQueue.queue(message)
+      }
     }
   }
 

@@ -44,13 +44,19 @@ class StatsService {
    */
   async get(stat) {
     const statKey = /** @type {StatKey} */ (stat.toLowerCase())
-    if (!this.statLookup[statKey]) throw new Error('Not found')
+    if (!this.statLookup[statKey]) {
+      throw new Error('Not found')
+    }
     try {
       const cacheKey = this._getCacheKey(statKey)
       const cached = await this.cache.get(cacheKey)
-      if (cached) return cached
+      if (cached) {
+        return cached
+      }
       const result = await this.statLookup[statKey].bind(this)()
-      if (result) await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
+      if (result) {
+        await this.cache.set(cacheKey, result, 60 * 60 /* 1h */)
+      }
       return result
     } catch (error) {
       this.logger.error(`Stat service failed for ${statKey}`, error)
@@ -122,7 +128,9 @@ class StatsService {
    * @private
    */
   _getMedian(frequencyTable, totalCount) {
-    if (totalCount === 0) return 0
+    if (totalCount === 0) {
+      return 0
+    }
     const cutoff = Math.ceil(totalCount / 2)
     let marker = 0
     let median = 0

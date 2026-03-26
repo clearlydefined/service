@@ -106,7 +106,9 @@ describe('Definition Service', () => {
     const { service } = setup()
     service.definitionStore.list = coordinates => {
       coordinates.revision = '2.3'
-      if (coordinates.name === 'missing') return Promise.resolve([])
+      if (coordinates.name === 'missing') {
+        return Promise.resolve([])
+      }
       return Promise.resolve([coordinates.toString().toLowerCase()])
     }
     const coordinates = [
@@ -671,14 +673,22 @@ function setupWithDelegates(
 function validate(definition) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
-  if (!validator.validate('definition', definition)) throw new Error(validator.errorsText())
+  if (!validator.validate('definition', definition)) {
+    throw new Error(validator.errorsText())
+  }
 }
 
 function createDefinition(facets, files, tools) {
   const result = {}
-  if (facets) set(result, 'described.facets', facets)
-  if (files) result.files = files
-  if (tools) set(result, 'described.tools', tools)
+  if (facets) {
+    set(result, 'described.facets', facets)
+  }
+  if (files) {
+    result.files = files
+  }
+  if (tools) {
+    set(result, 'described.tools', tools)
+  }
   return result
 }
 

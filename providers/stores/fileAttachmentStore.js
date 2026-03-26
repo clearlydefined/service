@@ -46,7 +46,9 @@ class FileAttachmentStore {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result.toString()).attachment
     } catch (/** @type {any} */ error) {
-      if (error.code === 'ENOENT') return null
+      if (error.code === 'ENOENT') {
+        return null
+      }
       throw error
     }
   }

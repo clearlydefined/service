@@ -43,7 +43,9 @@ class RedisCache {
    * @throws {Error} Will throw an error if the Redis connection fails
    */
   async initialize() {
-    if (this._client) return Promise.resolve()
+    if (this._client) {
+      return Promise.resolve()
+    }
     if (!this._clientReady) {
       this._clientReady = RedisCache.initializeClient(this.options, this.logger)
         .then(client => {
@@ -86,7 +88,9 @@ class RedisCache {
    */
   async get(item) {
     const cacheItem = await this._client.get(item)
-    if (!cacheItem) return null
+    if (!cacheItem) {
+      return null
+    }
 
     let result
     try {
@@ -114,7 +118,9 @@ class RedisCache {
       return null
     }
 
-    if (!result.startsWith(objectPrefix)) return result
+    if (!result.startsWith(objectPrefix)) {
+      return result
+    }
     try {
       return JSON.parse(result.substring(4))
     } catch (error) {
@@ -132,11 +138,16 @@ class RedisCache {
    * @returns {Promise<void>} Promise that resolves when the item is stored
    */
   async set(item, value, ttlSeconds) {
-    if (typeof value !== 'string') value = objectPrefix + JSON.stringify(value)
+    if (typeof value !== 'string') {
+      value = objectPrefix + JSON.stringify(value)
+    }
     const deflated = pako.deflate(value)
     const data = Buffer.from(deflated).toString('base64')
-    if (ttlSeconds) await this._client.set(item, data, { EX: ttlSeconds })
-    else await this._client.set(item, data)
+    if (ttlSeconds) {
+      await this._client.set(item, data, { EX: ttlSeconds })
+    } else {
+      await this._client.set(item, data)
+    }
   }
 
   /**

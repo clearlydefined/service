@@ -16,10 +16,14 @@ const loggerFactory = require('../../logging/logger')
  * @returns {string[]} Parsed array or empty array if parsing fails
  */
 function parseListEnv(value, logger) {
-  if (!value || value.trim() === '') return []
+  if (!value || value.trim() === '') {
+    return []
+  }
   try {
     const parsed = JSON.parse(value)
-    if (!Array.isArray(parsed)) throw new Error('Not an array')
+    if (!Array.isArray(parsed)) {
+      throw new Error('Not an array')
+    }
     return parsed
   } catch (e) {
     logger.warn(`Blacklist configuration invalid, using empty list: ${e instanceof Error ? e.message : String(e)}`)

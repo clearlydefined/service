@@ -62,7 +62,9 @@ router.get(
     } catch (e) {
       const error = /** @type {any} */ (e)
       logger.error('Error in /:login/:repo/revisions route', { error })
-      if (error.code === 404) return response.status(200).send([])
+      if (error.code === 404) {
+        return response.status(200).send([])
+      }
       // TODO what to do on non-404 errors? Log for sure but what do we give back to the caller?
       return response.status(200).send([])
     }
