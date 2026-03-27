@@ -141,7 +141,8 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
         if (!tool || !toolVersion) {
           return result
         }
-        const current = (result[tool] = result[tool] || {})
+        result[tool] = result[tool] || {}
+        const current = result[tool]
         current[toolVersion] = entry.content
         return result
       }, result)

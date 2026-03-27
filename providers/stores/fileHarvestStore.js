@@ -113,7 +113,8 @@ class FileHarvestStore extends AbstractFileStore {
     )
     return contents.reduce((result, entry) => {
       const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
-      const current = (result[tool] = result[tool] || {})
+      result[tool] = result[tool] || {}
+      const current = result[tool]
       current[toolVersion] = entry.content
       return result
     }, {})
