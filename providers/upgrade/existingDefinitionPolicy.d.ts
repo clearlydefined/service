@@ -9,5 +9,3 @@ export declare class ExistingDefinitionPolicy implements UpgradeHandler {
 
   validate(definition: Definition | null): Promise<Definition | undefined>
 }
-
-export declare function factory(): ExistingDefinitionPolicy

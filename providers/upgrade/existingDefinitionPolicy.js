@@ -25,12 +25,6 @@ class ExistingDefinitionPolicy {
   }
 }
 
-/** @returns {ExistingDefinitionPolicy} */
-function factory() {
-  return new ExistingDefinitionPolicy()
-}
-
 module.exports = {
-  ExistingDefinitionPolicy,
-  factory
+  ExistingDefinitionPolicy
 }
