@@ -21,7 +21,7 @@ export interface FetchRequestOptions {
   /** HTTP headers to include in the request. */
   headers?: Record<string, string>
   /** Request body data. */
-  body?: any
+  body?: unknown
   /** Whether to include credentials in cross-origin requests. */
   withCredentials?: boolean
   /** Whether to throw an error for HTTP error status codes. Defaults to `true`. */
@@ -36,8 +36,6 @@ export interface FetchResponse<T = any> extends AxiosResponse<T> {
   statusCode: number
   /** HTTP status message (alias for `statusText`). */
   statusMessage: string
-  /** Response configuration used for the request. */
-  config: any
 }
 
 /** HTTP error with status code information. */
