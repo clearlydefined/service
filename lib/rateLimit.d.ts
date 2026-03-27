@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { NextFunction, Request, Response } from 'express'
-import type { Store } from 'express-rate-limit'
+import type { Options as ExpressRateLimitOptions, Store } from 'express-rate-limit'
+import type { RedisClientType } from 'redis'
 import type { ICache } from '../providers/caching'
 import type { Logger } from '../providers/logging'
 
@@ -33,7 +34,7 @@ export interface ExtendedRateLimitConfig extends LegacyRateLimitConfig {
 /** Redis-specific configuration for rate limiting */
 export interface RedisRateLimitConfig {
   /** Redis client instance */
-  client: any
+  client: RedisClientType
   /** Prefix for Redis keys used by the rate limiter */
   prefix: string
 }
@@ -67,7 +68,7 @@ export type RateLimitMiddleware = (req: Request, res: Response, next: NextFuncti
 /** Base rate limiter class that provides rate limiting functionality using express-rate-limit */
 declare class RateLimiter {
   /** Configuration options for the rate limiter */
-  protected options: any
+  protected options: RateLimiterOptions
 
   /** Logger instance for rate limiter operations */
   protected logger: Logger
@@ -80,7 +81,7 @@ declare class RateLimiter {
    *
    * @param opts - Configuration options for the rate limiter
    */
-  constructor(opts: any)
+  constructor(opts: RateLimiterOptions)
 
   /**
    * Initializes the rate limiter with optional store
@@ -104,20 +105,20 @@ declare class RateLimiter {
    * @param store - Optional store for rate limit data persistence
    * @returns Options object for express-rate-limit
    */
-  static buildOptions(config: any, store?: Store): any
+  static buildOptions(config: RateLimitConfig, store?: Store): Partial<ExpressRateLimitOptions>
 }
 
 /** Redis-based rate limiter that extends RateLimiter with Redis persistence */
 declare class RedisBasedRateLimiter extends RateLimiter {
   /** Redis client instance */
-  private _client: any
+  private _client: RedisClientType | undefined
 
   /**
    * Creates a new RedisBasedRateLimiter instance
    *
    * @param opts - Configuration options including Redis client
    */
-  constructor(opts: any)
+  constructor(opts: RateLimiterOptions)
 
   /**
    * Initializes the Redis-based rate limiter
@@ -134,13 +135,13 @@ declare class RedisBasedRateLimiter extends RateLimiter {
    * @param config - Redis configuration with prefix
    * @returns Redis store instance for express-rate-limit
    */
-  static buildRedisStore(client: any, config: any): Store
+  static buildRedisStore(client: RedisClientType, config: RedisRateLimitConfig): Store
 }
 
 /** Abstract base class for middleware delegates that create rate limiting middleware asynchronously */
 declare abstract class AbstractMiddlewareDelegate {
   /** Configuration options for the middleware delegate */
-  protected options: any
+  protected options: RateLimiterFactoryOptions
 
   /** Logger instance for middleware operations */
   protected logger: Logger
@@ -153,7 +154,7 @@ declare abstract class AbstractMiddlewareDelegate {
    *
    * @param opts - Configuration options for the middleware delegate
    */
-  constructor(opts: any)
+  constructor(opts: RateLimiterFactoryOptions)
 
   /**
    * Gets the rate limiting middleware function
@@ -203,7 +204,7 @@ declare class BatchApiMiddlewareDelegate extends AbstractMiddlewareDelegate {
  * @param opts - Configuration options for the rate limiter
  * @returns RateLimiter or RedisBasedRateLimiter instance
  */
-declare function createRateLimiter(opts: any): RateLimiter | RedisBasedRateLimiter
+declare function createRateLimiter(opts: RateLimiterOptions): RateLimiter | RedisBasedRateLimiter
 
 /**
  * Builds rate limiter options from configuration
@@ -214,7 +215,12 @@ declare function createRateLimiter(opts: any): RateLimiter | RedisBasedRateLimit
  * @param logger - Logger instance
  * @returns Rate limiter options
  */
-declare function buildOpts(config: LegacyRateLimitConfig, cachingService: ICache, prefix: string, logger?: Logger): any
+declare function buildOpts(
+  config: LegacyRateLimitConfig,
+  cachingService: ICache,
+  prefix: string,
+  logger?: Logger
+): RateLimiterOptions
 
 /**
  * Creates an API rate limiter instance
@@ -241,8 +247,8 @@ declare function createBatchApiLimiter(options?: RateLimiterFactoryOptions): Rat
  * @returns Express middleware function for API rate limiting
  */
 declare function setupApiRateLimiterAfterCachingInit(
-  config: any,
-  cachingService: any,
+  config: RateLimiterFactoryOptions['config'],
+  cachingService: ICache,
   logger?: Logger
 ): RateLimitMiddleware
 
@@ -255,8 +261,8 @@ declare function setupApiRateLimiterAfterCachingInit(
  * @returns Express middleware function for batch API rate limiting
  */
 declare function setupBatchApiRateLimiterAfterCachingInit(
-  config: any,
-  cachingService: any,
+  config: RateLimiterFactoryOptions['config'],
+  cachingService: ICache,
   logger?: Logger
 ): RateLimitMiddleware
 

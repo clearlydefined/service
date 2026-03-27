@@ -6,8 +6,8 @@
  */
 
 declare module 'winston-azure-application-insights' {
-  import type * as winston from 'winston'
   import type * as appInsights from 'applicationinsights'
+  import type * as winston from 'winston'
 
   /** Winston log levels mapped to Application Insights severity levels. */
   type WinstonLevel =
@@ -117,5 +117,5 @@ declare module 'winston-azure-application-insights' {
 
   // Export the transport constructor for use with winston.add()
   export const AzureApplicationInsightsLogger: AzureApplicationInsightsLoggerConstructor
-  export { getMessageLevel, defaultFormatter }
+  export type { defaultFormatter, getMessageLevel }
 }
