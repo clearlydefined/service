@@ -14,7 +14,11 @@ const { factory: existingDefinitionPolicyFactory } = require('./existingDefiniti
 
 class DelayedComputePolicy {
   /** @param {DefinitionQueueUpgraderOptions} [options] */
-  constructor(options = /** @type {DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })) {
+  constructor(
+    options = /** @type {DefinitionQueueUpgraderOptions} */ ({
+      queue: () => ({})
+    })
+  ) {
     this.options = options
     this.logger = options.logger || logger()
   }
@@ -49,11 +53,15 @@ class DelayedComputePolicy {
 
   /** @param {EntityCoordinates} coordinates */
   async _queueCompute(coordinates) {
-    if (!this._compute) throw new Error('Compute queue is not set')
+    if (!this._compute) {
+      throw new Error('Compute queue is not set')
+    }
     try {
       const message = this._constructMessage(coordinates)
       await this._compute.queue(message)
-      this.logger.info('Queued for delayed definition compute', { coordinates: coordinates.toString() })
+      this.logger.info('Queued for delayed definition compute', {
+        coordinates: coordinates.toString()
+      })
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       this.logger.error(`Error queueing for delayed definition compute ${message}`, {
@@ -78,7 +86,11 @@ class DelayedComputePolicy {
  * @param {DefinitionQueueUpgraderOptions} [options]
  * @returns {DelayedComputePolicy}
  */
-function createDelayedComputePolicy(options = /** @type {DefinitionQueueUpgraderOptions} */ ({ queue: () => ({}) })) {
+function createDelayedComputePolicy(
+  options = /** @type {DefinitionQueueUpgraderOptions} */ ({
+    queue: () => ({})
+  })
+) {
   return new DelayedComputePolicy(options)
 }
 

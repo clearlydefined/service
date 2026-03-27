@@ -9,8 +9,8 @@ import type {
   DefinitionStore,
   HarvestService,
   HarvestStore,
-  SearchService,
-  UpgradeHandler
+  RecomputeHandler,
+  SearchService
 } from '../business/definitionService'
 import type { AttachmentStore } from '../business/noticeService'
 import type { StatsSearchService } from '../business/statsService'
@@ -24,6 +24,12 @@ import type { IQueue } from '../providers/queueing'
 /** Provider instance that supports async initialization */
 interface Initializable {
   initialize(): Promise<void> | void
+}
+
+/** Queue factory pair used by recompute handlers */
+interface RecomputeQueueFactories {
+  upgrade: () => IQueue & Initializable
+  compute: () => IQueue & Initializable
 }
 
 /** Service endpoint URLs */
@@ -79,11 +85,8 @@ interface AppConfig {
     store: () => DefinitionStore & Initializable
   }
   upgrade: {
-    queue: () => Initializable
-    service: (options: { queue: () => Initializable }) => UpgradeHandler &
-      Initializable & {
-        setupProcessing(definitionService: DefinitionService, logger: Logger): void
-      }
+    queue: RecomputeQueueFactories
+    service: (options: { queue: RecomputeQueueFactories }) => RecomputeHandler & Initializable
   }
   attachment: {
     store: () => AttachmentStore & Initializable
