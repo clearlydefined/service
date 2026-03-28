@@ -1,6 +1,7 @@
-const { LicenseMatcher, DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy } = require('../../lib/licenseMatcher')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { expect } = require('chai')
+// @ts-nocheck
+import { expect } from 'chai'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher } from '../../lib/licenseMatcher.js'
 
 describe('licenseMatcher.js', () => {
   describe('LicenseMatcher process()', () => {

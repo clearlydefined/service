@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import { expect } from 'chai'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 describe('EntityCoordinates', () => {
   it('should have type and provider in lower case', () => {

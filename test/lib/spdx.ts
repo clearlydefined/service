@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const SPDX = require('@clearlydefined/spdx')
-const { expect } = require('chai')
+import SPDX from '@clearlydefined/spdx'
+import { expect } from 'chai'
 
 describe('SPDX utility functions', () => {
   it('parses spdx expressions', () => {
-    const data = new Map([
+    const data = new Map<any, any>([
       [{ license: 'MIT' }, { license: 'MIT' }],
       ['MIT', { license: 'MIT' }],
       ['mit', { license: 'MIT' }],
@@ -60,7 +60,7 @@ describe('SPDX utility functions', () => {
   })
 
   it('stringifies spdx objects', () => {
-    const data = new Map([
+    const data = new Map<any, any>([
       [{ license: 'MIT' }, 'MIT'],
       [{ left: { license: 'MIT' }, conjunction: 'and', right: { license: 'Apache-2.0' } }, 'MIT AND Apache-2.0'],
       [{ left: { license: 'MIT' }, conjunction: 'or', right: { license: 'Apache-2.0' } }, 'MIT OR Apache-2.0'],
@@ -192,8 +192,8 @@ describe('SPDX utility functions', () => {
       ]
     ]
     for (const input of data) {
-      const results = SPDX.expand(input[0])
-      for (const expected of input[1]) {
+      const results = SPDX.expand(input[0] as string)
+      for (const expected of input[1] as string[][]) {
         expect(results).to.deep.include(expected)
       }
     }
@@ -201,7 +201,7 @@ describe('SPDX utility functions', () => {
 
   it('normalizes spdx expressions', () => {
     // prettier-ignore
-    const data = {
+    const data: Record<string, any> = {
       'AGPL-1.0': 'AGPL-1.0',
       'apache-2.0': 'Apache-2.0',
       apache2: 'NOASSERTION',
@@ -243,7 +243,7 @@ describe('SPDX utility functions', () => {
   })
 
   it('looks up spdx by name', () => {
-    const data = {
+    const data: Record<string, any> = {
       'Apache License 2.0': 'Apache-2.0',
       ' Apache License 2.0 ': 'Apache-2.0',
       'apache license 2.0': 'Apache-2.0',
