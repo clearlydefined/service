@@ -11,5 +11,5 @@ import type { Definition, UpgradeHandler } from '../../business/definitionServic
 export declare class SkipUpgradePolicy implements UpgradeHandler {
   currentSchema?: string
 
-  validate(definition: Definition | null): Promise<Definition | undefined>
+  validate(definition: Definition | null): Promise<Definition | null>
 }

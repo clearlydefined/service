@@ -19,10 +19,10 @@ class SkipUpgradePolicy {
 
   /**
    * @param {import('../../business/definitionService').Definition | null} definition
-   * @returns {Promise<import('../../business/definitionService').Definition | undefined>}
+   * @returns {Promise<import('../../business/definitionService').Definition | null>}
    */
   async validate(definition) {
-    return definition || undefined
+    return definition || null
   }
 }
 
