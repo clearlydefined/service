@@ -80,6 +80,7 @@ class RecomputeHandler {
    */
   async setupProcessing(definitionService, logger, once) {
     if (logger) {
+      //?
       this._logger = logger
     }
     this._logger.debug('Setting up recompute handler processing', {
@@ -114,13 +115,14 @@ function getPolicyName(policy) {
 
 /**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
- * @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options]
+ * Only `logger` is used from options; any other properties (e.g. `queue`) are intentionally ignored.
+ * @param {{ logger?: import('../logging').Logger }} [options]
  */
-function defaultFactory(options = {}) {
+function defaultFactory({ logger } = {}) {
   return new RecomputeHandler({
-    upgradePolicy: versionCheckFactory(options),
+    upgradePolicy: versionCheckFactory({ logger }),
     computePolicy: createOnDemandComputePolicy(),
-    logger: options.logger
+    logger
   })
 }
 

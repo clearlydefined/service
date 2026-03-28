@@ -40,8 +40,11 @@ export declare class RecomputeHandler implements IRecomputeHandler {
   compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
 }
 
-/** Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck */
-export declare function defaultFactory(options?: DefinitionVersionCheckerOptions): RecomputeHandler
+/**
+ * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
+ * Only `logger` is used; any other properties are intentionally ignored.
+ */
+export declare function defaultFactory(options?: Pick<DefinitionVersionCheckerOptions, 'logger'>): RecomputeHandler
 
 /** Compatibility alias for DEFINITION_UPGRADE_PROVIDER=upgradeQueue */
 export declare function delayedFactory(options?: DelayedFactoryOptions): RecomputeHandler
