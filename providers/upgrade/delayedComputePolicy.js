@@ -3,7 +3,7 @@
 
 const logger = require('../logging/logger')
 const { setup } = require('./process')
-const { ExistingDefinitionPolicy } = require('./existingDefinitionPolicy')
+const { SkipUpgradePolicy } = require('./skipUpgradePolicy')
 
 /** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
@@ -36,7 +36,7 @@ class DelayedComputePolicy {
    * @param {ICache} [sharedCache]
    */
   setupProcessing(definitionService, logger, once, sharedCache) {
-    const upgradePolicy = new ExistingDefinitionPolicy()
+    const upgradePolicy = new SkipUpgradePolicy()
     return setup(this._compute, definitionService, logger, once, upgradePolicy, sharedCache)
   }
 

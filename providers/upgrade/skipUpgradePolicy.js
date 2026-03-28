@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Policy for delayed compute queue processing.
- * Treat any existing definition as valid so compute queue only handles missing definitions.
+ * Upgrade policy for delayed compute queue processing.
+ * Always treats the stored definition as valid, effectively skipping staleness checks.
+ * Used by the delayed compute path to implement missing-only semantics.
  */
-class ExistingDefinitionPolicy {
+class SkipUpgradePolicy {
   /** @param {string} schemaVersion */
   set currentSchema(schemaVersion) {
     this._currentSchema = schemaVersion
@@ -26,5 +27,5 @@ class ExistingDefinitionPolicy {
 }
 
 module.exports = {
-  ExistingDefinitionPolicy
+  SkipUpgradePolicy
 }

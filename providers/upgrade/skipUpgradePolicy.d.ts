@@ -3,8 +3,12 @@
 
 import type { Definition, UpgradeHandler } from '../../business/definitionService'
 
-/** Policy that treats any existing definition as valid. */
-export declare class ExistingDefinitionPolicy implements UpgradeHandler {
+/**
+ * Upgrade policy for delayed compute queue processing.
+ * Always treats the stored definition as valid, effectively skipping staleness checks.
+ * Used by the delayed compute path to implement missing-only semantics.
+ */
+export declare class SkipUpgradePolicy implements UpgradeHandler {
   currentSchema?: string
 
   validate(definition: Definition | null): Promise<Definition | undefined>
