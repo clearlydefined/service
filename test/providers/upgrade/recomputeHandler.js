@@ -1,7 +1,10 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+const chai = require('chai')
+chai.use(chaiAsPromised.default)
+const { expect } = chai
 const sinon = require('sinon')
 
 const EntityCoordinates = require('../../../lib/entityCoordinates')
@@ -160,16 +163,13 @@ describe('RecomputeHandler compute policies', () => {
       expect(result._meta.updated).to.be.a('string')
     })
 
-    it('returns placeholder when delayed queue enqueue fails', async () => {
+    it('throws when delayed queue enqueue fails', async () => {
       const definitionService = createPlaceholderDefinitionService()
       const enqueueError = new Error('compute queue unavailable')
       queue.queue.rejects(enqueueError)
 
       await policy.initialize()
-      const result = await policy.compute(definitionService, coordinates)
-
-      expect(result.coordinates).to.deep.equal(coordinates)
-      expect(result.described.tools).to.deep.equal([])
+      await expect(policy.compute(definitionService, coordinates)).to.be.rejectedWith(enqueueError)
     })
 
     it('setupProcessing skips recompute when definition already exists', async () => {

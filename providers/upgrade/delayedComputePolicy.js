@@ -46,9 +46,8 @@ class DelayedComputePolicy {
    * @returns {Promise<Definition>}
    */
   async compute(definitionService, coordinates) {
-    const placeholder = definitionService.buildEmptyDefinition(coordinates)
     await this._queueCompute(coordinates)
-    return placeholder
+    return definitionService.buildEmptyDefinition(coordinates)
   }
 
   /** @param {EntityCoordinates} coordinates */
@@ -56,19 +55,11 @@ class DelayedComputePolicy {
     if (!this._compute) {
       throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
-    try {
-      const message = this._constructMessage(coordinates)
-      await this._compute.queue(message)
-      this.logger.info('Queued for delayed definition compute', {
-        coordinates: coordinates.toString()
-      })
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      this.logger.error(`Error queueing for delayed definition compute ${message}`, {
-        error,
-        coordinates: coordinates.toString()
-      })
-    }
+    const message = this._constructMessage(coordinates)
+    await this._compute.queue(message)
+    this.logger.info('Queued for delayed definition compute', {
+      coordinates: coordinates.toString()
+    })
   }
 
   /**
