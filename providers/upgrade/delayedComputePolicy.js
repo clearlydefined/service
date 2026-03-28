@@ -54,7 +54,7 @@ class DelayedComputePolicy {
   /** @param {EntityCoordinates} coordinates */
   async _queueCompute(coordinates) {
     if (!this._compute) {
-      throw new Error('Compute queue is not set')
+      throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
     try {
       const message = this._constructMessage(coordinates)
