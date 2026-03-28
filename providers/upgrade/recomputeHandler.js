@@ -3,8 +3,8 @@
 
 const { factory: versionCheckFactory } = require('./defVersionCheck')
 const DefinitionQueueUpgrader = require('./defUpgradeQueue')
-const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
-const { createDelayedComputePolicy } = require('./delayedComputePolicy')
+const { OnDemandComputePolicy } = require('./onDemandComputePolicy')
+const { DelayedComputePolicy } = require('./delayedComputePolicy')
 const memoryQueueConfig = require('./memoryQueueConfig')
 const Cache = require('../caching/memory')
 const logger = require('../logging/logger')
@@ -39,7 +39,7 @@ class RecomputeHandler {
   /** @param {RecomputeHandlerOptions} options */
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
-    this._computePolicy = options.computePolicy || createOnDemandComputePolicy()
+    this._computePolicy = options.computePolicy || new OnDemandComputePolicy()
     this._logger = options.logger || logger()
     this._sharedCache = Cache({
       defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds
@@ -117,7 +117,7 @@ function getPolicyName(policy) {
 function defaultFactory({ logger } = {}) {
   return new RecomputeHandler({
     upgradePolicy: versionCheckFactory({ logger }),
-    computePolicy: createOnDemandComputePolicy(),
+    computePolicy: new OnDemandComputePolicy(),
     logger
   })
 }
@@ -141,7 +141,7 @@ function delayedFactory(options = {}) {
 
   return new RecomputeHandler({
     upgradePolicy: new DefinitionQueueUpgrader(upgradeOptions),
-    computePolicy: createDelayedComputePolicy(computeOptions),
+    computePolicy: new DelayedComputePolicy(computeOptions),
     logger: options.logger
   })
 }

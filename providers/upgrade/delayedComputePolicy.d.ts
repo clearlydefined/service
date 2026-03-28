@@ -29,5 +29,3 @@ export declare class DelayedComputePolicy implements MissingDefinitionComputePol
 
   protected _constructMessage(coordinates: EntityCoordinates): string
 }
-
-export declare function createDelayedComputePolicy(options?: DefinitionQueueUpgraderOptions): DelayedComputePolicy

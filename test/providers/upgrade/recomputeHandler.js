@@ -6,8 +6,8 @@ const sinon = require('sinon')
 
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const { RecomputeHandler, delayedFactory } = require('../../../providers/upgrade/recomputeHandler')
-const { createOnDemandComputePolicy } = require('../../../providers/upgrade/onDemandComputePolicy')
-const { DelayedComputePolicy, createDelayedComputePolicy } = require('../../../providers/upgrade/delayedComputePolicy')
+const { OnDemandComputePolicy } = require('../../../providers/upgrade/onDemandComputePolicy')
+const { DelayedComputePolicy } = require('../../../providers/upgrade/delayedComputePolicy')
 
 describe('RecomputeHandler', () => {
   let upgradePolicy
@@ -105,7 +105,7 @@ describe('RecomputeHandler', () => {
 describe('RecomputeHandler compute policies', () => {
   describe('on-demand', () => {
     it('delegates to computeStoreAndCurate', async () => {
-      const policy = createOnDemandComputePolicy()
+      const policy = new OnDemandComputePolicy()
       const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
       const definition = {
         coordinates,
@@ -132,7 +132,7 @@ describe('RecomputeHandler compute policies', () => {
     beforeEach(() => {
       queue = createQueue()
       queueLogger = createLogger()
-      policy = createDelayedComputePolicy({
+      policy = new DelayedComputePolicy({
         logger: queueLogger,
         queue: () => queue
       })

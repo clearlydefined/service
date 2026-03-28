@@ -82,19 +82,6 @@ class DelayedComputePolicy {
   }
 }
 
-/**
- * @param {DefinitionQueueUpgraderOptions} [options]
- * @returns {DelayedComputePolicy}
- */
-function createDelayedComputePolicy(
-  options = /** @type {DefinitionQueueUpgraderOptions} */ ({
-    queue: () => ({})
-  })
-) {
-  return new DelayedComputePolicy(options)
-}
-
 module.exports = {
-  DelayedComputePolicy,
-  createDelayedComputePolicy
+  DelayedComputePolicy
 }
