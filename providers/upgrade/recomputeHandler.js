@@ -79,10 +79,6 @@ class RecomputeHandler {
    * @param {boolean} [once]
    */
   async setupProcessing(definitionService, logger, once) {
-    if (logger) {
-      //?
-      this._logger = logger
-    }
     this._logger.debug('Setting up recompute handler processing', {
       once: !!once,
       upgradePolicy: getPolicyName(this._upgradePolicy),
