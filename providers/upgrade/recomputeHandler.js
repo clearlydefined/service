@@ -7,6 +7,7 @@ const { createOnDemandComputePolicy } = require('./onDemandComputePolicy')
 const { createDelayedComputePolicy } = require('./delayedComputePolicy')
 const memoryQueueConfig = require('./memoryQueueConfig')
 const Cache = require('../caching/memory')
+const logger = require('../logging/logger')
 const { DefinitionUpgrader } = require('./process')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
@@ -25,7 +26,7 @@ const { DefinitionUpgrader } = require('./process')
  * }} UpgradePolicy
  */
 
-/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy?: MissingDefinitionComputePolicy }} RecomputeHandlerOptions */
+/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy?: MissingDefinitionComputePolicy, logger?: Logger }} RecomputeHandlerOptions */
 
 /**
  * @typedef {{
@@ -39,6 +40,7 @@ class RecomputeHandler {
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy || createOnDemandComputePolicy()
+    this._logger = options.logger || logger()
     this._sharedCache = Cache({
       defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds
     })
@@ -60,7 +62,15 @@ class RecomputeHandler {
   }
 
   async initialize() {
+    this._logger.debug('Initializing recompute handler policies', {
+      upgradePolicy: getPolicyName(this._upgradePolicy),
+      computePolicy: getPolicyName(this._computePolicy)
+    })
     await Promise.all([this._upgradePolicy.initialize?.(), this._computePolicy.initialize?.()])
+    this._logger.debug('Initialized recompute handler policies', {
+      upgradePolicy: getPolicyName(this._upgradePolicy),
+      computePolicy: getPolicyName(this._computePolicy)
+    })
   }
 
   /**
@@ -69,10 +79,23 @@ class RecomputeHandler {
    * @param {boolean} [once]
    */
   async setupProcessing(definitionService, logger, once) {
+    if (logger) {
+      this._logger = logger
+    }
+    this._logger.debug('Setting up recompute handler processing', {
+      once: !!once,
+      upgradePolicy: getPolicyName(this._upgradePolicy),
+      computePolicy: getPolicyName(this._computePolicy)
+    })
     await Promise.all([
       this._upgradePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache),
       this._computePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache)
     ])
+    this._logger.debug('Recompute handler processing setup complete', {
+      once: !!once,
+      upgradePolicy: getPolicyName(this._upgradePolicy),
+      computePolicy: getPolicyName(this._computePolicy)
+    })
   }
 
   /**
@@ -84,6 +107,11 @@ class RecomputeHandler {
   }
 }
 
+/** @param {unknown} policy */
+function getPolicyName(policy) {
+  return policy?.constructor ? policy.constructor.name : 'UnknownPolicy'
+}
+
 /**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
  * @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options]
@@ -91,7 +119,8 @@ class RecomputeHandler {
 function defaultFactory(options = {}) {
   return new RecomputeHandler({
     upgradePolicy: versionCheckFactory(options),
-    computePolicy: createOnDemandComputePolicy()
+    computePolicy: createOnDemandComputePolicy(),
+    logger: options.logger
   })
 }
 
@@ -114,7 +143,8 @@ function delayedFactory(options = {}) {
 
   return new RecomputeHandler({
     upgradePolicy: new DefinitionQueueUpgrader(upgradeOptions),
-    computePolicy: createDelayedComputePolicy(computeOptions)
+    computePolicy: createDelayedComputePolicy(computeOptions),
+    logger: options.logger
   })
 }
 

@@ -25,7 +25,11 @@ export interface DelayedFactoryOptions {
 export declare class RecomputeHandler implements IRecomputeHandler {
   currentSchema?: string
 
-  constructor(options: { upgradePolicy: UpgradeHandler; computePolicy?: MissingDefinitionComputePolicy })
+  constructor(options: {
+    upgradePolicy: UpgradeHandler
+    computePolicy?: MissingDefinitionComputePolicy
+    logger?: Logger
+  })
 
   validate(definition: Definition | null): Promise<Definition | null>
 

@@ -12,12 +12,14 @@ const { DelayedComputePolicy, createDelayedComputePolicy } = require('../../../p
 describe('RecomputeHandler', () => {
   let upgradePolicy
   let computePolicy
+  let logger
   let handler
 
   beforeEach(() => {
     upgradePolicy = createUpgradePolicy()
     computePolicy = createComputePolicy()
-    handler = new RecomputeHandler({ upgradePolicy, computePolicy })
+    logger = createLogger()
+    handler = new RecomputeHandler({ upgradePolicy, computePolicy, logger })
   })
 
   it('initializes both upgrade and compute policies', async () => {
@@ -30,14 +32,13 @@ describe('RecomputeHandler', () => {
   it('supports policy initialize hooks being undefined', async () => {
     upgradePolicy = createUpgradePolicy({ initialize: undefined })
     computePolicy = createComputePolicy({ initialize: undefined })
-    handler = new RecomputeHandler({ upgradePolicy, computePolicy })
+    handler = new RecomputeHandler({ upgradePolicy, computePolicy, logger })
 
     await handler.initialize()
   })
 
   it('delegates setupProcessing to both policies', async () => {
     const definitionService = { currentSchema: '1.7.0' }
-    const logger = createLogger()
 
     await handler.setupProcessing(definitionService, logger, true)
 
@@ -54,7 +55,6 @@ describe('RecomputeHandler', () => {
 
   it('passes the same shared cache instance to both policies', async () => {
     const definitionService = { currentSchema: '1.7.0' }
-    const logger = createLogger()
 
     await handler.setupProcessing(definitionService, logger, false)
 
@@ -158,6 +158,18 @@ describe('RecomputeHandler compute policies', () => {
       expect(result.described.tools).to.deep.equal([])
       expect(result._meta.schemaVersion).to.equal('1.7.0')
       expect(result._meta.updated).to.be.a('string')
+    })
+
+    it('returns placeholder when delayed queue enqueue fails', async () => {
+      const definitionService = createPlaceholderDefinitionService()
+      const enqueueError = new Error('compute queue unavailable')
+      queue.queue.rejects(enqueueError)
+
+      await policy.initialize()
+      const result = await policy.compute(definitionService, coordinates)
+
+      expect(result.coordinates).to.deep.equal(coordinates)
+      expect(result.described.tools).to.deep.equal([])
     })
 
     it('setupProcessing skips recompute when definition already exists', async () => {
