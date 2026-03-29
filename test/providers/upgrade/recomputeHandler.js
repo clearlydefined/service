@@ -156,7 +156,7 @@ describe('RecomputeHandler compute policies', () => {
 
       expect(queue.queue.calledOnce).to.be.true
       expect(EntityCoordinates.fromObject(queuedData.coordinates).toString()).to.equal(coordinates.toString())
-      expect(queuedData._meta).to.deep.equal({})
+      expect(queuedData._meta).to.be.undefined
       expect(result.coordinates).to.deep.equal(coordinates)
       expect(result.described.tools).to.deep.equal([])
       expect(result._meta.schemaVersion).to.equal('1.7.0')

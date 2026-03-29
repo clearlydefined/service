@@ -67,9 +67,7 @@ class DelayedComputePolicy {
    * @returns {string}
    */
   _constructMessage(coordinates) {
-    const _meta = {}
-    const content = { coordinates, _meta }
-    return Buffer.from(JSON.stringify(content)).toString('base64')
+    return Buffer.from(JSON.stringify({ coordinates })).toString('base64')
   }
 }
 
