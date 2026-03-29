@@ -8,7 +8,6 @@ const { DelayedComputePolicy } = require('./delayedComputePolicy')
 const memoryQueueConfig = require('./memoryQueueConfig')
 const Cache = require('../caching/memory')
 const logger = require('../logging/logger')
-const { DefinitionUpgrader } = require('./process')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
@@ -36,13 +35,15 @@ const { DefinitionUpgrader } = require('./process')
  */
 
 class RecomputeHandler {
+  static _sharedCacheTtlSeconds = 60 * 5 /* 5 mins */
+
   /** @param {RecomputeHandlerOptions} options */
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy || new OnDemandComputePolicy()
     this._logger = options.logger || logger()
     this._sharedCache = Cache({
-      defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds
+      defaultTtlSeconds: RecomputeHandler._sharedCacheTtlSeconds
     })
   }
 

@@ -55,7 +55,7 @@ class QueueHandler {
 }
 
 class DefinitionUpgrader {
-  static defaultTtlSeconds = 60 * 5 /* 5 mins */
+  static _defaultTtlSeconds = 60 * 5 /* 5 mins */
   static delayInMSeconds = 500
 
   /**
@@ -68,7 +68,7 @@ class DefinitionUpgrader {
     definitionService,
     logger,
     upgradePolicy,
-    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds })
+    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader._defaultTtlSeconds })
   ) {
     this.logger = logger
     this._definitionService = definitionService
