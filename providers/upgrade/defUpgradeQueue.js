@@ -76,7 +76,16 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param {ICache} [sharedCache]
    */
   setupProcessing(definitionService, logger, once, sharedCache) {
-    return setup(this._upgrade, definitionService, logger, once, undefined, sharedCache)
+    // Use a plain DefinitionVersionChecker (not `this`) so the queue processor returns undefined
+    // for stale definitions and triggers recompute — rather than re-queuing them again.
+    return setup(
+      this._upgrade,
+      definitionService,
+      logger,
+      once,
+      new DefinitionVersionChecker(this.options),
+      sharedCache
+    )
   }
 }
 
