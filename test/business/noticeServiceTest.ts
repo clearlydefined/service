@@ -3,8 +3,8 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import NoticeService from '../../business/noticeService.js'
 import spdxLicenseList from 'spdx-license-list/full.js'
+import NoticeService from '../../business/noticeService.js'
 import logger from '../../providers/logging/logger.js'
 import { createSilentLogger } from '../helpers/mockLogger.ts'
 
@@ -23,7 +23,9 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** test; version 1.0.0 -- \ncopyright me\n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
+      normalizeLineBreaks(
+        `** test; version 1.0.0 -- \ncopyright me\n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
+      )
     )
     expect(notice.summary).to.deep.eq({
       total: 1,
@@ -41,7 +43,9 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** @scope/test; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
+      normalizeLineBreaks(
+        `** @scope/test; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
+      )
     )
   })
 
@@ -132,7 +136,9 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** no-copyright; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
+      normalizeLineBreaks(
+        `** no-copyright; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
+      )
     )
     expect(notice.summary).to.deep.eq({
       total: 3,

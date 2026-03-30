@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import lodash from 'lodash'
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import lodash from 'lodash'
+
 const { compact, uniq, flatten } = lodash
+
 import { expect } from 'chai'
 import Summarizer from '../../../../providers/summary/scancode.js'
 

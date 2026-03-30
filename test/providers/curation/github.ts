@@ -3,15 +3,17 @@
 
 import * as chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import GitHubCurationService from '../../../providers/curation/github.js'
-import DefinitionService from '../../../business/definitionService.js'
-import CurationStore from '../../../providers/curation/memoryStore.js'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
-import Curation from '../../../lib/curation.js'
-import sinon from 'sinon'
 import extend from 'extend'
 import lodash from 'lodash'
+import sinon from 'sinon'
+import DefinitionService from '../../../business/definitionService.js'
+import Curation from '../../../lib/curation.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import GitHubCurationService from '../../../providers/curation/github.js'
+import CurationStore from '../../../providers/curation/memoryStore.js'
+
 const { find } = lodash
+
 import { DateTime } from 'luxon'
 import logger from '../../../providers/logging/logger.js'
 

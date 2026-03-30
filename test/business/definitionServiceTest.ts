@@ -11,16 +11,15 @@ import SummaryService from '../../business/summarizer.js'
 import Curation from '../../lib/curation.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { setIfValue } from '../../lib/utils.js'
+import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
 import DefinitionQueueUpgrader from '../../providers/upgrade/defUpgradeQueue.js'
 import { DefinitionVersionChecker } from '../../providers/upgrade/defVersionCheck.js'
 import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
-import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
 import validator from '../../schemas/validator.js'
 
 const { set } = lodash
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -703,13 +702,18 @@ function buildFile(path: string, license?: string | null, holders?: string[] | n
   return result
 }
 
-function setup(definition?: Record<string, unknown>, coordinateSpec?: string, curation?: Record<string, unknown>): { coordinates: EntityCoordinates; service: any; harvestService: ReturnType<typeof mockHarvestService> } {
+function setup(
+  definition?: Record<string, unknown>,
+  coordinateSpec?: string,
+  curation?: Record<string, unknown>
+): { coordinates: EntityCoordinates; service: any; harvestService: ReturnType<typeof mockHarvestService> } {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
-    apply: (_coordinates: unknown, _curationSpec: unknown, definition: unknown) => Promise.resolve(Curation.apply(definition, curation)),
+    apply: (_coordinates: unknown, _curationSpec: unknown, definition: unknown) =>
+      Promise.resolve(Curation.apply(definition, curation)),
     autoCurate: () => {
       return
     }

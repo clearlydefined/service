@@ -102,13 +102,48 @@ describe('Aggregation service', () => {
 
   it('handles Rust crates with license choices', async () => {
     const testcases = [
-      { name: 'slog', version: '2.7.0', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'MPL-2.0 OR MIT OR Apache-2.0' },
-      { name: 'quote', version: '0.6.4', tools: [['clearlydefined', 'fossology', 'licensee', 'scancode']], expected: 'MIT OR Apache-2.0' },
-      { name: 'quote', version: '1.0.9', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'MIT OR Apache-2.0' },
-      { name: 'rand', version: '0.8.2', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'MIT OR Apache-2.0' },
-      { name: 'regex', version: '1.5.3', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'MIT OR Apache-2.0' },
-      { name: 'serde', version: '1.0.123', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'MIT OR Apache-2.0' },
-      { name: 'mpmc', version: '0.1.6', tools: [['clearlydefined', 'licensee', 'scancode']], expected: 'BSD-2-Clause-Views' }
+      {
+        name: 'slog',
+        version: '2.7.0',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MPL-2.0 OR MIT OR Apache-2.0'
+      },
+      {
+        name: 'quote',
+        version: '0.6.4',
+        tools: [['clearlydefined', 'fossology', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0'
+      },
+      {
+        name: 'quote',
+        version: '1.0.9',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0'
+      },
+      {
+        name: 'rand',
+        version: '0.8.2',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0'
+      },
+      {
+        name: 'regex',
+        version: '1.5.3',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0'
+      },
+      {
+        name: 'serde',
+        version: '1.0.123',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'MIT OR Apache-2.0'
+      },
+      {
+        name: 'mpmc',
+        version: '0.1.6',
+        tools: [['clearlydefined', 'licensee', 'scancode']],
+        expected: 'BSD-2-Clause-Views'
+      }
     ]
 
     const summaryService = (SummaryService as Function)({})

@@ -3,8 +3,8 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import { DateTime } from 'luxon'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
-import utils from '../../lib/utils.js'
 import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
+import utils from '../../lib/utils.js'
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect

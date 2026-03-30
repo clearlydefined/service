@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import fsPromise from 'node:fs/promises'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import lodash from 'lodash'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+
 const { uniq } = lodash
 
 // @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS

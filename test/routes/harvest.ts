@@ -6,8 +6,8 @@ import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import utils from '../../lib/utils.js'
-import harvestRoutes from '../../routes/harvest.js'
 import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.js'
+import harvestRoutes from '../../routes/harvest.js'
 
 // Shared noop logger for tests
 const logger = {
@@ -113,8 +113,18 @@ describe('Harvest route', () => {
   })
 })
 
-function createRoutes(harvester?: Record<string, sinon.SinonStub>, harvestStore?: Record<string, sinon.SinonStub>, summarizer?: Record<string, sinon.SinonStub>) {
-  return (harvestRoutes as Function)(harvester, harvestStore, summarizer, new ListBasedFilter({ blacklist: [], logger }), true)
+function createRoutes(
+  harvester?: Record<string, sinon.SinonStub>,
+  harvestStore?: Record<string, sinon.SinonStub>,
+  summarizer?: Record<string, sinon.SinonStub>
+) {
+  return (harvestRoutes as Function)(
+    harvester,
+    harvestStore,
+    summarizer,
+    new ListBasedFilter({ blacklist: [], logger }),
+    true
+  )
 }
 
 function createRequest(entries?: unknown) {

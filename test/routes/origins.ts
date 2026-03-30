@@ -309,7 +309,7 @@ describe('GitHub origin routes', () => {
   })
 
   it('should handle /:login/:repo/revisions with only lightweight tags', async () => {
-    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.resolves({
+    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -328,7 +328,7 @@ describe('GitHub origin routes', () => {
       ]
     })
 
-    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.rejects({ status: 404 })
+    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.rejects({ status: 404 })
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -354,12 +354,12 @@ describe('GitHub origin routes', () => {
       { tag: 'v2.0.0', sha: 'sha456' },
       { tag: 'v1.0.0', sha: 'sha123' }
     ])
-    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
-    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.called).to.be.true
+    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
+    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.called).to.be.true
   })
 
   it('should handle /:login/:repo/revisions with annotated tags', async () => {
-    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.resolves({
+    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -367,7 +367,7 @@ describe('GitHub origin routes', () => {
         }
       ]
     })
-    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.resolves({
+    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.resolves({
       data: { object: { sha: 'commitSha1' } }
     })
 
@@ -392,8 +392,8 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([{ tag: 'v1.0.0', sha: 'commitSha1' }])
-    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
-    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.calledOnce).to.be.true
+    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
+    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.calledOnce).to.be.true
   })
 
   it('should return empty array on 404 from GitHub', async () => {
@@ -401,7 +401,7 @@ describe('GitHub origin routes', () => {
     notFoundError.code = 404
     notFoundError.status = 404
 
-    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.rejects(notFoundError)
+    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.rejects(notFoundError)
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -424,7 +424,7 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([])
-    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
+    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
   })
 })
 

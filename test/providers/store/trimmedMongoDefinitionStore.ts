@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import fsPromise from 'node:fs/promises'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import lodash from 'lodash'
-const { uniq } = lodash
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import sinon from 'sinon'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
+import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+
+const { uniq } = lodash
 
 // @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
 const __dirname = dirname(fileURLToPath(import.meta.url))
