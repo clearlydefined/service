@@ -1,9 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const sinon = require('sinon')
-const cacheBasedHarvester = require('../../../providers/harvest/cacheBasedCrawler')
+import assert from 'node:assert'
+import sinon from 'sinon'
+import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.js'
 
 function createCacheMock() {
   return {

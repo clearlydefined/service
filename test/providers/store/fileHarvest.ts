@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+import sinon from 'sinon'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import * as chai from 'chai'
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
-const FileStore = require('../../../providers/stores/fileHarvestStore')
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
+import FileStore from '../../../providers/stores/fileHarvestStore.js'
 
 const data = {
   'npm/npmjs/-/test/0.0': {},

@@ -1,15 +1,20 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const TrimmedMongoDefinitionStore = require('../../../providers/stores/trimmedMongoDefinitionStore')
-const { MongoMemoryServer } = require('mongodb-memory-server')
-const fsPromise = require('node:fs/promises')
-const path = require('node:path')
-const { uniq } = require('lodash')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const sinon = require('sinon')
-const PagedMongoDefinitionStore = require('../../../providers/stores/mongo')
+import { expect } from 'chai'
+import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import fsPromise from 'node:fs/promises'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import lodash from 'lodash'
+const { uniq } = lodash
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import sinon from 'sinon'
+import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
+
+// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const dbOptions = {
   dbName: 'clearlydefined',

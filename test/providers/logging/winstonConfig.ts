@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const { sanitizeHeaders, sanitizeMeta, buildProperties } = require('../../../providers/logging/winstonConfig')
+import { expect } from 'chai'
+import { sanitizeHeaders, sanitizeMeta, buildProperties } from '../../../providers/logging/winstonConfig.js'
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {

@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const { expect } = require('chai')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
-const FileStore = require('../../../providers/stores/fileDefinitionStore')
+import sinon from 'sinon'
+import { expect } from 'chai'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
+import FileStore from '../../../providers/stores/fileDefinitionStore.js'
 
 const data = {
   'npm/npmjs/-/test/0.0': {},

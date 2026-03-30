@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
+import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
-const assert = require('node:assert')
-const redisCache = require('../../../providers/caching/redis')
-const { RedisCache } = require('../../../providers/caching/redis')
-const { GenericContainer } = require('testcontainers')
-const pako1 = require('pako-1')
-const pako2 = require('pako')
+import assert from 'node:assert'
+import redisCache from '../../../providers/caching/redis.js'
+import { RedisCache } from '../../../providers/caching/redis.js'
+import { GenericContainer } from 'testcontainers'
+import pako1 from 'pako-1'
+import pako2 from 'pako'
 
 const logger = {
   info: () => {},

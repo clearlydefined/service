@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Store = require('../../../providers/stores/mongo')
-const sinon = require('sinon')
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const { range } = require('lodash')
+import Store from '../../../providers/stores/mongo.js'
+import sinon from 'sinon'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import * as chai from 'chai'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import lodash from 'lodash'
+const { range } = lodash
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect

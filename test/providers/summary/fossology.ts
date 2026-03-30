@@ -1,11 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const summarizer = require('../../../providers/summary/fossology')()
+import assert from 'node:assert'
+import fs from 'node:fs'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import Summarizer from '../../../providers/summary/fossology.js'
+
+// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const summarizer = (Summarizer as Function)()
 summarizer.logger = { info: () => {} }
-const fs = require('node:fs')
-const path = require('node:path')
 
 describe('FOSSologySummarizer fixtures', () => {
   it('summarizes npm 3.4.0', () => {

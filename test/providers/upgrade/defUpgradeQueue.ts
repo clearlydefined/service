@@ -1,13 +1,13 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const chaiAsPromised = require('chai-as-promised')
-const chai = require('chai')
-chai.use(chaiAsPromised.default)
-const { expect } = require('chai')
-const sinon = require('sinon')
-const DefinitionQueueUpgrader = require('../../../providers/upgrade/defUpgradeQueue')
-const MemoryQueue = require('../../../providers/upgrade/memoryQueueConfig')
+import chaiAsPromised from 'chai-as-promised'
+import * as chai from 'chai'
+chai.use(chaiAsPromised)
+import { expect } from 'chai'
+import sinon from 'sinon'
+import DefinitionQueueUpgrader from '../../../providers/upgrade/defUpgradeQueue.js'
+import MemoryQueue from '../../../providers/upgrade/memoryQueueConfig.js'
 
 describe('DefinitionQueueUpgrader', () => {
   let logger

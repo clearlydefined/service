@@ -1,9 +1,9 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const ListBasedFilter = require('../../../../providers/harvest/throttling/listBasedFilter')
-const EntityCoordinates = require('../../../../lib/entityCoordinates')
+import { expect } from 'chai'
+import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
+import EntityCoordinates from '../../../../lib/entityCoordinates.js'
 
 describe('ListBasedFilter', () => {
   const logger = {

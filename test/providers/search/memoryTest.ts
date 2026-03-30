@@ -1,9 +1,9 @@
 // (c) Copyright 2022, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const MemorySearch = require('../../../providers/search/memory')
+import { expect } from 'chai'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import MemorySearch from '../../../providers/search/memory.js'
 
 describe('memory search tests', () => {
   const searches = {

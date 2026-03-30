@@ -1,9 +1,9 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const { expect } = require('chai')
-const DispatchDefinitionStore = require('../../../providers/stores/dispatchDefinitionStore')
+import sinon from 'sinon'
+import { expect } from 'chai'
+import DispatchDefinitionStore from '../../../providers/stores/dispatchDefinitionStore.js'
 
 describe('Dispatch Definition store', () => {
   let dispatchDefinitionStore

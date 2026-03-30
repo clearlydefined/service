@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const { expect } = require('chai')
-const Store = require('../../../providers/stores/azblobAttachmentStore')
+import sinon from 'sinon'
+import { expect } from 'chai'
+import Store from '../../../providers/stores/azblobAttachmentStore.js'
 
 describe('AzureAttachmentStore list definitions', () => {
   it('throws original error when not ENOENT', async () => {

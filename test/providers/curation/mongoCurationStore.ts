@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Store = require('../../../providers/curation/mongoCurationStore')
-const Curation = require('../../../lib/curation')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const sinon = require('sinon')
-const { expect } = require('chai')
+import Store from '../../../providers/curation/mongoCurationStore.js'
+import Curation from '../../../lib/curation.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import sinon from 'sinon'
+import { expect } from 'chai'
 
 const pr = {
   number: 12,

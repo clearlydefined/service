@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Store = require('../../../providers/stores/azblobHarvestStore')
-const sinon = require('sinon')
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+import Store from '../../../providers/stores/azblobHarvestStore.js'
+import sinon from 'sinon'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import * as chai from 'chai'
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 

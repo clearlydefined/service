@@ -1,14 +1,14 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Store = require('../../../providers/stores/trimmedMongoDefinitionStore')
-const shouldPaginateSearchCorrectly = require('./mongoDefinitionPagination')
+import Store from '../../../providers/stores/mongo.js'
+import shouldPaginateSearchCorrectly from './mongoDefinitionPagination.ts'
 
 const dbOptions = {
-  collectionName: 'definitions-trimmed'
+  collectionName: 'definitions-paged'
 }
 
-describe('Mongo Definition Store: Trimmed', () => {
+describe('Mongo Definition Store: Paged', () => {
   before('setup store factory', async function () {
     this.createStore = createStore
   })
@@ -19,9 +19,7 @@ describe('Mongo Definition Store: Trimmed', () => {
 async function createStore(options, defs) {
   const mongoStore = Store({ ...options, ...dbOptions })
   await mongoStore.initialize()
-  for (const def of defs) {
-    delete def._mongo
-  }
+  await mongoStore.collection.createIndex({ '_mongo.partitionKey': 1 })
   await mongoStore.collection.insertMany(defs)
   return mongoStore
 }

@@ -1,12 +1,18 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const summarizer = require('../../../../providers/summary/scancode')({}, { info: () => {} })
-const fs = require('node:fs')
-const path = require('node:path')
-const { compact, uniq, flatten } = require('lodash')
-const { expect } = require('chai')
+import assert from 'node:assert'
+import fs from 'node:fs'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import lodash from 'lodash'
+const { compact, uniq, flatten } = lodash
+import { expect } from 'chai'
+import Summarizer from '../../../../providers/summary/scancode.js'
+
+// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const summarizer = (Summarizer as Function)({}, { info: () => {} })
 
 const SCANCODE_VERSIONS = ['32.1.0']
 

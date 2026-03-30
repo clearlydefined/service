@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Store = require('../../../providers/stores/azblobDefinitionStore')
-const sinon = require('sinon')
-const { expect } = require('chai')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
+import Store from '../../../providers/stores/azblobDefinitionStore.js'
+import sinon from 'sinon'
+import { expect } from 'chai'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
 
 describe('azblob Definition store', () => {
   it('throws original error', async () => {

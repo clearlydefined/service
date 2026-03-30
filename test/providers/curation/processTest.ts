@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const process = require('../../../providers/curation/process')
-const memoryQueue = require('../../../providers/queueing/memoryQueue')
-const sinon = require('sinon')
+import { expect } from 'chai'
+import process from '../../../providers/curation/process.js'
+import memoryQueue from '../../../providers/queueing/memoryQueue.js'
+import sinon from 'sinon'
 
 describe('Curation queue processing', () => {
   let clock

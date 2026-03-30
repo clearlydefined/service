@@ -1,25 +1,27 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-const GitHubCurationService = require('../../../providers/curation/github')
-const DefinitionService = require('../../../business/definitionService')
-const CurationStore = require('../../../providers/curation/memoryStore')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const Curation = require('../../../lib/curation')
-const sinon = require('sinon')
-const extend = require('extend')
-const { find } = require('lodash')
-const { DateTime } = require('luxon')
+import * as chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+import GitHubCurationService from '../../../providers/curation/github.js'
+import DefinitionService from '../../../business/definitionService.js'
+import CurationStore from '../../../providers/curation/memoryStore.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import Curation from '../../../lib/curation.js'
+import sinon from 'sinon'
+import extend from 'extend'
+import lodash from 'lodash'
+const { find } = lodash
+import { DateTime } from 'luxon'
+import logger from '../../../providers/logging/logger.js'
 
-chai.use(chaiAsPromised.default)
+chai.use(chaiAsPromised)
 const expect = chai.expect
 const assert = chai.assert
 
 describe('Github Curation Service', () => {
   beforeEach(() => {
-    require('../../../providers/logging/logger')({
+    logger({
       error: sinon.stub(),
       info: sinon.stub(),
       debug: sinon.stub()
@@ -51,7 +53,7 @@ describe('Github Curation Service', () => {
   })
 
   it('validates invalid PR change', async () => {
-    require('../../../providers/logging/logger')({
+    logger({
       error: sinon.stub()
     })
     const service = createService()
@@ -548,7 +550,7 @@ function createService(
     get: sinon.stub().resolves(undefined),
     set: sinon.stub()
   }
-  require('../../../providers/logging/logger')({
+  logger({
     error: sinon.stub(),
     info: sinon.stub()
   })
