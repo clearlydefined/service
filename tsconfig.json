@@ -1,9 +1,5 @@
 {
-  "extends": [
-    "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node24/tsconfig.json",
-    "@tsconfig/node-ts/tsconfig.json"
-  ],
+  "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node24/tsconfig.json", "@tsconfig/node-ts/tsconfig.json"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
@@ -13,10 +9,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": false,
-    "types": [
-      "mocha",
-      "node"
-    ]
+    "types": ["mocha", "node"]
   },
   "include": [
     "types/**/*",

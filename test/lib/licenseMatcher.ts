@@ -424,7 +424,11 @@ describe('licenseMatcher.js', () => {
     describe('Match nuget package', () => {
       const sourceLicense = 'MIT'
       const sourceLicenseUrl = 'https://licenses.nuget.org/MIT'
-      function generateNugetDefinitionAndHarvest(revision: string, license?: unknown, licenseUrl?: unknown): LicenseMatchInput {
+      function generateNugetDefinitionAndHarvest(
+        revision: string,
+        license?: unknown,
+        licenseUrl?: unknown
+      ): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`nuget/nuget/-/Microsoft.Identity.Web.MicrosoftGraph/${revision}`)
@@ -693,7 +697,11 @@ describe('licenseMatcher.js', () => {
     describe('Match pypi package', () => {
       const sourceLicenseInfo = 'BSD'
       const sourceDeclaredLicense = 'BSD-2-Clause'
-      function generatePypiDefinitionAndHarvest(revision: string, licenseInfo?: unknown, declaredLicense?: unknown): LicenseMatchInput {
+      function generatePypiDefinitionAndHarvest(
+        revision: string,
+        licenseInfo?: unknown,
+        declaredLicense?: unknown
+      ): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)
