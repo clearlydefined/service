@@ -1,19 +1,27 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { SinonStub } from 'sinon'
+import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.js'
+import type { ICache } from '../../providers/caching/index.js'
+
 const { assert } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
-const requestPromiseStub = sinon.stub()
+const requestPromiseStub: SinonStub = sinon.stub()
 
 const fetchModuleStub = {
   callFetch: requestPromiseStub
 }
-const createCondaRepoAccess = proxyquire('../../lib/condaRepoAccess', {
-  './fetch': fetchModuleStub
-})
 
-const channelData = {
+const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = proxyquire(
+  '../../lib/condaRepoAccess',
+  {
+    './fetch': fetchModuleStub
+  }
+)
+
+const channelData: CondaChannelData = {
   packages: {
     'sample-package': { subdirs: ['linux-64'] },
     'another-package': {},
@@ -22,15 +30,15 @@ const channelData = {
   subdirs: ['linux-64']
 }
 
-const repoData = {
+const repoData: CondaRepoData = {
   packages: {
     'pkg-1': { name: 'sample-package', version: '1.0', build: '0' }
   }
 }
 
 describe('CondaRepoAccess', () => {
-  let condaRepoAccess
-  let cacheMock
+  let condaRepoAccess: ReturnType<typeof createCondaRepoAccess>
+  let cacheMock: { get: sinon.SinonStub; set: sinon.SinonStub }
 
   beforeEach(() => {
     cacheMock = {
@@ -38,20 +46,21 @@ describe('CondaRepoAccess', () => {
       set: sinon.stub()
     }
 
-    condaRepoAccess = createCondaRepoAccess(cacheMock)
+    condaRepoAccess = createCondaRepoAccess(cacheMock as unknown as ICache)
   })
 
   afterEach(() => {
     sinon.restore()
     requestPromiseStub.resetHistory()
   })
+
   describe('checkIfValidChannel', () => {
     it('should throw an error for an unrecognized channel', async () => {
       try {
         condaRepoAccess.checkIfValidChannel('unknown-channel')
         assert.fail('Expected error was not thrown')
       } catch (error) {
-        assert.strictEqual(error.message, 'Unrecognized Conda channel unknown-channel')
+        assert.strictEqual((error as Error).message, 'Unrecognized Conda channel unknown-channel')
       }
     })
 
@@ -119,7 +128,7 @@ describe('CondaRepoAccess', () => {
         await condaRepoAccess.getRevisions('conda-forge', 'linux-64', 'non-existent-package')
         assert.fail('Expected error was not thrown')
       } catch (error) {
-        assert.strictEqual(error.message, 'Package non-existent-package not found in channel conda-forge')
+        assert.strictEqual((error as Error).message, 'Package non-existent-package not found in channel conda-forge')
       }
     })
 
@@ -131,7 +140,10 @@ describe('CondaRepoAccess', () => {
         await condaRepoAccess.getRevisions('conda-forge', 'linux-641', 'sample-package')
         assert.fail('Expected error was not thrown')
       } catch (error) {
-        assert.strictEqual(error.message, 'Subdir linux-641 is non-existent in channel conda-forge, subdirs: linux-64')
+        assert.strictEqual(
+          (error as Error).message,
+          'Subdir linux-641 is non-existent in channel conda-forge, subdirs: linux-64'
+        )
       }
     })
 
