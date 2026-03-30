@@ -28,7 +28,7 @@
     "ajv-errors": "3.0.0",
     "ajv-formats": "3.0.1",
     "applicationinsights": "3.14.0",
-    "axios": "1.13.6",
+    "axios": "1.14.0",
     "azure-storage": "2.10.7",
     "base-64": "1.0.0",
     "body-parser": "2.2.2",
@@ -73,7 +73,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.8",
+    "@biomejs/biome": "2.4.9",
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
