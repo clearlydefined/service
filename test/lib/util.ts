@@ -1,11 +1,13 @@
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+// @ts-nocheck
+import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import { DateTime } from 'luxon'
+import sinon from 'sinon'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import utils from '../../lib/utils.js'
+
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-const sinon = require('sinon')
-const utils = require('../../lib/utils')
-const { DateTime } = require('luxon')
-const EntityCoordinates = require('../../lib/entityCoordinates')
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -903,8 +905,8 @@ describe('normalizeLicenseExpression', () => {
     expect(result).to.eq('MIT AND GPL-3.0')
   })
   it('should normalize license to SPDX equivalent', () => {
-    /* 
-      NOTE: If this fails in tests for generated scancode map workflow PR, it is incorrect if it is expecting a LicenseRef.  
+    /*
+      NOTE: If this fails in tests for generated scancode map workflow PR, it is incorrect if it is expecting a LicenseRef.
       There is an SPDX valid license which does not require a LicenseRef meaning this test is correct as is.
     */
     const expression = 'net-snmp'

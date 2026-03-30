@@ -1,19 +1,19 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const sinon = require('sinon')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const coordinatesMapper = require('../../lib/coordinatesMapper')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import coordinatesMapper from '../../lib/coordinatesMapper.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
-function pypiCoordinates(name) {
+function pypiCoordinates(name: string) {
   return EntityCoordinates.fromString(`pypi/pypi/-/${name}/1.1.0a4`)
 }
 
-function fakeCache(cache) {
+function fakeCache(cache: Record<string, EntityCoordinates>) {
   return {
-    get: key => cache[key],
-    set: (key, value) => (cache[key] = value),
+    get: (key: string) => cache[key],
+    set: (key: string, value: EntityCoordinates) => (cache[key] = value),
     size: () => Object.keys(cache).length
   }
 }
@@ -21,24 +21,24 @@ function fakeCache(cache) {
 describe('CoordinatesMapper', () => {
   it('return coordinate when no mapper', async () => {
     const coordinates = pypiCoordinates('0_core_client')
-    const mapped = await coordinatesMapper({}).map(coordinates)
+    const mapped = await coordinatesMapper({} as any).map(coordinates)
     expect(mapped).to.be.eq(coordinates)
   })
 
   it('use cache when available', async () => {
     const coordinates = pypiCoordinates('0_core_client')
-    const cache = {}
+    const cache: Record<string, EntityCoordinates> = {}
     cache[coordinates.toString()] = coordinates
 
-    const mapper = coordinatesMapper({ pypi: {} }, fakeCache(cache))
+    const mapper = coordinatesMapper({ pypi: {} } as any, fakeCache(cache) as any)
     const mapped = await mapper.map(coordinates)
     expect(mapped).to.be.eq(coordinates)
   })
 
   it('map then cache', async () => {
     const mapStub = sinon.stub().resolves(pypiCoordinates('0-core-client'))
-    const cacheStub = fakeCache({})
-    const mapper = coordinatesMapper({ pypi: { map: mapStub } }, cacheStub)
+    const cacheStub = fakeCache({}) as any
+    const mapper = coordinatesMapper({ pypi: { map: mapStub } } as any, cacheStub)
     const coordinates = pypiCoordinates('0_core_client')
 
     //cached after map
@@ -55,7 +55,7 @@ describe('CoordinatesMapper', () => {
   })
 
   it('null check', async () => {
-    const mapped = await coordinatesMapper().map()
+    const mapped = await coordinatesMapper().map(undefined as any)
     expect(mapped).to.be.undefined
   })
 })

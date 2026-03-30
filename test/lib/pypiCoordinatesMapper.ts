@@ -1,23 +1,23 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const sinon = require('sinon')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const PypiCoordinatesMapper = require('../../lib/pypiCoordinatesMapper')
+import { expect } from 'chai'
+import sinon from 'sinon'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import PypiCoordinatesMapper from '../../lib/pypiCoordinatesMapper.js'
 
-function mockPypiCoordinates(name) {
+function mockPypiCoordinates(name: string) {
   const spec = { type: 'pypi', provider: 'pypi', revision: '1.0.0', name }
   return EntityCoordinates.fromObject(spec)
 }
 
-function mockPypiAnswer(name) {
+function mockPypiAnswer(name: string) {
   return { info: { name } }
 }
 
 describe('PypiCoordinatesMapper', () => {
-  let coordinatesMapper
-  let fetchStub
+  let coordinatesMapper: any
+  let fetchStub: sinon.SinonStub
   beforeEach(() => {
     fetchStub = sinon.stub()
     coordinatesMapper = new PypiCoordinatesMapper(fetchStub)
@@ -66,11 +66,11 @@ describe('PypiCoordinatesMapper', () => {
 
     it('should return null when the name is ..', async () => handleInvalidName(coordinatesMapper, '..'))
 
-    it('should return null for no name', async () => handleInvalidName(coordinatesMapper))
+    it('should return null for no name', async () => handleInvalidName(coordinatesMapper, undefined as any))
   })
 })
 
-async function handleInvalidName(coordinatesMapper, name) {
+async function handleInvalidName(coordinatesMapper: any, name: string) {
   const mapped = await coordinatesMapper.map(mockPypiCoordinates(name))
   expect(mapped).to.be.null
 }

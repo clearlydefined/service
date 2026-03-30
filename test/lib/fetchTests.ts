@@ -1,10 +1,10 @@
-const { fail } = require('node:assert')
-const { callFetch, withDefaults, defaultHeaders } = require('../../lib/fetch')
-const { expect } = require('chai')
-const fs = require('node:fs')
-const mockttp = require('mockttp')
+import { fail } from 'node:assert'
+import fs from 'node:fs'
+import { expect } from 'chai'
+import mockttp from 'mockttp'
+import { callFetch, defaultHeaders, withDefaults } from '../../lib/fetch.js'
 
-function checkDefaultHeaders(headers) {
+function checkDefaultHeaders(headers: Record<string, string | string[] | undefined>) {
   for (const [key, value] of Object.entries(defaultHeaders)) {
     expect(headers).to.have.property(key.toLowerCase()).that.equals(value)
   }
@@ -18,7 +18,7 @@ describe('CallFetch', () => {
 
     it('checks if the response is JSON while sending GET request', async () => {
       const path = '/registry.npmjs.com/redis/0.1.0'
-      const expected = fs.readFileSync('test/fixtures/fetch/redis-0.1.0.json')
+      const expected = fs.readFileSync('test/fixtures/fetch/redis-0.1.0.json', 'utf8')
       await mockServer.forGet(path).thenReply(200, expected)
 
       const response = await callFetch({
@@ -84,11 +84,11 @@ describe('CallFetch', () => {
         await callFetch({
           url: mockServer.urlFor(path),
           method: 'GET',
-          json: 'true',
+          json: 'true' as any,
           resolveWithFullResponse: true
         })
         fail('should have thrown')
-      } catch (err) {
+      } catch (err: any) {
         expect(err.statusCode).to.be.equal(404)
       }
     })
@@ -105,7 +105,7 @@ describe('CallFetch', () => {
     })
 
     it('should download stream successfully with GET request', async () => {
-      const expected = JSON.parse(fs.readFileSync('test/fixtures/fetch/redis-0.1.0.json'))
+      const expected = JSON.parse(fs.readFileSync('test/fixtures/fetch/redis-0.1.0.json', 'utf8'))
       const path = '/registry.npmjs.com/redis/0.1.0'
       await mockServer.forGet(path).thenStream(200, fs.createReadStream('test/fixtures/fetch/redis-0.1.0.json'))
 
@@ -117,7 +117,7 @@ describe('CallFetch', () => {
       await new Promise(resolve => {
         response.pipe(fs.createWriteStream(destination).on('finish', () => resolve(true)))
       })
-      const downloaded = JSON.parse(fs.readFileSync(destination))
+      const downloaded = JSON.parse(fs.readFileSync(destination, 'utf8'))
       expect(downloaded).to.be.deep.equal(expected)
       fs.unlinkSync(destination)
     })
@@ -196,10 +196,10 @@ describe('CallFetch', () => {
       await mockServer.forPost(path).thenReply(200, 'done')
       const query = `
       traces
-      | where timestamp > ago(90d) 
-      | where customDimensions.outcome == 'Processed'  
+      | where timestamp > ago(90d)
+      | where customDimensions.outcome == 'Processed'
       | where strlen(customDimensions.crawlerHost) > 0
-      | parse message with "Processed " tool "@cd:/" type "/" specTrail 
+      | parse message with "Processed " tool "@cd:/" type "/" specTrail
       | summarize count() by when=bin(timestamp, 1d), tool
       | order by when asc, tool`
 
@@ -226,7 +226,7 @@ describe('CallFetch', () => {
         try {
           await callFetch({ url: mockServer.urlFor(path) })
           fail('should have thrown')
-        } catch (err) {
+        } catch (err: any) {
           expect(err.statusCode).to.be.equal(300)
         }
       })

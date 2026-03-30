@@ -1,23 +1,24 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const {
-  RateLimiter,
-  RedisBasedRateLimiter,
+import assert from 'node:assert'
+import express from 'express'
+import sinon from 'sinon'
+// @ts-expect-error - supertest has no type declarations
+import supertest from 'supertest'
+import { GenericContainer } from 'testcontainers'
+import {
   createApiLimiter,
   createBatchApiLimiter,
+  RateLimiter,
+  RedisBasedRateLimiter,
   setupApiRateLimiterAfterCachingInit,
   setupBatchApiRateLimiterAfterCachingInit
-} = require('../../lib/rateLimit')
-const supertest = require('supertest')
-const express = require('express')
-const sinon = require('sinon')
-const { RedisCache } = require('../../providers/caching/redis')
-const MemoryCache = require('../../providers/caching/memory')
-const { GenericContainer } = require('testcontainers')
+} from '../../lib/rateLimit.js'
+import MemoryCache from '../../providers/caching/memory.js'
+import { RedisCache } from '../../providers/caching/redis.js'
 
-const logger = {
+const logger: any = {
   info: () => {},
   error: () => {},
   debug: () => {}
@@ -38,7 +39,7 @@ describe('Rate Limiter', () => {
     })
 
     it('builds rate limit options with store', async () => {
-      const store = {}
+      const store = {} as any
       const options = RateLimiter.buildOptions(limit, store)
       assert.deepStrictEqual(options, {
         standardHeaders: true,
@@ -50,20 +51,20 @@ describe('Rate Limiter', () => {
     })
 
     it('builds rate limit options when max === 0', async () => {
-      const options = RateLimiter.buildOptions({ windowSeconds: 1, max: 0 })
+      const options = RateLimiter.buildOptions({ windowSeconds: 1, max: 0 } as any)
       assert.equal(options.standardHeaders, true)
       assert.equal(options.legacyHeaders, false)
-      assert.equal(options.skip(), true)
+      assert.equal((options as any).skip(), true)
     })
   })
 
   describe('Redis Based Rate Limiter', () => {
     it('throws error if redis client is missing', async () => {
       try {
-        //eslint-disable-next-line no-unused-vars
-        const _middleware = new RedisBasedRateLimiter({ limit, logger }).middleware
+        // @ts-expect-error - intentionally unused, testing side effect
+        const _middleware = new RedisBasedRateLimiter({ limit, logger } as any).middleware
         assert.fail('Should have thrown error')
-      } catch (error) {
+      } catch (error: any) {
         assert.strictEqual(error.message, 'Redis client is missing')
       }
     })
@@ -78,11 +79,11 @@ describe('Rate Limiter', () => {
     }
 
     describe('Memory Based', () => {
-      const options = { config: { limits }, cachingService: undefined, logger }
+      const options: any = { config: { limits }, cachingService: undefined, logger }
       it('builds a rate limiter', () => {
         const rateLimiter = createApiLimiter(options)
         assert.ok(rateLimiter instanceof RateLimiter)
-        const expected = {
+        const expected: any = {
           limit: {
             windowMs: 1000,
             max: 0
@@ -90,13 +91,13 @@ describe('Rate Limiter', () => {
           redis: undefined,
           logger
         }
-        assert.deepStrictEqual(rateLimiter.options, expected)
+        assert.deepStrictEqual((rateLimiter as any).options, expected)
       })
 
       it('builds a batch rate limiter', () => {
         const batchRateLimiter = createBatchApiLimiter(options)
         assert.ok(batchRateLimiter instanceof RateLimiter)
-        const expected = {
+        const expected: any = {
           limit: {
             windowMs: 10000,
             max: 10
@@ -104,7 +105,7 @@ describe('Rate Limiter', () => {
           redis: undefined,
           logger
         }
-        assert.deepStrictEqual(batchRateLimiter.options, expected)
+        assert.deepStrictEqual((batchRateLimiter as any).options, expected)
       })
 
       it('builds a api rate limiter with default', () => {
@@ -119,9 +120,9 @@ describe('Rate Limiter', () => {
     })
 
     describe('Redis Based', () => {
-      let options
+      let options: any
       beforeEach(() => {
-        const cachingService = new RedisCache({ logger })
+        const cachingService = new RedisCache({ logger } as any)
         sinon.stub(cachingService, 'client').value({})
         options = { config: { limits }, cachingService, logger }
       })
@@ -144,7 +145,7 @@ describe('Rate Limiter', () => {
           },
           logger
         }
-        assert.deepStrictEqual(rateLimiter.options, expected)
+        assert.deepStrictEqual((rateLimiter as any).options, expected)
       })
 
       it('builds a redis based batch rate limiter', () => {
@@ -161,13 +162,13 @@ describe('Rate Limiter', () => {
           },
           logger
         }
-        assert.deepStrictEqual(batchRateLimiter.options, expected)
+        assert.deepStrictEqual((batchRateLimiter as any).options, expected)
       })
     })
   })
 
   describe('Create MiddlewareDelegate', () => {
-    let cachingService
+    let cachingService: any
 
     beforeEach(() => {
       cachingService = { initialize: sinon.stub().resolves() }
@@ -187,7 +188,7 @@ describe('Rate Limiter', () => {
   })
 
   describe('Rate Limit Integration Test', () => {
-    let client
+    let client: any
 
     afterEach(async () => {
       await new Promise(resolve => setTimeout(resolve, limit.windowMs))
@@ -219,15 +220,15 @@ describe('Rate Limiter', () => {
     })
 
     xdescribe('Redis Based Rate Limiter', () => {
-      let container
-      let redisClient
-      let redisOpts
+      let container: any
+      let redisClient: any
+      let redisOpts: any
 
       before(async function () {
         this.timeout(15000)
         ;({ redisOpts, container } = await startRedis())
         redisClient = await RedisCache.initializeClient(redisOpts, logger)
-        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient }, logger })
+        const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient, prefix: 'test' }, logger })
         client = await buildTestAppClient(rateLimiter.middleware)
       })
 
@@ -241,9 +242,9 @@ describe('Rate Limiter', () => {
 
     xdescribe('MiddlewareDelegate - Redis Based', () => {
       const config = { limits: { windowSeconds: 1, max: 1 } }
-      let container
-      let cachingService
-      let redisOpts
+      let container: any
+      let cachingService: any
+      let redisOpts: any
 
       before(async function () {
         this.timeout(15000)
@@ -282,7 +283,7 @@ async function startRedis() {
   return { redisOpts, container }
 }
 
-async function tryBeyondLimit(max, client) {
+async function tryBeyondLimit(max: number, client: any) {
   let counter = 0
   while (counter < max + 10) {
     const response = await client.get('/')
@@ -294,7 +295,7 @@ async function tryBeyondLimit(max, client) {
   return counter
 }
 
-async function buildTestAppClient(rateLimiter) {
+async function buildTestAppClient(rateLimiter: any) {
   const app = express()
   app.use(rateLimiter)
   app.get('/', (_req, res) => res.send('Hello World!'))

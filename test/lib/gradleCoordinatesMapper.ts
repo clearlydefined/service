@@ -1,14 +1,14 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const sinon = require('sinon')
-const fs = require('node:fs')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const GradleCoordinatesMapper = require('../../lib/gradleCoordinatesMapper')
+import fs from 'node:fs'
+import { expect } from 'chai'
+import sinon from 'sinon'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import GradleCoordinatesMapper from '../../lib/gradleCoordinatesMapper.js'
 
 describe('GradleCoordinatesMapper', () => {
-  let coordinatesMapper
+  let coordinatesMapper: any
   beforeEach(() => {
     coordinatesMapper = new GradleCoordinatesMapper()
   })
