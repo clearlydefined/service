@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import * as chai from 'chai'
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
-const Summarizer = require('../../providers/summary/fossology')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const validator = require('../../schemas/validator')
-const { groupBy, omit } = require('lodash')
+import Summarizer from '../../providers/summary/fossology.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import validator from '../../schemas/validator.js'
+import lodash from 'lodash'
+const { groupBy, omit } = lodash
 
 describe('General summarizer', () => {
   it('handles empty input', () => {

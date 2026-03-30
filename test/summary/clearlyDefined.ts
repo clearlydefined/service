@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const chai = require('chai')
-const validator = require('../../schemas/validator')
+import * as chai from 'chai'
+import validator from '../../schemas/validator.js'
 const { expect } = chai
-const Summarizer = require('../../providers/summary/clearlydefined')
-const { setIfValue } = require('../../lib/utils')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import Summarizer from '../../providers/summary/clearlydefined.js'
+import { setIfValue } from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 describe('ClearlyDefined Maven summarizer', () => {
   it('handles with all the data', () => {

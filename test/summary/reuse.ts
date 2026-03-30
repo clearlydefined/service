@@ -1,8 +1,9 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const summarizer = require('../../providers/summary/reuse')()
+import assert from 'node:assert'
+import Summarizer from '../../providers/summary/reuse.js'
+const summarizer = (Summarizer as Function)()
 
 describe('FsfeReuseSummarizer', () => {
   it('should include populate all available attributes', () => {

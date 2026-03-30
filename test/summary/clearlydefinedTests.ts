@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const summarizer = require('../../providers/summary/clearlydefined')()
-const { get } = require('lodash')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import assert from 'node:assert'
+import Summarizer from '../../providers/summary/clearlydefined.js'
+const summarizer = (Summarizer as Function)()
+import lodash from 'lodash'
+const { get } = lodash
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 const testCoordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
 describe('ClearlyDescribedSummarizer general behavior', () => {

@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const summarizer = require('../../providers/summary/licensee')()
+import assert from 'node:assert'
+import Summarizer from '../../providers/summary/licensee.js'
+const summarizer = (Summarizer as Function)()
 
 describe('LicenseeSummarizer', () => {
   it('should skip non-exact and low confidence and missing paths matches', () => {

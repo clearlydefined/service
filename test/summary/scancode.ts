@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
-const validator = require('../../schemas/validator')
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import * as chai from 'chai'
+import validator from '../../schemas/validator.js'
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
-const Summarizer = require('../../providers/summary/scancode')
-const ScanCodeLegacySummarizer = require('../../providers/summary/scancode/legacy-summarizer')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { joinExpressions } = require('../../lib/utils')
+import Summarizer from '../../providers/summary/scancode.js'
+import ScanCodeLegacySummarizer from '../../providers/summary/scancode/legacy-summarizer.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { joinExpressions } from '../../lib/utils.js'
 
 describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {

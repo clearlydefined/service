@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const Summarizer = require('../../business/summarizer')
+import { expect } from 'chai'
+import Summarizer from '../../business/summarizer.js'
 
 describe('Summarizer service', () => {
   it('has the correct coordinates and tool info', () => {
