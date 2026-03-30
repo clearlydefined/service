@@ -488,16 +488,15 @@ describe('Github Curation Service', () => {
   })
 
   describe('verify _getBranchName', () => {
+    let clock: sinon.SinonFakeTimers
+
     before(() => {
-      sinon.replace(
-        DateTime,
-        'now',
-        sinon.stub().callsFake().returns(DateTime.fromFormat('211203_140949.712', 'yyMMdd_HHmmss.SSS'))
-      )
+      // 2021-12-03T14:09:49.712Z
+      clock = sinon.useFakeTimers(new Date(2021, 11, 3, 14, 9, 49, 712))
     })
 
     after(() => {
-      sinon.restore()
+      clock.restore()
     })
 
     it('verify branch name', () => {
