@@ -1,9 +1,9 @@
-// @ts-nocheck
 import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import { DateTime } from 'luxon'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
 import utils from '../../lib/utils.js'
 
 chai.use(deepEqualInAnyOrder)
@@ -11,7 +11,7 @@ const expect = chai.expect
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
-    const inputs = {
+    const inputs: Record<string, string | string[] | undefined> = {
       1: ['1'], // https://github.com/clearlydefined/crawler/issues/124
       '1.1.0': ['1', '1.0.1', '1.1.0'], // special handling for version = '1'
       '1.2.0': ['1', '1.2.0'],
@@ -35,7 +35,7 @@ describe('Utils latest version', () => {
   })
 
   it('should extract license from license URLs', () => {
-    const inputs = {
+    const inputs: Record<string, string | null> = {
       'http://glassfish.java.net/public/CDDL+GPL_1_1.html': 'CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0',
       'https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html':
         'CDDL-1.1 OR GPL-2.0-only WITH Classpath-exception-2.0',
@@ -159,9 +159,9 @@ describe('Utils merge Licenses', () => {
 
 describe('Utils mergeDefinitions', () => {
   it('should add new entries as needed', () => {
-    const base = { described: { releaseDate: '2018-6-3' } }
+    const base: Definition = { described: { releaseDate: '2018-6-3' } }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.mergeDefinitions(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(1)
     expect(base.files[0].path).to.eq('1.txt')
@@ -169,9 +169,9 @@ describe('Utils mergeDefinitions', () => {
   })
 
   it('should merge entries as needed', () => {
-    const base = { described: { releaseDate: '2018-6-3' }, files: [{ path: '1.txt', license: 'MIT' }] }
+    const base: Definition = { described: { releaseDate: '2018-6-3' }, files: [{ path: '1.txt', license: 'MIT' }] }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.mergeDefinitions(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(1)
     expect(base.files[0].path).to.eq('1.txt')
@@ -180,7 +180,7 @@ describe('Utils mergeDefinitions', () => {
   })
 
   it('does not mess with existing entries', () => {
-    const base = {
+    const base: Definition = {
       described: { releaseDate: '2018-6-3' },
       files: [
         { path: '1.txt', license: 'MIT' },
@@ -188,7 +188,7 @@ describe('Utils mergeDefinitions', () => {
       ]
     }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
-    utils.mergeDefinitions(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
     expect(base.described.releaseDate).to.eq('2018-6-3')
     expect(base.files.length).to.eq(2)
     expect(base.files[0].path).to.eq('1.txt')
@@ -199,7 +199,7 @@ describe('Utils mergeDefinitions', () => {
   })
 
   it('overrides NOASSERTION', () => {
-    const base = {
+    const base: Definition = {
       licensed: { declared: 'NOASSERTION' },
       files: [{ path: '1.txt', license: 'NOASSERTION' }]
     }
@@ -211,7 +211,7 @@ describe('Utils mergeDefinitions', () => {
   })
 
   it('merges files correctly', () => {
-    const base = {
+    const base: Definition = {
       files: [
         {
           path: '1.txt',
@@ -252,14 +252,14 @@ describe('Utils mergeDefinitions', () => {
         hashes: { sha1: '1', sha256: '256' },
         facets: { dev: 'foo', core: 'bar' }
       }
-    }
+    } as unknown as Definition
     const newDefinition = {
       described: {
         hashes: { sha1: '1', sha256: '257' },
         facets: { dev: 'foo', core: 'test', doc: 'this' }
       }
     }
-    utils.mergeDefinitions(base, newDefinition)
+    utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
     expect(base.described.projectWebsite).to.eq('https://test')
     expect(base.described.hashes.sha1).to.eq('1')
     expect(base.described.hashes.sha256).to.eq('257')
@@ -525,13 +525,13 @@ describe('Utils isLicenseFile', () => {
   })
 
   it('should handle falsy input', () => {
-    expect(utils.isLicenseFile()).to.be.false
+    expect(utils.isLicenseFile(undefined)).to.be.false
   })
 })
 
 describe('Utils extractDate', () => {
   it('should extract date from timestamps', () => {
-    const inputs = {
+    const inputs: Record<string, string | null> = {
       '2014-11-21T00:06:54.027559+00:00': '2014-11-21',
       '2014-11-21': '2014-11-21',
       '11-21-2014': '2014-11-21',
@@ -589,10 +589,10 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
       name: 'javaproperties',
       revision: '0.8.1'
     }
-  }
+  } as unknown as EntityCoordinatesRequest
 
   before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
   })
 
   after(() => {
@@ -616,7 +616,7 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
       name: 'v3',
       revision: 'v3.1.0'
     }
-  }
+  } as unknown as EntityCoordinatesRequest
 
   it('encodes slashes in namespaces', async () => {
     const result = await utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
@@ -655,7 +655,7 @@ describe('Utils parseNamespaceNameRevision', () => {
       extra2: 'bah',
       extra3: 'v3.1.0'
     }
-  }
+  } as unknown as EntityCoordinatesRequest
 
   it('parses the args into one string', () => {
     const result = utils.parseNamespaceNameRevision(fakeSlashNamespaceRequest)
@@ -672,10 +672,10 @@ describe('Utils getLicenseLocations', () => {
       name: 'javascriptproperties',
       revision: '0.8.1'
     }
-  }
+  } as unknown as EntityCoordinatesRequest
 
   before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry))
+    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
   })
 
   after(() => {
@@ -697,7 +697,7 @@ describe('Utils getLicenseLocations', () => {
         name: 'fx',
         revision: '1.14.2'
       }
-    }
+    } as unknown as EntityCoordinatesRequest
 
     it('finds the correct location for go packages', async () => {
       const coordinates = await utils.toEntityCoordinatesFromRequest(goRequest)
@@ -714,7 +714,7 @@ describe('Utils getLicenseLocations', () => {
           name: 'github-release-resource',
           revision: 'v1.6.4'
         }
-      }
+      } as unknown as EntityCoordinatesRequest
 
       const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
@@ -730,7 +730,7 @@ describe('Utils getLicenseLocations', () => {
           name: 'github-release-resource',
           revision: 'v1.6.4'
         }
-      }
+      } as unknown as EntityCoordinatesRequest
 
       const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
@@ -747,7 +747,7 @@ describe('Utils getLicenseLocations', () => {
         name: 'python-tenacity',
         revision: '8.2.1-1'
       }
-    }
+    } as unknown as EntityCoordinatesRequest
 
     it('returns an empty array when not passing packages', async () => {
       const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
@@ -899,9 +899,11 @@ describe('Utils buildSourceUrl', () => {
 })
 
 describe('normalizeLicenseExpression', () => {
+  const noop = { info: () => {} }
+
   it('should normalize license', () => {
     const expression = 'MIT AND GPL-3.0'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('MIT AND GPL-3.0')
   })
   it('should normalize license to SPDX equivalent', () => {
@@ -910,39 +912,39 @@ describe('normalizeLicenseExpression', () => {
       There is an SPDX valid license which does not require a LicenseRef meaning this test is correct as is.
     */
     const expression = 'net-snmp'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('Net-SNMP')
   })
   it('should normalize single licenseRef', () => {
     const expression = 'afpl-9.0'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('LicenseRef-scancode-afpl-9.0')
   })
   it('should normalize license and licenseRef', () => {
     const expression = 'afl-1.1 AND afpl-9.0'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('AFL-1.1 AND LicenseRef-scancode-afpl-9.0')
   })
   it('should normalize licenseRef and license', () => {
     const expression = 'afpl-9.0 AND MIT'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND MIT')
   })
   it('should normalize licenseRef and licenseRef', () => {
     const expression = 'afpl-9.0 AND activestate-community'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community')
   })
   it('should normalize licenseRef and licenseRef or licenseRef', () => {
     const expression = 'afpl-9.0 AND activestate-community OR ac3filter'
-    const result = utils.normalizeLicenseExpression(expression)
+    const result = utils.normalizeLicenseExpression(expression, noop)
     expect(result).to.eq(
       'LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community OR LicenseRef-scancode-ac3filter'
     )
   })
   it('should normalize INVALID to NOASSERTION', () => {
     const mockLogger = {
-      info: message => {
+      info: (message: string) => {
         console.log(message)
       }
     }

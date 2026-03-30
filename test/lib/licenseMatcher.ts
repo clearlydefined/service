@@ -1,21 +1,23 @@
-// @ts-nocheck
 import { expect } from 'chai'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { LicenseMatchInput } from '../../lib/licenseMatcher.js'
 import { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher } from '../../lib/licenseMatcher.js'
 
 describe('licenseMatcher.js', () => {
   describe('LicenseMatcher process()', () => {
     it('Should return NOT match if any policy returns mismatch', () => {
-      const mismatch = { propPath: 'path.to.license.prop', source: 'license1', target: 'license2' }
+      const mismatch = { policy: 'test', propPath: 'path.to.license.prop', source: 'license1', target: 'license2' }
       const matcher = new LicenseMatcher([
         {
-          compare: () => ({ match: [{}], mismatch: [mismatch] })
+          name: 'mock1',
+          compare: () => ({ match: [{ policy: 'mock1', propPath: 'test', value: 'test' }], mismatch: [mismatch] })
         },
         {
-          compare: () => ({ match: [{}], mismatch: [] })
+          name: 'mock2',
+          compare: () => ({ match: [{ policy: 'mock2', propPath: 'test', value: 'test' }], mismatch: [] })
         }
       ])
-      const result = matcher.process({}, {})
+      const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
       expect(result).to.have.property('isMatching', false)
       expect(result.mismatch).to.deep.include(mismatch)
     })
@@ -23,13 +25,15 @@ describe('licenseMatcher.js', () => {
     it('Should return NOT match if all policy returns empty mismatch and empty match', () => {
       const matcher = new LicenseMatcher([
         {
+          name: 'mock1',
           compare: () => ({ match: [], mismatch: [] })
         },
         {
+          name: 'mock2',
           compare: () => ({ match: [], mismatch: [] })
         }
       ])
-      const result = matcher.process({}, {})
+      const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
       expect(result.mismatch).to.have.lengthOf(0)
       expect(result).to.have.property('isMatching', false)
     })
@@ -39,13 +43,15 @@ describe('licenseMatcher.js', () => {
       const secondMatch = { policy: '2', propPath: 'path.to.license.prop2', value: 'license2' }
       const matcher = new LicenseMatcher([
         {
+          name: 'mock1',
           compare: () => ({ match: [firstMatch], mismatch: [] })
         },
         {
+          name: 'mock2',
           compare: () => ({ match: [secondMatch], mismatch: [] })
         }
       ])
-      const result = matcher.process({}, {})
+      const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
       expect(result).to.have.property('isMatching', true)
       expect(result.match).to.have.lengthOf(2).and.to.have.deep.members([firstMatch, secondMatch])
     })
@@ -78,8 +84,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: { ...sourceDefinition, coordinates } },
-        { definition: { ...targetDefinition, coordinates } }
+        { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
+        { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
@@ -115,8 +121,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: { ...sourceDefinition, coordinates } },
-        { definition: { ...targetDefinition, coordinates } }
+        { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
+        { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
@@ -148,8 +154,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: { ...sourceDefinition, coordinates } },
-        { definition: { ...targetDefinition, coordinates } }
+        { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
+        { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
       expect(result.match).to.have.lengthOf(1).and.deep.include({
         policy: definitionLicenseMatchPolicy.name,
@@ -180,8 +186,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: sourceDefinition },
-        { definition: targetDefinition }
+        { definition: sourceDefinition } as unknown as LicenseMatchInput,
+        { definition: targetDefinition } as unknown as LicenseMatchInput
       )
       expect(result.match).to.have.lengthOf(0)
       expect(result.mismatch).to.have.lengthOf(0)
@@ -211,8 +217,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: sourceDefinition },
-        { definition: targetDefinition }
+        { definition: sourceDefinition } as unknown as LicenseMatchInput,
+        { definition: targetDefinition } as unknown as LicenseMatchInput
       )
       expect(result.match).to.have.lengthOf(0)
       expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
@@ -253,8 +259,8 @@ describe('licenseMatcher.js', () => {
       }
 
       const result = definitionLicenseMatchPolicy.compare(
-        { definition: { ...sourceDefinition, coordinates } },
-        { definition: { ...targetDefinition, coordinates } }
+        { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
+        { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
 
       expect(result.match)
@@ -292,7 +298,7 @@ describe('licenseMatcher.js', () => {
           ]
         }
       ]
-      function generateMavenDefinitionAndHarvest(revision, licenses) {
+      function generateMavenDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(
@@ -361,7 +367,7 @@ describe('licenseMatcher.js', () => {
     describe('Match crate package', () => {
       const sourceLicense = 'MIT OR Apache-2.0'
 
-      function generateCrateDefinitionAndHarvest(revision, license) {
+      function generateCrateDefinitionAndHarvest(revision: string, license?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`crate/cratesio/-/libc/${revision}`)
@@ -418,7 +424,11 @@ describe('licenseMatcher.js', () => {
     describe('Match nuget package', () => {
       const sourceLicense = 'MIT'
       const sourceLicenseUrl = 'https://licenses.nuget.org/MIT'
-      function generateNugetDefinitionAndHarvest(revision, license, licenseUrl) {
+      function generateNugetDefinitionAndHarvest(
+        revision: string,
+        license?: unknown,
+        licenseUrl?: unknown
+      ): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`nuget/nuget/-/Microsoft.Identity.Web.MicrosoftGraph/${revision}`)
@@ -520,7 +530,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match npm package', () => {
       const sourceLicense = 'MIT'
-      function generateNpmDefinitionAndHarvest(revision, license) {
+      function generateNpmDefinitionAndHarvest(revision: string, license?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`npm/npmjs/-/mongoose/${revision}`)
@@ -576,7 +586,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match composer package', () => {
       const sourceLicenses = ['GPL-2.0+']
-      function generateComposerDefinitionAndHarvest(revision, licenses) {
+      function generateComposerDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`composer/packagist/codeinwp/themeisle-sdk/$${revision}`)
@@ -632,7 +642,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match gem package', () => {
       const sourceLicenses = ['Ruby']
-      function generateGemDefinitionAndHarvest(revision, licenses) {
+      function generateGemDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`gem/rubygems/-/reline/${revision}`)
@@ -687,7 +697,11 @@ describe('licenseMatcher.js', () => {
     describe('Match pypi package', () => {
       const sourceLicenseInfo = 'BSD'
       const sourceDeclaredLicense = 'BSD-2-Clause'
-      function generatePypiDefinitionAndHarvest(revision, licenseInfo, declaredLicense) {
+      function generatePypiDefinitionAndHarvest(
+        revision: string,
+        licenseInfo?: unknown,
+        declaredLicense?: unknown
+      ): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)
@@ -773,7 +787,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match deb package', () => {
       const sourceLicenses = ['AGPL-3', 'MIT', 'BSD-3-clause', '(GPL-3 OR AGPL-3)', 'PSF-2', 'GPL-3']
-      function generateDebDefinitionAndHarvest(revision, licenses) {
+      function generateDebDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`deb/debian/-/kopano-contacts/${revision}`)
@@ -825,7 +839,7 @@ describe('licenseMatcher.js', () => {
 
     describe('Match debsrc package', () => {
       const sourceLicenses = ['GPL-3.0+', 'MIT', 'GPL-2.0+', 'AGPL-3.0', 'BSD-3-clause']
-      function generateDebDefinitionAndHarvest(revision, licenses) {
+      function generateDebDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
             coordinates: EntityCoordinates.fromString(`debsrc/debian/-/lava/${revision}`)

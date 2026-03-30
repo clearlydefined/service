@@ -37,7 +37,7 @@ class FsfeReuseSummarizer {
    * @throws {Error} If REUSE data is invalid
    */
   summarize(_coordinates, harvested) {
-    if (!harvested || !harvested.reuse || !harvested.reuse.metadata.CreatorTool) {
+    if (!harvested?.reuse?.metadata.CreatorTool) {
       throw new Error('Invalid REUSE data')
     }
     const result = {}

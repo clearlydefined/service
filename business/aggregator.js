@@ -137,7 +137,7 @@ class AggregationService {
    */
   _normalizeFiles(result, cdSummarized, coordinates) {
     const cdFiles = get(cdSummarized, 'summary.files')
-    if (!cdFiles || !cdFiles.length) {
+    if (!cdFiles?.length) {
       return
     }
     const difference = (result.files?.length || 0) - cdFiles.length

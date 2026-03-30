@@ -770,7 +770,7 @@ ${this._formatDefinitions(patch.patches)}`
       return curation
     }
     const all = await this._getCurations(coordinates, /** @type {number | string | null} */ (curation))
-    if (!all || !all.revisions) {
+    if (!all?.revisions) {
       return null
     }
     const result = all.revisions[coordinates.revision]
@@ -887,7 +887,7 @@ ${this._formatDefinitions(patch.patches)}`
     try {
       const response = await this.github.rest.repos.getContent({ owner, repo, ref, path })
       const data = /** @type {{ content?: string }} */ (response.data)
-      if (!data || !data.content) {
+      if (!data?.content) {
         this.logger.info(`No content found for ${owner}/${repo}/${ref}/${path}.`)
         return null
       }

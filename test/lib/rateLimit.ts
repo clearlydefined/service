@@ -4,7 +4,6 @@
 import assert from 'node:assert'
 import express from 'express'
 import sinon from 'sinon'
-// @ts-expect-error - supertest has no type declarations
 import supertest from 'supertest'
 import { GenericContainer } from 'testcontainers'
 import {
@@ -61,7 +60,6 @@ describe('Rate Limiter', () => {
   describe('Redis Based Rate Limiter', () => {
     it('throws error if redis client is missing', async () => {
       try {
-        // @ts-expect-error - intentionally unused, testing side effect
         const _middleware = new RedisBasedRateLimiter({ limit, logger } as any).middleware
         assert.fail('Should have thrown error')
       } catch (error: any) {
