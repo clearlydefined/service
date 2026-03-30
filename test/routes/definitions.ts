@@ -1,6 +1,8 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { SinonStub } from 'sinon'
+
 const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
@@ -17,8 +19,8 @@ const definitionsRoutes = proxyquire('../../routes/definitions', {
 })
 
 describe('Definition route', () => {
-  let router
-  let definitionService
+  let router: Record<string, Function>
+  let definitionService: Record<string, SinonStub>
 
   beforeEach(() => {
     definitionService = createDefinitionService()
@@ -98,8 +100,8 @@ function createGetForceComputeRequest() {
   })
 }
 
-function createGetWithExtraValues(extraValues = []) {
-  const baseParams = {
+function createGetWithExtraValues(extraValues: string[] = []) {
+  const baseParams: Record<string, string> = {
     type: 'crate',
     provider: 'cratesio',
     namespace: '-',
@@ -120,7 +122,7 @@ function createGetWithExtraValues(extraValues = []) {
   })
 }
 
-function createRoutes(definition) {
+function createRoutes(definition: Record<string, SinonStub>) {
   return definitionsRoutes(definition, true)
 }
 
@@ -132,7 +134,7 @@ function createDefinitionService() {
 }
 
 describe('Definition adjust result keys ', () => {
-  let router
+  let router: Record<string, Function>
 
   function mockResult() {
     return { a: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }

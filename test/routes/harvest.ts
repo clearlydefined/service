@@ -1,20 +1,21 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const httpMocks = require('node-mocks-http')
-const sinon = require('sinon')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const harvestRoutes = require('../../routes/harvest')
-const ListBasedFilter = require('../../providers/harvest/throttling/listBasedFilter')
-const utils = require('../../lib/utils')
+import { expect } from 'chai'
+import httpMocks from 'node-mocks-http'
+import sinon from 'sinon'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import utils from '../../lib/utils.js'
+import harvestRoutes from '../../routes/harvest.js'
+import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.js'
 
 // Shared noop logger for tests
 const logger = {
   info: () => {},
   debug: () => {},
   error: () => {},
-  warn: () => {}
+  warn: () => {},
+  log: () => {}
 }
 
 describe('Harvest route', () => {
@@ -105,27 +106,26 @@ describe('Harvest route', () => {
     sinon
       .stub(utils, 'toNormalizedEntityCoordinates')
       .resolves(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
-    const router = harvestRoutes(harvester, undefined, undefined, throttler, true)
+    const router = (harvestRoutes as Function)(harvester, undefined, undefined, throttler, true)
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(422)
     expect(harvester.harvest.calledOnce).to.be.false
   })
 })
 
-function createRoutes(harvester, harvestStore, summarizer) {
-  return harvestRoutes(harvester, harvestStore, summarizer, new ListBasedFilter({ blacklist: [], logger }), true)
+function createRoutes(harvester?: Record<string, sinon.SinonStub>, harvestStore?: Record<string, sinon.SinonStub>, summarizer?: Record<string, sinon.SinonStub>) {
+  return (harvestRoutes as Function)(harvester, harvestStore, summarizer, new ListBasedFilter({ blacklist: [], logger }), true)
 }
 
-function createRequest(entries) {
+function createRequest(entries?: unknown) {
   return httpMocks.createRequest({
     method: 'POST',
     url: '/',
     body: entries
-    // body: JSON.stringify(entries)
   })
 }
 
-function createGetRequest(entries) {
+function createGetRequest(entries: Record<string, string>) {
   return httpMocks.createRequest({
     method: 'GET',
     url: '/',

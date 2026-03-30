@@ -1,11 +1,11 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const httpMocks = require('node-mocks-http')
-const sinon = require('sinon')
-const definitionsRoutes = require('../../routes/definitions-1.0.0')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import { expect } from 'chai'
+import httpMocks from 'node-mocks-http'
+import sinon from 'sinon'
+import definitionsRoutes from '../../routes/definitions-1.0.0.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 describe('Definition v1.0.0 route', () => {
   it('accepts a good GET request', async () => {
@@ -48,8 +48,8 @@ function createGetForceComputeRequest() {
   })
 }
 
-function createRoutes(definition) {
-  return definitionsRoutes(definition, true)
+function createRoutes(definition: Record<string, sinon.SinonStub>): Record<string, Function> {
+  return (definitionsRoutes as Function)(definition, true)
 }
 
 function createDefinitionService() {

@@ -1,10 +1,10 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const webhookRoutes = require('../../routes/webhook')
-const httpMocks = require('node-mocks-http')
-const sinon = require('sinon')
+import { expect } from 'chai'
+import httpMocks from 'node-mocks-http'
+import sinon from 'sinon'
+import webhookRoutes from '../../routes/webhook.js'
 
 describe('Webhook Route for Crawler calls', () => {
   it('handles basic header signature', () => {
@@ -12,7 +12,7 @@ describe('Webhook Route for Crawler calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.computeAndStoreIfNecessary.calledOnce).to.be.true
@@ -26,7 +26,20 @@ describe('Webhook Route for Crawler calls', () => {
     expect(response._getData()).to.be.empty
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = webhookRoutes(null, service, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
+    router._handlePost(request, response)
+    expect(response.statusCode).to.be.eq(400)
+    expect(service.computeStoreAndCurate.calledOnce).to.be.false
+    expect(logger.info.calledOnce).to.be.true
+    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+  })
+
+  it('handles missing links', () => {
+    const request = createRequest(undefined, {})
+    const response = httpMocks.createResponse()
+    const logger = createLogger()
+    const service = createDefinitionService()
+    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.computeStoreAndCurate.calledOnce).to.be.false
@@ -39,7 +52,7 @@ describe('Webhook Route for Crawler calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = webhookRoutes(null, service, logger, 'secret', 'different', true)
+    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'different', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.computeStoreAndCurate.calledOnce).to.be.false
@@ -59,7 +72,7 @@ function createDefinitionService() {
   }
 }
 
-function createRequest(urn, links) {
+function createRequest(urn?: string, links?: Record<string, unknown>) {
   return httpMocks.createRequest({
     method: 'POST',
     url: '/',
@@ -70,6 +83,6 @@ function createRequest(urn, links) {
       _metadata: {
         links: links || { self: { href: urn } }
       }
-    })
+    }) as unknown
   })
 }

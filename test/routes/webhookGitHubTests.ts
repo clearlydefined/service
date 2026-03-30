@@ -1,13 +1,13 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const webhookRoutes = require('../../routes/webhook')
-const httpMocks = require('node-mocks-http')
-const sinon = require('sinon')
+import { expect } from 'chai'
+import httpMocks from 'node-mocks-http'
+import sinon from 'sinon'
+import webhookRoutes from '../../routes/webhook.js'
 
 describe('Webhook Route for GitHub calls', () => {
-  let clock
+  let clock: sinon.SinonFakeTimers
 
   beforeEach(() => {
     clock = sinon.useFakeTimers()
@@ -22,7 +22,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.updateContribution.calledOnce).to.be.false
@@ -37,7 +37,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.updateContribution.calledOnce).to.be.false
@@ -50,36 +50,19 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.updateContribution.calledOnce).to.be.false
     expect(response._getData().startsWith('Missing')).to.be.true
   })
 
-  // TODO for some reason this test is failing on Travis. Runs fine on my windows machine and
-  // really should not be affected by environment. could be something with the async/await code
-  // not working right on Travis.
-  // it('handles closed event that is merged', async () => {
-  //   const request = createRequest('closed', true)
-  //   const response = httpMocks.createResponse()
-  //   const curationService = createCurationService([simpleCoords])
-  //   const definitionService = createDefinitionService()
-  //   const router = webhookRoutes(curationService, definitionService, null, 'secret', 'secret', true)
-  //   await router._handlePost(request, response)
-  //   expect(response.statusCode).to.be.eq(200)
-  //   expect(definitionService.invalidate.calledOnce).to.be.true
-  //   expect(definitionService.invalidate.getCall(0).args[0][0]).to.be.eq(simpleCoords)
-  //   expect(definitionService.computeAndStore.calledOnce).to.be.true
-  //   expect(definitionService.computeAndStore.getCall(0).args[0]).to.be.eq(simpleCoords)
-  // })
-
   it('skips closed event that is not merged', async () => {
     const request = createRequest('closed', false)
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -97,7 +80,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -113,7 +96,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -129,7 +112,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -141,7 +124,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = webhookRoutes(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -156,13 +139,13 @@ function createLogger() {
 function createCurationService() {
   return {
     getContributedCurations: sinon.stub(),
-    updateContribution: sinon.stub(),
-    validateContributions: sinon.stub(),
-    addByMergedCuration: sinon.stub()
+    updateContribution: sinon.stub().resolves(),
+    validateContributions: sinon.stub().resolves(),
+    addByMergedCuration: sinon.stub().resolves()
   }
 }
 
-function createRequest(action, merged) {
+function createRequest(action: string, merged = true) {
   return httpMocks.createRequest({
     method: 'POST',
     url: '/',
@@ -184,6 +167,6 @@ function createRequest(action, merged) {
           sha: '24'
         }
       }
-    })
+    }) as unknown
   })
 }

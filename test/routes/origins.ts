@@ -1,6 +1,7 @@
-// @ts-nocheck
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
+
+import type { SinonStub } from 'sinon'
 
 const { expect, assert } = require('chai')
 const sinon = require('sinon')
@@ -11,8 +12,8 @@ const originMavenRoutes = require('../../routes/originMaven')
 const originCondaRoutes = require('../../routes/originConda')
 
 describe('Pypi origin routes', () => {
-  let router
-  let requestPromiseStub
+  let router: Record<string, Function>
+  let requestPromiseStub: SinonStub
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
     requestPromiseStub = sinon.stub()
@@ -40,7 +41,7 @@ describe('Pypi origin routes', () => {
     try {
       await router._getPypiData('pand')
     } catch (error) {
-      expect(error.statusCode).to.be.equal(400)
+      expect((error as Record<string, unknown>).statusCode).to.be.equal(400)
       return
     }
     //Fail the test case if the error is not thrown
@@ -49,7 +50,7 @@ describe('Pypi origin routes', () => {
 })
 
 describe('Maven origin routes', () => {
-  let router
+  let router: Record<string, Function>
   const fixturePath = 'test/fixtures/origins/maven'
 
   before(() => {
@@ -86,16 +87,16 @@ describe('Maven origin routes', () => {
     expect(router._getSuggestions(responseFilePath, invalidGroupId)).to.be.deep.equal([])
   })
 
-  function getResponse(filename) {
+  function getResponse(filename: string) {
     return router._getSuggestions(loadFixture(`${fixturePath}/${filename}.json`))
   }
 })
 
 describe('Conda origin routes', () => {
-  let condaRepoAccess
-  let cacheMock
+  let condaRepoAccess: Record<string, Function>
+  let cacheMock: { get: SinonStub; set: SinonStub }
 
-  const requestPromiseStub = sinon.stub()
+  const requestPromiseStub: SinonStub = sinon.stub()
   const fetchModuleStub = {
     callFetch: requestPromiseStub
   }
@@ -180,7 +181,7 @@ describe('Conda origin routes', () => {
     assert.isTrue(requestPromiseStub.calledOnce)
   })
 
-  function createGetOriginCondaRevisionsRequest(name) {
+  function createGetOriginCondaRevisionsRequest(name: string) {
     return httpMocks.createRequest({
       method: 'GET',
       url: `/origins/conda/'conda-forge'/linux-64/${name}/revisions`,
@@ -193,7 +194,7 @@ describe('Conda origin routes', () => {
     })
   }
 
-  function createGetOriginCondaRequest(channel) {
+  function createGetOriginCondaRequest(channel: string) {
     return httpMocks.createRequest({
       method: 'GET',
       url: `/origins/conda/${channel}/tensorflow/`,
@@ -211,9 +212,9 @@ describe('Conda origin routes', () => {
 })
 
 describe('GitHub origin routes', () => {
-  let router
-  let githubMock
-  let loggerStub
+  let router: Record<string, Function>
+  let githubMock: Record<string, unknown>
+  let loggerStub: Record<string, SinonStub>
 
   beforeEach(() => {
     loggerStub = {
@@ -263,10 +264,10 @@ describe('GitHub origin routes', () => {
     })
     const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
       res.on('error', reject)
-      router.handle(req, res, err => {
+      router.handle(req, res, (err: Error) => {
         if (err) {
           reject(err)
         }
@@ -275,11 +276,11 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([{ id: 'octocat' }])
-    expect(githubMock.search.users.calledOnce).to.be.true
+    expect((githubMock.search as Record<string, SinonStub>).users.calledOnce).to.be.true
   })
 
   it('should handle /:login/:repo route', async () => {
-    githubMock.search.repos.resolves({
+    ;(githubMock.search as Record<string, SinonStub>).repos.resolves({
       data: { items: [{ full_name: 'octocat/Hello-World' }] }
     })
 
@@ -292,10 +293,10 @@ describe('GitHub origin routes', () => {
 
     const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
       res.on('error', reject)
-      router.handle(req, res, err => {
+      router.handle(req, res, (err: Error) => {
         if (err) {
           reject(err)
         }
@@ -304,11 +305,11 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([{ id: 'octocat/Hello-World' }])
-    expect(githubMock.search.repos.calledOnce).to.be.true
+    expect((githubMock.search as Record<string, SinonStub>).repos.calledOnce).to.be.true
   })
 
   it('should handle /:login/:repo/revisions with only lightweight tags', async () => {
-    githubMock.rest.repos.listTags.resolves({
+    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -327,7 +328,7 @@ describe('GitHub origin routes', () => {
       ]
     })
 
-    githubMock.rest.git.getTag.rejects({ status: 404 })
+    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.rejects({ status: 404 })
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -338,10 +339,10 @@ describe('GitHub origin routes', () => {
 
     const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
       res.on('error', reject)
-      router.handle(req, res, err => {
+      router.handle(req, res, (err: Error) => {
         if (err) {
           reject(err)
         }
@@ -353,12 +354,12 @@ describe('GitHub origin routes', () => {
       { tag: 'v2.0.0', sha: 'sha456' },
       { tag: 'v1.0.0', sha: 'sha123' }
     ])
-    expect(githubMock.rest.repos.listTags.calledOnce).to.be.true
-    expect(githubMock.rest.git.getTag.called).to.be.true
+    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
+    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.called).to.be.true
   })
 
   it('should handle /:login/:repo/revisions with annotated tags', async () => {
-    githubMock.rest.repos.listTags.resolves({
+    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -366,7 +367,7 @@ describe('GitHub origin routes', () => {
         }
       ]
     })
-    githubMock.rest.git.getTag.resolves({
+    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.resolves({
       data: { object: { sha: 'commitSha1' } }
     })
 
@@ -379,10 +380,10 @@ describe('GitHub origin routes', () => {
 
     const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       res.on('finish', resolve)
       res.on('error', reject)
-      router.handle(req, res, err => {
+      router.handle(req, res, (err: Error) => {
         if (err) {
           reject(err)
         }
@@ -391,16 +392,16 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([{ tag: 'v1.0.0', sha: 'commitSha1' }])
-    expect(githubMock.rest.repos.listTags.calledOnce).to.be.true
-    expect(githubMock.rest.git.getTag.calledOnce).to.be.true
+    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
+    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).git).getTag.calledOnce).to.be.true
   })
 
   it('should return empty array on 404 from GitHub', async () => {
-    const notFoundError = new Error('Not Found')
+    const notFoundError = new Error('Not Found') as Error & Record<string, unknown>
     notFoundError.code = 404
     notFoundError.status = 404
 
-    githubMock.rest.repos.listTags.rejects(notFoundError)
+    ;((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.rejects(notFoundError)
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -411,10 +412,10 @@ describe('GitHub origin routes', () => {
 
     const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
       res.on('error', reject)
-      router.handle(req, res, err => {
+      router.handle(req, res, (err: Error) => {
         if (err) {
           reject(err)
         }
@@ -423,11 +424,11 @@ describe('GitHub origin routes', () => {
 
     expect(res.statusCode).to.equal(200)
     expect(res._getData()).to.deep.equal([])
-    expect(githubMock.rest.repos.listTags.calledOnce).to.be.true
+    expect(((githubMock.rest as Record<string, Record<string, SinonStub>>).repos).listTags.calledOnce).to.be.true
   })
 })
 
-function loadFixture(path) {
+function loadFixture(path: string) {
   const body = fs.readFileSync(path)
   return JSON.parse(body)
 }
