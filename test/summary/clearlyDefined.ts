@@ -4,10 +4,12 @@
 
 import * as chai from 'chai'
 import validator from '../../schemas/validator.js'
+
 const { expect } = chai
-import Summarizer from '../../providers/summary/clearlydefined.js'
-import { setIfValue } from '../../lib/utils.js'
+
 import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { setIfValue } from '../../lib/utils.js'
+import Summarizer from '../../providers/summary/clearlydefined.js'
 
 describe('ClearlyDefined Maven summarizer', () => {
   it('handles with all the data', () => {

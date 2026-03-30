@@ -2,11 +2,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import Store from '../../../providers/curation/mongoCurationStore.js'
+import { expect } from 'chai'
+import sinon from 'sinon'
 import Curation from '../../../lib/curation.js'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
-import sinon from 'sinon'
-import { expect } from 'chai'
+import Store from '../../../providers/curation/mongoCurationStore.js'
 
 const pr = {
   number: 12,

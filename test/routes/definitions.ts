@@ -19,7 +19,7 @@ const definitionsRoutes = proxyquire('../../routes/definitions', {
 })
 
 describe('Definition route', () => {
-  let router: Record<string, Function>
+  let router: Record<string, (...args: any[]) => any>
   let definitionService: Record<string, SinonStub>
 
   beforeEach(() => {
@@ -134,7 +134,7 @@ function createDefinitionService() {
 }
 
 describe('Definition adjust result keys ', () => {
-  let router: Record<string, Function>
+  let router: Record<string, (...args: any[]) => any>
 
   function mockResult() {
     return { a: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }

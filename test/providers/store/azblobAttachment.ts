@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import sinon from 'sinon'
 import { expect } from 'chai'
+import sinon from 'sinon'
 import Store from '../../../providers/stores/azblobAttachmentStore.js'
 
 describe('AzureAttachmentStore list definitions', () => {
@@ -49,7 +49,7 @@ function createStore() {
       cb(error)
     })
   }
-  const store = (Store as Function)({})
+  const store = (Store as (...args: any[]) => any)({})
   store.blobService = blobServiceStub
   return store
 }

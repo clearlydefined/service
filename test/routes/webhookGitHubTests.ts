@@ -22,7 +22,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.updateContribution.calledOnce).to.be.false
@@ -37,7 +37,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.updateContribution.calledOnce).to.be.false
@@ -50,7 +50,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.updateContribution.calledOnce).to.be.false
@@ -62,7 +62,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -80,7 +80,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -96,7 +96,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -112,7 +112,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
@@ -124,7 +124,7 @@ describe('Webhook Route for GitHub calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createCurationService()
-    const router = (webhookRoutes as Function)(service, null, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise

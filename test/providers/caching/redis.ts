@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: MIT
 
 import sinon from 'sinon'
+
 const sandbox = sinon.createSandbox()
+
 import assert from 'node:assert'
-import redisCache from '../../../providers/caching/redis.js'
-import { RedisCache } from '../../../providers/caching/redis.js'
-import { GenericContainer } from 'testcontainers'
-import pako1 from 'pako-1'
 import pako2 from 'pako'
+import pako1 from 'pako-1'
+import { GenericContainer } from 'testcontainers'
+import redisCache, { RedisCache } from '../../../providers/caching/redis.js'
 
 const logger = {
   info: () => {},

@@ -36,7 +36,7 @@ class LicenseeSummarizer {
    * @throws {Error} If Licensee data is invalid
    */
   summarize(coordinates, harvested) {
-    if (!harvested || !harvested.licensee || !harvested.licensee.version) {
+    if (!harvested?.licensee?.version) {
       throw new Error('Invalid Licensee data')
     }
     const result = {}

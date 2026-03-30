@@ -4,9 +4,13 @@
 
 import assert from 'node:assert'
 import Summarizer from '../../providers/summary/clearlydefined.js'
-const summarizer = (Summarizer as Function)()
+
+const summarizer = (Summarizer as (...args: any[]) => any)()
+
 import lodash from 'lodash'
+
 const { get } = lodash
+
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 const testCoordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')

@@ -1,10 +1,10 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { expect } from 'chai'
 import SummaryService from '../../business/summarizer.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 

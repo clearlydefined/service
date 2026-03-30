@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
+import sinon from 'sinon'
 import process from '../../../providers/harvest/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
-import sinon from 'sinon'
 
 describe('Harvest queue processing', () => {
   it('handles new message from clearlydefined tool', async () => {

@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import lodash from 'lodash'
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import lodash from 'lodash'
 
 const { compact, uniq, flatten } = lodash
 
@@ -14,7 +14,7 @@ import Summarizer from '../../../../providers/summary/scancode.js'
 
 // @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const summarizer = (Summarizer as Function)({}, { info: () => {} })
+const summarizer = (Summarizer as (...args: any[]) => any)({}, { info: () => {} })
 
 const SCANCODE_VERSIONS = ['32.1.0']
 

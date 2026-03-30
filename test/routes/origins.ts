@@ -12,7 +12,7 @@ const originMavenRoutes = require('../../routes/originMaven')
 const originCondaRoutes = require('../../routes/originConda')
 
 describe('Pypi origin routes', () => {
-  let router: Record<string, Function>
+  let router: Record<string, (...args: any[]) => any>
   let requestPromiseStub: SinonStub
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('Pypi origin routes', () => {
 })
 
 describe('Maven origin routes', () => {
-  let router: Record<string, Function>
+  let router: Record<string, (...args: any[]) => any>
   const fixturePath = 'test/fixtures/origins/maven'
 
   before(() => {
@@ -93,7 +93,7 @@ describe('Maven origin routes', () => {
 })
 
 describe('Conda origin routes', () => {
-  let condaRepoAccess: Record<string, Function>
+  let condaRepoAccess: Record<string, (...args: any[]) => any>
   let cacheMock: { get: SinonStub; set: SinonStub }
 
   const requestPromiseStub: SinonStub = sinon.stub()
@@ -212,7 +212,7 @@ describe('Conda origin routes', () => {
 })
 
 describe('GitHub origin routes', () => {
-  let router: Record<string, Function>
+  let router: Record<string, (...args: any[]) => any>
   let githubMock: Record<string, unknown>
   let loggerStub: Record<string, SinonStub>
 

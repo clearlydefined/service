@@ -2,12 +2,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import Store from '../../../providers/stores/mongo.js'
-import sinon from 'sinon'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import * as chai from 'chai'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
+import sinon from 'sinon'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import Store from '../../../providers/stores/mongo.js'
+
 const { range } = lodash
 
 chai.use(deepEqualInAnyOrder)

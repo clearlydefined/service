@@ -659,7 +659,7 @@ function setupWithDelegates(
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
   const harvestService = mockHarvestService()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
-  const service: any = (DefinitionService as Function)(
+  const service: any = (DefinitionService as (...args: any[]) => any)(
     harvestStore,
     harvestService,
     summary,
@@ -725,7 +725,7 @@ function setup(
   const aggregator = { process: () => Promise.resolve(definition) }
   const upgradeHandler = { validate: (def: unknown) => Promise.resolve(def) }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
-  const service: any = (DefinitionService as Function)(
+  const service: any = (DefinitionService as (...args: any[]) => any)(
     harvestStore,
     harvestService,
     summary,

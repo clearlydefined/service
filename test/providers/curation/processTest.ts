@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
+import sinon from 'sinon'
 import process from '../../../providers/curation/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
-import sinon from 'sinon'
 
 describe('Curation queue processing', () => {
   let clock

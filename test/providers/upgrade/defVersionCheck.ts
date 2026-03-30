@@ -1,9 +1,11 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import chaiAsPromised from 'chai-as-promised'
 import * as chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
 chai.use(chaiAsPromised)
+
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { DefinitionVersionChecker, factory } from '../../../providers/upgrade/defVersionCheck.js'

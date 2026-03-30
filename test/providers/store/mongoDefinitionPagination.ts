@@ -2,12 +2,12 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import lodash from 'lodash'
-import { MongoMemoryServer } from 'mongodb-memory-server'
 import fsPromise from 'node:fs/promises'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { expect } from 'chai'
+import lodash from 'lodash'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 
 const { uniq } = lodash

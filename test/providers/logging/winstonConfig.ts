@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import { sanitizeHeaders, sanitizeMeta, buildProperties } from '../../../providers/logging/winstonConfig.js'
+import { buildProperties, sanitizeHeaders, sanitizeMeta } from '../../../providers/logging/winstonConfig.js'
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {

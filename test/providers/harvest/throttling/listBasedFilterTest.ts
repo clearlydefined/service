@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
 import EntityCoordinates from '../../../../lib/entityCoordinates.js'
+import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
 
 describe('ListBasedFilter', () => {
   const logger = {

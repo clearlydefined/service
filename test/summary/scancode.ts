@@ -2,15 +2,17 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import validator from '../../schemas/validator.js'
+
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai
-import Summarizer from '../../providers/summary/scancode.js'
-import ScanCodeLegacySummarizer from '../../providers/summary/scancode/legacy-summarizer.js'
+
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { joinExpressions } from '../../lib/utils.js'
+import ScanCodeLegacySummarizer from '../../providers/summary/scancode/legacy-summarizer.js'
+import Summarizer from '../../providers/summary/scancode.js'
 
 describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {

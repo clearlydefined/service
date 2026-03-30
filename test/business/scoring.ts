@@ -154,8 +154,8 @@ describe('Definition Service Scoring', () => {
   })
 })
 
-function createService(): Record<string, Function> {
-  return (DefinitionService as Function)() as Record<string, Function>
+function createService(): Record<string, (...args: any[]) => any> {
+  return (DefinitionService as (...args: any[]) => any)() as Record<string, (...args: any[]) => any>
 }
 
 function createDefinition(declared: string | null | undefined, files?: Record<string, unknown>[]) {

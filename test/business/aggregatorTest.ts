@@ -1,11 +1,11 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import AggregatorService from '../../business/aggregator.js'
 import SummaryService from '../../business/summarizer.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
@@ -146,7 +146,7 @@ describe('Aggregation service', () => {
       }
     ]
 
-    const summaryService = (SummaryService as Function)({})
+    const summaryService = (SummaryService as (...args: any[]) => any)({})
 
     for (const testcase of testcases) {
       const coordSpec = `crate/cratesio/-/${testcase.name}/${testcase.version}`
@@ -166,7 +166,7 @@ describe('Aggregation service', () => {
     const coords = EntityCoordinates.fromString(coordSpec)
     const raw = loadEvidence(coordSpec.replace(/\//g, '-'))
 
-    const summaryService = (SummaryService as Function)({})
+    const summaryService = (SummaryService as (...args: any[]) => any)({})
     const summaries = summaryService.summarizeAll(coords, raw)
     const { service } = setupAggregatorWithParams(coordSpec, tools)
     const aggregated = service.process(summaries, coords)
@@ -186,13 +186,13 @@ function buildFile(path: string, license?: string, holders?: string[]) {
 function setupAggregator() {
   const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
   const config = { precedence: [['tool1', 'tool2', 'tool3']] }
-  const service = (AggregatorService as Function)(config)
+  const service = (AggregatorService as (...args: any[]) => any)(config)
   return { service, coordinates }
 }
 
 function setupAggregatorWithParams(coordSpec: string, tool_precedence: string[][]) {
   const coordinates = EntityCoordinates.fromString(coordSpec)
   const config = { precedence: tool_precedence }
-  const service = (AggregatorService as Function)(config)
+  const service = (AggregatorService as (...args: any[]) => any)(config)
   return { service, coordinates }
 }

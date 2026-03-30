@@ -12,7 +12,7 @@ describe('Webhook Route for Crawler calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(200)
     expect(service.computeAndStoreIfNecessary.calledOnce).to.be.true
@@ -26,7 +26,7 @@ describe('Webhook Route for Crawler calls', () => {
     expect(response._getData()).to.be.empty
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.computeStoreAndCurate.calledOnce).to.be.false
@@ -39,7 +39,7 @@ describe('Webhook Route for Crawler calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'secret', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.computeStoreAndCurate.calledOnce).to.be.false
@@ -52,7 +52,7 @@ describe('Webhook Route for Crawler calls', () => {
     const response = httpMocks.createResponse()
     const logger = createLogger()
     const service = createDefinitionService()
-    const router = (webhookRoutes as Function)(null, service, logger, 'secret', 'different', true)
+    const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'different', true)
     router._handlePost(request, response)
     expect(response.statusCode).to.be.eq(400)
     expect(service.computeStoreAndCurate.calledOnce).to.be.false

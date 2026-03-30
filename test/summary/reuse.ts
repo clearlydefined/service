@@ -3,7 +3,8 @@
 
 import assert from 'node:assert'
 import Summarizer from '../../providers/summary/reuse.js'
-const summarizer = (Summarizer as Function)()
+
+const summarizer = (Summarizer as (...args: any[]) => any)()
 
 describe('FsfeReuseSummarizer', () => {
   it('should include populate all available attributes', () => {

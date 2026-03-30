@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import * as chai from 'chai'
+
 const { expect } = chai
+
 import validator from '../../schemas/validator.js'
 
 describe('Validator - Coordinates Schema Tests', () => {

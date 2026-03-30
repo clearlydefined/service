@@ -4,7 +4,8 @@
 
 import assert from 'node:assert'
 import Summarizer from '../../providers/summary/licensee.js'
-const summarizer = (Summarizer as Function)()
+
+const summarizer = (Summarizer as (...args: any[]) => any)()
 
 describe('LicenseeSummarizer', () => {
   it('should skip non-exact and low confidence and missing paths matches', () => {

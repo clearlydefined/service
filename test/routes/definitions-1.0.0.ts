@@ -48,8 +48,8 @@ function createGetForceComputeRequest() {
   })
 }
 
-function createRoutes(definition: Record<string, sinon.SinonStub>): Record<string, Function> {
-  return (definitionsRoutes as Function)(definition, true)
+function createRoutes(definition: Record<string, sinon.SinonStub>): Record<string, (...args: any[]) => any> {
+  return (definitionsRoutes as (...args: any[]) => any)(definition, true)
 }
 
 function createDefinitionService() {

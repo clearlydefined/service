@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
-import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import sinon from 'sinon'
 import SuggestionService from '../../business/suggestionService.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
@@ -160,5 +160,5 @@ function createDefinition(
 
 function setup(definition: Record<string, unknown>, others: Record<string, unknown>[]) {
   const definitionService = { find: sinon.stub().resolves({ data: [...others, definition] }) }
-  return (SuggestionService as Function)(definitionService)
+  return (SuggestionService as (...args: any[]) => any)(definitionService)
 }

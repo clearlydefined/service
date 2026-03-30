@@ -106,7 +106,7 @@ describe('Harvest route', () => {
     sinon
       .stub(utils, 'toNormalizedEntityCoordinates')
       .resolves(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
-    const router = (harvestRoutes as Function)(harvester, undefined, undefined, throttler, true)
+    const router = (harvestRoutes as (...args: any[]) => any)(harvester, undefined, undefined, throttler, true)
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(422)
     expect(harvester.harvest.calledOnce).to.be.false
@@ -118,7 +118,7 @@ function createRoutes(
   harvestStore?: Record<string, sinon.SinonStub>,
   summarizer?: Record<string, sinon.SinonStub>
 ) {
-  return (harvestRoutes as Function)(
+  return (harvestRoutes as (...args: any[]) => any)(
     harvester,
     harvestStore,
     summarizer,

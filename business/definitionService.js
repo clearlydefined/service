@@ -729,7 +729,7 @@ class DefinitionService {
    * @private
    */
   _computeTextsScore(definition) {
-    if (!definition.files || !definition.files.length) {
+    if (!definition.files?.length) {
       return 0
     }
     const includedTexts = this._collectLicenseTexts(definition)

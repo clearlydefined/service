@@ -2,11 +2,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import sinon from 'sinon'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import sinon from 'sinon'
+
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
+
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 import FileStore from '../../../providers/stores/fileHarvestStore.js'

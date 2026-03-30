@@ -212,7 +212,10 @@ describe('Notice Service', () => {
 function setup(definitions: Record<string, Record<string, unknown>>, attachments: Record<string, string> = {}) {
   const attachmentStore = { get: (token: string) => attachments[token] }
   const definitionService = { getAll: sinon.stub().returns(Promise.resolve(definitions)) }
-  const service: Record<string, Function> = (NoticeService as Function)(definitionService, attachmentStore)
+  const service: Record<string, (...args: any[]) => any> = (NoticeService as (...args: any[]) => any)(
+    definitionService,
+    attachmentStore
+  )
   const coordinates = Object.keys(definitions).map(x => definitions[x].coordinates)
   return { service, coordinates }
 }
