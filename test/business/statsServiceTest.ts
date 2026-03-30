@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const StatsService = require('../../business/statsService')
+import { expect } from 'chai'
+import StatsService from '../../business/statsService.js'
 
 describe('Stats Service', () => {
   it('calculates median score given frequency table', () => {
@@ -19,13 +19,15 @@ describe('Stats Service', () => {
       { count: 22, value: 9 },
       { count: 1039, value: 10 }
     ]
-    const result = StatsService()._getMedian(input, 3288)
+    const service = (StatsService as Function)() as Record<string, Function>
+    const result = service._getMedian(input, 3288)
     expect(result).to.eq(3)
   })
 
   it('calculates 0 median score for 0 totalCount', () => {
-    const input = []
-    const result = StatsService()._getMedian(input, 0)
+    const input: { count: number; value: number }[] = []
+    const service = (StatsService as Function)() as Record<string, Function>
+    const result = service._getMedian(input, 0)
     expect(result).to.eq(0)
   })
 })

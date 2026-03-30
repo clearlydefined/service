@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const DefinitionService = require('../../business/definitionService')
-const { setIfValue } = require('../../lib/utils')
-const { set } = require('lodash')
+import { expect } from 'chai'
+import lodash from 'lodash'
+import DefinitionService from '../../business/definitionService.js'
+import { setIfValue } from '../../lib/utils.js'
+
+const { set } = lodash
 
 describe('Definition Service Scoring', () => {
   it('computes simple score', () => {
@@ -152,19 +154,19 @@ describe('Definition Service Scoring', () => {
   })
 })
 
-function createService() {
-  return DefinitionService()
+function createService(): Record<string, Function> {
+  return (DefinitionService as Function)() as Record<string, Function>
 }
 
-function createDefinition(declared, files) {
-  const result = {}
+function createDefinition(declared: string | null | undefined, files?: Record<string, unknown>[]) {
+  const result: Record<string, unknown> = {}
   setIfValue(result, 'licensed.declared', declared)
   setIfValue(result, 'files', files)
   if (files) {
-    // collect up the flie license expressions
+    // collect up the file license expressions
     const expressions = Array.from(
-      files.reduce((list, file) => {
-        if (!file.facets || file.facets.includes('core')) {
+      files.reduce((list: Set<unknown>, file: Record<string, unknown>) => {
+        if (!file.facets || (file.facets as string[]).includes('core')) {
           list.add(file.license)
         }
         return list
@@ -175,8 +177,15 @@ function createDefinition(declared, files) {
   return result
 }
 
-function buildFile(path, license, holders, token, facets, natures) {
-  const result = { path }
+function buildFile(
+  path: string,
+  license?: string | null,
+  holders?: string[] | null,
+  token?: number | null,
+  facets?: string[] | null,
+  natures?: string[] | null
+) {
+  const result: Record<string, unknown> = { path }
   setIfValue(result, 'license', license)
   setIfValue(result, 'facets', facets)
   setIfValue(result, 'token', token)

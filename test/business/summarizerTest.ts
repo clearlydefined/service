@@ -1,15 +1,25 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const SummaryService = require('../../business/summarizer')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import { expect } from 'chai'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import SummaryService from '../../business/summarizer.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+
+// @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
+const testDir = dirname(fileURLToPath(import.meta.url))
+
+function loadEvidence(coordSpec: string): unknown {
+  return JSON.parse(readFileSync(join(testDir, 'evidence', `${coordSpec.replace(/\//g, '-')}.json`), 'utf-8'))
+}
 
 describe('Summary Service', () => {
   it('should handle sourcearchive components', () => {
     const coordSpec = 'sourcearchive/mavencentral/org.apache.httpcomponents/httpcore/4.1'
     const coords = EntityCoordinates.fromString(coordSpec)
-    const raw = require(`./evidence/${coordSpec.replace(/\//g, '-')}.json`)
+    const raw = loadEvidence(coordSpec)
 
     const summaryService = SummaryService({})
     const summaries = summaryService.summarizeAll(coords, raw)

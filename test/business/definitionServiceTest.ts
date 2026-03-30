@@ -1,23 +1,26 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const validator = require('../../schemas/validator')
-const DefinitionService = require('../../business/definitionService')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { setIfValue } = require('../../lib/utils')
-const Curation = require('../../lib/curation')
-const { set } = require('lodash')
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import lodash from 'lodash'
+import sinon from 'sinon'
+import AggregatorService from '../../business/aggregator.js'
+import DefinitionService from '../../business/definitionService.js'
+import SummaryService from '../../business/summarizer.js'
+import Curation from '../../lib/curation.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { setIfValue } from '../../lib/utils.js'
+import DefinitionQueueUpgrader from '../../providers/upgrade/defUpgradeQueue.js'
+import { DefinitionVersionChecker } from '../../providers/upgrade/defVersionCheck.js'
+import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
+import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
+import validator from '../../schemas/validator.js'
+
+const { set } = lodash
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-const FileHarvestStore = require('../../providers/stores/fileHarvestStore')
-const SummaryService = require('../../business/summarizer')
-const AggregatorService = require('../../business/aggregator')
-const DefinitionQueueUpgrader = require('../../providers/upgrade/defUpgradeQueue')
-const memoryQueue = require('../../providers/upgrade/memoryQueueConfig')
-const { DefinitionVersionChecker } = require('../../providers/upgrade/defVersionCheck')
+
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
@@ -645,17 +648,18 @@ function setupServiceForUpgrade(definition, upgradeHandler) {
 }
 
 function setupWithDelegates(
-  curator,
-  harvestStore,
-  summary,
-  aggregator,
-  store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
-  upgradeHandler = { validate: def => Promise.resolve(def) }
-) {
+  curator: Record<string, unknown>,
+  harvestStore: Record<string, unknown>,
+  summary: Record<string, unknown>,
+  aggregator: Record<string, unknown>,
+  store: Record<string, sinon.SinonStub> = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
+  upgradeHandler: Record<string, unknown> = { validate: (def: unknown) => Promise.resolve(def) }
+): any {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
   const harvestService = mockHarvestService()
-  const service = DefinitionService(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
+  const service: any = (DefinitionService as Function)(
     harvestStore,
     harvestService,
     summary,
@@ -670,7 +674,7 @@ function setupWithDelegates(
   return service
 }
 
-function validate(definition) {
+function validate(definition: Record<string, unknown>) {
   // Tack on a dummy coordinates to keep the schema happy. Tool summarizations do not have to include coordinates
   definition.coordinates = { type: 'npm', provider: 'npmjs', namespace: null, name: 'foo', revision: '1.0' }
   if (!validator.validate('definition', definition)) {
@@ -678,8 +682,8 @@ function validate(definition) {
   }
 }
 
-function createDefinition(facets, files, tools) {
-  const result = {}
+function createDefinition(facets?: unknown, files?: unknown[], tools?: string[]): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
   if (facets) {
     set(result, 'described.facets', facets)
   }
@@ -692,20 +696,20 @@ function createDefinition(facets, files, tools) {
   return result
 }
 
-function buildFile(path, license, holders) {
-  const result = { path }
+function buildFile(path: string, license?: string | null, holders?: string[] | null): Record<string, unknown> {
+  const result: Record<string, unknown> = { path }
   setIfValue(result, 'license', license)
   setIfValue(result, 'attributions', holders ? holders.map(entry => `Copyright ${entry}`) : null)
   return result
 }
 
-function setup(definition, coordinateSpec, curation) {
+function setup(definition?: Record<string, unknown>, coordinateSpec?: string, curation?: Record<string, unknown>): { coordinates: EntityCoordinates; service: any; harvestService: ReturnType<typeof mockHarvestService> } {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
   const curator = {
     get: () => Promise.resolve(curation),
-    apply: (_coordinates, _curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation)),
+    apply: (_coordinates: unknown, _curationSpec: unknown, definition: unknown) => Promise.resolve(Curation.apply(definition, curation)),
     autoCurate: () => {
       return
     }
@@ -714,8 +718,9 @@ function setup(definition, coordinateSpec, curation) {
   const harvestService = mockHarvestService()
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const upgradeHandler = { validate: def => Promise.resolve(def) }
-  const service = DefinitionService(
+  const upgradeHandler = { validate: (def: unknown) => Promise.resolve(def) }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
+  const service: any = (DefinitionService as Function)(
     harvestStore,
     harvestService,
     summary,

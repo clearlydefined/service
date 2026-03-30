@@ -1,21 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const sinon = require('sinon')
-const NoticeService = require('../../business/noticeService')
-const spdxLicenseList = require('spdx-license-list/full')
-const logger = require('../../providers/logging/logger')
-
-const mockLogger = {
-  info: () => {},
-  error: () => {},
-  debug: () => {}
-}
+import { expect } from 'chai'
+import sinon from 'sinon'
+import NoticeService from '../../business/noticeService.js'
+import spdxLicenseList from 'spdx-license-list/full.js'
+import logger from '../../providers/logging/logger.js'
+import { createSilentLogger } from '../helpers/mockLogger.ts'
 
 describe('Notice Service', () => {
   before(() => {
-    logger(mockLogger)
+    logger(createSilentLogger())
   })
 
   it('generates simple notice', async () => {
@@ -28,7 +23,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** test; version 1.0.0 -- \ncopyright me\n\n${spdxLicenseList.MIT.licenseText}`)
+      normalizeLineBreaks(`** test; version 1.0.0 -- \ncopyright me\n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
     )
     expect(notice.summary).to.deep.eq({
       total: 1,
@@ -46,7 +41,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** @scope/test; version 1.0.0 -- \n\n${spdxLicenseList.MIT.licenseText}`)
+      normalizeLineBreaks(`** @scope/test; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
     )
   })
 
@@ -137,7 +132,7 @@ describe('Notice Service', () => {
     })
     const notice = await service.generate(coordinates)
     expect(normalizeLineBreaks(notice.content)).to.eq(
-      normalizeLineBreaks(`** no-copyright; version 1.0.0 -- \n\n${spdxLicenseList.MIT.licenseText}`)
+      normalizeLineBreaks(`** no-copyright; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`)
     )
     expect(notice.summary).to.deep.eq({
       total: 3,
@@ -196,27 +191,27 @@ describe('Notice Service', () => {
       service._getRenderer('junk')
       expect(true).to.be.false
     } catch (error) {
-      expect(error.message).to.eq('"junk" is not a supported renderer')
+      expect((error as Error).message).to.eq('"junk" is not a supported renderer')
     }
 
     try {
       service._getRenderer('template', {})
       expect(true).to.be.false
     } catch (error) {
-      expect(error.message).to.eq('options.template is required for template renderer')
+      expect((error as Error).message).to.eq('options.template is required for template renderer')
     }
   })
 })
 
-function setup(definitions, attachments = {}) {
-  const attachmentStore = { get: token => attachments[token] }
+function setup(definitions: Record<string, Record<string, unknown>>, attachments: Record<string, string> = {}) {
+  const attachmentStore = { get: (token: string) => attachments[token] }
   const definitionService = { getAll: sinon.stub().returns(Promise.resolve(definitions)) }
-  const service = NoticeService(definitionService, attachmentStore)
+  const service: Record<string, Function> = (NoticeService as Function)(definitionService, attachmentStore)
   const coordinates = Object.keys(definitions).map(x => definitions[x].coordinates)
   return { service, coordinates }
 }
 
-function normalizeLineBreaks(str) {
+function normalizeLineBreaks(str: string): string {
   const normalized = str.replace(/[\r\n]+/g, ' ').trim()
   return normalized.replace(/\s+/g, ' ')
 }
