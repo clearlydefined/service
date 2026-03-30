@@ -11,7 +11,7 @@ process.env['GITLAB_TOKEN'] = 'abc'
 
 const config = proxyquire('../bin/config', {
   ['painless-config']: {
-    get: name => {
+    get: (name: string) => {
       return (
         {
           WEBHOOK_GITHUB_SECRET: 'secret',
@@ -23,8 +23,8 @@ const config = proxyquire('../bin/config', {
 })
 
 describe('Application', () => {
-  let clock
-  let sandbox
+  let clock: sinon.SinonFakeTimers
+  let sandbox: sinon.SinonSandbox
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()
@@ -45,7 +45,7 @@ describe('Application', () => {
     assert.strictEqual(typeof app.use, 'function', 'App is not an Express instance')
     // Verify that process.on was called to add unhandledRejection listener
     assert.ok(
-      process.on.calledWithMatch('unhandledRejection'),
+      (process.on as sinon.SinonStub).calledWithMatch('unhandledRejection'),
       'Application should attempt to add unhandledRejection listener'
     )
   })

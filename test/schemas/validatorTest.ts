@@ -1,9 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const chai = require('chai')
+import * as chai from 'chai'
 const { expect } = chai
-const validator = require('../../schemas/validator')
+import validator from '../../schemas/validator.js'
 
 describe('Validator - Coordinates Schema Tests', () => {
   describe('Valid coordinates validation', () => {
