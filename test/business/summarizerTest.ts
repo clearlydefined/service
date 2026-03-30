@@ -22,7 +22,7 @@ describe('Summary Service', () => {
     const raw = loadEvidence(coordSpec)
 
     const summaryService = SummaryService({})
-    const summaries = summaryService.summarizeAll(coords, raw)
+    const summaries = summaryService.summarizeAll(coords, raw as any)
     const scancodeSummary = summaries['scancode']['32.3.0']
     expect(scancodeSummary.licensed.declared).to.equal('Apache-2.0')
     const licenseeSummary = summaries['licensee']['9.14.0']

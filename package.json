@@ -10,7 +10,7 @@
     "mocha": "mocha --exit \"test/**/*.ts\"",
     "lint": "npm run tsc && biome check .",
     "lint:fix": "biome check . --write",
-    "tsc": "tsc",
+    "tsc": "tsc && tsc -p test/tsconfig.json",
     "dev": "nodemon ./bin/www",
     "start": "node --max-old-space-size=8192 ./bin/www",
     "debug": "node --inspect=0.0.0.0:9228 --max-old-space-size=8192 ./bin/www"
@@ -80,6 +80,7 @@
     "@types/base-64": "1.0.2",
     "@types/body-parser": "1.19.6",
     "@types/chai": "5.2.3",
+    "@types/chai-as-promised": "8.0.2",
     "@types/cookie-parser": "1.4.10",
     "@types/cors": "2.8.19",
     "@types/debug": "4.1.13",

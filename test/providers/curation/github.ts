@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -14,7 +15,6 @@ import CurationStore from '../../../providers/curation/memoryStore.js'
 
 const { find } = lodash
 
-import { DateTime } from 'luxon'
 import logger from '../../../providers/logging/logger.js'
 
 chai.use(chaiAsPromised)

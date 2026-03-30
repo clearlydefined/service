@@ -44,12 +44,12 @@ function createStore() {
       if (data[path]) {
         return cb(null, data[path])
       }
-      const error = new Error('not found')
+      const error = new Error('not found') as Error & { statusCode: number }
       error.statusCode = 404
       cb(error)
     })
   }
-  const store = Store({})
+  const store = (Store as Function)({})
   store.blobService = blobServiceStub
   return store
 }

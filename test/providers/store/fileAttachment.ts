@@ -24,7 +24,7 @@ describe('FileAttachmentStore list definitions', () => {
         if (data[path]) {
           return cb(null, data[path])
         }
-        const error = new Error('not found')
+        const error = new Error('not found') as Error & { code: string }
         error.code = 'ENOENT'
         cb(error)
       }

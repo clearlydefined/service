@@ -7,7 +7,7 @@ const proxyquire = require('proxyquire')
 
 describe('ListBasedFilterConfig', () => {
   // Helper to create a factory with shared logger stub and optional overrides
-  const makeFactory = overrides =>
+  const makeFactory = (overrides?: Record<string, unknown>) =>
     proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
       '../../logging/logger': () => ({
         info: () => {},

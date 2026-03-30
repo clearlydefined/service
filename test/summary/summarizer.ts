@@ -9,7 +9,7 @@ describe('Summarizer service', () => {
     const output = buildOutput([])
     const summarizer = Summarizer({})
     const coordinates = 'npm/npmjs/-/test/1.0'
-    const summary = summarizer.summarizeAll(coordinates, output)
+    const summary = summarizer.summarizeAll(coordinates as any, output)
     const scancode = summary.scancode['32.1.0']
     expect(scancode).to.be.not.null
   })

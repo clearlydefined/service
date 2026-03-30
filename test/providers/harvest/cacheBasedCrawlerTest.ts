@@ -49,7 +49,7 @@ describe('CacheBasedHarvester', () => {
     crawler = cacheBasedHarvester({
       cachingService: cacheMock,
       harvester: harvesterMock,
-      logger: loggerMock
+      logger: loggerMock as any
     })
   })
 

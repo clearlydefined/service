@@ -36,7 +36,7 @@ describe('FileDefinitionStore list definitions', () => {
     })
   })
 
-  after(() => AbstractFileStore.prototype.list.restore())
+  after(() => (AbstractFileStore.prototype.list as any).restore())
 
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore()

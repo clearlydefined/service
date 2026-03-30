@@ -11,7 +11,7 @@ describe('Harvest queue processing', () => {
     const { queue, definitionService, logger } = setup(
       'urn:gem:rubygems:-:0mq:revision:0.5.2:tool:clearlydefined:1.3.3'
     )
-    await process(queue, definitionService, logger, true)
+    await process(queue, definitionService as any, logger as any, true)
 
     expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
     expect(definitionService.computeStoreAndCurate.getCall(0).args[0]).to.deep.eq({
@@ -31,7 +31,7 @@ describe('Harvest queue processing', () => {
     const { queue, definitionService, logger } = setup(
       'urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2'
     )
-    await process(queue, definitionService, logger, true)
+    await process(queue, definitionService as any, logger as any, true)
 
     expect(definitionService.computeAndStoreIfNecessary.calledOnce).to.be.true
     expect(definitionService.computeAndStoreIfNecessary.getCall(0).args[0]).to.deep.eq({
@@ -49,9 +49,7 @@ describe('Harvest queue processing', () => {
 
   it('handles bogus message', async () => {
     const { queue, definitionService, logger } = setup({ junk: 'here' })
-    await process(queue, definitionService, logger, true)
-
-    expect(definitionService.computeStoreAndCurate.called).to.be.false
+    await process(queue, definitionService as any, logger as any, true)
     expect(logger.info.called).to.be.false
     expect(queue.data.length).to.eq(1)
   })

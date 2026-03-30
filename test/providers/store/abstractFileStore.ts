@@ -35,7 +35,7 @@ describe('AbstractFileStore', () => {
         }
         const result = Object.keys(data).filter(p => p.startsWith(path))
         if (result.length === 0) {
-          const error = new Error('test')
+          const error = new Error('test') as Error & { code: string }
           error.code = 'ENOENT'
           throw error
         }
