@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "ENABLE_REST_VALIDATION_ERRORS=true npm run mocha && npm run lint",
-    "mocha": "nyc mocha --exit \"test/**/*.js\" \"test/**/*.ts\"",
+    "mocha": "mocha --exit \"test/**/*.ts\"",
     "lint": "npm run tsc && biome check .",
     "lint:fix": "biome check . --write",
     "tsc": "tsc",
