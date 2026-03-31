@@ -1,12 +1,11 @@
+import assert from 'node:assert/strict'
+import { describe, it, before, after, beforeEach, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
 import extend from 'extend'
 import lodash from 'lodash'
-import sinon from 'sinon'
 import DefinitionService from '../../../business/definitionService.js'
 import Curation from '../../../lib/curation.js'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
@@ -17,21 +16,19 @@ const { find } = lodash
 
 import logger from '../../../providers/logging/logger.js'
 
-chai.use(chaiAsPromised)
-const expect = chai.expect
 const assert = chai.assert
 
 describe('Github Curation Service', () => {
   beforeEach(() => {
     logger({
-      error: sinon.stub(),
-      info: sinon.stub(),
-      debug: sinon.stub()
+      error: mock.fn(),
+      info: mock.fn(),
+      debug: mock.fn()
     })
   })
   it('invalidates coordinates when handling merge', async () => {
     const service = createService()
-    sinon.stub(service, 'getContributedCurations').callsFake(() => {
+    mock.method(service, 'getContributedCurations').callsFake(() => {
       return [createCuration(simpleCuration)]
     })
     const result = await service.getContributedCurations(1, 42)
@@ -43,25 +40,25 @@ describe('Github Curation Service', () => {
 
   it('validates valid PR change', async () => {
     const service = createService()
-    sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, 'getContributedCurations').callsFake(() => {
+    mock.method(service, '_postCommitStatus').returns(Promise.resolve())
+    mock.method(service, 'getContributedCurations').callsFake(() => {
       return [createCuration()]
     })
     const curations = await service.getContributedCurations(42, 'testBranch')
     await service.validateContributions('42', 'testBranch', curations)
-    expect(service._postCommitStatus.calledTwice).to.be.true
-    expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
-    expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('success')
+    assert.strictEqual(service._postCommitStatus.mock.callCount() === 2, true)
+    expect(service._postCommitStatus.mock.calls[0].arguments[2]).to.be.eq('pending')
+    expect(service._postCommitStatus.mock.calls[1].arguments[2]).to.be.eq('success')
   })
 
   it('validates invalid PR change', async () => {
     logger({
-      error: sinon.stub()
+      error: mock.fn()
     })
     const service = createService()
-    sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
-    sinon.stub(service, '_postErrorsComment').returns(Promise.resolve())
-    sinon.stub(service, 'getContributedCurations').callsFake(() => {
+    mock.method(service, '_postCommitStatus').returns(Promise.resolve())
+    mock.method(service, '_postErrorsComment').returns(Promise.resolve())
+    mock.method(service, 'getContributedCurations').callsFake(() => {
       return [createInvalidCuration()]
     })
 
@@ -69,95 +66,95 @@ describe('Github Curation Service', () => {
     service.logger = {
       // intercept and verify invalid contribution
       error: description => {
-        expect(description).to.be.eq('Invalid curations: curations/sdfdsf/npmjs/test.yaml')
+        assert.strictEqual(description, 'Invalid curations: curations/sdfdsf/npmjs/test.yaml')
       }
     }
     await service.validateContributions('42', 'testBranch', curations)
-    expect(service._postCommitStatus.calledTwice).to.be.true
-    expect(service._postCommitStatus.getCall(0).args[2]).to.be.eq('pending')
-    expect(service._postCommitStatus.getCall(1).args[2]).to.be.eq('error')
-    expect(service._postErrorsComment.calledOnce).to.be.true
-    expect(service._postErrorsComment.getCall(0).args[1]).to.be.eq(
+    assert.strictEqual(service._postCommitStatus.mock.callCount() === 2, true)
+    expect(service._postCommitStatus.mock.calls[0].arguments[2]).to.be.eq('pending')
+    expect(service._postCommitStatus.mock.calls[1].arguments[2]).to.be.eq('error')
+    assert.strictEqual(service._postErrorsComment.mock.callCount() === 1, true)
+    expect(service._postErrorsComment.mock.calls[0].arguments[1]).to.be.eq(
       'We discovered some errors in this curation when validating it:\n\nThis is an error\n'
     )
   })
 
   it('merges simple changes', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
     const base = { coordinates: definitionCoordinates }
     await service.apply(null, null, base)
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    assert.strictEqual(base.described.projectWebsite, 'http://foo.com')
   })
 
   it('merges complex curation on simple base', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
     const base = extend(true, {}, simpleHarvested)
     await service.apply(null, null, base)
-    expect(base.described.releaseDate).to.eq('2018-10-19')
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    assert.strictEqual(base.described.releaseDate, '2018-10-19')
+    assert.strictEqual(base.described.projectWebsite, 'http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
-    expect(!!file1).to.be.true
-    expect(file1.license).to.eq('MIT')
+    assert.strictEqual(!!file1, true)
+    assert.strictEqual(file1.license, 'MIT')
     const file2 = find(base.files, file => file.path === '2.txt')
-    expect(!!file2).to.be.true
-    expect(file2.license).to.eq('GPL')
+    assert.strictEqual(!!file2, true)
+    assert.strictEqual(file2.license, 'GPL')
   })
 
   it('merges simple curation on complex base', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
     const base = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
-    expect(base.described.releaseDate).to.eq('2018-08-09')
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    assert.strictEqual(base.described.releaseDate, '2018-08-09')
+    assert.strictEqual(base.described.projectWebsite, 'http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
-    expect(!!file1).to.be.true
-    expect(file1.token).to.eq('1 token')
+    assert.strictEqual(!!file1, true)
+    assert.strictEqual(file1.token, '1 token')
     const file2 = find(base.files, file => file.path === '2.txt')
-    expect(!!file2).to.be.true
-    expect(file2.token).to.eq('2 token')
+    assert.strictEqual(!!file2, true)
+    assert.strictEqual(file2.token, '2 token')
   })
 
   it('merges complex structures', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
     const base = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    assert.strictEqual(base.described.projectWebsite, 'http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
-    expect(!!file1).to.be.true
-    expect(file1.license).to.eq('MIT')
-    expect(file1.token).to.eq('1 token')
+    assert.strictEqual(!!file1, true)
+    assert.strictEqual(file1.license, 'MIT')
+    assert.strictEqual(file1.token, '1 token')
     const file2 = find(base.files, file => file.path === '2.txt')
-    expect(!!file2).to.be.true
-    expect(file2.license).to.eq('GPL')
-    expect(file2.token).to.eq('2 token')
+    assert.strictEqual(!!file2, true)
+    assert.strictEqual(file2.license, 'GPL')
+    assert.strictEqual(file2.token, '2 token')
   })
 
   it('overrides file licenses when curated', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
     const base = extend(true, {}, complexHarvestedWithLicenses)
     await service.apply(null, null, base)
-    expect(base.described.projectWebsite).to.eq('http://foo.com')
+    assert.strictEqual(base.described.projectWebsite, 'http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
-    expect(!!file1).to.be.true
-    expect(file1.license).to.eq('MIT')
-    expect(file1.token).to.eq('1 token')
+    assert.strictEqual(!!file1, true)
+    assert.strictEqual(file1.license, 'MIT')
+    assert.strictEqual(file1.token, '1 token')
     const file2 = find(base.files, file => file.path === '2.txt')
-    expect(!!file2).to.be.true
-    expect(file2.license).to.eq('GPL')
-    expect(file2.token).to.eq('2 token')
+    assert.strictEqual(!!file2, true)
+    assert.strictEqual(file2.license, 'GPL')
+    assert.strictEqual(file2.token, '2 token')
   })
 
   it('overrides package license when curated', async () => {
     const service = createService()
-    sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
+    mock.method(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
     const base = extend(true, {}, complexHarvestedWithLicenses)
     await service.apply(null, null, base)
-    expect(base.licensed.declared).to.eq('Apache-2.0')
+    assert.strictEqual(base.licensed.declared, 'Apache-2.0')
   })
 
   it('fails if definition exists', async () => {
@@ -194,7 +191,7 @@ describe('Github Curation Service', () => {
         EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
       ])
     const gitHubService = createService(service)
-    sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+    mock.method(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
     const contributionPatch = {
       skipMultiversionSearch: true,
@@ -220,7 +217,7 @@ describe('Github Curation Service', () => {
 
     const result = await gitHubService.addOrUpdate(null, gitHubService.github, info, contributionPatch)
     expect(result).to.be.deep.equal({ data: { number: 143 } })
-    expect(gitHubService.github.rest.issues.createComment.getCall(0).args[0].body).to.contain(
+    expect(gitHubService.github.rest.issues.createComment.mock.calls[0].arguments[0].body).to.contain(
       '(http://localhost:3000/curations/143)'
     )
   })
@@ -237,7 +234,7 @@ describe('Github Curation Service', () => {
         files: [{ filename: 'curations/npm/npmjs/-/test.yaml' }],
         merged_at: '2018-11-13T02:44:34Z'
       }
-      const processStub = sinon.stub()
+      const processStub = mock.fn()
       const licenseFileMatch = {
         policy: 'file match',
         file: 'LICENSE.txt',
@@ -260,7 +257,7 @@ describe('Github Curation Service', () => {
       pr.merged_at = null
       const gitHubService = createService()
       const result = await gitHubService.addByMergedCuration(pr)
-      expect(result).to.be.undefined
+      assert.strictEqual(result, undefined)
     })
 
     it('create a PR with multiversion curation if eligible', async () => {
@@ -276,19 +273,19 @@ describe('Github Curation Service', () => {
         .callsFake(() => [
           EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
         ])
-      sinon.stub(service, 'list').callsFake(() => [
+      mock.method(service, 'list').callsFake(() => [
         'npm/npmjs/-/test/1.0', // curated revision
         'npm/npmjs/-/test/1.1', // license match on file
         'npm/npmjs/-/test/1.2', // license match on metadata
         'npm/npmjs/-/test/1.3', // license match on metadata, but already curated
         'npm/npmjs/-/test/1.4' // no license match, already curated
       ])
-      sinon.stub(service, 'getStored').callsFake(() => Promise.resolve())
+      mock.method(service, 'getStored').callsFake(() => Promise.resolve())
 
       const gitHubService = createService(service, licenseMatcher, harvestStore)
-      sinon.stub(gitHubService, '_getPatchesFromMergedPullRequest').resolves([component])
-      sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
-      sinon.stub(gitHubService, 'list').callsFake(() => {
+      mock.method(gitHubService, '_getPatchesFromMergedPullRequest').resolves([component])
+      mock.method(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
+      mock.method(gitHubService, 'list').callsFake(() => {
         return {
           curations: { 'npm/npmjs/-/test/1.3': {} },
           contributions: [{ files: [{ revisions: [{ revision: '1.4' }] }] }]
@@ -313,12 +310,12 @@ describe('Github Curation Service', () => {
       expect(description).to.be.deep.equal(expectedDescription)
 
       // Check if the flow was correct
-      const startMatchingSpy = sinon.spy(gitHubService, '_startMatching')
-      const calculateMatchingRevisionAndReasonSpy = sinon.spy(gitHubService, '_calculateMatchingRevisionAndReason')
-      const formatRevisionsSpy = sinon.spy(gitHubService, '_formatMultiversionCuratedRevisions')
+      const startMatchingSpy = mock.method(gitHubService, '_startMatching')
+      const calculateMatchingRevisionAndReasonSpy = mock.method(gitHubService, '_calculateMatchingRevisionAndReason')
+      const formatRevisionsSpy = mock.method(gitHubService, '_formatMultiversionCuratedRevisions')
       const result = await gitHubService.addByMergedCuration(pr)
       expect(result).to.be.deep.equal({ data: { number: 143 } })
-      expect(gitHubService.github.rest.issues.createComment.getCall(0).args[0].body).to.contain(
+      expect(gitHubService.github.rest.issues.createComment.mock.calls[0].arguments[0].body).to.contain(
         '(http://localhost:3000/curations/143)'
       )
 
@@ -356,24 +353,24 @@ describe('Github Curation Service', () => {
 
     beforeEach(() => {
       const { service } = setup()
-      sinon.stub(service, 'getStored').resolves({
+      mock.method(service, 'getStored').resolves({
         coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
       })
       const licenseMatcher = {
-        process: sinon.stub().callsFake(() => matcherResult)
+        process: mock.fn(() => matcherResult)
       }
       const store = {
-        list: sinon.stub().callsFake(() => curationsAndContributions)
+        list: mock.fn(() => curationsAndContributions)
       }
       const harvestStore = {
-        getAll: sinon.stub().resolves({})
+        getAll: mock.fn(async () => {})
       }
       gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
       // TODO: Should not stub private functions and private properties
-      sinon.stub(gitHubService, 'github').value({
-        rest: { users: { get: sinon.stub() } }
+      mock.method(gitHubService, 'github').value({
+        rest: { users: { get: mock.fn() } }
       })
-      sinon.stub(gitHubService, '_addOrUpdate').resolves({
+      mock.method(gitHubService, '_addOrUpdate').resolves({
         data: { number: 1 }
       })
     })
@@ -392,7 +389,7 @@ describe('Github Curation Service', () => {
         match: []
       }
       await gitHubService.autoCurate(sourceDefinition)
-      expect(gitHubService._addOrUpdate.calledOnce).to.be.true
+      assert.strictEqual(gitHubService._addOrUpdate.mock.callCount() === 1, true)
     })
 
     it('Should not auto curate if licenses do not match', async () => {
@@ -408,7 +405,7 @@ describe('Github Curation Service', () => {
         isMatching: false
       }
       await gitHubService.autoCurate(sourceDefinition)
-      expect(gitHubService._addOrUpdate.called).to.be.false
+      assert.strictEqual(gitHubService._addOrUpdate.mock.callCount() > 0, false)
     })
   })
 
@@ -419,32 +416,32 @@ describe('Github Curation Service', () => {
 
     beforeEach(() => {
       const definitionService = {
-        list: sinon.stub().resolves(['npm/npmjs/-/express/5.0.0', 'npm/npmjs/-/express/4.0.0']),
-        getStored: sinon.stub().resolves({
+        list: mock.fn(async () => ['npm/npmjs/-/express/5.0.0', 'npm/npmjs/-/express/4.0.0']),
+        getStored: mock.fn(async () => {
           coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
         })
       }
       const harvestStore = {
-        getAll: sinon.stub().resolves({})
+        getAll: mock.fn(async () => {})
       }
       const licenseMatcher = {
-        process: sinon.stub().callsFake(() => matcherResult)
+        process: mock.fn(() => matcherResult)
       }
       const store = {
-        list: sinon.stub().callsFake(() => curationsAndContributions)
+        list: mock.fn(() => curationsAndContributions)
       }
       gitHubService = createService(definitionService, licenseMatcher, harvestStore, {}, store)
       gitHubService.github = {
         rest: {
           users: { get: () => ({ name: 'clearlydefined-bot' }) },
-          pullRequests: { create: sinon.stub() },
-          issues: { createComment: sinon.stub() }
+          pullRequests: { create: mock.fn() },
+          issues: { createComment: mock.fn() }
         }
       }
       // TODO: it's not optimal to mock private functions. But the GitHubCurationService
       // is so complicated now. And it could be refactored to two smaller classes. The lower
       // level class will provide a public addOrUpdate function
-      sinon.stub(gitHubService, '_addOrUpdate').resolves({
+      mock.method(gitHubService, '_addOrUpdate').resolves({
         data: { number: 1, html_url: 'www.curation.pr.com' }
       })
     })
@@ -472,7 +469,7 @@ describe('Github Curation Service', () => {
       }
       const coordinatesList = [EntityCoordinates.fromString('npm/npmjs/-/express')]
       const result = await gitHubService.reprocessMergedCurations(coordinatesList)
-      expect(result).to.have.lengthOf(1)
+      assert.strictEqual(result.length, 1)
       expect(result).to.be.deep.includes.members([
         {
           coordinates: 'npm/npmjs/-/express',
@@ -501,14 +498,14 @@ describe('Github Curation Service', () => {
 
     it('verify branch name', () => {
       const branchName = createService()._getBranchName({ login: 'test' })
-      expect(branchName).to.be.eq('test_211203_140949.712')
+      assert.strictEqual(branchName, 'test_211203_140949.712')
     })
   })
 
   describe('verify _getCurationReviewUrl', () => {
     it('verify branch name', () => {
       const curationReviewUrl = createService()._getCurationReviewUrl(143)
-      expect(curationReviewUrl).to.be.eq('http://localhost:3000/curations/143')
+      assert.strictEqual(curationReviewUrl, 'http://localhost:3000/curations/143')
     })
   })
 })
@@ -548,12 +545,12 @@ function createService(
   store = CurationStore({})
 ) {
   const mockCache = {
-    get: sinon.stub().resolves(undefined),
-    set: sinon.stub()
+    get: mock.fn(async () => undefined),
+    set: mock.fn()
   }
   logger({
-    error: sinon.stub(),
-    info: sinon.stub()
+    error: mock.fn(),
+    info: mock.fn()
   })
   const service = GitHubCurationService(
     {
@@ -583,9 +580,9 @@ function createService(
           })
       },
       git: {
-        createRef: sinon.stub()
+        createRef: mock.fn()
       },
-      issues: { createComment: sinon.stub() },
+      issues: { createComment: mock.fn() },
       pulls: {
         create: () =>
           Promise.resolve({
@@ -647,14 +644,14 @@ function createInvalidCuration() {
 }
 
 function setup(definition, coordinateSpec, curation) {
-  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
-  const search = { delete: sinon.stub(), store: sinon.stub() }
+  const store = { delete: mock.fn(), get: mock.fn(), store: mock.fn() }
+  const search = { delete: mock.fn(), store: mock.fn() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(Curation.apply(definition, curation))
   }
   const harvestStore = { getAll: () => Promise.resolve(null) }
-  const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
+  const harvestService = { harvest: mock.fn(() => Promise.resolve(null)) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
   const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)

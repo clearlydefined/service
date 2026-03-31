@@ -1,22 +1,20 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { describe, it, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
-import sinon from 'sinon'
 import SuggestionService from '../../business/suggestionService.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { setIfValue } from '../../lib/utils.js'
 
 const { get } = lodash
 
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
 
 // @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
 const testDir = dirname(fileURLToPath(import.meta.url))
@@ -33,15 +31,15 @@ describe('Suggestion Service', () => {
     const others = [before1, before2, after]
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
-    expect(suggestions).to.not.be.null
-    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+    assert.notStrictEqual(suggestions, null)
+    assert.deepStrictEqual(service.definitionService.find.mock.calls[0].arguments[0], {
       type: 'npm',
       provider: 'npmjs',
       name: 'test',
       namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(declared, [
       { value: 'GPL', version: '102.0' },
       { value: 'MIT', version: '10-5.0' },
       { value: 'MIT', version: '10-3.0' }
@@ -57,15 +55,15 @@ describe('Suggestion Service', () => {
     const others = [after, before2, before1]
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
-    expect(suggestions).to.not.be.null
-    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+    assert.notStrictEqual(suggestions, null)
+    assert.deepStrictEqual(service.definitionService.find.mock.calls[0].arguments[0], {
       type: 'npm',
       provider: 'npmjs',
       name: 'test',
       namespace: null
     })
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(declared, [
       { value: 'MIT', version: '10-3.0' },
       { value: 'MIT', version: '10-5.0' },
       { value: 'GPL', version: '102.0' }
@@ -81,8 +79,8 @@ describe('Suggestion Service', () => {
     const others = [before1, before2, after]
     const service = setup(definition, others)
     const suggestions = await service.get(testCoordinates)
-    expect(suggestions).to.be.null
-    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+    assert.strictEqual(suggestions, null)
+    assert.deepStrictEqual(service.definitionService.find.mock.calls[0].arguments[0], {
       type: 'npm',
       provider: 'npmjs',
       name: 'test',
@@ -95,7 +93,7 @@ describe('Suggestion Service', () => {
     const definition = createDefinition(testCoordinates, now, null, files)
     const service = setup(definition, [])
     const suggestions = await service.get(testCoordinates)
-    expect(suggestions).to.be.null
+    assert.strictEqual(suggestions, null)
   })
 
   it('queries related definitions with namespace', async () => {
@@ -104,7 +102,7 @@ describe('Suggestion Service', () => {
     const definition = createDefinition(coordinates, now, null, files)
     const service = setup(definition, [])
     await service.get(coordinates)
-    expect(service.definitionService.find.getCall(0).args[0]).to.deep.eq({
+    assert.deepStrictEqual(service.definitionService.find.mock.calls[0].arguments[0], {
       type: 'npm',
       provider: 'npmjs',
       name: 'scope-test',
@@ -117,9 +115,9 @@ describe('Suggestion Service', () => {
     const sample_definition = JSON.parse(readFileSync(join(testDir, 'evidence', 'issue-453-sample-1.json'), 'utf-8'))
     const service = setup(sample_definition, [])
     const suggestions = await service.get(t2)
-    expect(suggestions).to.not.be.null
+    assert.notStrictEqual(suggestions, null)
     const declared = get(suggestions, 'licensed.declared')
-    expect(declared).to.deep.equalInAnyOrder([{ value: 'GPL-2.0', version: '1.6.2.b8' }])
+    assertDeepEqualInAnyOrder(declared, [{ value: 'GPL-2.0', version: '1.6.2.b8' }])
   })
 })
 
@@ -159,6 +157,6 @@ function createDefinition(
 }
 
 function setup(definition: Record<string, unknown>, others: Record<string, unknown>[]) {
-  const definitionService = { find: sinon.stub().resolves({ data: [...others, definition] }) }
+  const definitionService = { find: mock.fn(async () => { data: [...others, definition] }) }
   return (SuggestionService as (...args: any[]) => any)(definitionService)
 }

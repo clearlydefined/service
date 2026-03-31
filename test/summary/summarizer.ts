@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import Summarizer from '../../business/summarizer.js'
 
 describe('Summarizer service', () => {

@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import process from '../../../providers/harvest/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
 
@@ -13,18 +13,18 @@ describe('Harvest queue processing', () => {
     )
     await process(queue, definitionService as any, logger as any, true)
 
-    expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
-    expect(definitionService.computeStoreAndCurate.getCall(0).args[0]).to.deep.eq({
+    assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 1, true)
+    assert.deepStrictEqual(definitionService.computeStoreAndCurate.mock.calls[0].arguments[0], {
       type: 'gem',
       provider: 'rubygems',
       name: '0mq',
       revision: '0.5.2'
     })
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq(
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 
       'Handled Crawler update event for urn:gem:rubygems:-:0mq:revision:0.5.2:tool:clearlydefined:1.3.3'
     )
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(queue.data.length, 0)
   })
 
   it('handles new message from non-clearlydefined tool', async () => {
@@ -33,25 +33,25 @@ describe('Harvest queue processing', () => {
     )
     await process(queue, definitionService as any, logger as any, true)
 
-    expect(definitionService.computeAndStoreIfNecessary.calledOnce).to.be.true
-    expect(definitionService.computeAndStoreIfNecessary.getCall(0).args[0]).to.deep.eq({
+    assert.strictEqual(definitionService.computeAndStoreIfNecessary.mock.callCount() === 1, true)
+    assert.deepStrictEqual(definitionService.computeAndStoreIfNecessary.mock.calls[0].arguments[0], {
       type: 'pypi',
       provider: 'pypi',
       name: 'backports.ssl_match_hostname',
       revision: '3.2a3'
     })
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq(
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 
       'Handled Crawler update event for urn:pypi:pypi:-:backports.ssl_match_hostname:revision:3.2a3:tool:scancode:3.2.2'
     )
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(queue.data.length, 0)
   })
 
   it('handles bogus message', async () => {
     const { queue, definitionService, logger } = setup({ junk: 'here' })
     await process(queue, definitionService as any, logger as any, true)
-    expect(logger.info.called).to.be.false
-    expect(queue.data.length).to.eq(1)
+    assert.strictEqual(logger.info.mock.callCount() > 0, false)
+    assert.strictEqual(queue.data.length, 1)
   })
 })
 
@@ -59,12 +59,12 @@ function setup(urn) {
   const queue = memoryQueue()
   queue.queue(JSON.stringify(createMessage(urn)))
   const definitionService = {
-    computeStoreAndCurate: sinon.stub().resolves({}),
-    computeAndStoreIfNecessary: sinon.stub().resolves({})
+    computeStoreAndCurate: mock.fn(async () => {}),
+    computeAndStoreIfNecessary: mock.fn(async () => {})
   }
   const logger = {
-    info: sinon.stub(),
-    error: sinon.stub()
+    info: mock.fn(),
+    error: mock.fn()
   }
 
   return { queue, definitionService, logger }

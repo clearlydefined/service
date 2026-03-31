@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, before, beforeEach, afterEach, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { SinonStub } from 'sinon'
 
 const { expect, assert } = require('chai')
 const sinon = require('sinon')
@@ -16,19 +17,19 @@ describe('Pypi origin routes', () => {
   let requestPromiseStub: SinonStub
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
-    requestPromiseStub = sinon.stub()
+    requestPromiseStub = mock.fn()
     const createRoute = proxyquire('../../routes/originPyPi', { '../lib/fetch': { callFetch: requestPromiseStub } })
     router = createRoute(true)
   })
 
   afterEach(() => {
-    sinon.restore()
+    mock.restoreAll()
   })
 
   it('should return a valid response when a valid package is provided as input', async () => {
     requestPromiseStub.returns({ body: loadFixture(`${fixturePath}/pandas.json`), statusCode: 200 })
     const response = await router._getPypiData('pandas')
-    expect(response.body.info.name).to.be.equal('pandas')
+    assert.strictEqual(response.body.info.name, 'pandas')
   })
 
   it('should return an empty response when a missing package is provided as input', async () => {
@@ -96,7 +97,7 @@ describe('Conda origin routes', () => {
   let condaRepoAccess: Record<string, (...args: any[]) => any>
   let cacheMock: { get: SinonStub; set: SinonStub }
 
-  const requestPromiseStub: SinonStub = sinon.stub()
+  const requestPromiseStub: SinonStub = mock.fn()
   const fetchModuleStub = {
     callFetch: requestPromiseStub
   }
@@ -120,15 +121,15 @@ describe('Conda origin routes', () => {
 
   beforeEach(() => {
     cacheMock = {
-      get: sinon.stub(),
-      set: sinon.stub()
+      get: mock.fn(),
+      set: mock.fn()
     }
 
     condaRepoAccess = createCondaRepoAccess(cacheMock)
   })
 
   afterEach(() => {
-    sinon.restore()
+    mock.restoreAll()
     requestPromiseStub.resetHistory()
   })
 
@@ -142,7 +143,7 @@ describe('Conda origin routes', () => {
     await router._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), ['linux-64:2.15.0-cuda120py39hb94c71b_3'])
-    assert.isTrue(requestPromiseStub.calledTwice)
+    assert.isTrue(requestPromiseStub.mock.callCount() === 2)
   })
 
   it('handles a valid GET request for package listings', async () => {
@@ -154,7 +155,7 @@ describe('Conda origin routes', () => {
     await router._getOriginConda(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), [{ id: 'tensorflow' }])
-    assert.isTrue(requestPromiseStub.called)
+    assert.isTrue(requestPromiseStub.mock.callCount() > 0)
   })
 
   it('returns a 404 error for a non-existent channel', async () => {
@@ -178,7 +179,7 @@ describe('Conda origin routes', () => {
     await router._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 404)
     assert.strictEqual(response._getData(), 'Package tensorflow1212 not found in channel conda-forge')
-    assert.isTrue(requestPromiseStub.calledOnce)
+    assert.isTrue(requestPromiseStub.mock.callCount() === 1)
   })
 
   function createGetOriginCondaRevisionsRequest(name: string) {
@@ -218,27 +219,27 @@ describe('GitHub origin routes', () => {
 
   beforeEach(() => {
     loggerStub = {
-      error: sinon.stub(),
-      warn: sinon.stub(),
-      info: sinon.stub(),
-      debug: sinon.stub()
+      error: mock.fn(),
+      warn: mock.fn(),
+      info: mock.fn(),
+      debug: mock.fn()
     }
 
     githubMock = {
       search: {
-        users: sinon.stub().resolves({
+        users: mock.fn(async () => {
           data: { items: [{ login: 'octocat' }] }
         }),
-        repos: sinon.stub().resolves({
+        repos: mock.fn(async () => {
           data: { items: [{ full_name: 'octocat/Hello-World' }] }
         })
       },
       rest: {
         repos: {
-          listTags: sinon.stub()
+          listTags: mock.fn()
         },
         git: {
-          getTag: sinon.stub()
+          getTag: mock.fn()
         }
       }
     }
@@ -252,7 +253,7 @@ describe('GitHub origin routes', () => {
   })
 
   afterEach(() => {
-    sinon.restore()
+    mock.restoreAll()
   })
 
   it('should handle /:login route (repo param omitted)', async () => {
@@ -274,9 +275,9 @@ describe('GitHub origin routes', () => {
       })
     })
 
-    expect(res.statusCode).to.equal(200)
+    assert.strictEqual(res.statusCode, 200)
     expect(res._getData()).to.deep.equal([{ id: 'octocat' }])
-    expect((githubMock.search as Record<string, SinonStub>).users.calledOnce).to.be.true
+    assert.strictEqual((githubMock.search as Record<string, SinonStub>).users.mock.callCount() === 1, true)
   })
 
   it('should handle /:login/:repo route', async () => {
@@ -303,9 +304,9 @@ describe('GitHub origin routes', () => {
       })
     })
 
-    expect(res.statusCode).to.equal(200)
+    assert.strictEqual(res.statusCode, 200)
     expect(res._getData()).to.deep.equal([{ id: 'octocat/Hello-World' }])
-    expect((githubMock.search as Record<string, SinonStub>).repos.calledOnce).to.be.true
+    assert.strictEqual((githubMock.search as Record<string, SinonStub>).repos.mock.callCount() === 1, true)
   })
 
   it('should handle /:login/:repo/revisions with only lightweight tags', async () => {
@@ -349,13 +350,13 @@ describe('GitHub origin routes', () => {
       })
     })
 
-    expect(res.statusCode).to.equal(200)
+    assert.strictEqual(res.statusCode, 200)
     expect(res._getData()).to.deep.equal([
       { tag: 'v2.0.0', sha: 'sha456' },
       { tag: 'v1.0.0', sha: 'sha123' }
     ])
-    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
-    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.called).to.be.true
+    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
+    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.mock.callCount() > 0, true)
   })
 
   it('should handle /:login/:repo/revisions with annotated tags', async () => {
@@ -390,10 +391,10 @@ describe('GitHub origin routes', () => {
       })
     })
 
-    expect(res.statusCode).to.equal(200)
+    assert.strictEqual(res.statusCode, 200)
     expect(res._getData()).to.deep.equal([{ tag: 'v1.0.0', sha: 'commitSha1' }])
-    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
-    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.calledOnce).to.be.true
+    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
+    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.mock.callCount() === 1, true)
   })
 
   it('should return empty array on 404 from GitHub', async () => {
@@ -422,9 +423,9 @@ describe('GitHub origin routes', () => {
       })
     })
 
-    expect(res.statusCode).to.equal(200)
+    assert.strictEqual(res.statusCode, 200)
     expect(res._getData()).to.deep.equal([])
-    expect((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.calledOnce).to.be.true
+    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
   })
 })
 

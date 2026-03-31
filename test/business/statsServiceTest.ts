@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import StatsService from '../../business/statsService.js'
 
 describe('Stats Service', () => {
@@ -21,13 +22,13 @@ describe('Stats Service', () => {
     ]
     const service = (StatsService as (...args: any[]) => any)() as Record<string, (...args: any[]) => any>
     const result = service._getMedian(input, 3288)
-    expect(result).to.eq(3)
+    assert.strictEqual(result, 3)
   })
 
   it('calculates 0 median score for 0 totalCount', () => {
     const input: { count: number; value: number }[] = []
     const service = (StatsService as (...args: any[]) => any)() as Record<string, (...args: any[]) => any>
     const result = service._getMedian(input, 0)
-    expect(result).to.eq(0)
+    assert.strictEqual(result, 0)
   })
 })

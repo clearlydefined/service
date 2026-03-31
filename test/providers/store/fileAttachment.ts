@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict'
+import { describe, it, before, after, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -40,19 +42,19 @@ describe('FileAttachmentStore list definitions', () => {
       await fileStore.get('error')
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      assert.strictEqual(error.message, 'test error')
     }
   })
 
   it('works for unknown key', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.get('44')
-    expect(result).to.be.null
+    assert.strictEqual(result, null)
   })
 
   it('gets an attachment', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.get('42')
-    expect(result).to.eq('42 attachment')
+    assert.strictEqual(result, '42 attachment')
   })
 })

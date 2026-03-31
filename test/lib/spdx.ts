@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 import SPDX from '@clearlydefined/spdx'
-import { expect } from 'chai'
 
 describe('SPDX utility functions', () => {
   it('parses spdx expressions', () => {
@@ -55,7 +56,7 @@ describe('SPDX utility functions', () => {
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.parse(input)).to.deep.equal(expected)
+      assert.deepStrictEqual(SPDX.parse(input), expected)
     })
   })
 
@@ -105,7 +106,7 @@ describe('SPDX utility functions', () => {
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.stringify(input)).to.equal(expected)
+      assert.strictEqual(SPDX.stringify(input), expected)
     })
   })
 
@@ -126,7 +127,7 @@ describe('SPDX utility functions', () => {
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.satisfies(input[0], input[1])).to.eq(expected)
+      assert.strictEqual(SPDX.satisfies(input[0], input[1]), expected)
     })
   })
 
@@ -145,7 +146,7 @@ describe('SPDX utility functions', () => {
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.merge(input[0], input[1])).to.eq(expected)
+      assert.strictEqual(SPDX.merge(input[0], input[1]), expected)
     })
   })
 
@@ -167,7 +168,7 @@ describe('SPDX utility functions', () => {
     ])
 
     data.forEach((expected, input) => {
-      expect(SPDX.merge(input[0], input[1], 'AND')).to.eq(expected)
+      assert.strictEqual(SPDX.merge(input[0], input[1], 'AND'), expected)
     })
   })
 
@@ -194,7 +195,7 @@ describe('SPDX utility functions', () => {
     for (const input of data) {
       const results = SPDX.expand(input[0] as string)
       for (const expected of input[1] as string[][]) {
-        expect(results).to.deep.include(expected)
+        assert.ok(results.some((r: unknown) => JSON.stringify(r) === JSON.stringify(expected)))
       }
     }
   })
@@ -238,7 +239,7 @@ describe('SPDX utility functions', () => {
       if (input === 'null') {
         input = null
       }
-      expect(SPDX.normalize(input)).to.eq(data[input])
+      assert.strictEqual(SPDX.normalize(input), data[input])
     }
   })
 
@@ -256,7 +257,7 @@ describe('SPDX utility functions', () => {
       if (input === 'null') {
         input = null
       }
-      expect(SPDX.lookupByName(input)).to.eq(data[input])
+      assert.strictEqual(SPDX.lookupByName(input), data[input])
     }
   })
 })

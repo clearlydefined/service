@@ -1,14 +1,12 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { describe, it, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
-import sinon from 'sinon'
 import Store from '../../../providers/stores/azblobHarvestStore.js'
 
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
 
 describe('azblob Harvest store', () => {
   describe('list', () => {
@@ -33,7 +31,7 @@ describe('azblob Harvest store', () => {
         revision: '4.6.0'
       })
       const expected = ['npm/npmjs/-/co/4.6.0/clearlydefined/1', 'npm/npmjs/-/co/4.6.0/scancode/2.2.1']
-      expect(result).to.deep.equalInAnyOrder(expected)
+      assertDeepEqualInAnyOrder(result, expected)
     })
 
     it('should list results preserving case from blob metadata', async () => {
@@ -66,7 +64,7 @@ describe('azblob Harvest store', () => {
         name: 'jsonstream',
         revision: '1.3.4'
       })
-      expect(resultCased).to.deep.equalInAnyOrder(expected)
+      assertDeepEqualInAnyOrder(resultCased, expected)
     })
 
     it('list results with partial coordinates', async () => {
@@ -102,7 +100,7 @@ describe('azblob Harvest store', () => {
         'npm/npmjs/-/co/4.6.0/clearlydefined/1',
         'npm/npmjs/-/co/4.6.0/scancode/2.2.1'
       ]
-      expect(result).to.deep.equalInAnyOrder(expected)
+      assertDeepEqualInAnyOrder(result, expected)
     })
   })
 
@@ -129,16 +127,16 @@ describe('azblob Harvest store', () => {
       })
 
       const tools = Object.getOwnPropertyNames(result)
-      expect(tools.length).to.eq(4)
+      assert.strictEqual(tools.length, 4)
       const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-      expect(clearlydefinedVersions[0]).to.eq('1.5.0')
-      expect(clearlydefinedVersions.length).to.eq(1)
+      assert.strictEqual(clearlydefinedVersions[0], '1.5.0')
+      assert.strictEqual(clearlydefinedVersions.length, 1)
       const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions).to.deep.equalInAnyOrder(['32.3.0', '30.3.0'])
+      assertDeepEqualInAnyOrder(scancodeVersions, ['32.3.0', '30.3.0'])
       const licenseeVersions = Object.getOwnPropertyNames(result.licensee)
-      expect(licenseeVersions).to.deep.equalInAnyOrder(['9.18.1', '9.14.0'])
+      assertDeepEqualInAnyOrder(licenseeVersions, ['9.18.1', '9.14.0'])
       const reuseVersions = Object.getOwnPropertyNames(result.reuse)
-      expect(reuseVersions).to.deep.equalInAnyOrder(['3.2.1', '3.2.2'])
+      assertDeepEqualInAnyOrder(reuseVersions, ['3.2.1', '3.2.2'])
     })
 
     it('handles unversioned tool output', async () => {
@@ -159,15 +157,15 @@ describe('azblob Harvest store', () => {
       })
 
       const tools = Object.getOwnPropertyNames(result)
-      expect(tools.length).to.eq(2)
+      assert.strictEqual(tools.length, 2)
       const clearlydefinedVersions = Object.getOwnPropertyNames(result.clearlydefined)
-      expect(clearlydefinedVersions[0]).to.eq('1')
-      expect(clearlydefinedVersions.length).to.eq(1)
+      assert.strictEqual(clearlydefinedVersions[0], '1')
+      assert.strictEqual(clearlydefinedVersions.length, 1)
       const scancodeVersions = Object.getOwnPropertyNames(result.scancode)
-      expect(scancodeVersions[0]).to.eq('2.2.1')
-      expect(scancodeVersions[1]).to.eq('2.9.1')
-      expect(scancodeVersions[2]).to.eq('2.9.2')
-      expect(scancodeVersions.length).to.eq(3)
+      assert.strictEqual(scancodeVersions[0], '2.2.1')
+      assert.strictEqual(scancodeVersions[1], '2.9.1')
+      assert.strictEqual(scancodeVersions[2], '2.9.2')
+      assert.strictEqual(scancodeVersions.length, 3)
     })
   })
 
@@ -183,13 +181,12 @@ describe('azblob Harvest store', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
       ])
-      expect(Array.from(latest)).to.deep.equalInAnyOrder([
+      assertDeepEqualInAnyOrder(Array.from(latest), [
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
-      ])
-    })
+      ])    })
 
     it('retrieves latest entries', async () => {
       const azblobStore = createAzBlobStore(
@@ -218,7 +215,7 @@ describe('azblob Harvest store', () => {
         reuse: { '3.2.2': {} },
         scancode: { '32.3.0': {} }
       }
-      expect(result).to.deep.equal(exptected)
+      assert.deepStrictEqual(result, exptected)
     })
 
     it('retrieves latest entries ignoring unversioned result', async () => {
@@ -241,7 +238,7 @@ describe('azblob Harvest store', () => {
         revision: '4.6.0'
       })
       const exptected = { clearlydefined: { 1: {} }, scancode: { '2.9.2': {} } }
-      expect(result).to.deep.equal(exptected)
+      assert.deepStrictEqual(result, exptected)
     })
 
     it('should fall back to getAll when there is error', async () => {
@@ -253,8 +250,8 @@ describe('azblob Harvest store', () => {
           'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.0b1.json'
         ])
       )
-      azblobStore.logger = { error: sinon.stub() }
-      azblobStore._getLatestToolPaths = sinon.stub().throws(new Error('test error'))
+      azblobStore.logger = { error: mock.fn() }
+      azblobStore._getLatestToolPaths = mock.fn().throws(new Error('test error'))
       const result = await azblobStore.getAllLatest({
         type: 'npm',
         provider: 'npmjs',
@@ -263,7 +260,7 @@ describe('azblob Harvest store', () => {
         revision: '4.6.0'
       })
       const exptected = { clearlydefined: { 1: {} }, scancode: { '2.2.1': {}, '2.9.1': {}, '2.9.0b1': {} } }
-      expect(result).to.deep.equal(exptected)
+      assert.deepStrictEqual(result, exptected)
     })
   })
 })
@@ -274,11 +271,11 @@ function createEntries(names) {
 
 function createAzBlobStore(entries, withMetadata) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
-    getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
-    createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
+    listBlobsSegmentedWithPrefix: mock.fn().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
+    getBlobToText: mock.fn().callsArgWith(2, null, '{}'),
+    createContainerIfNotExists: mock.fn().callsArgWith(1, null)
   }
-  blobServiceStub.withFilter = sinon.stub().returns(blobServiceStub)
+  blobServiceStub.withFilter = mock.fn(() => blobServiceStub)
   const store = Store({})
   store.blobService = blobServiceStub
   return store

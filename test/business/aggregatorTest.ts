@@ -1,18 +1,17 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { describe, it } from 'node:test'
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import AggregatorService from '../../business/aggregator.js'
 import SummaryService from '../../business/summarizer.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { setIfValue } from '../../lib/utils.js'
 
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
 
 // @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
 const testDir = dirname(fileURLToPath(import.meta.url))
@@ -25,14 +24,14 @@ describe('Aggregation service', () => {
   it('handles no tool data', async () => {
     const { service } = setupAggregator()
     const aggregated = service.process({})
-    expect(aggregated).to.be.null
+    assert.strictEqual(aggregated, null)
   })
 
   it('handles one tool one version data', async () => {
     const summaries = { tool2: { '1.0.0': { files: [buildFile('foo.txt', 'MIT')] } } }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
-    expect(aggregated.files.length).to.eq(1)
+    assert.strictEqual(aggregated.files.length, 1)
   })
 
   it('handles one tool multiple version data', async () => {
@@ -44,9 +43,9 @@ describe('Aggregation service', () => {
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
-    expect(aggregated.files.length).to.eq(1)
-    expect(aggregated.files[0].path).to.eq('foo.txt')
-    expect(aggregated.files[0].license).to.eq('GPL-2.0')
+    assert.strictEqual(aggregated.files.length, 1)
+    assert.strictEqual(aggregated.files[0].path, 'foo.txt')
+    assert.strictEqual(aggregated.files[0].license, 'GPL-2.0')
   })
 
   it('handles multiple tools and one file data', async () => {
@@ -59,8 +58,8 @@ describe('Aggregation service', () => {
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
-    expect(aggregated.files.length).to.eq(1)
-    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
+    assert.strictEqual(aggregated.files.length, 1)
+    assert.strictEqual(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')
   })
 
   it('handles multiple tools and multiple file data with extras ignored', async () => {
@@ -76,8 +75,8 @@ describe('Aggregation service', () => {
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
-    expect(aggregated.files.length).to.eq(1)
-    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
+    assert.strictEqual(aggregated.files.length, 1)
+    assert.strictEqual(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')
   })
 
   it('handles multiple tools and multiple file data with extras included', async () => {
@@ -93,11 +92,11 @@ describe('Aggregation service', () => {
     }
     const { service } = setupAggregator()
     const aggregated = service.process(summaries)
-    expect(aggregated.files.length).to.eq(2)
-    expect(aggregated.files[0].path).to.eq('foo.txt')
-    expect(aggregated.files[0].license).to.equal('BSD-3-Clause AND GPL-2.0')
-    expect(aggregated.files[1].path).to.eq('bar.txt')
-    expect(aggregated.files[1].license).to.eq('GPL-2.0')
+    assert.strictEqual(aggregated.files.length, 2)
+    assert.strictEqual(aggregated.files[0].path, 'foo.txt')
+    assert.strictEqual(aggregated.files[0].license, 'BSD-3-Clause AND GPL-2.0')
+    assert.strictEqual(aggregated.files[1].path, 'bar.txt')
+    assert.strictEqual(aggregated.files[1].license, 'GPL-2.0')
   })
 
   it('handles Rust crates with license choices', async () => {
@@ -156,7 +155,7 @@ describe('Aggregation service', () => {
       const summaries = summaryService.summarizeAll(coords, raw)
       const { service } = setupAggregatorWithParams(coordSpec, tools)
       const aggregated = service.process(summaries, coords)
-      expect(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`).to.eq(testcase.expected)
+      assert.strictEqual(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`, testcase.expected)
     }
   })
 
@@ -170,9 +169,9 @@ describe('Aggregation service', () => {
     const summaries = summaryService.summarizeAll(coords, raw)
     const { service } = setupAggregatorWithParams(coordSpec, tools)
     const aggregated = service.process(summaries, coords)
-    expect(aggregated.licensed.declared).to.be.ok
+    assert.ok(aggregated.licensed.declared)
     // package manifest: LGPL-2.0-or-later, license: LGPL-2.1-only
-    expect(aggregated.licensed.declared).to.be.not.equal('NOASSERTION')
+    assert.notStrictEqual(aggregated.licensed.declared, 'NOASSERTION')
   })
 })
 

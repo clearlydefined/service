@@ -1,3 +1,6 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -6,15 +9,13 @@ const sinon = require('sinon')
 const sandbox = sinon.createSandbox()
 const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
 
 describe('AbstractFileStore', () => {
   const logger = {
-    debug: sinon.stub(),
-    error: sinon.stub()
+    debug: mock.fn(),
+    error: mock.fn()
   }
 
   describe('AbstractFileStore lists entries ', () => {
@@ -62,24 +63,24 @@ describe('AbstractFileStore', () => {
         await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'error', '0.0'), data => data)
         throw new Error('should have thrown error')
       } catch (error) {
-        expect(error.message).to.eq('test error')
+        assert.strictEqual(error.message, 'test error')
       }
     })
 
     it('works for unknown path coordinates ', async () => {
       const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'bogus', '0.0'), data => data)
-      expect(result.length).to.eq(0)
+      assert.strictEqual(result.length, 0)
     })
 
     it('lists no files', async () => {
       const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'), data => data)
-      expect(result.length).to.eq(0)
+      assert.strictEqual(result.length, 0)
     })
 
     it('lists single files', async () => {
       const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), data => data)
-      expect(result.length).to.eq(1)
-      expect(result[0].path).to.eq('/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json')
+      assert.strictEqual(result.length, 1)
+      assert.strictEqual(result[0].path, '/foo/npm/npmjs/-/test/revision/1.0/tool/testtool/2.0.json')
     })
 
     it('lists multiple files', async () => {
@@ -197,7 +198,7 @@ describe('AbstractFileStore', () => {
         // account for platform differences in path separator.
         const normalizedResult = result.replace(/\\/g, '/')
         const normalizedInput = (input.location + separator + input.path).replace(/\\/g, '/')
-        expect(normalizedResult).to.deep.equal(normalizedInput)
+        assert.deepStrictEqual(normalizedResult, normalizedInput)
       })
     }
   })
@@ -213,13 +214,12 @@ describe('AbstractFileStore', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/30.3.0.json'
       ])
-      expect(Array.from(latest)).to.deep.equalInAnyOrder([
+      assertDeepEqualInAnyOrder(Array.from(latest), [
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
-      ])
-    })
+      ])    })
 
     it('should get latest tool versions and ignore un-versioned data', () => {
       const latest = AbstractFileStore.getLatestToolPaths([
@@ -229,11 +229,10 @@ describe('AbstractFileStore', () => {
         'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json',
         'npm/npmjs/-/co/revision/4.6.0/tool/scancode.json'
       ])
-      expect(Array.from(latest)).to.deep.equalInAnyOrder([
+      assertDeepEqualInAnyOrder(Array.from(latest), [
         'npm/npmjs/-/co/revision/4.6.0/tool/clearlydefined/1.json',
         'npm/npmjs/-/co/revision/4.6.0/tool/scancode/2.9.2.json'
-      ])
-    })
+      ])    })
 
     it('should get latest tool versions and ignore invalid semver', () => {
       const latest = AbstractFileStore.getLatestToolPaths([
@@ -246,11 +245,10 @@ describe('AbstractFileStore', () => {
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/3.2.2.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
       ])
-      expect(Array.from(latest)).to.deep.equalInAnyOrder([
+      assertDeepEqualInAnyOrder(Array.from(latest), [
         'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/30.3.0.json'
-      ])
-    })
+      ])    })
 
     it('should ignore invalid semver, invalid sermver first', () => {
       const latest = AbstractFileStore.getLatestToolPaths([
@@ -273,11 +271,10 @@ describe('AbstractFileStore', () => {
         'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
       ])
-      expect(Array.from(latest)).to.deep.equalInAnyOrder([
+      assertDeepEqualInAnyOrder(Array.from(latest), [
         'npm/npmjs/-/debug/revision/3.1.0/tool/clearlydefined/1.5.0.json',
         'npm/npmjs/-/debug/revision/3.1.0/tool/scancode/2.9.0b1.json'
-      ])
-    })
+      ])    })
   })
 
   describe('find(query)', () => {
@@ -340,7 +337,7 @@ describe('AbstractFileStore', () => {
 
       const filteredResults = results.filter(entry => entry && (entry.meta === 'b' || entry.meta === 'c'))
 
-      expect(filteredResults).to.be.an('array').with.length(2)
+      assert.ok(Array.isArray(filteredResults)).with.length(2)
       expect(filteredResults.map(r => r.meta)).to.have.members(['b', 'c'])
     })
 
@@ -349,14 +346,14 @@ describe('AbstractFileStore', () => {
         name: 'non-existent-name'
       }
       const results = await fileStore.find(noMatchQuery)
-      expect(results).to.be.an('array').that.is.empty
+      assert.ok(Array.isArray(results)).that.is.empty
     })
 
     it('filters by license declared', async () => {
       const query = { license: 'MIT' }
       const results = await fileStore.find(query)
-      expect(results).to.have.length(1)
-      expect(results[0].meta).to.equal('a')
+      assert.strictEqual(results.length, 1)
+      assert.strictEqual(results[0].meta, 'a')
     })
 
     it('filters by releasedAfter date', async () => {

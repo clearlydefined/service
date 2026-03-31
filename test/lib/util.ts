@@ -1,13 +1,12 @@
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import assert from 'node:assert/strict'
+import { describe, it, afterEach } from 'node:test'
 import { DateTime } from 'luxon'
-import sinon from 'sinon'
+import { mock } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
 import utils from '../../lib/utils.js'
 
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {
@@ -30,7 +29,7 @@ describe('Utils latest version', () => {
 
     for (const expected of Object.getOwnPropertyNames(inputs)) {
       const result = `${utils.getLatestVersion(inputs[expected])}`
-      expect(result).to.equal(expected)
+      assert.strictEqual(result, expected)
     }
   })
 
@@ -131,7 +130,7 @@ describe('Utils latest version', () => {
 
     for (const licenseUrl of Object.getOwnPropertyNames(inputs)) {
       const parsedLicense = utils.extractLicenseFromLicenseUrl(licenseUrl)
-      expect(parsedLicense).to.equal(inputs[licenseUrl])
+      assert.strictEqual(parsedLicense, inputs[licenseUrl])
     }
   })
 })
@@ -152,7 +151,7 @@ describe('Utils merge Licenses', () => {
     for (const input of inputs) {
       const base = { licensed: { declared: input[0] } }
       utils.mergeDefinitions(base, { licensed: { declared: input[1] } })
-      expect(base.licensed.declared).to.eq(input[2])
+      assert.strictEqual(base.licensed.declared, input[2])
     }
   })
 })
@@ -162,21 +161,21 @@ describe('Utils mergeDefinitions', () => {
     const base: Definition = { described: { releaseDate: '2018-6-3' } }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
+    assert.strictEqual(base.described.releaseDate, '2018-6-3')
+    assert.strictEqual(base.files.length, 1)
+    assert.strictEqual(base.files[0].path, '1.txt')
+    assert.strictEqual(base.files[0].token, '13')
   })
 
   it('should merge entries as needed', () => {
     const base: Definition = { described: { releaseDate: '2018-6-3' }, files: [{ path: '1.txt', license: 'MIT' }] }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
-    expect(base.files[0].license).to.eq('MIT')
+    assert.strictEqual(base.described.releaseDate, '2018-6-3')
+    assert.strictEqual(base.files.length, 1)
+    assert.strictEqual(base.files[0].path, '1.txt')
+    assert.strictEqual(base.files[0].token, '13')
+    assert.strictEqual(base.files[0].license, 'MIT')
   })
 
   it('does not mess with existing entries', () => {
@@ -189,13 +188,13 @@ describe('Utils mergeDefinitions', () => {
     }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(2)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
-    expect(base.files[0].license).to.eq('MIT')
-    expect(base.files[1].path).to.eq('2.txt')
-    expect(base.files[1].license).to.eq('GPL')
+    assert.strictEqual(base.described.releaseDate, '2018-6-3')
+    assert.strictEqual(base.files.length, 2)
+    assert.strictEqual(base.files[0].path, '1.txt')
+    assert.strictEqual(base.files[0].token, '13')
+    assert.strictEqual(base.files[0].license, 'MIT')
+    assert.strictEqual(base.files[1].path, '2.txt')
+    assert.strictEqual(base.files[1].license, 'GPL')
   })
 
   it('overrides NOASSERTION', () => {
@@ -205,9 +204,9 @@ describe('Utils mergeDefinitions', () => {
     }
     const newDefinition = { licensed: { declared: 'MIT' }, files: [{ path: '1.txt', license: 'GPL-3.0' }] }
     utils.mergeDefinitions(base, newDefinition)
-    expect(base.licensed.declared).to.eq('MIT')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].license).to.eq('GPL-3.0')
+    assert.strictEqual(base.licensed.declared, 'MIT')
+    assert.strictEqual(base.files.length, 1)
+    assert.strictEqual(base.files[0].license, 'GPL-3.0')
   })
 
   it('merges files correctly', () => {
@@ -237,12 +236,12 @@ describe('Utils mergeDefinitions', () => {
     }
     utils.mergeDefinitions(base, newDefinition)
     const file = base.files[0]
-    expect(file.attributions).to.have.members(['1', '2', '3'])
-    expect(file.license).to.eq('GPL-3.0 AND MIT')
-    expect(file.facets).to.have.members(['core', 'dev'])
-    expect(file.hashes.sha1).to.eq('1')
-    expect(file.hashes.sha256).to.eq('257')
-    expect(file.natures).to.have.members(['license', 'test'])
+    assert.deepStrictEqual(new Set(file.attributions), new Set(['1', '2', '3']))
+    assert.strictEqual(file.license, 'GPL-3.0 AND MIT')
+    assert.deepStrictEqual(new Set(file.facets), new Set(['core', 'dev']))
+    assert.strictEqual(file.hashes.sha1, '1')
+    assert.strictEqual(file.hashes.sha256, '257')
+    assert.deepStrictEqual(new Set(file.natures), new Set(['license', 'test']))
   })
 
   it('merges described correctly', () => {
@@ -260,29 +259,29 @@ describe('Utils mergeDefinitions', () => {
       }
     }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.projectWebsite).to.eq('https://test')
-    expect(base.described.hashes.sha1).to.eq('1')
-    expect(base.described.hashes.sha256).to.eq('257')
-    expect(base.described.facets.dev).to.eq('foo')
-    expect(base.described.facets.core).to.eq('test')
-    expect(base.described.facets.doc).to.eq('this')
+    assert.strictEqual(base.described.projectWebsite, 'https://test')
+    assert.strictEqual(base.described.hashes.sha1, '1')
+    assert.strictEqual(base.described.hashes.sha256, '257')
+    assert.strictEqual(base.described.facets.dev, 'foo')
+    assert.strictEqual(base.described.facets.core, 'test')
+    assert.strictEqual(base.described.facets.doc, 'this')
   })
 })
 
 describe('Copyright simplification', () => {
   it('handles duplicate entries', () => {
     const result = utils.simplifyAttributions(['foo', 'foo', 'bar'])
-    expect(result).to.deep.equalInAnyOrder(['foo', 'bar'])
+    assertDeepEqualInAnyOrder(result, ['foo', 'bar'])
   })
 
   it('handles bogus punctuation', () => {
     const result = utils.simplifyAttributions(['%$#@foo*&^$', 'foo$.', 'foo.', 'foo.*&$!', 'bar,'])
-    expect(result).to.deep.equalInAnyOrder(['foo.', 'foo$.', 'bar'])
+    assertDeepEqualInAnyOrder(result, ['foo.', 'foo$.', 'bar'])
   })
 
   it('decodes html, removes redundant white space', () => {
     const result = utils.simplifyAttributions(['&lt;jane@foo.com&gt;', ' \r \nfoo   bar  \\n\r', 'foo bar'])
-    expect(result).to.deep.equalInAnyOrder(['<jane@foo.com>', 'foo bar'])
+    assertDeepEqualInAnyOrder(result, ['<jane@foo.com>', 'foo bar'])
   })
 })
 
@@ -302,7 +301,7 @@ describe('Utils isLicenseFile', () => {
     ]
 
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input), true, `input: ${input}`)
     }
   })
 
@@ -310,7 +309,7 @@ describe('Utils isLicenseFile', () => {
     const inputs = ['package/LICENSE', 'licenses/license', 'package/COPYING', 'licenses/copying']
 
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input), false, `input: ${input}`)
     }
   })
 
@@ -329,7 +328,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), true, `input: ${input}`)
     }
   })
 
@@ -348,7 +347,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), true, `input: ${input}`)
     }
   })
 
@@ -367,7 +366,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('sourcearchive/mavencentral/group/artifact/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), true, `input: ${input}`)
     }
   })
 
@@ -386,7 +385,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), true, `input: ${input}`)
     }
   })
 
@@ -410,7 +409,7 @@ describe('Utils isLicenseFile', () => {
       { name: 'tenacity', version: '8.2.1' }
     ]
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate, packages), `input: ${input}`).to.be.true
+      assert.strictEqual(utils.isLicenseFile(input, coordinate, packages), true, `input: ${input}`)
     }
   })
 
@@ -429,7 +428,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('nuget/nuget/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), false, `input: ${input}`)
     }
   })
 
@@ -448,7 +447,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), false, `input: ${input}`)
     }
   })
 
@@ -467,7 +466,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), false, `input: ${input}`)
     }
   })
 
@@ -486,7 +485,7 @@ describe('Utils isLicenseFile', () => {
     ]
     const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input, coordinate), false, `input: ${input}`)
     }
   })
 
@@ -520,12 +519,12 @@ describe('Utils isLicenseFile', () => {
       { name: 'tenacity', version: '8.2.1' }
     ]
     for (const input of inputs) {
-      expect(utils.isLicenseFile(input, coordinate, packages), `input: ${input}`).to.be.false
+      assert.strictEqual(utils.isLicenseFile(input, coordinate, packages), false, `input: ${input}`)
     }
   })
 
   it('should handle falsy input', () => {
-    expect(utils.isLicenseFile(undefined)).to.be.false
+    assert.strictEqual(utils.isLicenseFile(undefined), false)
   })
 })
 
@@ -553,7 +552,7 @@ describe('Utils extractDate', () => {
 
     for (const timestamp of Object.getOwnPropertyNames(inputs)) {
       const date = utils.extractDate(timestamp)
-      expect(date).to.equal(inputs[timestamp])
+      assert.strictEqual(date, inputs[timestamp])
     }
   })
 })
@@ -561,22 +560,22 @@ describe('Utils extractDate', () => {
 describe('Utils compareDates', () => {
   it('sort non null dates', () => {
     const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort(utils.compareDates)
-    expect(sorted).to.deep.eq(['1990-01-01', '2000-01-01', '2010-01-01'])
+    assert.deepStrictEqual(sorted, ['1990-01-01', '2000-01-01', '2010-01-01'])
   })
 
   it('reverse sort non null dates', () => {
     const sorted = ['2010-01-01', '1990-01-01', '2000-01-01'].sort((x, y) => -utils.compareDates(x, y))
-    expect(sorted).to.deep.eq(['2010-01-01', '2000-01-01', '1990-01-01'])
+    assert.deepStrictEqual(sorted, ['2010-01-01', '2000-01-01', '1990-01-01'])
   })
 
   it('sort null and non null dates: null first', () => {
     const sorted = [null, '1990-01-01', null].sort(utils.compareDates)
-    expect(sorted).to.deep.eq([null, null, '1990-01-01'])
+    assert.deepStrictEqual(sorted, [null, null, '1990-01-01'])
   })
 
   it('reverse sort null and non null: null last', () => {
     const sorted = [null, '1990-01-01', null].sort((x, y) => -utils.compareDates(x, y))
-    expect(sorted).to.deep.eq(['1990-01-01', null, null])
+    assert.deepStrictEqual(sorted, ['1990-01-01', null, null])
   })
 })
 
@@ -592,20 +591,20 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   } as unknown as EntityCoordinatesRequest
 
   before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
+    mock.method(utils, 'toNormalizedEntityCoordinates', (entry: any) => Promise.resolve(entry) as Promise<EntityCoordinates>)
   })
 
   after(() => {
-    sinon.restore()
+    mock.restoreAll()
   })
 
   it('should turn a request into entity coordinates', async () => {
     const result = await utils.toEntityCoordinatesFromRequest(fakeRequest)
-    expect(result.type).to.eq('pypi')
-    expect(result.provider).to.eq('pypi')
-    expect(result.namespace).to.eq(undefined)
-    expect(result.name).to.eq('javaproperties')
-    expect(result.revision).to.eq('0.8.1')
+    assert.strictEqual(result.type, 'pypi')
+    assert.strictEqual(result.provider, 'pypi')
+    assert.strictEqual(result.namespace, undefined)
+    assert.strictEqual(result.name, 'javaproperties')
+    assert.strictEqual(result.revision, '0.8.1')
   })
 
   const fakeSlashNamespaceRequest = {
@@ -620,7 +619,7 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
 
   it('encodes slashes in namespaces', async () => {
     const result = await utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
-    expect(result.namespace).to.eq('rsc.io%2fquote')
+    assert.strictEqual(result.namespace, 'rsc.io%2fquote')
   })
 })
 
@@ -635,11 +634,11 @@ describe('Utils toEntityCoordinatesFromArgs', () => {
 
   it('should turn the args into entity coordinates', () => {
     const result = utils.toEntityCoordinatesFromArgs(args)
-    expect(result.type).to.eq('go')
-    expect(result.provider).to.eq('golang')
-    expect(result.namespace).to.eq('rsc.io%2fquote')
-    expect(result.name).to.eq('v3')
-    expect(result.revision).to.eq('v3.1.0')
+    assert.strictEqual(result.type, 'go')
+    assert.strictEqual(result.provider, 'golang')
+    assert.strictEqual(result.namespace, 'rsc.io%2fquote')
+    assert.strictEqual(result.name, 'v3')
+    assert.strictEqual(result.revision, 'v3.1.0')
   })
 })
 
@@ -659,7 +658,7 @@ describe('Utils parseNamespaceNameRevision', () => {
 
   it('parses the args into one string', () => {
     const result = utils.parseNamespaceNameRevision(fakeSlashNamespaceRequest)
-    expect(result).to.eq('rsc.io/quote/v3/foo/bar/bah/v3.1.0')
+    assert.strictEqual(result, 'rsc.io/quote/v3/foo/bar/bah/v3.1.0')
   })
 })
 
@@ -675,17 +674,17 @@ describe('Utils getLicenseLocations', () => {
   } as unknown as EntityCoordinatesRequest
 
   before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
+    mock.method(utils, 'toNormalizedEntityCoordinates', (entry: any) => Promise.resolve(entry) as Promise<EntityCoordinates>)
   })
 
   after(() => {
-    sinon.restore()
+    mock.restoreAll()
   })
 
   it('finds the correct license location for npm packages', async () => {
     const coordinates = await utils.toEntityCoordinatesFromRequest(npmRequest)
     const result = utils.getLicenseLocations(coordinates)
-    expect(result).to.deep.include('package/')
+    assert.ok(result.some((item: any) => JSON.stringify(item) === JSON.stringify('package/')))
   })
 
   describe('Go packages', () => {
@@ -702,7 +701,7 @@ describe('Utils getLicenseLocations', () => {
     it('finds the correct location for go packages', async () => {
       const coordinates = await utils.toEntityCoordinatesFromRequest(goRequest)
       const result = utils.getLicenseLocations(coordinates)
-      expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
+      assert.ok(result.some((item: any) => JSON.stringify(item) === JSON.stringify('go.uber.org/fx@1.14.2/')))
     })
 
     it('finds the correct license location for complex namespaces with lower case %2f', async () => {
@@ -718,7 +717,7 @@ describe('Utils getLicenseLocations', () => {
 
       const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
-      expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+      assert.ok(result.some((item: any) => JSON.stringify(item) === JSON.stringify('github.com/concourse/github-release-resource@v1.6.4/')))
     })
 
     it('finds the correct license location for complex namespaces with upper case %2F', async () => {
@@ -734,7 +733,7 @@ describe('Utils getLicenseLocations', () => {
 
       const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
-      expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
+      assert.ok(result.some((item: any) => JSON.stringify(item) === JSON.stringify('github.com/concourse/github-release-resource@v1.6.4/')))
     })
   })
 
@@ -752,7 +751,7 @@ describe('Utils getLicenseLocations', () => {
     it('returns an empty array when not passing packages', async () => {
       const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
       const result = utils.getLicenseLocations(coordinates)
-      expect(result).to.deep.equal([])
+      assert.deepStrictEqual(result, [])
     })
 
     it('finds the correct license locations when passing packages', async () => {
@@ -763,7 +762,7 @@ describe('Utils getLicenseLocations', () => {
         { name: 'tenacity', version: '8.2.1' }
       ]
       const result = utils.getLicenseLocations(coordinates, packages)
-      expect(result).to.deep.equal(['python-tenacity-doc/', 'python3-tenacity/', 'tenacity-8.2.1/'])
+      assert.deepStrictEqual(result, ['python-tenacity-doc/', 'python3-tenacity/', 'tenacity-8.2.1/'])
     })
   })
 })
@@ -781,7 +780,7 @@ describe('Utils buildSourceUrl', () => {
     const coordinates = utils.toEntityCoordinatesFromArgs(args)
     const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://github.com/clearlydefined/service/tree/123abc')
+    assert.strictEqual(result, 'https://github.com/clearlydefined/service/tree/123abc')
   })
 
   it('returns the correct gitlab source url', () => {
@@ -796,7 +795,7 @@ describe('Utils buildSourceUrl', () => {
     const coordinates = utils.toEntityCoordinatesFromArgs(args)
     const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://gitlab.com/clearlydefined/service/-/tree/123abc')
+    assert.strictEqual(result, 'https://gitlab.com/clearlydefined/service/-/tree/123abc')
   })
 
   describe('maven urls', () => {
@@ -812,7 +811,7 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq(
+      assert.strictEqual(result, 
         'https://search.maven.org/remotecontent?filepath=clearlydefined/service/1.2.3/service-1.2.3-sources.jar'
       )
     })
@@ -829,7 +828,7 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq(
+      assert.strictEqual(result, 
         'https://search.maven.org/remotecontent?filepath=clearlydefined/foo/service/1.2.3/service-1.2.3-sources.jar'
       )
     })
@@ -846,7 +845,7 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq('https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
+      assert.strictEqual(result, 'https://maven.google.com/web/index.html#clearlydefined:service:1.2.3')
     })
   })
 
@@ -863,7 +862,7 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq('https://pkg.go.dev/clearlydefined/service@v1.2.3')
+      assert.strictEqual(result, 'https://pkg.go.dev/clearlydefined/service@v1.2.3')
     })
 
     it('returns the correct golang source url with slashes in the namespace', () => {
@@ -878,7 +877,7 @@ describe('Utils buildSourceUrl', () => {
       const coordinates = utils.toEntityCoordinatesFromArgs(args)
       const result = utils.buildSourceUrl(coordinates)
 
-      expect(result).to.eq('https://pkg.go.dev/clearlydefined/foo/service@v1.2.3')
+      assert.strictEqual(result, 'https://pkg.go.dev/clearlydefined/foo/service@v1.2.3')
     })
   })
 
@@ -894,7 +893,7 @@ describe('Utils buildSourceUrl', () => {
     const coordinates = utils.toEntityCoordinatesFromArgs(args)
     const result = utils.buildSourceUrl(coordinates)
 
-    expect(result).to.eq('https://pypi.org/project/zuul/3.3.0/')
+    assert.strictEqual(result, 'https://pypi.org/project/zuul/3.3.0/')
   })
 })
 
@@ -904,7 +903,7 @@ describe('normalizeLicenseExpression', () => {
   it('should normalize license', () => {
     const expression = 'MIT AND GPL-3.0'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('MIT AND GPL-3.0')
+    assert.strictEqual(result, 'MIT AND GPL-3.0')
   })
   it('should normalize license to SPDX equivalent', () => {
     /*
@@ -913,32 +912,32 @@ describe('normalizeLicenseExpression', () => {
     */
     const expression = 'net-snmp'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('Net-SNMP')
+    assert.strictEqual(result, 'Net-SNMP')
   })
   it('should normalize single licenseRef', () => {
     const expression = 'afpl-9.0'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('LicenseRef-scancode-afpl-9.0')
+    assert.strictEqual(result, 'LicenseRef-scancode-afpl-9.0')
   })
   it('should normalize license and licenseRef', () => {
     const expression = 'afl-1.1 AND afpl-9.0'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('AFL-1.1 AND LicenseRef-scancode-afpl-9.0')
+    assert.strictEqual(result, 'AFL-1.1 AND LicenseRef-scancode-afpl-9.0')
   })
   it('should normalize licenseRef and license', () => {
     const expression = 'afpl-9.0 AND MIT'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND MIT')
+    assert.strictEqual(result, 'LicenseRef-scancode-afpl-9.0 AND MIT')
   })
   it('should normalize licenseRef and licenseRef', () => {
     const expression = 'afpl-9.0 AND activestate-community'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq('LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community')
+    assert.strictEqual(result, 'LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community')
   })
   it('should normalize licenseRef and licenseRef or licenseRef', () => {
     const expression = 'afpl-9.0 AND activestate-community OR ac3filter'
     const result = utils.normalizeLicenseExpression(expression, noop)
-    expect(result).to.eq(
+    assert.strictEqual(result, 
       'LicenseRef-scancode-afpl-9.0 AND LicenseRef-scancode-activestate-community OR LicenseRef-scancode-ac3filter'
     )
   })
@@ -950,6 +949,6 @@ describe('normalizeLicenseExpression', () => {
     }
     const expression = 'INVALID'
     const result = utils.normalizeLicenseExpression(expression, mockLogger)
-    expect(result).to.eq('NOASSERTION')
+    assert.strictEqual(result, 'NOASSERTION')
   })
 })

@@ -1,9 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
-import sinon from 'sinon'
 import webhookRoutes from '../../routes/webhook.js'
 
 describe('Webhook Route for GitHub calls', () => {
@@ -24,11 +24,11 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(service.updateContribution.calledOnce).to.be.false
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, false)
     expect(response._getData()).to.be.eq('')
-    expect(logger.error.notCalled).to.be.true
-    expect(logger.info.notCalled).to.be.true
+    assert.strictEqual(logger.error.mock.callCount() === 0, true)
+    assert.strictEqual(logger.info.mock.callCount() === 0, true)
   })
 
   it('handles missing signature', async () => {
@@ -39,9 +39,9 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
-    expect(service.updateContribution.calledOnce).to.be.false
-    expect(response._getData().startsWith('Missing')).to.be.true
+    assert.strictEqual(response.statusCode, 400)
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, false)
+    assert.strictEqual(response._getData().startsWith('Missing'), true)
   })
 
   it('handles missing event header', async () => {
@@ -52,9 +52,9 @@ describe('Webhook Route for GitHub calls', () => {
     const service = createCurationService()
     const router = (webhookRoutes as (...args: any[]) => any)(service, null, logger, 'secret', 'secret', true)
     await router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
-    expect(service.updateContribution.calledOnce).to.be.false
-    expect(response._getData().startsWith('Missing')).to.be.true
+    assert.strictEqual(response.statusCode, 400)
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, false)
+    assert.strictEqual(response._getData().startsWith('Missing'), true)
   })
 
   it('skips closed event that is not merged', async () => {
@@ -66,13 +66,13 @@ describe('Webhook Route for GitHub calls', () => {
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
-    expect(response.statusCode).to.be.eq(200)
-    expect(service.validateContributions.calledOnce).to.be.false
-    expect(service.addByMergedCuration.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(service.validateContributions.mock.callCount() === 1, false)
+    assert.strictEqual(service.addByMergedCuration.mock.callCount() === 1, true)
     expect(service.addByMergedCuration.calledBefore(service.updateContribution))
-    expect(service.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.error.notCalled).to.be.true
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.error.mock.callCount() === 0, true)
   })
 
   it('calls valid for PR changes', async () => {
@@ -84,11 +84,11 @@ describe('Webhook Route for GitHub calls', () => {
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
-    expect(response.statusCode).to.be.eq(200)
-    expect(service.validateContributions.calledOnce).to.be.true
-    expect(service.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.error.notCalled).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(service.validateContributions.mock.callCount() === 1, true)
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.error.mock.callCount() === 0, true)
   })
 
   it('calls missing for PR changes', async () => {
@@ -100,11 +100,11 @@ describe('Webhook Route for GitHub calls', () => {
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
-    expect(response.statusCode).to.be.eq(200)
-    expect(service.validateContributions.calledOnce).to.be.true
-    expect(service.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.error.notCalled).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(service.validateContributions.mock.callCount() === 1, true)
+    assert.strictEqual(service.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.error.mock.callCount() === 0, true)
   })
 
   it('validates the curation when a PR is opened', async () => {
@@ -116,7 +116,7 @@ describe('Webhook Route for GitHub calls', () => {
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
-    expect(service.validateContributions.calledOnce).to.be.true
+    assert.strictEqual(service.validateContributions.mock.callCount() === 1, true)
   })
 
   it('validates the curation when a PR is reopened', async () => {
@@ -128,20 +128,20 @@ describe('Webhook Route for GitHub calls', () => {
     const promise = router._handlePost(request, response)
     await clock.runAllAsync()
     await promise
-    expect(service.validateContributions.calledOnce).to.be.true
+    assert.strictEqual(service.validateContributions.mock.callCount() === 1, true)
   })
 })
 
 function createLogger() {
-  return { info: sinon.stub(), error: sinon.stub() }
+  return { info: mock.fn(), error: mock.fn() }
 }
 
 function createCurationService() {
   return {
-    getContributedCurations: sinon.stub(),
-    updateContribution: sinon.stub().resolves(),
-    validateContributions: sinon.stub().resolves(),
-    addByMergedCuration: sinon.stub().resolves()
+    getContributedCurations: mock.fn(),
+    updateContribution: mock.fn().resolves(),
+    validateContributions: mock.fn().resolves(),
+    addByMergedCuration: mock.fn().resolves()
   }
 }
 

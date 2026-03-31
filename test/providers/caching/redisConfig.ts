@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -30,13 +32,13 @@ describe('redisConfig.serviceFactory', () => {
   }
 
   function expectRedisCalledWith(expectedOptions, result) {
-    assert.ok(redisStub.calledOnce)
-    assert.deepStrictEqual(redisStub.firstCall.args[0], expectedOptions)
+    assert.ok(redisStub.mock.callCount() === 1)
+    assert.deepStrictEqual(redisStub.mock.calls[0].arguments[0], expectedOptions)
     assert.deepStrictEqual(result, { ok: true, received: expectedOptions })
   }
 
   function expectConfigGetCalled(configSpy, keys) {
-    assert.strictEqual(configSpy.callCount, keys.length)
+    assert.strictEqual(configSpy.mock.callCount(), keys.length)
     for (const k of keys) {
       assert.ok(configSpy.calledWith(k))
     }
@@ -50,7 +52,7 @@ describe('redisConfig.serviceFactory', () => {
     const result = serviceFactory(providedOptions)
 
     expectRedisCalledWith(providedOptions, result)
-    assert.ok(configGetStub.notCalled)
+    assert.ok(configGetStub.mock.callCount() === 0)
   })
 
   it('reads config when options omitted', () => {

@@ -1,11 +1,11 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
-import sinon from 'sinon'
 import AggregatorService from '../../business/aggregator.js'
 import DefinitionService from '../../business/definitionService.js'
 import SummaryService from '../../business/summarizer.js'
@@ -19,17 +19,15 @@ import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
 import validator from '../../schemas/validator.js'
 
 const { set } = lodash
-chai.use(deepEqualInAnyOrder)
-const expect = chai.expect
 
 describe('Definition Service', () => {
   it('invalidates single coordinate', async () => {
     const { service, coordinates } = setup()
     await service.invalidate(coordinates)
-    expect(service.definitionStore.delete.calledOnce).to.be.true
-    expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test')
-    expect(service.cache.delete.calledOnce).to.be.true
-    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test/1.0')
+    assert.strictEqual(service.definitionStore.delete.mock.callCount() === 1, true)
+    expect(service.definitionStore.delete.mock.calls[0].arguments[0].name).to.be.eq('test')
+    assert.strictEqual(service.cache.delete.mock.callCount() === 1, true)
+    expect(service.cache.delete.mock.calls[0].arguments[0]).to.be.eq('def_npm/npmjs/-/test/1.0')
   })
 
   it('invalidates array of coordinates', async () => {
@@ -39,52 +37,52 @@ describe('Definition Service', () => {
       EntityCoordinates.fromString('npm/npmjs/-/test1/2.3')
     ]
     await service.invalidate(coordinates)
-    expect(service.definitionStore.delete.calledTwice).to.be.true
-    expect(service.cache.delete.calledTwice).to.be.true
-    expect(service.definitionStore.delete.getCall(0).args[0].name).to.be.eq('test0')
-    expect(service.definitionStore.delete.getCall(1).args[0].name).to.be.eq('test1')
-    expect(service.cache.delete.getCall(0).args[0]).to.be.eq('def_npm/npmjs/-/test0/2.3')
-    expect(service.cache.delete.getCall(1).args[0]).to.be.eq('def_npm/npmjs/-/test1/2.3')
+    assert.strictEqual(service.definitionStore.delete.mock.callCount() === 2, true)
+    assert.strictEqual(service.cache.delete.mock.callCount() === 2, true)
+    expect(service.definitionStore.delete.mock.calls[0].arguments[0].name).to.be.eq('test0')
+    expect(service.definitionStore.delete.mock.calls[1].arguments[0].name).to.be.eq('test1')
+    expect(service.cache.delete.mock.calls[0].arguments[0]).to.be.eq('def_npm/npmjs/-/test0/2.3')
+    expect(service.cache.delete.mock.calls[1].arguments[0]).to.be.eq('def_npm/npmjs/-/test1/2.3')
   })
 
   it('does not store empty definitions', async () => {
     const { service, coordinates } = setup(createDefinition())
     await service.get(coordinates)
-    expect(service.definitionStore.store.notCalled).to.be.true
-    expect(service.search.store.notCalled).to.be.true
+    assert.strictEqual(service.definitionStore.store.mock.callCount() === 0, true)
+    assert.strictEqual(service.search.store.mock.callCount() === 0, true)
   })
 
   it('stores new definitions', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, ['foo']))
     await service.get(coordinates)
-    expect(service.definitionStore.store.calledOnce).to.be.true
-    expect(service.search.store.notCalled).to.be.true
+    assert.strictEqual(service.definitionStore.store.mock.callCount() === 1, true)
+    assert.strictEqual(service.search.store.mock.callCount() === 0, true)
   })
 
   it('trims files from definitions', async () => {
     const { service, coordinates } = setup(createDefinition(null, [{ path: 'path/to/file' }], ['foo']))
     const definition = await service.get(coordinates, null, null, '-files')
-    expect(definition.files).to.be.undefined
+    assert.strictEqual(definition.files, undefined)
     const fullDefinition = await service.get(coordinates)
-    expect(fullDefinition.files).to.deep.eq([{ path: 'path/to/file' }])
+    assert.deepStrictEqual(fullDefinition.files, [{ path: 'path/to/file' }])
   })
 
   it('logs and harvest new definitions with empty tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, []))
     await service.get(coordinates)
-    // expect(service.logger.info.calledOnce).to.be.true
-    // expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
-    expect(service._harvest.calledOnce).to.be.true
-    expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
+    // assert.strictEqual(service.logger.info.mock.callCount() === 1, true)
+    // assert.strictEqual(service.logger.info.mock.calls[0].arguments[0], 'definition not available')
+    assert.strictEqual(service._harvest.mock.callCount() === 1, true)
+    assert.strictEqual(service._harvest.mock.calls[0].arguments[0], coordinates)
   })
 
   it('logs and harvests new definitions with undefined tools', async () => {
     const { service, coordinates } = setup(createDefinition(null, null, undefined))
     await service.get(coordinates)
-    // expect(service.logger.info.calledOnce).to.be.true
-    // expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
-    expect(service._harvest.calledOnce).to.be.true
-    expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
+    // assert.strictEqual(service.logger.info.mock.callCount() === 1, true)
+    // assert.strictEqual(service.logger.info.mock.calls[0].arguments[0], 'definition not available')
+    assert.strictEqual(service._harvest.mock.callCount() === 1, true)
+    assert.strictEqual(service._harvest.mock.calls[0].arguments[0], coordinates)
   })
 
   it('higher score than tool score with a curation', async () => {
@@ -97,12 +95,12 @@ describe('Definition Service', () => {
     }
     const { service, coordinates } = setup(raw, null, curation)
     const definition = await service.compute(coordinates)
-    expect(definition.described.score.total).to.eq(30)
-    expect(definition.described.toolScore.total).to.eq(0)
-    expect(definition.licensed.score.total).to.eq(85)
-    expect(definition.licensed.toolScore.total).to.eq(0)
-    expect(definition.scores.effective).to.eq(57) // floor(85+30/2)
-    expect(definition.scores.tool).to.eq(0)
+    assert.strictEqual(definition.described.score.total, 30)
+    assert.strictEqual(definition.described.toolScore.total, 0)
+    assert.strictEqual(definition.licensed.score.total, 85)
+    assert.strictEqual(definition.licensed.toolScore.total, 0)
+    assert.strictEqual(definition.scores.effective, 57) // floor(85+30/2)
+    assert.strictEqual(definition.scores.tool, 0)
   })
 
   it('lists all coordinates found', async () => {
@@ -121,7 +119,7 @@ describe('Definition Service', () => {
       EntityCoordinates.fromString('npm/npmjs/-/missing/2.3')
     ]
     const result = await service.listAll(coordinates)
-    expect(result.length).to.eq(3)
+    assert.strictEqual(result.length, 3)
     expect(result.map(x => x.name)).to.have.members(['test0', 'test1', 'testUpperCase'])
   })
 
@@ -129,22 +127,22 @@ describe('Definition Service', () => {
     const { service } = setup()
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test') // no revision
     const result = await service.get(coordinates)
-    expect(result).to.be.undefined
+    assert.strictEqual(result, undefined)
   })
 
   it('returns definition if coordinates has revision', async () => {
     const { service } = setup()
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const result = await service.get(coordinates)
-    expect(result).to.not.be.undefined
-    expect(result.coordinates.revision).to.eq('1.0')
+    assert.notStrictEqual(result, undefined)
+    assert.strictEqual(result.coordinates.revision, '1.0')
   })
 
   it('returns undefined if coordinates does not have revision and name', async () => {
     const { service } = setup()
     const coordinates = EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
     const result = await service.get(coordinates)
-    expect(result).to.be.undefined
+    assert.strictEqual(result, undefined)
   })
 
   it('returns definition for only valid coordinates in getAll function', async () => {
@@ -155,7 +153,7 @@ describe('Definition Service', () => {
       EntityCoordinates.fromString('maven/mavencentral/org.apache.httpcomponents')
     ]
     const result = await service.getAll(coordinates)
-    expect(result).to.not.be.undefined
+    assert.notStrictEqual(result, undefined)
     expect(Object.keys(result)).to.deep.equal(['maven/mavencentral/org.apache.httpcomponents/httpcore/4.4.16'])
     expect(Object.keys(result).length).to.eq(1)
   })
@@ -232,44 +230,44 @@ describe('Definition Service', () => {
     let coordinates
     beforeEach(() => {
       ;({ service, coordinates } = setup())
-      service.getStored = sinon.stub().resolves({
+      service.getStored = mock.fn(async () => {
         described: {
           tools: ['scancode/3.2.2', 'licensee/3.2.2']
         }
       })
-      sinon.spy(service, 'compute')
+      mock.method(service, 'compute')
     })
 
     afterEach(() => {
-      sinon.restore()
+      mock.restoreAll()
     })
 
     it('computes if definition does not exist', async () => {
-      service.getStored = sinon.stub().resolves(undefined)
+      service.getStored = mock.fn(async () => undefined)
       await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
-      expect(service.getStored.calledOnce).to.be.true
-      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
-      expect(service.compute.calledOnce).to.be.true
-      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.getStored.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.getStored.mock.calls[0].arguments[0], coordinates)
+      assert.strictEqual(service.compute.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.compute.mock.calls[0].arguments[0], coordinates)
     })
 
     it('computes if tools array is undefined', async () => {
-      service.getStored = sinon.stub().resolves({ described: {} })
+      service.getStored = mock.fn(async () => { described: {} })
       await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
-      expect(service.compute.calledOnce).to.be.true
+      assert.strictEqual(service.compute.mock.callCount() === 1, true)
     })
 
     it('computes if the tool result is not included in definition', async () => {
       await service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2')
-      expect(service.compute.calledOnce).to.be.true
-      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.compute.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.compute.mock.calls[0].arguments[0], coordinates)
     })
 
     it('skips compute if existing definition contains the tool result', async () => {
       await service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
-      expect(service.getStored.calledOnce).to.be.true
-      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
-      expect(service.compute.notCalled).to.be.true
+      assert.strictEqual(service.getStored.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.getStored.mock.calls[0].arguments[0], coordinates)
+      assert.strictEqual(service.compute.mock.callCount() === 0, true)
     })
 
     it('handles two computes for the same coordinates: computes the first and skip the second', async () => {
@@ -277,16 +275,16 @@ describe('Definition Service', () => {
         service.computeAndStoreIfNecessary(coordinates, 'reuse', '3.2.2'),
         service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
       ])
-      expect(service.getStored.calledTwice).to.be.true
-      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
-      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.getStored.mock.callCount() === 2, true)
+      assert.deepStrictEqual(service.getStored.mock.calls[0].arguments[0], coordinates)
+      assert.deepStrictEqual(service.getStored.mock.calls[1].arguments[0], coordinates)
 
-      expect(service.compute.calledOnce).to.be.true
-      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.compute.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.compute.mock.calls[0].arguments[0], coordinates)
 
       //verfiy the calls are in sequence to ensure that locking works
-      expect(service.compute.getCall(0).calledAfter(service.getStored.getCall(0))).to.be.true
-      expect(service.compute.getCall(0).calledBefore(service.getStored.getCall(1))).to.be.true
+      assert.strictEqual(service.compute.getCall(0).calledAfter(service.getStored.getCall(0)), true)
+      assert.strictEqual(service.compute.getCall(0).calledBefore(service.getStored.getCall(1)), true)
     })
 
     it('releases the lock upon failure', async () => {
@@ -302,17 +300,17 @@ describe('Definition Service', () => {
         service.computeAndStoreIfNecessary(coordinates, 'scancode', '3.2.2')
       ])
 
-      expect(results[0].status).to.eq('rejected')
-      expect(results[0].reason.message).to.eq('test error')
-      expect(results[1].status).to.eq('fulfilled')
+      assert.strictEqual(results[0].status, 'rejected')
+      assert.strictEqual(results[0].reason.message, 'test error')
+      assert.strictEqual(results[1].status, 'fulfilled')
 
       //lock is released after the first call
-      expect(service.getStored.calledTwice).to.be.true
-      expect(service.getStored.getCall(0).args[0]).to.deep.eq(coordinates)
-      expect(service.getStored.getCall(1).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.getStored.mock.callCount() === 2, true)
+      assert.deepStrictEqual(service.getStored.mock.calls[0].arguments[0], coordinates)
+      assert.deepStrictEqual(service.getStored.mock.calls[1].arguments[0], coordinates)
 
-      expect(service.compute.calledOnce).to.be.true
-      expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
+      assert.strictEqual(service.compute.mock.callCount() === 1, true)
+      assert.deepStrictEqual(service.compute.mock.calls[0].arguments[0], coordinates)
     })
   })
 })
@@ -327,8 +325,8 @@ describe('Definition Service Facet management', () => {
     const definition = await service.compute(coordinates)
     validate(definition)
     const core = definition.licensed.facets.core
-    expect(core.attribution.parties).to.deep.equalInAnyOrder(['Copyright <Bob>.', 'Copyright Jane Inc.'])
-    expect(definition.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(core.attribution.parties, ['Copyright <Bob>.', 'Copyright Jane Inc.'])
+    assertDeepEqualInAnyOrder(definition.files, [
       { path: 'foo.txt', attributions: ['Copyright <Bob>', 'Copyright Jane Inc.'] },
       { path: 'bar.txt', attributions: ['Copyright <Bob>.', 'Copyright Jane Inc'] }
     ])
@@ -339,14 +337,14 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(undefined, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(2)
-    expect(definition.licensed.declared).to.be.undefined
+    assert.strictEqual(definition.files.length, 2)
+    assert.strictEqual(definition.licensed.declared, undefined)
     const core = definition.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.attribution.parties).to.be.undefined
-    expect(core.attribution.unknown).to.eq(2)
-    expect(core.discovered.expressions).to.be.undefined
-    expect(core.discovered.unknown).to.eq(2)
+    assert.strictEqual(core.files, 2)
+    assert.strictEqual(core.attribution.parties, undefined)
+    assert.strictEqual(core.attribution.unknown, 2)
+    assert.strictEqual(core.discovered.expressions, undefined)
+    assert.strictEqual(core.discovered.unknown, 2)
   })
 
   it('handles no files', async () => {
@@ -354,9 +352,9 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(undefined, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(0)
-    expect(definition.licensed.score.total).to.eq(0)
-    expect(definition.licensed.toolScore.total).to.eq(0)
+    assert.strictEqual(definition.files.length, 0)
+    assert.strictEqual(definition.licensed.score.total, 0)
+    assert.strictEqual(definition.licensed.toolScore.total, 0)
     expect(Object.keys(definition.licensed).length).to.eq(2)
   })
 
@@ -366,10 +364,10 @@ describe('Definition Service Facet management', () => {
     const definition = await service.compute(coordinates)
     validate(definition)
     const core = definition.licensed.facets.core
-    expect(core.files).to.eq(2)
-    expect(core.attribution.parties.length).to.eq(3)
-    expect(core.attribution.parties).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Jane', 'Copyright Fred'])
-    expect(core.attribution.unknown).to.eq(0)
+    assert.strictEqual(core.files, 2)
+    assert.strictEqual(core.attribution.parties.length, 3)
+    assertDeepEqualInAnyOrder(core.attribution.parties, ['Copyright Bob', 'Copyright Jane', 'Copyright Fred'])
+    assert.strictEqual(core.attribution.unknown, 0)
   })
 
   it('summarizes with basic facets', async () => {
@@ -378,15 +376,15 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(2)
+    assert.strictEqual(definition.files.length, 2)
     const core = definition.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL-2.0'])
-    expect(core.discovered.unknown).to.eq(0)
+    assert.strictEqual(core.files, 1)
+    assert.deepStrictEqual(core.discovered.expressions, ['GPL-2.0'])
+    assert.strictEqual(core.discovered.unknown, 0)
     const tests = definition.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
+    assert.strictEqual(tests.files, 1)
+    assert.deepStrictEqual(tests.discovered.expressions, ['MIT'])
+    assert.strictEqual(tests.discovered.unknown, 0)
   })
 
   it('summarizes with no core filters', async () => {
@@ -395,15 +393,15 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(2)
+    assert.strictEqual(definition.files.length, 2)
     const core = definition.licensed.facets.core
-    expect(core.files).to.eq(1)
-    expect(core.discovered.expressions).to.deep.eq(['GPL-2.0'])
-    expect(core.discovered.unknown).to.eq(0)
+    assert.strictEqual(core.files, 1)
+    assert.deepStrictEqual(core.discovered.expressions, ['GPL-2.0'])
+    assert.strictEqual(core.discovered.unknown, 0)
     const tests = definition.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
+    assert.strictEqual(tests.files, 1)
+    assert.deepStrictEqual(tests.discovered.expressions, ['MIT'])
+    assert.strictEqual(tests.discovered.unknown, 0)
   })
 
   it('summarizes with everything grouped into non-core facet', async () => {
@@ -412,16 +410,16 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(2)
-    expect(definition.licensed.facets.core).to.be.undefined
+    assert.strictEqual(definition.files.length, 2)
+    assert.strictEqual(definition.licensed.facets.core, undefined)
     const dev = definition.licensed.facets.dev
-    expect(dev.files).to.eq(1)
-    expect(dev.discovered.expressions).to.deep.eq(['GPL-2.0'])
-    expect(dev.discovered.unknown).to.eq(0)
+    assert.strictEqual(dev.files, 1)
+    assert.deepStrictEqual(dev.discovered.expressions, ['GPL-2.0'])
+    assert.strictEqual(dev.discovered.unknown, 0)
     const tests = definition.licensed.facets.tests
-    expect(tests.files).to.eq(1)
-    expect(tests.discovered.expressions).to.deep.eq(['MIT'])
-    expect(tests.discovered.unknown).to.eq(0)
+    assert.strictEqual(tests.files, 1)
+    assert.deepStrictEqual(tests.discovered.expressions, ['MIT'])
+    assert.strictEqual(tests.discovered.unknown, 0)
   })
 
   it('summarizes files in multiple facets', async () => {
@@ -430,18 +428,18 @@ describe('Definition Service Facet management', () => {
     const { service, coordinates } = setup(createDefinition(facets, files))
     const definition = await service.compute(coordinates)
     validate(definition)
-    expect(definition.files.length).to.eq(2)
-    expect(definition.files[0].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
-    expect(definition.files[1].facets).to.deep.equalInAnyOrder(['tests', 'dev'])
-    expect(definition.licensed.facets.core).to.be.undefined
+    assert.strictEqual(definition.files.length, 2)
+    assertDeepEqualInAnyOrder(definition.files[0].facets, ['tests', 'dev'])
+    assertDeepEqualInAnyOrder(definition.files[1].facets, ['tests', 'dev'])
+    assert.strictEqual(definition.licensed.facets.core, undefined)
     const dev = definition.licensed.facets.dev
-    expect(dev.files).to.eq(2)
-    expect(dev.discovered.expressions).to.deep.equalInAnyOrder(['GPL-2.0', 'MIT'])
-    expect(dev.discovered.unknown).to.eq(0)
+    assert.strictEqual(dev.files, 2)
+    assertDeepEqualInAnyOrder(dev.discovered.expressions, ['GPL-2.0', 'MIT'])
+    assert.strictEqual(dev.discovered.unknown, 0)
     const tests = definition.licensed.facets.tests
-    expect(tests.files).to.eq(2)
-    expect(tests.discovered.expressions).to.deep.equalInAnyOrder(['MIT', 'GPL-2.0'])
-    expect(tests.discovered.unknown).to.eq(0)
+    assert.strictEqual(tests.files, 2)
+    assertDeepEqualInAnyOrder(tests.discovered.expressions, ['MIT', 'GPL-2.0'])
+    assert.strictEqual(tests.discovered.unknown, 0)
   })
 })
 
@@ -464,9 +462,9 @@ describe('Integration test', () => {
       const comparison_def = await service.compute(coordinates)
 
       //updated timestamp is not deterministic
-      expect(comparison_def._meta.updated).to.not.equal(baseline_def._meta.updated)
+      assert.notStrictEqual(comparison_def._meta.updated, baseline_def._meta.updated)
       comparison_def._meta.updated = baseline_def._meta.updated
-      expect(comparison_def).to.deep.equal(baseline_def)
+      assert.deepStrictEqual(comparison_def, baseline_def)
     })
   })
 
@@ -485,26 +483,26 @@ describe('Integration test', () => {
       describe('verify schema version', () => {
         it('logs and harvests new definitions with empty tools', async () => {
           const { service } = setupServiceForUpgrade(null, upgradeHandler)
-          service._harvest = sinon.stub()
+          service._harvest = mock.fn()
           await service.get(coordinates)
-          expect(service._harvest.calledOnce).to.be.true
-          expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
+          assert.strictEqual(service._harvest.mock.callCount() === 1, true)
+          assert.strictEqual(service._harvest.mock.calls[0].arguments[0], coordinates)
         })
 
         it('computes if definition does not exist', async () => {
           const { service } = setupServiceForUpgrade(null, upgradeHandler)
-          service.computeStoreAndCurate = sinon.stub().resolves(definition)
+          service.computeStoreAndCurate = mock.fn(async () => definition)
           await service.get(coordinates)
-          expect(service.computeStoreAndCurate.calledOnce).to.be.true
-          expect(service.computeStoreAndCurate.getCall(0).args[0]).to.eq(coordinates)
+          assert.strictEqual(service.computeStoreAndCurate.mock.callCount() === 1, true)
+          assert.strictEqual(service.computeStoreAndCurate.mock.calls[0].arguments[0], coordinates)
         })
 
         it('returns the up-to-date definition', async () => {
           const { service } = setupServiceForUpgrade(definition, upgradeHandler)
-          service.computeStoreAndCurate = sinon.stub()
+          service.computeStoreAndCurate = mock.fn()
           const result = await service.get(coordinates)
-          expect(service.computeStoreAndCurate.called).to.be.false
-          expect(result).to.deep.equal(definition)
+          assert.strictEqual(service.computeStoreAndCurate.mock.callCount() > 0, false)
+          assert.deepStrictEqual(result, definition)
         })
       })
     }
@@ -522,9 +520,9 @@ describe('Integration test', () => {
           const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           const result = await service.get(coordinates)
-          expect(result._meta.schemaVersion).to.eq('1.7.0')
-          expect(result.coordinates).to.deep.equal(coordinates)
-          expect(store.store.calledOnce).to.be.true
+          assert.strictEqual(result._meta.schemaVersion, '1.7.0')
+          assert.deepStrictEqual(result.coordinates, coordinates)
+          assert.strictEqual(store.store.mock.callCount() === 1, true)
         })
       })
     })
@@ -534,7 +532,7 @@ describe('Integration test', () => {
       let staleDef
       beforeEach(async () => {
         queue = memoryQueue()
-        const queueFactory = sinon.stub().returns(queue)
+        const queueFactory = mock.fn(() => queue)
         upgradeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
         await upgradeHandler.initialize()
         staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
@@ -546,43 +544,43 @@ describe('Integration test', () => {
         it('returns a stale definition, queues update, recomputes and retrieves the updated definition', async () => {
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           const result = await service.get(coordinates)
-          expect(result).to.deep.equal(staleDef)
-          expect(queue.data.length).to.eq(1)
+          assert.deepStrictEqual(result, staleDef)
+          assert.strictEqual(queue.data.length, 1)
           await upgradeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
-          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
-          expect(store.store.calledOnce).to.be.true
-          expect(queue.data.length).to.eq(0)
+          assert.strictEqual(newResult._meta.schemaVersion, '1.7.0')
+          assert.strictEqual(store.store.mock.callCount() === 1, true)
+          assert.strictEqual(queue.data.length, 0)
         })
 
         it('computes once when the same coordinates is queued twice', async () => {
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           await service.get(coordinates)
           const result = await service.get(coordinates)
-          expect(result).to.deep.equal(staleDef)
-          expect(queue.data.length).to.eq(2)
+          assert.deepStrictEqual(result, staleDef)
+          assert.strictEqual(queue.data.length, 2)
           await upgradeHandler.setupProcessing(service, logger, true)
-          expect(queue.data.length).to.eq(1)
+          assert.strictEqual(queue.data.length, 1)
           await upgradeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
-          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
-          expect(store.store.calledOnce).to.be.true
-          expect(queue.data.length).to.eq(0)
+          assert.strictEqual(newResult._meta.schemaVersion, '1.7.0')
+          assert.strictEqual(store.store.mock.callCount() === 1, true)
+          assert.strictEqual(queue.data.length, 0)
         })
 
         it('computes once when the same coordinates is queued twice within one dequeue batch ', async () => {
           const { service, store } = setupServiceForUpgrade(staleDef, upgradeHandler)
           await service.get(coordinates)
           await service.get(coordinates)
-          queue.dequeueMultiple = sinon.stub().callsFake(async () => {
+          queue.dequeueMultiple = mock.fn(async () => {
             const message1 = await queue.dequeue()
             const message2 = await queue.dequeue()
             return Promise.resolve([message1, message2])
           })
           await upgradeHandler.setupProcessing(service, logger, true)
           const newResult = await service.get(coordinates)
-          expect(newResult._meta.schemaVersion).to.eq('1.7.0')
-          expect(store.store.calledOnce).to.be.true
+          assert.strictEqual(newResult._meta.schemaVersion, '1.7.0')
+          assert.strictEqual(store.store.mock.callCount() === 1, true)
         })
       })
     })
@@ -595,10 +593,10 @@ describe('Integration test', () => {
 
     it('deletes the tracked in progress harvest after definition is computed', async () => {
       ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
-      harvestService.done = sinon.stub().resolves(true)
+      harvestService.done = mock.fn(async () => true)
       await service.computeAndStore(coordinates)
-      expect(harvestService.done.calledOnce).to.be.true
-      expect(harvestService.done.args[0][0]).to.be.deep.equal(coordinates)
+      assert.strictEqual(harvestService.done.mock.callCount() === 1, true)
+      expect(harvestService.done.mock.calls[0].arguments[0]).to.be.deep.equal(coordinates)
     })
   })
 })
@@ -620,7 +618,7 @@ function setupServiceToCalculateDefinition(rawHarvestData) {
 
   const tools = [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
   const aggregator = AggregatorService({ precedence: tools })
-  aggregator.logger = { info: sinon.stub() }
+  aggregator.logger = { info: mock.fn() }
   const curator = {
     get: () => Promise.resolve(),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
@@ -632,8 +630,8 @@ function setupServiceToCalculateDefinition(rawHarvestData) {
 function setupServiceForUpgrade(definition, upgradeHandler) {
   let storedDef = definition && { ...definition }
   const store = {
-    get: sinon.stub().resolves(storedDef),
-    store: sinon.stub().callsFake(def => (storedDef = def))
+    get: mock.fn(async () => storedDef),
+    store: mock.fn(def => (storedDef = def))
   }
   const harvestStore = { getAllLatest: () => Promise.resolve(null) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
@@ -652,11 +650,11 @@ function setupWithDelegates(
   harvestStore: Record<string, unknown>,
   summary: Record<string, unknown>,
   aggregator: Record<string, unknown>,
-  store: Record<string, sinon.SinonStub> = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
+  store: Record<string, ReturnType<typeof mock.fn>> = { delete: mock.fn(), get: mock.fn(), store: mock.fn() },
   upgradeHandler: Record<string, unknown> = { validate: (def: unknown) => Promise.resolve(def) }
 ): any {
-  const search = { delete: sinon.stub(), store: sinon.stub() }
-  const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
+  const search = { delete: mock.fn(), store: mock.fn() }
+  const cache = { delete: mock.fn(), get: mock.fn(), set: mock.fn() }
   const harvestService = mockHarvestService()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
   const service: any = (DefinitionService as (...args: any[]) => any)(
@@ -670,7 +668,7 @@ function setupWithDelegates(
     cache,
     upgradeHandler
   )
-  service.logger = { info: sinon.stub(), debug: () => {} }
+  service.logger = { info: mock.fn(), debug: () => {} }
   return service
 }
 
@@ -708,9 +706,9 @@ function setup(
   coordinateSpec?: string,
   curation?: Record<string, unknown>
 ): { coordinates: EntityCoordinates; service: any; harvestService: ReturnType<typeof mockHarvestService> } {
-  const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
-  const search = { delete: sinon.stub(), store: sinon.stub() }
-  const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
+  const store = { delete: mock.fn(), get: mock.fn(), store: mock.fn() }
+  const search = { delete: mock.fn(), store: mock.fn() }
+  const cache = { delete: mock.fn(), get: mock.fn(), set: mock.fn() }
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (_coordinates: unknown, _curationSpec: unknown, definition: unknown) =>
@@ -736,15 +734,15 @@ function setup(
     cache,
     upgradeHandler
   )
-  service.logger = { info: sinon.stub(), debug: sinon.stub() }
-  service._harvest = sinon.stub()
+  service.logger = { info: mock.fn(), debug: mock.fn() }
+  service._harvest = mock.fn()
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
   return { coordinates, service, harvestService }
 }
 
 function mockHarvestService() {
   return {
-    harvest: () => sinon.stub(),
+    harvest: () => mock.fn(),
     done: () => Promise.resolve()
   }
 }

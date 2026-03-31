@@ -1,4 +1,5 @@
-import { expect } from 'chai'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import type { LicenseMatchInput } from '../../lib/licenseMatcher.js'
 import { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher } from '../../lib/licenseMatcher.js'
@@ -18,8 +19,8 @@ describe('licenseMatcher.js', () => {
         }
       ])
       const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
-      expect(result).to.have.property('isMatching', false)
-      expect(result.mismatch).to.deep.include(mismatch)
+      assert.strictEqual(result.isMatching, false)
+      assert.ok(result.mismatch.some((m: any) => JSON.stringify(m) === JSON.stringify(mismatch)))
     })
 
     it('Should return NOT match if all policy returns empty mismatch and empty match', () => {
@@ -34,8 +35,8 @@ describe('licenseMatcher.js', () => {
         }
       ])
       const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
-      expect(result.mismatch).to.have.lengthOf(0)
-      expect(result).to.have.property('isMatching', false)
+      assert.strictEqual(result.mismatch.length, 0)
+      assert.strictEqual(result.isMatching, false)
     })
 
     it('Should return match when the every policy match', () => {
@@ -52,8 +53,10 @@ describe('licenseMatcher.js', () => {
         }
       ])
       const result = matcher.process({} as LicenseMatchInput, {} as LicenseMatchInput)
-      expect(result).to.have.property('isMatching', true)
-      expect(result.match).to.have.lengthOf(2).and.to.have.deep.members([firstMatch, secondMatch])
+      assert.strictEqual(result.isMatching, true)
+      assert.strictEqual(result.match.length, 2)
+      assert.ok(result.match.some((m: any) => JSON.stringify(m) === JSON.stringify(firstMatch)))
+      assert.ok(result.match.some((m: any) => JSON.stringify(m) === JSON.stringify(secondMatch)))
     })
   })
 
@@ -87,13 +90,14 @@ describe('licenseMatcher.js', () => {
         { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
         { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
-      expect(result.match).to.have.lengthOf(1).and.deep.include({
+      assert.strictEqual(result.match.length, 1)
+      assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
         policy: definitionLicenseMatchPolicy.name,
         file: 'package/LICENSE',
         propPath: 'hashes.sha1',
         value: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26'
-      })
-      expect(result.mismatch).to.have.lengthOf(0)
+      })))
+      assert.strictEqual(result.mismatch.length, 0)
     })
 
     it('Should return match array includes the same hashes.sha256', () => {
@@ -124,13 +128,14 @@ describe('licenseMatcher.js', () => {
         { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
         { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
-      expect(result.match).to.have.lengthOf(1).and.deep.include({
+      assert.strictEqual(result.match.length, 1)
+      assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
         policy: definitionLicenseMatchPolicy.name,
         file: 'foo-1.0.0/LICENSE',
         propPath: 'hashes.sha256',
         value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
-      })
-      expect(result.mismatch).to.have.lengthOf(0)
+      })))
+      assert.strictEqual(result.mismatch.length, 0)
     })
 
     it('Should return match array includes the same token', () => {
@@ -157,13 +162,14 @@ describe('licenseMatcher.js', () => {
         { definition: { ...sourceDefinition, coordinates } } as unknown as LicenseMatchInput,
         { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
-      expect(result.match).to.have.lengthOf(1).and.deep.include({
+      assert.strictEqual(result.match.length, 1)
+      assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
         policy: definitionLicenseMatchPolicy.name,
         file: 'meta-inf/LICENSE',
         propPath: 'token',
         value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
-      })
-      expect(result.mismatch).to.have.lengthOf(0)
+      })))
+      assert.strictEqual(result.mismatch.length, 0)
     })
 
     it('Should return empty match and mismatch array when no license files found', () => {
@@ -189,8 +195,8 @@ describe('licenseMatcher.js', () => {
         { definition: sourceDefinition } as unknown as LicenseMatchInput,
         { definition: targetDefinition } as unknown as LicenseMatchInput
       )
-      expect(result.match).to.have.lengthOf(0)
-      expect(result.mismatch).to.have.lengthOf(0)
+      assert.strictEqual(result.match.length, 0)
+      assert.strictEqual(result.mismatch.length, 0)
     })
 
     it('Should return mismatch array when file license hashes.sha1 are different', () => {
@@ -220,14 +226,15 @@ describe('licenseMatcher.js', () => {
         { definition: sourceDefinition } as unknown as LicenseMatchInput,
         { definition: targetDefinition } as unknown as LicenseMatchInput
       )
-      expect(result.match).to.have.lengthOf(0)
-      expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+      assert.strictEqual(result.match.length, 0)
+      assert.strictEqual(result.mismatch.length, 1)
+      assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
         policy: definitionLicenseMatchPolicy.name,
         file: 'license.md',
         propPath: 'hashes.sha1',
         source: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26',
         target: 'dbf8c7e394791d3de9a9fff305d8ee7b59196f26-Diff'
-      })
+      })))
     })
 
     it('Should return match array when all license file matched', () => {
@@ -263,9 +270,8 @@ describe('licenseMatcher.js', () => {
         { definition: { ...targetDefinition, coordinates } } as unknown as LicenseMatchInput
       )
 
-      expect(result.match)
-        .to.have.lengthOf(2)
-        .and.have.deep.members([
+      assert.strictEqual(result.match.length, 2)
+      assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify(
           {
             policy: definitionLicenseMatchPolicy.name,
             file: 'meta-inf/LICENSE',
@@ -278,8 +284,8 @@ describe('licenseMatcher.js', () => {
             propPath: 'token',
             value: 'd9fccda7d1daaec4c1a84d46b48d808e56ee8979c1b62ccc1492b7c27ab7010d'
           }
-        ])
-      expect(result.mismatch).to.have.lengthOf(0)
+      )))
+      assert.strictEqual(result.mismatch.length, 0)
     })
   })
 
@@ -324,12 +330,13 @@ describe('licenseMatcher.js', () => {
         const source = generateMavenDefinitionAndHarvest('1.0.0', sourceLicenses)
         const target = generateMavenDefinitionAndHarvest('2.0.0', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'manifest.summary.licenses',
           value: sourceLicenses
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest manifest.summary.licenses when they are NOT deep equal', () => {
@@ -346,21 +353,22 @@ describe('licenseMatcher.js', () => {
         const source = generateMavenDefinitionAndHarvest('1.0.0', sourceLicenses)
         const target = generateMavenDefinitionAndHarvest('2.0.0', targetLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'manifest.summary.licenses',
           source: sourceLicenses,
           target: targetLicenses
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest manifest.summary.licenses are both undefined/null', () => {
         const source = generateMavenDefinitionAndHarvest('1.0.0')
         const target = generateMavenDefinitionAndHarvest('2.0.0')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -389,12 +397,13 @@ describe('licenseMatcher.js', () => {
         const target = generateCrateDefinitionAndHarvest('0.2.49', sourceLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
 
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.license',
           value: sourceLicense
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest registryData.license when they are NOT deep equal', () => {
@@ -403,21 +412,22 @@ describe('licenseMatcher.js', () => {
         const target = generateCrateDefinitionAndHarvest('0.2.49', targetLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
 
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.license',
           source: sourceLicense,
           target: targetLicense
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest manifest.summary.licenses are both undefined/null', () => {
         const source = generateCrateDefinitionAndHarvest('0.2.86')
         const target = generateCrateDefinitionAndHarvest('0.2.49')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -450,9 +460,8 @@ describe('licenseMatcher.js', () => {
         const source = generateNugetDefinitionAndHarvest('1.4.0', sourceLicense, sourceLicenseUrl)
         const target = generateNugetDefinitionAndHarvest('1.4.6', sourceLicense, sourceLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match)
-          .to.have.lengthOf(2)
-          .and.have.deep.members([
+        assert.strictEqual(result.match.length, 2)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'manifest.licenseExpression',
@@ -463,8 +472,8 @@ describe('licenseMatcher.js', () => {
               propPath: 'manifest.licenseUrl',
               value: sourceLicenseUrl
             }
-          ])
-        expect(result.mismatch).to.have.lengthOf(0)
+        )))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest manifest.licenseExpression when they are NOT deep equal', () => {
@@ -472,16 +481,15 @@ describe('licenseMatcher.js', () => {
         const source = generateNugetDefinitionAndHarvest('1.4.0', sourceLicense)
         const target = generateNugetDefinitionAndHarvest('1.4.6', targetLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.mismatch)
-          .to.have.lengthOf(1)
-          .and.have.deep.members([
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'manifest.licenseExpression',
               source: sourceLicense,
               target: targetLicense
             }
-          ])
+        )))
       })
 
       it('Should return mismatch array includes harvest manifest.licenseUrl when they are NOT deep equal', () => {
@@ -489,24 +497,23 @@ describe('licenseMatcher.js', () => {
         const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, sourceLicenseUrl)
         const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, targetLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.mismatch)
-          .to.have.lengthOf(1)
-          .and.have.deep.members([
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'manifest.licenseUrl',
               source: sourceLicenseUrl,
               target: targetLicenseUrl
             }
-          ])
+        )))
       })
 
       it('Should return empty match and mismatch array when harvest manifest.licenseExpression and manifest.licenseUrl are both undefined/null', () => {
         const source = generateNugetDefinitionAndHarvest('0.2.86')
         const target = generateNugetDefinitionAndHarvest('0.2.49')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return empty match and mismatch when manifest.licenseExpression is empty and manifest.licenseUrl including github.com', () => {
@@ -514,8 +521,8 @@ describe('licenseMatcher.js', () => {
         const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, githubLicenseUrl)
         const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, githubLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return empty match and mismatch when manifest.licenseExpression is empty and manifest.licenseUrl including aka.ms/deprecateLicenseUrl', () => {
@@ -523,8 +530,8 @@ describe('licenseMatcher.js', () => {
         const source = generateNugetDefinitionAndHarvest('1.4.0', undefined, deprecatedLicenseUrl)
         const target = generateNugetDefinitionAndHarvest('1.4.6', undefined, deprecatedLicenseUrl)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -553,12 +560,13 @@ describe('licenseMatcher.js', () => {
         const source = generateNpmDefinitionAndHarvest('5.2.5', sourceLicense)
         const target = generateNpmDefinitionAndHarvest('4.2.7', sourceLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.manifest.license',
           value: sourceLicense
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest registryData.manifest.license when they are NOT deep equal', () => {
@@ -566,21 +574,22 @@ describe('licenseMatcher.js', () => {
         const source = generateNpmDefinitionAndHarvest('5.2.5', sourceLicense)
         const target = generateNpmDefinitionAndHarvest('4.2.7', targetLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.manifest.license',
           source: sourceLicense,
           target: targetLicense
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest manifest.manifest.license are both undefined/null', () => {
         const source = generateNpmDefinitionAndHarvest('5.2.5')
         const target = generateNpmDefinitionAndHarvest('4.2.7')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -609,12 +618,13 @@ describe('licenseMatcher.js', () => {
         const source = generateComposerDefinitionAndHarvest('3.2.9', sourceLicenses)
         const target = generateComposerDefinitionAndHarvest('3.1.9', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.manifest.license',
           value: sourceLicenses
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest registryData.manifest.license when they are NOT deep equal', () => {
@@ -622,21 +632,22 @@ describe('licenseMatcher.js', () => {
         const source = generateComposerDefinitionAndHarvest('3.2.9', sourceLicenses)
         const target = generateComposerDefinitionAndHarvest('3.1.9', targetLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.manifest.license',
           source: sourceLicenses,
           target: targetLicenses
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest registryData.manifest.licenses are both undefined/null', () => {
         const source = generateComposerDefinitionAndHarvest('3.2.9')
         const target = generateComposerDefinitionAndHarvest('3.1.9')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -663,12 +674,13 @@ describe('licenseMatcher.js', () => {
         const source = generateGemDefinitionAndHarvest('0.2.1', sourceLicenses)
         const target = generateGemDefinitionAndHarvest('0.1.1', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.licenses',
           value: sourceLicenses
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest registryData.licenses when they are NOT deep equal', () => {
@@ -676,21 +688,22 @@ describe('licenseMatcher.js', () => {
         const source = generateGemDefinitionAndHarvest('0.2.1', sourceLicenses)
         const target = generateGemDefinitionAndHarvest('0.1.1', targetLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'registryData.licenses',
           source: sourceLicenses,
           target: targetLicenses
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest manifest.manifest.license are both undefined/null', () => {
         const source = generateGemDefinitionAndHarvest('0.2.1')
         const target = generateGemDefinitionAndHarvest('0.1.1')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -725,9 +738,8 @@ describe('licenseMatcher.js', () => {
         const source = generatePypiDefinitionAndHarvest('2021.1.0', sourceLicenseInfo, sourceDeclaredLicense)
         const target = generatePypiDefinitionAndHarvest('1.25.3', sourceLicenseInfo, sourceDeclaredLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match)
-          .to.have.lengthOf(2)
-          .and.have.deep.members([
+        assert.strictEqual(result.match.length, 2)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'registryData.info.license',
@@ -738,8 +750,8 @@ describe('licenseMatcher.js', () => {
               propPath: 'declaredLicense',
               value: sourceDeclaredLicense
             }
-          ])
-        expect(result.mismatch).to.have.lengthOf(0)
+        )))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
@@ -747,16 +759,15 @@ describe('licenseMatcher.js', () => {
         const source = generatePypiDefinitionAndHarvest('2021.1.0', undefined, sourceDeclaredLicense)
         const target = generatePypiDefinitionAndHarvest('1.25.3', undefined, targetDeclaredLicense)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.mismatch)
-          .to.have.lengthOf(1)
-          .and.have.deep.members([
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'declaredLicense',
               source: sourceDeclaredLicense,
               target: targetDeclaredLicense
             }
-          ])
+        )))
       })
 
       it('Should return mismatch array includes harvest registryData.info.license when they are NOT deep equal', () => {
@@ -764,24 +775,23 @@ describe('licenseMatcher.js', () => {
         const source = generatePypiDefinitionAndHarvest('2021.1.0', sourceLicenseInfo)
         const target = generatePypiDefinitionAndHarvest('1.25.3', targetLicenseInfo)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.mismatch)
-          .to.have.lengthOf(1)
-          .and.have.deep.members([
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify(
             {
               policy: 'harvest',
               propPath: 'registryData.info.license',
               source: sourceLicenseInfo,
               target: targetLicenseInfo
             }
-          ])
+        )))
       })
 
       it('Should return empty match and mismatch array when harvest declaredLicense and registryData.info.license are both undefined/null', () => {
         const source = generatePypiDefinitionAndHarvest('2021.1.0')
         const target = generatePypiDefinitionAndHarvest('1.25.3')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -806,12 +816,13 @@ describe('licenseMatcher.js', () => {
         const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('8.7.0-4_i386', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'declaredLicenses',
           value: sourceLicenses
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
@@ -819,21 +830,22 @@ describe('licenseMatcher.js', () => {
         const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('8.7.0-3_amd64', targetLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'declaredLicenses',
           source: sourceLicenses,
           target: targetLicenses
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest declaredLicense are both undefined/null', () => {
         const source = generateDebDefinitionAndHarvest('8.7.0-4_s390x')
         const target = generateDebDefinitionAndHarvest('8.7.0-3_amd64')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
 
@@ -858,12 +870,13 @@ describe('licenseMatcher.js', () => {
         const source = generateDebDefinitionAndHarvest('2019.10-1', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('2019.10-2', sourceLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 1)
+        assert.ok(result.match.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'declaredLicenses',
           value: sourceLicenses
-        })
-        expect(result.mismatch).to.have.lengthOf(0)
+        })))
+        assert.strictEqual(result.mismatch.length, 0)
       })
 
       it('Should return mismatch array includes harvest declaredLicense when they are NOT deep equal', () => {
@@ -871,21 +884,22 @@ describe('licenseMatcher.js', () => {
         const source = generateDebDefinitionAndHarvest('2019.10-1', sourceLicenses)
         const target = generateDebDefinitionAndHarvest('2019.10-2', targetLicenses)
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(1).and.deep.include({
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 1)
+        assert.ok(result.mismatch.some((item: any) => JSON.stringify(item) === JSON.stringify({
           policy: 'harvest',
           propPath: 'declaredLicenses',
           source: sourceLicenses,
           target: targetLicenses
-        })
+        })))
       })
 
       it('Should return empty match and mismatch array when harvest declaredLicense are both undefined/null', () => {
         const source = generateDebDefinitionAndHarvest('2019.10-1')
         const target = generateDebDefinitionAndHarvest('2019.10-2')
         const result = harvestLicenseMatchPolicy.compare(source, target)
-        expect(result.match).to.have.lengthOf(0)
-        expect(result.mismatch).to.have.lengthOf(0)
+        assert.strictEqual(result.match.length, 0)
+        assert.strictEqual(result.mismatch.length, 0)
       })
     })
   })

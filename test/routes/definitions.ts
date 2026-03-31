@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { SinonStub } from 'sinon'
 
 const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
@@ -31,41 +32,41 @@ describe('Definition route', () => {
     const request = createGetRequest()
     const response = httpMocks.createResponse()
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(definitionService.get.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
   })
 
   it('accepts a GET request with one extra param', async () => {
     const request = createGetWithExtraValues(['extra1'])
     const response = httpMocks.createResponse()
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(definitionService.get.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
   })
 
   it('accepts a GET request with two extra params', async () => {
     const request = createGetWithExtraValues(['extra1', 'extra2'])
     const response = httpMocks.createResponse()
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(definitionService.get.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
   })
 
   it('accepts a GET request with three extra params', async () => {
     const request = createGetWithExtraValues(['extra1', 'extra2', 'extra3'])
     const response = httpMocks.createResponse()
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(definitionService.get.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
   })
 
   it('forces a recompute if requested', async () => {
     const request = createGetForceComputeRequest()
     const response = httpMocks.createResponse()
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    assert.strictEqual(response.statusCode, 200)
     const getDefinitionSpy = definitionService.get
-    expect(getDefinitionSpy.args[0][2]).to.be.true
+    assert.strictEqual(getDefinitionSpy.mock.calls[0].arguments[2], true)
   })
 })
 
@@ -128,8 +129,8 @@ function createRoutes(definition: Record<string, SinonStub>) {
 
 function createDefinitionService() {
   return {
-    computeAndStore: sinon.stub(),
-    get: sinon.stub()
+    computeAndStore: mock.fn(),
+    get: mock.fn()
   }
 }
 
@@ -144,44 +145,44 @@ describe('Definition adjust result keys ', () => {
   }
 
   beforeEach(() => {
-    router = createRoutes(sinon.stub())
+    router = createRoutes(mock.fn())
   })
 
   afterEach(() => {
-    sinon.restore()
+    mock.restoreAll()
   })
 
   it('match case: true', () => {
     const expected = { a: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
-    const stub = sinon.stub(Array.prototype, 'reduce').callThrough()
+    const stub = mock.method(Array.prototype, 'reduce').callThrough()
     const actual = router._adaptResultKeys(mockResult(), ['a', 'b', 'D'], new Map(), true)
-    expect(actual).to.deep.equal(expected)
-    expect(stub.calledOnce).to.be.true
+    assert.deepStrictEqual(actual, expected)
+    assert.strictEqual(stub.mock.callCount() === 1, true)
   })
 
   it('match case: false', () => {
     const expected = { a: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }
-    const stub = sinon.stub(Array.prototype, 'reduce').callThrough()
+    const stub = mock.method(Array.prototype, 'reduce').callThrough()
     const actual = router._adaptResultKeys(mockResult(), ['a', 'b', 'D'], new Map())
-    expect(actual).to.deep.equal(expected)
-    expect(stub.calledOnce).to.be.false
+    assert.deepStrictEqual(actual, expected)
+    assert.strictEqual(stub.mock.callCount() === 1, false)
   })
 
   it('with coordinates mapping, match case: true', () => {
     const expected = { c: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
     const actual = router._adaptResultKeys(mockResult(), ['c', 'b', 'D'], mockMapping(), true)
-    expect(actual).to.deep.equal(expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('with coordinates mapping, match case: false', () => {
     const expected = { c: { test: 'a' }, b: { test: 'b' }, d: { test: 'd' } }
     const actual = router._adaptResultKeys(mockResult(), ['c', 'b', 'D'], mockMapping())
-    expect(actual).to.deep.equal(expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('duplicates after coordinates mapping, match case: true', () => {
     const expected = { a: { test: 'a' }, c: { test: 'a' }, b: { test: 'b' }, D: { test: 'd' } }
     const actual = router._adaptResultKeys(mockResult(), ['a', 'c', 'b', 'D'], mockMapping(), true)
-    expect(actual).to.deep.equal(expected)
+    assert.deepStrictEqual(actual, expected)
   })
 })

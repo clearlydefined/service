@@ -1,25 +1,22 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { SinonStub } from 'sinon'
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.js'
 import type { ICache } from '../../providers/caching/index.js'
 
-const { assert } = require('chai')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire').noCallThru()
-const requestPromiseStub: SinonStub = sinon.stub()
+const requestPromiseStub = mock.fn()
 
-const fetchModuleStub = {
-  callFetch: requestPromiseStub
-}
-
-const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = proxyquire(
-  '../../lib/condaRepoAccess',
-  {
-    './fetch': fetchModuleStub
+mock.module('../../lib/fetch', {
+  namedExports: {
+    callFetch: requestPromiseStub
   }
-)
+})
+
+const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = (
+  await import('../../lib/condaRepoAccess.js')
+).default
 
 const channelData: CondaChannelData = {
   packages: {
@@ -38,20 +35,19 @@ const repoData: CondaRepoData = {
 
 describe('CondaRepoAccess', () => {
   let condaRepoAccess: ReturnType<typeof createCondaRepoAccess>
-  let cacheMock: { get: sinon.SinonStub; set: sinon.SinonStub }
+  let cacheMock: { get: ReturnType<typeof mock.fn>; set: ReturnType<typeof mock.fn> }
 
   beforeEach(() => {
     cacheMock = {
-      get: sinon.stub(),
-      set: sinon.stub()
+      get: mock.fn(),
+      set: mock.fn()
     }
 
     condaRepoAccess = createCondaRepoAccess(cacheMock as unknown as ICache)
   })
 
   afterEach(() => {
-    sinon.restore()
-    requestPromiseStub.resetHistory()
+    requestPromiseStub.mock.resetCalls()
   })
 
   describe('checkIfValidChannel', () => {
@@ -71,58 +67,56 @@ describe('CondaRepoAccess', () => {
 
   describe('fetchChannelData', () => {
     it('should fetch channel data from the cache if available', async () => {
-      cacheMock.get.returns(channelData)
+      cacheMock.get.mock.mockImplementation(() => channelData)
 
       const result = await condaRepoAccess.fetchChannelData('conda-forge')
       assert.strictEqual(result, channelData)
-      assert.isFalse(requestPromiseStub.called)
+      assert.strictEqual(requestPromiseStub.mock.callCount(), 0)
     })
 
     it('should fetch channel data from the network if not cached', async () => {
-      requestPromiseStub.resolves(channelData)
-      cacheMock.get.returns(null)
+      requestPromiseStub.mock.mockImplementation(async () => channelData)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       const result = await condaRepoAccess.fetchChannelData('conda-forge')
       assert.strictEqual(result, channelData)
-      assert.isTrue(
-        requestPromiseStub.calledOnceWith({
-          url: 'https://conda.anaconda.org/conda-forge/channeldata.json',
-          method: 'GET',
-          json: true
-        })
-      )
+      assert.strictEqual(requestPromiseStub.mock.callCount(), 1)
+      assert.deepStrictEqual(requestPromiseStub.mock.calls[0].arguments[0], {
+        url: 'https://conda.anaconda.org/conda-forge/channeldata.json',
+        method: 'GET',
+        json: true
+      })
     })
   })
 
   describe('fetchRepoData', () => {
     it('should fetch repo data from the cache if available', async () => {
-      cacheMock.get.returns(channelData)
+      cacheMock.get.mock.mockImplementation(() => channelData)
 
       const result = await condaRepoAccess.fetchRepoData('conda-forge', 'linux-64')
       assert.strictEqual(result, channelData)
-      assert.isFalse(requestPromiseStub.called)
+      assert.strictEqual(requestPromiseStub.mock.callCount(), 0)
     })
 
     it('should fetch repo data from the network if not cached', async () => {
-      requestPromiseStub.resolves(channelData)
-      cacheMock.get.returns(null)
+      requestPromiseStub.mock.mockImplementation(async () => channelData)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       const result = await condaRepoAccess.fetchRepoData('conda-forge', 'linux-64')
       assert.strictEqual(result, channelData)
-      assert.isTrue(
-        requestPromiseStub.calledOnceWith({
-          url: 'https://conda.anaconda.org/conda-forge/linux-64/repodata.json',
-          method: 'GET',
-          json: true
-        })
-      )
+      assert.strictEqual(requestPromiseStub.mock.callCount(), 1)
+      assert.deepStrictEqual(requestPromiseStub.mock.calls[0].arguments[0], {
+        url: 'https://conda.anaconda.org/conda-forge/linux-64/repodata.json',
+        method: 'GET',
+        json: true
+      })
     })
   })
 
   describe('getRevisions', () => {
     it('should throw an error if package is not found', async () => {
-      requestPromiseStub.resolves(channelData)
-      cacheMock.get.returns(null)
+      requestPromiseStub.mock.mockImplementation(async () => channelData)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       try {
         await condaRepoAccess.getRevisions('conda-forge', 'linux-64', 'non-existent-package')
@@ -133,8 +127,8 @@ describe('CondaRepoAccess', () => {
     })
 
     it('should throw an error if subdir is not found in channel data', async () => {
-      requestPromiseStub.resolves(channelData)
-      cacheMock.get.returns(null)
+      requestPromiseStub.mock.mockImplementation(async () => channelData)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       try {
         await condaRepoAccess.getRevisions('conda-forge', 'linux-641', 'sample-package')
@@ -148,24 +142,27 @@ describe('CondaRepoAccess', () => {
     })
 
     it('should return revisions for a valid package', async () => {
-      requestPromiseStub.onFirstCall().resolves(channelData)
-      requestPromiseStub.onSecondCall().resolves(repoData)
+      let callCount = 0
+      requestPromiseStub.mock.mockImplementation(async () => {
+        callCount++
+        return callCount === 1 ? channelData : repoData
+      })
 
-      cacheMock.get.returns(null)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       const revisions = await condaRepoAccess.getRevisions('conda-forge', 'linux-64', 'sample-package')
-      assert.deepEqual(revisions, ['linux-64:1.0-0'])
+      assert.deepStrictEqual(revisions, ['linux-64:1.0-0'])
     })
   })
 
   describe('getPackages', () => {
     it('should return matching packages', async () => {
-      requestPromiseStub.reset()
-      requestPromiseStub.resolves(channelData)
-      cacheMock.get.returns(null)
+      requestPromiseStub.mock.resetCalls()
+      requestPromiseStub.mock.mockImplementation(async () => channelData)
+      cacheMock.get.mock.mockImplementation(() => null)
 
       const matches = await condaRepoAccess.getPackages('conda-forge', 'sample')
-      assert.deepEqual(matches, [{ id: 'sample-package' }, { id: 'sample-lib' }])
+      assert.deepStrictEqual(matches, [{ id: 'sample-package' }, { id: 'sample-lib' }])
     })
   })
 })

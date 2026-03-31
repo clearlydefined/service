@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
 
 const { expect } = chai
 
@@ -137,8 +138,8 @@ describe('Validator - Coordinates Schema Tests', () => {
       it(`validates valid ${type} coordinates`, () => {
         for (const [index, coord] of coordinates.entries()) {
           const isValid = validator.validate('coordinates-1.0', coord)
-          expect(isValid, `Failed for ${type} coordinate ${index}: ${JSON.stringify(coord)}`).to.be.true
-          expect(validator.errors).to.be.null
+          assert.strictEqual(isValid, `Failed for ${type} coordinate ${index}: ${JSON.stringify(coord)}`, true)
+          assert.strictEqual(validator.errors, null)
         }
       })
     }
@@ -191,9 +192,9 @@ describe('Validator - Coordinates Schema Tests', () => {
           const isValid = validator.validate('coordinates-1.0', coord)
           expect(isValid, `Expected coordinate to be invalid for ${type} case ${index}: ${JSON.stringify(coord)}`).to.be
             .false
-          expect(validator.errors).to.not.be.null
-          expect(validator.errors).to.be.an('array')
-          expect(validator.errors.length).to.be.greaterThan(0)
+          assert.notStrictEqual(validator.errors, null)
+          assert.ok(Array.isArray(validator.errors))
+          assert.ok(validator.errors.length > 0)
         }
       })
     }

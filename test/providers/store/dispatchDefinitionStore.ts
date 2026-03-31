@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, mock } from 'node:test'
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import DispatchDefinitionStore from '../../../providers/stores/dispatchDefinitionStore.js'
 
 describe('Dispatch Definition store', () => {
@@ -14,7 +14,7 @@ describe('Dispatch Definition store', () => {
   beforeEach(() => {
     store1 = createStore()
     store2 = createStore()
-    logger = { error: sinon.stub() }
+    logger = { error: mock.fn() }
     dispatchDefinitionStore = DispatchDefinitionStore({
       stores: [store1, store2],
       logger
@@ -25,32 +25,32 @@ describe('Dispatch Definition store', () => {
     store1.get.resolves(1)
     store2.get.resolves(2)
     const result = await dispatchDefinitionStore.get('test')
-    expect(result).to.be.equal(1)
-    expect(store1.get.callCount).to.be.equal(1)
-    expect(store2.get.callCount).to.be.equal(0)
+    assert.strictEqual(result, 1)
+    assert.strictEqual(store1.get.mock.callCount(), 1)
+    assert.strictEqual(store2.get.mock.callCount(), 0)
   })
 
   it('should initialize in parallel', async () => {
     store1.initialize.resolves()
     store2.initialize.resolves()
     await dispatchDefinitionStore.initialize()
-    expect(store1.initialize.callCount).to.be.equal(1)
-    expect(store2.initialize.callCount).to.be.equal(1)
+    assert.strictEqual(store1.initialize.mock.callCount(), 1)
+    assert.strictEqual(store2.initialize.mock.callCount(), 1)
   })
 
   it('should perform in parallel and handle exception', async () => {
     store1.initialize.resolves()
     store2.initialize.rejects('store2 failed')
     await dispatchDefinitionStore.initialize()
-    expect(store1.initialize.callCount).to.be.equal(1)
-    expect(store2.initialize.callCount).to.be.equal(1)
-    expect(logger.error.callCount).to.be.equal(1)
+    assert.strictEqual(store1.initialize.mock.callCount(), 1)
+    assert.strictEqual(store2.initialize.mock.callCount(), 1)
+    assert.strictEqual(logger.error.mock.callCount(), 1)
   })
 })
 
 function createStore() {
   return {
-    get: sinon.stub(),
-    initialize: sinon.stub()
+    get: mock.fn(),
+    initialize: mock.fn()
   }
 }

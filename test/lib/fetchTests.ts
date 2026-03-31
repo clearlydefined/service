@@ -1,12 +1,12 @@
-import { fail } from 'node:assert'
+import assert from 'node:assert/strict'
 import fs from 'node:fs'
-import { expect } from 'chai'
+import { describe, it, beforeEach, afterEach } from 'node:test'
 import mockttp from 'mockttp'
 import { callFetch, defaultHeaders, withDefaults } from '../../lib/fetch.js'
 
 function checkDefaultHeaders(headers: Record<string, string | string[] | undefined>) {
   for (const [key, value] of Object.entries(defaultHeaders)) {
-    expect(headers).to.have.property(key.toLowerCase()).that.equals(value)
+    assert.strictEqual(headers[key.toLowerCase()], value)
   }
 }
 
@@ -26,7 +26,7 @@ describe('CallFetch', () => {
         method: 'GET',
         json: true
       })
-      expect(response).to.be.deep.equal(JSON.parse(expected))
+      assert.deepStrictEqual(response, JSON.parse(expected))
     })
 
     it('checks if all the default headers are present in requests', async () => {
@@ -60,7 +60,7 @@ describe('CallFetch', () => {
       })
       const requests = await endpointMock.getSeenRequests()
       checkDefaultHeaders(requests[0].headers)
-      expect(requests[0].headers).to.include({ accept: 'text/html' })
+      assert.strictEqual(requests[0].headers['accept'], 'text/html')
     })
 
     it('checks if the full response is fetched', async () => {
@@ -73,8 +73,8 @@ describe('CallFetch', () => {
         method: 'GET',
         resolveWithFullResponse: true
       })
-      expect(response.statusCode).to.be.equal(200)
-      expect(response.statusMessage).to.be.equal('OK')
+      assert.strictEqual(response.statusCode, 200)
+      assert.strictEqual(response.statusMessage, 'OK')
     })
 
     it('should throw error with error code', async () => {
@@ -87,9 +87,9 @@ describe('CallFetch', () => {
           json: 'true' as any,
           resolveWithFullResponse: true
         })
-        fail('should have thrown')
+        assert.fail('should have thrown')
       } catch (err: any) {
-        expect(err.statusCode).to.be.equal(404)
+        assert.strictEqual(err.statusCode, 404)
       }
     })
 
@@ -101,7 +101,7 @@ describe('CallFetch', () => {
         url: mockServer.urlFor(path),
         method: 'GET'
       })
-      expect(response).to.be.equal('module "rsc.io/quote"\n')
+      assert.strictEqual(response, 'module "rsc.io/quote"\n')
     })
 
     it('should download stream successfully with GET request', async () => {
@@ -118,7 +118,7 @@ describe('CallFetch', () => {
         response.pipe(fs.createWriteStream(destination).on('finish', () => resolve(true)))
       })
       const downloaded = JSON.parse(fs.readFileSync(destination, 'utf8'))
-      expect(downloaded).to.be.deep.equal(expected)
+      assert.deepStrictEqual(downloaded, expected)
       fs.unlinkSync(destination)
     })
 
@@ -133,10 +133,10 @@ describe('CallFetch', () => {
       await requestWithDefaults({ url })
 
       const requests = await endpointMock.getSeenRequests()
-      expect(requests.length).to.equal(2)
-      expect(requests[0].url).to.equal(url)
+      assert.strictEqual(requests.length, 2)
+      assert.strictEqual(requests[0].url, url)
       checkDefaultHeaders(requests[0].headers)
-      expect(requests[1].url).to.equal(url)
+      assert.strictEqual(requests[1].url, url)
       checkDefaultHeaders(requests[1].headers)
     })
 
@@ -148,7 +148,7 @@ describe('CallFetch', () => {
         uri: mockServer.urlFor(path),
         method: 'GET'
       })
-      expect(response).to.be.equal('done')
+      assert.strictEqual(response, 'done')
     })
 
     it('should POST with JSON', async () => {
@@ -163,13 +163,13 @@ describe('CallFetch', () => {
         headers: { 'x-crawler': 'secret' },
         resolveWithFullResponse: true
       })
-      expect(response.statusCode).to.be.equal(200)
+      assert.strictEqual(response.statusCode, 200)
       const requests = await endpointMock.getSeenRequests()
-      expect(requests.length).to.equal(1)
+      assert.strictEqual(requests.length, 1)
       const json = await requests[0].body.getJson()
-      expect(json).to.deep.equal({ test: 'test' })
-      expect(requests[0].headers).to.include({ 'x-crawler': 'secret' })
-      expect(checkDefaultHeaders(requests[0].headers))
+      assert.deepStrictEqual(json, { test: 'test' })
+      assert.strictEqual(requests[0].headers['x-crawler'], 'secret')
+      checkDefaultHeaders(requests[0].headers)
     })
 
     it('should GET with withCredentials set to false', async () => {
@@ -187,8 +187,8 @@ describe('CallFetch', () => {
         resolveWithFullResponse: true,
         json: true
       })
-      expect(response.statusCode).to.be.equal(200)
-      expect(response.config.withCredentials).to.be.false
+      assert.strictEqual(response.statusCode, 200)
+      assert.strictEqual(response.config.withCredentials, false)
     })
 
     it('should POST with withCredentials set to false', async () => {
@@ -214,8 +214,8 @@ describe('CallFetch', () => {
         json: true,
         resolveWithFullResponse: true
       })
-      expect(response.statusCode).to.be.equal(200)
-      expect(response.config.withCredentials).to.be.false
+      assert.strictEqual(response.statusCode, 200)
+      assert.strictEqual(response.config.withCredentials, false)
     })
 
     describe('test simple', () => {
@@ -225,9 +225,9 @@ describe('CallFetch', () => {
 
         try {
           await callFetch({ url: mockServer.urlFor(path) })
-          fail('should have thrown')
+          assert.fail('should have thrown')
         } catch (err: any) {
-          expect(err.statusCode).to.be.equal(300)
+          assert.strictEqual(err.statusCode, 300)
         }
       })
 
@@ -239,7 +239,7 @@ describe('CallFetch', () => {
           url: mockServer.urlFor(path),
           simple: false
         })
-        expect(response).to.be.equal('test')
+        assert.strictEqual(response, 'test')
       })
 
       it('should return status 300 with simple === false', async () => {
@@ -251,8 +251,8 @@ describe('CallFetch', () => {
           simple: false,
           resolveWithFullResponse: true
         })
-        expect(response.statusCode).to.be.equal(300)
-        expect(response.statusMessage).to.be.equal('Multiple Choices')
+        assert.strictEqual(response.statusCode, 300)
+        assert.strictEqual(response.statusMessage, 'Multiple Choices')
       })
     })
   })

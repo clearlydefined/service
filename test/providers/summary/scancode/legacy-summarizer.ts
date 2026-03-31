@@ -9,7 +9,6 @@ import lodash from 'lodash'
 
 const { get, uniq, flatten } = lodash
 
-import { expect } from 'chai'
 import Summarizer from '../../../../providers/summary/scancode.js'
 
 // @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
@@ -128,7 +127,7 @@ describe('ScanCodeLegacySummarizer basic compatability', () => {
     try {
       summarizer.summarize(coordinates, harvestData)
     } catch (error) {
-      expect(error.message).to.eq(`Invalid version of ScanCode: ${version}`)
+      assert.strictEqual(error.message, `Invalid version of ScanCode: ${version}`)
     }
   })
 

@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, before, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import spdxLicenseList from 'spdx-license-list/full.js'
 import NoticeService from '../../business/noticeService.js'
 import logger from '../../providers/logging/logger.js'
@@ -22,12 +22,12 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(normalizeLineBreaks(notice.content)).to.eq(
+    assert.strictEqual(normalizeLineBreaks(notice.content),
       normalizeLineBreaks(
         `** test; version 1.0.0 -- \ncopyright me\n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
       )
     )
-    expect(notice.summary).to.deep.eq({
+    assert.deepStrictEqual(notice.summary, {
       total: 1,
       warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
@@ -42,7 +42,7 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(normalizeLineBreaks(notice.content)).to.eq(
+    assert.strictEqual(normalizeLineBreaks(notice.content),
       normalizeLineBreaks(
         `** @scope/test; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
       )
@@ -62,7 +62,7 @@ describe('Notice Service', () => {
       { abcd: '%%%This is the attachment%%%' }
     )
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('** test; version 1.0.0 -- \n\n%%%This is the attachment%%%')
+    assert.strictEqual(notice.content, '** test; version 1.0.0 -- \n\n%%%This is the attachment%%%')
   })
 
   it('includes license only for top-level files in a package', async () => {
@@ -91,7 +91,7 @@ describe('Notice Service', () => {
       }
     )
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq(
+    assert.strictEqual(notice.content, 
       '** tested; version 2.0.0 -- \n\n%%%This should be included!%%%\n\n------\n\n** tested; version 1.0.0 -- \n\n%%%This is the attachment%%%'
     )
   })
@@ -113,7 +113,7 @@ describe('Notice Service', () => {
       template:
         'HEADER CONTENT\n\n\n----\n\n{{#buckets}}\n{{#packages}}\n\n----\n\n{{{name}}} {{{version}}} - {{{../name}}}\n{{/packages}}{{/buckets}}\n'
     })
-    expect(notice.content).to.eq(
+    assert.strictEqual(notice.content, 
       'HEADER CONTENT\n\n\n----\n\n\n----\n\ntest 2.0.0 - Apache-2.0\n\n----\n\ntest 1.0.0 - MIT\n\n'
     )
   })
@@ -135,12 +135,12 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(normalizeLineBreaks(notice.content)).to.eq(
+    assert.strictEqual(normalizeLineBreaks(notice.content),
       normalizeLineBreaks(
         `** no-copyright; version 1.0.0 -- \n\n${(spdxLicenseList as unknown as Record<string, Record<string, string>>).MIT.licenseText}`
       )
     )
-    expect(notice.summary).to.deep.eq({
+    assert.deepStrictEqual(notice.summary, {
       total: 3,
       warnings: {
         noDefinition: ['npm/npmjs/-/not-harvested/1.0.0'],
@@ -164,8 +164,8 @@ describe('Notice Service', () => {
       }
     })
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('')
-    expect(notice.summary).to.deep.eq({
+    assert.strictEqual(notice.content, '')
+    assert.deepStrictEqual(notice.summary, {
       total: 2,
       warnings: {
         noCopyright: [],
@@ -178,8 +178,8 @@ describe('Notice Service', () => {
   it('generates empty notices for no definitions', async () => {
     const { service, coordinates } = setup({})
     const notice = await service.generate(coordinates)
-    expect(notice.content).to.eq('')
-    expect(notice.summary).to.deep.eq({
+    assert.strictEqual(notice.content, '')
+    assert.deepStrictEqual(notice.summary, {
       total: 0,
       warnings: { noCopyright: [], noDefinition: [], noLicense: [] }
     })
@@ -195,14 +195,14 @@ describe('Notice Service', () => {
 
     try {
       service._getRenderer('junk')
-      expect(true).to.be.false
+      assert.strictEqual(true, false)
     } catch (error) {
       expect((error as Error).message).to.eq('"junk" is not a supported renderer')
     }
 
     try {
       service._getRenderer('template', {})
-      expect(true).to.be.false
+      assert.strictEqual(true, false)
     } catch (error) {
       expect((error as Error).message).to.eq('options.template is required for template renderer')
     }
@@ -211,7 +211,7 @@ describe('Notice Service', () => {
 
 function setup(definitions: Record<string, Record<string, unknown>>, attachments: Record<string, string> = {}) {
   const attachmentStore = { get: (token: string) => attachments[token] }
-  const definitionService = { getAll: sinon.stub().returns(Promise.resolve(definitions)) }
+  const definitionService = { getAll: mock.fn(() => Promise.resolve(definitions)) }
   const service: Record<string, (...args: any[]) => any> = (NoticeService as (...args: any[]) => any)(
     definitionService,
     attachmentStore

@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import sinon from 'sinon'
 
 const sandbox = sinon.createSandbox()
 
@@ -34,7 +33,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: mock.fn().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })
@@ -83,17 +82,22 @@ describe('Redis Cache', () => {
 
     it('initalizes client only once', async () => {
       await Promise.all([cache.initialize(), cache.initialize()])
-      assert.ok(RedisCache.buildRedisClient.calledOnce)
+      assert.ok(RedisCache.buildRedisClient.mock.callCount() === 1)
     })
 
     it('calls client.quit only once', async () => {
       await cache.initialize()
       await Promise.all([cache.done(), cache.done()])
-      assert.ok(mockClient.quit.calledOnce)
+      assert.ok(mockClient.quit.mock.callCount() === 1)
     })
 
     it('allows initialization to be retried on error', async () => {
-      mockClient.connect = sinon.stub().rejects(new Error('Connection failed')).onSecondCall().resolves(mockClient)
+      let connectCallCount = 0
+      mockClient.connect = mock.fn(async () => {
+        connectCallCount++
+        if (connectCallCount === 1) throw new Error('Connection failed')
+        return mockClient
+      })
       // First call to initialize will fail
       try {
         await cache.initialize()
@@ -105,8 +109,8 @@ describe('Redis Cache', () => {
       await cache.initialize()
       // Verify that the client was built twice
       assert.ok(cache.client)
-      assert.ok(RedisCache.buildRedisClient.calledTwice)
-      assert.ok(mockClient.connect.calledTwice)
+      assert.ok(RedisCache.buildRedisClient.mock.callCount() === 2)
+      assert.ok(mockClient.connect.mock.callCount() === 2)
     })
   })
 
@@ -127,7 +131,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: mock.fn().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })
@@ -302,7 +306,7 @@ describe('Redis Cache', () => {
       })
     })
   })
-  xdescribe('Integration Test', () => {
+  describe.skip('Integration Test', () => {
     let container
     let redisConfig
 

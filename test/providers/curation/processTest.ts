@@ -1,9 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import process from '../../../providers/curation/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
 
@@ -24,12 +24,12 @@ describe('Curation queue processing', () => {
     await clock.runAllAsync()
     await promise
 
-    expect(curationService.getContributedCurations.calledOnce).to.be.true
-    expect(curationService.validateContributions.calledOnce).to.be.true
-    expect(curationService.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq('Handled GitHub event "opened" for PR#1')
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(curationService.getContributedCurations.mock.callCount() === 1, true)
+    assert.strictEqual(curationService.validateContributions.mock.callCount() === 1, true)
+    assert.strictEqual(curationService.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 'Handled GitHub event "opened" for PR#1')
+    assert.strictEqual(queue.data.length, 0)
   })
 
   it('handles synchronize message', async () => {
@@ -38,12 +38,12 @@ describe('Curation queue processing', () => {
     await clock.runAllAsync()
     await promise
 
-    expect(curationService.getContributedCurations.calledOnce).to.be.true
-    expect(curationService.validateContributions.calledOnce).to.be.true
-    expect(curationService.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq('Handled GitHub event "synchronize" for PR#1')
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(curationService.getContributedCurations.mock.callCount() === 1, true)
+    assert.strictEqual(curationService.validateContributions.mock.callCount() === 1, true)
+    assert.strictEqual(curationService.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 'Handled GitHub event "synchronize" for PR#1')
+    assert.strictEqual(queue.data.length, 0)
   })
 
   it('handles closed message', async () => {
@@ -52,26 +52,26 @@ describe('Curation queue processing', () => {
     await clock.runAllAsync()
     await promise
 
-    expect(curationService.getContributedCurations.calledOnce).to.be.false
-    expect(curationService.validateContributions.calledOnce).to.be.false
-    expect(curationService.addByMergedCuration.calledOnce).to.be.true
+    assert.strictEqual(curationService.getContributedCurations.mock.callCount() === 1, false)
+    assert.strictEqual(curationService.validateContributions.mock.callCount() === 1, false)
+    assert.strictEqual(curationService.addByMergedCuration.mock.callCount() === 1, true)
     expect(curationService.addByMergedCuration.calledBefore(curationService.updateContribution))
-    expect(curationService.updateContribution.calledOnce).to.be.true
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq('Handled GitHub event "closed" for PR#1')
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(curationService.updateContribution.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 'Handled GitHub event "closed" for PR#1')
+    assert.strictEqual(queue.data.length, 0)
   })
 
   it('skips processing for random messages', async () => {
     const { queue, curationService, logger } = setup({ action: 'rando' })
     await process(queue, curationService, logger, true)
 
-    expect(curationService.getContributedCurations.calledOnce).to.be.false
-    expect(curationService.validateContributions.calledOnce).to.be.false
-    expect(curationService.updateContribution.calledOnce).to.be.false
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.getCall(0).args[0]).to.eq('Handled GitHub event "rando" for PR#1')
-    expect(queue.data.length).to.eq(0)
+    assert.strictEqual(curationService.getContributedCurations.mock.callCount() === 1, false)
+    assert.strictEqual(curationService.validateContributions.mock.callCount() === 1, false)
+    assert.strictEqual(curationService.updateContribution.mock.callCount() === 1, false)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0], 'Handled GitHub event "rando" for PR#1')
+    assert.strictEqual(queue.data.length, 0)
   })
 })
 
@@ -94,14 +94,14 @@ function setup({ action, merged }) {
   )
 
   const curationService = {
-    getContributedCurations: sinon.stub(),
-    validateContributions: sinon.stub(),
-    updateContribution: sinon.stub(),
-    addByMergedCuration: sinon.stub()
+    getContributedCurations: mock.fn(),
+    validateContributions: mock.fn(),
+    updateContribution: mock.fn(),
+    addByMergedCuration: mock.fn()
   }
   const logger = {
-    info: sinon.stub(),
-    error: sinon.stub()
+    info: mock.fn(),
+    error: mock.fn()
   }
 
   return { queue, curationService, logger }

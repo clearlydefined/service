@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach } from 'node:test'
+import sinon from 'sinon'
+
 const proxyquire = require('proxyquire')
-const sinon = require('sinon')
-const assert = require('node:assert')
 const Application = require('../app')
 
 process.env['CURATION_GITHUB_TOKEN'] = '123'
@@ -45,7 +47,7 @@ describe('Application', () => {
     assert.strictEqual(typeof app.use, 'function', 'App is not an Express instance')
     // Verify that process.on was called to add unhandledRejection listener
     assert.ok(
-      (process.on as sinon.SinonStub).calledWithMatch('unhandledRejection'),
+      (process.on as ReturnType<typeof mock.fn>).calledWithMatch('unhandledRejection'),
       'Application should attempt to add unhandledRejection listener'
     )
   })

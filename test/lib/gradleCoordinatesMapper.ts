@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import fs from 'node:fs'
-import { expect } from 'chai'
-import sinon from 'sinon'
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, mock } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import GradleCoordinatesMapper from '../../lib/gradleCoordinatesMapper.js'
 
@@ -13,63 +13,53 @@ describe('GradleCoordinatesMapper', () => {
     coordinatesMapper = new GradleCoordinatesMapper()
   })
 
-  it('spec with namespace', async () => {
-    sinon.stub(coordinatesMapper, '_handleRequest').rejects('should not be called')
+  it('spec with namespace', async (t) => {
+    t.mock.method(coordinatesMapper, '_handleRequest', async () => { throw new Error('should not be called') })
     const specWithNameSpace = 'maven/gradleplugin/namespace/org.springframework.boot/1.4.2.RELEASE'
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString(specWithNameSpace))
-    expect(mapped).to.be.null
+    assert.strictEqual(mapped, null)
   })
 
-  it('spec without namespace', async () => {
-    const stub = sinon
-      .stub(coordinatesMapper, '_handleRequest')
-      .resolves(fs.readFileSync('test/fixtures/maven/pom.xml'))
+  it('spec without namespace', async (t) => {
+    t.mock.method(coordinatesMapper, '_handleRequest', async () => fs.readFileSync('test/fixtures/maven/pom.xml'))
     const specWithoutNameSpace = 'maven/gradleplugin/-/org.springframework.boot/1.4.2.RELEASE'
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString(specWithoutNameSpace))
 
-    stub.calledOn(
-      'https://plugins.gradle.org/m2/org/springframework/boot/org.springframework.boot.gradle.plugin/1.4.2.RELEASE/org.springframework.boot.gradle.plugin-1.4.2.RELEASE.pom'
-    )
-    expect(mapped.namespace).to.be.eq('org.springframework.boot')
-    expect(mapped.name).to.be.eq('spring-boot-gradle-plugin')
-    expect(mapped.revision).to.be.eq('1.4.2.RELEASE')
+    assert.strictEqual(mapped.namespace, 'org.springframework.boot')
+    assert.strictEqual(mapped.name, 'spring-boot-gradle-plugin')
+    assert.strictEqual(mapped.revision, '1.4.2.RELEASE')
   })
 
-  it('invalid spec handle 404', async () => {
-    sinon.stub(coordinatesMapper, '_handleRequest').rejects({ statusCode: 404 })
+  it('invalid spec handle 404', async (t) => {
+    t.mock.method(coordinatesMapper, '_handleRequest', async () => { throw { statusCode: 404 } })
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString('maven/gradleplugin/-/name/invalid'))
-    expect(mapped).not.to.be.ok
+    assert.ok(!mapped)
   })
 
-  it('spec without revision', async () => {
-    sinon
-      .stub(coordinatesMapper, '_handleRequest')
-      .withArgs('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/maven-metadata.xml')
-      .resolves(fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
-      .withArgs(
-        'https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/4.5.10/pluginId.gradle.plugin-4.5.10.pom'
-      )
-      .resolves(fs.readFileSync('test/fixtures/maven/pom.xml'))
+  it('spec without revision', async (t) => {
+    const pomContent = fs.readFileSync('test/fixtures/maven/pom.xml')
+    const metadataContent = fs.readFileSync('test/fixtures/maven/maven-metadata.xml')
+    t.mock.method(coordinatesMapper, '_handleRequest', async (url: string) => {
+      if (url.includes('maven-metadata.xml')) return metadataContent
+      if (url.includes('.pom')) return pomContent
+      throw new Error('unexpected url: ' + url)
+    })
     const mapped = await coordinatesMapper.map(EntityCoordinates.fromString('maven/gradleplugin/-/pluginId'))
-    expect(mapped.revision).not.to.be.ok
-    expect(mapped.namespace).to.be.equal('org.springframework.boot')
-    expect(mapped.name).to.be.equal('spring-boot-gradle-plugin')
+    assert.ok(!mapped.revision)
+    assert.strictEqual(mapped.namespace, 'org.springframework.boot')
+    assert.strictEqual(mapped.name, 'spring-boot-gradle-plugin')
   })
 
-  it('_getLatestVersion', async () => {
-    const stub = sinon
-      .stub(coordinatesMapper, '_handleRequest')
-      .resolves(fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
+  it('_getLatestVersion', async (t) => {
+    t.mock.method(coordinatesMapper, '_handleRequest', async () => fs.readFileSync('test/fixtures/maven/maven-metadata.xml'))
     const latest = await coordinatesMapper._getLatestVersion({ name: 'pluginId' })
-    stub.calledOn('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/maven-metadata.xml')
-    expect(latest).to.be.equal('4.5.10')
+    assert.strictEqual(latest, '4.5.10')
   })
 
-  it('getMavenMetadata', async () => {
+  it('getMavenMetadata', async (t) => {
     const metadata = fs.readFileSync('test/fixtures/maven/maven-metadata.xml')
-    const stub = sinon.stub(coordinatesMapper, '_handleRequest').resolves(metadata)
+    t.mock.method(coordinatesMapper, '_handleRequest', async () => metadata)
     const retrieved = await coordinatesMapper.getMavenMetadata('name')
-    stub.calledOn('https://plugins.gradle.org/m2/pluginId/pluginId.gradle.plugin/maven-metadata.xml')
-    expect(retrieved).to.be.equal(metadata)
+    assert.strictEqual(retrieved, metadata)
   })
 })

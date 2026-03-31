@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 import coordinatesMapper from '../../lib/coordinatesMapper.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 
@@ -22,7 +22,7 @@ describe('CoordinatesMapper', () => {
   it('return coordinate when no mapper', async () => {
     const coordinates = pypiCoordinates('0_core_client')
     const mapped = await coordinatesMapper({} as any).map(coordinates)
-    expect(mapped).to.be.eq(coordinates)
+    assert.strictEqual(mapped, coordinates)
   })
 
   it('use cache when available', async () => {
@@ -32,30 +32,30 @@ describe('CoordinatesMapper', () => {
 
     const mapper = coordinatesMapper({ pypi: {} } as any, fakeCache(cache) as any)
     const mapped = await mapper.map(coordinates)
-    expect(mapped).to.be.eq(coordinates)
+    assert.strictEqual(mapped, coordinates)
   })
 
   it('map then cache', async () => {
-    const mapStub = sinon.stub().resolves(pypiCoordinates('0-core-client'))
+    const mapStub = mock.fn(async () => pypiCoordinates('0-core-client'))
     const cacheStub = fakeCache({}) as any
     const mapper = coordinatesMapper({ pypi: { map: mapStub } } as any, cacheStub)
     const coordinates = pypiCoordinates('0_core_client')
 
     //cached after map
     let mapped = await mapper.map(coordinates)
-    expect(mapped.name).to.be.eq('0-core-client')
-    expect(mapStub.calledOnce).to.be.true
-    expect(cacheStub.size()).to.be.eq(1)
+    assert.strictEqual(mapped.name, '0-core-client')
+    assert.strictEqual(mapStub.mock.callCount(), 1)
+    assert.strictEqual(cacheStub.size(), 1)
 
     //2nd time, should use cache, map should not be called.
     mapped = await mapper.map(coordinates)
-    expect(mapped.name).to.be.eq('0-core-client')
-    expect(mapStub.calledOnce).to.be.true
-    expect(cacheStub.size()).to.be.eq(1)
+    assert.strictEqual(mapped.name, '0-core-client')
+    assert.strictEqual(mapStub.mock.callCount(), 1)
+    assert.strictEqual(cacheStub.size(), 1)
   })
 
   it('null check', async () => {
     const mapped = await coordinatesMapper().map(undefined as any)
-    expect(mapped).to.be.undefined
+    assert.strictEqual(mapped, undefined)
   })
 })
