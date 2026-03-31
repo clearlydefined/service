@@ -4,7 +4,6 @@ import { describe, it } from 'node:test'
 // SPDX-License-Identifier: MIT
 
 
-const { expect } = chai
 
 import validator from '../../schemas/validator.js'
 
@@ -190,8 +189,7 @@ describe('Validator - Coordinates Schema Tests', () => {
       it(`rejects coordinates with ${type}`, () => {
         for (const [index, coord] of coordinates.entries()) {
           const isValid = validator.validate('coordinates-1.0', coord)
-          expect(isValid, `Expected coordinate to be invalid for ${type} case ${index}: ${JSON.stringify(coord)}`).to.be
-            .false
+          assert.strictEqual(isValid, false, `Expected coordinate to be invalid for ${type} case ${index}: ${JSON.stringify(coord)}`)
           assert.notStrictEqual(validator.errors, null)
           assert.ok(Array.isArray(validator.errors))
           assert.ok(validator.errors.length > 0)

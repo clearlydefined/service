@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
 import { describe, it, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT

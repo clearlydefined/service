@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, mock } from 'node:test'
+import { beforeEach, describe, it, mock } from 'node:test'
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -22,8 +22,10 @@ describe('Dispatch Definition store', () => {
   })
 
   it('should perform in sequence for get', async () => {
-    store1.get.resolves(1)
-    store2.get.resolves(2)
+    store1.get.mock.mockImplementation(async () => 1)
+
+    store2.get.mock.mockImplementation(async () => 2)
+
     const result = await dispatchDefinitionStore.get('test')
     assert.strictEqual(result, 1)
     assert.strictEqual(store1.get.mock.callCount(), 1)
@@ -31,16 +33,21 @@ describe('Dispatch Definition store', () => {
   })
 
   it('should initialize in parallel', async () => {
-    store1.initialize.resolves()
-    store2.initialize.resolves()
+    store1.initialize.mock.mockImplementation(async () => {})
+
+    store2.initialize.mock.mockImplementation(async () => {})
+
     await dispatchDefinitionStore.initialize()
     assert.strictEqual(store1.initialize.mock.callCount(), 1)
     assert.strictEqual(store2.initialize.mock.callCount(), 1)
   })
 
   it('should perform in parallel and handle exception', async () => {
-    store1.initialize.resolves()
-    store2.initialize.rejects('store2 failed')
+    store1.initialize.mock.mockImplementation(async () => {})
+
+    store2.initialize.mock.mockImplementation(async () => {
+      throw 'store2 failed'
+    })
     await dispatchDefinitionStore.initialize()
     assert.strictEqual(store1.initialize.mock.callCount(), 1)
     assert.strictEqual(store2.initialize.mock.callCount(), 1)

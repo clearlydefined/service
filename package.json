@@ -7,8 +7,8 @@
   },
   "scripts": {
     "test": "ENABLE_REST_VALIDATION_ERRORS=true npm run test:run && npm run lint",
-    "test:run": "node --test --experimental-test-module-mocks \"test/**/*.ts\"",
-    "test:watch": "node --test --watch --experimental-test-module-mocks \"test/**/*.ts\"",
+    "test:run": "node --test --require ./test/setup.cjs --experimental-test-module-mocks \"test/**/*.ts\"",
+    "test:watch": "node --test --watch --require ./test/setup.cjs --experimental-test-module-mocks \"test/**/*.ts\"",
     "lint": "npm run tsc && biome check .",
     "lint:fix": "biome check . --write",
     "tsc": "tsc && tsc -p test/tsconfig.json",

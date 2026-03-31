@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
 import { describe, it, before, after, beforeEach, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
@@ -29,7 +29,7 @@ const data = {
 
 describe('FileHarvestStore list tool results', () => {
   before(() => {
-    mock.method(AbstractFileStore.prototype, 'list').callsFake(async (coordinates, visitor) => {
+    mock.method(AbstractFileStore.prototype, 'list', async (coordinates, visitor) => {
       const path = coordinates.toString()
       if (path.includes('error')) {
         throw new Error('test error')
@@ -149,7 +149,7 @@ describe('getAll and getAllLatest', () => {
     const result = fileStore._getListOfLatestFiles(allFiles)
     assert.strictEqual(fileStore.logger.error.mock.callCount() === 1, true)
     assert.strictEqual(result.length, allFiles.length)
-    expect(Array.from(result)).to.deep.equalInAnyOrder(allFiles)
+    assertDeepEqualInAnyOrder(Array.from(result), allFiles)
   })
 })
 

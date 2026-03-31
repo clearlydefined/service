@@ -2,10 +2,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import sinon from 'sinon'
 
 const sandbox = sinon.createSandbox()
 
 import assert from 'node:assert'
+import { after, afterEach, before, beforeEach, describe, it, mock } from 'node:test'
 import pako2 from 'pako'
 import pako1 from 'pako-1'
 import { GenericContainer } from 'testcontainers'
@@ -33,7 +35,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: mock.fn().resolves()
+        quit: mock.fn(async () => {})
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })
@@ -131,7 +133,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: mock.fn().resolves()
+        quit: mock.fn(async () => {})
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })

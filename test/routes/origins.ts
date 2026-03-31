@@ -1,10 +1,13 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
-import { describe, it, before, beforeEach, afterEach, mock } from 'node:test'
+import { afterEach, before, beforeEach, describe, it, mock } from 'node:test'
+
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-
-const { expect, assert } = require('chai')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 const fs = require('node:fs')
@@ -14,7 +17,7 @@ const originCondaRoutes = require('../../routes/originConda')
 
 describe('Pypi origin routes', () => {
   let router: Record<string, (...args: any[]) => any>
-  let requestPromiseStub: SinonStub
+  let requestPromiseStub: any
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(() => {
     requestPromiseStub = mock.fn()
@@ -27,22 +30,29 @@ describe('Pypi origin routes', () => {
   })
 
   it('should return a valid response when a valid package is provided as input', async () => {
-    requestPromiseStub.returns({ body: loadFixture(`${fixturePath}/pandas.json`), statusCode: 200 })
+    requestPromiseStub.mock.mockImplementation(() => ({
+      body: loadFixture(`${fixturePath}/pandas.json`),
+      statusCode: 200
+    }))
     const response = await router._getPypiData('pandas')
     assert.strictEqual(response.body.info.name, 'pandas')
   })
 
   it('should return an empty response when a missing package is provided as input', async () => {
-    requestPromiseStub.throws({ body: { message: 'Not Found' }, statusCode: 404 })
-    expect(await router._getPypiData('pand')).to.be.deep.equal({})
+    requestPromiseStub.mock.mockImplementation(() => {
+      throw { body: { message: 'Not Found' }, statusCode: 404 }
+    })
+    assert.deepStrictEqual(await router._getPypiData('pand'), {})
   })
 
   it('should return a valid error message when an error other than 404 occurs', async () => {
-    requestPromiseStub.throws({ statusCode: 400 })
+    requestPromiseStub.mock.mockImplementation(() => {
+      throw { statusCode: 400 }
+    })
     try {
       await router._getPypiData('pand')
     } catch (error) {
-      expect((error as Record<string, unknown>).statusCode).to.be.equal(400)
+      assert.strictEqual((error as Record<string, unknown>).statusCode, 400)
       return
     }
     //Fail the test case if the error is not thrown
@@ -60,32 +70,24 @@ describe('Maven origin routes', () => {
 
   it('should return suggestions when incomplete group id is provided as input', async () => {
     const partialGroupId = 'org.apache.httpcom'
-    expect(getResponse(partialGroupId)).to.be.deep.equal([
-      'httpcore',
-      'httpconn',
-      'httpcodec',
-      'httpcommons',
-      'httprox'
-    ])
+    assert.deepStrictEqual(getResponse(partialGroupId), ['httpcore', 'httpconn', 'httpcodec', 'httpcommons', 'httprox'])
   })
 
   it('should return list of artefacts when complete group id is provided as input', async () => {
     const completeGroupId = 'org.apache.httpcomponents'
-    expect(getResponse(completeGroupId)).to.be.deep.equal(
-      loadFixture(`${fixturePath}/${completeGroupId}-response.json`)
-    )
+    assert.deepStrictEqual(getResponse(completeGroupId), loadFixture(`${fixturePath}/${completeGroupId}-response.json`))
   })
 
   it('should return blank response when group id is invalid and suggestions are not present', async () => {
     const invalidGroupId = '12345'
-    expect(getResponse(invalidGroupId)).to.be.deep.equal([])
+    assert.deepStrictEqual(getResponse(invalidGroupId), [])
   })
 
   it('should return blank response when group id and artefact id are invalid and suggestions are not present', async () => {
     const invalidGroupId = '12345'
     const invalidArtifactId = '1234'
     const responseFilePath = loadFixture(`${fixturePath}/${invalidGroupId}-${invalidArtifactId}.json`)
-    expect(router._getSuggestions(responseFilePath, invalidGroupId)).to.be.deep.equal([])
+    assert.deepStrictEqual(router._getSuggestions(responseFilePath, invalidGroupId), [])
   })
 
   function getResponse(filename: string) {
@@ -95,9 +97,9 @@ describe('Maven origin routes', () => {
 
 describe('Conda origin routes', () => {
   let condaRepoAccess: Record<string, (...args: any[]) => any>
-  let cacheMock: { get: SinonStub; set: SinonStub }
+  let cacheMock: { get: any; set: any }
 
-  const requestPromiseStub: SinonStub = mock.fn()
+  const requestPromiseStub: any = mock.fn()
   const fetchModuleStub = {
     callFetch: requestPromiseStub
   }
@@ -130,12 +132,12 @@ describe('Conda origin routes', () => {
 
   afterEach(() => {
     mock.restoreAll()
-    requestPromiseStub.resetHistory()
+    requestPromiseStub.mock.resetCalls()
   })
 
   it('handles a valid GET request for revisions', async () => {
-    requestPromiseStub.onFirstCall().resolves(channelData)
-    requestPromiseStub.onSecondCall().resolves(repoData)
+    let _stubCallN = 0
+    requestPromiseStub.mock.mockImplementation(async () => (++_stubCallN === 1 ? channelData : repoData))
     const request = createGetOriginCondaRevisionsRequest('tensorflow')
     const response = httpMocks.createResponse()
 
@@ -143,11 +145,11 @@ describe('Conda origin routes', () => {
     await router._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), ['linux-64:2.15.0-cuda120py39hb94c71b_3'])
-    assert.isTrue(requestPromiseStub.mock.callCount() === 2)
+    assert.strictEqual(requestPromiseStub.mock.callCount() === 2, true)
   })
 
   it('handles a valid GET request for package listings', async () => {
-    requestPromiseStub.onFirstCall().resolves(channelData)
+    requestPromiseStub.mock.mockImplementation(async () => channelData)
     const request = createGetOriginCondaRequest('conda-forge')
     const response = httpMocks.createResponse()
 
@@ -155,11 +157,11 @@ describe('Conda origin routes', () => {
     await router._getOriginConda(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), [{ id: 'tensorflow' }])
-    assert.isTrue(requestPromiseStub.mock.callCount() > 0)
+    assert.strictEqual(requestPromiseStub.mock.callCount() > 0, true)
   })
 
   it('returns a 404 error for a non-existent channel', async () => {
-    requestPromiseStub.onFirstCall().resolves(channelData)
+    requestPromiseStub.mock.mockImplementation(async () => channelData)
     const request = createGetOriginCondaRequest('tensor')
     const response = httpMocks.createResponse()
 
@@ -170,8 +172,8 @@ describe('Conda origin routes', () => {
   })
 
   it('returns a 404 error for a non-existent package in revisions', async () => {
-    requestPromiseStub.onFirstCall().resolves(channelData)
-    requestPromiseStub.onSecondCall().resolves(repoData)
+    let _stubCallN = 0
+    requestPromiseStub.mock.mockImplementation(async () => (++_stubCallN === 1 ? channelData : repoData))
     const request = createGetOriginCondaRevisionsRequest('tensorflow1212')
     const response = httpMocks.createResponse()
 
@@ -179,7 +181,7 @@ describe('Conda origin routes', () => {
     await router._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 404)
     assert.strictEqual(response._getData(), 'Package tensorflow1212 not found in channel conda-forge')
-    assert.isTrue(requestPromiseStub.mock.callCount() === 1)
+    assert.strictEqual(requestPromiseStub.mock.callCount() === 1, true)
   })
 
   function createGetOriginCondaRevisionsRequest(name: string) {
@@ -215,7 +217,7 @@ describe('Conda origin routes', () => {
 describe('GitHub origin routes', () => {
   let router: Record<string, (...args: any[]) => any>
   let githubMock: Record<string, unknown>
-  let loggerStub: Record<string, SinonStub>
+  let loggerStub: Record<string, any>
 
   beforeEach(() => {
     loggerStub = {
@@ -227,19 +229,23 @@ describe('GitHub origin routes', () => {
 
     githubMock = {
       search: {
-        users: mock.fn(async () => {
-          data: { items: [{ login: 'octocat' }] }
+        users: sinon.stub().resolves({
+          data: {
+            items: [{ login: 'octocat' }]
+          }
         }),
-        repos: mock.fn(async () => {
-          data: { items: [{ full_name: 'octocat/Hello-World' }] }
+        repos: sinon.stub().resolves({
+          data: {
+            items: [{ full_name: 'octocat/Hello-World' }]
+          }
         })
       },
       rest: {
         repos: {
-          listTags: mock.fn()
+          listTags: sinon.stub()
         },
         git: {
-          getTag: mock.fn()
+          getTag: sinon.stub()
         }
       }
     }
@@ -276,12 +282,12 @@ describe('GitHub origin routes', () => {
     })
 
     assert.strictEqual(res.statusCode, 200)
-    expect(res._getData()).to.deep.equal([{ id: 'octocat' }])
-    assert.strictEqual((githubMock.search as Record<string, SinonStub>).users.mock.callCount() === 1, true)
+    assert.deepStrictEqual(res._getData(), [{ id: 'octocat' }])
+    assert.strictEqual((githubMock.search as Record<string, any>).users.calledOnce, true)
   })
 
   it('should handle /:login/:repo route', async () => {
-    ;(githubMock.search as Record<string, SinonStub>).repos.resolves({
+    (githubMock.search as Record<string, any>).repos.mock.mockImplementation(async () => ({
       data: { items: [{ full_name: 'octocat/Hello-World' }] }
     })
 
@@ -305,12 +311,12 @@ describe('GitHub origin routes', () => {
     })
 
     assert.strictEqual(res.statusCode, 200)
-    expect(res._getData()).to.deep.equal([{ id: 'octocat/Hello-World' }])
-    assert.strictEqual((githubMock.search as Record<string, SinonStub>).repos.mock.callCount() === 1, true)
+    assert.deepStrictEqual(res._getData(), [{ id: 'octocat/Hello-World' }])
+    assert.strictEqual((githubMock.search as Record<string, any>).repos.calledOnce, true)
   })
 
   it('should handle /:login/:repo/revisions with only lightweight tags', async () => {
-    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.resolves({
+    ;(githubMock.rest as Record<string, Record<string, any>>).repos.listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -329,7 +335,7 @@ describe('GitHub origin routes', () => {
       ]
     })
 
-    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.rejects({ status: 404 })
+    ;(githubMock.rest as Record<string, Record<string, any>>).git.getTag.rejects({ status: 404 })
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -351,16 +357,22 @@ describe('GitHub origin routes', () => {
     })
 
     assert.strictEqual(res.statusCode, 200)
-    expect(res._getData()).to.deep.equal([
+    assert.deepStrictEqual(res._getData(), [
       { tag: 'v2.0.0', sha: 'sha456' },
       { tag: 'v1.0.0', sha: 'sha123' }
     ])
-    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
-    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.mock.callCount() > 0, true)
+    assert.strictEqual(
+      (githubMock.rest as Record<string, Record<string, any>>).repos.listTags.calledOnce,
+      true
+    )
+    assert.strictEqual(
+      (githubMock.rest as Record<string, Record<string, any>>).git.getTag.called,
+      true
+    )
   })
 
   it('should handle /:login/:repo/revisions with annotated tags', async () => {
-    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.resolves({
+    ;(githubMock.rest as Record<string, Record<string, any>>).repos.listTags.resolves({
       data: [
         {
           name: 'v1.0.0',
@@ -368,7 +380,7 @@ describe('GitHub origin routes', () => {
         }
       ]
     })
-    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.resolves({
+    ;(githubMock.rest as Record<string, Record<string, any>>).git.getTag.resolves({
       data: { object: { sha: 'commitSha1' } }
     })
 
@@ -392,9 +404,15 @@ describe('GitHub origin routes', () => {
     })
 
     assert.strictEqual(res.statusCode, 200)
-    expect(res._getData()).to.deep.equal([{ tag: 'v1.0.0', sha: 'commitSha1' }])
-    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
-    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).git.getTag.mock.callCount() === 1, true)
+    assert.deepStrictEqual(res._getData(), [{ tag: 'v1.0.0', sha: 'commitSha1' }])
+    assert.strictEqual(
+      (githubMock.rest as Record<string, Record<string, any>>).repos.listTags.calledOnce,
+      true
+    )
+    assert.strictEqual(
+      (githubMock.rest as Record<string, Record<string, any>>).git.getTag.calledOnce,
+      true
+    )
   })
 
   it('should return empty array on 404 from GitHub', async () => {
@@ -402,7 +420,7 @@ describe('GitHub origin routes', () => {
     notFoundError.code = 404
     notFoundError.status = 404
 
-    ;(githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.rejects(notFoundError)
+    ;(githubMock.rest as Record<string, Record<string, any>>).repos.listTags.rejects(notFoundError)
 
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -424,8 +442,11 @@ describe('GitHub origin routes', () => {
     })
 
     assert.strictEqual(res.statusCode, 200)
-    expect(res._getData()).to.deep.equal([])
-    assert.strictEqual((githubMock.rest as Record<string, Record<string, SinonStub>>).repos.listTags.mock.callCount() === 1, true)
+    assert.deepStrictEqual(res._getData(), [])
+    assert.strictEqual(
+      (githubMock.rest as Record<string, Record<string, any>>).repos.listTags.calledOnce,
+      true
+    )
   })
 })
 

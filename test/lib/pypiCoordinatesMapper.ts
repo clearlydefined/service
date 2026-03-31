@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, mock } from 'node:test'
+import { beforeEach, describe, it, mock } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import PypiCoordinatesMapper from '../../lib/pypiCoordinatesMapper.js'
 
@@ -42,25 +42,33 @@ describe('PypiCoordinatesMapper', () => {
   })
 
   it('should return null when pypi api returns 404', async () => {
-    fetchStub.mock.mockImplementation(() => { throw { statusCode: 404 } })
+    fetchStub.mock.mockImplementation(() => {
+      throw { statusCode: 404 }
+    })
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('blivet-gui'))
     assert.strictEqual(mapped, null)
   })
 
-  it('should handle name not resolved', async (t) => {
+  it('should handle name not resolved', async t => {
     t.mock.method(coordinatesMapper, '_resolve', async () => undefined)
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0_core_client'))
     assert.strictEqual(mapped, undefined)
   })
 
-  it('should handle no mapping necessary', async (t) => {
-    t.mock.method(coordinatesMapper, '_resolve', async () => { throw new Error('Should not be called') })
+  it('should handle no mapping necessary', async t => {
+    t.mock.method(coordinatesMapper, '_resolve', async () => {
+      throw new Error('Should not be called')
+    })
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('backports'))
     assert.strictEqual(mapped, null)
   })
 
   describe('should handle invalid package names and skip network calls', () => {
-    beforeEach(() => fetchStub.mock.mockImplementation(() => { throw new Error('Should not be called') }))
+    beforeEach(() =>
+      fetchStub.mock.mockImplementation(() => {
+        throw new Error('Should not be called')
+      })
+    )
 
     it('should return null for an invalid name', async () => handleInvalidName(coordinatesMapper, 'backports./test'))
 

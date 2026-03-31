@@ -1,11 +1,14 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
-import { describe, it, before, afterEach, mock } from 'node:test'
+import { afterEach, before, describe, it, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
+
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
 const CurationStore = require('../../../providers/curation/memoryStore')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
@@ -14,7 +17,6 @@ const yaml = require('js-yaml')
 const base64 = require('base-64')
 const EntityCoordinates = require('../../../lib/entityCoordinates')
 
-const { expect } = chai
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
 
 function complexCuration(name = 'foo') {
@@ -81,13 +83,13 @@ describe('Curation service pr events', () => {
     assert.strictEqual(updateSpy.mock.callCount() === 1, true)
     assert.strictEqual(updateSpy.mock.calls[0].arguments[0].number, 12)
     const data = updateSpy.mock.calls[0].arguments[1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
+    assertDeepEqualInAnyOrder(data, [complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     assert.strictEqual(cacheDeleteSpy.mock.callCount() === 2, true)
-    assertDeepEqualInAnyOrder([cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]], [
-      'cur_npm/npmjs/-/foo/1.0',
-      'cur_npm/npmjs/-/foo'
-    ])
+    assertDeepEqualInAnyOrder(
+      [cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]],
+      ['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo']
+    )
   }).timeout(8000) // First time loading proxyquire('../../../providers/curation/github') is very slow.
 
   it('handles update', async () => {
@@ -97,13 +99,13 @@ describe('Curation service pr events', () => {
     assert.strictEqual(updateSpy.mock.callCount() === 1, true)
     assert.strictEqual(updateSpy.mock.calls[0].arguments[0].number, 12)
     const data = updateSpy.mock.calls[0].arguments[1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
+    assertDeepEqualInAnyOrder(data, [complexCuration()])
     const cacheDeleteSpy = service.cache.delete
     assert.strictEqual(cacheDeleteSpy.mock.callCount() === 2, true)
-    assertDeepEqualInAnyOrder([cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]], [
-      'cur_npm/npmjs/-/foo/1.0',
-      'cur_npm/npmjs/-/foo'
-    ])
+    assertDeepEqualInAnyOrder(
+      [cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]],
+      ['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo']
+    )
   })
 
   it('handles merge', async () => {
@@ -114,27 +116,29 @@ describe('Curation service pr events', () => {
     assert.strictEqual(updateSpy.mock.callCount() === 1, true)
     assert.strictEqual(updateSpy.mock.calls[0].arguments[0].number, 12)
     const data = updateSpy.mock.calls[0].arguments[1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration()])
+    assertDeepEqualInAnyOrder(data, [complexCuration()])
 
     const curationSpy = service.store.updateCurations
     assert.strictEqual(curationSpy.mock.callCount() === 1, true)
     const curations = curationSpy.mock.calls[0].arguments[0].map(curation => curation.data)
-    expect(curations).to.be.deep.equalInAnyOrder([complexCuration()])
+    assertDeepEqualInAnyOrder(curations, [complexCuration()])
 
     const invalidateSpy = service.definitionService.invalidate
     assert.strictEqual(invalidateSpy.mock.callCount() === 1, true)
-    expect(invalidateSpy.mock.calls[0].arguments[0]).to.be.deep.equalInAnyOrder([{ ...complexCuration().coordinates, revision: '1.0' }])
+    assertDeepEqualInAnyOrder(invalidateSpy.mock.calls[0].arguments[0], [
+      { ...complexCuration().coordinates, revision: '1.0' }
+    ])
 
     const cacheDeleteSpy = service.cache.delete
     assert.strictEqual(cacheDeleteSpy.mock.callCount() === 2, true)
-    assertDeepEqualInAnyOrder([cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]], [
-      'cur_npm/npmjs/-/foo/1.0',
-      'cur_npm/npmjs/-/foo'
-    ])
+    assertDeepEqualInAnyOrder(
+      [cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]],
+      ['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo']
+    )
 
     const computeSpy = service.definitionService.computeAndStore
     assert.strictEqual(computeSpy.mock.callCount() === 1, true)
-    expect(computeSpy.mock.calls[0].arguments[0]).to.be.deep.equal({ ...complexCuration().coordinates, revision: '1.0' })
+    assert.deepStrictEqual(computeSpy.mock.calls[0].arguments[0], { ...complexCuration().coordinates, revision: '1.0' })
   })
 
   it('handles close', async () => {
@@ -145,10 +149,10 @@ describe('Curation service pr events', () => {
     assert.strictEqual(updateSpy.mock.calls[0].arguments[0].number, 12)
     const cacheDeleteSpy = service.cache.delete
     assert.strictEqual(cacheDeleteSpy.mock.callCount() === 2, true)
-    assertDeepEqualInAnyOrder([cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]], [
-      'cur_npm/npmjs/-/foo/1.0',
-      'cur_npm/npmjs/-/foo'
-    ])
+    assertDeepEqualInAnyOrder(
+      [cacheDeleteSpy.mock.calls[0].arguments[0], cacheDeleteSpy.mock.calls[1].arguments[0]],
+      ['cur_npm/npmjs/-/foo/1.0', 'cur_npm/npmjs/-/foo']
+    )
   })
 
   it('handles list', async () => {
@@ -157,7 +161,7 @@ describe('Curation service pr events', () => {
     const list = await service.list(EntityCoordinates.fromString('npm/npmjs'))
     const listSpy = service.store.list
     assert.strictEqual(listSpy.mock.callCount() === 1, true)
-    expect(list).to.be.deep.equalInAnyOrder([complexCuration()])
+    assertDeepEqualInAnyOrder(list, [complexCuration()])
     const cacheGetSpy = service.cache.get
     assert.strictEqual(cacheGetSpy.mock.callCount() === 1, true)
     assert.strictEqual(cacheGetSpy.mock.calls[0].arguments[0], 'cur_npm/npmjs/-')
@@ -174,23 +178,26 @@ describe('Curation service pr events', () => {
     assert.strictEqual(updateSpy.mock.callCount() === 1, true)
     assert.strictEqual(updateSpy.mock.calls[0].arguments[0].number, 13)
     const data = updateSpy.mock.calls[0].arguments[1].map(curation => curation.data)
-    expect(data).to.be.deep.equalInAnyOrder([complexCuration('foo'), complexCuration('bar')])
+    assertDeepEqualInAnyOrder(data, [complexCuration('foo'), complexCuration('bar')])
 
     const curationSpy = service.store.updateCurations
     assert.strictEqual(curationSpy.mock.callCount() === 1, true)
     const curations = curationSpy.mock.calls[0].arguments[0].map(curation => curation.data)
-    expect(curations).to.be.deep.equalInAnyOrder([complexCuration('foo'), complexCuration('bar')])
+    assertDeepEqualInAnyOrder(curations, [complexCuration('foo'), complexCuration('bar')])
 
     const invalidateSpy = service.definitionService.invalidate
     assert.strictEqual(invalidateSpy.mock.callCount() === 1, true)
-    expect(invalidateSpy.mock.calls[0].arguments[0]).to.be.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(invalidateSpy.mock.calls[0].arguments[0], [
       { ...complexCuration('foo').coordinates, revision: '1.0' },
       { ...complexCuration('bar').coordinates, revision: '1.0' }
     ])
 
     const computeSpy = service.definitionService.computeAndStore
     assert.strictEqual(computeSpy.mock.callCount() === 2, true)
-    expect(computeSpy.mock.calls[0].arguments[0]).to.be.deep.equal({ ...complexCuration('foo').coordinates, revision: '1.0' })
+    assert.deepStrictEqual(computeSpy.mock.calls[0].arguments[0], {
+      ...complexCuration('foo').coordinates,
+      revision: '1.0'
+    })
   })
 
   it('gets null curation if blob does not exist', async () => {

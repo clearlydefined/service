@@ -1,10 +1,13 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import { afterEach, beforeEach, describe, it, mock } from 'node:test'
+
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-
-const { expect } = require('chai')
 const httpMocks = require('node-mocks-http')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
 import { describe, it, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -68,7 +68,10 @@ describe('azblob Definition store', () => {
     const store = createStore()
     await store.store(definition)
     assert.strictEqual(store.blobService.createBlockBlobFromText.mock.callCount(), 1)
-    assert.strictEqual(store.blobService.createBlockBlobFromText.mock.calls[0].arguments[1], 'npm/npmjs/-/foo/revision/1.0.json')
+    assert.strictEqual(
+      store.blobService.createBlockBlobFromText.mock.calls[0].arguments[1],
+      'npm/npmjs/-/foo/revision/1.0.json'
+    )
   })
 
   it('deletes a definition', async () => {
@@ -107,20 +110,18 @@ function createDefinitionJson(coordinates) {
 
 function createStore(data) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon
-      .stub()
-      .callsFake(async (_container, name, _continuation, _metadata, callback) => {
-        name = name.toLowerCase()
-        if (name.includes('error')) {
-          return callback(new Error('test error'))
-        }
-        callback(null, {
-          continuationToken: null,
-          entries: Object.keys(data)
-            .map(key => (key.startsWith(name) ? data[key] : null))
-            .filter(e => e)
-        })
-      }),
+    listBlobsSegmentedWithPrefix: mock.fn(async (_container, name, _continuation, _metadata, callback) => {
+      name = name.toLowerCase()
+      if (name.includes('error')) {
+        return callback(new Error('test error'))
+      }
+      callback(null, {
+        continuationToken: null,
+        entries: Object.keys(data)
+          .map(key => (key.startsWith(name) ? data[key] : null))
+          .filter(e => e)
+      })
+    }),
     createBlockBlobFromText: mock.fn(async (_container, name, _content, _metadata, callback) => {
       if (name.includes('error')) {
         return callback(new Error('test error'))

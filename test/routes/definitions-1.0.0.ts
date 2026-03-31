@@ -17,7 +17,7 @@ describe('Definition v1.0.0 route', () => {
     assert.strictEqual(response.statusCode, 200)
     assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
     const coordinates = EntityCoordinates.fromString('go/golang/github.com%2Fquasilyte%2Fregex/syntax/v0.0.0')
-    expect(definitionService.get.calledOnceWith(coordinates))
+    assert.deepStrictEqual(definitionService.get.mock.calls[0].arguments[0], coordinates)
   })
 
   it('forces a recompute if requested', async () => {

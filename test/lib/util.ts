@@ -1,12 +1,10 @@
 import assert from 'node:assert/strict'
-import { describe, it, afterEach } from 'node:test'
+import { describe, it, before, beforeEach, afterEach, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
 import { DateTime } from 'luxon'
-import { mock } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
 import utils from '../../lib/utils.js'
-
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
 
 describe('Utils latest version', () => {
   it('should get the latest version', () => {

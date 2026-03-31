@@ -187,24 +187,24 @@ describe('Notice Service', () => {
 
   it('gets renderer by choice', () => {
     const { service } = setup({})
-    expect(service._getRenderer().constructor.name).to.eq('TextRenderer')
-    expect(service._getRenderer('text').constructor.name).to.eq('TextRenderer')
-    expect(service._getRenderer('html', {}).constructor.name).to.eq('HtmlRenderer')
-    expect(service._getRenderer('template', { template: 'template' }).constructor.name).to.eq('TemplateRenderer')
-    expect(service._getRenderer('json').constructor.name).to.eq('JsonRenderer')
+    assert.strictEqual(service._getRenderer().constructor.name, 'TextRenderer')
+    assert.strictEqual(service._getRenderer('text').constructor.name, 'TextRenderer')
+    assert.strictEqual(service._getRenderer('html', {}).constructor.name, 'HtmlRenderer')
+    assert.strictEqual(service._getRenderer('template', { template: 'template' }).constructor.name, 'TemplateRenderer')
+    assert.strictEqual(service._getRenderer('json').constructor.name, 'JsonRenderer')
 
     try {
       service._getRenderer('junk')
       assert.strictEqual(true, false)
     } catch (error) {
-      expect((error as Error).message).to.eq('"junk" is not a supported renderer')
+      assert.strictEqual((error as Error).message, '"junk" is not a supported renderer')
     }
 
     try {
       service._getRenderer('template', {})
       assert.strictEqual(true, false)
     } catch (error) {
-      expect((error as Error).message).to.eq('options.template is required for template renderer')
+      assert.strictEqual((error as Error).message, 'options.template is required for template renderer')
     }
   })
 })

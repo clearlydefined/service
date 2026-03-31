@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import SPDX from '@clearlydefined/spdx'
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import SPDX from '@clearlydefined/spdx'
 
 describe('SPDX utility functions', () => {
   it('parses spdx expressions', () => {

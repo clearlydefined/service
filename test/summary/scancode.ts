@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
 import { describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
@@ -7,7 +7,6 @@ import { describe, it } from 'node:test'
 
 import validator from '../../schemas/validator.js'
 
-const { expect } = chai
 
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { joinExpressions } from '../../lib/utils.js'
@@ -227,7 +226,7 @@ describe('ScanCode summarizer', () => {
 })
 
 describe('ScanCodeLegacySummarizer', () => {
-  context('_createExpressionFromLicense', () => {
+  describe('_createExpressionFromLicense', () => {
     it('creates expressions from matched_rule', () => {
       const examples = new Map([
         [buildRule('mit OR apache-2.0', ['mit', 'apache-2.0']), 'MIT OR Apache-2.0'],
@@ -255,7 +254,7 @@ describe('ScanCodeLegacySummarizer', () => {
     })
   })
 
-  context('_getRootFiles', () => {
+  describe('_getRootFiles', () => {
     it('gets root files', () => {
       const result = ScanCodeLegacySummarizer()._getRootFiles({ type: 'npm' }, [
         { path: 'realroot' },
@@ -263,7 +262,7 @@ describe('ScanCodeLegacySummarizer', () => {
         { path: 'other/nonroot' },
         { path: 'package/deep/path' }
       ])
-      expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
+      assert.deepStrictEqual(result.map(x => x.path), ['realroot', 'package/packageRoot'])
     })
   })
 })

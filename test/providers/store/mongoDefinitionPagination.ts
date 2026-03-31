@@ -233,7 +233,7 @@ async function loadDefinitions() {
 
 function verifyExpectedCoordinates(allCoordinates, expected) {
   const firstCoordinates = allCoordinates.slice(0, expected.length)
-  expect(firstCoordinates).to.be.deep.equal(expected)
+  assert.deepStrictEqual(firstCoordinates, expected)
 }
 
 function verifyUniqueCoordinates(defs) {

@@ -6,7 +6,6 @@ import { describe, it } from 'node:test'
 
 import validator from '../../schemas/validator.js'
 
-const { expect } = chai
 
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { setIfValue } from '../../lib/utils.js'

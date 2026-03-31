@@ -130,7 +130,10 @@ describe('Mongo Curation store', () => {
     await service.updateCurations([curation])
     assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, true)
     assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[0], { _id: 'npm/npmjs/-/foo' })
-    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[1], { _id: 'npm/npmjs/-/foo', ...curation.data })
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[1], {
+      _id: 'npm/npmjs/-/foo',
+      ...curation.data
+    })
     assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
@@ -152,8 +155,10 @@ describe('Mongo Curation store', () => {
       'files.coordinates.name': 'foo',
       'files.revisions.revision': '1.0'
     })
-    expect(service.collection.find().sort.mock.calls[0].arguments[0]).to.deep.eq({ 'pr.number': -1 })
-    assert.deepStrictEqual(result.curations, { 'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } } })
+    assert.deepStrictEqual(service.collection.find().sort.mock.calls[0].arguments[0], { 'pr.number': -1 })
+    assert.deepStrictEqual(result.curations, {
+      'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } }
+    })
   })
 
   it('handles list with no coordinates', async () => {
@@ -161,7 +166,7 @@ describe('Mongo Curation store', () => {
     const result = await service.list(new EntityCoordinates())
     assert.strictEqual(result, null)
 
-    await expect(service.list()).to.eventually.be.rejectedWith('must specify coordinates to list')
+    await assert.rejects(service.list(), { message: 'must specify coordinates to list' })
   })
 })
 

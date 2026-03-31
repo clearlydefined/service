@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
 import { describe, it, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 import Store from '../../../providers/stores/azblobHarvestStore.js'
-
 
 describe('azblob Harvest store', () => {
   describe('list', () => {
@@ -55,7 +54,7 @@ describe('azblob Harvest store', () => {
         revision: '1.3.4'
       })
       const expected = ['npm/npmjs/-/JSONStream/1.3.4/clearlydefined/1', 'npm/npmjs/-/JSONStream/1.3.4/scancode/2.2.1']
-      expect(result).to.be.deep.equalInAnyOrder(expected)
+      assertDeepEqualInAnyOrder(result, expected)
 
       const resultCased = await store.list({
         type: 'npm',
@@ -186,7 +185,8 @@ describe('azblob Harvest store', () => {
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/reuse/3.2.2.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/scancode/32.3.0.json'
-      ])    })
+      ])
+    })
 
     it('retrieves latest entries', async () => {
       const azblobStore = createAzBlobStore(
@@ -271,9 +271,9 @@ function createEntries(names) {
 
 function createAzBlobStore(entries, withMetadata) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: mock.fn().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
-    getBlobToText: mock.fn().callsArgWith(2, null, '{}'),
-    createContainerIfNotExists: mock.fn().callsArgWith(1, null)
+    listBlobsSegmentedWithPrefix: mock.fn((...args: any[]) => args[withMetadata ? 4 : 3](null, { entries })),
+    getBlobToText: mock.fn((...args: any[]) => args[2](null, '{}')),
+    createContainerIfNotExists: mock.fn((...args: any[]) => args[1](null))
   }
   blobServiceStub.withFilter = mock.fn(() => blobServiceStub)
   const store = Store({})

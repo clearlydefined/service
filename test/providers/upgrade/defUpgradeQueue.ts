@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, mock } from 'node:test'
+import { beforeEach, describe, it, mock } from 'node:test'
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
-
-
 
 import DefinitionQueueUpgrader from '../../../providers/upgrade/defUpgradeQueue.js'
 import MemoryQueue from '../../../providers/upgrade/memoryQueueConfig.js'
@@ -21,15 +19,15 @@ describe('DefinitionQueueUpgrader', () => {
 
     beforeEach(async () => {
       queue = {
-        queue: mock.fn().resolves(),
-        initialize: mock.fn().resolves()
+        queue: mock.fn(async () => {}),
+        initialize: mock.fn(async () => {})
       }
       const queueFactory = mock.fn(() => queue)
       upgrader = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
     })
 
     it('returns an instance of DefinitionQueueUpgrader', () => {
-      expect(upgrader).to.be.an.instanceOf(DefinitionQueueUpgrader)
+      assert.ok(upgrader instanceof DefinitionQueueUpgrader)
     })
 
     it('sets and gets current schema version', () => {
@@ -50,19 +48,19 @@ describe('DefinitionQueueUpgrader', () => {
       assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
     })
 
-    context('validate', () => {
+    describe('validate', () => {
       it('fails if current schema version is not set', async () => {
-        await expect(upgrader.validate(definition)).to.be.rejectedWith(Error)
+        await assert.rejects(upgrader.validate(definition), Error)
       })
 
       it('fails if it is not initialized', async () => {
         upgrader.currentSchema = '1.0.0'
         const stale = { coordinates: 'test', _meta: { schemaVersion: '0.0.1' } }
-        await expect(upgrader.validate(stale)).to.be.rejectedWith(Error)
+        await assert.rejects(upgrader.validate(stale), Error)
       })
     })
 
-    context('validate after set up', () => {
+    describe('validate after set up', () => {
       beforeEach(async () => {
         await upgrader.initialize()
         upgrader.currentSchema = '1.0.0'
@@ -98,7 +96,9 @@ describe('DefinitionQueueUpgrader', () => {
           },
           _meta: { schemaVersion: '0.0.1' }
         }
-        queue.queue.rejects(new Error('test'))
+        queue.queue.mock.mockImplementation(async () => {
+          throw new Error('test')
+        })
         const result = await upgrader.validate(staleDef)
         assert.deepStrictEqual(result, staleDef)
         assert.strictEqual(logger.error.mock.callCount() === 1, true)

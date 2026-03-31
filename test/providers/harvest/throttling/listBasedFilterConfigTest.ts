@@ -1,9 +1,13 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
+
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
 const EntityCoordinates = require('../../../../lib/entityCoordinates')
 const proxyquire = require('proxyquire')
 

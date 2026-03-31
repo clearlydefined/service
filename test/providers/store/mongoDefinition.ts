@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
 import { describe, it, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -10,7 +10,6 @@ import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import Store from '../../../providers/stores/mongo.js'
 
 const { range } = lodash
-
 
 describe('Mongo Definition store', () => {
   const data = {
@@ -57,7 +56,10 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.store(definition)
     assert.strictEqual(store.collection.deleteMany.mock.callCount(), 1)
-    assert.strictEqual(store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'], 'npm/npmjs/-/foo/1.0')
+    assert.strictEqual(
+      store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'],
+      'npm/npmjs/-/foo/1.0'
+    )
     assert.strictEqual(store.collection.insertMany.mock.callCount(), 1)
     assert.strictEqual(store.collection.insertMany.mock.calls[0].arguments[0][0]._id, 'npm/npmjs/-/foo/1.0')
     assert.strictEqual(store.collection.insertMany.mock.calls[0].arguments[0][0]._mongo.page, 1)
@@ -72,7 +74,10 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.store(definition)
     assert.strictEqual(store.collection.deleteMany.mock.callCount(), 1)
-    assert.strictEqual(store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'], 'npm/npmjs/-/foo/1.0')
+    assert.strictEqual(
+      store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'],
+      'npm/npmjs/-/foo/1.0'
+    )
     assert.strictEqual(store.collection.insertMany.mock.callCount(), 1)
     assert.strictEqual(store.collection.insertMany.mock.calls[0].arguments[0][0]._id, 'npm/npmjs/-/foo/1.0')
     assert.strictEqual(store.collection.insertMany.mock.calls[0].arguments[0][0].files.length, 1000)
@@ -88,7 +93,10 @@ describe('Mongo Definition store', () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
     assert.strictEqual(store.collection.deleteMany.mock.callCount(), 1)
-    assert.strictEqual(store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'], 'npm/npmjs/-/foo/1.0')
+    assert.strictEqual(
+      store.collection.deleteMany.mock.calls[0].arguments[0]['_mongo.partitionKey'],
+      'npm/npmjs/-/foo/1.0'
+    )
   })
 
   it('gets a definition', async () => {
@@ -126,7 +134,7 @@ describe('Mongo Definition store', () => {
       [{ maxToolScore: 50 }, { '_mongo.page': 1, 'scores.tool': { $lt: 50 } }]
     ])
     data.forEach((expected, input) => {
-      expect(store.buildQuery(input)).to.deep.equal(expected)
+      assert.deepStrictEqual(store.buildQuery(input), expected)
     })
   })
 
@@ -148,7 +156,7 @@ describe('Mongo Definition store', () => {
       ]
     }
 
-    expect(store._buildQueryWithPaging(parameters, continuationToken, sort)).to.deep.equal(expected)
+    assert.deepStrictEqual(store._buildQueryWithPaging(parameters, continuationToken, sort), expected)
   })
 
   it('builds a mongo sort', () => {
@@ -182,7 +190,7 @@ describe('Mongo Definition store', () => {
     data.forEach((expected, input) => {
       const result = store._buildSort(input)
       assert.deepStrictEqual(result, expected)
-      expect(Object.keys(result)).to.have.ordered.members(Object.keys(expected))
+      assert.deepStrictEqual(Object.keys(result), Object.keys(expected))
     })
   })
 
@@ -215,7 +223,9 @@ describe('Mongo Definition store', () => {
 
   it('should call find with right arguments', async () => {
     const store = createStore()
-    store.collection.find = mock.fn(() => { toArray: () => Promise.resolve([]) })
+    store.collection.find = mock.fn(() => {
+      toArray: () => Promise.resolve([])
+    })
     await store.find({ type: 'npm' })
     const filter = { 'coordinates.type': 'npm', '_mongo.page': 1 }
     const opts = {
@@ -224,8 +234,8 @@ describe('Mongo Definition store', () => {
       limit: 100
     }
     const findArgs = store.collection.find.mock.calls[0].arguments
-    expect(findArgs[0]).to.be.deep.equal(filter)
-    expect(findArgs[1]).to.be.deep.equal(opts)
+    assert.deepStrictEqual(findArgs[0], filter)
+    assert.deepStrictEqual(findArgs[1], opts)
   })
 })
 

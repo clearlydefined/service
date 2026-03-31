@@ -1,9 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import assert from 'node:assert'
-import { describe, it, before, after, beforeEach, afterEach, mock } from 'node:test'
 import express from 'express'
+import assert from 'node:assert'
+import { after, afterEach, before, beforeEach, describe, it, mock } from 'node:test'
 import supertest from 'supertest'
 import { GenericContainer } from 'testcontainers'
 import {
@@ -119,7 +119,7 @@ describe('Rate Limiter', () => {
 
     describe('Redis Based', () => {
       let options: any
-      beforeEach((t) => {
+      beforeEach(t => {
         const cachingService = new RedisCache({ logger } as any)
         t.mock.property(cachingService, 'client', {})
         options = { config: { limits }, cachingService, logger }

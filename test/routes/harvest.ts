@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { describe, it, afterEach, mock } from 'node:test'
+import { afterEach, describe, it, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -63,8 +63,8 @@ describe('Harvest route', () => {
     const router = createRoutes(harvester)
     await router._queue(request, response)
     assert.strictEqual(response.statusCode, 201)
-    assert.strictEqual(harvester.harvest.mock.callCount() === 1, true)
-    assert.strictEqual(harvester.harvest.calledWith([{ tool: 'test', coordinates: '1/2/3/4' }], sinon.match.any), true)
+    assert.strictEqual(harvester.harvest.mock.callCount(), 1)
+    assert.deepStrictEqual(harvester.harvest.mock.calls[0].arguments[0], [{ tool: 'test', coordinates: '1/2/3/4' }])
   })
 
   it('filter out falsy coordinates', async () => {
@@ -74,14 +74,14 @@ describe('Harvest route', () => {
     const router = createRoutes(harvester)
     await router._queue(request, response)
     assert.strictEqual(response.statusCode, 201)
-    assert.strictEqual(harvester.harvest.mock.callCount() === 1, true)
-    assert.strictEqual(harvester.harvest.calledWith([{ tool: 'test', coordinates: '1/2/3/4' }], sinon.match.any), true)
+    assert.strictEqual(harvester.harvest.mock.callCount(), 1)
+    assert.deepStrictEqual(harvester.harvest.mock.calls[0].arguments[0], [{ tool: 'test', coordinates: '1/2/3/4' }])
   })
 
   it('normalize coordinates', async () => {
     const harvester = { harvest: mock.fn() }
     const router = createRoutes(harvester)
-    mock.method(utils, 'toNormalizedEntityCoordinates').resolves(EntityCoordinates.fromString('one/two/three/four'))
+    mock.method(utils, 'toNormalizedEntityCoordinates', async () => EntityCoordinates.fromString('one/two/three/four'))
     const normalized = await router._normalizeCoordinates([{ tool: 'test', coordinates: '1/2/3/4' }])
     assert.deepStrictEqual(normalized, [{ tool: 'test', coordinates: 'one/two/three/four' }])
   })
@@ -103,9 +103,9 @@ describe('Harvest route', () => {
     const response = httpMocks.createResponse()
     const harvester = { harvest: mock.fn() }
     const throttler = new ListBasedFilter({ blacklist: ['git/github/org/name'], logger })
-    sinon
-      .stub(utils, 'toNormalizedEntityCoordinates')
-      .resolves(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
+    mock.method(utils, 'toNormalizedEntityCoordinates', async () =>
+      EntityCoordinates.fromString('git/github/org/name/1.0.0')
+    )
     const router = (harvestRoutes as (...args: any[]) => any)(harvester, undefined, undefined, throttler, true)
     await router._queue(request, response)
     assert.strictEqual(response.statusCode, 422)

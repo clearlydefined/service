@@ -16,7 +16,7 @@ describe('Webhook Route for Crawler calls', () => {
     router._handlePost(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.strictEqual(service.computeAndStoreIfNecessary.mock.callCount() === 1, true)
-    expect(service.computeAndStoreIfNecessary.mock.calls[0].arguments[0].name).to.be.eq('test')
+    assert.strictEqual(service.computeAndStoreIfNecessary.mock.calls[0].arguments[0].name, 'test')
   })
 
   it('handles missing self', () => {

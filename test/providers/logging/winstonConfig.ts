@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach } from 'node:test'
+import { beforeEach, describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -341,7 +341,7 @@ describe('buildProperties', () => {
     const info = { requestParams: createNullProtoDict({ foo: 'bar' }) }
     const result = buildProperties(info)
     assert.deepStrictEqual(result.requestParams, { foo: 'bar' })
-    expect(Object.getPrototypeOf(result.requestParams)).to.equal(Object.prototype)
+    assert.strictEqual(Object.getPrototypeOf(result.requestParams), Object.prototype)
   })
 
   it('leaves plain objects unchanged (by reference)', () => {

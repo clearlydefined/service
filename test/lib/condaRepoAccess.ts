@@ -1,22 +1,24 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import { afterEach, beforeEach, describe, it, mock } from 'node:test'
 import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.js'
 import type { ICache } from '../../providers/caching/index.js'
 
+const proxyquire = require('proxyquire').noCallThru()
 const requestPromiseStub = mock.fn()
 
-mock.module('../../lib/fetch', {
-  namedExports: {
-    callFetch: requestPromiseStub
+const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = proxyquire(
+  '../../lib/condaRepoAccess',
+  {
+    './fetch': { callFetch: requestPromiseStub }
   }
-})
-
-const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = (
-  await import('../../lib/condaRepoAccess.js')
-).default
+)
 
 const channelData: CondaChannelData = {
   packages: {

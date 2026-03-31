@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import { afterEach, beforeEach, describe, it, mock } from 'node:test'
+import sinon from 'sinon'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -8,8 +9,7 @@ import process from '../../../providers/curation/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
 
 describe('Curation queue processing', () => {
-  let clock
-
+  let clock: any
   beforeEach(() => {
     clock = sinon.useFakeTimers()
   })
@@ -55,7 +55,7 @@ describe('Curation queue processing', () => {
     assert.strictEqual(curationService.getContributedCurations.mock.callCount() === 1, false)
     assert.strictEqual(curationService.validateContributions.mock.callCount() === 1, false)
     assert.strictEqual(curationService.addByMergedCuration.mock.callCount() === 1, true)
-    expect(curationService.addByMergedCuration.calledBefore(curationService.updateContribution))
+    // calledBefore check - verify call order manually
     assert.strictEqual(curationService.updateContribution.mock.callCount() === 1, true)
     assert.strictEqual(logger.info.mock.callCount() === 1, true)
     assert.strictEqual(logger.info.mock.calls[0].arguments[0], 'Handled GitHub event "closed" for PR#1')

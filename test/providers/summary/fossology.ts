@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
+import { describe, it, mock } from 'node:test'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'

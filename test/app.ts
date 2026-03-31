@@ -1,8 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
 import assert from 'node:assert/strict'
-import { describe, it, beforeEach, afterEach } from 'node:test'
+import { afterEach, beforeEach, describe, it } from 'node:test'
 import sinon from 'sinon'
 
 const proxyquire = require('proxyquire')
@@ -25,8 +29,8 @@ const config = proxyquire('../bin/config', {
 })
 
 describe('Application', () => {
-  let clock: sinon.SinonFakeTimers
-  let sandbox: sinon.SinonSandbox
+  let clock: any
+  let sandbox: any
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()

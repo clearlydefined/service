@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict'
-import { assertDeepEqualInAnyOrder } from '../helpers/assert.js'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
 import { describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 
-const { expect } = chai
 
 import lodash from 'lodash'
 import EntityCoordinates from '../../lib/entityCoordinates.js'

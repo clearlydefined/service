@@ -16,12 +16,12 @@ describe('DefinitionVersionChecker', () => {
   })
 
   it('returns an instance of DefinitionVersionChecker', () => {
-    expect(checker).to.be.an.instanceOf(DefinitionVersionChecker)
+    assert.ok(checker instanceof DefinitionVersionChecker)
   })
 
   it('creates a new instance of DefinitionVersionChecker using factory', () => {
     const checker = factory({ logger: logger })
-    expect(checker).to.be.an.instanceOf(DefinitionVersionChecker)
+    assert.ok(checker instanceof DefinitionVersionChecker)
   })
 
   it('sets and gets current schema version', () => {
@@ -41,10 +41,10 @@ describe('DefinitionVersionChecker', () => {
 
   it('throws an error in validate if current schema version is not set', async () => {
     const definition = { _meta: { schemaVersion: '1.0.0' } }
-    await expect(checker.validate(definition)).to.be.rejectedWith(Error)
+    await assert.rejects(checker.validate(definition), Error)
   })
 
-  context('validate after current schema version is set', () => {
+  describe('validate after current schema version is set', () => {
     beforeEach(() => {
       checker.currentSchema = '1.0.0'
     })

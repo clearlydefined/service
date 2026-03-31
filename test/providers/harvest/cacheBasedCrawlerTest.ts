@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
+import { beforeEach, describe, it, mock } from 'node:test'
 import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.js'
 
 function createCacheMock() {
@@ -108,14 +109,18 @@ describe('CacheBasedHarvester', () => {
     })
 
     it('throws error if harvester throws', async () => {
-      harvesterMock.harvest.rejects(new Error('Harvester error'))
+      harvesterMock.harvest.mock.mockImplementation(async () => {
+        throw new Error('Harvester error')
+      })
       await assert.rejects(async () => {
         await crawler.harvest([foo], false)
       }, 'Expected harvest to throw the harvest errors')
     })
 
     it('handles errors in cache gracefully', async () => {
-      cacheMock.get = mock.fn(async () => { throw new Error('Cache error') })
+      cacheMock.get = mock.fn(async () => {
+        throw new Error('Cache error')
+      })
       await assert.doesNotReject(async () => {
         await crawler.isTracked(foo.coordinates)
       }, 'Expected isTracked to handle cache errors gracefully')
@@ -200,7 +205,10 @@ describe('CacheBasedHarvester', () => {
 
     it('handles null spec in harvest', async () => {
       await crawler.harvest(null, false)
-      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called for null coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for null coordinates'
+      )
     })
 
     it('handles empty objects in harvest', async () => {
@@ -210,12 +218,18 @@ describe('CacheBasedHarvester', () => {
 
     it('handles null coordinates in harvest', async () => {
       await crawler.harvest([null], false)
-      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called for null coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for null coordinates'
+      )
     })
 
     it('handles undefined coordinates in harvest', async () => {
       await crawler.harvest([undefined], false)
-      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called for undefined coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for undefined coordinates'
+      )
     })
 
     it('handles empty array in harvest', async () => {
