@@ -9,7 +9,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": false,
-    "types": ["mocha", "node"]
+    "types": ["node"]
   },
   "include": [
     "types/**/*",
