@@ -260,7 +260,6 @@
     "routes/originCondaforge.d.ts",
     "routes/originCondaforge.js",
     "schemas/validator.d.ts",
-    "schemas/validator.js",
-    "test/**/*.ts"
+    "schemas/validator.js"
   ]
 }

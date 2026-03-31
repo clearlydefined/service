@@ -85,10 +85,7 @@ class MongoCurationStore {
    * @param {Curation[] | null} [curations] - The set of actual proposed changes.
    */
   updateContribution(pr, curations = null) {
-    if (
-      !curations ||
-      !curations.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))
-    ) {
+    if (!curations?.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))) {
       return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
     }
     const files = curations

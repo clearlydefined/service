@@ -345,7 +345,7 @@ class ScanCodeLegacySummarizer {
    */
   _createExpressionFromLicense(license) {
     const rule = license.matched_rule
-    if (!rule || !rule.license_expression) {
+    if (!rule?.license_expression) {
       return SPDX.normalize(license.spdx_license_key)
     }
     return normalizeLicenseExpression(rule.license_expression, this.logger, null)
