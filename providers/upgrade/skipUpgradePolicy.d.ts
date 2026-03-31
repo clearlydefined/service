@@ -9,7 +9,5 @@ import type { Definition, UpgradeHandler } from '../../business/definitionServic
  * Used by the delayed compute path to implement missing-only semantics.
  */
 export declare class SkipUpgradePolicy implements UpgradeHandler {
-  currentSchema?: string
-
   validate(definition: Definition | null): Promise<Definition | null>
 }

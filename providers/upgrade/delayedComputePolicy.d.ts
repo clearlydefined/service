@@ -12,7 +12,7 @@ export declare class DelayedComputePolicy implements MissingDefinitionComputePol
   options: DefinitionQueueUpgraderOptions
   logger: Logger
 
-  constructor(options?: DefinitionQueueUpgraderOptions)
+  constructor(options: DefinitionQueueUpgraderOptions)
 
   initialize(): Promise<void>
 

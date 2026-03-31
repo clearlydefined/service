@@ -4,7 +4,7 @@
 class OnDemandComputePolicy {
   async initialize() {}
 
-  setupProcessing() {}
+  async setupProcessing() {}
 
   /**
    * @param {import('../../business/definitionService').RecomputeContext} definitionService

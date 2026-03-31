@@ -7,7 +7,7 @@ import type { EntityCoordinates } from '../../lib/entityCoordinates'
 
 export declare class OnDemandComputePolicy implements MissingDefinitionComputePolicy {
   initialize(): Promise<void>
-  setupProcessing(): void
+  setupProcessing(): Promise<void>
   compute(
     definitionService: RecomputeContext,
     coordinates: EntityCoordinates

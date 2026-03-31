@@ -7,16 +7,6 @@
  * Used by the delayed compute path to implement missing-only semantics.
  */
 class SkipUpgradePolicy {
-  /** @param {string} schemaVersion */
-  set currentSchema(schemaVersion) {
-    this._currentSchema = schemaVersion
-  }
-
-  /** @returns {string | undefined} */
-  get currentSchema() {
-    return this._currentSchema
-  }
-
   /**
    * @param {import('../../business/definitionService').Definition | null} definition
    * @returns {Promise<import('../../business/definitionService').Definition | null>}

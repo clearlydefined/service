@@ -13,12 +13,8 @@ const { SkipUpgradePolicy } = require('./skipUpgradePolicy')
 /** @typedef {import('../caching').ICache} ICache */
 
 class DelayedComputePolicy {
-  /** @param {DefinitionQueueUpgraderOptions} [options] */
-  constructor(
-    options = /** @type {DefinitionQueueUpgraderOptions} */ ({
-      queue: () => ({})
-    })
-  ) {
+  /** @param {DefinitionQueueUpgraderOptions} options */
+  constructor(options) {
     this.options = options
     this.logger = options.logger || logger()
   }
