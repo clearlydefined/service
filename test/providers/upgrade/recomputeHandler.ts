@@ -1,28 +1,33 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const chaiAsPromised = require('chai-as-promised')
-const chai = require('chai')
-chai.use(chaiAsPromised.default)
-const { expect } = chai
-const sinon = require('sinon')
+import * as chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const { RecomputeHandler, delayedFactory } = require('../../../providers/upgrade/recomputeHandler')
-const { OnDemandComputePolicy } = require('../../../providers/upgrade/onDemandComputePolicy')
-const { DelayedComputePolicy } = require('../../../providers/upgrade/delayedComputePolicy')
+chai.use(chaiAsPromised)
+
+import { expect } from 'chai'
+import sinon from 'sinon'
+import type { DefinitionService, RecomputeContext } from '../../../business/definitionService.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import type { IQueue } from '../../../providers/queueing/index.js'
+import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputePolicy.js'
+import { OnDemandComputePolicy } from '../../../providers/upgrade/onDemandComputePolicy.js'
+import { delayedFactory, RecomputeHandler } from '../../../providers/upgrade/recomputeHandler.js'
+import { createMockLogger, type StubbedLogger } from '../../helpers/mockLogger.ts'
 
 describe('RecomputeHandler', () => {
-  let upgradePolicy
-  let computePolicy
-  let logger
-  let handler
+  let upgradePolicy: ReturnType<typeof createUpgradePolicy>
+  let computePolicy: ReturnType<typeof createComputePolicy>
+  let logger: StubbedLogger
+  let handler: InstanceType<typeof RecomputeHandler>
 
   beforeEach(() => {
     upgradePolicy = createUpgradePolicy()
     computePolicy = createComputePolicy()
-    logger = createLogger()
-    handler = new RecomputeHandler({ upgradePolicy, computePolicy, logger })
+    logger = createMockLogger()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handler = new RecomputeHandler({ upgradePolicy: upgradePolicy as any, computePolicy: computePolicy as any, logger })
   })
 
   it('initializes both upgrade and compute policies', async () => {
@@ -35,13 +40,14 @@ describe('RecomputeHandler', () => {
   it('supports policy initialize hooks being undefined', async () => {
     upgradePolicy = createUpgradePolicy({ initialize: undefined })
     computePolicy = createComputePolicy({ initialize: undefined })
-    handler = new RecomputeHandler({ upgradePolicy, computePolicy, logger })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handler = new RecomputeHandler({ upgradePolicy: upgradePolicy as any, computePolicy: computePolicy as any, logger })
 
     await handler.initialize()
   })
 
   it('delegates setupProcessing to both policies', async () => {
-    const definitionService = { currentSchema: '1.7.0' }
+    const definitionService = { currentSchema: '1.7.0' } as unknown as DefinitionService
 
     await handler.setupProcessing(definitionService, logger, true)
 
@@ -57,7 +63,7 @@ describe('RecomputeHandler', () => {
   })
 
   it('passes the same shared cache instance to both policies', async () => {
-    const definitionService = { currentSchema: '1.7.0' }
+    const definitionService = { currentSchema: '1.7.0' } as unknown as DefinitionService
 
     await handler.setupProcessing(definitionService, logger, false)
 
@@ -84,7 +90,7 @@ describe('RecomputeHandler', () => {
     const definitionService = {
       currentSchema: '1.7.0',
       buildEmptyDefinition: sinon.stub()
-    }
+    } as unknown as RecomputeContext
     const expectedDefinition = {
       coordinates,
       _meta: { schemaVersion: '1.7.0' }
@@ -117,27 +123,31 @@ describe('RecomputeHandler compute policies', () => {
       }
       const definitionService = {
         computeStoreAndCurate: sinon.stub().resolves(definition)
-      }
+      } as unknown as RecomputeContext
 
       const result = await policy.compute(definitionService, coordinates)
 
-      expect(definitionService.computeStoreAndCurate.calledOnceWithExactly(coordinates)).to.be.true
+      expect(
+        (
+          definitionService as unknown as { computeStoreAndCurate: sinon.SinonStub }
+        ).computeStoreAndCurate.calledOnceWithExactly(coordinates)
+      ).to.be.true
       expect(result).to.deep.equal(definition)
     })
   })
 
   describe('DelayedComputePolicy', () => {
-    let queue
-    let queueLogger
-    let policy
-    let coordinates
+    let queue: ReturnType<typeof createQueue>
+    let queueLogger: StubbedLogger
+    let policy: InstanceType<typeof DelayedComputePolicy>
+    let coordinates: ReturnType<typeof EntityCoordinates.fromString>
 
     beforeEach(() => {
       queue = createQueue()
-      queueLogger = createLogger()
+      queueLogger = createMockLogger()
       policy = new DelayedComputePolicy({
         logger: queueLogger,
-        queue: () => queue
+        queue: () => queue as unknown as IQueue
       })
       coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
     })
@@ -174,38 +184,39 @@ describe('RecomputeHandler compute policies', () => {
 
     it('setupProcessing skips recompute when definition already exists', async () => {
       setupQueueProcessingMocks(queue, coordinates)
-      const existingDefinition = {
-        coordinates,
-        _meta: { schemaVersion: '0.0.1' }
-      }
+      const existingDefinition = { coordinates, _meta: { schemaVersion: '0.0.1' } }
+      const getStored = sinon.stub().resolves(existingDefinition)
+      const computeStoreAndCurate = sinon.stub().resolves()
       const definitionService = {
         currentSchema: '1.7.0',
-        getStored: sinon.stub().resolves(existingDefinition),
-        computeStoreAndCurate: sinon.stub().resolves()
-      }
+        getStored,
+        computeStoreAndCurate
+      } as unknown as DefinitionService
 
       await policy.initialize()
       await policy.setupProcessing(definitionService, queueLogger, true)
 
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
-      expect(queue.delete.calledOnce).to.be.true
+      expect(getStored.calledOnce).to.be.true
+      expect(computeStoreAndCurate.notCalled).to.be.true
+      expect((queue as unknown as { delete: sinon.SinonStub }).delete.calledOnce).to.be.true
     })
 
     it('setupProcessing recomputes when definition is missing', async () => {
       setupQueueProcessingMocks(queue, coordinates)
+      const getStored = sinon.stub().resolves(undefined)
+      const computeStoreAndCurate = sinon.stub().resolves()
       const definitionService = {
         currentSchema: '1.7.0',
-        getStored: sinon.stub().resolves(undefined),
-        computeStoreAndCurate: sinon.stub().resolves()
-      }
+        getStored,
+        computeStoreAndCurate
+      } as unknown as DefinitionService
 
       await policy.initialize()
       await policy.setupProcessing(definitionService, queueLogger, true)
 
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
-      expect(queue.delete.calledOnce).to.be.true
+      expect(getStored.calledOnce).to.be.true
+      expect(computeStoreAndCurate.calledOnce).to.be.true
+      expect((queue as unknown as { delete: sinon.SinonStub }).delete.calledOnce).to.be.true
     })
   })
 
@@ -217,8 +228,8 @@ describe('RecomputeHandler compute policies', () => {
     const computeQueue = createQueue()
     const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
     const handler = delayedFactory({
-      logger: createLogger(),
-      queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
+      logger: createMockLogger(),
+      queue: { upgrade: () => upgradeQueue as unknown as IQueue, compute: () => computeQueue as unknown as IQueue }
     })
     const definitionService = createPlaceholderDefinitionService()
 
@@ -236,43 +247,39 @@ describe('RecomputeHandler compute policies', () => {
 
 const TEST_COORDINATES = 'npm/npmjs/-/leftpad/1.0.0'
 
-const createUpgradePolicy = (overrides = {}) => ({
+const createUpgradePolicy = (overrides: Record<string, unknown> = {}) => ({
   initialize: sinon.stub().resolves(),
   validate: sinon.stub().resolves(),
   setupProcessing: sinon.stub().resolves(),
-  currentSchema: undefined,
+  currentSchema: undefined as string | undefined,
   ...overrides
 })
 
-const createComputePolicy = (overrides = {}) => ({
+const createComputePolicy = (overrides: Record<string, unknown> = {}) => ({
   initialize: sinon.stub().resolves(),
   setupProcessing: sinon.stub().resolves(),
   compute: sinon.stub().resolves(undefined),
   ...overrides
 })
 
-const createLogger = () => ({
-  info: sinon.stub(),
-  error: sinon.stub(),
-  debug: sinon.stub()
-})
-
-const createQueue = (overrides = {}) => ({
+const createQueue = (overrides: Record<string, unknown> = {}) => ({
   queue: sinon.stub().resolves(),
   initialize: sinon.stub().resolves(),
   ...overrides
 })
 
-const createPlaceholderDefinitionService = () => ({
-  currentSchema: '1.7.0',
-  buildEmptyDefinition: coordinates => ({
-    coordinates,
-    described: { tools: [] },
-    _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
-  })
-})
+const createPlaceholderDefinitionService = () =>
+  ({
+    currentSchema: '1.7.0',
+    buildEmptyDefinition: (coordinates: unknown) => ({
+      coordinates,
+      described: { tools: [] as string[] },
+      _meta: { schemaVersion: '1.7.0', updated: new Date().toISOString() }
+    }),
+    computeStoreAndCurate: sinon.stub().resolves()
+  }) as unknown as RecomputeContext
 
-const setupQueueProcessingMocks = (queue, coordinates) => {
-  queue.dequeueMultiple = sinon.stub().resolves([{ data: { coordinates } }])
-  queue.delete = sinon.stub().resolves()
+const setupQueueProcessingMocks = (queue: ReturnType<typeof createQueue>, coordinates: unknown) => {
+  ;(queue as Record<string, unknown>).dequeueMultiple = sinon.stub().resolves([{ data: { coordinates } }])
+  ;(queue as Record<string, unknown>).delete = sinon.stub().resolves()
 }
