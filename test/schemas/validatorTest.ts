@@ -137,7 +137,7 @@ describe('Validator - Coordinates Schema Tests', () => {
       it(`validates valid ${type} coordinates`, () => {
         for (const [index, coord] of coordinates.entries()) {
           const isValid = validator.validate('coordinates-1.0', coord)
-          assert.strictEqual(isValid, `Failed for ${type} coordinate ${index}: ${JSON.stringify(coord)}`, true)
+          assert.strictEqual(isValid, true, `Failed for ${type} coordinate ${index}: ${JSON.stringify(coord)}`)
           assert.strictEqual(validator.errors, null)
         }
       })

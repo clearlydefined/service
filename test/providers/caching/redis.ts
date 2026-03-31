@@ -84,7 +84,7 @@ describe('Redis Cache', () => {
 
     it('initalizes client only once', async () => {
       await Promise.all([cache.initialize(), cache.initialize()])
-      assert.ok(RedisCache.buildRedisClient.mock.callCount() === 1)
+      assert.ok(RedisCache.buildRedisClient.calledOnce)
     })
 
     it('calls client.quit only once', async () => {
@@ -111,8 +111,8 @@ describe('Redis Cache', () => {
       await cache.initialize()
       // Verify that the client was built twice
       assert.ok(cache.client)
-      assert.ok(RedisCache.buildRedisClient.mock.callCount() === 2)
-      assert.ok(mockClient.connect.mock.callCount() === 2)
+      assert.ok(RedisCache.buildRedisClient.calledTwice)
+      assert.strictEqual(mockClient.connect.mock.callCount(), 2)
     })
   })
 
@@ -313,7 +313,6 @@ describe('Redis Cache', () => {
     let redisConfig
 
     before(async function () {
-      this.timeout(10000)
       container = await new GenericContainer('redis').withExposedPorts(6379).start()
       const service = container.getHost()
       const port = container.getMappedPort(6379)

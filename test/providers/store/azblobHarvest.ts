@@ -251,7 +251,7 @@ describe('azblob Harvest store', () => {
         ])
       )
       azblobStore.logger = { error: mock.fn() }
-      azblobStore._getLatestToolPaths = mock.fn().throws(new Error('test error'))
+      azblobStore._getLatestToolPaths = mock.fn(() => { throw new Error('test error') })
       const result = await azblobStore.getAllLatest({
         type: 'npm',
         provider: 'npmjs',

@@ -223,9 +223,9 @@ describe('Mongo Definition store', () => {
 
   it('should call find with right arguments', async () => {
     const store = createStore()
-    store.collection.find = mock.fn(() => {
+    store.collection.find = mock.fn(() => ({
       toArray: () => Promise.resolve([])
-    })
+    }))
     await store.find({ type: 'npm' })
     const filter = { 'coordinates.type': 'npm', '_mongo.page': 1 }
     const opts = {

@@ -287,7 +287,7 @@ describe('GitHub origin routes', () => {
   })
 
   it('should handle /:login/:repo route', async () => {
-    (githubMock.search as Record<string, any>).repos.mock.mockImplementation(async () => ({
+    ;(githubMock.search as Record<string, any>).repos.resolves({
       data: { items: [{ full_name: 'octocat/Hello-World' }] }
     })
 

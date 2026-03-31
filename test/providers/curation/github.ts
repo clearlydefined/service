@@ -234,7 +234,6 @@ describe('Github Curation Service', () => {
         files: [{ filename: 'curations/npm/npmjs/-/test.yaml' }],
         merged_at: '2018-11-13T02:44:34Z'
       }
-      const processStub = mock.fn()
       const licenseFileMatch = {
         policy: 'file match',
         file: 'LICENSE.txt',
@@ -246,10 +245,14 @@ describe('Github Curation Service', () => {
         propPath: 'registryData.manifest.license',
         value: ['LICENSE METADATA']
       }
-      processStub.onFirstCall().returns({ isMatching: true, match: [licenseFileMatch] })
-      processStub.onSecondCall().returns({ isMatching: true, match: [licenseMetadataMatch] })
-      processStub.onThirdCall().returns({ isMatching: true, match: [licenseFileMatch, licenseMetadataMatch] })
-      processStub.returns({ isMatching: false })
+      let processCallCount = 0
+      const processStub = mock.fn(() => {
+        processCallCount++
+        if (processCallCount === 1) return { isMatching: true, match: [licenseFileMatch] }
+        if (processCallCount === 2) return { isMatching: true, match: [licenseMetadataMatch] }
+        if (processCallCount === 3) return { isMatching: true, match: [licenseFileMatch, licenseMetadataMatch] }
+        return { isMatching: false }
+      })
       licenseMatcher = { process: processStub }
     })
 
@@ -353,9 +356,9 @@ describe('Github Curation Service', () => {
 
     beforeEach(() => {
       const { service } = setup()
-      mock.method(service, 'getStored', async () => {
+      mock.method(service, 'getStored', async () => ({
         coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
-      })
+      }))
       const licenseMatcher = {
         process: mock.fn(() => matcherResult)
       }
@@ -417,9 +420,9 @@ describe('Github Curation Service', () => {
     beforeEach(() => {
       const definitionService = {
         list: mock.fn(async () => ['npm/npmjs/-/express/5.0.0', 'npm/npmjs/-/express/4.0.0']),
-        getStored: mock.fn(async () => {
+        getStored: mock.fn(async () => ({
           coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
-        })
+        }))
       }
       const harvestStore = {
         getAll: mock.fn(async () => {})

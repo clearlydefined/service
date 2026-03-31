@@ -12,7 +12,7 @@ const dbOptions = {
 }
 
 describe('Mongo Definition Store: Trimmed', () => {
-  before('setup store factory', async function () {
+  before(async function () {
     this.createStore = createStore
   })
 

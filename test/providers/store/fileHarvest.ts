@@ -40,7 +40,7 @@ describe('FileHarvestStore list tool results', () => {
     })
   })
 
-  after(() => AbstractFileStore.prototype.list.restore())
+  after(() => mock.restoreAll())
 
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore()
@@ -144,7 +144,7 @@ describe('getAll and getAllLatest', () => {
     ])  })
 
   it('should handle error', () => {
-    fileStore._getLatestToolVersions = mock.fn().throws(new Error('test error'))
+    fileStore._getLatestToolVersions = mock.fn(() => { throw new Error('test error') })
     fileStore.logger.error = mock.fn()
     const result = fileStore._getListOfLatestFiles(allFiles)
     assert.strictEqual(fileStore.logger.error.mock.callCount() === 1, true)

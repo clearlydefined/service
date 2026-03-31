@@ -31,8 +31,7 @@ describe('Trimmed Mongo Definition store', () => {
   const mongoServer = new MongoMemoryServer()
   let mongoStore
 
-  before('setup database', async function () {
-    this.timeout(10000)
+  before(async function setupDatabase() {
     await mongoServer.start()
     const uri = await mongoServer.getUri()
     const options = {
@@ -43,18 +42,17 @@ describe('Trimmed Mongo Definition store', () => {
     await mongoStore.initialize()
   })
 
-  after('cleanup database', async function () {
-    this.timeout(10000)
+  after(async function cleanupDatabase() {
     await mongoStore.close()
     await mongoServer.stop()
   })
 
-  beforeEach('setup collection', async () => {
+  beforeEach(async () => {
     mongoStore.collection = mongoStore.db.collection(mongoStore.options.collectionName)
     await setupStore(mongoStore)
   })
 
-  afterEach('cleanup collection', async () => {
+  afterEach(async () => {
     await mongoStore.collection.drop()
   })
 
@@ -76,7 +74,7 @@ describe('Trimmed Mongo Definition store', () => {
       const definition = createDefinition('npm/npmjs/-/foo/1.0')
       await mongoStore.store(definition)
       assert.strictEqual(mongoStore.collection.replaceOne.mock.callCount(), 1)
-      const args = mongoStore.collection.replaceOne.args[0]
+      const args = mongoStore.collection.replaceOne.mock.calls[0].arguments
       assert.strictEqual(args[0]['_id'], 'npm/npmjs/-/foo/1.0')
       assert.ok(!args[1].files)
     })
@@ -110,9 +108,9 @@ describe('Trimmed Mongo Definition store', () => {
 
   describe('find', () => {
     it('should call find with right arguments', async () => {
-      mongoStore.collection.find = mock.fn(() => {
+      mongoStore.collection.find = mock.fn(() => ({
         toArray: () => Promise.resolve([])
-      })
+      }))
       await mongoStore.find({ type: 'npm' })
 
       const filter = { 'coordinates.type': 'npm' }
@@ -331,7 +329,7 @@ describe('Trimmed Mongo Definition store', () => {
   describe('trimmed vs. paged definition', () => {
     let pagedMongoStore
 
-    beforeEach('setup database', async () => {
+    beforeEach(async () => {
       const uri = await mongoServer.getUri()
       const options = {
         ...dbOptions,

@@ -29,8 +29,7 @@ const shouldPaginateSearchCorrectly = () => {
     const mongoServer = new MongoMemoryServer()
     let mongoStore
 
-    before('setup database', async function () {
-      this.timeout(10000)
+    before(async function () {
       await mongoServer.start()
       const uri = await mongoServer.getUri()
       const options = {
@@ -41,8 +40,7 @@ const shouldPaginateSearchCorrectly = () => {
       mongoStore = await this.createStore(options, defs)
     })
 
-    after('cleanup database', async function () {
-      this.timeout(10000)
+    after(async function () {
       if (mongoStore) {
         await mongoStore.collection.drop()
         await mongoStore.close()

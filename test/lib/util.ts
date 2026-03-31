@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { describe, it, before, beforeEach, afterEach, mock } from 'node:test'
+import { describe, it, before, after, beforeEach, afterEach, mock } from 'node:test'
 import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
 import { DateTime } from 'luxon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'

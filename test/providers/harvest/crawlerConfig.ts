@@ -46,7 +46,7 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
     const result = serviceFactory({ extra: 'value' })
 
     // Keys fetched
-    assert.strictEqual(configGet.mock.callCount(), 3)
+    assert.strictEqual(configGet.callCount, 3)
     for (const k of ['CRAWLER_API_AUTH_TOKEN', 'CRAWLER_API_URL', 'HARVEST_CACHE_TTL_IN_SECONDS']) {
       assert.ok(configGet.calledWith(k))
     }
@@ -75,8 +75,8 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
       // Only assert TTL behavior and harvester presence to keep tests minimal
       assert.strictEqual(result.received.cacheTTLInSeconds, expected)
       assert.ok(result.received.harvester)
-      assert.ok(cacheBasedCrawlerStub.mock.callCount() === 1)
-      assert.ok(crawlerStub.mock.callCount() === 1)
+      assert.ok(cacheBasedCrawlerStub.calledOnce)
+      assert.ok(crawlerStub.calledOnce)
     })
   }
 })

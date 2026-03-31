@@ -34,13 +34,13 @@ describe('redisConfig.serviceFactory', () => {
   }
 
   function expectRedisCalledWith(expectedOptions, result) {
-    assert.ok(redisStub.mock.callCount() === 1)
-    assert.deepStrictEqual(redisStub.mock.calls[0].arguments[0], expectedOptions)
+    assert.ok(redisStub.calledOnce)
+    assert.deepStrictEqual(redisStub.args[0][0], expectedOptions)
     assert.deepStrictEqual(result, { ok: true, received: expectedOptions })
   }
 
   function expectConfigGetCalled(configSpy, keys) {
-    assert.strictEqual(configSpy.mock.callCount(), keys.length)
+    assert.strictEqual(configSpy.callCount, keys.length)
     for (const k of keys) {
       assert.ok(configSpy.calledWith(k))
     }
@@ -54,7 +54,7 @@ describe('redisConfig.serviceFactory', () => {
     const result = serviceFactory(providedOptions)
 
     expectRedisCalledWith(providedOptions, result)
-    assert.ok(configGetStub.mock.callCount() === 0)
+    assert.ok(configGetStub.notCalled)
   })
 
   it('reads config when options omitted', () => {

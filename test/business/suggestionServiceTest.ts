@@ -157,6 +157,6 @@ function createDefinition(
 }
 
 function setup(definition: Record<string, unknown>, others: Record<string, unknown>[]) {
-  const definitionService = { find: mock.fn(async () => { data: [...others, definition] }) }
+  const definitionService = { find: mock.fn(async () => ({ data: [...others, definition] })) }
   return (SuggestionService as (...args: any[]) => any)(definitionService)
 }

@@ -130,7 +130,7 @@ describe('CacheBasedHarvester', () => {
   describe('isTracked', () => {
     it('calls cache with the correct parameter', async () => {
       await crawler.isTracked(foo.coordinates)
-      assert.ok(cacheMock.get.calledWith(cacheKeyFoo), 'Expected cache get to be called with the correct key')
+      assert.deepStrictEqual(cacheMock.get.mock.calls[0].arguments[0], cacheKeyFoo, 'Expected cache get to be called with the correct key')
     })
 
     it('returns true if the entry is tracked', async () => {
@@ -170,7 +170,7 @@ describe('CacheBasedHarvester', () => {
 
     it('call delete with the correct parameters', async () => {
       await crawler.done(foo.coordinates)
-      assert.ok(cacheMock.delete.calledWith(cacheKeyFoo))
+      assert.deepStrictEqual(cacheMock.delete.mock.calls[0].arguments[0], cacheKeyFoo)
     })
 
     it('deletes the cache for the given coordinates', async () => {

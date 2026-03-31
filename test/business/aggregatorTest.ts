@@ -155,7 +155,7 @@ describe('Aggregation service', () => {
       const summaries = summaryService.summarizeAll(coords, raw)
       const { service } = setupAggregatorWithParams(coordSpec, tools)
       const aggregated = service.process(summaries, coords)
-      assert.strictEqual(aggregated.licensed.declared, `${testcase.name}-${testcase.version}`, testcase.expected)
+      assert.strictEqual(aggregated.licensed.declared, testcase.expected, `${testcase.name}-${testcase.version}`)
     }
   })
 
