@@ -3,6 +3,7 @@
 
 import type { Logger } from '../logging'
 import type { IQueue } from '../queueing'
+import type { ICache } from '../caching'
 import type {
   Definition,
   DefinitionService,
@@ -13,6 +14,17 @@ import type {
 import type { EntityCoordinates } from '../../lib/entityCoordinates'
 import type { MissingDefinitionComputePolicy } from './computePolicy'
 import type { DefinitionVersionCheckerOptions } from './defVersionCheck'
+
+/** Upgrade policy accepted by RecomputeHandler: an UpgradeHandler with optional lifecycle hooks */
+export interface UpgradePolicy extends UpgradeHandler {
+  initialize?(): Promise<void> | void
+  setupProcessing?(
+    definitionService?: DefinitionService,
+    logger?: Logger,
+    once?: boolean,
+    cache?: ICache
+  ): Promise<void> | void
+}
 
 export interface DelayedFactoryOptions {
   queue?: {
@@ -26,7 +38,7 @@ export declare class RecomputeHandler implements IRecomputeHandler {
   currentSchema?: string
 
   constructor(options: {
-    upgradePolicy: UpgradeHandler
+    upgradePolicy: UpgradePolicy
     computePolicy: MissingDefinitionComputePolicy
     logger?: Logger
   })

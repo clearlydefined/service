@@ -11,28 +11,14 @@ const logger = require('../logging/logger')
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
-/** @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler */
 /** @typedef {import('../logging').Logger} Logger */
-/** @typedef {import('../queueing').IQueue} IQueue */
-/** @typedef {import('../caching').ICache} ICache */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('./computePolicy').MissingDefinitionComputePolicy} MissingDefinitionComputePolicy */
-
-/**
- * @typedef {UpgradeHandler & {
- *   initialize?: () => Promise<void> | void,
- *   setupProcessing?: (definitionService?: DefinitionService, logger?: Logger, once?: boolean, cache?: ICache) => Promise<void> | void
- * }} UpgradePolicy
- */
+/** @typedef {import('./recomputeHandler').UpgradePolicy} UpgradePolicy */
 
 /** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy: MissingDefinitionComputePolicy, logger?: Logger }} RecomputeHandlerOptions */
 
-/**
- * @typedef {{
- *   queue?: { upgrade?: () => IQueue, compute?: () => IQueue },
- *   logger?: Logger
- * }} DelayedFactoryOptions
- */
+/** @typedef {import('./recomputeHandler').DelayedFactoryOptions} DelayedFactoryOptions */
 
 class RecomputeHandler {
   static _sharedCacheTtlSeconds = 60 * 5 /* 5 mins */
