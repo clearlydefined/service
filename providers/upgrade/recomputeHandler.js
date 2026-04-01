@@ -25,7 +25,7 @@ const logger = require('../logging/logger')
  * }} UpgradePolicy
  */
 
-/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy?: MissingDefinitionComputePolicy, logger?: Logger }} RecomputeHandlerOptions */
+/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy: MissingDefinitionComputePolicy, logger?: Logger }} RecomputeHandlerOptions */
 
 /**
  * @typedef {{
@@ -40,7 +40,7 @@ class RecomputeHandler {
   /** @param {RecomputeHandlerOptions} options */
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
-    this._computePolicy = options.computePolicy || new OnDemandComputePolicy()
+    this._computePolicy = options.computePolicy
     this._logger = options.logger || logger()
     this._sharedCache = Cache({
       defaultTtlSeconds: RecomputeHandler._sharedCacheTtlSeconds

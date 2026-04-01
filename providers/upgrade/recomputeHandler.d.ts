@@ -27,7 +27,7 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 
   constructor(options: {
     upgradePolicy: UpgradeHandler
-    computePolicy?: MissingDefinitionComputePolicy
+    computePolicy: MissingDefinitionComputePolicy
     logger?: Logger
   })
 
