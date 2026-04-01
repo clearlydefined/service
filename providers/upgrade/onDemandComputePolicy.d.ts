@@ -11,5 +11,5 @@ export declare class OnDemandComputePolicy implements MissingDefinitionComputePo
   compute(
     definitionService: RecomputeContext,
     coordinates: EntityCoordinates
-  ): Promise<import('../../business/definitionService').Definition | undefined>
+  ): Promise<import('../../business/definitionService').Definition>
 }

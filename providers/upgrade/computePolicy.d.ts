@@ -14,5 +14,5 @@ export interface MissingDefinitionComputePolicy {
     once?: boolean,
     cache?: ICache
   ): Promise<void> | void
-  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
 }

@@ -49,7 +49,7 @@ export declare class RecomputeHandler implements IRecomputeHandler {
 
   setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void>
 
-  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
 }
 
 /**
