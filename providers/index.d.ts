@@ -45,9 +45,9 @@ export interface AuthProviders {
 }
 
 /** Paired queue factories used by recompute handlers */
-export interface RecomputeQueueFactories {
-  upgrade: ProviderFactory
-  compute: ProviderFactory
+export interface RecomputeQueueFactories<T = any> {
+  upgrade: ProviderFactory<T>
+  compute: ProviderFactory<T>
 }
 
 /** Provider configuration for upgrade queue */

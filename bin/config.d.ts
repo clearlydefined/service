@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { RecomputeQueueFactories } from '../providers'
 import type { RequestHandler, Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
 import type {
@@ -24,12 +25,6 @@ import type { IQueue } from '../providers/queueing'
 /** Provider instance that supports async initialization */
 interface Initializable {
   initialize(): Promise<void> | void
-}
-
-/** Queue factory pair used by recompute handlers */
-interface RecomputeQueueFactories {
-  upgrade: () => IQueue & Initializable
-  compute: () => IQueue & Initializable
 }
 
 /** Service endpoint URLs */
@@ -85,8 +80,8 @@ interface AppConfig {
     store: () => DefinitionStore & Initializable
   }
   upgrade: {
-    queue: RecomputeQueueFactories
-    service: (options: { queue: RecomputeQueueFactories }) => RecomputeHandler & Initializable
+    queue: RecomputeQueueFactories<IQueue & Initializable>
+    service: (options: { queue: RecomputeQueueFactories<IQueue & Initializable> }) => RecomputeHandler & Initializable
   }
   attachment: {
     store: () => AttachmentStore & Initializable
