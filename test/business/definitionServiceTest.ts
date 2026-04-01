@@ -13,10 +13,8 @@ import Curation from '../../lib/curation.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { setIfValue } from '../../lib/utils.js'
 import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
-import DefinitionQueueUpgrader from '../../providers/upgrade/defUpgradeQueue.js'
-import { DefinitionVersionChecker } from '../../providers/upgrade/defVersionCheck.js'
 import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
-import { delayedFactory } from '../../providers/upgrade/recomputeHandler.js'
+import { defaultFactory, delayedFactory } from '../../providers/upgrade/recomputeHandler.js'
 import validator from '../../schemas/validator.js'
 import { createSilentLogger } from '../helpers/mockLogger.ts'
 
@@ -495,22 +493,6 @@ describe('Integration test', () => {
 
     const handleVersionedDefinition = () => {
       describe('verify schema version', () => {
-        it('logs and harvests new definitions with empty tools', async () => {
-          const { service } = setupServiceForUpgrade(null, recomputeHandler)
-          service._harvest = sinon.stub()
-          await service.get(coordinates)
-          expect(service._harvest.calledOnce).to.be.true
-          expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
-        })
-
-        it('computes if definition does not exist', async () => {
-          const { service } = setupServiceForUpgrade(null, recomputeHandler)
-          service.computeStoreAndCurate = sinon.stub().resolves(definition)
-          await service.get(coordinates)
-          expect(service.computeStoreAndCurate.calledOnce).to.be.true
-          expect(service.computeStoreAndCurate.getCall(0).args[0]).to.eq(coordinates)
-        })
-
         it('returns the up-to-date definition', async () => {
           const { service } = setupServiceForUpgrade(definition, recomputeHandler)
           service.computeStoreAndCurate = sinon.stub()
@@ -521,15 +503,29 @@ describe('Integration test', () => {
       })
     }
 
-    describe('schema version check', () => {
+    describe('on demand upgrade', () => {
       beforeEach(async () => {
-        recomputeHandler = new DefinitionVersionChecker({ logger })
+        recomputeHandler = defaultFactory({ logger })
         await recomputeHandler.initialize()
-        recomputeHandler.compute = (definitionService, recomputeCoordinates) =>
-          definitionService.computeStoreAndCurate(recomputeCoordinates)
       })
 
       handleVersionedDefinition()
+
+      it('logs and harvests new definitions with empty tools', async () => {
+        const { service } = setupServiceForUpgrade(null, recomputeHandler)
+        service._harvest = sinon.stub()
+        await service.get(coordinates)
+        expect(service._harvest.calledOnce).to.be.true
+        expect(service._harvest.getCall(0).args[0]).to.eq(coordinates)
+      })
+
+      it('computes if definition does not exist', async () => {
+        const { service } = setupServiceForUpgrade(null, recomputeHandler)
+        service.computeStoreAndCurate = sinon.stub().resolves(definition)
+        await service.get(coordinates)
+        expect(service.computeStoreAndCurate.calledOnce).to.be.true
+        expect(service.computeStoreAndCurate.getCall(0).args[0]).to.eq(coordinates)
+      })
 
       context('with stale definitions', () => {
         it('recomputes a definition with the updated schema version', async () => {
@@ -548,11 +544,8 @@ describe('Integration test', () => {
       let staleDef
       beforeEach(async () => {
         queue = memoryQueue.upgrade()
-        const queueFactory = sinon.stub().returns(queue)
-        recomputeHandler = new DefinitionQueueUpgrader({ logger, queue: queueFactory })
+        recomputeHandler = delayedFactory({ logger, queue: { upgrade: () => queue, compute: memoryQueue.compute } })
         await recomputeHandler.initialize()
-        recomputeHandler.compute = (definitionService, recomputeCoordinates) =>
-          definitionService.computeStoreAndCurate(recomputeCoordinates)
         staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
       })
 
@@ -654,7 +647,7 @@ describe('Integration test', () => {
     })
   })
 
-  describe('get() with delayed compute e2e', () => {
+  describe('get() with delayed compute integration', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     let recomputeHandler
     let queue
@@ -751,19 +744,23 @@ function setupServiceForUpgrade(definition, recomputeHandler) {
   return { service, store }
 }
 
-function setupWithDelegates(
-  curator: Record<string, unknown>,
-  harvestStore: Record<string, unknown>,
-  summary: Record<string, unknown>,
-  aggregator: Record<string, unknown>,
-  store: Record<string, sinon.SinonStub> = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
-  recomputeHandler: Record<string, unknown> = {
+function createPassthroughRecomputeHandler() {
+  return {
     validate: (def: unknown) => Promise.resolve(def),
     initialize: () => Promise.resolve(),
     setupProcessing: () => Promise.resolve(),
     compute: (definitionService: any, recomputeCoordinates: unknown) =>
       definitionService.computeStoreAndCurate(recomputeCoordinates)
   }
+}
+
+function setupWithDelegates(
+  curator: Record<string, unknown>,
+  harvestStore: Record<string, unknown>,
+  summary: Record<string, unknown>,
+  aggregator: Record<string, unknown>,
+  store: Record<string, sinon.SinonStub> = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() },
+  recomputeHandler: Record<string, unknown> = createPassthroughRecomputeHandler()
 ): any {
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const cache = { delete: sinon.stub(), get: sinon.stub(), set: sinon.stub() }
@@ -833,13 +830,7 @@ function setup(
   const harvestService = mockHarvestService()
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const recomputeHandler = {
-    validate: (def: unknown) => Promise.resolve(def),
-    initialize: () => Promise.resolve(),
-    setupProcessing: () => Promise.resolve(),
-    compute: (definitionService: any, recomputeCoordinates: unknown) =>
-      definitionService.computeStoreAndCurate(recomputeCoordinates)
-  }
+  const recomputeHandler = createPassthroughRecomputeHandler()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test accesses internal service properties
   const service: any = (DefinitionService as (...args: any[]) => any)(
     harvestStore,
