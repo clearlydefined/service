@@ -17,11 +17,7 @@ import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputeP
 import memoryQueueConfig from '../../../providers/upgrade/memoryQueueConfig.js'
 import { OnDemandComputePolicy } from '../../../providers/upgrade/onDemandComputePolicy.js'
 import { defaultFactory, delayedFactory, RecomputeHandler } from '../../../providers/upgrade/recomputeHandler.js'
-import loggerSingleton from '../../../providers/logging/logger.js'
 import { createMockLogger, type StubbedLogger } from '../../helpers/mockLogger.ts'
-
-// MemoryQueue uses the global logger singleton — prime it so tests can run in isolation
-before(() => loggerSingleton(createMockLogger()))
 
 const TEST_COORDINATES = 'npm/npmjs/-/leftpad/1.0.0'
 
@@ -215,6 +211,7 @@ describe('delayedFactory', () => {
 
 describe('shared cache', () => {
   it('deduplicates compute across upgrade and compute queues for same coordinates', async () => {
+    // Arrange: wire both queues through a single handler with shared cache
     const upgradeQueue = memoryQueueConfig.upgrade()
     const computeQueue = memoryQueueConfig.compute()
     const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
@@ -224,6 +221,7 @@ describe('shared cache', () => {
       queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
     })
 
+    // Simulate storage: first compute "stores" the definition so subsequent lookups find it
     const storedDef = { coordinates, _meta: { schemaVersion: '1.7.0' } }
     const getStored = sinon.stub().resolves(undefined)
     const computeStoreAndCurate = sinon.stub().callsFake(async () => {
@@ -235,6 +233,7 @@ describe('shared cache', () => {
       computeStoreAndCurate
     } as unknown as DefinitionService
 
+    // Act: enqueue same coordinates into both queues, then process both
     await handler.initialize()
     await upgradeQueue.queue(
       Buffer.from(JSON.stringify({ coordinates, _meta: { schemaVersion: '0.0.1' } })).toString('base64')
@@ -242,6 +241,8 @@ describe('shared cache', () => {
     await computeQueue.queue(Buffer.from(JSON.stringify({ coordinates })).toString('base64'))
     await handler.setupProcessing(definitionService, logger, true)
 
+    // Assert: first processor computes and "stores" (getStored now returns storedDef).
+    // Second processor sees stored def after shared cache lock releases, so it skips recompute.
     expect(computeStoreAndCurate.calledOnce).to.be.true
   })
 })

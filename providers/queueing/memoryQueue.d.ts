@@ -7,6 +7,7 @@ import type { Logger } from '../logging'
 export interface MemoryQueueOptions {
   /** Decode message text before JSON.parse. Defaults to identity function. */
   decoder?: (text: string) => string
+  logger?: Logger
 }
 
 export declare class MemoryQueue implements IQueue {
