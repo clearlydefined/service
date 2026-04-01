@@ -24,8 +24,4 @@ export declare class DelayedComputePolicy implements MissingDefinitionComputePol
   ): Promise<void>
 
   compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
-
-  protected _queueCompute(coordinates: EntityCoordinates): Promise<void>
-
-  protected _constructMessage(coordinates: EntityCoordinates): string
 }
