@@ -123,7 +123,7 @@ class DefinitionUpgrader {
  * @param {Logger} _logger
  * @param {boolean} [once]
  * @param {UpgradeHandler} [_upgradePolicy]
- * @param {ICache} [sharedCache]
+ * @param {ICache} [cache]
  */
 function setup(
   _queue,
@@ -131,9 +131,9 @@ function setup(
   _logger,
   once = false,
   _upgradePolicy = factory({ logger: _logger }),
-  sharedCache
+  cache
 ) {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy, sharedCache)
+  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy, cache)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
 }

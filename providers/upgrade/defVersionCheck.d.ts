@@ -37,7 +37,7 @@ export declare class DefinitionVersionChecker implements UpgradeHandler {
   initialize(): Promise<void>
 
   /** No-op setup (exists for interface compatibility with subclass overrides) */
-  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean, sharedCache?: ICache): void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean, cache?: ICache): void
 
   /**
    * Extracts a string representation of coordinates from a definition.

@@ -55,10 +55,10 @@ class DefinitionVersionChecker {
    * @param {import('../../business/definitionService').DefinitionService} [_definitionService]
    * @param {Logger} [_logger]
    * @param {boolean} [_once]
-   * @param {ICache} [_sharedCache]
+   * @param {ICache} [_cache]
    */
-  setupProcessing(_definitionService, _logger, _once, _sharedCache) {
-    void [_definitionService, _logger, _once, _sharedCache]
+  setupProcessing(_definitionService, _logger, _once, _cache) {
+    void [_definitionService, _logger, _once, _cache]
     //do nothing for set up processing
   }
 

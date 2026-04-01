@@ -16,12 +16,7 @@ export declare class DelayedComputePolicy implements MissingDefinitionComputePol
 
   initialize(): Promise<void>
 
-  setupProcessing(
-    definitionService: DefinitionService,
-    logger: Logger,
-    once?: boolean,
-    sharedCache?: ICache
-  ): Promise<void>
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean, cache?: ICache): Promise<void>
 
   compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition>
 }

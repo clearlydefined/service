@@ -44,14 +44,9 @@ declare class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param definitionService - The service used to recompute definitions
    * @param logger - Logger instance
    * @param once - If true, process one batch and stop (for testing)
-   * @param sharedCache - Optional shared lock cache used across queue processors
+   * @param cache - Optional lock cache
    */
-  setupProcessing(
-    definitionService: DefinitionService,
-    logger: Logger,
-    once?: boolean,
-    sharedCache?: ICache
-  ): Promise<void>
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean, cache?: ICache): Promise<void>
 }
 
 export default DefinitionQueueUpgrader

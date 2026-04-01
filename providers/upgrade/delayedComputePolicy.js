@@ -29,11 +29,11 @@ class DelayedComputePolicy {
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {boolean} [once]
-   * @param {ICache} [sharedCache]
+   * @param {ICache} [cache]
    */
-  setupProcessing(definitionService, logger, once, sharedCache) {
+  setupProcessing(definitionService, logger, once, cache) {
     const upgradePolicy = new SkipUpgradePolicy()
-    return setup(this._compute, definitionService, logger, once, upgradePolicy, sharedCache)
+    return setup(this._compute, definitionService, logger, once, upgradePolicy, cache)
   }
 
   /**
