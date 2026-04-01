@@ -16,7 +16,9 @@ import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
 import DefinitionQueueUpgrader from '../../providers/upgrade/defUpgradeQueue.js'
 import { DefinitionVersionChecker } from '../../providers/upgrade/defVersionCheck.js'
 import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
+import { delayedFactory } from '../../providers/upgrade/recomputeHandler.js'
 import validator from '../../schemas/validator.js'
+import { createSilentLogger } from '../helpers/mockLogger.ts'
 
 const { set } = lodash
 chai.use(deepEqualInAnyOrder)
@@ -599,6 +601,94 @@ describe('Integration test', () => {
           expect(store.store.calledOnce).to.be.true
         })
       })
+    })
+  })
+
+  describe('get() → recomputeHandler interaction', () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
+    let recomputeHandler
+    let service
+
+    beforeEach(() => {
+      recomputeHandler = {
+        validate: sinon.stub(),
+        compute: sinon.stub().resolves(definition),
+        initialize: () => Promise.resolve(),
+        setupProcessing: () => Promise.resolve()
+      }
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('returns definition without calling compute when validate passes', async () => {
+      recomputeHandler.validate.resolves(definition)
+      ;({ service } = setupServiceForUpgrade(definition, recomputeHandler))
+      sinon.stub(service, 'computeAndStore')
+
+      const result = await service.get(coordinates)
+      expect(result).to.deep.equal(definition)
+      expect(recomputeHandler.compute.notCalled).to.be.true
+      expect(service.computeAndStore.notCalled).to.be.true
+    })
+
+    it('calls computeAndStore when force=true regardless of stored definition', async () => {
+      ;({ service } = setupServiceForUpgrade(definition, recomputeHandler))
+      sinon.stub(service, 'computeAndStore').resolves(definition)
+
+      await service.get(coordinates, null, true)
+      expect(service.computeAndStore.calledOnce).to.be.true
+      expect(recomputeHandler.compute.notCalled).to.be.true
+    })
+
+    it('calls recomputeHandler.compute when no stored definition and force=false', async () => {
+      recomputeHandler.validate.resolves(null)
+      ;({ service } = setupServiceForUpgrade(null, recomputeHandler))
+      sinon.stub(service, 'computeAndStore')
+
+      await service.get(coordinates)
+      expect(recomputeHandler.compute.calledOnce).to.be.true
+      expect(service.computeAndStore.notCalled).to.be.true
+    })
+  })
+
+  describe('get() with delayed compute e2e', () => {
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+    let recomputeHandler
+    let queue
+    const logger = createSilentLogger()
+
+    beforeEach(async () => {
+      queue = memoryQueue.compute()
+      recomputeHandler = delayedFactory({ logger, queue: { compute: () => queue, upgrade: memoryQueue.upgrade } })
+      await recomputeHandler.initialize()
+      recomputeHandler.currentSchema = '1.7.0'
+    })
+
+    it('returns placeholder when no definition exists, then returns real definition after queue processed', async () => {
+      const computedDef = { ...createDefinition(null, null, ['clearlydefined']), coordinates }
+      const { service, store } = setupServiceForUpgrade(computedDef, recomputeHandler)
+      store.get.resolves(null) // no stored definition initially — triggers delayed compute path
+
+      const placeholder = await service.get(coordinates)
+      expect(placeholder).to.exist
+      expect(queue.data.length).to.eq(1)
+
+      await recomputeHandler.setupProcessing(service, logger, true)
+      expect(queue.data.length).to.eq(0)
+
+      const result = await service.get(coordinates)
+      expect(result._meta.schemaVersion).to.eq('1.7.0')
+      expect(store.store.calledOnce).to.be.true
+    })
+
+    it('propagates enqueue error without returning a placeholder', async () => {
+      queue.queue = sinon.stub().rejects(new Error('compute queue unavailable'))
+      const { service } = setupServiceForUpgrade(null, recomputeHandler)
+
+      await expect(service.get(coordinates)).to.be.rejectedWith('compute queue unavailable')
     })
   })
 
