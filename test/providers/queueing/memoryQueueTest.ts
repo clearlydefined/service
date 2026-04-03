@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
+import { describe, it, before, beforeEach } from 'node:test'
 import MemoryQueue from '../../../providers/queueing/memoryQueue.js'
 
 describe('memory queue operations', () => {
   let memQueue
-  context('with unecoded messages', () => {
+  describe('with unecoded messages', () => {
     beforeEach(() => {
       memQueue = MemoryQueue()
     })
@@ -77,7 +78,7 @@ describe('memory queue operations', () => {
     })
   })
 
-  context('with encoded messages', () => {
+  describe('with encoded messages', () => {
     beforeEach(() => {
       memQueue = MemoryQueue({
         decoder: text => Buffer.from(text, 'base64').toString('utf8')

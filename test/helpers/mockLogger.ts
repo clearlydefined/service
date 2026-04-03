@@ -1,26 +1,26 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import sinon from 'sinon'
+import { mock } from 'node:test'
 import type { Logger } from '../../providers/logging/index.js'
 
-/** Sinon-stubbed version of the Logger interface for test assertions */
-export interface StubbedLogger extends Logger {
-  info: sinon.SinonStub
-  error: sinon.SinonStub
-  warn: sinon.SinonStub
-  debug: sinon.SinonStub
-  log: sinon.SinonStub
+/** Mock version of the Logger interface for test assertions */
+export interface MockedLogger extends Logger {
+  info: ReturnType<typeof mock.fn>
+  error: ReturnType<typeof mock.fn>
+  warn: ReturnType<typeof mock.fn>
+  debug: ReturnType<typeof mock.fn>
+  log: ReturnType<typeof mock.fn>
 }
 
-/** Creates a fully stubbed Logger instance for use in tests */
-export function createMockLogger(): StubbedLogger {
+/** Creates a fully mocked Logger instance for use in tests */
+export function createMockLogger(): MockedLogger {
   return {
-    info: sinon.stub(),
-    error: sinon.stub(),
-    warn: sinon.stub(),
-    debug: sinon.stub(),
-    log: sinon.stub()
+    info: mock.fn(),
+    error: mock.fn(),
+    warn: mock.fn(),
+    debug: mock.fn(),
+    log: mock.fn()
   }
 }
 

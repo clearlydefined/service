@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 import ResultCoordinates from '../../lib/resultCoordinates.js'
 
 describe('ResultCoordinates', () => {
@@ -29,7 +30,7 @@ describe('ResultCoordinates', () => {
 
     for (const input of Object.getOwnPropertyNames(data)) {
       const result = ResultCoordinates.fromUrn(input)
-      expect(result).to.deep.equal(data[input])
+      assert.deepStrictEqual(result, data[input])
     }
   })
 })

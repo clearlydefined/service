@@ -1,9 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
-import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import definitionsRoutes from '../../routes/definitions-1.0.0.js'
 
@@ -14,10 +14,10 @@ describe('Definition v1.0.0 route', () => {
     const definitionService = createDefinitionService()
     const router = createRoutes(definitionService)
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(definitionService.get.calledOnce).to.be.true
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(definitionService.get.mock.callCount() === 1, true)
     const coordinates = EntityCoordinates.fromString('go/golang/github.com%2Fquasilyte%2Fregex/syntax/v0.0.0')
-    expect(definitionService.get.calledOnceWith(coordinates))
+    assert.deepStrictEqual(definitionService.get.mock.calls[0].arguments[0], coordinates)
   })
 
   it('forces a recompute if requested', async () => {
@@ -26,9 +26,9 @@ describe('Definition v1.0.0 route', () => {
     const definitionService = createDefinitionService()
     const router = createRoutes(definitionService)
     await router._getDefinition(request, response)
-    expect(response.statusCode).to.be.eq(200)
+    assert.strictEqual(response.statusCode, 200)
     const getDefinitionSpy = definitionService.get
-    expect(getDefinitionSpy.args[0][2]).to.be.true
+    assert.strictEqual(getDefinitionSpy.mock.calls[0].arguments[2], true)
   })
 })
 
@@ -48,13 +48,13 @@ function createGetForceComputeRequest() {
   })
 }
 
-function createRoutes(definition: Record<string, sinon.SinonStub>): Record<string, (...args: any[]) => any> {
+function createRoutes(definition: Record<string, ReturnType<typeof mock.fn>>): Record<string, (...args: any[]) => any> {
   return (definitionsRoutes as (...args: any[]) => any)(definition, true)
 }
 
 function createDefinitionService() {
   return {
-    computeAndStore: sinon.stub(),
-    get: sinon.stub()
+    computeAndStore: mock.fn(),
+    get: mock.fn()
   }
 }

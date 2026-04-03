@@ -1,9 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import assert from 'node:assert'
 import express from 'express'
-import sinon from 'sinon'
+import assert from 'node:assert'
+import { after, afterEach, before, beforeEach, describe, it, mock } from 'node:test'
 import supertest from 'supertest'
 import { GenericContainer } from 'testcontainers'
 import {
@@ -119,14 +119,10 @@ describe('Rate Limiter', () => {
 
     describe('Redis Based', () => {
       let options: any
-      beforeEach(() => {
+      beforeEach(t => {
         const cachingService = new RedisCache({ logger } as any)
-        sinon.stub(cachingService, 'client').value({})
+        t.mock.property(cachingService, 'client', {})
         options = { config: { limits }, cachingService, logger }
-      })
-
-      afterEach(() => {
-        sinon.restore()
       })
 
       it('builds a redis based rate limiter', () => {
@@ -169,19 +165,19 @@ describe('Rate Limiter', () => {
     let cachingService: any
 
     beforeEach(() => {
-      cachingService = { initialize: sinon.stub().resolves() }
+      cachingService = { initialize: mock.fn(async () => {}) }
     })
 
     it('creates api rate limit middleware function', () => {
       const middleware = setupApiRateLimiterAfterCachingInit({}, cachingService, logger)
       assert.equal(typeof middleware, 'function')
-      assert.ok(cachingService.initialize.notCalled)
+      assert.strictEqual(cachingService.initialize.mock.callCount(), 0)
     })
 
     it('creates batch api rate limit middleware function', () => {
       const middleware = setupBatchApiRateLimiterAfterCachingInit({}, cachingService, logger)
       assert.equal(typeof middleware, 'function')
-      assert.ok(cachingService.initialize.notCalled)
+      assert.strictEqual(cachingService.initialize.mock.callCount(), 0)
     })
   })
 
@@ -217,13 +213,12 @@ describe('Rate Limiter', () => {
       verifyRateLimiting()
     })
 
-    xdescribe('Redis Based Rate Limiter', () => {
+    describe.skip('Redis Based Rate Limiter', () => {
       let container: any
       let redisClient: any
       let redisOpts: any
 
-      before(async function () {
-        this.timeout(15000)
+      before(async () => {
         ;({ redisOpts, container } = await startRedis())
         redisClient = await RedisCache.initializeClient(redisOpts, logger)
         const rateLimiter = new RedisBasedRateLimiter({ limit, redis: { client: redisClient, prefix: 'test' }, logger })
@@ -238,14 +233,13 @@ describe('Rate Limiter', () => {
       verifyRateLimiting()
     })
 
-    xdescribe('MiddlewareDelegate - Redis Based', () => {
+    describe.skip('MiddlewareDelegate - Redis Based', () => {
       const config = { limits: { windowSeconds: 1, max: 1 } }
       let container: any
       let cachingService: any
       let redisOpts: any
 
-      before(async function () {
-        this.timeout(15000)
+      before(async () => {
         ;({ container, redisOpts } = await startRedis())
         cachingService = new RedisCache({ ...redisOpts, logger })
         const middleware = setupApiRateLimiterAfterCachingInit(config, cachingService, logger)

@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict'
+import { describe, it, before, after } from 'node:test'
 // @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -5,7 +7,6 @@
 import fsPromise from 'node:fs/promises'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { expect } from 'chai'
 import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
@@ -28,8 +29,7 @@ const shouldPaginateSearchCorrectly = () => {
     const mongoServer = new MongoMemoryServer()
     let mongoStore
 
-    before('setup database', async function () {
-      this.timeout(10000)
+    before(async function () {
       await mongoServer.start()
       const uri = await mongoServer.getUri()
       const options = {
@@ -40,8 +40,7 @@ const shouldPaginateSearchCorrectly = () => {
       mongoStore = await this.createStore(options, defs)
     })
 
-    after('cleanup database', async function () {
-      this.timeout(10000)
+    after(async function () {
       if (mongoStore) {
         await mongoStore.collection.drop()
         await mongoStore.close()
@@ -60,7 +59,7 @@ const shouldPaginateSearchCorrectly = () => {
       ]
       const query = {}
       const defs = await fetchAll(mongoStore, query, 5)
-      expect(defs.length).to.be.equal(12)
+      assert.strictEqual(defs.length, 12)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -72,7 +71,7 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchUpToNTimes(mongoStore, query, 1)
-      expect(defs.length).to.be.equal(1)
+      assert.strictEqual(defs.length, 1)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -91,10 +90,10 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].described.releaseDate).not.to.be.ok
-      expect(defs[3].described.releaseDate).to.be.ok
+      assert.ok(!defs[0].described.releaseDate)
+      assert.ok(defs[3].described.releaseDate)
 
-      expect(defs.length).to.be.equal(12)
+      assert.strictEqual(defs.length, 12)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -105,7 +104,7 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: true
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs.length).to.be.equal(12)
+      assert.strictEqual(defs.length, 12)
       verifyUniqueCoordinates(defs)
     })
 
@@ -123,9 +122,9 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].described.releaseDate).not.to.be.ok
-      expect(defs[1].described.releaseDate).to.be.ok
-      expect(defs.length).to.be.equal(12)
+      assert.ok(!defs[0].described.releaseDate)
+      assert.ok(defs[1].described.releaseDate)
+      assert.strictEqual(defs.length, 12)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -136,7 +135,7 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: true
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs.length).to.be.equal(12)
+      assert.strictEqual(defs.length, 12)
       verifyUniqueCoordinates(defs)
     })
 
@@ -154,9 +153,9 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].coordinates.namespace).not.to.be.ok
-      expect(defs[2].coordinates.namespace).to.be.ok
-      expect(defs.length).to.be.equal(4)
+      assert.ok(!defs[0].coordinates.namespace)
+      assert.ok(defs[2].coordinates.namespace)
+      assert.strictEqual(defs.length, 4)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -175,7 +174,7 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: true
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs.length).to.be.equal(4)
+      assert.strictEqual(defs.length, 4)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -194,11 +193,11 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs.length).to.be.equal(4)
-      expect(defs[0].scores.tool).to.be.equal(80)
-      expect(defs[1].scores.tool).to.be.equal(84)
-      expect(defs[2].scores.tool).to.be.equal(90)
-      expect(defs[3].scores.tool).to.be.equal(94)
+      assert.strictEqual(defs.length, 4)
+      assert.strictEqual(defs[0].scores.tool, 80)
+      assert.strictEqual(defs[1].scores.tool, 84)
+      assert.strictEqual(defs[2].scores.tool, 90)
+      assert.strictEqual(defs[3].scores.tool, 94)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -217,7 +216,7 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: true
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs.length).to.be.equal(4)
+      assert.strictEqual(defs.length, 4)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -232,13 +231,13 @@ async function loadDefinitions() {
 
 function verifyExpectedCoordinates(allCoordinates, expected) {
   const firstCoordinates = allCoordinates.slice(0, expected.length)
-  expect(firstCoordinates).to.be.deep.equal(expected)
+  assert.deepStrictEqual(firstCoordinates, expected)
 }
 
 function verifyUniqueCoordinates(defs) {
   const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates).toString())
   const uniqTokens = uniq(allCoordinates)
-  expect(uniqTokens.length).to.be.equal(allCoordinates.length)
+  assert.strictEqual(uniqTokens.length, allCoordinates.length)
   return allCoordinates
 }
 

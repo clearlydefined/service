@@ -1,7 +1,13 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
 const EntityCoordinates = require('../../../../lib/entityCoordinates')
 const proxyquire = require('proxyquire')
 
@@ -30,8 +36,8 @@ describe('ListBasedFilterConfig', () => {
       it('should not block any coordinates when given "[]"', () => {
         const filter = factory('[]')
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
       })
     })
 
@@ -39,14 +45,14 @@ describe('ListBasedFilterConfig', () => {
       it('should block coordinates matching blacklist entries', () => {
         const filter = factory(JSON.stringify(['npm/npmjs/-/left-pad', 'git/github/org/name']))
 
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.true
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), true)
       })
 
       it('should not block coordinates not in blacklist', () => {
         const filter = factory(JSON.stringify(['npm/npmjs/-/left-pad', 'git/github/org/name']))
 
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
       })
     })
 
@@ -54,38 +60,38 @@ describe('ListBasedFilterConfig', () => {
       it('should default to empty blacklist for non-JSON string', () => {
         const filter = factory('npm/npmjs/-/left-pad')
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
       })
 
       it('should default to empty blacklist for malformed JSON', () => {
         const filter = factory('{invalid json}')
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
       })
 
       it('should default to empty blacklist for non-array JSON', () => {
         const filter = factory('{"key": "value"}')
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
       })
 
       it('should default to empty blacklist for null', () => {
         const filter = factory(null)
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
       })
 
       it('should default to empty blacklist for undefined', () => {
         const filter = factory(undefined)
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
       })
 
       it('should default to empty blacklist for empty string', () => {
         const filter = factory('')
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
       })
     })
 
@@ -94,9 +100,9 @@ describe('ListBasedFilterConfig', () => {
         const mixed = JSON.stringify(['npm/npmjs/-/left-pad', 123, null, {}, 'git/github/org/name'])
         const filter = factory(mixed)
 
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
       })
     })
 
@@ -109,8 +115,8 @@ describe('ListBasedFilterConfig', () => {
         })
 
         const filter = factoryFromEnv()
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('git/github/org/other/1.0.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/other/1.0.0')), false)
       })
     })
   })

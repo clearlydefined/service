@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import lodash from 'lodash'
 import DefinitionService from '../../business/definitionService.js'
 import { setIfValue } from '../../lib/utils.js'
@@ -13,7 +14,7 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition('MIT')
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(60)
+    assert.strictEqual(scores.licensedScore.total, 60)
   })
 
   it('computes full score', async () => {
@@ -34,15 +35,15 @@ describe('Definition Service Scoring', () => {
     })
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(100)
-    expect(scores.describedScore.total).to.be.equal(100)
+    assert.strictEqual(scores.licensedScore.total, 100)
+    assert.strictEqual(scores.describedScore.total, 100)
   })
 
   it('computes zero score for empty definitions', async () => {
     const definition = createDefinition(undefined)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 0)
   })
 
   it('does not give value to file with only license', async () => {
@@ -50,7 +51,7 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition(undefined, files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 0)
   })
 
   it('does not give value to file with only copyrights and skips non-core files', async () => {
@@ -59,7 +60,7 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition(undefined, files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 0)
   })
 
   it('correctly apportions score based on number of clearly defined files', async () => {
@@ -72,8 +73,8 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition(undefined, files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(6) // 25% (1 of 4 files) of 25 points
-    expect(scores.licensedScore.discovered).to.be.equal(6)
+    assert.strictEqual(scores.licensedScore.total, 6) // 25% (1 of 4 files) of 25 points
+    assert.strictEqual(scores.licensedScore.discovered, 6)
   })
 
   it('correctly matches discovered and declared licenses', async () => {
@@ -85,16 +86,16 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition('MIT OR GPL-3.0 OR (MIT AND GPL-3.0) OR Apache-2.0', files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(60)
-    expect(scores.licensedScore.consistency).to.be.equal(15)
+    assert.strictEqual(scores.licensedScore.total, 60)
+    assert.strictEqual(scores.licensedScore.consistency, 15)
   })
 
   it('correctly filters NOASSERTION licenses', async () => {
     const definition = createDefinition('NOASSERTION')
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(15)
-    expect(scores.licensedScore.declared).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 15)
+    assert.strictEqual(scores.licensedScore.declared, 0)
   })
 
   it('correctly finds mismatched discovered and declared licenses', async () => {
@@ -106,8 +107,8 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition('MIT OR GPL-3.0 OR (MIT AND GPL-3.0)', files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(45)
-    expect(scores.licensedScore.consistency).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 45)
+    assert.strictEqual(scores.licensedScore.consistency, 0)
   })
 
   it('correctly matches licenses and texts', async () => {
@@ -121,8 +122,8 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition('Apache-2.0', files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(60)
-    expect(scores.licensedScore.texts).to.be.equal(15)
+    assert.strictEqual(scores.licensedScore.total, 60)
+    assert.strictEqual(scores.licensedScore.texts, 15)
   })
 
   it('correctly skips license files that are recognized as license texts', async () => {
@@ -136,8 +137,8 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition('Apache-2.0', files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(45)
-    expect(scores.licensedScore.texts).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 45)
+    assert.strictEqual(scores.licensedScore.texts, 0)
   })
 
   it('correctly finds mismatched licenses and texts', async () => {
@@ -149,8 +150,8 @@ describe('Definition Service Scoring', () => {
     const definition = createDefinition(null, files)
     const service = createService()
     const scores = service._computeScores(definition)
-    expect(scores.licensedScore.total).to.be.equal(0)
-    expect(scores.licensedScore.texts).to.be.equal(0)
+    assert.strictEqual(scores.licensedScore.total, 0)
+    assert.strictEqual(scores.licensedScore.texts, 0)
   })
 })
 

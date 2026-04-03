@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
+import assert from 'node:assert/strict'
+import { beforeEach, describe, it, mock } from 'node:test'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import PypiCoordinatesMapper from '../../lib/pypiCoordinatesMapper.js'
 
@@ -17,50 +17,58 @@ function mockPypiAnswer(name: string) {
 
 describe('PypiCoordinatesMapper', () => {
   let coordinatesMapper: any
-  let fetchStub: sinon.SinonStub
+  let fetchStub: ReturnType<typeof mock.fn>
   beforeEach(() => {
-    fetchStub = sinon.stub()
+    fetchStub = mock.fn()
     coordinatesMapper = new PypiCoordinatesMapper(fetchStub)
   })
 
   it('should map name containing "_" mapped to "-"', async () => {
-    fetchStub.resolves(mockPypiAnswer('0-core-client'))
+    fetchStub.mock.mockImplementation(async () => mockPypiAnswer('0-core-client'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0_core_client'))
-    expect(mapped.name).to.be.eq('0-core-client')
+    assert.strictEqual(mapped.name, '0-core-client')
   })
 
   it('should map name containing "." mapped to "-"', async () => {
-    fetchStub.resolves(mockPypiAnswer('0-core-client'))
+    fetchStub.mock.mockImplementation(async () => mockPypiAnswer('0-core-client'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0.core_client'))
-    expect(mapped.name).to.be.eq('0-core-client')
+    assert.strictEqual(mapped.name, '0-core-client')
   })
 
   it('should map name containing "-" mapped to "_"', async () => {
-    fetchStub.resolves(mockPypiAnswer('backports.ssl_match_hostname'))
+    fetchStub.mock.mockImplementation(async () => mockPypiAnswer('backports.ssl_match_hostname'))
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('Backports.ssl-match-hostname'))
-    expect(mapped.name).to.be.eq('backports.ssl_match_hostname')
+    assert.strictEqual(mapped.name, 'backports.ssl_match_hostname')
   })
 
   it('should return null when pypi api returns 404', async () => {
-    fetchStub.throws({ statusCode: 404 })
+    fetchStub.mock.mockImplementation(() => {
+      throw { statusCode: 404 }
+    })
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('blivet-gui'))
-    expect(mapped).to.be.null
+    assert.strictEqual(mapped, null)
   })
 
-  it('should handle name not resolved', async () => {
-    sinon.stub(coordinatesMapper, '_resolve').resolves(undefined)
+  it('should handle name not resolved', async t => {
+    t.mock.method(coordinatesMapper, '_resolve', async () => undefined)
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('0_core_client'))
-    expect(mapped).to.be.undefined
+    assert.strictEqual(mapped, undefined)
   })
 
-  it('should handle no mapping necessary', async () => {
-    sinon.stub(coordinatesMapper, '_resolve').rejects('Should not be called')
+  it('should handle no mapping necessary', async t => {
+    t.mock.method(coordinatesMapper, '_resolve', async () => {
+      throw new Error('Should not be called')
+    })
     const mapped = await coordinatesMapper.map(mockPypiCoordinates('backports'))
-    expect(mapped).to.be.null
+    assert.strictEqual(mapped, null)
   })
 
   describe('should handle invalid package names and skip network calls', () => {
-    beforeEach(() => fetchStub.rejects('Should not be called'))
+    beforeEach(() =>
+      fetchStub.mock.mockImplementation(() => {
+        throw new Error('Should not be called')
+      })
+    )
 
     it('should return null for an invalid name', async () => handleInvalidName(coordinatesMapper, 'backports./test'))
 
@@ -72,5 +80,5 @@ describe('PypiCoordinatesMapper', () => {
 
 async function handleInvalidName(coordinatesMapper: any, name: string) {
   const mapped = await coordinatesMapper.map(mockPypiCoordinates(name))
-  expect(mapped).to.be.null
+  assert.strictEqual(mapped, null)
 }

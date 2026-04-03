@@ -1,13 +1,12 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
+import { describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import validator from '../../schemas/validator.js'
 
-chai.use(deepEqualInAnyOrder)
-const { expect } = chai
 
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import { joinExpressions } from '../../lib/utils.js'
@@ -18,7 +17,7 @@ describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {
     const { coordinates, harvested } = setup([])
     const summary = Summarizer().summarize(coordinates, harvested)
-    expect(summary.coordinates).to.be.undefined
+    assert.strictEqual(summary.coordinates, undefined)
   })
 
   it('gets all the per file license info and attribution parties', () => {
@@ -28,19 +27,19 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].attributions.length).to.eq(3)
-    expect(summary.files[0].path).to.equal('foo.txt')
-    expect(summary.files[0].attributions).to.deep.equalInAnyOrder(['Copyright Bob', 'Copyright Fred', 'Copyright bob'])
-    expect(summary.files[0].license).to.equal('MIT')
-    expect(summary.files[1].path).to.equal('bar.txt')
-    expect(summary.files[1].attributions.length).to.eq(3)
-    expect(summary.files[1].attributions).to.deep.equalInAnyOrder([
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.files[0].attributions.length, 3)
+    assert.strictEqual(summary.files[0].path, 'foo.txt')
+    assertDeepEqualInAnyOrder(summary.files[0].attributions, ['Copyright Bob', 'Copyright Fred', 'Copyright bob'])
+    assert.strictEqual(summary.files[0].license, 'MIT')
+    assert.strictEqual(summary.files[1].path, 'bar.txt')
+    assert.strictEqual(summary.files[1].attributions.length, 3)
+    assertDeepEqualInAnyOrder(summary.files[1].attributions, [
       'Copyright John',
       'Copyright Jane',
       'Copyright Fred'
     ])
-    expect(summary.files[1].license).to.equal('GPL-3.0')
+    assert.strictEqual(summary.files[1].license, 'GPL-3.0')
   })
 
   it('uses discovered full text license as declared license', () => {
@@ -50,17 +49,17 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].natures[0]).to.be.equal('license')
+    assert.strictEqual(summary.licensed.declared, 'MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.files[0].natures[0], 'license')
   })
 
   it('respects low license score', () => {
     const { coordinates, harvested } = setup([buildFile('LICENSE', 'MIT', [], 10, { is_license_text: true })])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed).to.be.undefined
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed, undefined)
   })
 
   it('finds multiple license text files', () => {
@@ -70,8 +69,8 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('GPL-3.0 AND MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.licensed.declared, 'GPL-3.0 AND MIT')
   })
 
   it('skips license files in subdirectories', () => {
@@ -81,11 +80,11 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed).to.be.undefined
-    expect(summary.files[0].attributions).to.be.undefined
-    expect(summary.files[0].path).to.equal('foo/LICENSE.md')
-    expect(summary.files[0].license).to.equal('MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.licensed, undefined)
+    assert.strictEqual(summary.files[0].attributions, undefined)
+    assert.strictEqual(summary.files[0].path, 'foo/LICENSE.md')
+    assert.strictEqual(summary.files[0].license, 'MIT')
   })
 
   it('DETECTS npm license file in package folder', () => {
@@ -95,11 +94,11 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.be.equal('GPL-3.0')
-    expect(summary.files.length).to.eq(1)
-    expect(summary.files[0].attributions).to.be.undefined
-    expect(summary.files[0].path).to.equal('package/LICENSE.md')
-    expect(summary.files[0].license).to.equal('GPL-3.0')
+    assert.strictEqual(summary.licensed.declared, 'GPL-3.0')
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.files[0].attributions, undefined)
+    assert.strictEqual(summary.files[0].path, 'package/LICENSE.md')
+    assert.strictEqual(summary.files[0].license, 'GPL-3.0')
   })
 
   it('SKIPS nuget license file in a nested `package` folder', () => {
@@ -109,11 +108,11 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed).to.be.undefined
-    expect(summary.files[0].attributions).to.be.undefined
-    expect(summary.files[0].path).to.equal('package/LICENSE.md')
-    expect(summary.files[0].license).to.equal('GPL-3.0')
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed, undefined)
+    assert.strictEqual(summary.files[0].attributions, undefined)
+    assert.strictEqual(summary.files[0].path, 'package/LICENSE.md')
+    assert.strictEqual(summary.files[0].license, 'GPL-3.0')
   })
 
   it('DETECTS asserted license file in the NPM package subdirectory', () => {
@@ -124,16 +123,16 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed.declared).to.eq('MIT')
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed.declared, 'MIT')
   })
 
   it('SKIPS asserted license file NOT in the NPM package subdirectory', () => {
     const { coordinates, harvested } = setup([buildPackageFile('package.json', 'MIT', [])], 'npm/npmjs/-/test/1.0')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed).to.be.undefined
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed, undefined)
   })
 
   it('DETECTS asserted license file in root', () => {
@@ -144,16 +143,16 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed.declared).to.eq('MIT')
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed.declared, 'MIT')
   })
 
   it('SKIPS asserted license file NOT in the root', () => {
     const { coordinates, harvested } = setup([buildPackageFile('bar/foo.nuspec', 'MIT', [])])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(1)
-    expect(summary.licensed).to.be.undefined
+    assert.strictEqual(summary.files.length, 1)
+    assert.strictEqual(summary.licensed, undefined)
   })
 
   it('prioritizes package manifest over full text license file for 2.2', () => {
@@ -167,8 +166,8 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.licensed.declared, 'MIT')
   })
 
   it('prioritizes full text license file over package manifest for 3.0', () => {
@@ -182,8 +181,8 @@ describe('ScanCode summarizer', () => {
     )
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.licensed.declared).to.eq('GPL-3.0')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.licensed.declared, 'GPL-3.0')
   })
 
   it('creates expressions from license expressions', () => {
@@ -197,7 +196,7 @@ describe('ScanCode summarizer', () => {
     ])
     examples.forEach((expected, input) => {
       const result = joinExpressions(input)
-      expect(result).to.eq(expected)
+      assert.strictEqual(result, expected)
     })
   })
 
@@ -208,9 +207,9 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].license).to.eq('Apache-2.0 AND MIT')
-    expect(summary.files[1].license).to.eq('MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.files[0].license, 'Apache-2.0 AND MIT')
+    assert.strictEqual(summary.files[1].license, 'MIT')
   })
 
   it('ANDs together invalid licenses', () => {
@@ -220,14 +219,14 @@ describe('ScanCode summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files.length).to.eq(2)
-    expect(summary.files[0].license).to.eq('MIT AND NOASSERTION')
-    expect(summary.files[1].license).to.eq('MIT')
+    assert.strictEqual(summary.files.length, 2)
+    assert.strictEqual(summary.files[0].license, 'MIT AND NOASSERTION')
+    assert.strictEqual(summary.files[1].license, 'MIT')
   })
 })
 
 describe('ScanCodeLegacySummarizer', () => {
-  context('_createExpressionFromLicense', () => {
+  describe('_createExpressionFromLicense', () => {
     it('creates expressions from matched_rule', () => {
       const examples = new Map([
         [buildRule('mit OR apache-2.0', ['mit', 'apache-2.0']), 'MIT OR Apache-2.0'],
@@ -245,17 +244,17 @@ describe('ScanCodeLegacySummarizer', () => {
       ])
       examples.forEach((expected, input) => {
         const result = ScanCodeLegacySummarizer()._createExpressionFromLicense(input)
-        expect(result).to.eq(expected)
+        assert.strictEqual(result, expected)
       })
     })
 
     it('uses spdx license key when no expression is available from matched_rule', () => {
       const result = ScanCodeLegacySummarizer()._createExpressionFromLicense({ spdx_license_key: 'MIT' })
-      expect(result).to.eq('MIT')
+      assert.strictEqual(result, 'MIT')
     })
   })
 
-  context('_getRootFiles', () => {
+  describe('_getRootFiles', () => {
     it('gets root files', () => {
       const result = ScanCodeLegacySummarizer()._getRootFiles({ type: 'npm' }, [
         { path: 'realroot' },
@@ -263,7 +262,7 @@ describe('ScanCodeLegacySummarizer', () => {
         { path: 'other/nonroot' },
         { path: 'package/deep/path' }
       ])
-      expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
+      assert.deepStrictEqual(result.map(x => x.path), ['realroot', 'package/packageRoot'])
     })
   })
 })

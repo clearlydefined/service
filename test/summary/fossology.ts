@@ -1,12 +1,11 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../helpers/assert.ts'
+import { describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 
-chai.use(deepEqualInAnyOrder)
-const { expect } = chai
 
 import lodash from 'lodash'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
@@ -19,7 +18,7 @@ describe('General summarizer', () => {
   it('handles empty input', () => {
     const { coordinates, harvested } = setup([])
     const summary = Summarizer().summarize(coordinates, harvested)
-    expect(summary.coordinates).to.be.undefined
+    assert.strictEqual(summary.coordinates, undefined)
   })
 })
 
@@ -28,7 +27,7 @@ describe('Nomos summarizer', () => {
     const { coordinates, harvested } = setup([buildNomosFile('foo.txt', 'MIT'), buildNomosFile('bar.txt', 'GPL-3.0')])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       { path: 'foo.txt', license: 'MIT' },
       { path: 'bar.txt', license: 'GPL-3.0' }
     ])
@@ -42,7 +41,7 @@ describe('Nomos summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.eq([
+    assert.deepStrictEqual(summary.files, [
       { path: 'foo.txt' },
       { path: 'bar.txt' },
       { path: 'mit.txt', license: 'NOASSERTION' }
@@ -58,7 +57,7 @@ describe('Nomos summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       { path: 'foo.txt' },
       { path: 'bar.txt', license: 'MIT' },
       { path: 'junk.txt', license: 'NOASSERTION' }
@@ -70,7 +69,7 @@ it('does not apply See-file license detection', () => {
   const { coordinates, harvested } = setup([buildNomosFile('foo.txt', 'See-file')])
   const summary = Summarizer().summarize(coordinates, harvested)
   validate(summary)
-  expect(summary.files).to.deep.eq([{ path: 'foo.txt' }])
+  assert.deepStrictEqual(summary.files, [{ path: 'foo.txt' }])
 })
 
 describe('Monk summarizer', () => {
@@ -78,7 +77,7 @@ describe('Monk summarizer', () => {
     const { coordinates, harvested } = setup([buildMonkFile('foo.txt', 'MIT'), buildMonkFile('bar.txt', 'GPL-3.0')])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       { path: 'foo.txt', license: 'MIT' },
       { path: 'bar.txt', license: 'GPL-3.0' }
     ])
@@ -91,7 +90,7 @@ describe('Monk summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt', license: 'NOASSERTION' }, { path: 'bar.txt' }])
+    assertDeepEqualInAnyOrder(summary.files, [{ path: 'foo.txt', license: 'NOASSERTION' }, { path: 'bar.txt' }])
   })
 
   it('mixes spdx and non-spdx licenses correctly', () => {
@@ -102,7 +101,7 @@ describe('Monk summarizer', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       { path: 'foo.txt', license: 'NOASSERTION' },
       { path: 'bar.txt', license: 'MIT' }
     ])
@@ -117,7 +116,7 @@ describe('Monk summarizer', () => {
 //     ])
 //     const summary = Summarizer().summarize(coordinates, harvested)
 //     validate(summary)
-//     expect(summary.files).to.deep.equalInAnyOrder([
+//     assertDeepEqualInAnyOrder(summary.files, [
 //       { path: 'foo.txt', attributions: ['Jane', 'Fred'] },
 //       { path: 'bar.txt', attributions: ['Bob'] }
 //     ])
@@ -133,7 +132,7 @@ describe('Mixed summarization', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       { path: 'foo.txt', license: 'MIT' },
       { path: 'bar.txt', license: 'GPL-3.0' }
       //{ path: 'three.txt', attributions: ['Jane'] }
@@ -149,7 +148,7 @@ describe('Mixed summarization', () => {
     ])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([
+    assertDeepEqualInAnyOrder(summary.files, [
       {
         path: 'foo.txt',
         license: 'MIT'
@@ -167,7 +166,7 @@ describe('Mixed summarization', () => {
     const { coordinates, harvested } = setup([buildMonkFile('foo.txt', 'MIT'), buildNomosFile('foo.txt', 'GPL-3.0')])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.files).to.deep.equalInAnyOrder([{ path: 'foo.txt', license: 'GPL-3.0 AND MIT' }])
+    assertDeepEqualInAnyOrder(summary.files, [{ path: 'foo.txt', license: 'GPL-3.0 AND MIT' }])
   })
 })
 

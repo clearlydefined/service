@@ -1,8 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, before } from 'node:test'
 // @ts-nocheck
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import EntityCoordinates from '../../../../lib/entityCoordinates.js'
 import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
 
@@ -23,8 +24,8 @@ describe('ListBasedFilter', () => {
       it('should return false for any coordinate', () => {
         const filter = new ListBasedFilter({ blacklist: [], logger })
 
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/left-pad/1.3.0')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
       })
     })
 
@@ -34,14 +35,14 @@ describe('ListBasedFilter', () => {
         filter = new ListBasedFilter({ blacklist: ['git/github/org/name'], logger })
       })
       it('should block matching coordinates regardless of revision', () => {
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('git/github/org/name'))).to.be.true
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name')), true)
       })
 
       it('should not block non-matching coordinates', () => {
-        expect(filter.isBlocked(createCoord('git/github/org/name2/1.0.0'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name2/1.0.0')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api')), false)
       })
     })
 
@@ -49,8 +50,8 @@ describe('ListBasedFilter', () => {
       it('should match GitHub coordinates case-insensitively', () => {
         const filter = new ListBasedFilter({ blacklist: ['git/github/ORG/Name'], logger })
 
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('git/github/ORG/NAME/1.0.0'))).to.be.true
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/ORG/NAME/1.0.0')), true)
       })
     })
 
@@ -63,13 +64,13 @@ describe('ListBasedFilter', () => {
         })
       })
       it('should block all matching coordinates', () => {
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/lodash/4.17.21'))).to.be.true
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.apache/commons-lang3/3.12.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('git/github/test/repo/abc123'))).to.be.true
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/lodash/4.17.21')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.apache/commons-lang3/3.12.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/test/repo/abc123')), true)
       })
 
       it('should not block non-matching coordinates', () => {
-        expect(filter.isBlocked(createCoord('npm/npmjs/-/express/4.18.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('npm/npmjs/-/express/4.18.0')), false)
       })
     })
 
@@ -80,10 +81,10 @@ describe('ListBasedFilter', () => {
           logger
         })
 
-        expect(filter.isBlocked(createCoord('pypi/pypi/-/requests/2.28.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('nuget/nuget/-/Newtonsoft.Json/13.0.1'))).to.be.true
-        expect(filter.isBlocked(createCoord('gem/rubygems/-/rails/7.0.0'))).to.be.true
-        expect(filter.isBlocked(createCoord('pypi/pypi/-/django/4.0.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('pypi/pypi/-/requests/2.28.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('nuget/nuget/-/Newtonsoft.Json/13.0.1')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('gem/rubygems/-/rails/7.0.0')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('pypi/pypi/-/django/4.0.0')), false)
       })
     })
 
@@ -91,9 +92,9 @@ describe('ListBasedFilter', () => {
       it('should match Maven coordinates with proper namespace', () => {
         const filter = new ListBasedFilter({ blacklist: ['maven/mavencentral/org.slf4j/slf4j-api'], logger })
 
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12'))).to.be.true
-        expect(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-simple/2.0.12'))).to.be.false
-        expect(filter.isBlocked(createCoord('maven/mavencentral/com.google/guava/31.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-api/2.0.12')), true)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/org.slf4j/slf4j-simple/2.0.12')), false)
+        assert.strictEqual(filter.isBlocked(createCoord('maven/mavencentral/com.google/guava/31.0')), false)
       })
     })
 
@@ -101,8 +102,8 @@ describe('ListBasedFilter', () => {
       it('should return false for null or undefined coordinates', () => {
         const filter = new ListBasedFilter({ blacklist: ['npm/npmjs/-/test'], logger })
 
-        expect(filter.isBlocked(null)).to.be.false
-        expect(filter.isBlocked(undefined)).to.be.false
+        assert.strictEqual(filter.isBlocked(null), false)
+        assert.strictEqual(filter.isBlocked(undefined), false)
       })
     })
   })
@@ -112,7 +113,7 @@ describe('ListBasedFilter', () => {
       it('should ignore incomplete coordinates and log warnings', () => {
         const filter = new ListBasedFilter({ blacklist: ['git/github'], logger })
 
-        expect(filter.isBlocked(createCoord('git/github/org/name/1.0.0'))).to.be.false
+        assert.strictEqual(filter.isBlocked(createCoord('git/github/org/name/1.0.0')), false)
       })
 
       it('should log warnings for invalid coordinates', () => {
@@ -129,9 +130,9 @@ describe('ListBasedFilter', () => {
           logger: mockLogger
         })
 
-        expect(warnings.length).to.be.greaterThan(0)
-        expect(warnings.some(w => w.includes('git/github'))).to.be.true
-        expect(warnings.some(w => w.includes('invalid'))).to.be.true
+        assert.ok(warnings.length > 0)
+        assert.strictEqual(warnings.some(w => w.includes('git/github')), true)
+        assert.strictEqual(warnings.some(w => w.includes('invalid')), true)
       })
     })
   })

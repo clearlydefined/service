@@ -1,7 +1,11 @@
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+
+import assert from 'node:assert/strict'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
 
@@ -31,7 +35,7 @@ describe('redisConfig.serviceFactory', () => {
 
   function expectRedisCalledWith(expectedOptions, result) {
     assert.ok(redisStub.calledOnce)
-    assert.deepStrictEqual(redisStub.firstCall.args[0], expectedOptions)
+    assert.deepStrictEqual(redisStub.args[0][0], expectedOptions)
     assert.deepStrictEqual(result, { ok: true, received: expectedOptions })
   }
 

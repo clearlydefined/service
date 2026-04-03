@@ -1,8 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import Store from '../../../providers/stores/azblobAttachmentStore.js'
 
 describe('AzureAttachmentStore list definitions', () => {
@@ -12,20 +12,20 @@ describe('AzureAttachmentStore list definitions', () => {
       await store.get('error')
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      assert.strictEqual(error.message, 'test error')
     }
   })
 
   it('works for unknown key', async () => {
     const store = createStore()
     const result = await store.get('44')
-    expect(result).to.be.null
+    assert.strictEqual(result, null)
   })
 
   it('gets an attachment', async () => {
     const store = createStore()
     const result = await store.get('42')
-    expect(result).to.eq('42 attachment')
+    assert.strictEqual(result, '42 attachment')
   })
 })
 
@@ -37,7 +37,7 @@ const data = {
 
 function createStore() {
   const blobServiceStub = {
-    getBlobToText: sinon.stub().callsFake((_container, path, cb) => {
+    getBlobToText: mock.fn((_container, path, cb) => {
       if (path.includes('error')) {
         return cb(new Error('test error'))
       }

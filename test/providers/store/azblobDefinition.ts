@@ -1,9 +1,10 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import Store from '../../../providers/stores/azblobDefinitionStore.js'
 
@@ -18,7 +19,7 @@ describe('azblob Definition store', () => {
       await store.list(EntityCoordinates.fromString('npm/npmjs/-/error/4.6.0'))
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      assert.strictEqual(error.message, 'test error')
     }
   })
 
@@ -29,7 +30,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/bogus/4.6.0'))
-    expect(result.length).to.eq(0)
+    assert.strictEqual(result.length, 0)
   })
 
   it('should list one coordinates', async () => {
@@ -39,7 +40,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.0'))
-    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/co/4.6.0'])
+    assertDeepEqualInAnyOrder(result, ['npm/npmjs/-/co/4.6.0'])
   })
 
   it('should list coordinates preserving case from blob metadata', async () => {
@@ -49,7 +50,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
-    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.1'])
+    assertDeepEqualInAnyOrder(result, ['npm/npmjs/-/Co/4.6.1'])
   })
 
   it('list coordinates with partial coordinates', async () => {
@@ -59,29 +60,32 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co'))
-    expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.0', 'npm/npmjs/-/Co/4.6.1'])
+    assertDeepEqualInAnyOrder(result, ['npm/npmjs/-/Co/4.6.0', 'npm/npmjs/-/Co/4.6.1'])
   })
 
   it('stores a definition', async () => {
     const definition = createDefinition('npm/npmjs/-/foo/1.0')
     const store = createStore()
     await store.store(definition)
-    expect(store.blobService.createBlockBlobFromText.callCount).to.eq(1)
-    expect(store.blobService.createBlockBlobFromText.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    assert.strictEqual(store.blobService.createBlockBlobFromText.mock.callCount(), 1)
+    assert.strictEqual(
+      store.blobService.createBlockBlobFromText.mock.calls[0].arguments[1],
+      'npm/npmjs/-/foo/revision/1.0.json'
+    )
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    assert.strictEqual(store.blobService.deleteBlob.mock.callCount(), 1)
+    assert.strictEqual(store.blobService.deleteBlob.mock.calls[0].arguments[1], 'npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('does not throw deleting missing definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
+    assert.strictEqual(store.blobService.deleteBlob.mock.callCount(), 1)
+    assert.strictEqual(store.blobService.deleteBlob.mock.calls[0].arguments[1], 'npm/npmjs/-/missing/revision/1.0.json')
   })
 
   it('gets a definition', async () => {
@@ -92,7 +96,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     const result = await store.get(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
-    expect(result.coordinates).to.deep.eq(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
+    assert.deepStrictEqual(result.coordinates, EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
   })
 })
 
@@ -106,27 +110,25 @@ function createDefinitionJson(coordinates) {
 
 function createStore(data) {
   const blobServiceStub = {
-    listBlobsSegmentedWithPrefix: sinon
-      .stub()
-      .callsFake(async (_container, name, _continuation, _metadata, callback) => {
-        name = name.toLowerCase()
-        if (name.includes('error')) {
-          return callback(new Error('test error'))
-        }
-        callback(null, {
-          continuationToken: null,
-          entries: Object.keys(data)
-            .map(key => (key.startsWith(name) ? data[key] : null))
-            .filter(e => e)
-        })
-      }),
-    createBlockBlobFromText: sinon.stub().callsFake(async (_container, name, _content, _metadata, callback) => {
+    listBlobsSegmentedWithPrefix: mock.fn(async (_container, name, _continuation, _metadata, callback) => {
+      name = name.toLowerCase()
+      if (name.includes('error')) {
+        return callback(new Error('test error'))
+      }
+      callback(null, {
+        continuationToken: null,
+        entries: Object.keys(data)
+          .map(key => (key.startsWith(name) ? data[key] : null))
+          .filter(e => e)
+      })
+    }),
+    createBlockBlobFromText: mock.fn(async (_container, name, _content, _metadata, callback) => {
       if (name.includes('error')) {
         return callback(new Error('test error'))
       }
       callback()
     }),
-    deleteBlob: sinon.stub().callsFake(async (_container, name, callback) => {
+    deleteBlob: mock.fn(async (_container, name, callback) => {
       if (name.includes('error')) {
         return callback(new Error('test error'))
       }
@@ -135,7 +137,7 @@ function createStore(data) {
       }
       callback()
     }),
-    getBlobToText: sinon.stub().callsFake(async (_container, name, callback) => {
+    getBlobToText: mock.fn(async (_container, name, callback) => {
       if (name.includes('error')) {
         return callback(new Error('test error'))
       }

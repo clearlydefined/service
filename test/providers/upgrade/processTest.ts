@@ -1,14 +1,9 @@
+import assert from 'node:assert/strict'
+import { beforeEach, describe, it, mock } from 'node:test'
 // @ts-nocheck
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
-
-chai.use(chaiAsPromised)
-
-import { expect } from 'chai'
-import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import { DefinitionUpgrader, QueueHandler } from '../../../providers/upgrade/process.js'
 
@@ -17,9 +12,9 @@ describe('Definition Upgrade Queue Processing', () => {
 
   beforeEach(() => {
     logger = {
-      info: sinon.stub(),
-      error: sinon.stub(),
-      debug: sinon.stub()
+      info: mock.fn(),
+      error: mock.fn(),
+      debug: mock.fn()
     }
   })
 
@@ -30,61 +25,75 @@ describe('Definition Upgrade Queue Processing', () => {
 
     beforeEach(() => {
       queue = {
-        dequeueMultiple: sinon.stub(),
-        delete: sinon.stub().resolves()
+        dequeueMultiple: mock.fn(),
+        delete: mock.fn(async () => {})
       }
       messageHandler = {
-        processMessage: sinon.stub()
+        processMessage: mock.fn()
       }
       handler = new QueueHandler(queue, logger, messageHandler)
     })
 
     it('returns an instance of QueueHandler', () => {
-      expect(handler).to.be.an.instanceOf(QueueHandler)
+      assert.ok(handler instanceof QueueHandler)
     })
 
     it('works on a queue', () => {
-      queue.dequeueMultiple.resolves([])
+      queue.dequeueMultiple.mock.mockImplementation(async () => [])
+
       handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(messageHandler.processMessage.notCalled).to.be.true
-      expect(queue.delete.notCalled).to.be.true
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(messageHandler.processMessage.mock.callCount() === 0, true)
+      assert.strictEqual(queue.delete.mock.callCount() === 0, true)
     })
 
     it('processes one message', async () => {
-      queue.dequeueMultiple.resolves([{ message: 'test' }])
+      queue.dequeueMultiple.mock.mockImplementation(async () => [{ message: 'test' }])
+
       await handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(messageHandler.processMessage.calledOnce).to.be.true
-      expect(queue.delete.calledOnce).to.be.true
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(messageHandler.processMessage.mock.callCount() === 1, true)
+      assert.strictEqual(queue.delete.mock.callCount() === 1, true)
     })
 
     it('processes multiple messages', async () => {
-      queue.dequeueMultiple.resolves([{ message: 'testA' }, { message: 'testB' }])
+      queue.dequeueMultiple.mock.mockImplementation(async () => [{ message: 'testA' }, { message: 'testB' }])
+
       await handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(messageHandler.processMessage.calledTwice).to.be.true
-      expect(queue.delete.calledTwice).to.be.true
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(messageHandler.processMessage.mock.callCount() === 2, true)
+      assert.strictEqual(queue.delete.mock.callCount() === 2, true)
     })
 
     it('handles if error is thrown', async () => {
-      queue.dequeueMultiple.resolves([{ message: 'testA' }])
-      messageHandler.processMessage = sinon.stub().throws()
+      queue.dequeueMultiple.mock.mockImplementation(async () => [{ message: 'testA' }])
+
+      messageHandler.processMessage = mock.fn(() => {
+        throw new Error()
+      })
       await handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(messageHandler.processMessage.calledOnce).to.be.true
-      expect(queue.delete.called).to.be.false
-      expect(logger.error.calledOnce).to.be.true
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(messageHandler.processMessage.mock.callCount() === 1, true)
+      assert.strictEqual(queue.delete.mock.callCount() > 0, false)
+      assert.strictEqual(logger.error.mock.callCount() === 1, true)
     })
 
     it('handles both sucessful and unsucessful messages', async () => {
-      queue.dequeueMultiple.resolves([{ message: 'testA' }, { message: 'testB' }])
-      messageHandler.processMessage = sinon.stub().onFirstCall().throws().onSecondCall().resolves()
+      queue.dequeueMultiple.mock.mockImplementation(async () => [{ message: 'testA' }, { message: 'testB' }])
+
+      messageHandler.processMessage = mock.fn(
+        (() => {
+          let n = 0
+          return async () => {
+            if (n++ === 0) throw new Error()
+          }
+        })()
+      )
       await handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(messageHandler.processMessage.calledTwice).to.be.true
-      expect(queue.delete.calledOnce).to.be.true
-      expect(logger.error.calledOnce).to.be.true
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(messageHandler.processMessage.mock.callCount() === 2, true)
+      assert.strictEqual(queue.delete.mock.callCount() === 1, true)
+      assert.strictEqual(logger.error.mock.callCount() === 1, true)
     })
   })
 
@@ -98,58 +107,65 @@ describe('Definition Upgrade Queue Processing', () => {
 
     beforeEach(() => {
       definitionService = {
-        getStored: sinon.stub(),
-        computeStoreAndCurate: sinon.stub().resolves()
+        getStored: mock.fn(),
+        computeStoreAndCurate: mock.fn(async () => {})
       }
       versionChecker = {
-        validate: sinon.stub()
+        validate: mock.fn()
       }
       upgrader = new DefinitionUpgrader(definitionService, logger, versionChecker)
     })
 
     it('recomputes a definition, if a definition is not up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
+      definitionService.getStored.mock.mockImplementation(async () => definition)
+
+      versionChecker.validate.mock.mockImplementation(async () => {})
 
       await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 1, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 1, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 1, true)
     })
 
     it('skips compute if a definition is up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves(definition)
+      definitionService.getStored.mock.mockImplementation(async () => definition)
+
+      versionChecker.validate.mock.mockImplementation(async () => definition)
 
       await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 1, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 1, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 0, true)
     })
 
     it('computes if a definition does not exist', async () => {
-      definitionService.getStored.resolves()
-      versionChecker.validate.resolves()
+      definitionService.getStored.mock.mockImplementation(async () => {})
+
+      versionChecker.validate.mock.mockImplementation(async () => {})
 
       await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 1, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 1, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 1, true)
     })
 
     it('skips if there is no coordinates', async () => {
       await upgrader.processMessage({ data: {} })
-      expect(definitionService.getStored.notCalled).to.be.true
-      expect(versionChecker.validate.notCalled).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 0, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 0, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 0, true)
     })
 
     it('handles exception by rethrowing with coordinates and the original error message', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
-      definitionService.computeStoreAndCurate.rejects(new Error('test'))
+      definitionService.getStored.mock.mockImplementation(async () => definition)
 
-      await expect(upgrader.processMessage(message)).to.be.rejectedWith(Error, /pypi\/pypi\/-\/test\/revision: test/)
+      versionChecker.validate.mock.mockImplementation(async () => {})
+
+      definitionService.computeStoreAndCurate.mock.mockImplementation(async () => {
+        throw new Error('test')
+      })
+
+      await assert.rejects(upgrader.processMessage(message), Error, /pypi\/pypi\/-\/test\/revision: test/)
     })
   })
 
@@ -168,54 +184,61 @@ describe('Definition Upgrade Queue Processing', () => {
       let definitionUpgrader
       ;({ definitionService, versionChecker, definitionUpgrader } = setupDefinitionUpgrader(logger))
       queue = {
-        dequeueMultiple: sinon.stub().resolves([message]),
-        delete: sinon.stub().resolves()
+        dequeueMultiple: mock.fn(async () => [message]),
+        delete: mock.fn(async () => {})
       }
       handler = new QueueHandler(queue, logger, definitionUpgrader)
     })
 
     it('handles exception and logs the coordinates and the original error message', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
-      definitionService.computeStoreAndCurate.rejects(new Error('test'))
+      definitionService.getStored.mock.mockImplementation(async () => definition)
+
+      versionChecker.validate.mock.mockImplementation(async () => {})
+
+      definitionService.computeStoreAndCurate.mock.mockImplementation(async () => {
+        throw new Error('test')
+      })
 
       await handler.work(true)
-      expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(queue.delete.called).to.be.false
-      expect(logger.error.calledOnce).to.be.true
-      expect(logger.error.args[0][0].message).to.match(/pypi\/pypi\/-\/test\/revision: test/)
+      assert.strictEqual(queue.dequeueMultiple.mock.callCount() === 1, true)
+      assert.strictEqual(queue.delete.mock.callCount() > 0, false)
+      assert.strictEqual(logger.error.mock.callCount() === 1, true)
+      assert.match(logger.error.mock.calls[0].arguments[0].message, /pypi\/pypi\/-\/test\/revision: test/)
     })
 
     it('skips compute if a definition is up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves(definition)
+      definitionService.getStored.mock.mockImplementation(async () => definition)
+
+      versionChecker.validate.mock.mockImplementation(async () => definition)
 
       await handler.work(true)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
-      expect(queue.delete.called).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 1, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 1, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 0, true)
+      assert.strictEqual(queue.delete.mock.callCount() > 0, true)
     })
 
     it('recomputes a definition, if a definition is not up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
+      definitionService.getStored.mock.mockImplementation(async () => definition)
+
+      versionChecker.validate.mock.mockImplementation(async () => {})
+
       await handler.work(true)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
-      expect(queue.delete.called).to.be.true
+      assert.strictEqual(definitionService.getStored.mock.callCount() === 1, true)
+      assert.strictEqual(versionChecker.validate.mock.callCount() === 1, true)
+      assert.strictEqual(definitionService.computeStoreAndCurate.mock.callCount() === 1, true)
+      assert.strictEqual(queue.delete.mock.callCount() > 0, true)
     })
   })
 })
 
 function setupDefinitionUpgrader(logger) {
   const definitionService = {
-    getStored: sinon.stub(),
-    computeStoreAndCurate: sinon.stub().resolves()
+    getStored: mock.fn(),
+    computeStoreAndCurate: mock.fn(async () => {})
   }
   const versionChecker = {
-    validate: sinon.stub()
+    validate: mock.fn()
   }
   const definitionUpgrader = new DefinitionUpgrader(definitionService, logger, versionChecker)
   return { definitionService, versionChecker, definitionUpgrader }

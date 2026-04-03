@@ -7,6 +7,7 @@ import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
 
 import assert from 'node:assert'
+import { after, afterEach, before, beforeEach, describe, it, mock } from 'node:test'
 import pako2 from 'pako'
 import pako1 from 'pako-1'
 import { GenericContainer } from 'testcontainers'
@@ -34,7 +35,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: mock.fn(async () => {})
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })
@@ -89,11 +90,16 @@ describe('Redis Cache', () => {
     it('calls client.quit only once', async () => {
       await cache.initialize()
       await Promise.all([cache.done(), cache.done()])
-      assert.ok(mockClient.quit.calledOnce)
+      assert.ok(mockClient.quit.mock.callCount() === 1)
     })
 
     it('allows initialization to be retried on error', async () => {
-      mockClient.connect = sinon.stub().rejects(new Error('Connection failed')).onSecondCall().resolves(mockClient)
+      let connectCallCount = 0
+      mockClient.connect = mock.fn(async () => {
+        connectCallCount++
+        if (connectCallCount === 1) throw new Error('Connection failed')
+        return mockClient
+      })
       // First call to initialize will fail
       try {
         await cache.initialize()
@@ -106,7 +112,7 @@ describe('Redis Cache', () => {
       // Verify that the client was built twice
       assert.ok(cache.client)
       assert.ok(RedisCache.buildRedisClient.calledTwice)
-      assert.ok(mockClient.connect.calledTwice)
+      assert.strictEqual(mockClient.connect.mock.callCount(), 2)
     })
   })
 
@@ -127,7 +133,7 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: mock.fn(async () => {})
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger })
@@ -302,12 +308,11 @@ describe('Redis Cache', () => {
       })
     })
   })
-  xdescribe('Integration Test', () => {
+  describe.skip('Integration Test', () => {
     let container
     let redisConfig
 
     before(async function () {
-      this.timeout(10000)
       container = await new GenericContainer('redis').withExposedPorts(6379).start()
       const service = container.getHost()
       const port = container.getMappedPort(6379)

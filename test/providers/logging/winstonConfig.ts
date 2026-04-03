@@ -1,24 +1,25 @@
+import assert from 'node:assert/strict'
+import { beforeEach, describe, it } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import { buildProperties, sanitizeHeaders, sanitizeMeta } from '../../../providers/logging/winstonConfig.js'
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {
     const result = sanitizeHeaders(undefined)
-    expect(result).to.deep.equal({})
+    assert.deepStrictEqual(result, {})
   })
 
   it('should return empty object for null', () => {
     const result = sanitizeHeaders(null)
-    expect(result).to.deep.equal({})
+    assert.deepStrictEqual(result, {})
   })
 
   it('should return empty object for empty object', () => {
     const result = sanitizeHeaders({})
-    expect(result).to.deep.equal({})
+    assert.deepStrictEqual(result, {})
   })
 
   it('should pass through non-sensitive headers unchanged', () => {
@@ -28,31 +29,31 @@ describe('sanitizeHeaders', () => {
       'X-Request-Id': '12345'
     }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal(headers)
+    assert.deepStrictEqual(result, headers)
   })
 
   it('should redact x-api-key header', () => {
     const headers = { 'x-api-key': 'secret-key' }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({ 'x-api-key': '<REDACTED>' })
+    assert.deepStrictEqual(result, { 'x-api-key': '<REDACTED>' })
   })
 
   it('should redact authorization header', () => {
     const headers = { authorization: 'Bearer token123' }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({ authorization: '<REDACTED>' })
+    assert.deepStrictEqual(result, { authorization: '<REDACTED>' })
   })
 
   it('should redact proxy-authorization header', () => {
     const headers = { 'proxy-authorization': 'Basic xyz' }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({ 'proxy-authorization': '<REDACTED>' })
+    assert.deepStrictEqual(result, { 'proxy-authorization': '<REDACTED>' })
   })
 
   it('should redact cookie header', () => {
     const headers = { cookie: 'session=abc123' }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({ cookie: '<REDACTED>' })
+    assert.deepStrictEqual(result, { cookie: '<REDACTED>' })
   })
 
   it('should handle case-insensitive header names', () => {
@@ -62,7 +63,7 @@ describe('sanitizeHeaders', () => {
       Cookie: 'session=123'
     }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({
+    assert.deepStrictEqual(result, {
       Authorization: '<REDACTED>',
       'X-API-KEY': '<REDACTED>',
       Cookie: '<REDACTED>'
@@ -77,7 +78,7 @@ describe('sanitizeHeaders', () => {
       Accept: 'application/json'
     }
     const result = sanitizeHeaders(headers)
-    expect(result).to.deep.equal({
+    assert.deepStrictEqual(result, {
       'Content-Type': 'application/json',
       authorization: '<REDACTED>',
       'x-api-key': '<REDACTED>',
@@ -110,7 +111,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.req).to.deep.equal({
+      assert.deepStrictEqual(result.req, {
         method: 'GET',
         url: '/api/test',
         requestId: 'req-123',
@@ -131,7 +132,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.req.url).to.equal('/api/fallback')
+      assert.strictEqual(result.req.url, '/api/fallback')
     })
 
     it('should handle req without headers', () => {
@@ -146,7 +147,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.req).to.deep.equal({
+      assert.deepStrictEqual(result.req, {
         method: 'GET',
         url: '/test',
         requestId: undefined,
@@ -169,7 +170,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.res).to.deep.equal({
+      assert.deepStrictEqual(result.res, {
         statusCode: 200
       })
     })
@@ -185,7 +186,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.request).to.equal('[request omitted]')
+      assert.strictEqual(result.request, '[request omitted]')
     })
 
     it('should replace response field when res is not present', () => {
@@ -197,7 +198,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.response).to.equal('[response omitted]')
+      assert.strictEqual(result.response, '[response omitted]')
     })
 
     it('should not replace request field when req is present', () => {
@@ -210,7 +211,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.request).to.deep.equal({ some: 'data' })
+      assert.deepStrictEqual(result.request, { some: 'data' })
     })
 
     it('should not replace response field when res is present', () => {
@@ -223,7 +224,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.response).to.deep.equal({ some: 'data' })
+      assert.deepStrictEqual(result.response, { some: 'data' })
     })
   })
 
@@ -246,7 +247,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.config).to.deep.equal({
+      assert.deepStrictEqual(result.config, {
         method: 'post',
         url: 'https://api.example.com/data',
         headers: {
@@ -269,7 +270,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.config).to.deep.equal({
+      assert.deepStrictEqual(result.config, {
         method: 'get',
         url: 'https://api.example.com',
         headers: {}
@@ -288,7 +289,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.config).to.deep.equal({
+      assert.deepStrictEqual(result.config, {
         method: 'get',
         url: 'https://api.example.com',
         headers: {}
@@ -306,7 +307,7 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result).to.deep.equal(info)
+      assert.deepStrictEqual(result, info)
     })
 
     it('should preserve other metadata fields', () => {
@@ -320,8 +321,8 @@ describe('sanitizeMeta', () => {
 
       const result = format.transform(info)
 
-      expect(result.error).to.equal('Something went wrong')
-      expect(result.userId).to.equal('user-123')
+      assert.strictEqual(result.error, 'Something went wrong')
+      assert.strictEqual(result.userId, 'user-123')
     })
   })
 })
@@ -339,39 +340,39 @@ describe('buildProperties', () => {
   it('rehydrates null-prototype dictionary to plain object', () => {
     const info = { requestParams: createNullProtoDict({ foo: 'bar' }) }
     const result = buildProperties(info)
-    expect(result.requestParams).to.deep.equal({ foo: 'bar' })
-    expect(Object.getPrototypeOf(result.requestParams)).to.equal(Object.prototype)
+    assert.deepStrictEqual(result.requestParams, { foo: 'bar' })
+    assert.strictEqual(Object.getPrototypeOf(result.requestParams), Object.prototype)
   })
 
   it('leaves plain objects unchanged (by reference)', () => {
     const obj = { a: 1, b: 'x' }
     const result = buildProperties({ meta: obj })
-    expect(result.meta).to.equal(obj)
+    assert.strictEqual(result.meta, obj)
   })
 
   it('passes through arrays and primitives', () => {
     const info = { list: [1, 2, 3], s: 'str', n: 42, b: true, u: undefined, nl: null }
     const result = buildProperties(info)
-    expect(result).to.deep.equal(info)
+    assert.deepStrictEqual(result, info)
   })
 
   it('falls back to "[unserializable object]" when getter throws on null-prototype', () => {
     const dict = withThrowingGetter()
     const result = buildProperties({ requestParams: dict })
-    expect(result.requestParams).to.equal('[unserializable object]')
+    assert.strictEqual(result.requestParams, '[unserializable object]')
   })
 
   it('uses JSON.stringify via toJSON when assign fails but stringify succeeds', () => {
     const dict = withThrowingGetter()
     Object.defineProperty(dict, 'toJSON', { value: () => ({ safe: 'ok' }) })
     const result = buildProperties({ requestParams: dict })
-    expect(result.requestParams).to.equal(JSON.stringify({ safe: 'ok' }))
+    assert.strictEqual(result.requestParams, JSON.stringify({ safe: 'ok' }))
   })
 
   it('does not process nested null-prototype objects (shallow only)', () => {
     const nested = createNullProtoDict({ a: 'b' })
     const parent = { child: nested }
     const result = buildProperties({ parent })
-    expect(result.parent.child).to.equal(nested)
+    assert.strictEqual(result.parent.child, nested)
   })
 })

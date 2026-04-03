@@ -1,8 +1,9 @@
+import assert from 'node:assert/strict'
+import { assertDeepEqualInAnyOrder } from '../../helpers/assert.ts'
+import { describe, it, before, after, mock } from 'node:test'
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 import FileStore from '../../../providers/stores/fileDefinitionStore.js'
@@ -25,7 +26,7 @@ const data = {
 
 describe('FileDefinitionStore list definitions', () => {
   before(() => {
-    sinon.stub(AbstractFileStore.prototype, 'list').callsFake(async (coordinates, visitor) => {
+    mock.method(AbstractFileStore.prototype, 'list', async (coordinates, visitor) => {
       const path = coordinates.toString()
       if (path.includes('error')) {
         throw new Error('test error')
@@ -36,7 +37,7 @@ describe('FileDefinitionStore list definitions', () => {
     })
   })
 
-  after(() => (AbstractFileStore.prototype.list as any).restore())
+  after(() => mock.restoreAll())
 
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore()
@@ -44,27 +45,27 @@ describe('FileDefinitionStore list definitions', () => {
       await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'error', '0.0'))
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      assert.strictEqual(error.message, 'test error')
     }
   })
 
   it('works for unknown path coordinates ', async () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'bogus', '0.0'))
-    expect(result.length).to.eq(0)
+    assert.strictEqual(result.length, 0)
   })
 
   it('lists zero definitions', async () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'))
-    expect(result.length).to.eq(0)
+    assert.strictEqual(result.length, 0)
   })
 
   it('list a single definition', async () => {
     const fileStore = FileStore()
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'))
     const expected = ['npm/npmjs/-/test/1.0']
-    expect(result).to.deep.equalInAnyOrder(expected)
+    assertDeepEqualInAnyOrder(result, expected)
   })
 
   it('lists multiple definitions ', async () => {
@@ -72,6 +73,6 @@ describe('FileDefinitionStore list definitions', () => {
     const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test'))
     // Note that revision 0.0 is skipped because it is empty
     const expected = ['npm/npmjs/-/test/1.0', 'npm/npmjs/-/test/2.0']
-    expect(result).to.deep.equalInAnyOrder(expected)
+    assertDeepEqualInAnyOrder(result, expected)
   })
 })

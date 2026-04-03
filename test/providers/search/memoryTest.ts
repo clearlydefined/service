@@ -1,7 +1,8 @@
+import assert from 'node:assert/strict'
+import { describe, it, before } from 'node:test'
 // (c) Copyright 2022, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import MemorySearch from '../../../providers/search/memory.js'
 
@@ -32,7 +33,7 @@ describe('memory search tests', () => {
   it('should search successfully', async () => {
     for (const [key, value] of Object.entries(searches)) {
       const result = await memorySearch.suggestCoordinates(key)
-      expect(result[0]).to.be.equal(value)
+      assert.strictEqual(result[0], value)
     }
   })
 })

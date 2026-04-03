@@ -1,9 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
-import sinon from 'sinon'
 import webhookRoutes from '../../routes/webhook.js'
 
 describe('Webhook Route for Crawler calls', () => {
@@ -14,24 +14,24 @@ describe('Webhook Route for Crawler calls', () => {
     const service = createDefinitionService()
     const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(200)
-    expect(service.computeAndStoreIfNecessary.calledOnce).to.be.true
-    expect(service.computeAndStoreIfNecessary.getCall(0).args[0].name).to.be.eq('test')
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(service.computeAndStoreIfNecessary.mock.callCount() === 1, true)
+    assert.strictEqual(service.computeAndStoreIfNecessary.mock.calls[0].arguments[0].name, 'test')
   })
 
   it('handles missing self', () => {
     const request = createRequest()
     const response = httpMocks.createResponse()
-    expect(response.statusCode).to.be.eq(200)
-    expect(response._getData()).to.be.empty
+    assert.strictEqual(response.statusCode, 200)
+    assert.strictEqual(response._getData().length, 0)
     const logger = createLogger()
     const service = createDefinitionService()
     const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
-    expect(service.computeStoreAndCurate.calledOnce).to.be.false
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+    assert.strictEqual(response.statusCode, 400)
+    assert.strictEqual(service.computeStoreAndCurate.mock.callCount() === 1, false)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0].startsWith('Fatal'), true)
   })
 
   it('handles missing links', () => {
@@ -41,10 +41,10 @@ describe('Webhook Route for Crawler calls', () => {
     const service = createDefinitionService()
     const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'secret', true)
     router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
-    expect(service.computeStoreAndCurate.calledOnce).to.be.false
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+    assert.strictEqual(response.statusCode, 400)
+    assert.strictEqual(service.computeStoreAndCurate.mock.callCount() === 1, false)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0].startsWith('Fatal'), true)
   })
 
   it('handles incorrect token', () => {
@@ -54,21 +54,21 @@ describe('Webhook Route for Crawler calls', () => {
     const service = createDefinitionService()
     const router = (webhookRoutes as (...args: any[]) => any)(null, service, logger, 'secret', 'different', true)
     router._handlePost(request, response)
-    expect(response.statusCode).to.be.eq(400)
-    expect(service.computeStoreAndCurate.calledOnce).to.be.false
-    expect(logger.info.calledOnce).to.be.true
-    expect(logger.info.args[0][0].startsWith('Fatal')).to.be.true
+    assert.strictEqual(response.statusCode, 400)
+    assert.strictEqual(service.computeStoreAndCurate.mock.callCount() === 1, false)
+    assert.strictEqual(logger.info.mock.callCount() === 1, true)
+    assert.strictEqual(logger.info.mock.calls[0].arguments[0].startsWith('Fatal'), true)
   })
 })
 
 function createLogger() {
-  return { info: sinon.stub(), error: sinon.stub() }
+  return { info: mock.fn(), error: mock.fn() }
 }
 
 function createDefinitionService() {
   return {
-    computeStoreAndCurate: sinon.stub(),
-    computeAndStoreIfNecessary: sinon.stub()
+    computeStoreAndCurate: mock.fn(),
+    computeAndStoreIfNecessary: mock.fn()
   }
 }
 

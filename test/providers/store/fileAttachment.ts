@@ -1,10 +1,14 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
+import assert from 'node:assert/strict'
+import { after, before, describe, it } from 'node:test'
+
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
-const sandbox = sinon.createSandbox()
 const proxyquire = require('proxyquire')
-const { expect } = require('chai')
 let FileStore
 
 const data = {
@@ -32,7 +36,7 @@ describe('FileAttachmentStore list definitions', () => {
     FileStore = proxyquire('../../../providers/stores/fileAttachmentStore', { 'node:fs': fsStub })
   })
 
-  after(() => sandbox.restore())
+  after(() => {})
 
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore({ location: '/foo' })
@@ -40,19 +44,19 @@ describe('FileAttachmentStore list definitions', () => {
       await fileStore.get('error')
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      assert.strictEqual(error.message, 'test error')
     }
   })
 
   it('works for unknown key', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.get('44')
-    expect(result).to.be.null
+    assert.strictEqual(result, null)
   })
 
   it('gets an attachment', async () => {
     const fileStore = FileStore({ location: '/foo' })
     const result = await fileStore.get('42')
-    expect(result).to.eq('42 attachment')
+    assert.strictEqual(result, '42 attachment')
   })
 })

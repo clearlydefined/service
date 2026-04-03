@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
-import sinon from 'sinon'
+import { beforeEach, describe, it, mock } from 'node:test'
 import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.js'
 
 function createCacheMock() {
@@ -27,8 +27,8 @@ describe('CacheBasedHarvester', () => {
   const bar = { coordinates: 'pkg/npm/bar/2.0.0' }
 
   const loggerMock = {
-    debug: sinon.stub(),
-    error: sinon.stub()
+    debug: mock.fn(),
+    error: mock.fn()
   }
 
   let cacheMock
@@ -37,14 +37,14 @@ describe('CacheBasedHarvester', () => {
 
   beforeEach(() => {
     harvesterMock = {
-      harvest: sinon.stub(),
-      toHarvestItem: sinon.stub().callsFake(entry => entry)
+      harvest: mock.fn(),
+      toHarvestItem: mock.fn(entry => entry)
     }
 
     cacheMock = createCacheMock()
-    sinon.spy(cacheMock, 'get')
-    sinon.spy(cacheMock, 'set')
-    sinon.spy(cacheMock, 'delete')
+    mock.method(cacheMock, 'get')
+    mock.method(cacheMock, 'set')
+    mock.method(cacheMock, 'delete')
 
     crawler = cacheBasedHarvester({
       cachingService: cacheMock,
@@ -58,10 +58,10 @@ describe('CacheBasedHarvester', () => {
 
     it('calls harvester with correct parameters', async () => {
       await crawler.harvest(spec, false)
-      assert.strictEqual(cacheMock.set.callCount, 2, 'set should be called twice')
-      assert.ok(harvesterMock.harvest.calledOnce, 'harvest should be called once')
+      assert.strictEqual(cacheMock.set.mock.callCount(), 2, 'set should be called twice')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 1, 'harvest should be called once')
       assert.deepStrictEqual(
-        harvesterMock.harvest.args[0][0],
+        harvesterMock.harvest.mock.calls[0].arguments[0],
         [foo, bar],
         'Expected harvester to be called with the correct entries'
       )
@@ -77,10 +77,10 @@ describe('CacheBasedHarvester', () => {
 
     it('removes duplicates before harvest', async () => {
       await crawler.harvest([foo, foo], false)
-      assert.strictEqual(cacheMock.set.callCount, 1, 'set should be called once')
-      assert.ok(harvesterMock.harvest.calledOnce, 'harvest should be called once')
+      assert.strictEqual(cacheMock.set.mock.callCount(), 1, 'set should be called once')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 1, 'harvest should be called once')
       assert.deepStrictEqual(
-        harvesterMock.harvest.args[0][0],
+        harvesterMock.harvest.mock.calls[0].arguments[0],
         [foo],
         'Expected harvester to be called with the correct entries'
       )
@@ -90,7 +90,7 @@ describe('CacheBasedHarvester', () => {
       cacheMock.store[cacheKeyFoo] = [foo]
       await crawler.harvest(spec, false)
       assert.deepStrictEqual(
-        harvesterMock.harvest.args[0][0],
+        harvesterMock.harvest.mock.calls[0].arguments[0],
         [bar],
         'Expected harvester to be called with the correct entries'
       )
@@ -100,23 +100,27 @@ describe('CacheBasedHarvester', () => {
       cacheMock.store[cacheKeyFoo] = [foo]
       cacheMock.store[cacheKeyBar] = [bar]
       await crawler.harvest(spec, false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called')
     })
 
     it('does not call harvester if no entries are provided', async () => {
       await crawler.harvest([], false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called')
     })
 
     it('throws error if harvester throws', async () => {
-      harvesterMock.harvest.rejects(new Error('Harvester error'))
+      harvesterMock.harvest.mock.mockImplementation(async () => {
+        throw new Error('Harvester error')
+      })
       await assert.rejects(async () => {
         await crawler.harvest([foo], false)
       }, 'Expected harvest to throw the harvest errors')
     })
 
     it('handles errors in cache gracefully', async () => {
-      cacheMock.get = sinon.stub().rejects(new Error('Cache error'))
+      cacheMock.get = mock.fn(async () => {
+        throw new Error('Cache error')
+      })
       await assert.doesNotReject(async () => {
         await crawler.isTracked(foo.coordinates)
       }, 'Expected isTracked to handle cache errors gracefully')
@@ -126,7 +130,7 @@ describe('CacheBasedHarvester', () => {
   describe('isTracked', () => {
     it('calls cache with the correct parameter', async () => {
       await crawler.isTracked(foo.coordinates)
-      assert.ok(cacheMock.get.calledWith(cacheKeyFoo), 'Expected cache get to be called with the correct key')
+      assert.deepStrictEqual(cacheMock.get.mock.calls[0].arguments[0], cacheKeyFoo, 'Expected cache get to be called with the correct key')
     })
 
     it('returns true if the entry is tracked', async () => {
@@ -143,19 +147,19 @@ describe('CacheBasedHarvester', () => {
     it('returns false for null', async () => {
       const result = await crawler.isTracked(null)
       assert.strictEqual(result, false)
-      assert.ok(cacheMock.get.notCalled, 'Expected cache get not to be called')
+      assert.ok(cacheMock.get.mock.callCount() === 0, 'Expected cache get not to be called')
     })
 
     it('returns false for undefined', async () => {
       const result = await crawler.isTracked(undefined)
       assert.strictEqual(result, false)
-      assert.ok(cacheMock.get.notCalled, 'Expected cache get not to be called')
+      assert.ok(cacheMock.get.mock.callCount() === 0, 'Expected cache get not to be called')
     })
 
     it('returns false for empty string', async () => {
       const result = await crawler.isTracked('')
       assert.strictEqual(result, false)
-      assert.ok(cacheMock.get.notCalled, 'Expected cache get not to be called')
+      assert.ok(cacheMock.get.mock.callCount() === 0, 'Expected cache get not to be called')
     })
   })
 
@@ -166,7 +170,7 @@ describe('CacheBasedHarvester', () => {
 
     it('call delete with the correct parameters', async () => {
       await crawler.done(foo.coordinates)
-      assert.ok(cacheMock.delete.calledWith(cacheKeyFoo))
+      assert.deepStrictEqual(cacheMock.delete.mock.calls[0].arguments[0], cacheKeyFoo)
     })
 
     it('deletes the cache for the given coordinates', async () => {
@@ -179,7 +183,7 @@ describe('CacheBasedHarvester', () => {
 
     it('does not delete the cache for null', async () => {
       await crawler.done(null)
-      assert.ok(cacheMock.delete.notCalled, 'Expected cache delete not to be called')
+      assert.ok(cacheMock.delete.mock.callCount() === 0, 'Expected cache delete not to be called')
       assert.deepStrictEqual(cacheMock.store[cacheKeyFoo], [foo])
     })
 
@@ -187,7 +191,7 @@ describe('CacheBasedHarvester', () => {
       let isBarTracked = await crawler.isTracked(bar.coordinates)
       assert.ok(!isBarTracked, 'Expected cache to not be set for bar')
       await crawler.done(bar.coordinates)
-      assert.ok(cacheMock.delete.calledOnce, 'Expected cache delete to be called')
+      assert.ok(cacheMock.delete.mock.callCount() === 1, 'Expected cache delete to be called')
       isBarTracked = await crawler.isTracked(bar.coordinates)
       assert.ok(!isBarTracked, 'Expected cache to not be set for bar')
     })
@@ -201,27 +205,36 @@ describe('CacheBasedHarvester', () => {
 
     it('handles null spec in harvest', async () => {
       await crawler.harvest(null, false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called for null coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for null coordinates'
+      )
     })
 
     it('handles empty objects in harvest', async () => {
       await crawler.harvest([{}], false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called for empty objects')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called for empty objects')
     })
 
     it('handles null coordinates in harvest', async () => {
       await crawler.harvest([null], false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called for null coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for null coordinates'
+      )
     })
 
     it('handles undefined coordinates in harvest', async () => {
       await crawler.harvest([undefined], false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called for undefined coordinates')
+      assert.ok(
+        harvesterMock.harvest.mock.callCount() === 0,
+        'Expected harvester not to be called for undefined coordinates'
+      )
     })
 
     it('handles empty array in harvest', async () => {
       await crawler.harvest([], false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called for empty array')
+      assert.ok(harvesterMock.harvest.mock.callCount() === 0, 'Expected harvester not to be called for empty array')
     })
   })
 })

@@ -1,9 +1,9 @@
+import assert from 'node:assert/strict'
+import { describe, it, mock } from 'node:test'
 // @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { expect } from 'chai'
-import sinon from 'sinon'
 import Curation from '../../../lib/curation.js'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import Store from '../../../providers/curation/mongoCurationStore.js'
@@ -48,30 +48,30 @@ describe('Mongo Curation store', () => {
   it('handles updateContribution for no curation', async () => {
     const service = createStore()
     await service.updateContribution(pr)
-    expect(service.collection.updateOne.calledOnce).to.be.true
-    expect(service.collection.replaceOne.called).to.be.false
-    expect(service.collection.updateOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.updateOne.args[0][1]).to.deep.eq({ $set: { pr } })
-    expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() === 1, true)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() > 0, false)
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[1], { $set: { pr } })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
   it('handles updateContribution for curation', async () => {
     const service = createStore()
     await service.updateContribution(pr, [curation])
-    expect(service.collection.updateOne.called).to.be.false
-    expect(service.collection.replaceOne.calledOnce).to.be.true
-    expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.replaceOne.args[0][1]).to.deep.eq({ _id: 12, pr, files })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() > 0, false)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, true)
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[1], { _id: 12, pr, files })
   })
 
   it('handles updateContribution for curation with no data', async () => {
     const service = createStore()
     await service.updateContribution(pr, [new Curation()])
-    expect(service.collection.updateOne.called).to.be.true
-    expect(service.collection.replaceOne.calledOnce).to.be.false
-    expect(service.collection.updateOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.updateOne.args[0][1]).to.deep.eq({ $set: { pr } })
-    expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() > 0, true)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, false)
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[1], { $set: { pr } })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
   it('handles updateContribution for curation with partial data', async () => {
@@ -87,10 +87,10 @@ describe('Mongo Curation store', () => {
         }
       })
     ])
-    expect(service.collection.updateOne.called).to.be.false
-    expect(service.collection.replaceOne.calledOnce).to.be.true
-    expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.replaceOne.args[0][1]).to.deep.eq({ _id: 12, pr, files })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() > 0, false)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, true)
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[1], { _id: 12, pr, files })
   })
 
   it('handles updateContribution for curation with data with no revisions', async () => {
@@ -100,11 +100,11 @@ describe('Mongo Curation store', () => {
         coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' }
       })
     ])
-    expect(service.collection.updateOne.called).to.be.true
-    expect(service.collection.replaceOne.calledOnce).to.be.false
-    expect(service.collection.updateOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.updateOne.args[0][1]).to.deep.eq({ $set: { pr } })
-    expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() > 0, true)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, false)
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[1], { $set: { pr } })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
   it('handles updateContribution for curation with data with no coordinates', async () => {
@@ -118,62 +118,67 @@ describe('Mongo Curation store', () => {
         }
       })
     ])
-    expect(service.collection.updateOne.called).to.be.true
-    expect(service.collection.replaceOne.calledOnce).to.be.false
-    expect(service.collection.updateOne.args[0][0]).to.deep.eq({ _id: 12 })
-    expect(service.collection.updateOne.args[0][1]).to.deep.eq({ $set: { pr } })
-    expect(service.collection.updateOne.args[0][2]).to.deep.eq({ upsert: true })
+    assert.strictEqual(service.collection.updateOne.mock.callCount() > 0, true)
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, false)
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[0], { _id: 12 })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[1], { $set: { pr } })
+    assert.deepStrictEqual(service.collection.updateOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
   it('updates curations', async () => {
     const service = createStore()
     await service.updateCurations([curation])
-    expect(service.collection.replaceOne.calledOnce).to.be.true
-    expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 'npm/npmjs/-/foo' })
-    expect(service.collection.replaceOne.args[0][1]).to.deep.eq({ _id: 'npm/npmjs/-/foo', ...curation.data })
-    expect(service.collection.replaceOne.args[0][2]).to.deep.eq({ upsert: true })
+    assert.strictEqual(service.collection.replaceOne.mock.callCount() === 1, true)
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[0], { _id: 'npm/npmjs/-/foo' })
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[1], {
+      _id: 'npm/npmjs/-/foo',
+      ...curation.data
+    })
+    assert.deepStrictEqual(service.collection.replaceOne.mock.calls[0].arguments[2], { upsert: true })
   })
 
   it('gets contribution', async () => {
     const service = createStore()
     await service.getContribution(1)
-    expect(service.collection.findOne.calledOnce).to.be.true
-    expect(service.collection.findOne.args[0][0]).to.deep.eq({ _id: 1 })
+    assert.strictEqual(service.collection.findOne.mock.callCount() === 1, true)
+    assert.deepStrictEqual(service.collection.findOne.mock.calls[0].arguments[0], { _id: 1 })
   })
 
   it('lists by coordinates', async () => {
     const service = createStore()
     const result = await service.list(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(service.collection.find.calledTwice).to.be.true
-    expect(service.collection.find.args[0][0]).to.deep.eq({ _id: /^npm\/npmjs\/-\/foo/ })
-    expect(service.collection.find.args[1][0]).to.deep.eq({
+    assert.strictEqual(service.collection.find.mock.callCount() === 2, true)
+    assert.deepStrictEqual(service.collection.find.mock.calls[0].arguments[0], { _id: /^npm\/npmjs\/-\/foo/ })
+    assert.deepStrictEqual(service.collection.find.mock.calls[1].arguments[0], {
       'files.coordinates.type': 'npm',
       'files.coordinates.provider': 'npmjs',
       'files.coordinates.name': 'foo',
       'files.revisions.revision': '1.0'
     })
-    expect(service.collection.find().sort.args[0][0]).to.deep.eq({ 'pr.number': -1 })
-    expect(result.curations).to.deep.eq({ 'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } } })
+    assert.deepStrictEqual(service.collection.find().sort.mock.calls[0].arguments[0], { 'pr.number': -1 })
+    assert.deepStrictEqual(result.curations, {
+      'npm/npmjs/-/foo/1.0': { described: { projectWebsite: 'http://foo.com' } }
+    })
   })
 
   it('handles list with no coordinates', async () => {
     const service = createStore()
     const result = await service.list(new EntityCoordinates())
-    expect(result).to.be.null
+    assert.strictEqual(result, null)
 
-    await expect(service.list()).to.eventually.be.rejectedWith('must specify coordinates to list')
+    await assert.rejects(service.list(), { message: 'must specify coordinates to list' })
   })
 })
 
 function createStore() {
   const collectionStub = {
-    replaceOne: sinon.stub(),
-    updateOne: sinon.stub(),
-    findOne: sinon.stub(),
-    find: sinon.stub().returns({
-      sort: sinon.stub().returns({ project: sinon.stub().returns({ toArray: () => Promise.resolve([]) }) }),
-      project: sinon.stub().returns({ toArray: () => Promise.resolve([curation.data]) })
-    })
+    replaceOne: mock.fn(),
+    updateOne: mock.fn(),
+    findOne: mock.fn(),
+    find: mock.fn(() => ({
+      sort: mock.fn(() => ({ project: mock.fn(() => ({ toArray: () => Promise.resolve([]) })) })),
+      project: mock.fn(() => ({ toArray: () => Promise.resolve([curation.data]) }))
+    }))
   }
   const store = Store({})
   store.collection = collectionStub

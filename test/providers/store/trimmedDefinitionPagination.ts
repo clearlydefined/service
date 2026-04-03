@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict'
+import { describe, before } from 'node:test'
 // @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
@@ -10,7 +12,7 @@ const dbOptions = {
 }
 
 describe('Mongo Definition Store: Trimmed', () => {
-  before('setup store factory', async function () {
+  before(async function () {
     this.createStore = createStore
   })
 
