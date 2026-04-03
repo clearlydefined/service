@@ -245,6 +245,7 @@ function buildMonkFile(path, license, type = 'full') {
       output: `found full match between \\"${path}\\" and \\"${license}\\" (rf_pk=311); matched: 61+1022`
     }
   }
+  return undefined
 }
 
 function buildCopyrightFile(path, parties) {
