@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -76,9 +75,9 @@ describe('ClearlyDefined Maven summarizer', () => {
   })
 })
 
-function setupMaven(releaseDate, sourceInfo, projectSummary) {
+function setupMaven(releaseDate?, sourceInfo?, projectSummary?) {
   const coordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.summary.project', projectSummary)
   if (sourceInfo) {
@@ -131,9 +130,9 @@ describe('ClearlyDefined NuGet summarizer', () => {
   })
 })
 
-function setupNuGet({ releaseDate, sourceInfo, packageEntries }) {
+function setupNuGet({ releaseDate, sourceInfo, packageEntries }: any = {}) {
   const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.packageEntries', packageEntries)
   if (sourceInfo) {
@@ -169,9 +168,9 @@ describe('ClearlyDefined Source Archive summarizer', () => {
   })
 })
 
-function setupSourceArchive(releaseDate, sourceInfo) {
+function setupSourceArchive(releaseDate?, sourceInfo?) {
   const coordinates = EntityCoordinates.fromString('sourcearchive/github/-/test/1.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   if (sourceInfo) {
     harvested.sourceInfo = createSourceLocation(sourceInfo)
@@ -281,13 +280,13 @@ describe('ClearlyDefined NPM summarizer', () => {
   })
 })
 
-function setupNpm(releaseDate, license, homepage, bugs, sourceInfo) {
+function setupNpm(releaseDate?, license?, homepage?, bugs?, sourceInfo?) {
   const registryData = {}
   setIfValue(registryData, 'releaseDate', releaseDate)
   setIfValue(registryData, 'manifest.license', license)
   setIfValue(registryData, 'manifest.homepage', homepage)
   setIfValue(registryData, 'manifest.bugs', bugs)
-  const harvested = { registryData }
+  const harvested: Record<string, any> = { registryData }
   if (sourceInfo) {
     harvested.sourceInfo = createSourceLocation(sourceInfo)
   }
@@ -343,9 +342,9 @@ describe('ClearlyDefined Gem summarizer', () => {
   })
 })
 
-function setupGem(releaseDate, licenses, sourceInfo) {
+function setupGem(releaseDate?, licenses?, sourceInfo?) {
   const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   if (typeof licenses === 'string') {
     setIfValue(harvested, 'registryData.license', licenses)
@@ -385,9 +384,9 @@ describe('ClearlyDefined Pypi summarizer', () => {
   })
 })
 
-function setupPypi(releaseDate, license, sourceInfo) {
+function setupPypi(releaseDate?, license?, sourceInfo?) {
   const coordinates = EntityCoordinates.fromString('pypi/pypi/-/test/1.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
   setIfValue(harvested, 'registryData.releases', {
@@ -432,9 +431,9 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
   })
 })
 
-function setupCocoaPod(license, releaseDate, homepage) {
+function setupCocoaPod(license?, releaseDate?, homepage?) {
   const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'registryData.license', license)
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData.homepage', homepage)
@@ -497,7 +496,7 @@ describe('ClearlyDefined PHP composer summarizer', () => {
   })
 })
 
-function setupComposer(releaseDate, version, license, homepage) {
+function setupComposer(releaseDate?, version?, license?, homepage?) {
   const registryData = {}
   setIfValue(registryData, 'releaseDate', releaseDate)
   setIfValue(registryData, 'manifest.version', version)
@@ -657,11 +656,11 @@ describe('ClearlyDefined Debian source summarizer', () => {
   })
 })
 
-function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLicenses }) {
+function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLicenses }: any = {}) {
   const coordinates = isSrc
     ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')
     : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')
-  const harvested = {}
+  const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData', registryData)
   setIfValue(harvested, 'sourceInfo', sourceInfo)
@@ -679,7 +678,7 @@ function validate(definition) {
   }
 }
 
-function createSourceLocation() {
+function createSourceLocation(_sourceInfo?) {
   return { type: 'git', provider: 'github', namespace: 'clearlydefined', name: 'test', revision: '42' }
 }
 

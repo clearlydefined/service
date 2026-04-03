@@ -619,7 +619,7 @@ function setupServiceToCalculateDefinition(rawHarvestData) {
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
     autoCurate: () => {}
   }
-  return setupWithDelegates(curator, harvestStore, summary as any, aggregator)
+  return setupWithDelegates(curator, harvestStore, summary as any, aggregator as any)
 }
 
 function setupServiceForUpgrade(definition, upgradeHandler) {
