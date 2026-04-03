@@ -256,12 +256,15 @@ describe('ScanCodeLegacySummarizer', () => {
 
   context('_getRootFiles', () => {
     it('gets root files', () => {
-      const result = ScanCodeLegacySummarizer()._getRootFiles({ type: 'npm' } as any, [
-        { path: 'realroot' },
-        { path: 'package/packageRoot' },
-        { path: 'other/nonroot' },
-        { path: 'package/deep/path' }
-      ] as any)
+      const result = ScanCodeLegacySummarizer()._getRootFiles(
+        { type: 'npm' } as any,
+        [
+          { path: 'realroot' },
+          { path: 'package/packageRoot' },
+          { path: 'other/nonroot' },
+          { path: 'package/deep/path' }
+        ] as any
+      )
       expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
     })
   })
