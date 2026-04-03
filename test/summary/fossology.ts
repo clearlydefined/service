@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -19,7 +18,7 @@ describe('General summarizer', () => {
   it('handles empty input', () => {
     const { coordinates, harvested } = setup([])
     const summary = Summarizer().summarize(coordinates, harvested)
-    expect(summary.coordinates).to.be.undefined
+    expect((summary as any).coordinates).to.be.undefined
   })
 })
 
@@ -181,7 +180,7 @@ function validate(definition) {
   }
 }
 
-function setup(files, coordinateSpec) {
+function setup(files, coordinateSpec?) {
   const harvested = { _metadata: {} }
   const grouped = groupBy(files, 'type')
   setupNomos(harvested, grouped.nomos)
