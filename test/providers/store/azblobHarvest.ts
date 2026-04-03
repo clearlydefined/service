@@ -5,7 +5,6 @@ import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import sinon from 'sinon'
 import Store from '../../../providers/stores/azblobHarvestStore.js'
-import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect

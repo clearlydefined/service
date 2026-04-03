@@ -19,7 +19,6 @@ import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
-const assert = chai.assert
 
 describe('Github Curation Service', () => {
   beforeEach(() => {
