@@ -711,8 +711,12 @@ class DefinitionService {
    * @private
    */
   _computeSPDXScore(definition) {
+    const declaredLicense = get(definition, 'licensed.declared')
+    if (!declaredLicense) {
+      return 0
+    }
     try {
-      parse(get(definition, 'licensed.declared')) // use strict spdx-expression-parse
+      parse(declaredLicense) // use strict spdx-expression-parse
       return weights.spdx
     } catch (e) {
       this.logger.debug('Could not parse declared license expression.', {
