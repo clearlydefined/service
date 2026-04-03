@@ -1,4 +1,3 @@
-// @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -242,7 +241,7 @@ function verifyUniqueCoordinates(defs) {
   return allCoordinates
 }
 
-async function fetchAll(mongoStore, query, pageSize) {
+async function fetchAll(mongoStore, query, pageSize?) {
   return fetchUpToNTimes(mongoStore, query, Number.MAX_SAFE_INTEGER, pageSize)
 }
 
@@ -260,6 +259,9 @@ async function fetchUpToNTimes(mongoStore, query, nTimes, pageSize = 1) {
 }
 
 class ContinousFetch {
+  _fetchOperation: (params: any) => Promise<any>
+  _delay: number
+
   constructor(fetchOperation, delay = 0) {
     this._fetchOperation = fetchOperation
     this._delay = delay
@@ -283,7 +285,7 @@ class ContinousFetch {
   async fetchUpToNtimes(params, nTime) {
     let dispatchCounter = 0
     let fetchedCounter = 0
-    let retrieved = {}
+    let retrieved: Record<string, any> = {}
 
     while (dispatchCounter < nTime) {
       retrieved = await this._delayedFetch({
