@@ -1,4 +1,3 @@
-// @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -20,7 +19,7 @@ describe('Mongo Definition Store: Paged', () => {
 async function createStore(options, defs) {
   const mongoStore = Store({ ...options, ...dbOptions })
   await mongoStore.initialize()
-  await mongoStore.collection.createIndex({ '_mongo.partitionKey': 1 })
-  await mongoStore.collection.insertMany(defs)
+  await (mongoStore as any).collection.createIndex({ '_mongo.partitionKey': 1 })
+  await (mongoStore as any).collection.insertMany(defs)
   return mongoStore
 }
