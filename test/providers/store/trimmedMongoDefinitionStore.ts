@@ -1,4 +1,3 @@
-// @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -13,6 +12,8 @@ import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
 import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
 
+import { createSilentLogger } from '../../helpers/mockLogger.ts'
+
 const { uniq } = lodash
 
 // @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
@@ -21,10 +22,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const dbOptions = {
   dbName: 'clearlydefined',
   collectionName: 'definitions-trimmed',
-  logger: {
-    debug: () => {},
-    info: () => {}
-  }
+  logger: createSilentLogger()
 }
 
 describe('Trimmed Mongo Definition store', () => {
@@ -72,7 +70,7 @@ describe('Trimmed Mongo Definition store', () => {
 
   describe('store', () => {
     it('should call replaceOne with the right arguments', async () => {
-      mongoStore.collection.replaceOne = sinon.fake.resolves()
+      ;(mongoStore.collection as any).replaceOne = sinon.fake.resolves(undefined)
       const definition = createDefinition('npm/npmjs/-/foo/1.0')
       await mongoStore.store(definition)
       expect(mongoStore.collection.replaceOne.callCount).to.eq(1)
@@ -93,7 +91,7 @@ describe('Trimmed Mongo Definition store', () => {
 
   describe('delete', () => {
     it('should call deleteOne with the right arguments', async () => {
-      mongoStore.collection.deleteOne = sinon.fake.resolves()
+      ;(mongoStore.collection as any).deleteOne = sinon.fake.resolves(undefined)
       await mongoStore.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
       expect(mongoStore.collection.deleteOne.callCount).to.eq(1)
       expect(mongoStore.collection.deleteOne.args[0][0]['_id']).to.eq('npm/npmjs/-/foo/1.0')

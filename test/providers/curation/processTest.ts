@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -6,6 +5,8 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import process from '../../../providers/curation/process.js'
 import memoryQueue from '../../../providers/queueing/memoryQueue.js'
+
+import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 describe('Curation queue processing', () => {
   let clock
@@ -75,7 +76,7 @@ describe('Curation queue processing', () => {
   })
 })
 
-function setup({ action, merged }) {
+function setup({ action, merged = false }) {
   const queue = memoryQueue()
 
   queue.queue(
@@ -99,10 +100,7 @@ function setup({ action, merged }) {
     updateContribution: sinon.stub(),
     addByMergedCuration: sinon.stub()
   }
-  const logger = {
-    info: sinon.stub(),
-    error: sinon.stub()
-  }
+  const logger = createMockLogger()
 
   return { queue, curationService, logger }
 }
