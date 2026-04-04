@@ -59,9 +59,11 @@ export interface UpgradeQueueProviders {
 /** Provider configuration for upgrade service */
 export interface UpgradeServiceProviders {
   onDemand: ProviderFactory
-  versionCheck: ProviderFactory //deprecated, to be removed in favor of onDemand
+  /** @deprecated TODO: remove in favor of onDemand */
+  versionCheck: ProviderFactory
   delayed: ProviderFactory
-  upgradeQueue: ProviderFactory //deprecated, to be removed in favor of delayed
+  /** @deprecated TODO: remove in favor of delayed */
+  upgradeQueue: ProviderFactory
 }
 
 /** Provider configuration for upgrade */

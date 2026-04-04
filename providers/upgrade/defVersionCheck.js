@@ -58,7 +58,6 @@ class DefinitionVersionChecker {
    * @param {ICache} [_cache]
    */
   setupProcessing(_definitionService, _logger, _once, _cache) {
-    void [_definitionService, _logger, _once, _cache]
     //do nothing for set up processing
   }
 

@@ -66,6 +66,10 @@ class RecomputeHandler {
    * @param {boolean} [once]
    */
   async setupProcessing(definitionService, logger, once) {
+    // Resolves after the first polling batch from each queue. Queue consumers
+    // continue running indefinitely in the background via setTimeout — "setup
+    // complete" means "first batch processed and polling loop started", not
+    // "all processing done".
     this._logger.debug('Setting up recompute handler processing', {
       once: !!once,
       upgradePolicy: getPolicyName(this._upgradePolicy),

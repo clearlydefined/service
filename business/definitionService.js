@@ -136,6 +136,8 @@ class DefinitionService {
     if (result) {
       this._logDefinitionStatus(result, coordinates)
     } else if (force) {
+      // force=true bypasses curations intentionally — it recomputes raw harvest
+      // data only, without re-applying curation overlays.
       result = await this.computeAndStore(coordinates)
     } else {
       result = await this.recomputeHandler.compute(this, coordinates)
