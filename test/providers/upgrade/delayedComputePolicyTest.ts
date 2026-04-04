@@ -10,6 +10,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import type { Definition, DefinitionService, RecomputeContext } from '../../../business/definitionService.js'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import type { ICache } from '../../../providers/caching/index.js'
 import type { IQueue } from '../../../providers/queueing/index.js'
 import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputePolicy.js'
 import { createMockLogger } from '../../helpers/mockLogger.ts'
@@ -51,6 +52,43 @@ describe('DelayedComputePolicy', () => {
       queue.queue.rejects(enqueueError)
 
       await expect(policy.compute(definitionService(), coordinates)).to.be.rejectedWith(enqueueError)
+    })
+
+    describe('with enqueueCache', () => {
+      let enqueueCache: { [K in keyof ICache]: sinon.SinonStub }
+      let dedupPolicy: DelayedComputePolicy
+
+      beforeEach(async () => {
+        enqueueCache = createEnqueueCache()
+        dedupPolicy = new DelayedComputePolicy({ logger: createMockLogger(), queue: () => queue, enqueueCache })
+        await dedupPolicy.initialize()
+      })
+
+      it('skips enqueue for duplicate coordinates within cache TTL', async () => {
+        await dedupPolicy.compute(definitionService(), coordinates)
+        await dedupPolicy.compute(definitionService(), coordinates)
+
+        expect(queue.queue.calledOnce).to.be.true
+      })
+
+      it('enqueues again after cache entry expires', async () => {
+        await dedupPolicy.compute(definitionService(), coordinates)
+        enqueueCache.delete.callsFake((key: string) => enqueueCache.get.withArgs(key).returns(null))
+        enqueueCache.get.returns(null)
+
+        await dedupPolicy.compute(definitionService(), coordinates)
+
+        expect(queue.queue.calledTwice).to.be.true
+      })
+
+      it('enqueues independently for different coordinates', async () => {
+        const other = EntityCoordinates.fromString('npm/npmjs/-/debug/4.3.4')
+
+        await dedupPolicy.compute(definitionService(), coordinates)
+        await dedupPolicy.compute(definitionService(), other)
+
+        expect(queue.queue.calledTwice).to.be.true
+      })
     })
   })
 
@@ -117,4 +155,15 @@ function validateQueuedCoordinates(queue: { [K in keyof IQueue]: sinon.SinonStub
   const queued = JSON.parse(Buffer.from(queue.queue.getCall(0).args[0], 'base64').toString())
   expect(EntityCoordinates.fromObject(queued.coordinates).toString()).to.equal(coordinates.toString())
   expect(queued._meta).to.be.undefined
+}
+
+const createEnqueueCache = (): { [K in keyof ICache]: sinon.SinonStub } => {
+  const store = new Map<string, unknown>()
+  return {
+    initialize: sinon.stub().resolves(),
+    get: sinon.stub().callsFake((key: string) => store.get(key) ?? null),
+    set: sinon.stub().callsFake((key: string, value: unknown) => store.set(key, value)),
+    delete: sinon.stub().callsFake((key: string) => store.delete(key)),
+    done: sinon.stub().resolves()
+  }
 }

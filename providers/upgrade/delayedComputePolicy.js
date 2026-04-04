@@ -4,8 +4,10 @@
 const logger = require('../logging/logger')
 const { setup } = require('./process')
 const { SkipUpgradePolicy } = require('./skipUpgradePolicy')
+const Cache = require('../caching/memory')
 
 /** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
+/** @typedef {import('./delayedComputePolicy').DelayedComputePolicyOptions} DelayedComputePolicyOptions */
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
@@ -13,14 +15,18 @@ const { SkipUpgradePolicy } = require('./skipUpgradePolicy')
 /** @typedef {import('../caching').ICache} ICache */
 
 class DelayedComputePolicy {
-  /** @param {DefinitionQueueUpgraderOptions} options */
+  static _enqueueCacheTtlSeconds = 60 * 5 /* 5 mins */
+
+  /** @param {DelayedComputePolicyOptions} options */
   constructor(options) {
     this.options = options
     this.logger = options.logger || logger()
+    this._enqueueCache =
+      options.enqueueCache || Cache({ defaultTtlSeconds: DelayedComputePolicy._enqueueCacheTtlSeconds })
   }
 
   async initialize() {
-    const options = /** @type {DefinitionQueueUpgraderOptions} */ (this.options)
+    const options = /** @type {DelayedComputePolicyOptions} */ (this.options)
     this._compute = options.queue()
     return this._compute.initialize()
   }
@@ -51,10 +57,16 @@ class DelayedComputePolicy {
     if (!this._compute) {
       throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
+    const key = coordinates.toString()
+    if (this._enqueueCache.get(key)) {
+      this.logger.debug('Skipped duplicate enqueue for delayed definition compute', { coordinates: key })
+      return
+    }
     const message = this._constructMessage(coordinates)
     await this._compute.queue(message)
+    this._enqueueCache.set(key, true)
     this.logger.info('Queued for delayed definition compute', {
-      coordinates: coordinates.toString()
+      coordinates: key
     })
   }
 

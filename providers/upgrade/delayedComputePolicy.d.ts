@@ -8,11 +8,16 @@ import type { ICache } from '../caching'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
 import type { MissingDefinitionComputePolicy } from './computePolicy'
 
+export interface DelayedComputePolicyOptions extends DefinitionQueueUpgraderOptions {
+  /** Injectable for testing; defaults to an in-memory cache with 5-minute TTL */
+  enqueueCache?: ICache
+}
+
 export declare class DelayedComputePolicy implements MissingDefinitionComputePolicy {
-  options: DefinitionQueueUpgraderOptions
+  options: DelayedComputePolicyOptions
   logger: Logger
 
-  constructor(options: DefinitionQueueUpgraderOptions)
+  constructor(options: DelayedComputePolicyOptions)
 
   initialize(): Promise<void>
 
