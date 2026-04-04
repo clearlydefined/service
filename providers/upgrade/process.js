@@ -37,8 +37,13 @@ class QueueHandler {
       }
       const results = await Promise.allSettled(
         messages.map(async message => {
-          await this._messageHandler.processMessage(message)
-          await this._queue.delete(message)
+          try {
+            await this._messageHandler.processMessage(message)
+          } finally {
+            // Always delete: mirrors on-demand single-attempt semantics.
+            // On error, the next HTTP request will re-enqueue if needed.
+            await this._queue.delete(message)
+          }
         })
       )
       for (const result of results.filter(result => result.status === 'rejected')) {

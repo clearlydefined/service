@@ -67,23 +67,23 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.delete.calledTwice).to.be.true
     })
 
-    it('handles if error is thrown', async () => {
+    it('deletes message even if processing throws', async () => {
       queue.dequeueMultiple.resolves([{ message: 'testA' }])
       messageHandler.processMessage = sinon.stub().throws()
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
       expect(messageHandler.processMessage.calledOnce).to.be.true
-      expect(queue.delete.called).to.be.false
+      expect(queue.delete.calledOnce).to.be.true
       expect(logger.error.calledOnce).to.be.true
     })
 
-    it('handles both sucessful and unsucessful messages', async () => {
+    it('deletes all messages regardless of per-message success or failure', async () => {
       queue.dequeueMultiple.resolves([{ message: 'testA' }, { message: 'testB' }])
       messageHandler.processMessage = sinon.stub().onFirstCall().throws().onSecondCall().resolves()
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
       expect(messageHandler.processMessage.calledTwice).to.be.true
-      expect(queue.delete.calledOnce).to.be.true
+      expect(queue.delete.calledTwice).to.be.true
       expect(logger.error.calledOnce).to.be.true
     })
   })
@@ -181,7 +181,7 @@ describe('Definition Upgrade Queue Processing', () => {
 
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
-      expect(queue.delete.called).to.be.false
+      expect(queue.delete.calledOnce).to.be.true
       expect(logger.error.calledOnce).to.be.true
       expect(logger.error.args[0][0].message).to.match(/pypi\/pypi\/-\/test\/revision: test/)
     })
