@@ -15,7 +15,7 @@ const Cache = require('../caching/memory')
 /** @typedef {import('../caching').ICache} ICache */
 
 class DelayedComputePolicy {
-  static _enqueueCacheTtlSeconds = 60 * 5 /* 5 mins */
+  static _enqueueCacheTtlSeconds = 60 * 20 /* 20 mins */
 
   /** @param {DelayedComputePolicyOptions} options */
   constructor(options) {

@@ -12,7 +12,7 @@ const upgradeDefaultOptions = {
   queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
   dequeueOptions: {
     numOfMessages: config.get('DEFINITION_UPGRADE_DEQUEUE_BATCH_SIZE') || 16,
-    visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
+    visibilityTimeout: 20 * 60 // 20 min; covers p95 compute duration (~16 min over 20 days)
   }
 }
 
@@ -24,7 +24,7 @@ const computeDefaultOptions = {
   queueName: config.get('DEFINITION_COMPUTE_QUEUE_NAME') || 'recompute',
   dequeueOptions: {
     numOfMessages: 32, // Azure Storage Queue maximum; compute queue is high-traffic (~10K/hr)
-    visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
+    visibilityTimeout: 20 * 60 // 20 min; covers p95 compute duration (~16 min over 20 days)
   }
 }
 

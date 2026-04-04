@@ -60,7 +60,7 @@ class QueueHandler {
 }
 
 class DefinitionUpgrader {
-  static _defaultTtlSeconds = 60 * 5 /* 5 mins */
+  static _defaultTtlSeconds = 60 * 20 /* 20 mins */
   static delayInMSeconds = 500
 
   /**
