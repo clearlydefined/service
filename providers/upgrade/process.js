@@ -4,7 +4,6 @@
 const { get } = require('lodash')
 const EntityCoordinates = require('../../lib/entityCoordinates')
 const { factory } = require('./defVersionCheck')
-const Cache = require('../caching/memory')
 
 /**
  * @typedef {import('../queueing').IQueue} IQueue
@@ -12,7 +11,6 @@ const Cache = require('../caching/memory')
  * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
  * @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler
  * @typedef {import('../logging').Logger} Logger
- * @typedef {import('../caching').ICache} ICache
  */
 
 class QueueHandler {
@@ -60,26 +58,16 @@ class QueueHandler {
 }
 
 class DefinitionUpgrader {
-  static _defaultTtlSeconds = 60 * 20 /* 20 mins */
-  static delayInMSeconds = 500
-
   /**
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {UpgradeHandler} upgradePolicy
-   * @param {ICache} [cache]
    */
-  constructor(
-    definitionService,
-    logger,
-    upgradePolicy,
-    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader._defaultTtlSeconds })
-  ) {
+  constructor(definitionService, logger, upgradePolicy) {
     this.logger = logger
     this._definitionService = definitionService
     this._upgradePolicy = upgradePolicy
     this._upgradePolicy.currentSchema = definitionService.currentSchema
-    this._upgradeLock = cache
   }
 
   /** @param {DequeuedMessage} message */
@@ -90,34 +78,21 @@ class DefinitionUpgrader {
     }
     coordinates = EntityCoordinates.fromObject(coordinates)
 
-    while (this._upgradeLock.get(coordinates.toString())) {
-      await new Promise(resolve => setTimeout(resolve, DefinitionUpgrader.delayInMSeconds))
-    }
     try {
-      this._upgradeLock.set(coordinates.toString(), true)
-      await this._upgradeIfNecessary(coordinates)
-    } finally {
-      this._upgradeLock.delete(coordinates.toString())
-    }
-  }
-
-  /** @param {import('../../lib/entityCoordinates')} coordinates */
-  async _upgradeIfNecessary(coordinates) {
-    try {
-      const existing = await this._definitionService.getStored(coordinates)
-      const result = await this._upgradePolicy.validate(existing)
-      if (!result) {
-        await this._definitionService.computeStoreAndCurate(coordinates)
+      const result = await this._definitionService.computeStoreAndCurateIf(coordinates, async () => {
+        const existing = await this._definitionService.getStored(coordinates)
+        const valid = await this._upgradePolicy.validate(existing)
+        const needsCompute = !valid
+        return needsCompute
+      })
+      if (result) {
         this.logger.info('Handled definition upgrade', { coordinates })
       } else {
         this.logger.debug('Skipped definition upgrade', { coordinates })
       }
     } catch (error) {
-      const context = `Error handling definition upgrade for ${coordinates.toString()}`
       const originalError = error instanceof Error ? error : new Error(String(error))
-      const newError = new Error(`${context}: ${originalError.message}`)
-      newError.stack = originalError.stack
-      throw newError
+      throw new Error(`${coordinates}: ${originalError.message}`, { cause: originalError })
     }
   }
 }
@@ -128,17 +103,9 @@ class DefinitionUpgrader {
  * @param {Logger} _logger
  * @param {boolean} [once]
  * @param {UpgradeHandler} [_upgradePolicy]
- * @param {ICache} [cache]
  */
-function setup(
-  _queue,
-  _definitionService,
-  _logger,
-  once = false,
-  _upgradePolicy = factory({ logger: _logger }),
-  cache
-) {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy, cache)
+function setup(_queue, _definitionService, _logger, once = false, _upgradePolicy = factory({ logger: _logger })) {
+  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
 }

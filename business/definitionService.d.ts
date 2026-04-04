@@ -431,6 +431,19 @@ export declare class DefinitionService {
   ): Promise<Definition | undefined>
 
   /**
+   * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store+curate.
+   * Serializes compute per coordinate — check-then-act is atomic inside the lock.
+   *
+   * @param coordinates - The coordinates to compute
+   * @param shouldCompute - Returns true to proceed with compute, false to skip
+   * @returns The computed definition or undefined if skipped
+   */
+  computeStoreAndCurateIf(
+    coordinates: EntityCoordinates,
+    shouldCompute: () => Promise<boolean>
+  ): Promise<Definition | undefined>
+
+  /**
    * Compute the final representation of the specified definition
    *
    * @param coordinates - The entity for which we are computing

@@ -93,32 +93,45 @@ describe('DelayedComputePolicy', () => {
   })
 
   describe('setupProcessing()', () => {
+    let getStored: sinon.SinonStub
+    let computeStoreAndCurateIf: sinon.SinonStub
+    let service: DefinitionService
+    let shouldComputeResult: boolean | undefined
+
     beforeEach(() => {
+      const definition = { coordinates, _meta: { schemaVersion: '1.7.0' } }
       queue.dequeueMultiple.resolves([{ data: { coordinates } }])
       queue.delete.resolves()
+      getStored = sinon.stub()
+      shouldComputeResult = undefined
+      computeStoreAndCurateIf = sinon.stub().callsFake(async (_coords, shouldCompute) => {
+        shouldComputeResult = await shouldCompute()
+        return shouldComputeResult ? definition : undefined
+      })
+      service = { currentSchema: '1.7.0', getStored, computeStoreAndCurateIf } as unknown as DefinitionService
     })
 
     it('skips recompute when definition already exists', async () => {
-      const getStored = sinon.stub().resolves({ coordinates, _meta: { schemaVersion: '0.0.1' } })
-      const computeStoreAndCurate = sinon.stub().resolves()
-      const service = { currentSchema: '1.7.0', getStored, computeStoreAndCurate } as unknown as DefinitionService
+      getStored.resolves({ coordinates, _meta: { schemaVersion: '1.7.0' } })
 
       await policy.setupProcessing(service, createMockLogger(), true)
 
       expect(getStored.calledOnce).to.be.true
-      expect(computeStoreAndCurate.notCalled).to.be.true
+      expect(computeStoreAndCurateIf.calledOnce).to.be.true
+      expect(shouldComputeResult).to.be.false
+      expect(await computeStoreAndCurateIf.returnValues[0]).to.be.undefined
       expect(queue.delete.calledOnce).to.be.true
     })
 
     it('recomputes when definition is missing', async () => {
-      const getStored = sinon.stub().resolves(undefined)
-      const computeStoreAndCurate = sinon.stub().resolves()
-      const service = { currentSchema: '1.7.0', getStored, computeStoreAndCurate } as unknown as DefinitionService
+      getStored.resolves(undefined)
 
       await policy.setupProcessing(service, createMockLogger(), true)
 
       expect(getStored.calledOnce).to.be.true
-      expect(computeStoreAndCurate.calledOnce).to.be.true
+      expect(computeStoreAndCurateIf.calledOnce).to.be.true
+      expect(shouldComputeResult).to.be.true
+      expect(await computeStoreAndCurateIf.returnValues[0]).to.exist
       expect(queue.delete.calledOnce).to.be.true
     })
   })
