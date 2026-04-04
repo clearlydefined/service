@@ -23,8 +23,7 @@ const computeDefaultOptions = {
     config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
   queueName: config.get('DEFINITION_COMPUTE_QUEUE_NAME') || 'recompute',
   dequeueOptions: {
-    numOfMessages:
-      config.get('DEFINITION_COMPUTE_DEQUEUE_BATCH_SIZE') || config.get('DEFINITION_UPGRADE_DEQUEUE_BATCH_SIZE') || 16,
+    numOfMessages: 32, // Azure Storage Queue maximum; compute queue is high-traffic (~10K/hr)
     visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
   }
 }
