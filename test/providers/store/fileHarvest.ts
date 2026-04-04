@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -12,6 +11,7 @@ const expect = chai.expect
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 import FileStore from '../../../providers/stores/fileHarvestStore.js'
+import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const data = {
   'npm/npmjs/-/test/0.0': {},
@@ -42,7 +42,7 @@ describe('FileHarvestStore list tool results', () => {
     })
   })
 
-  after(() => AbstractFileStore.prototype.list.restore())
+  after(() => (AbstractFileStore.prototype.list as sinon.SinonStub).restore())
 
   it('throws original error when not ENOENT', async () => {
     const fileStore = FileStore()
@@ -62,20 +62,20 @@ describe('FileHarvestStore list tool results', () => {
 
   it('lists no results', async () => {
     const fileStore = FileStore()
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'), 'result')
+    const result = await (fileStore as any).list(new EntityCoordinates('npm', 'npmjs', null, 'test', '0.0'), 'result')
     expect(result.length).to.eq(0)
   })
 
   it('lists a single result', async () => {
     const fileStore = FileStore()
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), 'result')
+    const result = await (fileStore as any).list(new EntityCoordinates('npm', 'npmjs', null, 'test', '1.0'), 'result')
     const expected = ['npm/npmjs/-/test/1.0/testtool/2.0']
     expect(result).to.deep.equalInAnyOrder(expected)
   })
 
   it('lists multiple results', async () => {
     const fileStore = FileStore()
-    const result = await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'), 'result')
+    const result = await (fileStore as any).list(new EntityCoordinates('npm', 'npmjs', null, 'test', '2.0'), 'result')
     const expected = [
       'npm/npmjs/-/test/2.0/testtool0/1.0',
       'npm/npmjs/-/test/2.0/testtool1/2.0',
@@ -157,12 +157,5 @@ describe('getAll and getAllLatest', () => {
 })
 
 function createFileHarvestStore() {
-  const options = {
-    location: 'test/fixtures/store',
-    logger: {
-      error: () => {},
-      debug: () => {}
-    }
-  }
-  return FileStore(options)
+  return FileStore({ location: 'test/fixtures/store', logger: createSilentLogger() })
 }

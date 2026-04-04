@@ -5,12 +5,12 @@
     "checkJs": false,
     "strict": false,
     "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": false,
-    "noImplicitOverride": false
+    "noImplicitOverride": true
   },
   "include": [
     "../types/**/*",

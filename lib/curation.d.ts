@@ -77,7 +77,7 @@ declare class Curation {
    * @param path - Optional file path for error reporting
    * @param validate - Whether to validate the curation (default: true)
    */
-  constructor(content: string | CurationData, path?: string, validate?: boolean)
+  constructor(content?: string | CurationData, path?: string, validate?: boolean)
 
   /**
    * Applies a curation to a definition
