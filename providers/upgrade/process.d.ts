@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import type { DefinitionService, UpgradeHandler } from '../../business/definitionService'
-import type { ICache } from '../caching'
 import type { Logger } from '../logging'
 import type { DequeuedMessage, IQueue } from '../queueing'
 
@@ -36,21 +35,17 @@ export declare class QueueHandler {
 
 /**
  * Processes upgrade messages by recomputing stale definitions.
- * Uses an in-memory lock to prevent concurrent upgrades for the same coordinates.
+ * Serialization is handled by computeLock in definitionService via computeStoreAndCurateIf.
  */
 export declare class DefinitionUpgrader implements MessageHandler {
-  /** Delay in milliseconds between lock-retry attempts */
-  static readonly delayInMSeconds: number
-
   logger: Logger
 
   /**
    * @param definitionService - Service for fetching and recomputing definitions
    * @param logger - Logger instance
    * @param upgradePolicy - Policy that validates whether stored definitions need upgrade
-   * @param cache - Lock cache; defaults to a new in-memory cache with 5 min TTL
    */
-  constructor(definitionService: DefinitionService, logger: Logger, upgradePolicy: UpgradeHandler, cache?: ICache)
+  constructor(definitionService: DefinitionService, logger: Logger, upgradePolicy: UpgradeHandler)
 
   /**
    * Processes a single dequeued upgrade message.
@@ -68,13 +63,11 @@ export declare class DefinitionUpgrader implements MessageHandler {
  * @param logger - Logger instance
  * @param once - If true, processes one batch and stops
  * @param upgradePolicy - Upgrade policy (defaults to a new DefinitionVersionChecker)
- * @param cache - Optional lock cache; passed through to DefinitionUpgrader
  */
 export declare function setup(
   queue: IQueue,
   definitionService: DefinitionService,
   logger: Logger,
   once?: boolean,
-  upgradePolicy?: UpgradeHandler,
-  cache?: ICache
+  upgradePolicy?: UpgradeHandler
 ): Promise<void>

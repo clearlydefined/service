@@ -3,7 +3,6 @@
 
 import type { IQueue } from '../queueing'
 import type { Logger } from '../logging'
-import type { ICache } from '../caching'
 import type { Definition } from '../../business/definitionService'
 import type { DefinitionService } from '../../business/definitionService'
 import { DefinitionVersionChecker, type DefinitionVersionCheckerOptions } from './defVersionCheck'
@@ -44,9 +43,8 @@ declare class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param definitionService - The service used to recompute definitions
    * @param logger - Logger instance
    * @param once - If true, process one batch and stop (for testing)
-   * @param cache - Optional lock cache
    */
-  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean, cache?: ICache): Promise<void>
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void>
 }
 
 export default DefinitionQueueUpgrader

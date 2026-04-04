@@ -325,6 +325,70 @@ describe('Definition Service', () => {
       expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
     })
   })
+
+  describe('computeStoreAndCurateIf', () => {
+    let service
+    let coordinates
+    let autoCurate
+
+    beforeEach(() => {
+      autoCurate = sinon.stub().resolves()
+      ;({ service, coordinates } = setup(createDefinition(null, null, ['scancode/3.2.2'])))
+      service.curationService = {
+        apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+        autoCurate
+      }
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes and auto-curates when predicate returns true', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(autoCurate.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('skips compute and auto-curation when predicate returns false', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => false)
+      expect(service.compute.notCalled).to.be.true
+      expect(autoCurate.notCalled).to.be.true
+      expect(result).to.be.undefined
+    })
+
+    it('releases lock after predicate throws', async () => {
+      await expect(
+        service.computeStoreAndCurateIf(coordinates, async () => {
+          throw new Error('predicate error')
+        })
+      ).to.be.rejectedWith('predicate error')
+
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('serializes concurrent calls for the same coordinates', async () => {
+      const predicate = sinon.stub().onFirstCall().resolves(true).onSecondCall().resolves(false)
+
+      const [first, second] = await Promise.all([
+        service.computeStoreAndCurateIf(coordinates, predicate),
+        service.computeStoreAndCurateIf(coordinates, predicate)
+      ])
+
+      expect(predicate.calledTwice).to.be.true
+      expect(service.compute.calledOnce).to.be.true
+      expect(autoCurate.calledOnce).to.be.true
+      expect(first).to.exist
+      expect(second).to.be.undefined
+
+      // verify calls are serialized: first predicate completes before second starts
+      expect(predicate.getCall(1).calledAfter(service.compute.getCall(0))).to.be.true
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {
