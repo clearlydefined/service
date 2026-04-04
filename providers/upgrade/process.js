@@ -37,8 +37,13 @@ class QueueHandler {
       }
       const results = await Promise.allSettled(
         messages.map(async message => {
-          await this._messageHandler.processMessage(message)
-          await this._queue.delete(message)
+          try {
+            await this._messageHandler.processMessage(message)
+          } finally {
+            // Always delete: mirrors on-demand single-attempt semantics.
+            // On error, the next HTTP request will re-enqueue if needed.
+            await this._queue.delete(message)
+          }
         })
       )
       for (const result of results.filter(result => result.status === 'rejected')) {
@@ -55,25 +60,25 @@ class QueueHandler {
 }
 
 class DefinitionUpgrader {
-  static defaultTtlSeconds = 60 * 5 /* 5 mins */
+  static _defaultTtlSeconds = 60 * 20 /* 20 mins */
   static delayInMSeconds = 500
 
   /**
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
-   * @param {UpgradeHandler} defVersionChecker
+   * @param {UpgradeHandler} upgradePolicy
    * @param {ICache} [cache]
    */
   constructor(
     definitionService,
     logger,
-    defVersionChecker,
-    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader.defaultTtlSeconds })
+    upgradePolicy,
+    cache = Cache({ defaultTtlSeconds: DefinitionUpgrader._defaultTtlSeconds })
   ) {
     this.logger = logger
     this._definitionService = definitionService
-    this._defVersionChecker = defVersionChecker
-    this._defVersionChecker.currentSchema = definitionService.currentSchema
+    this._upgradePolicy = upgradePolicy
+    this._upgradePolicy.currentSchema = definitionService.currentSchema
     this._upgradeLock = cache
   }
 
@@ -100,7 +105,7 @@ class DefinitionUpgrader {
   async _upgradeIfNecessary(coordinates) {
     try {
       const existing = await this._definitionService.getStored(coordinates)
-      const result = await this._defVersionChecker.validate(existing)
+      const result = await this._upgradePolicy.validate(existing)
       if (!result) {
         await this._definitionService.computeStoreAndCurate(coordinates)
         this.logger.info('Handled definition upgrade', { coordinates })
@@ -122,10 +127,18 @@ class DefinitionUpgrader {
  * @param {DefinitionService} _definitionService
  * @param {Logger} _logger
  * @param {boolean} [once]
- * @param {UpgradeHandler} [_defVersionChecker]
+ * @param {UpgradeHandler} [_upgradePolicy]
+ * @param {ICache} [cache]
  */
-function setup(_queue, _definitionService, _logger, once = false, _defVersionChecker = factory({ logger: _logger })) {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _defVersionChecker)
+function setup(
+  _queue,
+  _definitionService,
+  _logger,
+  once = false,
+  _upgradePolicy = factory({ logger: _logger }),
+  cache
+) {
+  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy, cache)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)
 }

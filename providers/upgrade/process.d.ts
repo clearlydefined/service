@@ -39,8 +39,6 @@ export declare class QueueHandler {
  * Uses an in-memory lock to prevent concurrent upgrades for the same coordinates.
  */
 export declare class DefinitionUpgrader implements MessageHandler {
-  /** Default cache TTL in seconds (5 minutes) */
-  static readonly defaultTtlSeconds: number
   /** Delay in milliseconds between lock-retry attempts */
   static readonly delayInMSeconds: number
 
@@ -49,10 +47,10 @@ export declare class DefinitionUpgrader implements MessageHandler {
   /**
    * @param definitionService - Service for fetching and recomputing definitions
    * @param logger - Logger instance
-   * @param defVersionChecker - Checker that validates definition schema versions
-   * @param cache - Cache used as an upgrade lock (defaults to in-memory with 5 min TTL)
+   * @param upgradePolicy - Policy that validates whether stored definitions need upgrade
+   * @param cache - Lock cache; defaults to a new in-memory cache with 5 min TTL
    */
-  constructor(definitionService: DefinitionService, logger: Logger, defVersionChecker: UpgradeHandler, cache?: ICache)
+  constructor(definitionService: DefinitionService, logger: Logger, upgradePolicy: UpgradeHandler, cache?: ICache)
 
   /**
    * Processes a single dequeued upgrade message.
@@ -69,12 +67,14 @@ export declare class DefinitionUpgrader implements MessageHandler {
  * @param definitionService - Service for computing and storing definitions
  * @param logger - Logger instance
  * @param once - If true, processes one batch and stops
- * @param defVersionChecker - Version checker (defaults to a new DefinitionVersionChecker)
+ * @param upgradePolicy - Upgrade policy (defaults to a new DefinitionVersionChecker)
+ * @param cache - Optional lock cache; passed through to DefinitionUpgrader
  */
 export declare function setup(
   queue: IQueue,
   definitionService: DefinitionService,
   logger: Logger,
   once?: boolean,
-  defVersionChecker?: UpgradeHandler
+  upgradePolicy?: UpgradeHandler,
+  cache?: ICache
 ): Promise<void>

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { RecomputeQueueFactories } from '../providers'
 import type { RequestHandler, Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
 import type {
@@ -9,8 +10,8 @@ import type {
   DefinitionStore,
   HarvestService,
   HarvestStore,
-  SearchService,
-  UpgradeHandler
+  RecomputeHandler,
+  SearchService
 } from '../business/definitionService'
 import type { AttachmentStore } from '../business/noticeService'
 import type { StatsSearchService } from '../business/statsService'
@@ -79,11 +80,8 @@ interface AppConfig {
     store: () => DefinitionStore & Initializable
   }
   upgrade: {
-    queue: () => Initializable
-    service: (options: { queue: () => Initializable }) => UpgradeHandler &
-      Initializable & {
-        setupProcessing(definitionService: DefinitionService, logger: Logger): void
-      }
+    queue: RecomputeQueueFactories<IQueue & Initializable>
+    service: (options: { queue: RecomputeQueueFactories<IQueue & Initializable> }) => RecomputeHandler & Initializable
   }
   attachment: {
     store: () => AttachmentStore & Initializable
