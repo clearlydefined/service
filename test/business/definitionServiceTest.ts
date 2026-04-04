@@ -325,6 +325,90 @@ describe('Definition Service', () => {
       expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
     })
   })
+
+  describe('computeAndStoreIf', () => {
+    let service
+    let coordinates
+
+    beforeEach(() => {
+      ;({ service, coordinates } = setup(createDefinition(null, null, ['scancode/3.2.2'])))
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes when predicate returns true', async () => {
+      const result = await service.computeAndStoreIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('skips compute and returns undefined when predicate returns false', async () => {
+      const result = await service.computeAndStoreIf(coordinates, async () => false)
+      expect(service.compute.notCalled).to.be.true
+      expect(result).to.be.undefined
+    })
+
+    it('releases lock after predicate throws', async () => {
+      await expect(
+        service.computeAndStoreIf(coordinates, async () => {
+          throw new Error('predicate error')
+        })
+      ).to.be.rejectedWith('predicate error')
+
+      const result = await service.computeAndStoreIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+  })
+
+  describe('computeStoreAndCurateIf', () => {
+    let service
+    let coordinates
+    let autoCurate
+
+    beforeEach(() => {
+      autoCurate = sinon.stub().resolves()
+      ;({ service, coordinates } = setup(createDefinition(null, null, ['scancode/3.2.2'])))
+      service.curationService = {
+        apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+        autoCurate
+      }
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes and auto-curates when predicate returns true', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(autoCurate.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('skips compute and auto-curation when predicate returns false', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => false)
+      expect(service.compute.notCalled).to.be.true
+      expect(autoCurate.notCalled).to.be.true
+      expect(result).to.be.undefined
+    })
+
+    it('releases lock after predicate throws', async () => {
+      await expect(
+        service.computeStoreAndCurateIf(coordinates, async () => {
+          throw new Error('predicate error')
+        })
+      ).to.be.rejectedWith('predicate error')
+
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {

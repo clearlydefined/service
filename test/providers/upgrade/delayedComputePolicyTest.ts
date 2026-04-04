@@ -99,26 +99,23 @@ describe('DelayedComputePolicy', () => {
     })
 
     it('skips recompute when definition already exists', async () => {
-      const getStored = sinon.stub().resolves({ coordinates, _meta: { schemaVersion: '0.0.1' } })
-      const computeStoreAndCurate = sinon.stub().resolves()
-      const service = { currentSchema: '1.7.0', getStored, computeStoreAndCurate } as unknown as DefinitionService
+      const computeStoreAndCurateIf = sinon.stub().resolves(undefined)
+      const service = { currentSchema: '1.7.0', computeStoreAndCurateIf } as unknown as DefinitionService
 
       await policy.setupProcessing(service, createMockLogger(), true)
 
-      expect(getStored.calledOnce).to.be.true
-      expect(computeStoreAndCurate.notCalled).to.be.true
+      expect(computeStoreAndCurateIf.calledOnce).to.be.true
       expect(queue.delete.calledOnce).to.be.true
     })
 
     it('recomputes when definition is missing', async () => {
-      const getStored = sinon.stub().resolves(undefined)
-      const computeStoreAndCurate = sinon.stub().resolves()
-      const service = { currentSchema: '1.7.0', getStored, computeStoreAndCurate } as unknown as DefinitionService
+      const definition = { coordinates, _meta: { schemaVersion: '1.7.0' } }
+      const computeStoreAndCurateIf = sinon.stub().resolves(definition)
+      const service = { currentSchema: '1.7.0', computeStoreAndCurateIf } as unknown as DefinitionService
 
       await policy.setupProcessing(service, createMockLogger(), true)
 
-      expect(getStored.calledOnce).to.be.true
-      expect(computeStoreAndCurate.calledOnce).to.be.true
+      expect(computeStoreAndCurateIf.calledOnce).to.be.true
       expect(queue.delete.calledOnce).to.be.true
     })
   })

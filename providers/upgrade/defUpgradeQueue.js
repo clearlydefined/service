@@ -8,7 +8,6 @@ const { setup } = require('./process')
  * @typedef {import('../../business/definitionService').Definition} Definition
  * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
  * @typedef {import('../logging').Logger} Logger
- * @typedef {import('../caching').ICache} ICache
  */
 
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
@@ -73,12 +72,11 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {boolean} [once]
-   * @param {ICache} [cache]
    */
-  setupProcessing(definitionService, logger, once, cache) {
+  setupProcessing(definitionService, logger, once) {
     // Use a plain DefinitionVersionChecker (not `this`) so the queue processor returns undefined
     // for stale definitions and triggers recompute — rather than re-queuing them again.
-    return setup(this._upgrade, definitionService, logger, once, new DefinitionVersionChecker(this.options), cache)
+    return setup(this._upgrade, definitionService, logger, once, new DefinitionVersionChecker(this.options))
   }
 }
 
