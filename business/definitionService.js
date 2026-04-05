@@ -381,7 +381,8 @@ class DefinitionService {
   /**
    * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store+curate.
    * @param {EntityCoordinates} coordinates
-   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip
+   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip.
+   *   Should be lightweight and read-only (e.g. getStored + validate); it runs inside the lock.
    * @returns {Promise<Definition | undefined>}
    */
   async computeStoreAndCurateIf(coordinates, shouldCompute) {
@@ -409,10 +410,15 @@ class DefinitionService {
   /**
    * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store.
    * @param {EntityCoordinates} coordinates
-   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip
+   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip.
+   *   Should be lightweight and read-only (e.g. getStored + validate); it runs inside the lock.
    * @returns {Promise<Definition | undefined>}
    */
   async computeAndStoreIf(coordinates, shouldCompute) {
+    this.logger.debug('3:memory_lock:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     while (computeLock.get(coordinates.toString())) {
       await new Promise(resolve => setTimeout(resolve, 500))
     }

@@ -11,7 +11,6 @@ const { factory } = require('./defVersionCheck')
  * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
  * @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler
  * @typedef {import('../logging').Logger} Logger
- * @typedef {import('../caching').ICache} ICache
  */
 
 class QueueHandler {
