@@ -12,10 +12,10 @@ const Cache = require('../caching/memory')
 /** @typedef {import('../../business/definitionService').Definition} Definition */
 /** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
 /** @typedef {import('../logging').Logger} Logger */
-/** @typedef {import('../caching').ICache} ICache */
 
 class DelayedComputePolicy {
-  static _enqueueCacheTtlSeconds = 60 * 20 /* 20 mins */
+  static _enqueueCacheTtlSeconds =
+    60 * 20 /* 20 mins; matches visibilityTimeout to avoid re-enqueuing in-flight items */
 
   /** @param {DelayedComputePolicyOptions} options */
   constructor(options) {
@@ -35,11 +35,10 @@ class DelayedComputePolicy {
    * @param {DefinitionService} definitionService
    * @param {Logger} logger
    * @param {boolean} [once]
-   * @param {ICache} [cache]
    */
-  setupProcessing(definitionService, logger, once, cache) {
+  setupProcessing(definitionService, logger, once) {
     const upgradePolicy = new SkipUpgradePolicy()
-    return setup(this._compute, definitionService, logger, once, upgradePolicy, cache)
+    return setup(this._compute, definitionService, logger, once, upgradePolicy)
   }
 
   /**

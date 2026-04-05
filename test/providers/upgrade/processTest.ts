@@ -99,7 +99,7 @@ describe('Definition Upgrade Queue Processing', () => {
     beforeEach(() => {
       definitionService = {
         getStored: sinon.stub(),
-        computeStoreAndCurate: sinon.stub().resolves()
+        computeStoreAndCurateIf: sinon.stub()
       }
       versionChecker = {
         validate: sinon.stub()
@@ -107,47 +107,61 @@ describe('Definition Upgrade Queue Processing', () => {
       upgrader = new DefinitionUpgrader(definitionService, logger, versionChecker)
     })
 
-    it('recomputes a definition, if a definition is not up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
+    it('delegates to computeStoreAndCurateIf and logs when definition was recomputed', async () => {
+      definitionService.computeStoreAndCurateIf.resolves(definition)
 
       await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.getCall(0).args[0]).to.deep.eq(
+        EntityCoordinates.fromObject(definition.coordinates)
+      )
+      expect(logger.info.calledOnce).to.be.true
     })
 
-    it('skips compute if a definition is up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves(definition)
+    it('delegates to computeStoreAndCurateIf and logs debug when compute was skipped', async () => {
+      definitionService.computeStoreAndCurateIf.resolves(undefined)
 
       await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
-    })
-
-    it('computes if a definition does not exist', async () => {
-      definitionService.getStored.resolves()
-      versionChecker.validate.resolves()
-
-      await upgrader.processMessage(message)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
+      expect(logger.debug.calledOnce).to.be.true
+      expect(logger.info.notCalled).to.be.true
     })
 
     it('skips if there is no coordinates', async () => {
       await upgrader.processMessage({ data: {} })
-      expect(definitionService.getStored.notCalled).to.be.true
-      expect(versionChecker.validate.notCalled).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.notCalled).to.be.true
+    })
+
+    it('predicate skips compute when policy validates the definition', async () => {
+      definitionService.getStored.resolves(definition)
+      versionChecker.validate.resolves(definition) // truthy = valid, skip compute
+      definitionService.computeStoreAndCurateIf.callsFake(async (_coords, shouldCompute) => {
+        return (await shouldCompute()) ? definition : undefined
+      })
+
+      await upgrader.processMessage(message)
+      expect(definitionService.getStored.calledOnceWith(EntityCoordinates.fromObject(definition.coordinates))).to.be
+        .true
+      expect(versionChecker.validate.calledOnce).to.be.true
+      expect(logger.debug.calledOnce).to.be.true
+    })
+
+    it('predicate proceeds with compute when policy returns falsy', async () => {
+      definitionService.getStored.resolves(definition)
+      versionChecker.validate.resolves(undefined) // falsy = stale, compute
+      definitionService.computeStoreAndCurateIf.callsFake(async (_coords, shouldCompute) => {
+        return (await shouldCompute()) ? definition : undefined
+      })
+
+      await upgrader.processMessage(message)
+      expect(definitionService.getStored.calledOnceWith(EntityCoordinates.fromObject(definition.coordinates))).to.be
+        .true
+      expect(versionChecker.validate.calledOnce).to.be.true
+      expect(logger.info.calledOnce).to.be.true
     })
 
     it('handles exception by rethrowing with coordinates and the original error message', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
-      definitionService.computeStoreAndCurate.rejects(new Error('test'))
+      definitionService.computeStoreAndCurateIf.rejects(new Error('test'))
 
       await expect(upgrader.processMessage(message)).to.be.rejectedWith(Error, /pypi\/pypi\/-\/test\/revision: test/)
     })
@@ -163,10 +177,9 @@ describe('Definition Upgrade Queue Processing', () => {
     let queue
     let handler
     let definitionService
-    let versionChecker
     beforeEach(() => {
       let definitionUpgrader
-      ;({ definitionService, versionChecker, definitionUpgrader } = setupDefinitionUpgrader(logger))
+      ;({ definitionService, definitionUpgrader } = setupDefinitionUpgrader(logger))
       queue = {
         dequeueMultiple: sinon.stub().resolves([message]),
         delete: sinon.stub().resolves()
@@ -174,10 +187,8 @@ describe('Definition Upgrade Queue Processing', () => {
       handler = new QueueHandler(queue, logger, definitionUpgrader)
     })
 
-    it('handles exception and logs the coordinates and the original error message', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
-      definitionService.computeStoreAndCurate.rejects(new Error('test'))
+    it('handles exception and logs the error', async () => {
+      definitionService.computeStoreAndCurateIf.rejects(new Error('test'))
 
       await handler.work(true)
       expect(queue.dequeueMultiple.calledOnce).to.be.true
@@ -187,23 +198,18 @@ describe('Definition Upgrade Queue Processing', () => {
     })
 
     it('skips compute if a definition is up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves(definition)
+      definitionService.computeStoreAndCurateIf.resolves(undefined)
 
       await handler.work(true)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.notCalled).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
       expect(queue.delete.called).to.be.true
     })
 
     it('recomputes a definition, if a definition is not up-to-date', async () => {
-      definitionService.getStored.resolves(definition)
-      versionChecker.validate.resolves()
+      definitionService.computeStoreAndCurateIf.resolves(definition)
+
       await handler.work(true)
-      expect(definitionService.getStored.calledOnce).to.be.true
-      expect(versionChecker.validate.calledOnce).to.be.true
-      expect(definitionService.computeStoreAndCurate.calledOnce).to.be.true
+      expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
       expect(queue.delete.called).to.be.true
     })
   })
@@ -212,7 +218,7 @@ describe('Definition Upgrade Queue Processing', () => {
 function setupDefinitionUpgrader(logger) {
   const definitionService = {
     getStored: sinon.stub(),
-    computeStoreAndCurate: sinon.stub().resolves()
+    computeStoreAndCurateIf: sinon.stub()
   }
   const versionChecker = {
     validate: sinon.stub()

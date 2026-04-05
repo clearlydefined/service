@@ -375,19 +375,71 @@ class DefinitionService {
    * @returns {Promise<Definition>} The computed definition
    */
   async computeStoreAndCurate(coordinates) {
-    // one coordinate a time through this method so no duplicate auto curation will be created.
+    return await this.computeStoreAndCurateIf(coordinates, async () => true)
+  }
+
+  /**
+   * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store+curate.
+   * @param {EntityCoordinates} coordinates
+   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip.
+   *   Should be lightweight and read-only (e.g. getStored + validate); it runs inside the lock.
+   * @returns {Promise<Definition | undefined>}
+   */
+  async computeStoreAndCurateIf(coordinates, shouldCompute) {
+    // one coordinate at a time so no duplicate auto-curation will be created.
     this.logger.debug('3:memory_lock:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
+    const lockWaitStart = Date.now()
+    let lockWarnLogged = false
     while (computeLock.get(coordinates.toString())) {
       await new Promise(resolve => setTimeout(resolve, 500))
+      if (!lockWarnLogged && Date.now() - lockWaitStart > 60_000) {
+        this.logger.warn('computeLock spin-wait exceeded 60s', { coordinates: coordinates.toString() })
+        lockWarnLogged = true
+      }
     }
     try {
       computeLock.set(coordinates.toString(), true)
+      if (!(await shouldCompute())) {
+        return undefined
+      }
       const definition = await this._computeAndStore(coordinates)
       await this.curationService.autoCurate(definition)
       return definition
+    } finally {
+      computeLock.delete(coordinates.toString())
+    }
+  }
+
+  /**
+   * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store.
+   * @param {EntityCoordinates} coordinates
+   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip.
+   *   Should be lightweight and read-only (e.g. getStored + validate); it runs inside the lock.
+   * @returns {Promise<Definition | undefined>}
+   */
+  async computeAndStoreIf(coordinates, shouldCompute) {
+    this.logger.debug('3:memory_lock:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
+    const lockWaitStart = Date.now()
+    let lockWarnLogged = false
+    while (computeLock.get(coordinates.toString())) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      if (!lockWarnLogged && Date.now() - lockWaitStart > 60_000) {
+        this.logger.warn('computeLock spin-wait exceeded 60s', { coordinates: coordinates.toString() })
+        lockWarnLogged = true
+      }
+    }
+    try {
+      computeLock.set(coordinates.toString(), true)
+      if (!(await shouldCompute())) {
+        return undefined
+      }
+      return await this._computeAndStore(coordinates)
     } finally {
       computeLock.delete(coordinates.toString())
     }
@@ -399,15 +451,7 @@ class DefinitionService {
    * @returns {Promise<Definition>} The computed definition
    */
   async computeAndStore(coordinates) {
-    while (computeLock.get(coordinates.toString())) {
-      await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
-    }
-    try {
-      computeLock.set(coordinates.toString(), true)
-      return await this._computeAndStore(coordinates)
-    } finally {
-      computeLock.delete(coordinates.toString())
-    }
+    return await this.computeAndStoreIf(coordinates, async () => true)
   }
 
   /**
@@ -418,23 +462,17 @@ class DefinitionService {
    * @returns {Promise<Definition | undefined>} The computed definition or undefined if skipped
    */
   async computeAndStoreIfNecessary(coordinates, tool, toolRevision) {
-    while (computeLock.get(coordinates.toString())) {
-      await new Promise(resolve => setTimeout(resolve, 500)) // one coordinate a time through this method so we always get latest
-    }
-    try {
-      computeLock.set(coordinates.toString(), true)
-      if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
+    return await this.computeAndStoreIf(coordinates, async () => {
+      const isNew = await this._isToolResultNew(coordinates, tool, toolRevision)
+      if (!isNew) {
         this.logger.info('definition computation skipped: tool result processed', {
           coordinates: coordinates.toString(),
           tool,
           toolRevision
         })
-        return undefined
       }
-      return await this._computeAndStore(coordinates)
-    } finally {
-      computeLock.delete(coordinates.toString())
-    }
+      return isNew
+    })
   }
 
   /**
