@@ -391,8 +391,14 @@ class DefinitionService {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
+    const lockWaitStart = Date.now()
+    let lockWarnLogged = false
     while (computeLock.get(coordinates.toString())) {
       await new Promise(resolve => setTimeout(resolve, 500))
+      if (!lockWarnLogged && Date.now() - lockWaitStart > 60_000) {
+        this.logger.warn('computeLock spin-wait exceeded 60s', { coordinates: coordinates.toString() })
+        lockWarnLogged = true
+      }
     }
     try {
       computeLock.set(coordinates.toString(), true)
@@ -419,8 +425,14 @@ class DefinitionService {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
+    const lockWaitStart = Date.now()
+    let lockWarnLogged = false
     while (computeLock.get(coordinates.toString())) {
       await new Promise(resolve => setTimeout(resolve, 500))
+      if (!lockWarnLogged && Date.now() - lockWaitStart > 60_000) {
+        this.logger.warn('computeLock spin-wait exceeded 60s', { coordinates: coordinates.toString() })
+        lockWarnLogged = true
+      }
     }
     try {
       computeLock.set(coordinates.toString(), true)

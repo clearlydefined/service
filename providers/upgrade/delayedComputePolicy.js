@@ -14,7 +14,8 @@ const Cache = require('../caching/memory')
 /** @typedef {import('../logging').Logger} Logger */
 
 class DelayedComputePolicy {
-  static _enqueueCacheTtlSeconds = 60 * 20 /* 20 mins */
+  static _enqueueCacheTtlSeconds =
+    60 * 20 /* 20 mins; matches visibilityTimeout to avoid re-enqueuing in-flight items */
 
   /** @param {DelayedComputePolicyOptions} options */
   constructor(options) {
