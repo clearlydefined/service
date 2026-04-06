@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -11,12 +10,9 @@ import pako2 from 'pako'
 import pako1 from 'pako-1'
 import { GenericContainer } from 'testcontainers'
 import redisCache, { RedisCache } from '../../../providers/caching/redis.js'
+import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
-const logger = {
-  info: () => {},
-  error: () => {},
-  debug: () => {}
-}
+const logger = createSilentLogger()
 
 describe('Redis Cache', () => {
   describe('get a tool result', () => {
@@ -37,7 +33,7 @@ describe('Redis Cache', () => {
         quit: sinon.stub().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
-      cache = redisCache({ logger })
+      cache = redisCache({ logger } as any)
     })
 
     afterEach(() => {
@@ -83,7 +79,7 @@ describe('Redis Cache', () => {
 
     it('initalizes client only once', async () => {
       await Promise.all([cache.initialize(), cache.initialize()])
-      assert.ok(RedisCache.buildRedisClient.calledOnce)
+      assert.ok((RedisCache.buildRedisClient as sinon.SinonStub).calledOnce)
     })
 
     it('calls client.quit only once', async () => {
@@ -105,7 +101,7 @@ describe('Redis Cache', () => {
       await cache.initialize()
       // Verify that the client was built twice
       assert.ok(cache.client)
-      assert.ok(RedisCache.buildRedisClient.calledTwice)
+      assert.ok((RedisCache.buildRedisClient as sinon.SinonStub).calledTwice)
       assert.ok(mockClient.connect.calledTwice)
     })
   })
@@ -130,7 +126,7 @@ describe('Redis Cache', () => {
         quit: sinon.stub().resolves()
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
-      cache = redisCache({ logger })
+      cache = redisCache({ logger } as any)
     })
 
     afterEach(() => {
@@ -321,7 +317,7 @@ describe('Redis Cache', () => {
     describe('Redis Client Test', () => {
       let client
       before(async () => {
-        client = await RedisCache.initializeClient(redisConfig, logger)
+        client = await RedisCache.initializeClient(redisConfig, logger as any)
       })
 
       after(async () => {

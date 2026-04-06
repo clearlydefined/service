@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -173,7 +172,7 @@ describe('azblob Harvest store', () => {
 
   describe('getAllLatest', () => {
     it('should get latest tool versions', () => {
-      const store = Store({})
+      const store = Store({} as any) as any
       const latest = store._getLatestToolPaths([
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/clearlydefined/1.5.0.json',
         'maven/mavencentral/org.apache.httpcomponents/httpcore/revision/4.4.16/tool/licensee/9.18.1.json',
@@ -272,14 +271,14 @@ function createEntries(names) {
   return names.map(name => ({ name }))
 }
 
-function createAzBlobStore(entries, withMetadata) {
-  const blobServiceStub = {
+function createAzBlobStore(entries, withMetadata?) {
+  const blobServiceStub: Record<string, any> = {
     listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
     getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
     createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
   }
   blobServiceStub.withFilter = sinon.stub().returns(blobServiceStub)
-  const store = Store({})
-  store.blobService = blobServiceStub
-  return store
+  const store = Store({} as any)
+  ;(store as any).blobService = blobServiceStub
+  return store as any
 }

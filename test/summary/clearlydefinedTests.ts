@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -52,7 +51,7 @@ describe('ClearlyDescribedSummarizer add files', () => {
   })
 
   it('does nothing with extra attachments', () => {
-    const result = { files: [{ path: 'foo' }] }
+    const result: Record<string, any> = { files: [{ path: 'foo' }] }
     const files = { attachments: [{ path: 'LICENSE', token: 'abcd' }] }
     summarizer.addAttachedFiles(result, files)
     assert.strictEqual(result.files.length, 1)
@@ -61,7 +60,7 @@ describe('ClearlyDescribedSummarizer add files', () => {
   })
 
   it('adds token for one file', () => {
-    const result = { files: [{ path: 'foo' }] }
+    const result: Record<string, any> = { files: [{ path: 'foo' }] }
     const files = { attachments: [{ path: 'foo', token: 'abcd' }] }
     summarizer.addAttachedFiles(result, files)
     assert.strictEqual(result.files.length, 1)
@@ -70,7 +69,7 @@ describe('ClearlyDescribedSummarizer add files', () => {
   })
 
   it('adds tokens for multiple files', () => {
-    const result = { files: [{ path: 'foo' }, { path: 'bar' }] }
+    const result: Record<string, any> = { files: [{ path: 'foo' }, { path: 'bar' }] }
     const files = {
       attachments: [
         { path: 'foo', token: 'abcd' },
@@ -86,7 +85,7 @@ describe('ClearlyDescribedSummarizer add files', () => {
   })
 
   it('adds license nature for attachments named license', () => {
-    const result = { files: [{ path: 'foo' }, { path: 'LICENSE' }] }
+    const result: Record<string, any> = { files: [{ path: 'foo' }, { path: 'LICENSE' }] }
     const files = {
       attachments: [
         { path: 'foo', token: 'abcd' },
@@ -107,13 +106,13 @@ describe('ClearlyDescribedSummarizer add files', () => {
 describe('ClearlyDescribedSummarizer addCondaData', () => {
   const condaTestCoordinates = EntityCoordinates.fromString('conda/conda-forge/-/test/1.0')
   it('declares license from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCondaData(result, { declaredLicenses: 'MIT' }, condaTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
   it('declares dual license from registryData with SPDX expression', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     const data = setup([
       { path: 'LICENSE-MIT', license: 'MIT' },
       { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
@@ -124,13 +123,13 @@ describe('ClearlyDescribedSummarizer addCondaData', () => {
   })
 
   it('normalizes to spdx only', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCondaData(result, { declaredLicenses: 'Garbage' }, condaTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
   it('describes projectWebsite from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCondaData(
       result,
       {
@@ -144,7 +143,7 @@ describe('ClearlyDescribedSummarizer addCondaData', () => {
   })
 
   it('describes releaseDate from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCondaData(result, { releaseDate: 'Wed, 14 Jun 2017 07:00:00 GMT' }, condaTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2017-06-14')
   })
@@ -153,13 +152,13 @@ describe('ClearlyDescribedSummarizer addCondaData', () => {
 describe('ClearlyDescribedSummarizer addCrateData', () => {
   const crateTestCoordinates = EntityCoordinates.fromString('crate/cratesio/-/test/1.0')
   it('declares license from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCrateData(result, { registryData: { license: 'MIT' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
   it('declares dual license from registryData with SPDX expression', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     const data = setup([
       { path: 'LICENSE-MIT', license: 'MIT' },
       { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
@@ -170,7 +169,7 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   })
 
   it('declares dual license from registryData with slash-separated licenses', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     const data = setup([
       { path: 'LICENSE-MIT', license: 'MIT' },
       { path: 'LICENSE-APACHE', license: 'Apache-2.0' }
@@ -181,25 +180,25 @@ describe('ClearlyDescribedSummarizer addCrateData', () => {
   })
 
   it('normalizes to spdx only', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION')
   })
 
   it('normalizes to spdx only with slashes', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCrateData(result, { registryData: { license: 'Garbage/Junk' } }, crateTestCoordinates)
     assert.strictEqual(get(result, 'licensed.declared'), 'NOASSERTION OR NOASSERTION')
   })
 
   it('describes projectWebsite from manifest', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCrateData(result, { manifest: { homepage: 'https://github.com/owner/repo' } }, crateTestCoordinates)
     assert.strictEqual(result.described.projectWebsite, 'https://github.com/owner/repo')
   })
 
   it('describes releaseDate from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addCrateData(
       result,
       { registryData: { created_at: '2018-06-01T21:41:57.990052+00:00' } },
@@ -213,28 +212,28 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   const composerTestCoordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0')
 
   it('does not declare license when manifest is silent on the license', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(result, { registryData: { manifest: {} } }, composerTestCoordinates)
 
     assert.strictEqual(get(result, 'licensed.declared'), undefined)
   })
 
   it('declares license from registryData that is a singular license as a string', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(result, { registryData: { manifest: { license: 'MIT' } } }, composerTestCoordinates)
 
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
   it('declares license from registryData that is a singular license in an array', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(result, { registryData: { manifest: { license: ['MIT'] } } }, composerTestCoordinates)
 
     assert.strictEqual(get(result, 'licensed.declared'), 'MIT')
   })
 
   it('declares dual license from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { manifest: { license: ['MIT', 'Apache-2.0'] } } },
@@ -244,7 +243,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   })
 
   it('normalizes to spdx only', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { manifest: { license: ['Garbage'] } } },
@@ -254,7 +253,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   })
 
   it('normalizes to spdx only with slashes', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { manifest: { license: ['Garbage/Junk'] } } },
@@ -264,7 +263,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   })
 
   it('normalizes to spdx only with slashes', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { manifest: { license: ['Garbage', 'Junk'] } } },
@@ -274,7 +273,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   })
 
   it('describes projectWebsite from manifest', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { manifest: { homepage: 'https://github.com/owner/repo' } } },
@@ -284,7 +283,7 @@ describe('ClearlyDescribedSummarizer addComposerData', () => {
   })
 
   it('describes releaseDate from registryData', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addComposerData(
       result,
       { registryData: { releaseDate: '2018-06-01T21:41:57.990052+00:00' } },
@@ -315,7 +314,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
 
     for (const license of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: license } } }, npmTestCoordinates)
       if (data[license]) {
         assert.deepEqual(result, {
@@ -328,7 +327,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
 
     for (const license of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNpmData(result, { registryData: { manifest: { license: { type: license } } } }, npmTestCoordinates)
       if (data[license]) {
         assert.deepEqual(result, {
@@ -341,7 +340,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
 
     for (const license of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNpmData(result, { registryData: { manifest: { licenses: license } } }, npmTestCoordinates)
       if (data[license]) {
         assert.deepEqual(result, {
@@ -354,7 +353,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
 
     for (const license of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNpmData(result, { registryData: { manifest: { licenses: { type: license } } } }, npmTestCoordinates)
       if (data[license]) {
         assert.deepEqual(result, {
@@ -367,7 +366,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
     }
 
     const licenseArray = ['MIT']
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addNpmData(result, { registryData: { manifest: { license: licenseArray } } }, npmTestCoordinates)
     assert.deepEqual(result, { ...expectedResult, licensed: { declared: 'MIT' } })
 
@@ -405,9 +404,9 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
       JUNK: null
     }
     for (const date of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNpmData(result, { registryData: { releaseDate: date } }, npmTestCoordinates)
-      const expected = {
+      const expected: Record<string, any> = {
         described: {
           urls: expectedUrls
         }
@@ -420,7 +419,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
   })
 
   it('should set projectWebsite', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addNpmData(
       result,
       { registryData: { manifest: { homepage: 'https://github.com/project/repo' } } },
@@ -435,7 +434,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
   })
 
   it('should set issueTracker if it is http', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addNpmData(
       result,
       { registryData: { manifest: { bugs: 'https://github.com/project/repo/issues' } } },
@@ -458,7 +457,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
   })
 
   it('should set issueTracker if it is url or email', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addNpmData(
       result,
       {
@@ -492,7 +491,7 @@ describe('ClearlyDescribedSummarizer addNpmData', () => {
   it('should not set issueTracker if it is not http', () => {})
 
   it('should return if no registry data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addNpmData(result, {}, npmTestCoordinates)
     assert.deepEqual(result, {})
     summarizer.addNpmData(result, { registryData: {} }, npmTestCoordinates)
@@ -526,7 +525,7 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     }
 
     for (const licenseExpression of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNuGetData(result, { manifest: { licenseExpression } }, nugetTestCoordinates)
       if (data[licenseExpression]) {
         assert.deepEqual(result, {
@@ -551,7 +550,7 @@ describe('ClearlyDescribedSummarizer addNuGetData', () => {
     }
 
     for (const licenseUrl of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addNuGetData(result, { manifest: { licenseUrl } }, nugetTestCoordinates)
       if (data[licenseUrl]) {
         assert.deepEqual(result, {
@@ -614,7 +613,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addMavenData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -646,7 +645,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     ])
 
     data.forEach((expected, licenses) => {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinates)
       if (expected) {
         assert.deepEqual(result, {
@@ -682,7 +681,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addMavenData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -714,7 +713,7 @@ describe('ClearlyDescribedSummarizer addMavenData', () => {
     ])
 
     data.forEach((expected, licenses) => {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addMavenData(result, { manifest: { summary: { project: { licenses } } } }, testCoordinatesMavenGoogle)
       if (expected) {
         assert.deepEqual(result, {
@@ -747,7 +746,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addSourceArchiveData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -765,7 +764,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
   })
 
   it('should set the correct urls and no license when data section is empty', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addSourceArchiveData(result, {}, testCoordinates)
     assert.deepEqual(result, expectedResult)
   })
@@ -788,7 +787,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
     ])
 
     data.forEach((expected, license) => {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addSourceArchiveData(
         result,
         { manifest: { summary: { licenses: [{ license }] } } },
@@ -806,7 +805,7 @@ describe('ClearlyDescribedSummarizer addSourceArchiveData', () => {
 describe('ClearlyDescribedSummarizer addDebData', () => {
   const debTestCoordinates = EntityCoordinates.fromString('deb/debian/-/test/1.0_arch')
   it('describes releaseDate from data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addDebData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
@@ -815,7 +814,7 @@ describe('ClearlyDescribedSummarizer addDebData', () => {
 describe('ClearlyDescribedSummarizer addDebSrcData', () => {
   const debsrcTestCoordinates = EntityCoordinates.fromString('debsrc/debian/-/test/1.0')
   it('describes releaseDate from data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addDebSrcData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, debsrcTestCoordinates)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
@@ -837,7 +836,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addGitData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -854,7 +853,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
   })
 
   it('describes releaseDate from data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addGitData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGit)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
@@ -877,7 +876,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addGitData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -894,7 +893,7 @@ describe('ClearlyDescribedSummarizer addGitData', () => {
   })
 })
 
-function setup(files, attachments) {
+function setup(files, attachments?): Record<string, any> {
   const matched_files = files.map(file => {
     return {
       filename: file.path,
@@ -922,7 +921,7 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
     }
 
     for (const url of Object.keys(data)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addGoData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -956,7 +955,7 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
     }
 
     for (const url of Object.keys(testData)) {
-      const result = {}
+      const result: Record<string, any> = {}
       summarizer.addGoData(
         result,
         { manifest: { summary: { project: { licenses: [{ license: { url } }] } } } },
@@ -973,13 +972,13 @@ describe('ClearlyDescribedSummarizer addGoData', () => {
   })
 
   it('gets releaseDate from data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addGoData(result, { releaseDate: '2018-06-01T21:41:57.990052+00:00' }, testCoordinatesGo)
     assert.strictEqual(result.described.releaseDate, '2018-06-01')
   })
 
   it('gets license from data', () => {
-    const result = {}
+    const result: Record<string, any> = {}
     summarizer.addGoData(
       result,
       { registryData: { licenses: ['Apache-2.0', 'BSD-2-Clause, BSD-3-Clause, HPND'] } },

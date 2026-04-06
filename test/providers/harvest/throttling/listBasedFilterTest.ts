@@ -1,18 +1,13 @@
-// @ts-nocheck
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
 import EntityCoordinates from '../../../../lib/entityCoordinates.js'
 import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
+import { createSilentLogger } from '../../../helpers/mockLogger.ts'
 
 describe('ListBasedFilter', () => {
-  const logger = {
-    info: () => {},
-    debug: () => {},
-    error: () => {},
-    warn: () => {}
-  }
+  const logger = createSilentLogger()
 
   function createCoord(coordString) {
     return EntityCoordinates.fromString(coordString)
@@ -118,10 +113,8 @@ describe('ListBasedFilter', () => {
       it('should log warnings for invalid coordinates', () => {
         const warnings = []
         const mockLogger = {
-          info: () => {},
-          debug: () => {},
-          error: () => {},
-          warn: msg => warnings.push(msg)
+          ...createSilentLogger(),
+          warn: (msg: string) => warnings.push(msg)
         }
 
         new ListBasedFilter({

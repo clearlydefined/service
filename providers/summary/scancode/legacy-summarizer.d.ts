@@ -146,6 +146,6 @@ export declare class ScanCodeLegacySummarizer {
  * @param logger - Logger instance for logging
  * @returns A new ScanCodeLegacySummarizer instance
  */
-declare function legacySummarizerFactory(options: SummarizerOptions, logger: Logger): ScanCodeLegacySummarizer
+declare function legacySummarizerFactory(options?: SummarizerOptions, logger?: Logger): ScanCodeLegacySummarizer
 
 export = legacySummarizerFactory
