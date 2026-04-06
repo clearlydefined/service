@@ -12,7 +12,7 @@ class MemoryQueue {
    */
   constructor(options) {
     this.options = options
-    this.logger = logger()
+    this.logger = this.options.logger || logger()
     /** @type {QueueMessage[]} */
     this.data = []
     this.messageId = 0
@@ -27,7 +27,11 @@ class MemoryQueue {
    * @param {string} message
    */
   async queue(message) {
-    this.data.push({ messageText: message, dequeueCount: 0, messageId: ++this.messageId })
+    this.data.push({
+      messageText: message,
+      dequeueCount: 0,
+      messageId: ++this.messageId
+    })
   }
 
   /**
@@ -44,7 +48,10 @@ class MemoryQueue {
     }
     this.data[0].dequeueCount++
     if (message.dequeueCount <= 5) {
-      return Promise.resolve({ original: message, data: this._parseData(message) })
+      return Promise.resolve({
+        original: message,
+        data: this._parseData(message)
+      })
     }
     await this.delete({ original: message })
     return this.dequeue()

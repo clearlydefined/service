@@ -18,7 +18,7 @@
  * @typedef {import('./definitionService').CurationService} CurationService
  * @typedef {import('./definitionService').DefinitionStore} DefinitionStore
  * @typedef {import('./definitionService').SearchService} SearchService
- * @typedef {import('./definitionService').UpgradeHandler} UpgradeHandler
+ * @typedef {import('./definitionService').RecomputeHandler} RecomputeHandler
  * @typedef {import('./definitionService').DescribedScore} DescribedScore
  * @typedef {import('./definitionService').LicensedScore} LicensedScore
  * @typedef {import('./definitionService').FacetInfo} FacetInfo
@@ -59,11 +59,21 @@ const validator = require('../schemas/validator')
 const SPDX = require('@clearlydefined/spdx')
 /** @type {(expression: string) => any} */
 const parse = require('spdx-expression-parse')
-const computeLock = require('../providers/caching/memory')({ defaultTtlSeconds: 60 * 5 /* 5 mins */ })
+const computeLock = require('../providers/caching/memory')({
+  defaultTtlSeconds: 60 * 5 /* 5 mins */
+})
 
 const currentSchema = '1.7.0'
 
-const weights = { declared: 30, discovered: 25, consistency: 15, spdx: 15, texts: 15, date: 30, source: 70 }
+const weights = {
+  declared: 30,
+  discovered: 25,
+  consistency: 15,
+  spdx: 15,
+  texts: 15,
+  date: 30,
+  source: 70
+}
 
 /**
  * Service for managing component definitions.
@@ -80,9 +90,9 @@ class DefinitionService {
    * @param {DefinitionStore} store - Store for definitions
    * @param {SearchService} search - Service for searching definitions
    * @param {ICache} cache - Cache for definitions
-   * @param {UpgradeHandler} upgradeHandler - Handler for schema upgrades
+   * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
    */
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, upgradeHandler) {
+  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, recomputeHandler) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -91,9 +101,9 @@ class DefinitionService {
     this.definitionStore = store
     this.search = search
     this.cache = cache
-    this.upgradeHandler = upgradeHandler
-    if (this.upgradeHandler) {
-      this.upgradeHandler.currentSchema = currentSchema
+    this.recomputeHandler = recomputeHandler
+    if (this.recomputeHandler) {
+      this.recomputeHandler.currentSchema = currentSchema
     }
     this.logger = logger()
   }
@@ -122,11 +132,15 @@ class DefinitionService {
     }
 
     const existing = await this._cacheExistingAside(coordinates, force)
-    let result = await this.upgradeHandler.validate(existing)
+    let result = await this.recomputeHandler.validate(existing)
     if (result) {
       this._logDefinitionStatus(result, coordinates)
+    } else if (force) {
+      // force=true bypasses curations intentionally — it recomputes raw harvest
+      // data only, without re-applying curation overlays.
+      result = await this.computeAndStore(coordinates)
     } else {
-      result = force ? await this.computeAndStore(coordinates) : await this.computeStoreAndCurate(coordinates)
+      result = await this.recomputeHandler.compute(this, coordinates)
     }
     return this._trimDefinition(this._cast(result), expand)
   }
@@ -138,12 +152,18 @@ class DefinitionService {
    */
   async getStored(coordinates) {
     const cacheKey = this._getCacheKey(coordinates)
-    this.logger.debug('1:Redis:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('1:Redis:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     const cached = await this.cache.get(cacheKey)
     if (cached) {
       return cached
     }
-    this.logger.debug('2:blob+mongoDB:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('2:blob+mongoDB:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     const stored = await this.definitionStore.get(coordinates)
     if (stored) {
       this._setDefinitionInCache(cacheKey, stored)
@@ -159,10 +179,14 @@ class DefinitionService {
    */
   _logDefinitionStatus(definition, coordinates) {
     if (this._isEmpty(definition)) {
-      this.logger.debug('definition harvest in progress', { coordinates: coordinates.toString() })
+      this.logger.debug('definition harvest in progress', {
+        coordinates: coordinates.toString()
+      })
     } else {
       // Log line used for /status page insights
-      this.logger.debug('computed definition available', { coordinates: coordinates.toString() })
+      this.logger.debug('computed definition available', {
+        coordinates: coordinates.toString()
+      })
     }
   }
 
@@ -189,7 +213,9 @@ class DefinitionService {
   async _setDefinitionInCache(cacheKey, itemToStore) {
     // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
     if (itemToStore.files && itemToStore.files.length > 1000) {
-      this.logger.debug('Skipping caching for key', { coordinates: itemToStore.coordinates.toString() })
+      this.logger.debug('Skipping caching for key', {
+        coordinates: itemToStore.coordinates.toString()
+      })
       // remove any previously cached (now stale) value
       await this.cache.delete(cacheKey)
       return
@@ -240,7 +266,9 @@ class DefinitionService {
       throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
         this.logger.debug(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
         const definition = await this.get(coordinates, null, force, expand)
-        this.logger.debug(`1:1:notice_generate:get_single_end:${coordinates}`, { ts: new Date().toISOString() })
+        this.logger.debug(`1:1:notice_generate:get_single_end:${coordinates}`, {
+          ts: new Date().toISOString()
+        })
         if (!definition) {
           return
         }
@@ -348,7 +376,10 @@ class DefinitionService {
    */
   async computeStoreAndCurate(coordinates) {
     // one coordinate a time through this method so no duplicate auto curation will be created.
-    this.logger.debug('3:memory_lock:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('3:memory_lock:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     while (computeLock.get(coordinates.toString())) {
       await new Promise(resolve => setTimeout(resolve, 500))
     }
@@ -432,7 +463,9 @@ class DefinitionService {
     // If no tools participated in the creation of the definition then don't bother storing.
     if (this._isEmpty(definition)) {
       // Log line used for /status page insights
-      this.logger.info('definition not available', { coordinates: coordinates.toString() })
+      this.logger.info('definition not available', {
+        coordinates: coordinates.toString()
+      })
       this._harvest(coordinates) // fire and forget
       // cache the computed empty definition to avoid repeated recompute attempts
       const cacheKey = this._getCacheKey(coordinates)
@@ -440,7 +473,9 @@ class DefinitionService {
       return definition
     }
     // Log line used for /status page insights
-    this.logger.info('recomputed definition available', { coordinates: coordinates.toString() })
+    this.logger.info('recomputed definition available', {
+      coordinates: coordinates.toString()
+    })
     await this._store(definition)
     return definition
   }
@@ -453,9 +488,15 @@ class DefinitionService {
    */
   async _harvest(coordinates) {
     try {
-      this.logger.debug('trigger_harvest:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+      this.logger.debug('trigger_harvest:start', {
+        ts: new Date().toISOString(),
+        coordinates: coordinates.toString()
+      })
       await this.harvestService.harvest({ tool: 'component', coordinates }, true)
-      this.logger.debug('trigger_harvest:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+      this.logger.debug('trigger_harvest:end', {
+        ts: new Date().toISOString(),
+        coordinates: coordinates.toString()
+      })
     } catch (error) {
       this.logger.info('failed to harvest from definition service', {
         crawlerError: error,
@@ -470,9 +511,13 @@ class DefinitionService {
    * @private
    */
   async _store(definition) {
-    this.logger.debug('storing definition', { coordinates: definition.coordinates.toString() })
+    this.logger.debug('storing definition', {
+      coordinates: definition.coordinates.toString()
+    })
     await this.definitionStore.store(definition)
-    this.logger.debug('definition stored successfully', { coordinates: definition.coordinates.toString() })
+    this.logger.debug('definition stored successfully', {
+      coordinates: definition.coordinates.toString()
+    })
     await this._setDefinitionInCache(this._getCacheKey(definition.coordinates), definition)
     await this.harvestService.done(definition.coordinates)
   }
@@ -487,9 +532,15 @@ class DefinitionService {
    * @returns {Promise<Definition>} The fully rendered definition
    */
   async compute(coordinates, curationSpec) {
-    this.logger.debug('4:compute:blob:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('4:compute:blob:start', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     const raw = await this.harvestStore.getAllLatest(coordinates)
-    this.logger.debug('4:compute:blob:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('4:compute:blob:end', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     coordinates = this._getCasedCoordinates(raw, coordinates)
     this.logger.debug('5:compute:summarize:start', {
       ts: new Date().toISOString(),
@@ -501,10 +552,27 @@ class DefinitionService {
       coordinates: coordinates.toString()
     })
     const aggregatedDefinition = (await this.aggregationService.process(summaries, coordinates)) || {}
-    this.logger.debug('6:compute:aggregate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('6:compute:aggregate:end', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
     aggregatedDefinition.coordinates = coordinates
     this._ensureToolScores(coordinates, /** @type {Definition} */ (aggregatedDefinition))
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
+    this._calculateValidate(coordinates, definition)
+    return definition
+  }
+
+  /**
+   * Build a valid empty definition for the provided coordinates.
+   *
+   * @param {EntityCoordinates} givenCoordinates
+   * @returns {Definition}
+   */
+  buildEmptyDefinition(givenCoordinates) {
+    const coordinates = this._getCasedCoordinates({}, givenCoordinates)
+    const definition = { coordinates }
+    this._ensureToolScores(coordinates, definition)
     this._calculateValidate(coordinates, definition)
     return definition
   }
@@ -526,7 +594,10 @@ class DefinitionService {
     // protect against any element of the compute producing an invalid definition
     this._ensureNoNulls(definition)
     this._validate(definition)
-    this.logger.debug('9:compute:calculate:end', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
+    this.logger.debug('9:compute:calculate:end', {
+      ts: new Date().toISOString(),
+      coordinates: coordinates.toString()
+    })
   }
 
   /**
@@ -1003,7 +1074,10 @@ class DefinitionService {
    */
   // @ts-expect-error - unused but kept for API compatibility
   _getDefinitionCoordinates(coordinates) {
-    return Object.assign({}, coordinates, { tool: 'definition', toolVersion: 1 })
+    return Object.assign({}, coordinates, {
+      tool: 'definition',
+      toolVersion: 1
+    })
   }
 
   /**
@@ -1039,10 +1113,20 @@ class DefinitionService {
  * @param {DefinitionStore} store - Store for definitions
  * @param {SearchService} search - Service for searching definitions
  * @param {ICache} cache - Cache for definitions
- * @param {UpgradeHandler} versionHandler - Handler for schema upgrades
+ * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
  * @returns {DefinitionService} A new DefinitionService instance
  */
-module.exports = (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, versionHandler) =>
+module.exports = (
+  harvestStore,
+  harvestService,
+  summary,
+  aggregator,
+  curation,
+  store,
+  search,
+  cache,
+  recomputeHandler
+) =>
   new DefinitionService(
     harvestStore,
     harvestService,
@@ -1052,5 +1136,5 @@ module.exports = (harvestStore, harvestService, summary, aggregator, curation, s
     store,
     search,
     cache,
-    versionHandler
+    recomputeHandler
   )
