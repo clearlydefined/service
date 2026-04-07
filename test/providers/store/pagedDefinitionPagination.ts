@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import Store from '../../../providers/stores/mongo.js'
-import shouldPaginateSearchCorrectly from './mongoDefinitionPagination.ts'
+import shouldPaginateSearchCorrectly from './mongoDefinitionPagination.mts'
 
 const dbOptions = {
   collectionName: 'definitions-paged'
