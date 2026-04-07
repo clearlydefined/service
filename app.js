@@ -195,7 +195,7 @@ function createApp(config) {
   /** @param {import('express').Request} req @param {import('express').Response} _res @param {import('express').NextFunction} next */
   const requestHandler = (req, _res, next) => {
     logger.info('Error when handling a request', {
-      rawUrl: req._parsedUrl._raw,
+      rawUrl: req._parsedUrl?._raw,
       baseUrl: req.baseUrl,
       originalUrl: req.originalUrl,
       params: req.params,
