@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -8,6 +7,7 @@ import lodash from 'lodash'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.js'
 import Store from '../../../providers/stores/mongo.js'
+import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const { range } = lodash
 
@@ -231,12 +231,12 @@ describe('Mongo Definition store', () => {
   })
 })
 
-function createDefinition(coordinates) {
+function createDefinition(coordinates): Record<string, any> {
   coordinates = EntityCoordinates.fromString(coordinates)
   return { coordinates, _id: coordinates.toString(), '_mongo.partitionKey': coordinates.toString() }
 }
 
-function createStore(data) {
+function createStore(data: Record<string, any> = {}) {
   const collectionStub = {
     find: sinon.stub().callsFake(async filter => {
       const partitionKey = filter['_mongo.partitionKey']
@@ -281,8 +281,8 @@ function createStore(data) {
     insertMany: sinon.stub(),
     deleteMany: sinon.stub()
   }
-  const opts = { logger: { debug: () => {} } }
-  const store = Store(opts)
-  store.collection = collectionStub
-  return store
+  const opts = { logger: createSilentLogger() }
+  const store = Store(opts as any)
+  ;(store as any).collection = collectionStub
+  return store as any
 }

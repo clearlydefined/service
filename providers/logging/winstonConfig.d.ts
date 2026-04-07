@@ -35,3 +35,14 @@ export interface WinstonLoggerOptions {
 declare function factory(options?: WinstonLoggerOptions): winston.Logger
 
 export = factory
+
+/** Sanitize sensitive HTTP headers by redacting their values. */
+export function sanitizeHeaders(headers: Record<string, string> | null | undefined): Record<string, string>
+
+/** Winston format that sanitizes metadata to prevent circular JSON errors. */
+export function sanitizeMeta(): winston.Logform.Format
+
+/**
+ * Rehydrate null-prototype objects in log properties so AppInsights can serialize them.
+ */
+export function buildProperties(info: Record<string, any>): Record<string, any>

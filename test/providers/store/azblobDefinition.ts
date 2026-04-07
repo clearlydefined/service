@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -66,22 +65,22 @@ describe('azblob Definition store', () => {
     const definition = createDefinition('npm/npmjs/-/foo/1.0')
     const store = createStore()
     await store.store(definition)
-    expect(store.blobService.createBlockBlobFromText.callCount).to.eq(1)
-    expect(store.blobService.createBlockBlobFromText.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    expect((store as any).blobService.createBlockBlobFromText.callCount).to.eq(1)
+    expect((store as any).blobService.createBlockBlobFromText.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('deletes a definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
+    expect((store as any).blobService.deleteBlob.callCount).to.eq(1)
+    expect((store as any).blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('does not throw deleting missing definition', async () => {
     const store = createStore()
     await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0'))
-    expect(store.blobService.deleteBlob.callCount).to.eq(1)
-    expect(store.blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
+    expect((store as any).blobService.deleteBlob.callCount).to.eq(1)
+    expect((store as any).blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
   })
 
   it('gets a definition', async () => {
@@ -104,7 +103,7 @@ function createDefinitionJson(coordinates) {
   return JSON.stringify(createDefinition(coordinates))
 }
 
-function createStore(data) {
+function createStore(data?) {
   const blobServiceStub = {
     listBlobsSegmentedWithPrefix: sinon
       .stub()
@@ -143,12 +142,12 @@ function createStore(data) {
       if (data[name]) {
         return callback(null, data[name])
       }
-      const error = new Error('not found')
+      const error: any = new Error('not found')
       error.code = 'BlobNotFound'
       callback(error)
     })
   }
-  const store = Store({})
-  store.blobService = blobServiceStub
+  const store = Store({} as any)
+  ;(store as any).blobService = blobServiceStub
   return store
 }

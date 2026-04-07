@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -57,7 +56,7 @@ describe('Mongo Curation store', () => {
 
   it('handles updateContribution for curation', async () => {
     const service = createStore()
-    await service.updateContribution(pr, [curation])
+    await service.updateContribution(pr as any, [curation])
     expect(service.collection.updateOne.called).to.be.false
     expect(service.collection.replaceOne.calledOnce).to.be.true
     expect(service.collection.replaceOne.args[0][0]).to.deep.eq({ _id: 12 })
@@ -66,7 +65,7 @@ describe('Mongo Curation store', () => {
 
   it('handles updateContribution for curation with no data', async () => {
     const service = createStore()
-    await service.updateContribution(pr, [new Curation()])
+    await service.updateContribution(pr as any, [new Curation()])
     expect(service.collection.updateOne.called).to.be.true
     expect(service.collection.replaceOne.calledOnce).to.be.false
     expect(service.collection.updateOne.args[0][0]).to.deep.eq({ _id: 12 })
@@ -76,7 +75,7 @@ describe('Mongo Curation store', () => {
 
   it('handles updateContribution for curation with partial data', async () => {
     const service = createStore()
-    await service.updateContribution(pr, [
+    await service.updateContribution(pr as any, [
       new Curation(),
       new Curation({
         coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' },
@@ -95,7 +94,7 @@ describe('Mongo Curation store', () => {
 
   it('handles updateContribution for curation with data with no revisions', async () => {
     const service = createStore()
-    await service.updateContribution(pr, [
+    await service.updateContribution(pr as any, [
       new Curation({
         coordinates: { type: 'npm', provider: 'npmjs', name: 'foo' }
       })
@@ -109,7 +108,7 @@ describe('Mongo Curation store', () => {
 
   it('handles updateContribution for curation with data with no coordinates', async () => {
     const service = createStore()
-    await service.updateContribution(pr, [
+    await service.updateContribution(pr as any, [
       new Curation({
         revisions: {
           '1.0': {
@@ -175,7 +174,7 @@ function createStore() {
       project: sinon.stub().returns({ toArray: () => Promise.resolve([curation.data]) })
     })
   }
-  const store = Store({})
-  store.collection = collectionStub
-  return store
+  const store = Store({} as any)
+  ;(store as any).collection = collectionStub
+  return store as any
 }

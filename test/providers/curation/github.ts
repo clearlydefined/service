@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -16,18 +15,14 @@ import CurationStore from '../../../providers/curation/memoryStore.js'
 const { find } = lodash
 
 import logger from '../../../providers/logging/logger.js'
+import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
-const assert = chai.assert
 
 describe('Github Curation Service', () => {
   beforeEach(() => {
-    logger({
-      error: sinon.stub(),
-      info: sinon.stub(),
-      debug: sinon.stub()
-    })
+    logger(createMockLogger())
   })
   it('invalidates coordinates when handling merge', async () => {
     const service = createService()
@@ -55,9 +50,7 @@ describe('Github Curation Service', () => {
   })
 
   it('validates invalid PR change', async () => {
-    logger({
-      error: sinon.stub()
-    })
+    logger(createMockLogger())
     const service = createService()
     sinon.stub(service, '_postCommitStatus').returns(Promise.resolve())
     sinon.stub(service, '_postErrorsComment').returns(Promise.resolve())
@@ -85,7 +78,7 @@ describe('Github Curation Service', () => {
   it('merges simple changes', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
-    const base = { coordinates: definitionCoordinates }
+    const base: Record<string, any> = { coordinates: definitionCoordinates }
     await service.apply(null, null, base)
     expect(base.described.projectWebsite).to.eq('http://foo.com')
   })
@@ -93,7 +86,7 @@ describe('Github Curation Service', () => {
   it('merges complex curation on simple base', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
-    const base = extend(true, {}, simpleHarvested)
+    const base: Record<string, any> = extend(true, {}, simpleHarvested)
     await service.apply(null, null, base)
     expect(base.described.releaseDate).to.eq('2018-10-19')
     expect(base.described.projectWebsite).to.eq('http://foo.com')
@@ -108,7 +101,7 @@ describe('Github Curation Service', () => {
   it('merges simple curation on complex base', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => simpleCuration.revisions['1.0'])
-    const base = extend(true, {}, complexHarvested)
+    const base: any = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
     expect(base.described.releaseDate).to.eq('2018-08-09')
     expect(base.described.projectWebsite).to.eq('http://foo.com')
@@ -123,7 +116,7 @@ describe('Github Curation Service', () => {
   it('merges complex structures', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
-    const base = extend(true, {}, complexHarvested)
+    const base: any = extend(true, {}, complexHarvested)
     await service.apply(null, null, base)
     expect(base.described.projectWebsite).to.eq('http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
@@ -139,7 +132,7 @@ describe('Github Curation Service', () => {
   it('overrides file licenses when curated', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
-    const base = extend(true, {}, complexHarvestedWithLicenses)
+    const base: any = extend(true, {}, complexHarvestedWithLicenses)
     await service.apply(null, null, base)
     expect(base.described.projectWebsite).to.eq('http://foo.com')
     const file1 = find(base.files, file => file.path === '1.txt')
@@ -155,7 +148,7 @@ describe('Github Curation Service', () => {
   it('overrides package license when curated', async () => {
     const service = createService()
     sinon.stub(service, 'get').callsFake(() => complexCuration.revisions['1.0'])
-    const base = extend(true, {}, complexHarvestedWithLicenses)
+    const base: any = extend(true, {}, complexHarvestedWithLicenses)
     await service.apply(null, null, base)
     expect(base.licensed.declared).to.eq('Apache-2.0')
   })
@@ -190,7 +183,7 @@ describe('Github Curation Service', () => {
     const { service } = setup()
     sinon
       .stub(service, 'listAll')
-      .callsFake(() => [
+      .callsFake(async () => [
         EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
       ])
     const gitHubService = createService(service)
@@ -273,22 +266,22 @@ describe('Github Curation Service', () => {
       const { service, harvestStore } = setup()
       sinon
         .stub(service, 'listAll')
-        .callsFake(() => [
+        .callsFake(async () => [
           EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
         ])
-      sinon.stub(service, 'list').callsFake(() => [
+      sinon.stub(service, 'list').callsFake(async () => [
         'npm/npmjs/-/test/1.0', // curated revision
         'npm/npmjs/-/test/1.1', // license match on file
         'npm/npmjs/-/test/1.2', // license match on metadata
         'npm/npmjs/-/test/1.3', // license match on metadata, but already curated
         'npm/npmjs/-/test/1.4' // no license match, already curated
       ])
-      sinon.stub(service, 'getStored').callsFake(() => Promise.resolve())
+      sinon.stub(service, 'getStored').callsFake(async () => undefined as any)
 
       const gitHubService = createService(service, licenseMatcher, harvestStore)
       sinon.stub(gitHubService, '_getPatchesFromMergedPullRequest').resolves([component])
       sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
-      sinon.stub(gitHubService, 'list').callsFake(() => {
+      sinon.stub(gitHubService, 'list').callsFake(async () => {
         return {
           curations: { 'npm/npmjs/-/test/1.3': {} },
           contributions: [{ files: [{ revisions: [{ revision: '1.4' }] }] }]
@@ -322,16 +315,16 @@ describe('Github Curation Service', () => {
         '(http://localhost:3000/curations/143)'
       )
 
-      assert(
+      expect(
         startMatchingSpy.calledWith(EntityCoordinates.fromObject(definitionCoordinates), [
           EntityCoordinates.fromString('npm/npmjs/-/test/1.1'),
           EntityCoordinates.fromString('npm/npmjs/-/test/1.2'),
           EntityCoordinates.fromString('npm/npmjs/-/test/1.3'),
           EntityCoordinates.fromString('npm/npmjs/-/test/1.4')
         ])
-      )
-      assert(formatRevisionsSpy.calledWith(expectedResults))
-      assert(
+      ).to.be.true
+      expect(formatRevisionsSpy.calledWith(expectedResults)).to.be.true
+      expect(
         calculateMatchingRevisionAndReasonSpy.calledWith(
           sinon.match(
             obj =>
@@ -341,7 +334,7 @@ describe('Github Curation Service', () => {
               obj.revision === curatedCoordinates.revision
           )
         )
-      )
+      ).to.be.true
     })
   })
 
@@ -368,7 +361,7 @@ describe('Github Curation Service', () => {
       const harvestStore = {
         getAll: sinon.stub().resolves({})
       }
-      gitHubService = createService(service, licenseMatcher, harvestStore, {}, store)
+      gitHubService = createService(service, licenseMatcher, harvestStore, {} as any, store as any)
       // TODO: Should not stub private functions and private properties
       sinon.stub(gitHubService, 'github').value({
         rest: { users: { get: sinon.stub() } }
@@ -433,7 +426,7 @@ describe('Github Curation Service', () => {
       const store = {
         list: sinon.stub().callsFake(() => curationsAndContributions)
       }
-      gitHubService = createService(definitionService, licenseMatcher, harvestStore, {}, store)
+      gitHubService = createService(definitionService, licenseMatcher, harvestStore, {} as any, store as any)
       gitHubService.github = {
         rest: {
           users: { get: () => ({ name: 'clearlydefined-bot' }) },
@@ -551,10 +544,7 @@ function createService(
     get: sinon.stub().resolves(undefined),
     set: sinon.stub()
   }
-  logger({
-    error: sinon.stub(),
-    info: sinon.stub()
-  })
+  logger(createMockLogger())
   const service = GitHubCurationService(
     {
       owner: 'foobar',
@@ -563,12 +553,12 @@ function createService(
       token: 'foobar',
       multiversionCurationFeatureFlag: true
     },
-    store,
-    endpoints,
-    definitionService,
-    mockCache,
-    harvestStore,
-    licenseMatcher
+    store as any,
+    endpoints as any,
+    definitionService as any,
+    mockCache as any,
+    harvestStore as any,
+    licenseMatcher as any
   )
   service.github = {
     rest: {
@@ -596,8 +586,8 @@ function createService(
       },
       users: { get: () => ({ name: 'clearlydefined-bot' }) }
     }
-  }
-  return service
+  } as any
+  return service as any
 }
 
 const simpleHarvested = {
@@ -646,7 +636,7 @@ function createInvalidCuration() {
   return invalidCuration
 }
 
-function setup(definition, coordinateSpec, curation) {
+function setup(definition?, coordinateSpec?, curation?) {
   const store = { delete: sinon.stub(), get: sinon.stub(), store: sinon.stub() }
   const search = { delete: sinon.stub(), store: sinon.stub() }
   const curator = {
@@ -657,7 +647,15 @@ function setup(definition, coordinateSpec, curation) {
   const harvestService = { harvest: sinon.stub().returns(Promise.resolve(null)) }
   const summary = { summarizeAll: () => Promise.resolve(null) }
   const aggregator = { process: () => Promise.resolve(definition) }
-  const service = DefinitionService(harvestStore, harvestService, summary, aggregator, curator, store, search)
+  const service = DefinitionService(
+    harvestStore as any,
+    harvestService as any,
+    summary as any,
+    aggregator as any,
+    curator as any,
+    store as any,
+    search as any
+  )
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
 
   return { coordinates, service, harvestStore }
