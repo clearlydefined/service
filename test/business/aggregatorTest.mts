@@ -14,7 +14,6 @@ import { setIfValue } from '../../lib/utils.js'
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
-// @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
 const testDir = dirname(fileURLToPath(import.meta.url))
 
 function loadEvidence(name: string): unknown {

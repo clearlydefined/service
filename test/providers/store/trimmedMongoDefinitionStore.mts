@@ -16,7 +16,6 @@ import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const { uniq } = lodash
 
-// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const dbOptions = {
