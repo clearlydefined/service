@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -18,7 +17,7 @@ describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {
     const { coordinates, harvested } = setup([])
     const summary = Summarizer().summarize(coordinates, harvested)
-    expect(summary.coordinates).to.be.undefined
+    expect((summary as any).coordinates).to.be.undefined
   })
 
   it('gets all the per file license info and attribution parties', () => {
@@ -187,12 +186,12 @@ describe('ScanCode summarizer', () => {
   })
 
   it('creates expressions from license expressions', () => {
-    const examples = new Map([
+    const examples = new Map<Set<string> | null, string | null>([
       [new Set(['ISC']), 'ISC'],
       [new Set(['MIT', 'Apache-2.0']), 'Apache-2.0 AND MIT'],
       [new Set(['MIT OR Apache-2.0', 'GPL-3.0']), 'GPL-3.0 AND (MIT OR Apache-2.0)'],
-      [new Set(null), null],
-      [new Set(), null],
+      [new Set<string>(), null],
+      [new Set<string>(), null],
       [null, null]
     ])
     examples.forEach((expected, input) => {
@@ -257,12 +256,15 @@ describe('ScanCodeLegacySummarizer', () => {
 
   context('_getRootFiles', () => {
     it('gets root files', () => {
-      const result = ScanCodeLegacySummarizer()._getRootFiles({ type: 'npm' }, [
-        { path: 'realroot' },
-        { path: 'package/packageRoot' },
-        { path: 'other/nonroot' },
-        { path: 'package/deep/path' }
-      ])
+      const result = ScanCodeLegacySummarizer()._getRootFiles(
+        { type: 'npm' } as any,
+        [
+          { path: 'realroot' },
+          { path: 'package/packageRoot' },
+          { path: 'other/nonroot' },
+          { path: 'package/deep/path' }
+        ] as any
+      )
       expect(result.map(x => x.path)).to.deep.eq(['realroot', 'package/packageRoot'])
     })
   })
@@ -278,7 +280,7 @@ function validate(definition) {
   }
 }
 
-function setup(files, coordinateSpec, scancode_version = '30.1.0') {
+function setup(files, coordinateSpec?, scancode_version = '30.1.0') {
   const harvested = {
     _metadata: {},
     content: { scancode_version, files }
@@ -287,7 +289,7 @@ function setup(files, coordinateSpec, scancode_version = '30.1.0') {
   return { coordinates, harvested }
 }
 
-function buildFile(path, license, holders, score = 100, rule = {}, fileProps = {}) {
+function buildFile(path, license?, holders?, score = 100, rule = {}, fileProps = {}) {
   const wrapHolders = holders ? { statements: holders.map(holder => `Copyright ${holder}`) } : null
   if (!Array.isArray(license)) {
     license = [license]
@@ -303,7 +305,7 @@ function buildFile(path, license, holders, score = 100, rule = {}, fileProps = {
   }
 }
 
-function buildPackageFile(path, license) {
+function buildPackageFile(path, license, ..._rest) {
   return {
     path,
     type: 'file',

@@ -1,4 +1,3 @@
-// @ts-nocheck
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -229,6 +228,6 @@ function setupDefinitionUpgrader(logger) {
   const versionChecker = {
     validate: sinon.stub()
   }
-  const definitionUpgrader = new DefinitionUpgrader(definitionService, logger, versionChecker)
+  const definitionUpgrader = new DefinitionUpgrader(definitionService as any, logger, versionChecker)
   return { definitionService, versionChecker, definitionUpgrader }
 }

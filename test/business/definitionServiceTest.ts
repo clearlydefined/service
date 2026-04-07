@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -16,7 +15,7 @@ import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
 import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
 import { defaultFactory, delayedFactory } from '../../providers/upgrade/recomputeHandler.js'
 import validator from '../../schemas/validator.js'
-import { createSilentLogger } from '../helpers/mockLogger.ts'
+import { createMockLogger, createSilentLogger } from '../helpers/mockLogger.ts'
 
 const { set } = lodash
 chai.use(deepEqualInAnyOrder)
@@ -313,7 +312,7 @@ describe('Definition Service', () => {
       ])
 
       expect(results[0].status).to.eq('rejected')
-      expect(results[0].reason.message).to.eq('test error')
+      expect((results[0] as PromiseRejectedResult).reason.message).to.eq('test error')
       expect(results[1].status).to.eq('fulfilled')
 
       //lock is released after the first call
@@ -547,11 +546,7 @@ describe('Integration test', () => {
   describe('Handle schema version upgrade', () => {
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
     const definition = { _meta: { schemaVersion: '1.7.0' }, coordinates }
-    const logger = {
-      debug: () => {},
-      error: () => {},
-      info: () => {}
-    }
+    const logger = createSilentLogger()
 
     let recomputeHandler
 
@@ -767,27 +762,24 @@ describe('Integration test', () => {
 function createFileHarvestStore() {
   const options = {
     location: 'test/fixtures/store',
-    logger: {
-      error: () => {},
-      debug: () => {}
-    }
+    logger: createSilentLogger()
   }
   return FileHarvestStore(options)
 }
 
 function setupServiceToCalculateDefinition(rawHarvestData) {
   const harvestStore = { getAllLatest: () => Promise.resolve(rawHarvestData) }
-  const summary = SummaryService({})
+  const summary = SummaryService({} as any)
 
   const tools = [['clearlydefined', 'reuse', 'licensee', 'scancode', 'fossology', 'cdsource']]
   const aggregator = AggregatorService({ precedence: tools })
-  aggregator.logger = { info: sinon.stub() }
+  ;(aggregator as any).logger = createMockLogger()
   const curator = {
     get: () => Promise.resolve(),
     apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
     autoCurate: () => {}
   }
-  return setupWithDelegates(curator, harvestStore, summary, aggregator)
+  return setupWithDelegates(curator, harvestStore, summary as any, aggregator as any)
 }
 
 function setupServiceForUpgrade(definition, recomputeHandler) {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -23,6 +22,6 @@ async function createStore(options, defs) {
   for (const def of defs) {
     delete def._mongo
   }
-  await mongoStore.collection.insertMany(defs)
+  await (mongoStore as any).collection.insertMany(defs)
   return mongoStore
 }

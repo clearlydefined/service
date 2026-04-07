@@ -60,7 +60,7 @@ describe('Rate Limiter', () => {
   describe('Redis Based Rate Limiter', () => {
     it('throws error if redis client is missing', async () => {
       try {
-        const _middleware = new RedisBasedRateLimiter({ limit, logger } as any).middleware
+        void new RedisBasedRateLimiter({ limit, logger } as any).middleware
         assert.fail('Should have thrown error')
       } catch (error: any) {
         assert.strictEqual(error.message, 'Redis client is missing')

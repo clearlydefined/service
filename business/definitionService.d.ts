@@ -515,8 +515,8 @@ declare function createDefinitionService(
   curation: CurationService,
   store: DefinitionStore,
   search: SearchService,
-  cache: ICache,
-  recomputeHandler: RecomputeHandler
+  cache?: ICache,
+  recomputeHandler?: RecomputeHandler
 ): DefinitionService
 
 export default createDefinitionService

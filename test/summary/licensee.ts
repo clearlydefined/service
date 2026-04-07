@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
@@ -78,7 +77,7 @@ describe('LicenseeSummarizer', () => {
 
 // TOOD Add tests for merging the license data into files etc.
 
-function setup(files, attachments) {
+function setup(files, attachments?) {
   const matched_files = files.map(file => {
     return {
       filename: file.path,
