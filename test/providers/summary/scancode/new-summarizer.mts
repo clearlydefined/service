@@ -12,7 +12,6 @@ const { compact, uniq, flatten } = lodash
 import { expect } from 'chai'
 import Summarizer from '../../../../providers/summary/scancode.js'
 
-// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const summarizer = (Summarizer as (...args: any[]) => any)({}, { info: () => {} })
 

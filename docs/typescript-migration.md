@@ -12,7 +12,7 @@ Type information comes from three places:
 - JSDoc annotations in the JavaScript itself
 - custom type definitions in `types/` for third-party packages that don't ship their own types and aren't covered by DefinitelyTyped (`@types/` packages)
 
-Tests can be `.ts` files. Mocha runs both `test/**/*.js` and `test/**/*.ts`, and the tsconfig includes the `.ts` glob. There's one TypeScript test file so far.
+Every source `.js` file has a `.d.ts` counterpart. All tests are `.ts` (or `.mts` for files that need ESM semantics like `import.meta.url`). Mocha runs `test/**/*.ts` and `test/**/*.mts`.
 
 ### tsconfig.json
 
@@ -24,7 +24,6 @@ The config extends three bases:
 
 We override a few strict options because they don't play well with JavaScript:
 
-- `strictNullChecks: false`
 - `exactOptionalPropertyTypes: false`
 - `noPropertyAccessFromIndexSignature: false`
 
@@ -32,17 +31,15 @@ We also set `verbatimModuleSyntax: false`, overriding the `node-ts` default. Wit
 
 Other settings: `resolveJsonModule: true` (we import JSON in a few places).
 
+The `include` array uses glob patterns (`business/**/*.{js,d.ts}`, etc.) so new files are picked up automatically — no need to add individual entries.
+
 ## Adding types
 
-Write a `.d.ts` file next to the JavaScript module. Add JSDoc annotations to the `.js` file where they help. Then add both to the `include` array in [`tsconfig.json`][tsconfig]:
-
-```json
-{ "include": ["your/new/file.d.ts", "your/new/file.js"] }
-```
+Write a `.d.ts` file next to the JavaScript module. Add JSDoc annotations to the `.js` file where they help. The glob patterns in [`tsconfig.json`][tsconfig] will pick up both files automatically.
 
 Run `npm run tsc` to check your work.
 
-New tests can just be `.ts` files in `test/`. They're picked up automatically.
+New tests should be `.ts` files in `test/`. Use `.mts` if the test needs ESM-only features like `import.meta.url`. Both extensions are picked up automatically by mocha and the test tsconfig.
 
 ## What's next
 
@@ -66,9 +63,8 @@ A traditional `tsc` build step would remove the syntax restrictions and give us 
 
 1. Find a `.js` file that doesn't have a `.d.ts` yet
 2. Write the type definitions
-3. Add both files to `tsconfig.json`'s `include` list
-4. Run `npm run tsc`
-5. If something in this doc is wrong, fix it
+3. Run `npm run tsc`
+4. If something in this doc is wrong, fix it
 
 [tsconfig]: ../tsconfig.json
 [tsconfig-strictest]: https://www.npmjs.com/package/@tsconfig/strictest

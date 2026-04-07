@@ -49,7 +49,7 @@ interface AuthServiceModule {
 
 /** Application configuration built from environment variables and provider factories */
 interface AppConfig {
-  summary: Record<string, unknown>
+  summary: import('../business/summarizer').SummaryServiceOptions
   logging: {
     logger: () => Logger
   }
