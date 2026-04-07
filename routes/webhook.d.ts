@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type { DefinitionService } from '../business/definitionService'
-import type { Logger } from '../providers/logging'
+import type { DefinitionService } from '../business/definitionService.js'
+import type { Logger } from '../providers/logging/index.js'
 
 declare function setup(
   curation: any,
@@ -13,4 +13,4 @@ declare function setup(
   crawlerToken: string,
   testFlag?: boolean
 ): Router
-export = setup
+export default setup

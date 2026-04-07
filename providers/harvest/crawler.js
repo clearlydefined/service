@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { callFetch: requestPromise } = require('../../lib/fetch')
-const logger = require('../logging/logger')
+import { callFetch as requestPromise } from '../../lib/fetch.js'
+import logger from '../logging/logger.js'
 
 /**
  * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
@@ -52,4 +52,4 @@ class CrawlingHarvester {
   }
 }
 
-module.exports = /** @param {CrawlerOptions} options */ options => new CrawlingHarvester(options)
+export default /** @param {CrawlerOptions} options */ options => new CrawlingHarvester(options)

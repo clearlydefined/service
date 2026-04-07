@@ -1,13 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+import loggerFactory from '../providers/logging/logger.js'
+
 const router = express.Router()
-const utils = require('../lib/utils')
-const Curation = require('../lib/curation')
-const EntityCoordinates = require('../lib/entityCoordinates')
-const { permissionsCheck } = require('../middleware/permissions')
+
+import Curation from '../lib/curation.js'
+import EntityCoordinates from '../lib/entityCoordinates.js'
+import * as utils from '../lib/utils.js'
+import { permissionsCheck } from '../middleware/permissions.js'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */
@@ -189,8 +192,8 @@ let logger
  */
 function setup(service, appLogger) {
   curationService = service
-  logger = appLogger || require('../providers/logging/logger')()
+  logger = appLogger || loggerFactory()
   return router
 }
 
-module.exports = setup
+export default setup

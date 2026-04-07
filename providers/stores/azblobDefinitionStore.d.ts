@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { AzBlobStoreOptions } from './abstractAzblobStore'
-import AbstractAzBlobStore = require('./abstractAzblobStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
+import type AbstractAzBlobStore from './abstractAzblobStore.js'
 
 /** Definition object with coordinates */
 export interface Definition {
@@ -50,4 +50,4 @@ declare class AzBlobDefinitionStore extends AbstractAzBlobStore {
  */
 declare function createAzBlobDefinitionStore(options: AzBlobStoreOptions): AzBlobDefinitionStore
 
-export = createAzBlobDefinitionStore
+export default createAzBlobDefinitionStore

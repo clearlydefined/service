@@ -25,4 +25,4 @@ export type SpdxIdentifier = string
  */
 declare const scancodeMap: Map<ScancodeKey, SpdxIdentifier>
 
-export = scancodeMap
+export default scancodeMap

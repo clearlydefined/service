@@ -3,7 +3,7 @@
 
 import type { Octokit } from '@octokit/rest'
 import type { RequestHandler } from 'express'
-import type { ICache } from '../providers/caching'
+import type { ICache } from '../providers/caching/index.js'
 
 /**
  * GitHub user information retrieved from the GitHub API.
@@ -101,4 +101,3 @@ export interface GitHubAppLocals {
 declare function createGithubMiddleware(authOptions: GitHubMiddlewareOptions, authCache: ICache): RequestHandler
 
 export default createGithubMiddleware
-export = createGithubMiddleware

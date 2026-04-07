@@ -25,4 +25,4 @@ export interface GitHubService {
 }
 
 declare const githubService: GitHubService
-export = githubService
+export default githubService

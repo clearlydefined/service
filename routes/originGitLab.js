@@ -1,9 +1,14 @@
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const gitLabApi = require('../lib/gitlab.js')
-const config = require('painless-config')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
-const logger = require('../providers/logging/logger')()
+const router = express.Router()
+
+import config from 'painless-config'
+import * as gitLabApi from '../lib/gitlab.js'
+
+import loggerFactory from '../providers/logging/logger.js'
+
+let logger
 
 function gitLabClient() {
   return gitLabApi.getClient(/** @type {any} */ (config.get('GITLAB_TOKEN')))
@@ -82,6 +87,7 @@ router.get(
 )
 
 function setup() {
+  logger = loggerFactory()
   return router
 }
 
@@ -181,4 +187,4 @@ async function getGroups(groupName) {
   return group_names
 }
 
-module.exports = setup
+export default setup

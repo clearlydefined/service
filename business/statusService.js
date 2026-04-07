@@ -15,8 +15,8 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-const { callFetch: requestPromise } = require('../lib/fetch')
-const logger = require('../providers/logging/logger')
+import { callFetch as requestPromise } from '../lib/fetch.js'
+import logger from '../providers/logging/logger.js'
 
 /**
  * Service for retrieving system status information from Application Insights.
@@ -183,10 +183,10 @@ class StatusService {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
-      | where timestamp > ago(90d) 
-      | where customDimensions.outcome == 'Processed'  
+      | where timestamp > ago(90d)
+      | where customDimensions.outcome == 'Processed'
       | where strlen(customDimensions.crawlerHost) > 0
-      | parse message with "Processed " tool "@cd:/" type "/" specTrail 
+      | parse message with "Processed " tool "@cd:/" type "/" specTrail
       | summarize count() by when=bin(timestamp, 1d), tool, type
       | order by when asc, type`)
     )
@@ -222,10 +222,10 @@ class StatusService {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
-      | where timestamp > ago(90d) 
-      | where customDimensions.outcome == 'Processed'  
+      | where timestamp > ago(90d)
+      | where customDimensions.outcome == 'Processed'
       | where strlen(customDimensions.crawlerHost) > 0
-      | parse message with "Processed " tool "@cd:/" type "/" specTrail 
+      | parse message with "Processed " tool "@cd:/" type "/" specTrail
       | summarize count() by when=bin(timestamp, 1d), tool
       | order by when asc, tool`)
     )
@@ -301,4 +301,4 @@ class StatusService {
  * @param {ICache} cache - Cache for storing results
  * @returns {StatusService} A new StatusService instance
  */
-module.exports = (options, cache) => new StatusService(options, cache)
+export default (options, cache) => new StatusService(options, cache)

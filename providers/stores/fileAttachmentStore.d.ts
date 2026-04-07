@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
+import type { Logger } from '../logging/index.js'
 
 /** Options for configuring a FileAttachmentStore */
 export interface FileAttachmentStoreOptions {
@@ -50,4 +50,4 @@ declare class FileAttachmentStore {
  */
 declare function createFileAttachmentStore(options: FileAttachmentStoreOptions): FileAttachmentStore
 
-export = createFileAttachmentStore
+export default createFileAttachmentStore

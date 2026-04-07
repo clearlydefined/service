@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { FileEntry } from '../../lib/utils'
-import type { Logger } from '../logging'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { FileEntry } from '../../lib/utils.js'
+import type { Logger } from '../logging/index.js'
+import type { SummarizerOptions } from './index.js'
 
 /** ScanCode file license information */
 export interface ScanCodeLicense {
@@ -151,4 +151,4 @@ export declare class ScanCodeSummarizer {
  */
 declare function scancodeSummarizerFactory(options?: SummarizerOptions, logger?: Logger): ScanCodeSummarizer
 
-export = scancodeSummarizerFactory
+export default scancodeSummarizerFactory

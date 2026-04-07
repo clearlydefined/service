@@ -1,16 +1,21 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+
 chai.use(deepEqualInAnyOrder)
-const CurationStore = require('../../../providers/curation/memoryStore')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+
+import esmock from 'esmock'
+import sinon from 'sinon'
+import CurationStore from '../../../providers/curation/memoryStore.js'
+
 const sandbox = sinon.createSandbox()
-const yaml = require('js-yaml')
-const base64 = require('base-64')
-const EntityCoordinates = require('../../../lib/entityCoordinates')
+
+import base64 from 'base-64'
+import yaml from 'js-yaml'
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import initLogger from '../../../providers/logging/logger.js'
 
 const { expect } = chai
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }
@@ -61,7 +66,7 @@ const defaultCurations = {
 
 describe('Curation service pr events', () => {
   before(() => {
-    require('../../../providers/logging/logger')({
+    initLogger({
       error: sinon.stub(),
       info: sinon.stub(),
       debug: sinon.stub()
@@ -73,7 +78,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles open', async () => {
-    const service = createService({})
+    const service = await createService({})
     await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -86,10 +91,10 @@ describe('Curation service pr events', () => {
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
-  }).timeout(8000) // First time loading proxyquire('../../../providers/curation/github') is very slow.
+  }).timeout(8000) // First time loading esmock('../../../providers/curation/github.js') is very slow.
 
   it('handles update', async () => {
-    const service = createService({})
+    const service = await createService({})
     await service.updateContribution(prs[11])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -105,7 +110,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles merge', async () => {
-    const service = createService({})
+    const service = await createService({})
     await service.updateContribution(prs[12])
 
     const updateSpy = service.store.updateContribution
@@ -136,7 +141,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles close', async () => {
-    const service = createService({})
+    const service = await createService({})
     await service.updateContribution(prs[12])
     const updateSpy = service.store.updateContribution
     expect(updateSpy.calledOnce).to.be.true
@@ -150,7 +155,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles list', async () => {
-    const service = createService({})
+    const service = await createService({})
     service.store.curations = defaultCurations
     const list = await service.list(EntityCoordinates.fromString('npm/npmjs'))
     const listSpy = service.store.list
@@ -165,7 +170,7 @@ describe('Curation service pr events', () => {
   })
 
   it('handles failure to compute one definition of multiple', async () => {
-    const service = createService({})
+    const service = await createService({})
     await service.updateContribution(prs[13])
 
     const updateSpy = service.store.updateContribution
@@ -192,7 +197,7 @@ describe('Curation service pr events', () => {
   })
 
   it('gets null curation if blob does not exist', async () => {
-    const service = createService({
+    const service = await createService({
       geitStubOverride: () => {
         return {
           tree: ref => {
@@ -218,7 +223,7 @@ revisions:
     licensed:
       declared: MIT
 `
-    const service = createService({
+    const service = await createService({
       geitStubOverride: () => {
         return {
           tree: ref => {
@@ -258,7 +263,7 @@ revisions:
   })
 
   it('getCurations should use pr ref', async () => {
-    const service = createService({
+    const service = await createService({
       geitStubOverride: () => {
         return {
           tree: ref => {
@@ -275,7 +280,7 @@ revisions:
   })
 })
 
-function createService({ failsCompute = false, geitStubOverride = null }) {
+async function createService({ failsCompute = false, geitStubOverride = null }) {
   const store = CurationStore({})
   sinon.spy(store, 'updateContribution')
   sinon.spy(store, 'updateCurations')
@@ -298,13 +303,13 @@ function createService({ failsCompute = false, geitStubOverride = null }) {
       }
     })
 
-  require('../../../providers/logging/logger')({
+  initLogger({
     error: sinon.stub(),
     info: sinon.stub(),
     debug: sinon.stub()
   })
 
-  const service = proxyquire('../../../providers/curation/github', { geit: geitStub })(
+  const service = (await esmock('../../../providers/curation/github.js', { geit: geitStub }))(
     { owner: 'owner', repo: 'repo', branch: 'branch', token: 'token' },
     store,
     { website: 'http://localhost:3000' },

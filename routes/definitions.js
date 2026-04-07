@@ -1,13 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
 const router = express.Router()
-const utils = require('../lib/utils')
-const EntityCoordinates = require('../lib/entityCoordinates')
-const validator = require('../schemas/validator')
-const logger = require('../providers/logging/logger')
+
+import EntityCoordinates from '../lib/entityCoordinates.js'
+import * as utils from '../lib/utils.js'
+import logger from '../providers/logging/logger.js'
+import validator from '../schemas/validator.js'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */
@@ -223,4 +225,4 @@ function setup(definition, testFlag = false) {
   return router
 }
 
-module.exports = setup
+export default setup

@@ -1,9 +1,9 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { MissingDefinitionComputePolicy } from './computePolicy'
-import type { RecomputeContext } from '../../business/definitionService'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
+import type { MissingDefinitionComputePolicy } from './computePolicy.js'
+import type { RecomputeContext } from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
 
 export declare class OnDemandComputePolicy implements MissingDefinitionComputePolicy {
   initialize(): Promise<void>

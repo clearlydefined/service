@@ -5,10 +5,12 @@
 /** @typedef {import('express').Response} Response */
 /** @typedef {import('../business/suggestionService').SuggestionService} SuggestionService */
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
 const router = express.Router()
-const utils = require('../lib/utils')
+
+import * as utils from '../lib/utils.js'
 
 // Get some suggestions for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getSuggestions))
@@ -36,4 +38,4 @@ function setup(service) {
   return router
 }
 
-module.exports = setup
+export default setup

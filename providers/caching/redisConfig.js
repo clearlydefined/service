@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const redis = require('./redis')
-const config = require('painless-config')
+import config from 'painless-config'
+import redis from './redis.js'
 
 /**
  * @typedef {import('./redis.d.ts').RedisCacheOptions} RedisCacheOptions
@@ -28,4 +28,4 @@ function serviceFactory(options) {
   return redis(realOptions)
 }
 
-module.exports = serviceFactory
+export default serviceFactory

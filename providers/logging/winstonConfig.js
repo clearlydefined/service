@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const appInsights = require('applicationinsights')
-const winston = require('winston')
-const mockInsights = require('../../lib/mockInsights')
+import appInsights from 'applicationinsights'
+import config from 'painless-config'
+import winston from 'winston'
+import mockInsights from '../../lib/mockInsights.js'
+
 const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
 /** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
@@ -185,7 +186,5 @@ function mapLevel(level) {
   return levelMap.get(level) ?? appInsights.KnownSeverityLevel.Information
 }
 
-module.exports = factory
-module.exports.sanitizeHeaders = sanitizeHeaders
-module.exports.sanitizeMeta = sanitizeMeta
-module.exports.buildProperties = buildProperties
+export default factory
+export { buildProperties, sanitizeHeaders, sanitizeMeta }

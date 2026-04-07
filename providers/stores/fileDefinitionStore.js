@@ -7,13 +7,16 @@
  * @typedef {import('./fileDefinitionStore').Definition} Definition
  */
 
-const fs = require('node:fs')
-const path = require('node:path')
-const { mkdirp } = require('mkdirp')
-const AbstractFileStore = require('./abstractFileStore')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { sortedUniq } = require('lodash')
-const { promisify } = require('node:util')
+import fs from 'node:fs'
+import path from 'node:path'
+import lodash from 'lodash'
+import { mkdirp } from 'mkdirp'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import AbstractFileStore from './abstractFileStore.js'
+
+const { sortedUniq } = lodash
+
+import { promisify } from 'node:util'
 
 /**
  * File system implementation for storing component definitions.
@@ -77,4 +80,4 @@ class FileDefinitionStore extends AbstractFileStore {
  * @param {FileStoreOptions} [options] - Configuration options for the store
  * @returns {FileDefinitionStore} A new FileDefinitionStore instance
  */
-module.exports = options => new FileDefinitionStore(options)
+export default options => new FileDefinitionStore(options)

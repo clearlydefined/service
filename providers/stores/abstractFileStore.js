@@ -1,15 +1,19 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const fs = require('node:fs')
-const path = require('node:path')
-const recursive = require('recursive-readdir')
-const { promisify } = require('node:util')
-const ResultCoordinates = require('../../lib/resultCoordinates')
+import fs from 'node:fs'
 // @ts-expect-error - JSON schema has no type declarations
-const schema = require('../../schemas/definition-1.0')
-const { getLatestVersion } = require('../../lib/utils')
-const logger = require('../logging/logger')
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import { promisify } from 'node:util'
+import recursive from 'recursive-readdir'
+import ResultCoordinates from '../../lib/resultCoordinates.js'
+
+const require = createRequire(import.meta.url)
+const schema = require('../../schemas/definition-1.0.json')
+
+import { getLatestVersion } from '../../lib/utils.js'
+import logger from '../logging/logger.js'
 
 /**
  * @typedef {import('./abstractFileStore').FileStoreOptions} FileStoreOptions
@@ -293,4 +297,4 @@ class AbstractFileStore {
   }
 }
 
-module.exports = AbstractFileStore
+export default AbstractFileStore

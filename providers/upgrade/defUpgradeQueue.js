@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { DefinitionVersionChecker } = require('./defVersionCheck')
-const { setup } = require('./process')
+import { DefinitionVersionChecker } from './defVersionCheck.js'
+import { setup } from './process.js'
 
 /**
  * @typedef {import('../../business/definitionService').Definition} Definition
@@ -82,4 +82,4 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
   }
 }
 
-module.exports = DefinitionQueueUpgrader
+export default DefinitionQueueUpgrader

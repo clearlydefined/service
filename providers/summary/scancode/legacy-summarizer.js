@@ -13,18 +13,21 @@
  * @typedef {import('../../../lib/utils').FileEntry} FileEntry
  */
 
-const { get, flatten, uniq } = require('lodash')
-const SPDX = require('@clearlydefined/spdx')
-const {
-  extractDate,
-  isDeclaredLicense,
-  getLicenseLocations,
-  isLicenseFile,
-  setIfValue,
+import lodash from 'lodash'
+
+const { get, flatten, uniq } = lodash
+
+import SPDX from '@clearlydefined/spdx'
+import {
   addArrayToSet,
+  extractDate,
+  getLicenseLocations,
+  isDeclaredLicense,
+  isLicenseFile,
   joinExpressions,
-  normalizeLicenseExpression
-} = require('../../../lib/utils')
+  normalizeLicenseExpression,
+  setIfValue
+} from '../../../lib/utils.js'
 
 /**
  * ScanCode Legacy summarizer class that processes harvested data from older
@@ -358,4 +361,4 @@ class ScanCodeLegacySummarizer {
  * @param {Logger} logger - Logger instance for logging
  * @returns {ScanCodeLegacySummarizer} A new ScanCodeLegacySummarizer instance
  */
-module.exports = (options, logger) => new ScanCodeLegacySummarizer(options, logger)
+export default (options, logger) => new ScanCodeLegacySummarizer(options, logger)

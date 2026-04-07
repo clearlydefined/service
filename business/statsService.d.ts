@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from '../providers/caching'
-import type { Logger } from '../providers/logging'
-import type { DefinitionService } from './definitionService'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
+import type { DefinitionService } from './definitionService.js'
 
 /** Facet entry in a frequency table */
 export interface FacetEntry {
@@ -141,4 +141,3 @@ declare function createStatsService(
 ): StatsService
 
 export default createStatsService
-export = createStatsService

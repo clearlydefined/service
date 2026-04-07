@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type createCondaRepoAccess from '../lib/condaRepoAccess'
+import type createCondaRepoAccess from '../lib/condaRepoAccess.js'
 
 declare function setup(condaRepoAccess: ReturnType<typeof createCondaRepoAccess>, testflag?: boolean): Router
 
-export = setup
+export default setup

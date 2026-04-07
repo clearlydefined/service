@@ -45,4 +45,4 @@ declare class MockInsights {
   trackTrace(traceTelemetry: Contracts.TraceTelemetry): void
 }
 
-export = MockInsights
+export default MockInsights

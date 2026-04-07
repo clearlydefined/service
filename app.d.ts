@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Express } from 'express'
-import type { AppConfig } from './bin/config'
+import type { AppConfig } from './bin/config.js'
 
 /** Express application with an async initialization hook */
 export interface App extends Express {
@@ -22,4 +22,3 @@ export interface App extends Express {
 declare function createApp(config: AppConfig): App
 
 export default createApp
-export = createApp

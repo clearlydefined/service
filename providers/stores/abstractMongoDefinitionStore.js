@@ -1,12 +1,15 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const MongoClient = require('mongodb').MongoClient
-const promiseRetry = require('promise-retry')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const logger = require('../logging/logger')
-const { get } = require('lodash')
-const base64 = require('base-64')
+import lodash from 'lodash'
+import { MongoClient } from 'mongodb'
+import promiseRetry from 'promise-retry'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import logger from '../logging/logger.js'
+
+const { get } = lodash
+
+import base64 from 'base-64'
 
 /**
  * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionStoreOptions} MongoDefinitionStoreOptions
@@ -445,4 +448,4 @@ class AbstractMongoDefinitionStore {
     return base64.encode(lastValues)
   }
 }
-module.exports = AbstractMongoDefinitionStore
+export default AbstractMongoDefinitionStore

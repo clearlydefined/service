@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
-import type { IQueue } from '../queueing'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
 
 /** Minimum curation-service shape required by the queue processor */
 export interface CurationProcessService {
@@ -35,4 +35,4 @@ declare function setup(
   once?: boolean
 ): Promise<void>
 
-export = setup
+export default setup

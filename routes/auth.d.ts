@@ -3,7 +3,7 @@
 
 import type { Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
-import type { PermissionsConfig } from '../middleware/permissions'
+import type { PermissionsConfig } from '../middleware/permissions.js'
 
 /**
  * Configuration options for the auth route module.
@@ -175,4 +175,4 @@ declare namespace authRoute {
   export function getStrategy(): GitHubStrategy
 }
 
-export = authRoute
+export default authRoute

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DequeuedMessage, IQueue, QueueMessage } from '.'
-import type { Logger } from '../logging'
+import type { DequeuedMessage, IQueue, QueueMessage } from '..js'
+import type { Logger } from '../logging/index.js'
 
 export interface MemoryQueueOptions {
   /** Decode message text before JSON.parse. Defaults to identity function. */
@@ -35,4 +35,3 @@ export declare class MemoryQueue implements IQueue {
 declare function createMemoryQueue(opts?: MemoryQueueOptions): MemoryQueue
 
 export default createMemoryQueue
-export = createMemoryQueue

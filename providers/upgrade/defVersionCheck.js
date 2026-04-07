@@ -1,10 +1,13 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const logger = require('../logging/logger')
-const { gte } = require('semver')
-const { get } = require('lodash')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import lodash from 'lodash'
+import { gte } from 'semver'
+import logger from '../logging/logger.js'
+
+const { get } = lodash
+
+import EntityCoordinates from '../../lib/entityCoordinates.js'
 
 /**
  * @typedef {import('../logging').Logger} Logger
@@ -76,4 +79,4 @@ class DefinitionVersionChecker {
  */
 const factory = options => new DefinitionVersionChecker(options)
 
-module.exports = { DefinitionVersionChecker, factory }
+export { DefinitionVersionChecker, factory }

@@ -1,9 +1,9 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const validator = require('../../../schemas/validator')
-const loggerFactory = require('../../logging/logger')
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import validator from '../../../schemas/validator.js'
+import loggerFactory from '../../logging/logger.js'
 
 /**
  * @typedef {import('./listBasedFilter.d.ts').ListBasedFilterOptions} ListBasedFilterOptions
@@ -72,4 +72,4 @@ class ListBasedFilter {
   }
 }
 
-module.exports = ListBasedFilter
+export default ListBasedFilter

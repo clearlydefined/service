@@ -27,4 +27,4 @@ export interface GitlabModule {
 }
 
 declare const gitlab: GitlabModule
-export = gitlab
+export default gitlab

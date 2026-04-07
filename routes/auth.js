@@ -12,12 +12,12 @@
 /** @typedef {import('./auth').UserDetails} UserDetails */
 /** @typedef {import('./auth').GitHubEmail} GitHubEmail */
 
-const express = require('express')
-const passport = require('passport')
-const GitHubStrategy = require('passport-github').Strategy
-const { URL } = require('node:url')
-const { Octokit } = require('@octokit/rest')
-const { defaultHeaders } = require('../lib/fetch')
+import { URL } from 'node:url'
+import { Octokit } from '@octokit/rest'
+import express from 'express'
+import passport from 'passport'
+import { Strategy as GitHubStrategy } from 'passport-github'
+import { defaultHeaders } from '../lib/fetch.js'
 
 const router = express.Router()
 
@@ -208,4 +208,4 @@ function getStrategy() {
   )
 }
 
-module.exports = { setup, router, usePassport, getStrategy }
+export { getStrategy, router, setup, usePassport }

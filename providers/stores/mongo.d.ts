@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { Document, Filter, InsertManyResult } from 'mongodb'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore'
-import AbstractMongoDefinitionStore = require('./abstractMongoDefinitionStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.js'
+import type AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
 
 /** Definition object with coordinates and files */
 export interface Definition {
@@ -94,4 +94,4 @@ declare class MongoStore extends AbstractMongoDefinitionStore {
  */
 declare function createMongoStore(options: MongoDefinitionStoreOptions): MongoStore
 
-export = createMongoStore
+export default createMongoStore

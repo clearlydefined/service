@@ -1,10 +1,10 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from '../providers/caching'
-import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
-import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper'
-import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper'
+import type { ICache } from '../providers/caching/index.js'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.js'
+import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.js'
+import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.js'
 
 /** Interface for coordinate mappers that can transform coordinates */
 export interface ICoordinatesMapper {
@@ -82,4 +82,3 @@ export declare class CoordinatesMapper {
 declare function createCoordinatesMapper(mappers?: CoordinatesMappers, cache?: ICache): CoordinatesMapper
 
 export default createCoordinatesMapper
-export = createCoordinatesMapper

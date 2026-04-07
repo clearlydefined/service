@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type AzureStorageQueue from '../queueing/azureStorageQueue'
-import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue'
+import type AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue.js'
 
 /**
  * Factory function that creates an AzureStorageQueue configured for harvest processing.
@@ -14,4 +14,4 @@ import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue'
  */
 declare function azure(options?: AzureStorageQueueOptions): AzureStorageQueue
 
-export = azure
+export default azure

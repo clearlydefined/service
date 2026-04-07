@@ -14,7 +14,7 @@
  * @param {AsyncMiddlewareFunction} func - The async middleware function to wrap
  * @returns {import('express').RequestHandler} A standard Express middleware that handles async errors
  */
-module.exports = func => async (request, response, next) => {
+export default func => async (request, response, next) => {
   try {
     await func(request, response, next)
   } catch (error) {

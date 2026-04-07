@@ -14,17 +14,20 @@
  * @typedef {import('../../../lib/utils').FileEntry} FileEntry
  */
 
-const { get, flatten, uniq } = require('lodash')
-const SPDX = require('@clearlydefined/spdx')
-const {
+import lodash from 'lodash'
+
+const { get, flatten, uniq } = lodash
+
+import SPDX from '@clearlydefined/spdx'
+import {
   extractDate,
-  isDeclaredLicense,
   getLicenseLocations,
+  isDeclaredLicense,
   isLicenseFile,
-  setIfValue,
   joinExpressions,
-  normalizeLicenseExpression
-} = require('../../../lib/utils')
+  normalizeLicenseExpression,
+  setIfValue
+} from '../../../lib/utils.js'
 
 /**
  * ScanCode New summarizer class that processes harvested data from newer
@@ -355,4 +358,4 @@ class ScanCodeNewSummarizer {
  * @param {Logger} logger - Logger instance for logging
  * @returns {ScanCodeNewSummarizer} A new ScanCodeNewSummarizer instance
  */
-module.exports = (options, logger) => new ScanCodeNewSummarizer(options, logger)
+export default (options, logger) => new ScanCodeNewSummarizer(options, logger)

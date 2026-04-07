@@ -7,8 +7,8 @@
 /** @typedef {import('.').CurationHarvestStore} CurationHarvestStore */
 /** @typedef {import('../caching').ICache} ICache */
 
-const config = require('painless-config')
-const githubService = require('./github')
+import config from 'painless-config'
+import githubService from './github.js'
 
 /**
  * @param {GitHubCurationOptions | null | undefined} options
@@ -28,4 +28,4 @@ function github(options, store, endpoints, cache, harvestStore) {
   return githubService(realOptions, store, endpoints, null, cache, harvestStore)
 }
 
-module.exports = github
+export default github

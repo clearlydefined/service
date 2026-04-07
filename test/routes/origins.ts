@@ -1,23 +1,25 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { EventEmitter } from 'node:events'
+import fs from 'node:fs'
+import { assert, expect } from 'chai'
+import esmock from 'esmock'
+import httpMocks from 'node-mocks-http'
 import type { SinonStub } from 'sinon'
-
-const { expect, assert } = require('chai')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
-const fs = require('node:fs')
-const httpMocks = require('node-mocks-http')
-const originMavenRoutes = require('../../routes/originMaven')
-const originCondaRoutes = require('../../routes/originConda')
+import sinon from 'sinon'
+import originCondaRoutes from '../../routes/originConda.js'
+import originMavenRoutes from '../../routes/originMaven.js'
 
 describe('Pypi origin routes', () => {
   let router: Record<string, (...args: any[]) => any>
   let requestPromiseStub: SinonStub
   const fixturePath = 'test/fixtures/origins/pypi'
-  beforeEach(() => {
+  beforeEach(async () => {
     requestPromiseStub = sinon.stub()
-    const createRoute = proxyquire('../../routes/originPyPi', { '../lib/fetch': { callFetch: requestPromiseStub } })
+    const createRoute = await esmock('../../routes/originPyPi.js', {
+      '../../lib/fetch.js': { callFetch: requestPromiseStub }
+    })
     router = createRoute(true)
   })
 
@@ -54,6 +56,7 @@ describe('Maven origin routes', () => {
   const fixturePath = 'test/fixtures/origins/maven'
 
   before(() => {
+    // @ts-expect-error - Router has internal test methods
     router = originMavenRoutes(true)
   })
 
@@ -101,8 +104,12 @@ describe('Conda origin routes', () => {
     callFetch: requestPromiseStub
   }
 
-  const createCondaRepoAccess = proxyquire('../../lib/condaRepoAccess', {
-    './fetch': fetchModuleStub
+  let createCondaRepoAccess
+
+  before(async () => {
+    createCondaRepoAccess = await esmock('../../lib/condaRepoAccess.js', {
+      '../../lib/fetch.js': fetchModuleStub
+    })
   })
 
   const channelData = {
@@ -139,7 +146,7 @@ describe('Conda origin routes', () => {
     const response = httpMocks.createResponse()
 
     const router = initializeRoutes()
-    await router._getOriginCondaRevisions(request, response)
+    await (router as any)._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), ['linux-64:2.15.0-cuda120py39hb94c71b_3'])
     assert.isTrue(requestPromiseStub.calledTwice)
@@ -151,7 +158,7 @@ describe('Conda origin routes', () => {
     const response = httpMocks.createResponse()
 
     const router = initializeRoutes()
-    await router._getOriginConda(request, response)
+    await (router as any)._getOriginConda(request, response)
     assert.strictEqual(response.statusCode, 200)
     assert.deepEqual(response._getData(), [{ id: 'tensorflow' }])
     assert.isTrue(requestPromiseStub.called)
@@ -163,7 +170,7 @@ describe('Conda origin routes', () => {
     const response = httpMocks.createResponse()
 
     const router = initializeRoutes()
-    await router._getOriginConda(request, response)
+    await (router as any)._getOriginConda(request, response)
     assert.strictEqual(response.statusCode, 404)
     assert.strictEqual(response._getData(), 'Unrecognized Conda channel tensor')
   })
@@ -175,7 +182,7 @@ describe('Conda origin routes', () => {
     const response = httpMocks.createResponse()
 
     const router = initializeRoutes()
-    await router._getOriginCondaRevisions(request, response)
+    await (router as any)._getOriginCondaRevisions(request, response)
     assert.strictEqual(response.statusCode, 404)
     assert.strictEqual(response._getData(), 'Package tensorflow1212 not found in channel conda-forge')
     assert.isTrue(requestPromiseStub.calledOnce)
@@ -207,6 +214,7 @@ describe('Conda origin routes', () => {
   }
 
   function initializeRoutes() {
+    // @ts-expect-error - test uses partial CondaRepoAccess mock
     return originCondaRoutes(condaRepoAccess, true)
   }
 })
@@ -216,7 +224,7 @@ describe('GitHub origin routes', () => {
   let githubMock: Record<string, unknown>
   let loggerStub: Record<string, SinonStub>
 
-  beforeEach(() => {
+  beforeEach(async () => {
     loggerStub = {
       error: sinon.stub(),
       warn: sinon.stub(),
@@ -243,8 +251,8 @@ describe('GitHub origin routes', () => {
       }
     }
 
-    const proxiedOriginGitHubRoutes = proxyquire('../../routes/originGitHub', {
-      '../providers/logging/logger': () => loggerStub
+    const proxiedOriginGitHubRoutes = await esmock('../../routes/originGitHub.js', {
+      '../../providers/logging/logger.js': () => loggerStub
     })
 
     // Inject the real router
@@ -262,7 +270,7 @@ describe('GitHub origin routes', () => {
       params: { login: 'octocat' },
       app: { locals: { service: { github: { client: githubMock } } } }
     })
-    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: EventEmitter })
 
     await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
@@ -291,7 +299,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: EventEmitter })
 
     await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
@@ -337,7 +345,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: EventEmitter })
 
     await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
@@ -378,7 +386,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: EventEmitter })
 
     await new Promise<void>((resolve, reject) => {
       res.on('finish', resolve)
@@ -410,7 +418,7 @@ describe('GitHub origin routes', () => {
       app: { locals: { service: { github: { client: githubMock } } } }
     })
 
-    const res = httpMocks.createResponse({ eventEmitter: require('node:events').EventEmitter })
+    const res = httpMocks.createResponse({ eventEmitter: EventEmitter })
 
     await new Promise<void>((resolve, reject) => {
       res.on('end', resolve)
@@ -430,5 +438,5 @@ describe('GitHub origin routes', () => {
 
 function loadFixture(path: string) {
   const body = fs.readFileSync(path)
-  return JSON.parse(body)
+  return JSON.parse(body.toString())
 }

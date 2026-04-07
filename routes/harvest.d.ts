@@ -4,4 +4,4 @@
 import type { Router } from 'express'
 
 declare function setup(harvester: any, store: any, summarizer: any, throttler: any, testFlag?: boolean): Router
-export = setup
+export default setup

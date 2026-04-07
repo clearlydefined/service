@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Contribution, ContributionPR, ICurationStore } from '.'
-import type Curation from '../../lib/curation'
-import type { CurationData } from '../../lib/curation'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { Logger } from '../logging'
+import type { Contribution, ContributionPR, ICurationStore } from '..js'
+import type Curation from '../../lib/curation.js'
+import type { CurationData } from '../../lib/curation.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { Logger } from '../logging/index.js'
 
 /**
  * In-memory curation store used for testing.
@@ -70,4 +70,3 @@ export declare class MemoryStore implements ICurationStore {
 declare function createMemoryStore(options?: Record<string, unknown>): MemoryStore
 
 export default createMemoryStore
-export = createMemoryStore

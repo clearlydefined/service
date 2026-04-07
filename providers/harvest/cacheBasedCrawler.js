@@ -1,9 +1,11 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const logger = require('../logging/logger')
-const throat = require('throat').default
-const { uniqBy, isEqual } = require('lodash')
+import lodash from 'lodash'
+import throat from 'throat'
+import logger from '../logging/logger.js'
+
+const { uniqBy, isEqual } = lodash
 
 /**
  * @typedef {import('../../lib/entityCoordinates').EntityCoordinates} EntityCoordinates
@@ -244,4 +246,4 @@ class CacheBasedHarvester {
  * @param {Options} options - Configuration options for the harvester
  * @returns {CacheBasedHarvester} A new CacheBasedHarvester instance
  */
-module.exports = options => new CacheBasedHarvester(options)
+export default options => new CacheBasedHarvester(options)

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const logger = require('../logging/logger')
+import logger from '../logging/logger.js'
 
 /** @typedef {import('.').QueueMessage} QueueMessage */
 /** @typedef {import('.').DequeuedMessage} DequeuedMessage */
@@ -95,4 +95,4 @@ const factory = (opts = {}) => {
   return new MemoryQueue(mergedOpts)
 }
 
-module.exports = factory
+export default factory
