@@ -134,7 +134,22 @@ describe('Definition Upgrade Queue Processing', () => {
     it('handles exception by rethrowing with coordinates and the original error message', async () => {
       definitionService.computeStoreAndCurateIf.rejects(new Error('test'))
 
-      await expect(upgrader.processMessage(message)).to.be.rejectedWith(Error, /pypi\/pypi\/-\/test\/revision: test/)
+      await expect(upgrader.processMessage(message)).to.be.rejectedWith(
+        Error,
+        /Error handling definition upgrade for pypi\/pypi\/-\/test\/revision/
+      )
+    })
+
+    it('preserves original error as cause', async () => {
+      const originalError = new Error('original failure')
+      definitionService.computeStoreAndCurateIf.rejects(originalError)
+
+      try {
+        await upgrader.processMessage(message)
+        expect.fail('should have thrown')
+      } catch (error: any) {
+        expect(error.cause).to.equal(originalError)
+      }
     })
 
     describe('predicate integration', () => {
@@ -200,7 +215,9 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.dequeueMultiple.calledOnce).to.be.true
       expect(queue.delete.calledOnce).to.be.true
       expect(logger.error.calledOnce).to.be.true
-      expect(logger.error.args[0][0].message).to.match(/pypi\/pypi\/-\/test\/revision: test/)
+      expect(logger.error.args[0][0].message).to.match(
+        /Error handling definition upgrade for pypi\/pypi\/-\/test\/revision/
+      )
     })
 
     it('skips compute if a definition is up-to-date', async () => {

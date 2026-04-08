@@ -91,8 +91,9 @@ class DefinitionUpgrader {
         this.logger.debug('Skipped definition upgrade', { coordinates: coordinates.toString() })
       }
     } catch (error) {
+      const context = `Error handling definition upgrade for ${coordinates.toString()}`
       const originalError = error instanceof Error ? error : new Error(String(error))
-      throw new Error(`${coordinates}: ${originalError.message}`, { cause: originalError })
+      throw new Error(context, { cause: originalError })
     }
   }
 }
