@@ -27,8 +27,6 @@ We override a few strict options because they don't play well with JavaScript:
 - `exactOptionalPropertyTypes: false`
 - `noPropertyAccessFromIndexSignature: false`
 
-We also set `verbatimModuleSyntax: false`, overriding the `node-ts` default. Without this, all our CommonJS `require()` calls would be errors. Once we migrate imports, we can flip it back.
-
 Other settings: `resolveJsonModule: true` (we import JSON in a few places).
 
 The `include` array uses glob patterns (`business/**/*.{js,d.ts}`, etc.) so new files are picked up automatically — no need to add individual entries.
