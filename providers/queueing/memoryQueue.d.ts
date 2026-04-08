@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DequeuedMessage, IQueue, QueueMessage } from '..js'
+import type { DequeuedMessage, IQueue, QueueMessage } from './index.js'
 import type { Logger } from '../logging/index.js'
 
 export interface MemoryQueueOptions {

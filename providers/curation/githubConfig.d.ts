@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { CurationHarvestStore, Endpoints, GitHubCurationOptions, ICurationStore } from '..js'
+import type { CurationHarvestStore, Endpoints, GitHubCurationOptions, ICurationStore } from './index.js'
 import type { ICache } from '../caching/index.js'
 import type { GitHubCurationService } from './github.js'
 

@@ -13,16 +13,10 @@ export interface GitHubClientOptions {
   token: string
 }
 
-/** GitHub service module for creating authenticated GitHub API clients. */
-export interface GitHubService {
-  /**
-   * Creates an authenticated GitHub API client.
-   *
-   * @param options - Configuration options including the GitHub token
-   * @returns Authenticated GitHub API client instance
-   */
-  getClient(options: GitHubClientOptions): GitHubClient
-}
-
-declare const githubService: GitHubService
-export default githubService
+/**
+ * Creates an authenticated GitHub API client.
+ *
+ * @param options - Configuration options including the GitHub token
+ * @returns Authenticated GitHub API client instance
+ */
+export function getClient(options: GitHubClientOptions): GitHubClient

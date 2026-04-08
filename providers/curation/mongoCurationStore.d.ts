@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Collection, Db, MongoClient } from 'mongodb'
-import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from '..js'
+import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from './index.js'
 import type Curation from '../../lib/curation.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
 import type { Logger } from '../logging/index.js'

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Contribution, ContributionPR, ICurationStore } from '..js'
+import type { Contribution, ContributionPR, ICurationStore } from './index.js'
 import type Curation from '../../lib/curation.js'
 import type { CurationData } from '../../lib/curation.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.js'

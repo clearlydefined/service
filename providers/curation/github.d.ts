@@ -12,7 +12,7 @@ import type {
   GitHubCurationOptions,
   GitHubPR,
   ICurationStore
-} from '..js'
+} from './index.js'
 import type Curation from '../../lib/curation.js'
 import type { CurationRevision } from '../../lib/curation.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
