@@ -38,10 +38,12 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-const { getLatestVersion, mergeDefinitions } = require('../lib/utils')
-const { flattenDeep, get, set, intersectionBy } = require('lodash')
-const logger = require('../providers/logging/logger')
-const { setIfValue } = require('../lib/utils')
+import lodash from 'lodash'
+
+const { flattenDeep, get, set, intersectionBy } = lodash
+
+import { getLatestVersion, mergeDefinitions, setIfValue } from '../lib/utils.js'
+import logger from '../providers/logging/logger.js'
 
 /**
  * Service for aggregating summarized tool output into a single definition.
@@ -157,4 +159,4 @@ class AggregationService {
  * @param {AggregationServiceOptions} options - Configuration options including tool precedence
  * @returns {AggregationService} A new AggregationService instance
  */
-module.exports = options => new AggregationService(options)
+export default options => new AggregationService(options)

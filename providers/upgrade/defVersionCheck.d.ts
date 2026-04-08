@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
-import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService'
+import type { Logger } from '../logging/index.js'
+import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
 
 /** Configuration options for DefinitionVersionChecker */
 export interface DefinitionVersionCheckerOptions {

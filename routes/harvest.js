@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const utils = require('../lib/utils')
-const bodyParser = require('body-parser')
-const validator = require('../schemas/validator')
-const EntityCoordinates = require('../lib/entityCoordinates')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
+
+import bodyParser from 'body-parser'
+import EntityCoordinates from '../lib/entityCoordinates.js'
+import * as utils from '../lib/utils.js'
+import validator from '../schemas/validator.js'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */
@@ -169,4 +172,4 @@ function setup(harvester, store, summarizer, throttler, testFlag = false) {
   return router
 }
 
-module.exports = setup
+export default setup

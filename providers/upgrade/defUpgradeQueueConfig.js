@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const DefinitionQueueUpgrader = require('./defUpgradeQueue')
-const memory = require('../queueing/memoryQueue')
+import memory from '../queueing/memoryQueue.js'
+import DefinitionQueueUpgrader from './defUpgradeQueue.js'
 
 /**
  * @param {Partial<import('./defUpgradeQueue').DefinitionQueueUpgraderOptions>} [options]
@@ -13,4 +13,4 @@ function serviceFactory(options = {}) {
   return new DefinitionQueueUpgrader(mergedOptions)
 }
 
-module.exports = serviceFactory
+export default serviceFactory

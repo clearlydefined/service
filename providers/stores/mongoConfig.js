@@ -5,9 +5,9 @@
  * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionStoreOptions} MongoDefinitionStoreOptions
  */
 
-const config = require('painless-config')
-const mongo = require('./mongo')
-const TrimmedMongoDefinitionStore = require('./trimmedMongoDefinitionStore')
+import config from 'painless-config'
+import mongo from './mongo.js'
+import TrimmedMongoDefinitionStore from './trimmedMongoDefinitionStore.js'
 
 const dbOptions = {
   connectionString: config.get('DEFINITION_MONGO_CONNECTION_STRING'),
@@ -52,4 +52,4 @@ function definitionTrimmed(options) {
   )
 }
 
-module.exports = { definitionPaged, definitionTrimmed }
+export default { definitionPaged, definitionTrimmed }

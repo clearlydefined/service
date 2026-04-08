@@ -1,8 +1,9 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const express = require('express')
-const asyncMiddleware = require('../middleware/asyncMiddleware')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
 const router = express.Router()
 
 const channel = 'conda-forge'
@@ -43,4 +44,4 @@ function setup(condaForgeRepoAccess) {
   return router
 }
 
-module.exports = setup
+export default setup

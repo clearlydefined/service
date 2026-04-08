@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const azure = require('azure-storage')
-const logger = require('../logging/logger')
-const { promisify } = require('node:util')
+import { promisify } from 'node:util'
+import azure from 'azure-storage'
+import logger from '../logging/logger.js'
 
 /** @typedef {import('.').DequeuedMessage} DequeuedMessage */
 
@@ -100,4 +100,4 @@ class AzureStorageQueue {
   }
 }
 
-module.exports = AzureStorageQueue
+export default AzureStorageQueue

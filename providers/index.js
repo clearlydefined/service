@@ -1,70 +1,93 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-module.exports = {
+import githubAuthConfig from '../middleware/githubConfig.js'
+import memoryCaching from '../providers/caching/memory.js'
+import redisConfig from '../providers/caching/redisConfig.js'
+import curationAzureQueueConfig from '../providers/curation/azureQueueConfig.js'
+import curationGithubConfig from '../providers/curation/githubConfig.js'
+import curationMemoryStore from '../providers/curation/memoryStore.js'
+import curationMongoConfig from '../providers/curation/mongoConfig.js'
+import harvestAzureQueueConfig from '../providers/harvest/azureQueueConfig.js'
+import crawlerConfig from '../providers/harvest/crawlerConfig.js'
+import crawlerQueueConfig from '../providers/harvest/crawlerQueueConfig.js'
+import winstonConfig from '../providers/logging/winstonConfig.js'
+import memoryQueue from '../providers/queueing/memoryQueue.js'
+import azureSearchConfig from '../providers/search/azureConfig.js'
+import memorySearch from '../providers/search/memory.js'
+import azblobConfig from '../providers/stores/azblobConfig.js'
+import dispatchConfig from '../providers/stores/dispatchConfig.js'
+import fileConfig from '../providers/stores/fileConfig.js'
+import mongoConfig from '../providers/stores/mongoConfig.js'
+import upgradeAzureQueueConfig from '../providers/upgrade/azureQueueConfig.js'
+import upgradeMemoryQueueConfig from '../providers/upgrade/memoryQueueConfig.js'
+import * as recomputeHandler from '../providers/upgrade/recomputeHandler.js'
+import listBasedFilterConfig from './harvest/throttling/listBasedFilterConfig.js'
+
+export default {
   logging: {
-    winston: require('../providers/logging/winstonConfig')
+    winston: winstonConfig
   },
   definition: {
-    azure: require('../providers/stores/azblobConfig').definition,
-    file: require('../providers/stores/fileConfig').definition,
-    mongo: require('../providers/stores/mongoConfig').definitionPaged,
-    mongoTrimmed: require('../providers/stores/mongoConfig').definitionTrimmed,
-    dispatch: require('../providers/stores/dispatchConfig')
+    azure: azblobConfig.definition,
+    file: fileConfig.definition,
+    mongo: mongoConfig.definitionPaged,
+    mongoTrimmed: mongoConfig.definitionTrimmed,
+    dispatch: dispatchConfig
   },
   attachment: {
-    azure: require('../providers/stores/azblobConfig').attachment,
-    file: require('../providers/stores/fileConfig').attachment
+    azure: azblobConfig.attachment,
+    file: fileConfig.attachment
   },
   search: {
-    azure: require('../providers/search/azureConfig'),
-    memory: require('../providers/search/memory')
+    azure: azureSearchConfig,
+    memory: memorySearch
   },
   caching: {
-    redis: require('../providers/caching/redisConfig'),
-    memory: require('../providers/caching/memory')
+    redis: redisConfig,
+    memory: memoryCaching
   },
   auth: {
-    github: require('../middleware/githubConfig')
+    github: githubAuthConfig
   },
   upgrade: {
     queue: {
-      azure: require('../providers/upgrade/azureQueueConfig'),
-      memory: require('../providers/upgrade/memoryQueueConfig')
+      azure: upgradeAzureQueueConfig,
+      memory: upgradeMemoryQueueConfig
     },
     service: {
-      onDemand: require('../providers/upgrade/recomputeHandler').defaultFactory,
-      versionCheck: require('../providers/upgrade/recomputeHandler').defaultFactory,
-      delayed: require('../providers/upgrade/recomputeHandler').delayedFactory,
-      upgradeQueue: require('../providers/upgrade/recomputeHandler').delayedFactory
+      onDemand: recomputeHandler.defaultFactory,
+      versionCheck: recomputeHandler.defaultFactory,
+      delayed: recomputeHandler.delayedFactory,
+      upgradeQueue: recomputeHandler.delayedFactory
     }
   },
   curation: {
     queue: {
-      azure: require('../providers/curation/azureQueueConfig'),
-      memory: require('../providers/queueing/memoryQueue')
+      azure: curationAzureQueueConfig,
+      memory: memoryQueue
     },
-    service: { github: require('../providers/curation/githubConfig') },
+    service: { github: curationGithubConfig },
     store: {
-      memory: require('../providers/curation/memoryStore'),
-      mongo: require('../providers/curation/mongoConfig')
+      memory: curationMemoryStore,
+      mongo: curationMongoConfig
     }
   },
   harvest: {
     queue: {
-      azure: require('../providers/harvest/azureQueueConfig'),
-      memory: require('../providers/queueing/memoryQueue')
+      azure: harvestAzureQueueConfig,
+      memory: memoryQueue
     },
     service: {
-      crawler: require('../providers/harvest/crawlerConfig'),
-      crawlerQueue: require('../providers/harvest/crawlerQueueConfig')
+      crawler: crawlerConfig,
+      crawlerQueue: crawlerQueueConfig
     },
     store: {
-      azure: require('../providers/stores/azblobConfig').harvest,
-      file: require('../providers/stores/fileConfig').harvest
+      azure: azblobConfig.harvest,
+      file: fileConfig.harvest
     },
     throttler: {
-      filter: require('./harvest/throttling/listBasedFilterConfig')
+      filter: listBasedFilterConfig
     }
   }
 }

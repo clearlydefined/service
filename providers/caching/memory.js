@@ -1,7 +1,7 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const Cache = require('memory-cache').Cache
+import { Cache } from 'memory-cache'
 
 /** @typedef {import('./memory').MemoryCacheOptions} MemoryCacheOptions */
 
@@ -72,4 +72,4 @@ class MemoryCache {
  * @param {MemoryCacheOptions} [options] - Configuration options for the cache
  * @returns {MemoryCache} A new MemoryCache instance
  */
-module.exports = options => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })
+export default options => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })

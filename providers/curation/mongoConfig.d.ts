@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { MongoCurationStoreOptions } from './mongoCurationStore'
-import type { MongoCurationStore } from './mongoCurationStore'
+import type { MongoCurationStoreOptions } from './mongoCurationStore.js'
+import type { MongoCurationStore } from './mongoCurationStore.js'
 
 /**
  * Factory function that creates a MongoCurationStore configured for curation storage.
@@ -14,4 +14,4 @@ import type { MongoCurationStore } from './mongoCurationStore'
  */
 declare function store(options?: MongoCurationStoreOptions): MongoCurationStore
 
-export = store
+export default store

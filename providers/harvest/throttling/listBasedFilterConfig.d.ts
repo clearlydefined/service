@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../../logging'
-import type ListBasedFilter from './listBasedFilter'
+import type { Logger } from '../../logging/index.js'
+import type ListBasedFilter from './listBasedFilter.js'
 
 /**
  * Parses a JSON array string from environment variable
@@ -21,4 +21,4 @@ declare function parseListEnv(value: string | undefined, logger: Logger): string
  */
 declare function throttlerFactory(listSpec?: string): ListBasedFilter
 
-export = throttlerFactory
+export default throttlerFactory

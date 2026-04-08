@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const AzureStorageQueue = require('../queueing/azureStorageQueue')
+import config from 'painless-config'
+import AzureStorageQueue from '../queueing/azureStorageQueue.js'
 
 /** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
 
@@ -44,7 +44,4 @@ function computeQueueFactory(options) {
   return new AzureStorageQueue(options || computeDefaultOptions)
 }
 
-module.exports = {
-  upgrade: azure,
-  compute: computeQueueFactory
-}
+export default { upgrade: azure, compute: computeQueueFactory }

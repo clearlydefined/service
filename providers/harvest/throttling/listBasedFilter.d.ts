@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../../lib/entityCoordinates'
-import type { Logger } from '../../logging'
+import type { EntityCoordinates } from '../../../lib/entityCoordinates.js'
+import type { Logger } from '../../logging/index.js'
 
 /** Configuration options for ListBasedFilter */
 export interface ListBasedFilterOptions {
@@ -52,4 +52,4 @@ declare class ListBasedFilter {
   private _toVersionless(coordString: string): EntityCoordinates | null
 }
 
-export = ListBasedFilter
+export default ListBasedFilter

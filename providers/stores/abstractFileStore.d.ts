@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { ResultCoordinates, ResultCoordinatesSpec } from '../../lib/resultCoordinates'
-import type { Logger } from '../logging'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { ResultCoordinates, ResultCoordinatesSpec } from '../../lib/resultCoordinates.js'
+import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AbstractFileStore */
 export interface FileStoreOptions {
@@ -160,4 +160,4 @@ declare class AbstractFileStore {
   static getLatestToolPaths(paths: string[], toResultCoordinates?: (path: string) => ResultCoordinates): Set<string>
 }
 
-export = AbstractFileStore
+export default AbstractFileStore

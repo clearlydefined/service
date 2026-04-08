@@ -1,7 +1,7 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const MemoryQueue = require('../queueing/memoryQueue')
+import MemoryQueue from '../queueing/memoryQueue.js'
 
 /** @typedef {import('../queueing/memoryQueue').MemoryQueueOptions} MemoryQueueOptions */
 
@@ -17,7 +17,4 @@ const encodedMessageQueueFactory = opts => {
   return MemoryQueue(mergedOpts)
 }
 
-module.exports = {
-  upgrade: encodedMessageQueueFactory,
-  compute: encodedMessageQueueFactory
-}
+export default { upgrade: encodedMessageQueueFactory, compute: encodedMessageQueueFactory }

@@ -3,8 +3,8 @@
 
 /** @typedef {import('./mongoCurationStore').MongoCurationStoreOptions} MongoCurationStoreOptions */
 
-const config = require('painless-config')
-const storeFactory = require('./mongoCurationStore')
+import config from 'painless-config'
+import storeFactory from './mongoCurationStore.js'
 
 /** @param {MongoCurationStoreOptions} [options] */
 function store(options) {
@@ -16,4 +16,4 @@ function store(options) {
   return storeFactory(realOptions)
 }
 
-module.exports = store
+export default store

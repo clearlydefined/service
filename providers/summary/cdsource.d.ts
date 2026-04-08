@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { SummarizerOptions } from './index.js'
 
 /** Harvested data structure for CdSource tool */
 export interface CdSourceHarvestedData {
@@ -52,4 +52,4 @@ export declare class CdSourceSummarizer {
  */
 declare function cdsourceSummarizerFactory(options?: SummarizerOptions): CdSourceSummarizer
 
-export = cdsourceSummarizerFactory
+export default cdsourceSummarizerFactory

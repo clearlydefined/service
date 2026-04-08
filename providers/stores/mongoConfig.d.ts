@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore'
-import type { MongoStore } from './mongo'
-import type { TrimmedMongoDefinitionStore } from './trimmedMongoDefinitionStore'
+import type { MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.js'
+import type { MongoStore } from './mongo.js'
+import type { TrimmedMongoDefinitionStore } from './trimmedMongoDefinitionStore.js'
 
 /**
  * Creates a paged MongoDB definition store with the given options or default configuration.

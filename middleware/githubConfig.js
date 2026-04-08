@@ -8,11 +8,11 @@
 /** @typedef {import('../routes/auth')} AuthRouteModule */
 /** @typedef {import('./permissions').PermissionsConfig} PermissionsConfig */
 
-const config = require('painless-config')
-const githubMiddleware = require('./github')
-const githubRoute = require('../routes/auth')
-const permissions = require('./permissions')
-const memoryCache = require('../providers/caching/memory')
+import config from 'painless-config'
+import memoryCache from '../providers/caching/memory.js'
+import * as githubRoute from '../routes/auth.js'
+import githubMiddleware from './github.js'
+import * as permissions from './permissions.js'
 
 /** @type {GitHubConfigOptions} */
 const defaultOptions = {
@@ -61,4 +61,4 @@ function permissionsSetup(options) {
   permissions.setup(options || defaultOptions.permissions)
 }
 
-module.exports = { middleware, route, permissionsSetup }
+export default { middleware, route, permissionsSetup }

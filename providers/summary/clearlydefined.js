@@ -14,19 +14,22 @@
  * @typedef {import('../../lib/utils').FileEntry} FileEntry
  */
 
-const { get, set, isArray, uniq, cloneDeep, flatten, find } = require('lodash')
-const SPDX = require('@clearlydefined/spdx')
-const {
-  extractDate,
-  setIfValue,
-  extractLicenseFromLicenseUrl,
+import lodash from 'lodash'
+
+const { get, set, isArray, uniq, cloneDeep, flatten, find } = lodash
+
+import SPDX from '@clearlydefined/spdx'
+import {
   buildSourceUrl,
+  deCodeSlashes,
+  extractDate,
+  extractLicenseFromLicenseUrl,
   isDeclaredLicense,
   isLicenseFile,
-  deCodeSlashes,
-  updateSourceLocation,
-  mergeDefinitions
-} = require('../../lib/utils')
+  mergeDefinitions,
+  setIfValue,
+  updateSourceLocation
+} from '../../lib/utils.js'
 
 /** @type {Record<string, string>} */
 const mavenBasedUrls = {
@@ -803,4 +806,4 @@ class ClearlyDescribedSummarizer {
  * @param {SummarizerOptions} [options] - Configuration options for the summarizer
  * @returns {ClearlyDescribedSummarizer} A new ClearlyDescribedSummarizer instance
  */
-module.exports = options => new ClearlyDescribedSummarizer(options)
+export default options => new ClearlyDescribedSummarizer(options)

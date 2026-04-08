@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DefinitionService } from '../../business/definitionService'
-import type { Logger } from '../logging'
-import type { IQueue } from '../queueing'
+import type { DefinitionService } from '../../business/definitionService.js'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
 
 /**
  * Sets up and starts the harvest queue processor. Continuously dequeues messages and processes
@@ -22,4 +22,4 @@ declare function setup(
   once?: boolean
 ): Promise<void>
 
-export = setup
+export default setup

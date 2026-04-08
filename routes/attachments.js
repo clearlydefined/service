@@ -5,8 +5,10 @@
 /** @typedef {import('express').Response} Response */
 /** @typedef {import('../business/noticeService').AttachmentStore} AttachmentStore */
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
 
 // Get a proposed patch for a specific revision of a component
 router.get('/:id', asyncMiddleware(getAttachment))
@@ -32,4 +34,4 @@ function setup(attachment) {
   attachmentStore = attachment
   return router
 }
-module.exports = setup
+export default setup

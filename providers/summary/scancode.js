@@ -9,11 +9,14 @@
  * @typedef {import('./scancode').ScanCodeSummaryResult} ScanCodeSummaryResult
  */
 
-const { get } = require('lodash')
-const { gte } = require('semver')
-const Logger = require('../logging/logger')
-const ScanCodeLegacySummarizer = require('./scancode/legacy-summarizer')
-const ScanCodeNewSummarizer = require('./scancode/new-summarizer')
+import lodash from 'lodash'
+
+const { get } = lodash
+
+import { gte } from 'semver'
+import Logger from '../logging/logger.js'
+import ScanCodeLegacySummarizer from './scancode/legacy-summarizer.js'
+import ScanCodeNewSummarizer from './scancode/new-summarizer.js'
 
 /**
  * ScanCode delegator class that routes summarization to the appropriate
@@ -62,4 +65,4 @@ class ScanCodeDelegator {
  * @param {Logger} [logger] - Optional logger instance
  * @returns {ScanCodeDelegator} A new ScanCodeDelegator instance
  */
-module.exports = (options, logger) => new ScanCodeDelegator(options, logger)
+export default (options, logger) => new ScanCodeDelegator(options, logger)

@@ -1,9 +1,12 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get } = require('lodash')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { factory } = require('./defVersionCheck')
+import lodash from 'lodash'
+
+const { get } = lodash
+
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { factory } from './defVersionCheck.js'
 
 /**
  * @typedef {import('../queueing').IQueue} IQueue
@@ -111,4 +114,4 @@ function setup(_queue, _definitionService, _logger, once = false, _upgradePolicy
   return queueHandler.work(once)
 }
 
-module.exports = { DefinitionUpgrader, QueueHandler, setup }
+export { DefinitionUpgrader, QueueHandler, setup }

@@ -1,8 +1,8 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from './entityCoordinates'
-import type { Definition } from './utils'
+import type EntityCoordinates from './entityCoordinates.js'
+import type { Definition } from './utils.js'
 
 /** Error entry from curation validation */
 export interface CurationError {
@@ -114,4 +114,3 @@ declare class Curation {
 }
 
 export default Curation
-export = Curation

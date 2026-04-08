@@ -1,9 +1,9 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire').noCallThru()
+import assert from 'node:assert'
+import esmock from 'esmock'
+import sinon from 'sinon'
 
 describe('redisConfig.serviceFactory', () => {
   const sandbox = sinon.createSandbox()
@@ -18,9 +18,9 @@ describe('redisConfig.serviceFactory', () => {
   })
 
   // Helpers
-  function loadServiceFactory(configGetImpl) {
-    return proxyquire('../../../providers/caching/redisConfig', {
-      './redis': redisStub,
+  async function loadServiceFactory(configGetImpl) {
+    return await esmock.strict('../../../providers/caching/redisConfig.js', {
+      '../../../providers/caching/redis.js': redisStub,
       'painless-config': { get: configGetImpl }
     })
   }
@@ -42,9 +42,9 @@ describe('redisConfig.serviceFactory', () => {
     }
   }
 
-  it('uses provided options only', () => {
+  it('uses provided options only', async () => {
     const configGetStub = sandbox.stub() // should not be called
-    const serviceFactory = loadServiceFactory(configGetStub)
+    const serviceFactory = await loadServiceFactory(configGetStub)
 
     const providedOptions = { service: 'redis://localhost:6379', apiKey: 'abc123', port: 7777 }
     const result = serviceFactory(providedOptions)
@@ -53,14 +53,14 @@ describe('redisConfig.serviceFactory', () => {
     assert.ok(configGetStub.notCalled)
   })
 
-  it('reads config when options omitted', () => {
+  it('reads config when options omitted', async () => {
     const configGet = mappingGet({
       CACHING_REDIS_SERVICE: 'redis://example',
       CACHING_REDIS_API_KEY: 'secret-key',
       CACHING_REDIS_PORT: '6380'
     })
 
-    const serviceFactory = loadServiceFactory(configGet)
+    const serviceFactory = await loadServiceFactory(configGet)
     const result = serviceFactory()
 
     expectConfigGetCalled(configGet, ['CACHING_REDIS_SERVICE', 'CACHING_REDIS_API_KEY', 'CACHING_REDIS_PORT'])
@@ -69,13 +69,13 @@ describe('redisConfig.serviceFactory', () => {
     expectRedisCalledWith(expectedOptions, result)
   })
 
-  it('falls back to default port when CACHING_REDIS_PORT is not provided', () => {
+  it('falls back to default port when CACHING_REDIS_PORT is not provided', async () => {
     const configGet = mappingGet({
       CACHING_REDIS_SERVICE: 'redis://example',
       CACHING_REDIS_API_KEY: 'secret-key'
     })
 
-    const serviceFactory = loadServiceFactory(configGet)
+    const serviceFactory = await loadServiceFactory(configGet)
     const result = serviceFactory()
 
     expectConfigGetCalled(configGet, ['CACHING_REDIS_SERVICE', 'CACHING_REDIS_API_KEY', 'CACHING_REDIS_PORT'])

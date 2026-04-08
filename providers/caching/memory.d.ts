@@ -1,7 +1,7 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { BaseCacheOptions, ICache } from '.'
+import type { BaseCacheOptions, ICache } from './index.js'
 
 /** Configuration options for MemoryCache */
 export interface MemoryCacheOptions extends BaseCacheOptions {}
@@ -69,4 +69,3 @@ export declare class MemoryCache implements ICache {
 declare function createMemoryCache(options?: MemoryCacheOptions): MemoryCache
 
 export default createMemoryCache
-export = createMemoryCache

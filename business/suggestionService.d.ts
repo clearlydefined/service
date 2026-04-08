@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../lib/entityCoordinates'
-import type { DefinitionService, SourceLocation } from './definitionService'
+import type { EntityCoordinates } from '../lib/entityCoordinates.js'
+import type { DefinitionService, SourceLocation } from './definitionService.js'
 
 /** A suggested value with the version it came from */
 export interface SuggestionValue<T> {
@@ -63,4 +63,3 @@ export declare class SuggestionService {
 declare function createSuggestionService(definitionService: DefinitionService): SuggestionService
 
 export default createSuggestionService
-export = createSuggestionService

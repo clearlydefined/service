@@ -8,7 +8,7 @@
  * @typedef {import('./cdsource').CdSourceSummaryResult} CdSourceSummaryResult
  */
 
-const { extractDate } = require('../../lib/utils')
+import { extractDate } from '../../lib/utils.js'
 
 /**
  * CdSource summarizer class that processes harvested data from the ClearlyDefined
@@ -44,4 +44,4 @@ class CdSourceSummarizer {
  * @param {SummarizerOptions} [options] - Configuration options for the summarizer
  * @returns {CdSourceSummarizer} A new CdSourceSummarizer instance
  */
-module.exports = options => new CdSourceSummarizer(options)
+export default options => new CdSourceSummarizer(options)

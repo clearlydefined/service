@@ -31,4 +31,3 @@ export type AsyncMiddlewareFunction = (request: Request, response: Response, nex
 declare function asyncMiddleware(func: AsyncMiddlewareFunction): RequestHandler
 
 export default asyncMiddleware
-export = asyncMiddleware

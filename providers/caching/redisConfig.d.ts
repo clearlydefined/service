@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { RedisCache, RedisCacheOptions } from './redis'
+import type { RedisCache, RedisCacheOptions } from './redis.js'
 
 /**
  * Factory function that creates a Redis cache instance with configuration from environment variables or provided

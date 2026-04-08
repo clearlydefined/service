@@ -26,7 +26,9 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-const throat = require('throat')
+import lodash from 'lodash'
+import throat from 'throat'
+
 const {
   get,
   set,
@@ -40,26 +42,28 @@ const {
   intersection,
   intersectionWith,
   concat
-} = require('lodash')
+} = lodash
 
-const EntityCoordinates = require('../lib/entityCoordinates')
-const {
-  setIfValue,
-  setToArray,
+import SPDX from '@clearlydefined/spdx'
+import extend from 'extend'
+import { minimatch } from 'minimatch'
+/** @type {(expression: string) => any} */
+import parse from 'spdx-expression-parse'
+import EntityCoordinates from '../lib/entityCoordinates.js'
+import {
   addArrayToSet,
   buildSourceUrl,
   isDeclaredLicense,
+  setIfValue,
+  setToArray,
   simplifyAttributions,
   updateSourceLocation
-} = require('../lib/utils')
-const { minimatch } = require('minimatch')
-const extend = require('extend')
-const logger = require('../providers/logging/logger')
-const validator = require('../schemas/validator')
-const SPDX = require('@clearlydefined/spdx')
-/** @type {(expression: string) => any} */
-const parse = require('spdx-expression-parse')
-const computeLock = require('../providers/caching/memory')({
+} from '../lib/utils.js'
+import memoryCache from '../providers/caching/memory.js'
+import logger from '../providers/logging/logger.js'
+import validator from '../schemas/validator.js'
+
+const computeLock = memoryCache({
   defaultTtlSeconds: 60 * 5 /* 5 mins */
 })
 
@@ -1145,17 +1149,7 @@ class DefinitionService {
  * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
  * @returns {DefinitionService} A new DefinitionService instance
  */
-module.exports = (
-  harvestStore,
-  harvestService,
-  summary,
-  aggregator,
-  curation,
-  store,
-  search,
-  cache,
-  recomputeHandler
-) =>
+export default (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, recomputeHandler) =>
   new DefinitionService(
     harvestStore,
     harvestService,

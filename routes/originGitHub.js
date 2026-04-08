@@ -3,12 +3,19 @@
 
 /** @typedef {import('express').Request} Request */
 
-const throat = require('throat')
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const { get, uniq } = require('lodash')
+import express from 'express'
+import throat from 'throat'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
-const logger = require('../providers/logging/logger')()
+const router = express.Router()
+
+import lodash from 'lodash'
+
+const { get, uniq } = lodash
+
+import loggerFactory from '../providers/logging/logger.js'
+
+let logger
 
 /** @param {Request} request */
 function getClient(request) {
@@ -97,7 +104,8 @@ router.get(
 )
 
 function setup() {
+  logger = loggerFactory()
   return router
 }
 
-module.exports = setup
+export default setup

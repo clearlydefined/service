@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { callFetch: requestPromise } = require('../../lib/fetch')
-const AbstractSearch = require('./abstractSearch')
+import { callFetch as requestPromise } from '../../lib/fetch.js'
+import AbstractSearch from './abstractSearch.js'
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2019-05-06'
@@ -478,4 +478,4 @@ class AzureSearch extends AbstractSearch {
   }
 }
 
-module.exports = /** @param {import('./azureSearch').AzureSearchOptions} options */ options => new AzureSearch(options)
+export default /** @param {import('./azureSearch').AzureSearchOptions} options */ options => new AzureSearch(options)

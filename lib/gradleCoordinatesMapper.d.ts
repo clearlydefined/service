@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates'
-import { type FetchResponse } from './fetch'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.js'
+import { type FetchResponse } from './fetch.js'
 
 /** Coordinates specific to Gradle plugin resolution */
 export interface GradleCoordinates extends EntityCoordinatesSpec {
@@ -150,4 +150,3 @@ export declare class GradleCoordinatesMapper {
 }
 
 export default GradleCoordinatesMapper
-export = GradleCoordinatesMapper

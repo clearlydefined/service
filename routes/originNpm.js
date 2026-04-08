@@ -1,10 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const { callFetch: requestPromise } = require('../lib/fetch')
-const { uniq } = require('lodash')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
+
+import lodash from 'lodash'
+import { callFetch as requestPromise } from '../lib/fetch.js'
+
+const { uniq } = lodash
 
 // NPM API documentation: https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#:~:text=NPM%20Registry%20API%201%20Overview%202%20Schema.%20All,Authentication%20required.%20...%2010%20Search%20More%20items...%20
 router.get(
@@ -42,4 +47,4 @@ function setup() {
   return router
 }
 
-module.exports = setup
+export default setup

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
-import type { IQueue } from '../queueing'
-import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.js'
 
 /** Configuration options for CrawlingQueueHarvester */
 export interface CrawlerQueueOptions {
@@ -47,4 +47,3 @@ export declare class CrawlingQueueHarvester implements Harvester {
 declare function createCrawlerQueue(options: CrawlerQueueOptions): CrawlingQueueHarvester
 
 export default createCrawlerQueue
-export = createCrawlerQueue

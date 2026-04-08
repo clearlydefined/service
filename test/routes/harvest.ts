@@ -5,7 +5,7 @@ import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
-import utils from '../../lib/utils.js'
+import * as utils from '../../lib/utils.js'
 import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.js'
 import harvestRoutes from '../../routes/harvest.js'
 
@@ -79,9 +79,22 @@ describe('Harvest route', () => {
   })
 
   it('normalize coordinates', async () => {
+    const esmock = (await import('esmock')).default
+    const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
+      '../../lib/utils.js': {
+        ...utils,
+        toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('one/two/three/four'))
+      }
+    })) as typeof harvestRoutes
     const harvester = { harvest: sinon.stub() }
-    const router = createRoutes(harvester)
-    sinon.stub(utils, 'toNormalizedEntityCoordinates').resolves(EntityCoordinates.fromString('one/two/three/four'))
+    const noopThrottler = { isBlocked: () => false }
+    const router = (mockedHarvestRoutes as (...args: any[]) => any)(
+      harvester,
+      undefined,
+      undefined,
+      noopThrottler,
+      true
+    )
     const normalized = await router._normalizeCoordinates([{ tool: 'test', coordinates: '1/2/3/4' }])
     expect(normalized).to.deep.equal([{ tool: 'test', coordinates: 'one/two/three/four' }])
   })
@@ -98,15 +111,19 @@ describe('Harvest route', () => {
   })
 
   it('throttles via ListBasedFilter (422)', async () => {
+    const esmock = (await import('esmock')).default
+    const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
+      '../../lib/utils.js': {
+        ...utils,
+        toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
+      }
+    })) as typeof harvestRoutes
     const entries = [{ tool: 'test', coordinates: 'git/github/Org/Name/1.0.0' }]
     const request = createRequest(entries)
     const response = httpMocks.createResponse()
     const harvester = { harvest: sinon.stub() }
     const throttler = new ListBasedFilter({ blacklist: ['git/github/org/name'], logger })
-    sinon
-      .stub(utils, 'toNormalizedEntityCoordinates')
-      .resolves(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
-    const router = (harvestRoutes as (...args: any[]) => any)(harvester, undefined, undefined, throttler, true)
+    const router = (mockedHarvestRoutes as (...args: any[]) => any)(harvester, undefined, undefined, throttler, true)
     await router._queue(request, response)
     expect(response.statusCode).to.be.eq(422)
     expect(harvester.harvest.calledOnce).to.be.false

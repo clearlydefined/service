@@ -1,10 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const { callFetch: requestPromise } = require('../lib/fetch')
-const { uniq } = require('lodash')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
+
+import lodash from 'lodash'
+import { callFetch as requestPromise } from '../lib/fetch.js'
+
+const { uniq } = lodash
 
 // PyPi API documentation: https://warehouse.pypa.io/api-reference/json.html
 router.get(
@@ -48,4 +53,4 @@ function setup(testflag = false) {
   return router
 }
 
-module.exports = setup
+export default setup

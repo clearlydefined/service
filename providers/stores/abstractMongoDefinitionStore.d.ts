@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Collection, Db, Document, Filter, MongoClient, Sort } from 'mongodb'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { Logger } from '../logging'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AbstractMongoDefinitionStore */
 export interface MongoDefinitionStoreOptions {
@@ -256,4 +256,4 @@ declare class AbstractMongoDefinitionStore {
   protected _getContinuationToken(pageSize: number, data: any[], sortClause: Sort): string
 }
 
-export = AbstractMongoDefinitionStore
+export default AbstractMongoDefinitionStore

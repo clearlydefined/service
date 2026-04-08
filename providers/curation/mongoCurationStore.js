@@ -11,12 +11,15 @@
 /** @typedef {import('mongodb').Db} Db */
 /** @typedef {import('mongodb').Collection<{ _id: string | number, [key: string]: unknown }>} CurationCollection */
 
-const MongoClient = require('mongodb').MongoClient
-const promiseRetry = require('promise-retry')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const throat = require('throat')
-const { get } = require('lodash')
-const logger = require('../logging/logger')
+import lodash from 'lodash'
+import { MongoClient } from 'mongodb'
+import promiseRetry from 'promise-retry'
+import throat from 'throat'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+
+const { get } = lodash
+
+import logger from '../logging/logger.js'
 
 class MongoCurationStore {
   /** @param {MongoCurationStoreOptions} options */
@@ -195,4 +198,4 @@ class MongoCurationStore {
   }
 }
 
-module.exports = /** @param {MongoCurationStoreOptions} options */ options => new MongoCurationStore(options)
+export default /** @param {MongoCurationStoreOptions} options */ options => new MongoCurationStore(options)

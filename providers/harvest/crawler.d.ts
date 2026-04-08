@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
-import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler'
+import type { Logger } from '../logging/index.js'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.js'
 
 /** Configuration options for CrawlingHarvester */
 export interface CrawlerOptions {
@@ -45,4 +45,3 @@ export declare class CrawlingHarvester implements Harvester {
 declare function createCrawler(options: CrawlerOptions): CrawlingHarvester
 
 export default createCrawler
-export = createCrawler

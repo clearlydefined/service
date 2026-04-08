@@ -10,8 +10,10 @@
  * @typedef {import('./trimmedMongoDefinitionStore').TrimmedDefinition} TrimmedDefinition
  */
 
-const AbstractMongoDefinitionStore = require('./abstractMongoDefinitionStore')
-const { clone } = require('lodash')
+import lodash from 'lodash'
+import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
+
+const { clone } = lodash
 
 /**
  * MongoDB implementation for storing trimmed component definitions.
@@ -110,4 +112,4 @@ class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
  * @param {MongoDefinitionStoreOptions} options - Configuration options for the store
  * @returns {TrimmedMongoDefinitionStore} A new TrimmedMongoDefinitionStore instance
  */
-module.exports = options => new TrimmedMongoDefinitionStore(options)
+export default options => new TrimmedMongoDefinitionStore(options)

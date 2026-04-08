@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type { AttachmentStore } from '../business/noticeService'
+import type { AttachmentStore } from '../business/noticeService.js'
 
 declare function setup(attachment: AttachmentStore): Router
 
-export = setup
+export default setup

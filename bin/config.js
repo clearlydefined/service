@@ -1,8 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
-const config = require('painless-config')
-const { get } = require('lodash')
-const providers = require('../providers')
+
+import lodash from 'lodash'
+import config from 'painless-config'
+
+const { get } = lodash
+
+import providers from '../providers/index.js'
 
 /**
  * Loads the given factory for the indicated namespace. The namespace can be a subcomponent
@@ -35,19 +39,14 @@ function loadFactory(spec, namespace) {
 function loadOne(spec, namespace) {
   const [requirePath, objectPath] = spec.split('|')
   const getPath = (namespace ? `${namespace}.` : '') + requirePath
-  let target = get(providers, getPath)
-  try {
-    if (!target) {
-      target = require(requirePath)
-    }
-    return objectPath ? get(target, objectPath) : target
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e)
-    throw new Error(`could not load provider for ${requirePath}. Error ${message}`, { cause: e })
+  const target = get(providers, getPath)
+  if (!target) {
+    throw new Error(`unknown provider ${requirePath} in namespace ${namespace || '(root)'}`)
   }
+  return objectPath ? get(target, objectPath) : target
 }
 
-module.exports = {
+export default {
   summary: {},
   logging: {
     logger: loadFactory(config.get('LOGGING_PROVIDER') || 'winston', 'logging')

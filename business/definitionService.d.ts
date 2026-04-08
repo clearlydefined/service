@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../lib/entityCoordinates'
-import type { ICache } from '../providers/caching'
-import type { Logger } from '../providers/logging'
+import type { EntityCoordinates } from '../lib/entityCoordinates.js'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 /** Score breakdown for the described dimension */
 export interface DescribedScore {
@@ -520,4 +520,3 @@ declare function createDefinitionService(
 ): DefinitionService
 
 export default createDefinitionService
-export = createDefinitionService

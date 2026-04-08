@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { Logger } from '../logging'
-import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { Logger } from '../logging/index.js'
+import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore.js'
 
 /** Definition object with coordinates */
 export interface Definition {
@@ -106,4 +106,4 @@ declare class DispatchDefinitionStore {
  */
 declare function createDispatchDefinitionStore(options: DispatchDefinitionStoreOptions): DispatchDefinitionStore
 
-export = createDispatchDefinitionStore
+export default createDispatchDefinitionStore

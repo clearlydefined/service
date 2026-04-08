@@ -5,4 +5,4 @@ import type { Router } from 'express'
 
 declare function setup(): Router
 
-export = setup
+export default setup

@@ -6,7 +6,10 @@
  * @typedef {import('./fileAttachmentStore').FileAttachmentStoreOptions} FileAttachmentStoreOptions
  */
 
-const config = require('painless-config')
+import config from 'painless-config'
+import fileAttachmentStore from './fileAttachmentStore.js'
+import fileDefinitionStore from './fileDefinitionStore.js'
+import fileHarvestStore from './fileHarvestStore.js'
 
 const location = config.get('FILE_STORE_LOCATION') || (process.platform === 'win32' ? 'c:/temp/cd' : '/tmp/cd')
 
@@ -17,7 +20,7 @@ const location = config.get('FILE_STORE_LOCATION') || (process.platform === 'win
  * @returns {ReturnType<typeof import('./fileHarvestStore')>} A new FileHarvestStore instance
  */
 function harvest(options) {
-  return require('./fileHarvestStore')(options || { location })
+  return fileHarvestStore(options || { location })
 }
 
 /**
@@ -27,7 +30,7 @@ function harvest(options) {
  * @returns {ReturnType<typeof import('./fileDefinitionStore')>} A new FileDefinitionStore instance
  */
 function definition(options) {
-  return require('./fileDefinitionStore')(options || { location: `${location}-definition` })
+  return fileDefinitionStore(options || { location: `${location}-definition` })
 }
 
 /**
@@ -37,7 +40,7 @@ function definition(options) {
  * @returns {ReturnType<typeof import('./fileAttachmentStore')>} A new FileAttachmentStore instance
  */
 function attachment(options) {
-  return require('./fileAttachmentStore')(options || { location: `${location}-attachment` })
+  return fileAttachmentStore(options || { location: `${location}-attachment` })
 }
 
-module.exports = { harvest, definition, attachment }
+export default { harvest, definition, attachment }
