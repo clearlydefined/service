@@ -4,7 +4,7 @@
 import appInsights from 'applicationinsights'
 import config from 'painless-config'
 import winston from 'winston'
-import mockInsights from '../../lib/mockInsights.js'
+import mockInsights from '../../lib/mockInsights.ts'
 
 const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
