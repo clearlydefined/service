@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition } from '../../business/definitionService'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
+import type { Definition } from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
 
 export interface SearchOptions {
   [key: string]: any
@@ -39,4 +39,3 @@ export declare class AbstractSearch {
 }
 
 export default AbstractSearch
-export = AbstractSearch

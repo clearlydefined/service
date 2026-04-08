@@ -1,10 +1,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const sinon = require('sinon')
+import sinon from 'sinon'
+
 const sandbox = sinon.createSandbox()
-const proxyquire = require('proxyquire')
-const { expect } = require('chai')
+
+import { expect } from 'chai'
+import esmock from 'esmock'
+
 let FileStore
 
 const data = {
@@ -14,7 +17,7 @@ const data = {
 }
 
 describe('FileAttachmentStore list definitions', () => {
-  before(() => {
+  before(async () => {
     const fsStub = {
       readFile: (path, cb) => {
         path = path.replace(/\\/g, '/')
@@ -29,7 +32,7 @@ describe('FileAttachmentStore list definitions', () => {
         cb(error)
       }
     }
-    FileStore = proxyquire('../../../providers/stores/fileAttachmentStore', { 'node:fs': fsStub })
+    FileStore = await esmock('../../../providers/stores/fileAttachmentStore.js', { 'node:fs': fsStub })
   })
 
   after(() => sandbox.restore())

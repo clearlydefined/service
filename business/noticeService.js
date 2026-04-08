@@ -14,15 +14,22 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-const { isDeclaredLicense } = require('../lib/utils')
-const { get } = require('lodash')
+import lodash from 'lodash'
+import { isDeclaredLicense } from '../lib/utils.js'
+
+const { get } = lodash
+
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
 const DocBuilder = require('tiny-attribution-generator/lib/docbuilder').default
 const TextRenderer = require('tiny-attribution-generator/lib/outputs/text').default
 const HtmlRenderer = require('tiny-attribution-generator/lib/outputs/html').default
 const TemplateRenderer = require('tiny-attribution-generator/lib/outputs/template').default
 const JsonRenderer = require('tiny-attribution-generator/lib/outputs/json').default
 const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
-const logger = require('../providers/logging/logger')
+
+import logger from '../providers/logging/logger.js'
 
 /**
  * Service for generating attribution notices from definitions.
@@ -200,4 +207,4 @@ class NoticeService {
  * @param {AttachmentStore} attachmentStore - Store for retrieving license text attachments
  * @returns {NoticeService} A new NoticeService instance
  */
-module.exports = (definitionService, attachmentStore) => new NoticeService(definitionService, attachmentStore)
+export default (definitionService, attachmentStore) => new NoticeService(definitionService, attachmentStore)

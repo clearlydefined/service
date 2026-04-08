@@ -9,9 +9,11 @@
  * @typedef {import('../../lib/utils').FileEntry} FileEntry
  */
 
-const { mergeDefinitions, setIfValue, isLicenseFile } = require('../../lib/utils')
-const SPDX = require('@clearlydefined/spdx')
-const { get, uniq } = require('lodash')
+import SPDX from '@clearlydefined/spdx'
+import lodash from 'lodash'
+import { isLicenseFile, mergeDefinitions, setIfValue } from '../../lib/utils.js'
+
+const { get, uniq } = lodash
 
 const noOpLicenseIds = new Set(['No_license_found', 'See-file', 'See-URL'])
 
@@ -172,4 +174,4 @@ class FOSSologySummarizer {
  * @param {SummarizerOptions} [options] - Configuration options for the summarizer
  * @returns {FOSSologySummarizer} A new FOSSologySummarizer instance
  */
-module.exports = options => new FOSSologySummarizer(options)
+export default options => new FOSSologySummarizer(options)

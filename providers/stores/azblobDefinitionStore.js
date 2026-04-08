@@ -8,11 +8,14 @@
  * @typedef {import('./azblobDefinitionStore').Definition} Definition
  */
 
-const AbstractAzBlobStore = require('./abstractAzblobStore')
-const AbstractFileStore = require('./abstractFileStore')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { sortedUniq } = require('lodash')
-const { promisify } = require('node:util')
+import lodash from 'lodash'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import AbstractAzBlobStore from './abstractAzblobStore.js'
+import AbstractFileStore from './abstractFileStore.js'
+
+const { sortedUniq } = lodash
+
+import { promisify } from 'node:util'
 
 /**
  * Azure Blob Storage implementation for storing component definitions.
@@ -86,4 +89,4 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
  * @param {AzBlobStoreOptions} options - Configuration options for the store
  * @returns {AzBlobDefinitionStore} A new AzBlobDefinitionStore instance
  */
-module.exports = options => new AzBlobDefinitionStore(options)
+export default options => new AzBlobDefinitionStore(options)

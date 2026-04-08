@@ -1,15 +1,14 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { expect } = require('chai')
-const EntityCoordinates = require('../../../../lib/entityCoordinates')
-const proxyquire = require('proxyquire')
+import { expect } from 'chai'
+import esmock from 'esmock'
+import EntityCoordinates from '../../../../lib/entityCoordinates.js'
 
 describe('ListBasedFilterConfig', () => {
-  // Helper to create a factory with shared logger stub and optional overrides
-  const makeFactory = (overrides?: Record<string, unknown>) =>
-    proxyquire('../../../../providers/harvest/throttling/listBasedFilterConfig', {
-      '../../logging/logger': () => ({
+  const makeFactory = async (overrides?: Record<string, unknown>) =>
+    await esmock('../../../../providers/harvest/throttling/listBasedFilterConfig.js', {
+      '../../../../providers/logging/logger.js': () => ({
         info: () => {},
         debug: () => {},
         error: () => {},
@@ -19,7 +18,10 @@ describe('ListBasedFilterConfig', () => {
     })
 
   // Stub the logger used by the module to avoid initialization issues
-  const factory = makeFactory()
+  let factory
+  before(async () => {
+    factory = await makeFactory()
+  })
 
   function createCoord(coordString) {
     return EntityCoordinates.fromString(coordString)
@@ -101,8 +103,8 @@ describe('ListBasedFilterConfig', () => {
     })
 
     describe('environment config', () => {
-      it('reads HARVEST_THROTTLER_BLACKLIST from config and blocks', () => {
-        const factoryFromEnv = makeFactory({
+      it('reads HARVEST_THROTTLER_BLACKLIST from config and blocks', async () => {
+        const factoryFromEnv = await makeFactory({
           'painless-config': {
             get: key => (key === 'HARVEST_THROTTLER_BLACKLIST' ? JSON.stringify(['git/github/org/name']) : undefined)
           }

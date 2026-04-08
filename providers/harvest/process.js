@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get } = require('lodash')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const { parseUrn } = require('../../lib/utils')
+import lodash from 'lodash'
+
+const { get } = lodash
+
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import { parseUrn } from '../../lib/utils.js'
 
 /**
  * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage
@@ -71,4 +74,4 @@ function setup(_queue, _definitionService, _logger, once = false) {
   return work(once)
 }
 
-module.exports = setup
+export default setup

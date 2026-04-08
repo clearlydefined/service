@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { AbstractSearch } from './abstractSearch'
+import type { AbstractSearch } from './abstractSearch.js'
 
 export interface AzureSearchOptions {
   /** Azure Search service name (used in the URL template). */
@@ -33,4 +33,3 @@ export declare class AzureSearch extends AbstractSearch {
 declare function createAzureSearch(options: AzureSearchOptions): AzureSearch
 
 export default createAzureSearch
-export = createAzureSearch

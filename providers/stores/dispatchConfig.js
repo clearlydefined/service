@@ -5,6 +5,8 @@
  * @typedef {import('./dispatchConfig').DispatchConfigOptions} DispatchConfigOptions
  */
 
+import dispatchDefinitionStore from './dispatchDefinitionStore.js'
+
 /**
  * Creates a dispatch definition store with the given factory options.
  * The dispatch store delegates operations to multiple underlying stores.
@@ -18,7 +20,7 @@ function definition(options) {
     throw new Error('no factories configured')
   }
   const stores = options.factories.map(x => x())
-  return require('./dispatchDefinitionStore')({ stores })
+  return dispatchDefinitionStore({ stores })
 }
 
-module.exports = definition
+export default definition

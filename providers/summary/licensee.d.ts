@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { FileEntry } from '../../lib/utils'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { FileEntry } from '../../lib/utils.js'
+import type { SummarizerOptions } from './index.js'
 
 /** Licensee matched file information */
 export interface LicenseeMatchedFile {
@@ -107,4 +107,4 @@ export declare class LicenseeSummarizer {
  */
 declare function licenseeSummarizerFactory(options?: SummarizerOptions): LicenseeSummarizer
 
-export = licenseeSummarizerFactory
+export default licenseeSummarizerFactory

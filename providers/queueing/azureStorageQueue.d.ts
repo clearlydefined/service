@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DequeuedMessage, IQueue } from '.'
-import type { Logger } from '../logging'
+import type { DequeuedMessage, IQueue } from './index.js'
+import type { Logger } from '../logging/index.js'
 
 export interface AzureStorageQueueOptions {
   /** Azure Storage connection string */
@@ -27,4 +27,3 @@ export declare class AzureStorageQueue implements IQueue {
 }
 
 export default AzureStorageQueue
-export = AzureStorageQueue

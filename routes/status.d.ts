@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type { StatusService } from '../business/statusService'
+import type { StatusService } from '../business/statusService.js'
 
 declare function setup(service: StatusService): Router
 
-export = setup
+export default setup

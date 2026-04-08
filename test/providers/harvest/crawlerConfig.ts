@@ -1,9 +1,9 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const assert = require('node:assert')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire').noCallThru()
+import assert from 'node:assert'
+import esmock from 'esmock'
+import sinon from 'sinon'
 
 describe('crawlerConfig.serviceFactory (TTL cases)', () => {
   const sandbox = sinon.createSandbox()
@@ -20,10 +20,10 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
   })
 
   // Minimal helpers
-  function loadServiceFactory(configGetImpl) {
-    return proxyquire('../../../providers/harvest/crawlerConfig', {
-      './crawler': crawlerStub,
-      './cacheBasedCrawler': cacheBasedCrawlerStub,
+  async function loadServiceFactory(configGetImpl) {
+    return await esmock.strict('../../../providers/harvest/crawlerConfig.js', {
+      '../../../providers/harvest/crawler.js': crawlerStub,
+      '../../../providers/harvest/cacheBasedCrawler.js': cacheBasedCrawlerStub,
       'painless-config': { get: configGetImpl }
     })
   }
@@ -32,13 +32,13 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
     return sandbox.spy(key => map[key])
   }
 
-  it('reads required config keys', () => {
+  it('reads required config keys', async () => {
     const configGet = mappingGet({
       CRAWLER_API_AUTH_TOKEN: 'token123',
       CRAWLER_API_URL: 'http://crawler',
       HARVEST_CACHE_TTL_IN_SECONDS: '120'
     })
-    const serviceFactory = loadServiceFactory(configGet)
+    const serviceFactory = await loadServiceFactory(configGet)
     const result = serviceFactory({ extra: 'value' })
 
     // Keys fetched
@@ -59,13 +59,13 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
     { name: 'negative', envTTL: '-5', expected: undefined },
     { name: 'decimal truncated', envTTL: '10.9', expected: 10 }
   ]) {
-    it(`TTL case: ${name}`, () => {
+    it(`TTL case: ${name}`, async () => {
       const configGet = mappingGet({
         CRAWLER_API_AUTH_TOKEN: 'token123',
         CRAWLER_API_URL: 'http://crawler',
         HARVEST_CACHE_TTL_IN_SECONDS: envTTL
       })
-      const serviceFactory = loadServiceFactory(configGet)
+      const serviceFactory = await loadServiceFactory(configGet)
       const result = serviceFactory()
 
       // Only assert TTL behavior and harvester presence to keep tests minimal

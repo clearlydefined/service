@@ -1,12 +1,21 @@
 // (c) Copyright 2022, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const { get, uniq } = require('lodash')
-const { promisify } = require('node:util')
-const parseXml = promisify(require('xml2js').parseString)
-const GradleCoordinatesMapper = require('../lib/gradleCoordinatesMapper')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
+
+import lodash from 'lodash'
+
+const { get, uniq } = lodash
+
+import { promisify } from 'node:util'
+import xml2js from 'xml2js'
+
+const parseXml = promisify(xml2js.parseString)
+
+import GradleCoordinatesMapper from '../lib/gradleCoordinatesMapper.js'
 
 // Gradle plugin documentation: https://docs.gradle.org/current/userguide/plugins.html
 const gradleHelper = new GradleCoordinatesMapper()
@@ -39,4 +48,4 @@ function setup() {
   return router
 }
 
-module.exports = setup
+export default setup

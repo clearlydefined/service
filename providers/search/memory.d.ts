@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { AbstractSearch, SearchOptions } from './abstractSearch'
+import type { AbstractSearch, SearchOptions } from './abstractSearch.js'
 
 /** In-memory search index entry. */
 export interface SearchEntry {
@@ -32,4 +32,3 @@ export declare class MemorySearch extends AbstractSearch {
 declare function createMemorySearch(options: SearchOptions): MemorySearch
 
 export default createMemorySearch
-export = createMemorySearch

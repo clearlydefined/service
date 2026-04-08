@@ -21,35 +21,26 @@
 /** @typedef {import('.').MatchingProperty} MatchingProperty */
 /** @typedef {import('./github').CommitStatusState} CommitStatusState */
 
-const {
-  concat,
-  get,
-  forIn,
-  merge,
-  isEqual,
-  uniq,
-  pick,
-  flatten,
-  flatMap,
-  first,
-  union,
-  unset,
-  uniqWith
-} = require('lodash')
-const { DateTime } = require('luxon')
-const geit = require('geit')
-const yaml = require('js-yaml')
-const throat = require('throat')
-const Github = require('../../lib/github')
-const Curation = require('../../lib/curation')
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const tmp = require('tmp')
+import lodash from 'lodash'
+
+const { concat, get, forIn, merge, isEqual, uniq, pick, flatten, flatMap, first, union, unset, uniqWith } = lodash
+
+import geit from 'geit'
+import yaml from 'js-yaml'
+import { DateTime } from 'luxon'
+import throat from 'throat'
+import tmp from 'tmp'
+import Curation from '../../lib/curation.js'
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import * as Github from '../../lib/github.js'
+
 tmp.setGracefulCleanup()
-const logger = require('../logging/logger')
-const semver = require('semver')
-const { LicenseMatcher } = require('../../lib/licenseMatcher')
-const { Cache } = require('memory-cache')
-const { deCodeSlashes } = require('../../lib/utils')
+
+import { Cache } from 'memory-cache'
+import semver from 'semver'
+import { LicenseMatcher } from '../../lib/licenseMatcher.js'
+import { deCodeSlashes } from '../../lib/utils.js'
+import logger from '../logging/logger.js'
 
 const hourInMS = 60 * 60 * 1000
 
@@ -1217,15 +1208,14 @@ ${this._formatDefinitions(patch.patches)}`
   }
 }
 
-module.exports =
-  /**
-   * @param {GitHubCurationOptions} options
-   * @param {ICurationStore} store
-   * @param {Endpoints} endpoints
-   * @param {CurationDefinitionService} definition
-   * @param {ICache} cache
-   * @param {CurationHarvestStore} harvestService
-   * @param {LicenseMatcher} [licenseMatcher]
-   */
-  (options, store, endpoints, definition, cache, harvestService, licenseMatcher) =>
-    new GitHubCurationService(options, store, endpoints, definition, cache, harvestService, licenseMatcher)
+export default /**
+ * @param {GitHubCurationOptions} options
+ * @param {ICurationStore} store
+ * @param {Endpoints} endpoints
+ * @param {CurationDefinitionService} definition
+ * @param {ICache} cache
+ * @param {CurationHarvestStore} harvestService
+ * @param {LicenseMatcher} [licenseMatcher]
+ */
+(options, store, endpoints, definition, cache, harvestService, licenseMatcher) =>
+  new GitHubCurationService(options, store, endpoints, definition, cache, harvestService, licenseMatcher)

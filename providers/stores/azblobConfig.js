@@ -6,7 +6,10 @@
  * @typedef {import('./azblobAttachmentStore').AzBlobAttachmentStoreOptions} AzBlobAttachmentStoreOptions
  */
 
-const config = require('painless-config')
+import config from 'painless-config'
+import azblobAttachmentStore from './azblobAttachmentStore.js'
+import azblobDefinitionStore from './azblobDefinitionStore.js'
+import azblobHarvestStore from './azblobHarvestStore.js'
 
 const harvestConnectionString = config.get('HARVEST_AZBLOB_CONNECTION_STRING')
 const harvestContainerName = config.get('HARVEST_AZBLOB_CONTAINER_NAME')
@@ -22,7 +25,7 @@ const attachmentContainerName = config.get('ATTACHMENT_AZBLOB_CONTAINER_NAME') |
  * @returns {ReturnType<typeof import('./azblobHarvestStore')>} A new AzHarvestBlobStore instance
  */
 function harvest(options) {
-  return require('./azblobHarvestStore')(
+  return azblobHarvestStore(
     options || {
       connectionString: harvestConnectionString,
       containerName: harvestContainerName
@@ -37,7 +40,7 @@ function harvest(options) {
  * @returns {ReturnType<typeof import('./azblobDefinitionStore')>} A new AzBlobDefinitionStore instance
  */
 function definition(options) {
-  return require('./azblobDefinitionStore')(
+  return azblobDefinitionStore(
     options || {
       connectionString: definitionConnectionString,
       containerName: definitionContainerName
@@ -52,7 +55,7 @@ function definition(options) {
  * @returns {ReturnType<typeof import('./azblobAttachmentStore')>} A new AzBlobAttachmentStore instance
  */
 function attachment(options) {
-  return require('./azblobAttachmentStore')(
+  return azblobAttachmentStore(
     options || {
       connectionString: attachmentConnectionString,
       containerName: attachmentContainerName
@@ -60,4 +63,4 @@ function attachment(options) {
   )
 }
 
-module.exports = { harvest, definition, attachment }
+export default { harvest, definition, attachment }

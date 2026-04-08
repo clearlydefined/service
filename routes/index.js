@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
-const express = require('express')
+import express from 'express'
+
 const router = express.Router()
 
 router.get('/', (/** @type {import('express').Request} */ _req, /** @type {import('express').Response} */ res) => {
   const msg = `{ "status": "OK", "version": "${version}", "sha": "${sha}" }`
   res.status(200).send(msg)
 })
-
-module.exports = router
 
 /** @type {string} */
 let version
@@ -23,4 +22,4 @@ function setup(buildsha, appVersion) {
   sha = buildsha
   return router
 }
-module.exports = setup
+export default setup

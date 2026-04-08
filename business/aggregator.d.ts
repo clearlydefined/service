@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../lib/entityCoordinates'
-import type { Logger } from '../providers/logging'
-import type { Definition } from './definitionService'
+import type { EntityCoordinates } from '../lib/entityCoordinates.js'
+import type { Logger } from '../providers/logging/index.js'
+import type { Definition } from './definitionService.js'
 
 /**
  * Tool precedence configuration.
@@ -72,4 +72,3 @@ export declare class AggregationService {
 declare function createAggregationService(options: AggregationServiceOptions): AggregationService
 
 export default createAggregationService
-export = createAggregationService

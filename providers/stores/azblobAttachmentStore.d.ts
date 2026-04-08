@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
+import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AzBlobAttachmentStore */
 export interface AzBlobAttachmentStoreOptions {
@@ -59,4 +59,4 @@ declare class AzBlobAttachmentStore {
  */
 declare function createAzBlobAttachmentStore(options: AzBlobAttachmentStoreOptions): AzBlobAttachmentStore
 
-export = createAzBlobAttachmentStore
+export default createAzBlobAttachmentStore

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type { Logger } from '../providers/logging'
+import type { Logger } from '../providers/logging/index.js'
 
 declare function setup(service: any, appLogger?: Logger): Router
-export = setup
+export default setup

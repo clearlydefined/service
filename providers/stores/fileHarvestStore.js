@@ -9,11 +9,13 @@
  * @typedef {import('./fileHarvestStore').ToolOutputs} ToolOutputs
  */
 
-const fs = require('node:fs')
-const recursive = require('recursive-readdir')
-const AbstractFileStore = require('./abstractFileStore')
-const ResultCoordinates = require('../../lib/resultCoordinates')
-const { sortedUniq, get } = require('lodash')
+import fs from 'node:fs'
+import lodash from 'lodash'
+import recursive from 'recursive-readdir'
+import ResultCoordinates from '../../lib/resultCoordinates.js'
+import AbstractFileStore from './abstractFileStore.js'
+
+const { sortedUniq, get } = lodash
 
 /**
  * File system implementation for storing harvest results.
@@ -177,4 +179,4 @@ class FileHarvestStore extends AbstractFileStore {
  * @param {FileStoreOptions} [options] - Configuration options for the store
  * @returns {FileHarvestStore} A new FileHarvestStore instance
  */
-module.exports = options => new FileHarvestStore(options)
+export default options => new FileHarvestStore(options)

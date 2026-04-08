@@ -7,7 +7,7 @@
  * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
  */
 
-const summarizers = require('../providers/summary')
+import summarizers from '../providers/summary/index.js'
 
 /**
  * Service for summarizing tool output data.
@@ -69,4 +69,4 @@ class SummaryService {
  * @param {SummaryServiceOptions} options - Tool-specific configuration options
  * @returns {SummaryService} A new SummaryService instance
  */
-module.exports = options => new SummaryService(options)
+export default options => new SummaryService(options)

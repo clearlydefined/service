@@ -1,14 +1,12 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { IQueue } from '../queueing'
-import type { Logger } from '../logging'
-import type { ICache } from '../caching'
-import type { Definition } from '../../business/definitionService'
-import type { DefinitionService } from '../../business/definitionService'
-import { DefinitionVersionChecker, type DefinitionVersionCheckerOptions } from './defVersionCheck'
+import type { Definition, DefinitionService } from '../../business/definitionService.js'
+import type { IQueue } from '../queueing/index.js'
+import type { Logger } from '../logging/index.js'
+import type { ICache } from '../caching/index.js'
+import type { DefinitionVersionChecker, DefinitionVersionCheckerOptions } from './defVersionCheck.js'
 
-/** Configuration options for DefinitionQueueUpgrader */
 export interface DefinitionQueueUpgraderOptions extends DefinitionVersionCheckerOptions {
   /** Factory function that creates the upgrade queue */
   queue: () => IQueue
@@ -50,4 +48,3 @@ declare class DefinitionQueueUpgrader extends DefinitionVersionChecker {
 }
 
 export default DefinitionQueueUpgrader
-export = DefinitionQueueUpgrader

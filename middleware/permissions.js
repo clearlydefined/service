@@ -8,7 +8,7 @@
 /** @typedef {import('./permissions').PermissionName} PermissionName */
 /** @typedef {import('./permissions').PermissionsConfig} PermissionsConfig */
 
-const asyncMiddleware = require('./asyncMiddleware')
+import asyncMiddleware from './asyncMiddleware.js'
 
 /**
  * Creates middleware that checks if the user has the required permission.
@@ -51,4 +51,4 @@ function setup(permissionsOptions) {
   permissions = permissionsOptions
 }
 
-module.exports = { setup, permissionsCheck }
+export { permissionsCheck, setup }

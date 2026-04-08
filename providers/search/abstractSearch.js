@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { get, uniq, values } = require('lodash')
+import lodash from 'lodash'
+
+const { get, uniq, values } = lodash
 
 class AbstractSearch {
   /**
@@ -88,4 +90,4 @@ class AbstractSearch {
   delete(_coordinates) {}
 }
 
-module.exports = AbstractSearch
+export default AbstractSearch

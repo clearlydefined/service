@@ -10,10 +10,12 @@
  * @typedef {import('./azblobHarvestStore').BlobFileEntry} BlobFileEntry
  */
 
-const AbstractAzBlobStore = require('./abstractAzblobStore')
-const AbstractFileStore = require('./abstractFileStore')
-const ResultCoordinates = require('../../lib/resultCoordinates')
-const { sortedUniq } = require('lodash')
+import lodash from 'lodash'
+import ResultCoordinates from '../../lib/resultCoordinates.js'
+import AbstractAzBlobStore from './abstractAzblobStore.js'
+import AbstractFileStore from './abstractFileStore.js'
+
+const { sortedUniq } = lodash
 
 /**
  * Helper to create callback for Promise resolve/reject
@@ -200,4 +202,4 @@ class AzHarvestBlobStore extends AbstractAzBlobStore {
  * @param {AzBlobStoreOptions} options - Configuration options for the store
  * @returns {AzHarvestBlobStore} A new AzHarvestBlobStore instance
  */
-module.exports = options => new AzHarvestBlobStore(options)
+export default options => new AzHarvestBlobStore(options)

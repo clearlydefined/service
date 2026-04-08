@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { Collection, Db, MongoClient } from 'mongodb'
-import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from '.'
-import type Curation from '../../lib/curation'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { Logger } from '../logging'
+import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from './index.js'
+import type Curation from '../../lib/curation.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { Logger } from '../logging/index.js'
 
 /** Options for MongoDB-backed curation store */
 export interface MongoCurationStoreOptions {
@@ -74,4 +74,3 @@ export declare class MongoCurationStore implements ICurationStore {
 declare function createMongoCurationStore(options: MongoCurationStoreOptions): MongoCurationStore
 
 export default createMongoCurationStore
-export = createMongoCurationStore

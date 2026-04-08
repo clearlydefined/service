@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { Writable } from 'node:stream'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { ResultCoordinates } from '../../lib/resultCoordinates'
-import type { AzBlobStoreOptions } from './abstractAzblobStore'
-import AbstractAzBlobStore = require('./abstractAzblobStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
+import type AbstractAzBlobStore from './abstractAzblobStore.js'
 
 /** Tool output results organized by tool name and version */
 export interface ToolOutputs {
@@ -69,4 +69,4 @@ declare class AzHarvestBlobStore extends AbstractAzBlobStore {
  */
 declare function createAzHarvestBlobStore(options: AzBlobStoreOptions): AzHarvestBlobStore
 
-export = createAzHarvestBlobStore
+export default createAzHarvestBlobStore

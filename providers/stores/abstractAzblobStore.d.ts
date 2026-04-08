@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { ResultCoordinates } from '../../lib/resultCoordinates'
-import type { Logger } from '../logging'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.js'
+import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AbstractAzBlobStore */
 export interface AzBlobStoreOptions {
@@ -98,4 +98,4 @@ declare class AbstractAzBlobStore {
   protected _toResultCoordinatesFromStoragePath(path: string): ResultCoordinates
 }
 
-export = AbstractAzBlobStore
+export default AbstractAzBlobStore

@@ -6,10 +6,10 @@
  * @typedef {import('./fileAttachmentStore').FileAttachmentStoreOptions} FileAttachmentStoreOptions
  */
 
-const fs = require('node:fs')
-const path = require('node:path')
-const { promisify } = require('node:util')
-const logger = require('../logging/logger')
+import fs from 'node:fs'
+import path from 'node:path'
+import { promisify } from 'node:util'
+import logger from '../logging/logger.js'
 
 /**
  * File system implementation for storing and retrieving attachments.
@@ -60,4 +60,4 @@ class FileAttachmentStore {
  * @param {FileAttachmentStoreOptions} options - Configuration options for the store
  * @returns {FileAttachmentStore} A new FileAttachmentStore instance
  */
-module.exports = options => new FileAttachmentStore(options)
+export default options => new FileAttachmentStore(options)

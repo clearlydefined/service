@@ -4,8 +4,10 @@
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
 
 /** @type {any} */
 let repoAccess
@@ -52,4 +54,4 @@ function setup(condaRepoAccess, testflag = false) {
   repoAccess = condaRepoAccess
   return router
 }
-module.exports = setup
+export default setup

@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const AzureStorageQueue = require('../queueing/azureStorageQueue')
-const crawler = require('./crawlerQueue')
-const cacheBasedCrawler = require('./cacheBasedCrawler')
+import config from 'painless-config'
+import AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import cacheBasedCrawler from './cacheBasedCrawler.js'
+import crawler from './crawlerQueue.js'
 
 /**
  * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions
@@ -52,4 +52,4 @@ function serviceFactory(options) {
   return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester })
 }
 
-module.exports = serviceFactory
+export default serviceFactory

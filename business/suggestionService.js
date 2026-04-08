@@ -10,8 +10,11 @@
  * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
  */
 
-const { get } = require('lodash')
-const { isDeclaredLicense, setIfValue, compareDates } = require('../lib/utils')
+import lodash from 'lodash'
+
+const { get } = lodash
+
+import { compareDates, isDeclaredLicense, setIfValue } from '../lib/utils.js'
 
 /**
  * Service for generating suggestions to improve definitions.
@@ -132,4 +135,4 @@ class SuggestionService {
  * @param {DefinitionService} definitionService - The definition service to use
  * @returns {SuggestionService} A new SuggestionService instance
  */
-module.exports = definitionService => new SuggestionService(definitionService)
+export default definitionService => new SuggestionService(definitionService)

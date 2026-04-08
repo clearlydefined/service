@@ -1,25 +1,23 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { assert } from 'chai'
+import esmock from 'esmock'
 import type { SinonStub } from 'sinon'
+import sinon from 'sinon'
 import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.js'
 import type { ICache } from '../../providers/caching/index.js'
 
-const { assert } = require('chai')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire').noCallThru()
 const requestPromiseStub: SinonStub = sinon.stub()
 
 const fetchModuleStub = {
   callFetch: requestPromiseStub
 }
 
-const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')> = proxyquire(
-  '../../lib/condaRepoAccess',
-  {
-    './fetch': fetchModuleStub
-  }
-)
+const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')['default']> =
+  await esmock.strict('../../lib/condaRepoAccess.js', {
+    '../../lib/fetch.js': fetchModuleStub
+  })
 
 const channelData: CondaChannelData = {
   packages: {

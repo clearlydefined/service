@@ -6,7 +6,9 @@
 /** @typedef {import('./process').CurationProcessService} CurationProcessService */
 /** @typedef {import('../logging').Logger} Logger */
 
-const { get } = require('lodash')
+import lodash from 'lodash'
+
+const { get } = lodash
 
 /** @param {boolean} once */
 async function work(once) {
@@ -66,4 +68,4 @@ function setup(_queue, _curationService, _logger, once = false) {
   return work(once)
 }
 
-module.exports = setup
+export default setup

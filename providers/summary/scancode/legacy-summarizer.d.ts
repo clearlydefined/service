@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../../lib/entityCoordinates'
-import type { FileEntry } from '../../../lib/utils'
-import type { Logger } from '../../logging'
-import type { SummarizerOptions } from '../index'
+import type EntityCoordinates from '../../../lib/entityCoordinates.js'
+import type { FileEntry } from '../../../lib/utils.js'
+import type { Logger } from '../../logging/index.js'
+import type { SummarizerOptions } from '../index.js'
 import type {
   ScanCodeFile,
   ScanCodeHarvestedData,
   ScanCodeLicense,
   ScanCodePackage,
   ScanCodeSummaryResult
-} from '../scancode'
+} from '../scancode.js'
 
 /**
  * ScanCode Legacy summarizer class that processes harvested data from older
@@ -148,4 +148,4 @@ export declare class ScanCodeLegacySummarizer {
  */
 declare function legacySummarizerFactory(options?: SummarizerOptions, logger?: Logger): ScanCodeLegacySummarizer
 
-export = legacySummarizerFactory
+export default legacySummarizerFactory

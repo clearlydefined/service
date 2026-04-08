@@ -1,10 +1,9 @@
 import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import { DateTime } from 'luxon'
-import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
-import utils from '../../lib/utils.js'
+import * as utils from '../../lib/utils.js'
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
@@ -591,16 +590,22 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
     }
   } as unknown as EntityCoordinatesRequest
 
-  before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
-  })
-
-  after(() => {
-    sinon.restore()
+  let mockedUtils: typeof utils
+  before(async () => {
+    const esmock = (await import('esmock')).default
+    mockedUtils = await esmock(
+      '../../lib/utils.js',
+      {},
+      {
+        '../../lib/utils.js': {
+          toNormalizedEntityCoordinates: (entry: any) => Promise.resolve(entry)
+        }
+      }
+    )
   })
 
   it('should turn a request into entity coordinates', async () => {
-    const result = await utils.toEntityCoordinatesFromRequest(fakeRequest)
+    const result = await mockedUtils.toEntityCoordinatesFromRequest(fakeRequest)
     expect(result.type).to.eq('pypi')
     expect(result.provider).to.eq('pypi')
     expect(result.namespace).to.eq(undefined)
@@ -619,7 +624,7 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   } as unknown as EntityCoordinatesRequest
 
   it('encodes slashes in namespaces', async () => {
-    const result = await utils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
+    const result = await mockedUtils.toEntityCoordinatesFromRequest(fakeSlashNamespaceRequest)
     expect(result.namespace).to.eq('rsc.io%2fquote')
   })
 })
@@ -674,16 +679,22 @@ describe('Utils getLicenseLocations', () => {
     }
   } as unknown as EntityCoordinatesRequest
 
-  before(() => {
-    sinon.replace(utils, 'toNormalizedEntityCoordinates', entry => Promise.resolve(entry) as Promise<EntityCoordinates>)
-  })
-
-  after(() => {
-    sinon.restore()
+  let mockedUtils2: typeof utils
+  before(async () => {
+    const esmock = (await import('esmock')).default
+    mockedUtils2 = await esmock(
+      '../../lib/utils.js',
+      {},
+      {
+        '../../lib/utils.js': {
+          toNormalizedEntityCoordinates: (entry: any) => Promise.resolve(entry)
+        }
+      }
+    )
   })
 
   it('finds the correct license location for npm packages', async () => {
-    const coordinates = await utils.toEntityCoordinatesFromRequest(npmRequest)
+    const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(npmRequest)
     const result = utils.getLicenseLocations(coordinates)
     expect(result).to.deep.include('package/')
   })
@@ -700,7 +711,7 @@ describe('Utils getLicenseLocations', () => {
     } as unknown as EntityCoordinatesRequest
 
     it('finds the correct location for go packages', async () => {
-      const coordinates = await utils.toEntityCoordinatesFromRequest(goRequest)
+      const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(goRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('go.uber.org/fx@1.14.2/')
     })
@@ -716,7 +727,7 @@ describe('Utils getLicenseLocations', () => {
         }
       } as unknown as EntityCoordinatesRequest
 
-      const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
     })
@@ -732,7 +743,7 @@ describe('Utils getLicenseLocations', () => {
         }
       } as unknown as EntityCoordinatesRequest
 
-      const coordinates = await utils.toEntityCoordinatesFromRequest(complexNamespaceRequest)
+      const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(complexNamespaceRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.include('github.com/concourse/github-release-resource@v1.6.4/')
     })
@@ -750,13 +761,13 @@ describe('Utils getLicenseLocations', () => {
     } as unknown as EntityCoordinatesRequest
 
     it('returns an empty array when not passing packages', async () => {
-      const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
+      const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(debsrcRequest)
       const result = utils.getLicenseLocations(coordinates)
       expect(result).to.deep.equal([])
     })
 
     it('finds the correct license locations when passing packages', async () => {
-      const coordinates = await utils.toEntityCoordinatesFromRequest(debsrcRequest)
+      const coordinates = await mockedUtils2.toEntityCoordinatesFromRequest(debsrcRequest)
       const packages = [
         { name: 'python-tenacity-doc' },
         { name: 'python3-tenacity' },

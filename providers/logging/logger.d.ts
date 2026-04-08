@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '.'
+import type { Logger } from './index.js'
 
 /**
  * Logger factory function type that creates or returns a logger instance. If no logger is provided and one already
@@ -17,4 +17,4 @@ declare namespace loggerFactory {
   export type { Logger }
 }
 
-export = loggerFactory
+export default loggerFactory

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { Writable } from 'node:stream'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { ResultCoordinates } from '../../lib/resultCoordinates'
-import type { FileStoreOptions } from './abstractFileStore'
-import AbstractFileStore = require('./abstractFileStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.js'
+import type { FileStoreOptions } from './abstractFileStore.js'
+import type AbstractFileStore from './abstractFileStore.js'
 
 /** Tool output results organized by tool name and version */
 export interface ToolOutputs {
@@ -63,4 +63,4 @@ declare class FileHarvestStore extends AbstractFileStore {
  */
 declare function createFileHarvestStore(options?: FileStoreOptions): FileHarvestStore
 
-export = createFileHarvestStore
+export default createFileHarvestStore

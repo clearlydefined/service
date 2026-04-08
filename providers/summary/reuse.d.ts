@@ -1,9 +1,9 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { FileEntry } from '../../lib/utils'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { FileEntry } from '../../lib/utils.js'
+import type { SummarizerOptions } from './index.js'
 
 /** REUSE license information */
 export interface ReuseLicense {
@@ -108,4 +108,4 @@ export declare class ReuseSummarizer {
  */
 declare function reuseSummarizerFactory(options?: SummarizerOptions): ReuseSummarizer
 
-export = reuseSummarizerFactory
+export default reuseSummarizerFactory

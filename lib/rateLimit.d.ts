@@ -4,8 +4,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import type { Options as ExpressRateLimitOptions, Store } from 'express-rate-limit'
 import type { RedisClientType } from 'redis'
-import type { ICache } from '../providers/caching'
-import type { Logger } from '../providers/logging'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 /** Configuration options for rate limiting window and maximum requests */
 export interface RateLimitConfig {

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { FileStoreOptions } from './abstractFileStore'
-import AbstractFileStore = require('./abstractFileStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { FileStoreOptions } from './abstractFileStore.js'
+import type AbstractFileStore from './abstractFileStore.js'
 
 /** Definition object with coordinates */
 export interface Definition {
@@ -50,4 +50,4 @@ declare class FileDefinitionStore extends AbstractFileStore {
  */
 declare function createFileDefinitionStore(options?: FileStoreOptions): FileDefinitionStore
 
-export = createFileDefinitionStore
+export default createFileDefinitionStore
