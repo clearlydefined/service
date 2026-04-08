@@ -86,9 +86,9 @@ class DefinitionUpgrader {
         return needsCompute
       })
       if (result) {
-        this.logger.info('Handled definition upgrade', { coordinates })
+        this.logger.info('Handled definition upgrade', { coordinates: coordinates.toString() })
       } else {
-        this.logger.debug('Skipped definition upgrade', { coordinates })
+        this.logger.debug('Skipped definition upgrade', { coordinates: coordinates.toString() })
       }
     } catch (error) {
       const originalError = error instanceof Error ? error : new Error(String(error))

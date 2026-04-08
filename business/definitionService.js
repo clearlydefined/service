@@ -427,6 +427,8 @@ class DefinitionService {
       }
     }
     try {
+      // No `await` between the while-exit and set() — this is intentional.
+      // Inserting an async call here would break the lock.
       computeLock.set(coordinates.toString(), true)
       return await action()
     } finally {
