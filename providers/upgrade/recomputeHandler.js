@@ -1,7 +1,6 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import Cache from '../caching/memory.js'
 import logger from '../logging/logger.js'
 import DefinitionQueueUpgrader from './defUpgradeQueue.js'
 import { factory as versionCheckFactory } from './defVersionCheck.js'
@@ -21,16 +20,11 @@ import { OnDemandComputePolicy } from './onDemandComputePolicy.js'
 /** @typedef {import('./recomputeHandler').DelayedFactoryOptions} DelayedFactoryOptions */
 
 class RecomputeHandler {
-  static _sharedCacheTtlSeconds = 60 * 5 /* 5 mins */
-
   /** @param {RecomputeHandlerOptions} options */
   constructor(options) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy
     this._logger = options.logger || logger()
-    this._sharedCache = Cache({
-      defaultTtlSeconds: RecomputeHandler._sharedCacheTtlSeconds
-    })
   }
 
   /** @param {string} schemaVersion */
@@ -76,8 +70,8 @@ class RecomputeHandler {
       computePolicy: getPolicyName(this._computePolicy)
     })
     await Promise.all([
-      this._upgradePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache),
-      this._computePolicy.setupProcessing?.(definitionService, logger, once, this._sharedCache)
+      this._upgradePolicy.setupProcessing?.(definitionService, logger, once),
+      this._computePolicy.setupProcessing?.(definitionService, logger, once)
     ])
     this._logger.debug('Recompute handler processing setup complete', {
       once: !!once,

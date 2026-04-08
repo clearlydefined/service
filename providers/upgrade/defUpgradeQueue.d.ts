@@ -4,9 +4,9 @@
 import type { Definition, DefinitionService } from '../../business/definitionService.js'
 import type { IQueue } from '../queueing/index.js'
 import type { Logger } from '../logging/index.js'
-import type { ICache } from '../caching/index.js'
 import type { DefinitionVersionChecker, DefinitionVersionCheckerOptions } from './defVersionCheck.js'
 
+/** Configuration options for DefinitionQueueUpgrader */
 export interface DefinitionQueueUpgraderOptions extends DefinitionVersionCheckerOptions {
   /** Factory function that creates the upgrade queue */
   queue: () => IQueue
@@ -42,9 +42,8 @@ declare class DefinitionQueueUpgrader extends DefinitionVersionChecker {
    * @param definitionService - The service used to recompute definitions
    * @param logger - Logger instance
    * @param once - If true, process one batch and stop (for testing)
-   * @param cache - Optional lock cache
    */
-  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean, cache?: ICache): Promise<void>
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void>
 }
 
 export default DefinitionQueueUpgrader

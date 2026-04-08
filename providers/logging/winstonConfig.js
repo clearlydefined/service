@@ -116,7 +116,7 @@ function factory(options) {
   const logFormat = winston.format.combine(
     sanitizeMeta(),
     winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
+    winston.format.errors({ stack: true, cause: true }),
     winston.format.printf(({ timestamp, level, message, ...meta }) => {
       const metaKeys = Object.keys(meta)
       const metaString = metaKeys.length ? `\n${JSON.stringify(meta, null, 2)}` : ''
@@ -152,7 +152,9 @@ function factory(options) {
     const properties = buildProperties(info)
     if (info.level === 'error') {
       if (info.stack) {
-        aiClient.trackException({ exception: new Error(info.message), properties })
+        const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
+        exception.stack = info.stack
+        aiClient.trackException({ exception, properties })
       } else {
         aiClient.trackTrace({
           message: info.message,

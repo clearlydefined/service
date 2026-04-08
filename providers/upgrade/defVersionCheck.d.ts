@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import type { Logger } from '../logging/index.js'
-import type { ICache } from '../caching/index.js'
 import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
 
 /** Configuration options for DefinitionVersionChecker */
@@ -37,7 +36,7 @@ export declare class DefinitionVersionChecker implements UpgradeHandler {
   initialize(): Promise<void>
 
   /** No-op setup (exists for interface compatibility with subclass overrides) */
-  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean, cache?: ICache): void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): void
 
   /**
    * Extracts a string representation of coordinates from a definition.

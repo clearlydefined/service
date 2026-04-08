@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import { buildProperties, sanitizeHeaders, sanitizeMeta } from '../../../providers/logging/winstonConfig.js'
+import sinon from 'sinon'
+import MockInsights from '../../../lib/mockInsights.js'
+import winstonFactory, {
+  buildProperties,
+  sanitizeHeaders,
+  sanitizeMeta
+} from '../../../providers/logging/winstonConfig.js'
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {
@@ -372,5 +378,68 @@ describe('buildProperties', () => {
     const parent = { child: nested }
     const result = buildProperties({ parent })
     expect(result.parent.child).to.equal(nested)
+  })
+})
+
+describe('winstonFactory', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
+  it('preserves error cause when forwarding to trackException', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'error'
+    })
+
+    const rootCause = new Error('root cause')
+    const error = new Error('top level', { cause: rootCause })
+
+    logger.error(error)
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.calledOnce).to.be.true
+    const exceptionTelemetry = aiClient.trackException.getCall(0).args[0]
+    expect(exceptionTelemetry.exception).to.be.instanceOf(Error)
+    expect(exceptionTelemetry.exception.message).to.equal('top level')
+    expect(exceptionTelemetry.exception.cause).to.equal(rootCause)
+    expect(exceptionTelemetry.exception.stack).to.include('top level')
+  })
+
+  it('forwards error without cause when none is provided', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'error'
+    })
+
+    const error = new Error('no cause error')
+
+    logger.error(error)
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.calledOnce).to.be.true
+    const exceptionTelemetry = aiClient.trackException.getCall(0).args[0]
+    expect(exceptionTelemetry.exception).to.be.instanceOf(Error)
+    expect(exceptionTelemetry.exception.message).to.equal('no cause error')
+    expect(exceptionTelemetry.exception.cause).to.equal(undefined)
+    expect(exceptionTelemetry.exception.stack).to.include('no cause error')
   })
 })

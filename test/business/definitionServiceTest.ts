@@ -324,6 +324,131 @@ describe('Definition Service', () => {
       expect(service.compute.getCall(0).args[0]).to.deep.eq(coordinates)
     })
   })
+
+  describe('computeStoreAndCurateIf', () => {
+    let service
+    let coordinates
+    let autoCurate
+
+    beforeEach(() => {
+      autoCurate = sinon.stub().resolves()
+      ;({ service, coordinates } = setup(createDefinition(null, null, ['scancode/3.2.2'])))
+      service.curationService = {
+        apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
+        autoCurate
+      }
+      sinon.spy(service, 'compute')
+    })
+
+    afterEach(() => {
+      sinon.restore()
+    })
+
+    it('computes and auto-curates when predicate returns true', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(autoCurate.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('skips compute and auto-curation when predicate returns false', async () => {
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => false)
+      expect(service.compute.notCalled).to.be.true
+      expect(autoCurate.notCalled).to.be.true
+      expect(result).to.be.undefined
+    })
+
+    it('releases lock after predicate throws', async () => {
+      await expect(
+        service.computeStoreAndCurateIf(coordinates, async () => {
+          throw new Error('predicate error')
+        })
+      ).to.be.rejectedWith('predicate error')
+
+      const result = await service.computeStoreAndCurateIf(coordinates, async () => true)
+      expect(service.compute.calledOnce).to.be.true
+      expect(result).to.exist
+    })
+
+    it('serializes concurrent calls for the same coordinates', async () => {
+      const predicate = sinon.stub().onFirstCall().resolves(true).onSecondCall().resolves(false)
+
+      const [first, second] = await Promise.all([
+        service.computeStoreAndCurateIf(coordinates, predicate),
+        service.computeStoreAndCurateIf(coordinates, predicate)
+      ])
+
+      expect(predicate.calledTwice).to.be.true
+      expect(service.compute.calledOnce).to.be.true
+      expect(autoCurate.calledOnce).to.be.true
+      expect(first).to.exist
+      expect(second).to.be.undefined
+
+      // verify calls are serialized: first predicate completes before second starts
+      expect(predicate.getCall(1).calledAfter(service.compute.getCall(0))).to.be.true
+    })
+
+    describe('lock wait warning', () => {
+      // _withComputeLock serializes concurrent computes for the same coordinates via a
+      // spin-wait loop (polling every 500ms). If a caller spins for >60s it logs a
+      // one-shot warning so ops can detect unexpectedly long-held locks without being
+      // flooded with repeated log lines.
+      let clock
+      let loggerWarn
+      let resolveFirstCompute
+      let deferredDefinition
+
+      beforeEach(() => {
+        // Replace real timers so we can advance time without actually waiting.
+        clock = sinon.useFakeTimers()
+        loggerWarn = sinon.stub()
+        service.logger.warn = loggerWarn
+
+        // The first _computeAndStore call returns a promise we resolve manually,
+        // keeping the lock held for as long as we need to test the warning threshold.
+        const firstCompute = new Promise(resolve => {
+          resolveFirstCompute = resolve
+        })
+        deferredDefinition = createDefinition(null, null, ['scancode/3.2.2'])
+        sinon
+          .stub(service, '_computeAndStore')
+          .onFirstCall()
+          .returns(firstCompute) // first caller holds the lock indefinitely
+          .onSecondCall()
+          .resolves(deferredDefinition) // second caller proceeds once lock is free
+      })
+
+      afterEach(() => {
+        clock.restore()
+      })
+
+      it('logs a one-shot warning when lock wait exceeds 60 seconds', async () => {
+        const firstCall = service.computeStoreAndCurateIf(coordinates, async () => true)
+        // Yield once so the first call acquires the lock before the second call starts
+        // competing for it. Without this, both calls could race to acquire the lock and
+        // neither would be forced to spin-wait.
+        await Promise.resolve()
+        const secondCall = service.computeStoreAndCurateIf(coordinates, async () => true)
+
+        // Advance past the 60s warning threshold — the second call is still spinning.
+        await clock.tickAsync(60_500)
+
+        expect(loggerWarn.calledOnce).to.be.true
+        expect(loggerWarn.getCall(0).args[0]).to.contain('computeLock spin-wait exceeded 60s')
+        expect(loggerWarn.getCall(0).args[1]).to.deep.equal({ coordinates: coordinates.toString() })
+
+        // Advance another 60s to confirm the warning is not repeated (one-shot guard).
+        await clock.tickAsync(60_500)
+        expect(loggerWarn.calledOnce).to.be.true
+
+        // Release the first lock so both calls can complete cleanly.
+        resolveFirstCompute(deferredDefinition)
+        await firstCall
+        await clock.tickAsync(500)
+        await secondCall
+      })
+    })
+  })
 })
 
 describe('Definition Service Facet management', () => {

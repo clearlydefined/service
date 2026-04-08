@@ -3,7 +3,6 @@
 
 import type { Logger } from '../logging/index.js'
 import type { IQueue } from '../queueing/index.js'
-import type { ICache } from '../caching/index.js'
 import type {
   Definition,
   DefinitionService,
@@ -18,12 +17,7 @@ import type { DefinitionVersionCheckerOptions } from './defVersionCheck.js'
 /** Upgrade policy accepted by RecomputeHandler: an UpgradeHandler with optional lifecycle hooks */
 export interface UpgradePolicy extends UpgradeHandler {
   initialize?(): Promise<void> | void
-  setupProcessing?(
-    definitionService?: DefinitionService,
-    logger?: Logger,
-    once?: boolean,
-    cache?: ICache
-  ): Promise<void> | void
+  setupProcessing?(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
 }
 
 export interface DelayedFactoryOptions {
