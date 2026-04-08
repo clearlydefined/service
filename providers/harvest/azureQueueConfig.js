@@ -18,7 +18,7 @@ function azure(options) {
     queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests',
     dequeueOptions: {
       numOfMessages: 32,
-      visibilityTimeout: 10 * 60 // 10 min. The default value is 30 seconds.
+      visibilityTimeout: 20 * 60 // 20 min; covers p95 total processing time (~16 min over 20 days, dominated by computeLock wait)
     }
   }
   return new AzureStorageQueue(realOptions)
