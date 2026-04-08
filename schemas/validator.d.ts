@@ -19,4 +19,4 @@ import type Ajv from 'ajv'
  */
 declare const ajv: Ajv
 
-export = ajv
+export default ajv

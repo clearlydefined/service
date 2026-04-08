@@ -8,7 +8,6 @@ import { expect } from 'chai'
 import SummaryService from '../../business/summarizer.js'
 import EntityCoordinates from '../../lib/entityCoordinates.js'
 
-// @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
 const testDir = dirname(fileURLToPath(import.meta.url))
 
 function loadEvidence(coordSpec: string): unknown {

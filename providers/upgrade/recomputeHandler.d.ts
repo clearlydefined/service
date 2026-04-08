@@ -1,19 +1,19 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Logger } from '../logging'
-import type { IQueue } from '../queueing'
-import type { ICache } from '../caching'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
+import type { ICache } from '../caching/index.js'
 import type {
   Definition,
   DefinitionService,
   RecomputeContext,
   RecomputeHandler as IRecomputeHandler,
   UpgradeHandler
-} from '../../business/definitionService'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { MissingDefinitionComputePolicy } from './computePolicy'
-import type { DefinitionVersionCheckerOptions } from './defVersionCheck'
+} from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { MissingDefinitionComputePolicy } from './computePolicy.js'
+import type { DefinitionVersionCheckerOptions } from './defVersionCheck.js'
 
 /** Upgrade policy accepted by RecomputeHandler: an UpgradeHandler with optional lifecycle hooks */
 export interface UpgradePolicy extends UpgradeHandler {

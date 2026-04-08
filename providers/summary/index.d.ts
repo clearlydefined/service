@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { CdSourceSummarizer } from './cdsource'
-import type { Summarizer } from './clearlydefined'
-import type { FOSSologySummarizer } from './fossology'
-import type { LicenseeSummarizer } from './licensee'
-import type { ReuseSummarizer } from './reuse'
-import type { ScanCodeSummarizer } from './scancode'
+import type { CdSourceSummarizer } from './cdsource.js'
+import type { Summarizer } from './clearlydefined.js'
+import type { FOSSologySummarizer } from './fossology.js'
+import type { LicenseeSummarizer } from './licensee.js'
+import type { ReuseSummarizer } from './reuse.js'
+import type { ScanCodeSummarizer } from './scancode.js'
 
 /** Base interface for all summarizers */
 export interface BaseSummarizer {
@@ -34,4 +34,4 @@ export interface SummaryProviders {
 
 declare const summaryProviders: SummaryProviders
 
-export = summaryProviders
+export default summaryProviders

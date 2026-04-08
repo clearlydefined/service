@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../lib/entityCoordinates'
-import type { Logger } from '../providers/logging'
-import type { DefinitionService } from './definitionService'
+import type { EntityCoordinates } from '../lib/entityCoordinates.js'
+import type { Logger } from '../providers/logging/index.js'
+import type { DefinitionService } from './definitionService.js'
 
 /** Supported output formats for notice generation */
 export type NoticeOutputFormat = 'text' | 'html' | 'template' | 'json'
@@ -130,4 +130,3 @@ declare function createNoticeService(
 ): NoticeService
 
 export default createNoticeService
-export = createNoticeService

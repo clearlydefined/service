@@ -16,6 +16,4 @@ class SkipUpgradePolicy {
   }
 }
 
-module.exports = {
-  SkipUpgradePolicy
-}
+export { SkipUpgradePolicy }

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type { DefinitionService } from '../business/definitionService'
+import type { DefinitionService } from '../business/definitionService.js'
 
 declare function setup(definition: DefinitionService, testFlag?: boolean): Router
-export = setup
+export default setup

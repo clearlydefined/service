@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { RecomputeQueueFactories } from '..'
-import type AzureStorageQueue from '../queueing/azureStorageQueue'
+import type { RecomputeQueueFactories } from '...js'
+import type AzureStorageQueue from '../queueing/azureStorageQueue.js'
 
 /**
  * Queue factories for upgrade and delayed compute processing.
@@ -12,4 +12,4 @@ import type AzureStorageQueue from '../queueing/azureStorageQueue'
  */
 declare const queues: RecomputeQueueFactories<AzureStorageQueue>
 
-export = queues
+export default queues

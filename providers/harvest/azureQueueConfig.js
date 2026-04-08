@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const AzureStorageQueue = require('../queueing/azureStorageQueue')
+import config from 'painless-config'
+import AzureStorageQueue from '../queueing/azureStorageQueue.js'
 
 /**
  * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions
@@ -24,4 +24,4 @@ function azure(options) {
   return new AzureStorageQueue(realOptions)
 }
 
-module.exports = azure
+export default azure

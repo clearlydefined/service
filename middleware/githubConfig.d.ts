@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { RequestHandler } from 'express'
-import type { ICache } from '../providers/caching'
-import type authRoute from '../routes/auth'
-import type { GitHubMiddlewareOptions } from './github'
-import type { PermissionsConfig } from './permissions'
+import type { ICache } from '../providers/caching/index.js'
+import type authRoute from '../routes/auth.js'
+import type { GitHubMiddlewareOptions } from './github.js'
+import type { PermissionsConfig } from './permissions.js'
 
 /**
  * Extended options for GitHub authentication configuration.

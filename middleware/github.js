@@ -10,11 +10,11 @@
 /** @typedef {import('./github').GitHubMiddlewareOptions} GitHubMiddlewareOptions */
 /** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
 
-const crypto = require('node:crypto')
-const { Octokit } = require('@octokit/rest')
-const asyncMiddleware = require('./asyncMiddleware')
-const Github = require('../lib/github')
-const { defaultHeaders } = require('../lib/fetch')
+import crypto from 'node:crypto'
+import { Octokit } from '@octokit/rest'
+import { defaultHeaders } from '../lib/fetch.js'
+import * as Github from '../lib/github.js'
+import asyncMiddleware from './asyncMiddleware.js'
 
 /** @type {GitHubMiddlewareOptions | null} */
 let options = null
@@ -186,7 +186,7 @@ async function getCacheKey(prefix, token) {
  * @param {ICache} authCache - Cache instance for storing user info and team data
  * @returns {RequestHandler} Express middleware
  */
-module.exports = (authOptions, authCache) => {
+export default (authOptions, authCache) => {
   options = authOptions
   cache = authCache
   return middleware

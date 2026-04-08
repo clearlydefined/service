@@ -11,9 +11,11 @@
  * @typedef {import('../../lib/utils').FileEntry} FileEntry
  */
 
-const { setIfValue, isDeclaredLicense } = require('../../lib/utils')
-const SPDX = require('@clearlydefined/spdx')
-const { get, uniq } = require('lodash')
+import SPDX from '@clearlydefined/spdx'
+import lodash from 'lodash'
+import { isDeclaredLicense, setIfValue } from '../../lib/utils.js'
+
+const { get, uniq } = lodash
 
 /**
  * FSFE REUSE summarizer class that processes harvested data from the REUSE tool.
@@ -118,4 +120,4 @@ class FsfeReuseSummarizer {
  * @param {SummarizerOptions} [options] - Configuration options for the summarizer
  * @returns {FsfeReuseSummarizer} A new FsfeReuseSummarizer instance
  */
-module.exports = options => new FsfeReuseSummarizer(options)
+export default options => new FsfeReuseSummarizer(options)

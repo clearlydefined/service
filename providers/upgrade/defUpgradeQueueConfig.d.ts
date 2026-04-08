@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type DefinitionQueueUpgrader from './defUpgradeQueue'
-import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
+import type DefinitionQueueUpgrader from './defUpgradeQueue.js'
+import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.js'
 
 /**
  * Factory function that creates a DefinitionQueueUpgrader with a default memory queue.
@@ -13,4 +13,4 @@ import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue'
  */
 declare function serviceFactory(options?: Partial<DefinitionQueueUpgraderOptions>): DefinitionQueueUpgrader
 
-export = serviceFactory
+export default serviceFactory

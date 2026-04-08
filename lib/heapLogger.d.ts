@@ -29,4 +29,3 @@ export interface HeapLogger {
 declare function trySetHeapLoggingAtInterval(config: HeapLoggerConfig, logger: HeapLogger): void
 
 export default trySetHeapLoggingAtInterval
-export = trySetHeapLoggingAtInterval

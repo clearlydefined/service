@@ -5,8 +5,9 @@
 /** @typedef {import('express').Response} Response */
 /** @typedef {import('../business/statusService').StatusService} StatusService */
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
 const router = express.Router()
 
 router.get('/', (_request, response) => {
@@ -34,4 +35,4 @@ function setup(service) {
   return router
 }
 
-module.exports = setup
+export default setup

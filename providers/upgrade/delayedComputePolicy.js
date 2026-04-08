@@ -1,10 +1,10 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const logger = require('../logging/logger')
-const { setup } = require('./process')
-const { SkipUpgradePolicy } = require('./skipUpgradePolicy')
-const Cache = require('../caching/memory')
+import Cache from '../caching/memory.js'
+import logger from '../logging/logger.js'
+import { setup } from './process.js'
+import { SkipUpgradePolicy } from './skipUpgradePolicy.js'
 
 /** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
 /** @typedef {import('./delayedComputePolicy').DelayedComputePolicyOptions} DelayedComputePolicyOptions */
@@ -80,6 +80,4 @@ class DelayedComputePolicy {
   }
 }
 
-module.exports = {
-  DelayedComputePolicy
-}
+export { DelayedComputePolicy }

@@ -1,12 +1,11 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { expect } from 'chai'
+import esmock from 'esmock'
+import httpMocks from 'node-mocks-http'
 import type { SinonStub } from 'sinon'
-
-const { expect } = require('chai')
-const httpMocks = require('node-mocks-http')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+import sinon from 'sinon'
 
 const logger = () => ({
   debug: () => {},
@@ -14,8 +13,8 @@ const logger = () => ({
   info: () => {}
 })
 
-const definitionsRoutes = proxyquire('../../routes/definitions', {
-  '../providers/logging/logger': logger
+const definitionsRoutes = await esmock('../../routes/definitions.js', {
+  '../../providers/logging/logger.js': logger
 })
 
 describe('Definition route', () => {
@@ -144,6 +143,7 @@ describe('Definition adjust result keys ', () => {
   }
 
   beforeEach(() => {
+    // @ts-expect-error - test passes stub directly
     router = createRoutes(sinon.stub())
   })
 

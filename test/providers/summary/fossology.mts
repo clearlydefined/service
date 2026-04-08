@@ -7,7 +7,6 @@ import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Summarizer from '../../../providers/summary/fossology.js'
 
-// @ts-expect-error - Node 24 runs .ts as ESM but TypeScript infers CJS
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const summarizer = (Summarizer as (...args: any[]) => any)()
 summarizer.logger = { info: () => {} }

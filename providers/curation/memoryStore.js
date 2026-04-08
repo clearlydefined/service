@@ -6,8 +6,8 @@
 /** @typedef {import('.').ContributionPR} ContributionPR */
 /** @typedef {import('.').Contribution} Contribution */
 
-const EntityCoordinates = require('../../lib/entityCoordinates')
-const logger = require('../logging/logger')
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import logger from '../logging/logger.js'
 
 class MemoryStore {
   /** @param {Record<string, unknown>} [options] */
@@ -89,4 +89,4 @@ class MemoryStore {
   }
 }
 
-module.exports = /** @param {Record<string, unknown>} [options] */ options => new MemoryStore(options)
+export default /** @param {Record<string, unknown>} [options] */ options => new MemoryStore(options)

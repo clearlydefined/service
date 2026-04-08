@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DefinitionStore, DispatchDefinitionStore } from './dispatchDefinitionStore'
+import type { DefinitionStore, DispatchDefinitionStore } from './dispatchDefinitionStore.js'
 
 /** Options for configuring a dispatch definition store */
 export interface DispatchConfigOptions {
@@ -19,4 +19,4 @@ export interface DispatchConfigOptions {
  */
 declare function definition(options: DispatchConfigOptions): DispatchDefinitionStore
 
-export = definition
+export default definition

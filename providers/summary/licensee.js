@@ -10,9 +10,11 @@
  * @typedef {import('../../lib/utils').FileEntry} FileEntry
  */
 
-const { setIfValue, isDeclaredLicense, isLicenseFile } = require('../../lib/utils')
-const SPDX = require('@clearlydefined/spdx')
-const { get, uniq } = require('lodash')
+import SPDX from '@clearlydefined/spdx'
+import lodash from 'lodash'
+import { isDeclaredLicense, isLicenseFile, setIfValue } from '../../lib/utils.js'
+
+const { get, uniq } = lodash
 
 /**
  * Licensee summarizer class that processes harvested data from the Licensee tool.
@@ -103,4 +105,4 @@ class LicenseeSummarizer {
  * @param {SummarizerOptions} [options] - Configuration options for the summarizer
  * @returns {LicenseeSummarizer} A new LicenseeSummarizer instance
  */
-module.exports = options => new LicenseeSummarizer(options)
+export default options => new LicenseeSummarizer(options)

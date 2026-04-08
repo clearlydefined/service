@@ -3,8 +3,8 @@
 
 /** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
 
-const config = require('painless-config')
-const AzureStorageQueue = require('../queueing/azureStorageQueue')
+import config from 'painless-config'
+import AzureStorageQueue from '../queueing/azureStorageQueue.js'
 
 /** @param {AzureStorageQueueOptions} [options] */
 function azure(options) {
@@ -15,4 +15,4 @@ function azure(options) {
   return new AzureStorageQueue(realOptions)
 }
 
-module.exports = azure
+export default azure

@@ -5,13 +5,15 @@
 /** @typedef {import('express').Response} Response */
 /** @typedef {import('../business/noticeService').NoticeService} NoticeService */
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const express = require('express')
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
 const router = express.Router()
-const EntityCoordinates = require('../lib/entityCoordinates')
-const validator = require('../schemas/validator')
-const logger = require('../providers/logging/logger')
-const bodyParser = require('body-parser')
+
+import bodyParser from 'body-parser'
+import EntityCoordinates from '../lib/entityCoordinates.js'
+import logger from '../providers/logging/logger.js'
+import validator from '../schemas/validator.js'
 
 // Post a (set of) component to be included in a single NOTICE file
 router.post('/', bodyParser.json({ limit: '0.6mb' }), asyncMiddleware(generateNotices))
@@ -54,4 +56,4 @@ function setup(notice) {
   noticeService = notice
   return router
 }
-module.exports = setup
+export default setup

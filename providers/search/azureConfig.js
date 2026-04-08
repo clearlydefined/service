@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const search = require('./azureSearch')
+import config from 'painless-config'
+import search from './azureSearch.js'
 
 /**
  * @param {import('./azureSearch').AzureSearchOptions} [options]
@@ -23,4 +23,4 @@ function serviceFactory(options) {
   return search(realOptions)
 }
 
-module.exports = serviceFactory
+export default serviceFactory

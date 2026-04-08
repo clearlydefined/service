@@ -12,7 +12,7 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-const logger = require('../providers/logging/logger')
+import logger from '../providers/logging/logger.js'
 
 /**
  * Service for computing and caching statistics about definitions.
@@ -181,4 +181,4 @@ class StatsService {
  * @param {ICache} cache - Cache for storing results
  * @returns {StatsService} A new StatsService instance
  */
-module.exports = (definitionService, searchService, cache) => new StatsService(definitionService, searchService, cache)
+export default (definitionService, searchService, cache) => new StatsService(definitionService, searchService, cache)

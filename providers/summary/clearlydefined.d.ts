@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { FileEntry, SourceLocationSpec } from '../../lib/utils'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { FileEntry, SourceLocationSpec } from '../../lib/utils.js'
+import type { SummarizerOptions } from './index.js'
 
 /** Registry entry for Debian packages */
 export interface DebianRegistryEntry {
@@ -302,4 +302,4 @@ export declare class Summarizer {
  */
 declare function clearlydefinedSummarizerFactory(options?: SummarizerOptions): Summarizer
 
-export = clearlydefinedSummarizerFactory
+export default clearlydefinedSummarizerFactory

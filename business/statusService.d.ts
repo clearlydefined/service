@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from '../providers/caching'
-import type { Logger } from '../providers/logging'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 /** Options for the StatusService */
 export interface StatusServiceOptions {
@@ -117,4 +117,3 @@ export declare class StatusService {
 declare function createStatusService(options: StatusServiceOptions, cache: ICache): StatusService
 
 export default createStatusService
-export = createStatusService

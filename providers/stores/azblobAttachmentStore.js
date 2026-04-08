@@ -6,11 +6,13 @@
  * @typedef {import('./azblobAttachmentStore').AzBlobAttachmentStoreOptions} AzBlobAttachmentStoreOptions
  */
 
-const azure = require('azure-storage')
-const { promisify } = require('node:util')
-const Bottleneck = require('bottleneck').default
+import { promisify } from 'node:util'
+import azure from 'azure-storage'
+import Bottleneck from 'bottleneck'
+
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
-const logger = require('../logging/logger')
+
+import logger from '../logging/logger.js'
 
 /**
  * Azure Blob Storage implementation for storing and retrieving attachments.
@@ -73,4 +75,4 @@ class AzBlobAttachmentStore {
  * @param {AzBlobAttachmentStoreOptions} options - Configuration options for the store
  * @returns {AzBlobAttachmentStore} A new AzBlobAttachmentStore instance
  */
-module.exports = options => new AzBlobAttachmentStore(options)
+export default options => new AzBlobAttachmentStore(options)

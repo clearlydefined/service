@@ -1,9 +1,9 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { createClient } = require('redis')
-const pako = require('pako')
-const logger = require('../logging/logger')
+import pako from 'pako'
+import { createClient } from 'redis'
+import logger from '../logging/logger.js'
 
 /**
  * @typedef {import('./redis.d.ts').RedisCacheOptions} RedisCacheOptions
@@ -220,5 +220,5 @@ class RedisCache {
  * @param {RedisCacheOptions} options - Configuration options for the Redis connection
  * @returns {RedisCache} A new RedisCache instance
  */
-module.exports = options => new RedisCache(options)
-module.exports.RedisCache = RedisCache
+export default options => new RedisCache(options)
+export { RedisCache }

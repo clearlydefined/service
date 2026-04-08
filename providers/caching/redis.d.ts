@@ -1,9 +1,9 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { BaseCacheOptions, ICache } from './index.js'
 import type { RedisClientType } from 'redis'
-import type { BaseCacheOptions, ICache } from '.'
-import type { Logger } from '../logging'
+import type { Logger } from '../logging/index.js'
 
 /** Configuration options for Redis cache connection */
 export interface RedisCacheOptions extends BaseCacheOptions {
@@ -115,9 +115,5 @@ declare class RedisCache implements ICache {
  */
 declare function createRedisCache(options: RedisCacheOptions): RedisCache
 
-declare namespace createRedisCache {
-  export { RedisCache }
-}
-
-export = createRedisCache
-export type { RedisCacheOptions }
+export default createRedisCache
+export { RedisCache }

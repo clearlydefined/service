@@ -85,4 +85,3 @@ export declare class EntityCoordinates implements EntityCoordinatesSpec {
 }
 
 export default EntityCoordinates
-export = EntityCoordinates

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const crawler = require('./crawler')
-const cacheBasedCrawler = require('./cacheBasedCrawler')
+import config from 'painless-config'
+import cacheBasedCrawler from './cacheBasedCrawler.js'
+import crawler from './crawler.js'
 
 /**
  * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
@@ -27,4 +27,4 @@ function serviceFactory(options) {
   return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester })
 }
 
-module.exports = serviceFactory
+export default serviceFactory

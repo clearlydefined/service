@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from './caching'
-import type { Logger } from './logging'
+import type { ICache } from './caching/index.js'
+import type { Logger } from './logging/index.js'
 
 /** Factory function that creates a provider instance */
 export type ProviderFactory<T = any> = (options?: any) => T
@@ -136,4 +136,4 @@ export interface Providers {
 
 declare const providers: Providers
 
-export = providers
+export default providers

@@ -1,13 +1,18 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const express = require('express')
+import express from 'express'
+
 const router = express.Router()
-const crypto = require('node:crypto')
-const EntityCoordinates = require('../lib/entityCoordinates')
-const { get } = require('lodash')
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const { parseUrn } = require('../lib/utils')
+
+import crypto from 'node:crypto'
+import lodash from 'lodash'
+import EntityCoordinates from '../lib/entityCoordinates.js'
+
+const { get } = lodash
+
+import { parseUrn } from '../lib/utils.js'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */
@@ -194,4 +199,4 @@ function setup(curation, definition, appLogger, githubToken, crawlerToken, testF
   return router
 }
 
-module.exports = setup
+export default setup

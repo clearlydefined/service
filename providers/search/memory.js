@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { values } = require('lodash')
-const AbstractSearch = require('./abstractSearch')
-const { get } = require('lodash')
-const EntityCoordinates = require('../../lib/entityCoordinates')
+import lodash from 'lodash'
+
+const { values, get } = lodash
+
+import EntityCoordinates from '../../lib/entityCoordinates.js'
+import AbstractSearch from './abstractSearch.js'
 
 class MemorySearch extends AbstractSearch {
   /**
@@ -85,4 +87,4 @@ class MemorySearch extends AbstractSearch {
   }
 }
 
-module.exports = /** @param {import('./abstractSearch').SearchOptions} options */ options => new MemorySearch(options)
+export default /** @param {import('./abstractSearch').SearchOptions} options */ options => new MemorySearch(options)

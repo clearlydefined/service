@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { AzureSearch, AzureSearchOptions } from './azureSearch'
+import type { AzureSearch, AzureSearchOptions } from './azureSearch.js'
 
 /**
  * Factory that creates an AzureSearch instance using configuration from
@@ -14,4 +14,3 @@ import type { AzureSearch, AzureSearchOptions } from './azureSearch'
 declare function serviceFactory(options?: Partial<AzureSearchOptions>): AzureSearch
 
 export default serviceFactory
-export = serviceFactory

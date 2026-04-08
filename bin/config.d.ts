@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { RecomputeQueueFactories } from '../providers'
 import type { RequestHandler, Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
 import type {
@@ -12,15 +11,16 @@ import type {
   HarvestStore,
   RecomputeHandler,
   SearchService
-} from '../business/definitionService'
-import type { AttachmentStore } from '../business/noticeService'
-import type { StatsSearchService } from '../business/statsService'
-import type { PermissionsConfig } from '../middleware/permissions'
-import type { ICache } from '../providers/caching'
-import type { CurationHarvestStore, ICurationStore } from '../providers/curation'
-import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process'
-import type { Logger } from '../providers/logging'
-import type { IQueue } from '../providers/queueing'
+} from '../business/definitionService.js'
+import type { AttachmentStore } from '../business/noticeService.js'
+import type { StatsSearchService } from '../business/statsService.js'
+import type { PermissionsConfig } from '../middleware/permissions.js'
+import type { ICache } from '../providers/caching/index.js'
+import type { CurationHarvestStore, ICurationStore } from '../providers/curation/index.js'
+import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process.js'
+import type { Logger } from '../providers/logging/index.js'
+import type { IQueue } from '../providers/queueing/index.js'
+import type { RecomputeQueueFactories } from '../providers.js'
 
 /** Provider instance that supports async initialization */
 interface Initializable {
@@ -49,7 +49,7 @@ interface AuthServiceModule {
 
 /** Application configuration built from environment variables and provider factories */
 interface AppConfig {
-  summary: Record<string, unknown>
+  summary: import('../business/summarizer').SummaryServiceOptions
   logging: {
     logger: () => Logger
   }
@@ -117,8 +117,8 @@ interface AppConfig {
   }
 }
 
-export type { AppConfig, Initializable, ConfigEndpoints, AuthRouteModule, AuthServiceModule }
+export type { AppConfig, AuthRouteModule, AuthServiceModule, ConfigEndpoints, Initializable }
 
 declare const config: AppConfig
 
-export = config
+export default config

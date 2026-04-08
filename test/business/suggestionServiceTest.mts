@@ -18,7 +18,6 @@ const { get } = lodash
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
-// @ts-expect-error - Node 24 runs .ts files as ESM via detect-module, but TypeScript infers CJS
 const testDir = dirname(fileURLToPath(import.meta.url))
 
 const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')

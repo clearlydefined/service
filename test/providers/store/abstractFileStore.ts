@@ -1,15 +1,19 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const proxyquire = require('proxyquire')
-const sinon = require('sinon')
+import esmock from 'esmock'
+import sinon from 'sinon'
+
 const sandbox = sinon.createSandbox()
-const deepEqualInAnyOrder = require('deep-equal-in-any-order')
-const chai = require('chai')
+
+import * as chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
-const EntityCoordinates = require('../../../lib/entityCoordinates')
-const AbstractFileStore = require('../../../providers/stores/abstractFileStore')
+
+import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 
 describe('AbstractFileStore', () => {
   const logger = {
@@ -27,7 +31,7 @@ describe('AbstractFileStore', () => {
       '/foo/npm/npmjs/-/test/revision/2.0/tool/testtool2/3.0.json': {}
     }
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const recursiveStub = async path => {
         path = path.replace(/\\/g, '/')
         if (path.includes('error')) {
@@ -46,7 +50,7 @@ describe('AbstractFileStore', () => {
           cb(null, JSON.stringify({ path }))
         }
       }
-      FileStore = proxyquire('../../../providers/stores/abstractFileStore', {
+      FileStore = await esmock('../../../providers/stores/abstractFileStore.js', {
         'recursive-readdir': recursiveStub,
         'node:fs': fsStub
       })
@@ -191,8 +195,10 @@ describe('AbstractFileStore', () => {
     ]
     for (const input of data) {
       it(`works well for ${input.path}`, () => {
+        // @ts-expect-error - test uses partial Logger mock
         const fileStore = new AbstractFileStore({ location: input.location, logger })
         const separator = input.location.includes('/') ? '/' : '\\'
+        // @ts-expect-error - test accesses protected method and uses plain object coordinates
         const result = fileStore._toStoragePathFromCoordinates(input.coordinates)
         // account for platform differences in path separator.
         const normalizedResult = result.replace(/\\/g, '/')
@@ -308,8 +314,8 @@ describe('AbstractFileStore', () => {
       }
     ]
 
-    beforeEach(() => {
-      FileStore = proxyquire('../../../providers/stores/abstractFileStore', {
+    beforeEach(async () => {
+      FileStore = await esmock('../../../providers/stores/abstractFileStore.js', {
         'recursive-readdir': async path =>
           Object.keys({
             '/foo/npm/npmjs/-/test/revision/1.0/tool/toolA/1.0.json': {},

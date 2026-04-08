@@ -12,15 +12,15 @@ import type {
   GitHubCurationOptions,
   GitHubPR,
   ICurationStore
-} from '.'
-import type Curation from '../../lib/curation'
-import type { CurationRevision } from '../../lib/curation'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { GitHubClient } from '../../lib/github'
-import type { LicenseMatcher } from '../../lib/licenseMatcher'
-import type { Definition } from '../../lib/utils'
-import type { ICache } from '../caching'
-import type { Logger } from '../logging'
+} from './index.js'
+import type Curation from '../../lib/curation.js'
+import type { CurationRevision } from '../../lib/curation.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { GitHubClient } from '../../lib/github.js'
+import type { LicenseMatcher } from '../../lib/licenseMatcher.js'
+import type { Definition } from '../../lib/utils.js'
+import type { ICache } from '../caching/index.js'
+import type { Logger } from '../logging/index.js'
 
 /** User info returned from the GitHub API */
 export interface GitHubUserInfo {
@@ -236,4 +236,3 @@ declare function createGitHubCurationService(
 ): GitHubCurationService
 
 export default createGitHubCurationService
-export = createGitHubCurationService

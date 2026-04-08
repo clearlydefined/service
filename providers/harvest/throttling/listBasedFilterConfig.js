@@ -1,9 +1,9 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const config = require('painless-config')
-const ListBasedFilter = require('./listBasedFilter')
-const loggerFactory = require('../../logging/logger')
+import config from 'painless-config'
+import loggerFactory from '../../logging/logger.js'
+import ListBasedFilter from './listBasedFilter.js'
 
 /**
  * @typedef {import('../../logging').Logger} Logger
@@ -43,4 +43,4 @@ function throttlerFactory(listSpec) {
   return new ListBasedFilter({ blacklist, logger })
 }
 
-module.exports = throttlerFactory
+export default throttlerFactory

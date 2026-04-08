@@ -15,6 +15,4 @@ class OnDemandComputePolicy {
   }
 }
 
-module.exports = {
-  OnDemandComputePolicy
-}
+export { OnDemandComputePolicy }

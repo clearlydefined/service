@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../lib/entityCoordinates'
+import type { EntityCoordinates } from '../lib/entityCoordinates.js'
 
 /** Summarizer function interface */
 export interface Summarizer {
@@ -61,4 +61,3 @@ export declare class SummaryService {
 declare function createSummaryService(options: SummaryServiceOptions): SummaryService
 
 export default createSummaryService
-export = createSummaryService

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { UpdateResult } from 'mongodb'
-import type { EntityCoordinates } from '../../lib/entityCoordinates'
-import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore'
-import AbstractMongoDefinitionStore = require('./abstractMongoDefinitionStore')
+import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.js'
+import type AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
 
 /** Trimmed definition object (without files) */
 export interface TrimmedDefinition {
@@ -81,4 +81,4 @@ declare class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
  */
 declare function createTrimmedMongoDefinitionStore(options: MongoDefinitionStoreOptions): TrimmedMongoDefinitionStore
 
-export = createTrimmedMongoDefinitionStore
+export default createTrimmedMongoDefinitionStore

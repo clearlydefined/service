@@ -1,7 +1,7 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from '../providers/caching'
+import type { ICache } from '../providers/caching/index.js'
 
 /** Configuration mapping of Conda channel names to their base URLs */
 export interface CondaChannels {
@@ -127,4 +127,4 @@ declare class CondaRepoAccess {
  */
 declare function createCondaRepoAccess(cache?: ICache): CondaRepoAccess
 
-export = createCondaRepoAccess
+export default createCondaRepoAccess

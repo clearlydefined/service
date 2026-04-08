@@ -1,11 +1,16 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const asyncMiddleware = require('../middleware/asyncMiddleware')
-const router = require('express').Router()
-const { callFetch: requestPromise } = require('../lib/fetch')
-const { promisify } = require('node:util')
-const parseString = promisify(require('xml2js').parseString)
+import express from 'express'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+
+const router = express.Router()
+
+import { promisify } from 'node:util'
+import xml2js from 'xml2js'
+import { callFetch as requestPromise } from '../lib/fetch.js'
+
+const parseString = promisify(xml2js.parseString)
 
 //Example URL to request XML file with group ID "android.arch.navigation": https://dl.google.com/android/maven2/android/arch/navigation/group-index.xml
 
@@ -41,4 +46,4 @@ function setup() {
   return router
 }
 
-module.exports = setup
+export default setup

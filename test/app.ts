@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const proxyquire = require('proxyquire')
-const sinon = require('sinon')
-const assert = require('node:assert')
-const Application = require('../app')
+import assert from 'node:assert'
+import esmock from 'esmock'
+import sinon from 'sinon'
+import Application from '../app.js'
 
 process.env['CURATION_GITHUB_TOKEN'] = '123'
 process.env['GITLAB_TOKEN'] = 'abc'
 
-const config = proxyquire('../bin/config', {
+const config = await esmock('../bin/config.js', {
   ['painless-config']: {
     get: (name: string) => {
       return (

@@ -32,7 +32,7 @@ let logger
  * @returns {Logger} The global logger instance
  * @throws {Error} If no logger has been initialized and none is provided
  */
-module.exports = loggerValue => {
+export default loggerValue => {
   if (loggerValue && !logger) {
     logger = loggerValue
   }

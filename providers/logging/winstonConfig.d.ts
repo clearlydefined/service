@@ -34,7 +34,7 @@ export interface WinstonLoggerOptions {
  */
 declare function factory(options?: WinstonLoggerOptions): winston.Logger
 
-export = factory
+export default factory
 
 /** Sanitize sensitive HTTP headers by redacting their values. */
 export function sanitizeHeaders(headers: Record<string, string> | null | undefined): Record<string, string>

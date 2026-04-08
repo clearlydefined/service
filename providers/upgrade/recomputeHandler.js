@@ -1,13 +1,13 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-const { factory: versionCheckFactory } = require('./defVersionCheck')
-const DefinitionQueueUpgrader = require('./defUpgradeQueue')
-const { OnDemandComputePolicy } = require('./onDemandComputePolicy')
-const { DelayedComputePolicy } = require('./delayedComputePolicy')
-const memoryQueueConfig = require('./memoryQueueConfig')
-const Cache = require('../caching/memory')
-const logger = require('../logging/logger')
+import Cache from '../caching/memory.js'
+import logger from '../logging/logger.js'
+import DefinitionQueueUpgrader from './defUpgradeQueue.js'
+import { factory as versionCheckFactory } from './defVersionCheck.js'
+import { DelayedComputePolicy } from './delayedComputePolicy.js'
+import memoryQueueConfig from './memoryQueueConfig.js'
+import { OnDemandComputePolicy } from './onDemandComputePolicy.js'
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */
@@ -137,8 +137,4 @@ function delayedFactory(options = {}) {
   })
 }
 
-module.exports = {
-  RecomputeHandler,
-  defaultFactory,
-  delayedFactory
-}
+export { defaultFactory, delayedFactory, RecomputeHandler }

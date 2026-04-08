@@ -12,9 +12,11 @@
  * @typedef {import('./mongo').Definition} Definition
  */
 
-const { clone, get, range } = require('lodash')
-const AbstractMongoDefinitionStore = require('./abstractMongoDefinitionStore')
-const { escapeRegExp } = require('lodash')
+import lodash from 'lodash'
+
+const { clone, get, range, escapeRegExp } = lodash
+
+import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
 
 /**
  * MongoDB implementation for storing component definitions with pagination support.
@@ -167,4 +169,4 @@ class MongoStore extends AbstractMongoDefinitionStore {
  * @param {MongoDefinitionStoreOptions} options - Configuration options for the store
  * @returns {MongoStore} A new MongoStore instance
  */
-module.exports = options => new MongoStore(options)
+export default options => new MongoStore(options)

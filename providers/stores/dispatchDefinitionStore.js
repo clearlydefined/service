@@ -11,7 +11,7 @@
  * @typedef {import('./dispatchDefinitionStore').DispatchDefinitionStoreOptions} DispatchDefinitionStoreOptions
  */
 
-const logger = require('../logging/logger')
+import logger from '../logging/logger.js'
 
 /**
  * A definition store that dispatches operations to multiple underlying stores.
@@ -142,4 +142,4 @@ class DispatchDefinitionStore {
  * @param {DispatchDefinitionStoreOptions} options - Configuration options for the store
  * @returns {DispatchDefinitionStore} A new DispatchDefinitionStore instance
  */
-module.exports = options => new DispatchDefinitionStore(options)
+export default options => new DispatchDefinitionStore(options)

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates'
-import type { FileEntry } from '../../lib/utils'
-import type { SummarizerOptions } from './index'
+import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type { FileEntry } from '../../lib/utils.js'
+import type { SummarizerOptions } from './index.js'
 
 /** FOSSology Nomos output */
 export interface FossologyNomosOutput {
@@ -115,4 +115,4 @@ export declare class FOSSologySummarizer {
  */
 declare function fossologySummarizerFactory(options?: SummarizerOptions): FOSSologySummarizer
 
-export = fossologySummarizerFactory
+export default fossologySummarizerFactory
