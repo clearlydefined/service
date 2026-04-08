@@ -69,7 +69,9 @@ describe('Curation service pr events', () => {
     initLogger({
       error: sinon.stub(),
       info: sinon.stub(),
-      debug: sinon.stub()
+      debug: sinon.stub(),
+      warn: sinon.stub(),
+      log: sinon.stub()
     })
   })
 
@@ -306,7 +308,9 @@ async function createService({ failsCompute = false, geitStubOverride = null }) 
   initLogger({
     error: sinon.stub(),
     info: sinon.stub(),
-    debug: sinon.stub()
+    debug: sinon.stub(),
+    warn: sinon.stub(),
+    log: sinon.stub()
   })
 
   const service = (await esmock('../../../providers/curation/github.js', { geit: geitStub }))(
