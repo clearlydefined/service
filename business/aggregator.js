@@ -39,7 +39,9 @@
  */
 
 import lodash from 'lodash'
+
 const { flattenDeep, get, set, intersectionBy } = lodash
+
 import { getLatestVersion, mergeDefinitions, setIfValue } from '../lib/utils.js'
 import logger from '../providers/logging/logger.js'
 

@@ -175,9 +175,4 @@ declare namespace authRoute {
   export function getStrategy(): GitHubStrategy
 }
 
-export {
-  authRoute as setup,
-  authRoute as router,
-  authRoute as usePassport,
-  authRoute as getStrategy
-}
+export { authRoute as setup, authRoute as router, authRoute as usePassport, authRoute as getStrategy }
