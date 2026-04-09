@@ -69,11 +69,11 @@ class CoordinatesMapper {
     // biome-ignore lint/style/noNonNullAssertion: Existing codebase pattern for accessing provider
     // biome-ignore lint/suspicious/noNonNullAssertedOptionalChain: Existing codebase pattern for accessing provider
     const mapper = this.mappers[coordinates?.provider!]
-    let mapped = this.cache.get(coordinates.toString())
+    let mapped = await Promise.resolve(this.cache.get(coordinates.toString()))
     if (mapper && !mapped) {
       mapped = await mapper.map(coordinates)
       if (mapped) {
-        this.cache.set(coordinates.toString(), mapped)
+        await Promise.resolve(this.cache.set(coordinates.toString(), mapped))
       }
     }
     return mapped || coordinates
