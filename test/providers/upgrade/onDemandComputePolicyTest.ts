@@ -9,7 +9,7 @@ chai.use(chaiAsPromised)
 import { expect } from 'chai'
 import sinon from 'sinon'
 import type { RecomputeContext } from '../../../business/definitionService.js'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import { OnDemandComputePolicy } from '../../../providers/upgrade/onDemandComputePolicy.js'
 
 describe('OnDemandComputePolicy', () => {

@@ -13,12 +13,12 @@ import type {
   GitHubPR,
   ICurationStore
 } from './index.js'
-import type Curation from '../../lib/curation.js'
-import type { CurationRevision } from '../../lib/curation.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
-import type { GitHubClient } from '../../lib/github.js'
-import type { LicenseMatcher } from '../../lib/licenseMatcher.js'
-import type { Definition } from '../../lib/utils.js'
+import type Curation from '../../lib/curation.ts'
+import type { CurationRevision } from '../../lib/curation.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { GitHubClient } from '../../lib/github.ts'
+import type { LicenseMatcher } from '../../lib/licenseMatcher.ts'
+import type { Definition } from '../../lib/utils.ts'
 import type { ICache } from '../caching/index.js'
 import type { Logger } from '../logging/index.js'
 

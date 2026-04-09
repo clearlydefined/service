@@ -1,8 +1,8 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates.js'
-import type { FileEntry } from '../../lib/utils.js'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../lib/utils.ts'
 import type { SummarizerOptions } from './index.js'
 
 /** REUSE license information */

@@ -13,15 +13,15 @@ import he from 'he'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
 import semver from 'semver'
-import EntityCoordinates from './entityCoordinates.js'
-import ResultCoordinates from './resultCoordinates.js'
+import EntityCoordinates from './entityCoordinates.ts'
+import ResultCoordinates from './resultCoordinates.ts'
 
 const { set, unset, union, sortBy, trim, uniqBy } = lodash
 
 import SPDX from '@clearlydefined/spdx'
 import extend from 'extend'
-import coordinatesMapperFactory from './coordinatesMapper.js'
-import scancodeMap from './scancodeMap.js'
+import coordinatesMapperFactory from './coordinatesMapper.ts'
+import scancodeMap from './scancodeMap.ts'
 
 const coordinatesMapper = coordinatesMapperFactory()
 

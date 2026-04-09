@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Document, Filter, InsertManyResult } from 'mongodb'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.js'
 import type AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
 

@@ -15,7 +15,7 @@ import xml2js from 'xml2js'
 
 const parseXml = promisify(xml2js.parseString)
 
-import GradleCoordinatesMapper from '../lib/gradleCoordinatesMapper.js'
+import GradleCoordinatesMapper from '../lib/gradleCoordinatesMapper.ts'
 
 // Gradle plugin documentation: https://docs.gradle.org/current/userguide/plugins.html
 const gradleHelper = new GradleCoordinatesMapper()

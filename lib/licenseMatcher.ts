@@ -13,7 +13,7 @@ import lodash from 'lodash'
 const { get, isEqual: isDeepEqual } = lodash
 
 import logger from '../providers/logging/logger.js'
-import { getLatestVersion, isLicenseFile } from './utils.js'
+import { getLatestVersion, isLicenseFile } from './utils.ts'
 
 class LicenseMatcher {
   /**

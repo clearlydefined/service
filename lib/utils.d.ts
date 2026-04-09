@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request } from 'express'
-import type EntityCoordinates from './entityCoordinates.js'
-import type { EntityCoordinatesSpec } from './entityCoordinates.js'
-import type ResultCoordinates from './resultCoordinates.js'
+import type EntityCoordinates from './entityCoordinates.ts'
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
+import type ResultCoordinates from './resultCoordinates.ts'
 
 /** Express request with route params for entity coordinates */
 export interface EntityCoordinatesRequest extends Request {

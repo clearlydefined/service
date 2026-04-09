@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { Contribution, ContributionPR, ICurationStore } from './index.js'
-import type Curation from '../../lib/curation.js'
-import type { CurationData } from '../../lib/curation.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type Curation from '../../lib/curation.ts'
+import type { CurationData } from '../../lib/curation.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 
 /**

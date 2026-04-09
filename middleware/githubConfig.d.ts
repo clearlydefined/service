@@ -4,7 +4,7 @@
 import type { RequestHandler } from 'express'
 import type { ICache } from '../providers/caching/index.js'
 import type authRoute from '../routes/auth.js'
-import type { GitHubMiddlewareOptions } from './github.js'
+import type { GitHubMiddlewareOptions } from './github.ts'
 import type { PermissionsConfig } from './permissions.js'
 
 /**

@@ -14,7 +14,7 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import { compareDates, isDeclaredLicense, setIfValue } from '../lib/utils.js'
+import { compareDates, isDeclaredLicense, setIfValue } from '../lib/utils.ts'
 
 /**
  * Service for generating suggestions to improve definitions.

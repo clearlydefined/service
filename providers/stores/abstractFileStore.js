@@ -7,12 +7,12 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import { promisify } from 'node:util'
 import recursive from 'recursive-readdir'
-import ResultCoordinates from '../../lib/resultCoordinates.js'
+import ResultCoordinates from '../../lib/resultCoordinates.ts'
 
 const require = createRequire(import.meta.url)
 const schema = require('../../schemas/definition-1.0.json')
 
-import { getLatestVersion } from '../../lib/utils.js'
+import { getLatestVersion } from '../../lib/utils.ts'
 import logger from '../logging/logger.js'
 
 /**

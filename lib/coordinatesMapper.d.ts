@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { ICache } from '../providers/caching/index.js'
-import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.js'
-import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.js'
-import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.js'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.ts'
+import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.ts'
+import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.ts'
 
 /** Interface for coordinate mappers that can transform coordinates */
 export interface ICoordinatesMapper {

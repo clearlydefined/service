@@ -8,8 +8,8 @@ import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import AggregatorService from '../../business/aggregator.js'
 import SummaryService from '../../business/summarizer.js'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import { setIfValue } from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import { setIfValue } from '../../lib/utils.ts'
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect

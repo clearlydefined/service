@@ -11,7 +11,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import lodash from 'lodash'
 import { mkdirp } from 'mkdirp'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import AbstractFileStore from './abstractFileStore.js'
 
 const { sortedUniq } = lodash

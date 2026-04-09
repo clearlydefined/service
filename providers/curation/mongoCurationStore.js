@@ -15,7 +15,7 @@ import lodash from 'lodash'
 import { MongoClient } from 'mongodb'
 import promiseRetry from 'promise-retry'
 import throat from 'throat'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 const { get } = lodash
 

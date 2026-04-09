@@ -10,7 +10,7 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 const testCoordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
 describe('ClearlyDescribedSummarizer general behavior', () => {

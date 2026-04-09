@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 import type { ICache } from '../caching/index.js'
 import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.js'

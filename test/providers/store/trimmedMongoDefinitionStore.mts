@@ -8,7 +8,7 @@ import { expect } from 'chai'
 import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import sinon from 'sinon'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
 import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
 

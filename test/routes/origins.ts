@@ -18,7 +18,7 @@ describe('Pypi origin routes', () => {
   beforeEach(async () => {
     requestPromiseStub = sinon.stub()
     const createRoute = await esmock('../../routes/originPyPi.js', {
-      '../../lib/fetch.js': { callFetch: requestPromiseStub }
+      '../../lib/fetch.ts': { callFetch: requestPromiseStub }
     })
     router = createRoute(true)
   })
@@ -107,8 +107,8 @@ describe('Conda origin routes', () => {
   let createCondaRepoAccess
 
   before(async () => {
-    createCondaRepoAccess = await esmock('../../lib/condaRepoAccess.js', {
-      '../../lib/fetch.js': fetchModuleStub
+    createCondaRepoAccess = await esmock('../../lib/condaRepoAccess.ts', {
+      '../../lib/fetch.ts': fetchModuleStub
     })
   })
 

@@ -1,7 +1,7 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates.js'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
 import type { ICache } from '../caching/index.js'
 import type { Logger } from '../logging/index.js'
 

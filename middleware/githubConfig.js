@@ -11,7 +11,7 @@
 import config from 'painless-config'
 import memoryCache from '../providers/caching/memory.js'
 import * as githubRoute from '../routes/auth.js'
-import githubMiddleware from './github.js'
+import githubMiddleware from './github.ts'
 import * as permissions from './permissions.js'
 
 /** @type {GitHubConfigOptions} */

@@ -9,7 +9,7 @@
  */
 
 import lodash from 'lodash'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import AbstractAzBlobStore from './abstractAzblobStore.js'
 import AbstractFileStore from './abstractFileStore.js'
 

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import memoryCache from '../providers/caching/memory.js'
-import GradleCoordinatesMapper from './gradleCoordinatesMapper.js'
-import PypiCoordinatesMapper from './pypiCoordinatesMapper.js'
+import GradleCoordinatesMapper from './gradleCoordinatesMapper.ts'
+import PypiCoordinatesMapper from './pypiCoordinatesMapper.ts'
 
 const defaultcache = memoryCache({ defaultTtlSeconds: 60 * 60 * 24 /* 24 hours */ })
 

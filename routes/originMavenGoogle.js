@@ -8,7 +8,7 @@ const router = express.Router()
 
 import { promisify } from 'node:util'
 import xml2js from 'xml2js'
-import { callFetch as requestPromise } from '../lib/fetch.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const parseString = promisify(xml2js.parseString)
 

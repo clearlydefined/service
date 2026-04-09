@@ -15,7 +15,7 @@
  */
 
 import lodash from 'lodash'
-import { isDeclaredLicense } from '../lib/utils.js'
+import { isDeclaredLicense } from '../lib/utils.ts'
 
 const { get } = lodash
 

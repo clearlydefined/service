@@ -3,8 +3,8 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import coordinatesMapper from '../../lib/coordinatesMapper.js'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import coordinatesMapper from '../../lib/coordinatesMapper.ts'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 function pypiCoordinates(name: string) {
   return EntityCoordinates.fromString(`pypi/pypi/-/${name}/1.1.0a4`)

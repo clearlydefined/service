@@ -7,9 +7,9 @@ import extend from 'extend'
 import lodash from 'lodash'
 import sinon from 'sinon'
 import DefinitionService from '../../../business/definitionService.js'
-import Curation from '../../../lib/curation.js'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
-import GitHubCurationService from '../../../providers/curation/github.js'
+import Curation from '../../../lib/curation.ts'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
+import GitHubCurationService from '../../../providers/curation/github.ts'
 import CurationStore from '../../../providers/curation/memoryStore.js'
 
 const { find } = lodash

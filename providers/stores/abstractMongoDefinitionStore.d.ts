@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Collection, Db, Document, Filter, MongoClient, Sort } from 'mongodb'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AbstractMongoDefinitionStore */

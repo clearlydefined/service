@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../lib/entityCoordinates.js'
-import type { FileEntry, SourceLocationSpec } from '../../lib/utils.js'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry, SourceLocationSpec } from '../../lib/utils.ts'
 import type { SummarizerOptions } from './index.js'
 
 /** Registry entry for Debian packages */

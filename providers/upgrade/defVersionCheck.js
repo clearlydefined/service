@@ -7,7 +7,7 @@ import logger from '../logging/logger.js'
 
 const { get } = lodash
 
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 /**
  * @typedef {import('../logging').Logger} Logger

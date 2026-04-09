@@ -29,7 +29,7 @@ import {
   mergeDefinitions,
   setIfValue,
   updateSourceLocation
-} from '../../lib/utils.js'
+} from '../../lib/utils.ts'
 
 /** @type {Record<string, string>} */
 const mavenBasedUrls = {

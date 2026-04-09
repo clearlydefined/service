@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type Curation from '../../lib/curation.js'
-import type { CurationData, CurationRevision } from '../../lib/curation.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
-import type { Definition } from '../../lib/utils.js'
+import type Curation from '../../lib/curation.ts'
+import type { CurationData, CurationRevision } from '../../lib/curation.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { Definition } from '../../lib/utils.ts'
 
 /** Subset of DefinitionService methods used by GitHubCurationService */
 export interface CurationDefinitionService {

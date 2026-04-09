@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
-import type { ResultCoordinates } from '../../lib/resultCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 
 /** Options for configuring an AbstractAzBlobStore */

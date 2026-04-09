@@ -27,7 +27,7 @@ import {
   joinExpressions,
   normalizeLicenseExpression,
   setIfValue
-} from '../../../lib/utils.js'
+} from '../../../lib/utils.ts'
 
 /**
  * ScanCode Legacy summarizer class that processes harvested data from older

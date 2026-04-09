@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { Octokit } from '@octokit/rest'
-import { defaultHeaders } from './fetch.js'
+import { defaultHeaders } from './fetch.ts'
 
 /**
  * @typedef {import('./github').GitHubClientOptions} GitHubClientOptions

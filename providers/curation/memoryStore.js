@@ -6,7 +6,7 @@
 /** @typedef {import('.').ContributionPR} ContributionPR */
 /** @typedef {import('.').Contribution} Contribution */
 
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import logger from '../logging/logger.js'
 
 class MemoryStore {

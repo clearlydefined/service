@@ -1,8 +1,8 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { callFetch as requestPromise } from '../lib/fetch.js'
-import EntityCoordinates from './entityCoordinates.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
+import EntityCoordinates from './entityCoordinates.ts'
 
 /**
  * @typedef {import('./fetch').FetchFunction} FetchFunction

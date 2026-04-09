@@ -12,7 +12,7 @@
 import fs from 'node:fs'
 import lodash from 'lodash'
 import recursive from 'recursive-readdir'
-import ResultCoordinates from '../../lib/resultCoordinates.js'
+import ResultCoordinates from '../../lib/resultCoordinates.ts'
 import AbstractFileStore from './abstractFileStore.js'
 
 const { sortedUniq, get } = lodash

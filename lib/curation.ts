@@ -9,8 +9,8 @@
 import SPDX from '@clearlydefined/spdx'
 import yaml from 'js-yaml'
 import validator from '../schemas/validator.js'
-import EntityCoordinates from './entityCoordinates.js'
-import * as utils from './utils.js'
+import EntityCoordinates from './entityCoordinates.ts'
+import * as utils from './utils.ts'
 
 /**
  * Represents a curation document that can be applied to definitions

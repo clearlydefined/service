@@ -3,7 +3,7 @@
 
 /** @typedef {import('./resultCoordinates').ResultCoordinatesSpec} ResultCoordinatesSpec */
 
-import EntityCoordinates from './entityCoordinates.js'
+import EntityCoordinates from './entityCoordinates.ts'
 
 /** Represents result coordinates for a software component with associated tool information */
 class ResultCoordinates {

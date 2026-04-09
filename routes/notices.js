@@ -11,7 +11,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 const router = express.Router()
 
 import bodyParser from 'body-parser'
-import EntityCoordinates from '../lib/entityCoordinates.js'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
 import logger from '../providers/logging/logger.js'
 import validator from '../schemas/validator.js'
 

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { expect } from 'chai'
 import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 
 const { uniq } = lodash
 

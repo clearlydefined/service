@@ -1,7 +1,7 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import validator from '../../../schemas/validator.js'
 import loggerFactory from '../../logging/logger.js'
 

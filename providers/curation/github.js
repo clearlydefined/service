@@ -30,16 +30,16 @@ import yaml from 'js-yaml'
 import { DateTime } from 'luxon'
 import throat from 'throat'
 import tmp from 'tmp'
-import Curation from '../../lib/curation.js'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import * as Github from '../../lib/github.js'
+import Curation from '../../lib/curation.ts'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import * as Github from '../../lib/github.ts'
 
 tmp.setGracefulCleanup()
 
 import { Cache } from 'memory-cache'
 import semver from 'semver'
-import { LicenseMatcher } from '../../lib/licenseMatcher.js'
-import { deCodeSlashes } from '../../lib/utils.js'
+import { LicenseMatcher } from '../../lib/licenseMatcher.ts'
+import { deCodeSlashes } from '../../lib/utils.ts'
 import logger from '../logging/logger.js'
 
 const hourInMS = 60 * 60 * 1000

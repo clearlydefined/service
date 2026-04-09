@@ -13,7 +13,7 @@ import {
   RedisBasedRateLimiter,
   setupApiRateLimiterAfterCachingInit,
   setupBatchApiRateLimiterAfterCachingInit
-} from '../../lib/rateLimit.js'
+} from '../../lib/rateLimit.ts'
 import MemoryCache from '../../providers/caching/memory.js'
 import { RedisCache } from '../../providers/caching/redis.js'
 

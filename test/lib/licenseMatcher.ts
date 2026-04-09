@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import type { LicenseMatchInput } from '../../lib/licenseMatcher.js'
-import { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher } from '../../lib/licenseMatcher.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { LicenseMatchInput } from '../../lib/licenseMatcher.ts'
+import { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher } from '../../lib/licenseMatcher.ts'
 
 describe('licenseMatcher.js', () => {
   describe('LicenseMatcher process()', () => {

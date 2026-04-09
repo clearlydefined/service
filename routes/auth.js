@@ -17,7 +17,7 @@ import { Octokit } from '@octokit/rest'
 import express from 'express'
 import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github'
-import { defaultHeaders } from '../lib/fetch.js'
+import { defaultHeaders } from '../lib/fetch.ts'
 
 const router = express.Router()
 

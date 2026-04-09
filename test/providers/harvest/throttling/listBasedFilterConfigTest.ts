@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import esmock from 'esmock'
-import EntityCoordinates from '../../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../../lib/entityCoordinates.ts'
 
 describe('ListBasedFilterConfig', () => {
   const makeFactory = async (overrides?: Record<string, unknown>) =>

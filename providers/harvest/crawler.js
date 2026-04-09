@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { callFetch as requestPromise } from '../../lib/fetch.js'
+import { callFetch as requestPromise } from '../../lib/fetch.ts'
 import logger from '../logging/logger.js'
 
 /**

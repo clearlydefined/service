@@ -3,7 +3,7 @@
 
 import { promisify } from 'node:util'
 import xml2js from 'xml2js'
-import { callFetch as requestPromise } from '../lib/fetch.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const parseXml = promisify(xml2js.parseString)
 
@@ -11,7 +11,7 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import EntityCoordinates from './entityCoordinates.js'
+import EntityCoordinates from './entityCoordinates.ts'
 
 /**
  * @typedef {import('./fetch').FetchFunction} FetchFunction

@@ -5,8 +5,8 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import { parseUrn } from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import { parseUrn } from '../../lib/utils.ts'
 
 /**
  * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage

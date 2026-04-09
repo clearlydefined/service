@@ -3,8 +3,8 @@
 
 import type { Collection, Db, MongoClient } from 'mongodb'
 import type { Contribution, ContributionPR, CurationListResult, ICurationStore } from './index.js'
-import type Curation from '../../lib/curation.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type Curation from '../../lib/curation.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 
 /** Options for MongoDB-backed curation store */

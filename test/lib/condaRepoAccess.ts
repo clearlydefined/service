@@ -5,7 +5,7 @@ import { assert } from 'chai'
 import esmock from 'esmock'
 import type { SinonStub } from 'sinon'
 import sinon from 'sinon'
-import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.js'
+import type { CondaChannelData, CondaRepoData } from '../../lib/condaRepoAccess.ts'
 import type { ICache } from '../../providers/caching/index.js'
 
 const requestPromiseStub: SinonStub = sinon.stub()
@@ -14,9 +14,9 @@ const fetchModuleStub = {
   callFetch: requestPromiseStub
 }
 
-const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.js')['default']> =
-  await esmock.strict('../../lib/condaRepoAccess.js', {
-    '../../lib/fetch.js': fetchModuleStub
+const createCondaRepoAccess: (cache?: ICache) => ReturnType<typeof import('../../lib/condaRepoAccess.ts')['default']> =
+  await esmock.strict('../../lib/condaRepoAccess.ts', {
+    '../../lib/fetch.ts': fetchModuleStub
   })
 
 const channelData: CondaChannelData = {

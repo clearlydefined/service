@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.js'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.ts'
 
 /** Represents the specification object used to create ResultCoordinates */
 export interface ResultCoordinatesSpec extends EntityCoordinatesSpec {

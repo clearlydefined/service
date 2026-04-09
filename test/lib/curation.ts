@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { expect } from 'chai'
 import yaml from 'js-yaml'
-import Curation from '../../lib/curation.js'
+import Curation from '../../lib/curation.ts'
 
 function errorMessage(curation: InstanceType<typeof Curation>, index = 0): string {
   return (curation.errors[index].error as { message: string }).message

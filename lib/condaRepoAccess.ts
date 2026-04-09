@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
-import { callFetch as requestPromise } from './fetch.js'
+import { callFetch as requestPromise } from './fetch.ts'
 
 const { uniq } = lodash
 

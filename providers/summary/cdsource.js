@@ -8,7 +8,7 @@
  * @typedef {import('./cdsource').CdSourceSummaryResult} CdSourceSummaryResult
  */
 
-import { extractDate } from '../../lib/utils.js'
+import { extractDate } from '../../lib/utils.ts'
 
 /**
  * CdSource summarizer class that processes harvested data from the ClearlyDefined
