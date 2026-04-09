@@ -1,13 +1,12 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Request, RequestHandler } from 'express'
-import type { ICache } from '../providers/caching/index.js'
-
 import crypto from 'node:crypto'
 import { Octokit } from '@octokit/rest'
+import type { Request, RequestHandler } from 'express'
 import { defaultHeaders } from '../lib/fetch.ts'
 import * as Github from '../lib/github.ts'
+import type { ICache } from '../providers/caching/index.js'
 import asyncMiddleware from './asyncMiddleware.ts'
 
 /**

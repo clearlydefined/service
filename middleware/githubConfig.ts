@@ -2,15 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 import type { RequestHandler } from 'express'
-import type { ICache } from '../providers/caching/index.js'
-import type { AuthEndpoints } from '../routes/auth.js'
-import type { GitHubMiddlewareOptions } from './github.ts'
-import type { PermissionsConfig } from './permissions.ts'
-
 import config from 'painless-config'
+import type { ICache } from '../providers/caching/index.js'
 import memoryCache from '../providers/caching/memory.js'
+import type { AuthEndpoints } from '../routes/auth.js'
 import * as githubRoute from '../routes/auth.js'
+import type { GitHubMiddlewareOptions } from './github.ts'
 import githubMiddleware from './github.ts'
+import type { PermissionsConfig } from './permissions.ts'
 import * as permissions from './permissions.ts'
 
 /**
