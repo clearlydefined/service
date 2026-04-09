@@ -8,7 +8,7 @@
 /** @typedef {import('./permissions').PermissionName} PermissionName */
 /** @typedef {import('./permissions').PermissionsConfig} PermissionsConfig */
 
-import asyncMiddleware from './asyncMiddleware.js'
+import asyncMiddleware from './asyncMiddleware.ts'
 
 /**
  * Creates middleware that checks if the user has the required permission.

@@ -12,7 +12,7 @@ import config from 'painless-config'
 import memoryCache from '../providers/caching/memory.js'
 import * as githubRoute from '../routes/auth.js'
 import githubMiddleware from './github.js'
-import * as permissions from './permissions.js'
+import * as permissions from './permissions.ts'
 
 /** @type {GitHubConfigOptions} */
 const defaultOptions = {

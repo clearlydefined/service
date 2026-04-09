@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
-import asyncMiddleware from '../middleware/asyncMiddleware.js'
+import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 import loggerFactory from '../providers/logging/logger.js'
 
 const router = express.Router()
@@ -10,7 +10,7 @@ const router = express.Router()
 import Curation from '../lib/curation.ts'
 import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
-import { permissionsCheck } from '../middleware/permissions.js'
+import { permissionsCheck } from '../middleware/permissions.ts'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */

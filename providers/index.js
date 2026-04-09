@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import githubAuthConfig from '../middleware/githubConfig.js'
+import githubAuthConfig from '../middleware/githubConfig.ts'
 import memoryCaching from '../providers/caching/memory.js'
 import redisConfig from '../providers/caching/redisConfig.js'
 import curationAzureQueueConfig from '../providers/curation/azureQueueConfig.js'

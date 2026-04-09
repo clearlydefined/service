@@ -14,7 +14,7 @@ import crypto from 'node:crypto'
 import { Octokit } from '@octokit/rest'
 import { defaultHeaders } from '../lib/fetch.ts'
 import * as Github from '../lib/github.ts'
-import asyncMiddleware from './asyncMiddleware.js'
+import asyncMiddleware from './asyncMiddleware.ts'
 
 /** @type {GitHubMiddlewareOptions | null} */
 let options = null

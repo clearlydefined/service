@@ -14,7 +14,7 @@ import type {
 } from '../business/definitionService.js'
 import type { AttachmentStore } from '../business/noticeService.js'
 import type { StatsSearchService } from '../business/statsService.js'
-import type { PermissionsConfig } from '../middleware/permissions.js'
+import type { PermissionsConfig } from '../middleware/permissions.ts'
 import type { ICache } from '../providers/caching/index.js'
 import type { CurationHarvestStore, ICurationStore } from '../providers/curation/index.js'
 import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process.js'

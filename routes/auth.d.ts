@@ -3,7 +3,7 @@
 
 import type { Router } from 'express'
 import type { Strategy as GitHubStrategy } from 'passport-github'
-import type { PermissionsConfig } from '../middleware/permissions.js'
+import type { PermissionsConfig } from '../middleware/permissions.ts'
 
 /**
  * Configuration options for the auth route module.

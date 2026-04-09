@@ -12,7 +12,7 @@ import EntityCoordinates from '../lib/entityCoordinates.ts'
 const { get } = lodash
 
 import { parseUrn } from '../lib/utils.ts'
-import asyncMiddleware from '../middleware/asyncMiddleware.js'
+import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */

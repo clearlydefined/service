@@ -6,7 +6,7 @@
 /** @typedef {import('../business/statusService').StatusService} StatusService */
 
 import express from 'express'
-import asyncMiddleware from '../middleware/asyncMiddleware.js'
+import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
 
