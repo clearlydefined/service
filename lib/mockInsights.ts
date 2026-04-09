@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import * as appInsights from 'applicationinsights'
 import type { Contracts, TelemetryClient } from 'applicationinsights'
+import * as appInsights from 'applicationinsights'
 
 /** Common interface for telemetry clients (real or mock). */
 export interface InsightsClient {
@@ -52,7 +52,11 @@ export class MockInsights implements InsightsClient {
     if (!connectionString || connectionString === 'mock') {
       _client = new MockInsights()
     } else {
-      appInsights.setup(connectionString ?? undefined).setAutoCollectPerformance(false).setAutoCollectDependencies(true).start()
+      appInsights
+        .setup(connectionString ?? undefined)
+        .setAutoCollectPerformance(false, false)
+        .setAutoCollectDependencies(true)
+        .start()
       if (echo) {
         _client = new MockInsights(appInsights.defaultClient)
       } else {
