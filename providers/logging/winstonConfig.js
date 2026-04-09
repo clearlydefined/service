@@ -4,7 +4,7 @@
 import appInsights from 'applicationinsights'
 import config from 'painless-config'
 import winston from 'winston'
-import mockInsights from '../../lib/mockInsights.js'
+import { MockInsights } from '../../lib/mockInsights.ts'
 
 const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
@@ -111,7 +111,7 @@ function factory(options) {
     ...options
   }
 
-  mockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
+  MockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
 
   const logFormat = winston.format.combine(
     sanitizeMeta(),
@@ -145,7 +145,7 @@ function factory(options) {
     ]
   })
 
-  const aiClient = mockInsights.getClient()
+  const aiClient = MockInsights.getClient()
 
   // Pipe Winston logs to Application Insights
   logger.on('data', info => {
