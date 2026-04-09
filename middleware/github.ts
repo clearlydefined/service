@@ -1,14 +1,8 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('express').NextFunction} NextFunction */
-/** @typedef {import('express').RequestHandler} RequestHandler */
-/** @typedef {import('@octokit/rest').Octokit} OctokitType */
-/** @typedef {import('../providers/caching').ICache} ICache */
-/** @typedef {import('./github').GitHubMiddlewareOptions} GitHubMiddlewareOptions */
-/** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
+import type { Request, RequestHandler } from 'express'
+import type { ICache } from '../providers/caching/index.js'
 
 import crypto from 'node:crypto'
 import { Octokit } from '@octokit/rest'
@@ -16,19 +10,63 @@ import { defaultHeaders } from '../lib/fetch.ts'
 import * as Github from '../lib/github.ts'
 import asyncMiddleware from './asyncMiddleware.ts'
 
-/** @type {GitHubMiddlewareOptions | null} */
-let options = null
-/** @type {ICache | null} */
-let cache = null
+/**
+ * GitHub user information retrieved from the GitHub API.
+ */
+export interface GitHubUserInfo {
+  name: string | null
+  login: string
+  email: string | null
+}
+
+/**
+ * GitHub-related data and methods attached to the request.
+ */
+export interface GitHubUserContext {
+  client: Octokit | null
+  _info?: GitHubUserInfo
+  _teams?: string[]
+  getInfo(): Promise<GitHubUserInfo>
+  getTeams(): Promise<string[]>
+}
+
+/**
+ * Service-level GitHub context attached to the request.
+ */
+export interface GitHubServiceContext {
+  client: Octokit
+}
+
+/**
+ * Options for configuring the GitHub middleware.
+ */
+export interface GitHubMiddlewareOptions {
+  token: string
+  org: string
+}
+
+/**
+ * Express application locals extended with GitHub contexts.
+ * These are attached by the GitHub middleware.
+ */
+export interface GitHubAppLocals {
+  user: {
+    github: GitHubUserContext
+  }
+  service: {
+    github: GitHubServiceContext
+  }
+}
+
+let options: GitHubMiddlewareOptions | null = null
+let cache: ICache | null = null
 
 /**
  * GitHub convenience middleware that injects a client into the request object
  * that is pre-configured for the current user. Also injects a cached copy
  * of relevant teams the user is a member of.
- *
- * @type {RequestHandler}
  */
-const middleware = asyncMiddleware(async (req, res, next) => {
+const middleware: RequestHandler = asyncMiddleware(async (req, res, next) => {
   const authHeader = req.get('authorization')
   // if there is an auth header, it had better be Bearer
   if (authHeader && !authHeader.startsWith('Bearer ')) {
@@ -65,12 +103,7 @@ const middleware = asyncMiddleware(async (req, res, next) => {
 })
 
 // Create and configure a GitHub service client and attach it to the request
-/**
- * @param {Request} req - Express request object
- * @param {string} token - GitHub token
- * @returns {Promise<OctokitType>} The authenticated GitHub client
- */
-async function setupServiceClient(req, token) {
+async function setupServiceClient(req: Request, token: string): Promise<Octokit> {
   const client = Github.getClient({ token })
   if (!client) {
     throw new Error('GitHub client could not be created. Please check your configuration.')
@@ -80,12 +113,7 @@ async function setupServiceClient(req, token) {
 }
 
 // Create and configure a GitHub user client and attach it to the request
-/**
- * @param {Request} req - Express request object
- * @param {string | null} token - GitHub user token, or null for anonymous
- * @returns {Promise<OctokitType | null>} The authenticated GitHub client, or null if no token
- */
-async function setupUserClient(req, token) {
+async function setupUserClient(req: Request, token: string | null): Promise<Octokit | null> {
   if (!token) {
     req.app.locals.user = { github: { client: null } }
     return null
@@ -100,13 +128,7 @@ async function setupUserClient(req, token) {
 }
 
 // Get GitHub user info and attach it to the request
-/**
- * @param {Request} req - Express request object
- * @param {string} cacheKey - Cache key for user info
- * @param {OctokitType} client - GitHub client
- * @returns {Promise<void>}
- */
-async function setupInfo(req, cacheKey, client) {
+async function setupInfo(req: Request, cacheKey: string, client: Octokit): Promise<void> {
   let info = await cache.get(cacheKey)
   if (!info) {
     info = await client.rest.users.getAuthenticated()
@@ -117,16 +139,10 @@ async function setupInfo(req, cacheKey, client) {
 }
 
 // Get the user's teams (from GitHub or the cache) and attach them to the request
-/**
- * @param {Request} req - Express request object
- * @param {string | null} cacheKey - Cache key for team data
- * @param {OctokitType | null} client - GitHub client
- * @returns {Promise<void>}
- */
-async function setupTeams(req, cacheKey, client) {
+async function setupTeams(req: Request, cacheKey: string | null, client: Octokit | null): Promise<void> {
   // anonymous users are not members of any team
   if (!cacheKey || !client) {
-    return null
+    return
   }
   // check cache for team data; hash the token so we're not storing them raw
   let teams = await cache.get(cacheKey)
@@ -139,17 +155,13 @@ async function setupTeams(req, cacheKey, client) {
 
 /**
  * Fetch a list of teams a user belongs to filtered for the given org.
- *
- * @param {OctokitType} client - GitHubApi client
- * @param {string} org - org name to filter teams
- * @returns {Promise<string[]>} - list of teams
  */
-async function getTeams(client, org) {
+async function getTeams(client: Octokit, org: string): Promise<string[]> {
   try {
     const resp = await client.teams.listForAuthenticatedUser()
     return resp.data.filter(entry => entry.organization.login === org).map(entry => entry.name)
   } catch (err) {
-    const error = /** @type {Error & { code?: number; status?: number }} */ (err)
+    const error = err as Error & { code?: number; status?: number }
     if (error.status === 404 || error.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
@@ -169,24 +181,16 @@ async function getTeams(client, org) {
 
 /**
  * Creates a cache key by hashing a token.
- *
- * @param {string} prefix - Prefix for the cache key
- * @param {string} token - Token to hash
- * @returns {Promise<string>} Cache key
  */
-async function getCacheKey(prefix, token) {
+async function getCacheKey(prefix: string, token: string): Promise<string> {
   const hashedToken = await crypto.createHash('sha256').update(token).digest('hex')
   return `${prefix}.${hashedToken}`
 }
 
 /**
  * Factory function that creates the GitHub middleware.
- *
- * @param {GitHubMiddlewareOptions} authOptions - Configuration options including token and org
- * @param {ICache} authCache - Cache instance for storing user info and team data
- * @returns {RequestHandler} Express middleware
  */
-export default (authOptions, authCache) => {
+export default (authOptions: GitHubMiddlewareOptions, authCache: ICache): RequestHandler => {
   options = authOptions
   cache = authCache
   return middleware

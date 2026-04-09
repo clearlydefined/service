@@ -1,21 +1,29 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').RequestHandler} RequestHandler */
-/** @typedef {import('../providers/caching').ICache} ICache */
-/** @typedef {import('./githubConfig').GitHubConfigOptions} GitHubConfigOptions */
-/** @typedef {import('../routes/auth').AuthEndpoints} AuthEndpoints */
-/** @typedef {import('../routes/auth')} AuthRouteModule */
-/** @typedef {import('./permissions').PermissionsConfig} PermissionsConfig */
+import type { RequestHandler } from 'express'
+import type { ICache } from '../providers/caching/index.js'
+import type { AuthEndpoints } from '../routes/auth.js'
+import type { GitHubMiddlewareOptions } from './github.ts'
+import type { PermissionsConfig } from './permissions.ts'
 
 import config from 'painless-config'
 import memoryCache from '../providers/caching/memory.js'
 import * as githubRoute from '../routes/auth.js'
-import githubMiddleware from './github.js'
+import githubMiddleware from './github.ts'
 import * as permissions from './permissions.ts'
 
-/** @type {GitHubConfigOptions} */
-const defaultOptions = {
+/**
+ * Extended options for GitHub authentication configuration.
+ * Includes OAuth app credentials and permission mappings.
+ */
+export interface GitHubConfigOptions extends GitHubMiddlewareOptions {
+  clientId?: string
+  clientSecret?: string
+  permissions: PermissionsConfig
+}
+
+const defaultOptions: GitHubConfigOptions = {
   clientId: config.get('AUTH_GITHUB_CLIENT_ID'),
   clientSecret: config.get('AUTH_GITHUB_CLIENT_SECRET'),
   token: config.get('CURATION_GITHUB_TOKEN'),
@@ -29,12 +37,8 @@ const defaultCache = memoryCache({ defaultTtlSeconds: 10 * 60 /* 10 mins */ })
 
 /**
  * Creates the GitHub authentication middleware with optional custom configuration.
- *
- * @param {GitHubConfigOptions} [options] - GitHub configuration options (uses defaults if not provided)
- * @param {ICache} [cache] - Cache instance for storing user data (uses memory cache if not provided)
- * @returns {RequestHandler} Express middleware for GitHub authentication
  */
-function middleware(options, cache) {
+function middleware(options?: GitHubConfigOptions, cache?: ICache): RequestHandler {
   const realOptions = options || defaultOptions
   const realCache = cache || defaultCache
   return githubMiddleware(realOptions, realCache)
@@ -42,22 +46,16 @@ function middleware(options, cache) {
 
 /**
  * Sets up and returns the GitHub OAuth authentication route module.
- *
- * @param {GitHubConfigOptions} [options] - GitHub configuration options (uses defaults if not provided)
- * @param {AuthEndpoints} [endpoints] - Service endpoint URLs for OAuth callbacks
- * @returns {AuthRouteModule} The auth route module (use `.router` property to mount in Express)
  */
-function route(options, endpoints) {
+function route(options?: GitHubConfigOptions, endpoints?: AuthEndpoints): typeof githubRoute {
   githubRoute.setup(options || defaultOptions, endpoints)
-  return /** @type {AuthRouteModule} */ (githubRoute)
+  return githubRoute
 }
 
 /**
  * Sets up the permissions module with the given options.
- *
- * @param {PermissionsConfig} [options] - Permission configuration (uses defaults if not provided)
  */
-function permissionsSetup(options) {
+function permissionsSetup(options?: PermissionsConfig): void {
   permissions.setup(options || defaultOptions.permissions)
 }
 
