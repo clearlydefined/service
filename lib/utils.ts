@@ -725,7 +725,8 @@ function joinExpressions(expressions: Set<string> | null | undefined): string | 
 function normalizeLicenseExpression(
   rawLicenseExpression: string | null | undefined,
   logger: { info: (message: string) => void },
-  licenseRefLookup?: (token: string) => string | null | undefined
+  licenseRefLookup: ((token: string) => string | null | undefined) | null = (token) =>
+    token && scancodeMap.get(token)
 ): string | null {
   if (!rawLicenseExpression) {
     return null
@@ -733,8 +734,7 @@ function normalizeLicenseExpression(
 
   const licenseVisitor = (licenseExpression: string) =>
     scancodeMap.get(licenseExpression) || SPDX.normalizeSingle(licenseExpression)
-  const lookup = licenseRefLookup || ((token: string): string | null => (token && scancodeMap.get(token)) ?? null)
-  const parsed = SPDX.parse(rawLicenseExpression, licenseVisitor, lookup as any)
+  const parsed = SPDX.parse(rawLicenseExpression, licenseVisitor, licenseRefLookup as any)
   const result = SPDX.stringify(parsed)
   if (result === 'NOASSERTION') {
     logger.info(`ScanCode NOASSERTION from ${rawLicenseExpression}`)
