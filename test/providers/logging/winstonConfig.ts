@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import MockInsights from '../../../lib/mockInsights.js'
+import { MockInsights } from '../../../lib/mockInsights.ts'
 import winstonFactory, {
   buildProperties,
   sanitizeHeaders,

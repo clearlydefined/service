@@ -4,11 +4,17 @@
 import appInsights from 'applicationinsights'
 import type { Contracts, TelemetryClient } from 'applicationinsights'
 
+/** Common interface for telemetry clients (real or mock). */
+export interface InsightsClient {
+  trackException(telemetry: Contracts.ExceptionTelemetry): void
+  trackTrace(telemetry: Contracts.TraceTelemetry): void
+}
+
 /**
  * Module-level client reference. In applicationinsights 3.x, defaultClient is read-only,
  * so we maintain our own reference to the configured client.
  */
-let _client: TelemetryClient | MockInsights | null = null
+let _client: InsightsClient | null = null
 
 /**
  * Mapping from KnownSeverityLevel string values to single-character abbreviations for console output.
@@ -28,14 +34,14 @@ const severityMap = {
  * regardless of whether Application Insights is configured. Provides console-based fallback logging
  * when no client is available.
  */
-export class MockInsights {
+export class MockInsights implements InsightsClient {
   client: TelemetryClient | null
 
   constructor(client: TelemetryClient | null = null) {
     this.client = client
   }
 
-  static getClient(): TelemetryClient | MockInsights | null {
+  static getClient(): InsightsClient | null {
     return _client
   }
 
