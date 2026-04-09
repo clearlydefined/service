@@ -93,7 +93,7 @@ describe('Curation service pr events', () => {
       'cur_npm/npmjs/-/foo/1.0',
       'cur_npm/npmjs/-/foo'
     ])
-  }).timeout(8000) // First time loading esmock('../../../providers/curation/github.ts') is very slow.
+  }).timeout(8000) // First time loading esmock('../../../providers/curation/github.js') is very slow.
 
   it('handles update', async () => {
     const service = await createService({})
@@ -313,7 +313,7 @@ async function createService({ failsCompute = false, geitStubOverride = null }) 
     log: sinon.stub()
   })
 
-  const service = (await esmock('../../../providers/curation/github.ts', { geit: geitStub }))(
+  const service = (await esmock('../../../providers/curation/github.js', { geit: geitStub }))(
     { owner: 'owner', repo: 'repo', branch: 'branch', token: 'token' },
     store,
     { website: 'http://localhost:3000' },

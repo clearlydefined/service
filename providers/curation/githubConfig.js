@@ -8,7 +8,7 @@
 /** @typedef {import('../caching').ICache} ICache */
 
 import config from 'painless-config'
-import githubService from './github.ts'
+import githubService from './github.js'
 
 /**
  * @param {GitHubCurationOptions | null | undefined} options

@@ -4,26 +4,19 @@
 import { Octokit } from '@octokit/rest'
 import { defaultHeaders } from './fetch.ts'
 
-/**
- * @typedef {import('./github').GitHubClientOptions} GitHubClientOptions
- *
- * @typedef {import('./github').GitHubClient} GitHubClient
- */
+/** GitHub API client instance from @octokit/rest package. */
+export type GitHubClient = Octokit
+
+/** Options for configuring GitHub client authentication. */
+export interface GitHubClientOptions {
+  /** GitHub API token for authentication. */
+  token: string
+}
 
 /**
- * GitHub service module for creating authenticated GitHub API clients. Provides utilities for interacting with the
- * GitHub API using the Octokit library.
+ * Creates an authenticated GitHub API client with default headers.
  */
-
-/**
- * Creates an authenticated GitHub API client with default headers. The client is configured with the ClearlyDefined
- * user agent and authentication token.
- *
- * @param {GitHubClientOptions} options - Configuration options for the GitHub client
- * @returns {GitHubClient} Authenticated GitHub API client instance ready for making API calls
- * @throws {Error} When the provided token is invalid or authentication fails
- */
-const getClient = options => {
+const getClient = (options: GitHubClientOptions): GitHubClient => {
   const config = {
     headers: defaultHeaders,
     ...(options?.token ? { auth: options.token } : {})

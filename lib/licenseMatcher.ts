@@ -1,13 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./licenseMatcher').LicenseMatchInput} LicenseMatchInput */
-/** @typedef {import('./licenseMatcher').CompareResult} CompareResult */
-/** @typedef {import('./licenseMatcher').LicenseMatchResult} LicenseMatchResult */
-/** @typedef {import('./licenseMatcher').LicenseMatchPolicy} LicenseMatchPolicy */
-/** @typedef {import('./licenseMatcher').MatchEntry} MatchEntry */
-/** @typedef {import('./licenseMatcher').MismatchEntry} MismatchEntry */
-
+import type { Definition } from './utils.ts'
 import lodash from 'lodash'
 
 const { get, isEqual: isDeepEqual } = lodash
@@ -15,26 +9,73 @@ const { get, isEqual: isDeepEqual } = lodash
 import logger from '../providers/logging/logger.js'
 import { getLatestVersion, isLicenseFile } from './utils.ts'
 
+/** Harvest data for a coordinate, organized by tool and version */
+export interface CoordinateHarvest {
+  [tool: string]: {
+    [version: string]: unknown
+  }
+}
+
+/** Source/target data bundle for license matching */
+export interface LicenseMatchInput {
+  definition: Definition
+  harvest: CoordinateHarvest
+}
+
+/** A single match result entry */
+export interface MatchEntry {
+  policy: string
+  file?: string
+  propPath: string
+  value: unknown
+}
+
+/** A single mismatch result entry */
+export interface MismatchEntry {
+  policy: string
+  file?: string
+  propPath: string
+  source: unknown
+  target: unknown
+}
+
+/** Result from comparing two license sources */
+export interface CompareResult {
+  match: MatchEntry[]
+  mismatch: MismatchEntry[]
+}
+
+/** Final result from license matching process */
+export interface LicenseMatchResult {
+  isMatching: boolean
+  match?: MatchEntry[]
+  mismatch?: MismatchEntry[]
+}
+
+/** Interface for license match policies */
+export interface LicenseMatchPolicy {
+  name: string
+  compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult
+}
+
 class LicenseMatcher {
+  private _policies: LicenseMatchPolicy[]
+
   /**
    * Creates a new LicenseMatcher
-   * @param {LicenseMatchPolicy[]} [policies] - Optional array of match policies
    */
-  constructor(policies) {
+  constructor(policies?: LicenseMatchPolicy[]) {
     this._policies = policies || [new DefinitionLicenseMatchPolicy(), new HarvestLicenseMatchPolicy()]
   }
 
   /**
    * Given two coordinates with different revisions, decide whether they have the same license
-   * @param {LicenseMatchInput} source - Source definition and harvest data
-   * @param {LicenseMatchInput} target - Target definition and harvest data
-   * @returns {LicenseMatchResult} Match result with isMatching flag and match/mismatch details
    */
-  process(source, target) {
+  process(source: LicenseMatchInput, target: LicenseMatchInput): LicenseMatchResult {
     const compareResults = this._policies
-      .map(/** @param {LicenseMatchPolicy} policy */ policy => policy.compare(source, target))
+      .map((policy: LicenseMatchPolicy) => policy.compare(source, target))
       .reduce(
-        /** @param {CompareResult} acc @param {CompareResult} cur */ (acc, cur) => ({
+        (acc: CompareResult, cur: CompareResult) => ({
           match: acc.match.concat(cur.match),
           mismatch: acc.mismatch.concat(cur.mismatch)
         })
@@ -55,33 +96,25 @@ class LicenseMatcher {
 
 /**
  * Policy that compares license files in definitions by hash and token
- * @implements {LicenseMatchPolicy}
  */
-class DefinitionLicenseMatchPolicy {
+class DefinitionLicenseMatchPolicy implements LicenseMatchPolicy {
+  name: string
+  private _compareProps: string[]
+
   constructor() {
-    /** @type {string} */
     this.name = 'definition'
-    /** @type {string[]} */
     this._compareProps = ['hashes.sha1', 'hashes.sha256', 'token']
   }
 
   /**
    * Compare license files between source and target definitions
-   * @param {LicenseMatchInput} source - Source definition and harvest data
-   * @param {LicenseMatchInput} target - Target definition and harvest data
-   * @returns {CompareResult} Comparison result with matches and mismatches
    */
-  compare(source, target) {
+  compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult {
     const fileMap = this._generateFileMap(source, target)
     return this._compareFileInMap(fileMap)
   }
 
-  /**
-   * @param {LicenseMatchInput} source
-   * @param {LicenseMatchInput} target
-   * @returns {Map<string, {sourceFile?: object, targetFile?: object}>}
-   */
-  _generateFileMap(source, target) {
+  _generateFileMap(source: LicenseMatchInput, target: LicenseMatchInput): Map<string, {sourceFile?: object, targetFile?: object}> {
     const sourceLicenseFiles = this._getLicenseFile(source.definition)
     const targetLicenseFiles = this._getLicenseFile(target.definition)
     const fileMap = new Map()
@@ -90,41 +123,27 @@ class DefinitionLicenseMatchPolicy {
     return fileMap
   }
 
-  /**
-   * @param {Map<string, {sourceFile?: object, targetFile?: object}>} fileMap
-   * @param {object[]} files
-   * @param {'sourceFile' | 'targetFile'} propName
-   */
-  _addFileToMap(fileMap, files, propName) {
+  _addFileToMap(fileMap: Map<string, {sourceFile?: object, targetFile?: object}>, files: object[], propName: 'sourceFile' | 'targetFile') {
     if (files) {
-      for (const f of /** @type {{path?: string}[]} */ (files)) {
+      for (const f of files as {path?: string}[]) {
         if (!f.path) {
           continue
         }
-        const current = fileMap.get(f.path) || /** @type {{sourceFile?: object, targetFile?: object}} */ ({})
+        const current = fileMap.get(f.path) || {} as {sourceFile?: object, targetFile?: object}
         current[propName] = f
         fileMap.set(f.path, current)
       }
     }
   }
 
-  /**
-   * @param {{files?: Array<{path?: string}>, coordinates?: import('./entityCoordinates')}} definition
-   * @returns {object[] | undefined}
-   */
-  _getLicenseFile(definition) {
+  _getLicenseFile(definition: {files?: Array<{path?: string}>, coordinates?: import('./entityCoordinates.ts').default}): object[] | undefined {
     return definition.files?.filter(
-      /** @param {{path?: string}} f */ f => isLicenseFile(f.path, definition.coordinates)
+      (f: {path?: string}) => isLicenseFile(f.path, definition.coordinates)
     )
   }
 
-  /**
-   * @param {Map<string, {sourceFile?: object, targetFile?: object}>} fileMap
-   * @returns {CompareResult}
-   */
-  _compareFileInMap(fileMap) {
-    /** @type {CompareResult} */
-    const result = {
+  _compareFileInMap(fileMap: Map<string, {sourceFile?: object, targetFile?: object}>): CompareResult {
+    const result: CompareResult = {
       match: [],
       mismatch: []
     }
@@ -159,31 +178,24 @@ class DefinitionLicenseMatchPolicy {
 
 /**
  * Policy that compares license information from harvest data
- * @implements {LicenseMatchPolicy}
  */
-class HarvestLicenseMatchPolicy {
+class HarvestLicenseMatchPolicy implements LicenseMatchPolicy {
+  name: string
+
   constructor() {
-    /** @type {string} */
     this.name = 'harvest'
   }
 
   /**
    * Compare harvest license data between source and target
-   * @param {LicenseMatchInput} source - Source definition and harvest data
-   * @param {LicenseMatchInput} target - Target definition and harvest data
-   * @returns {CompareResult} Comparison result with matches and mismatches
    */
-  compare(source, target) {
+  compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult {
     const type = source.definition.coordinates.type
     const strategy = this._getStrategy(type)
     return strategy.compare(source, target)
   }
 
-  /**
-   * @param {string} type
-   * @returns {BaseHarvestLicenseMatchStrategy}
-   */
-  _getStrategy(type) {
+  _getStrategy(type: string): BaseHarvestLicenseMatchStrategy {
     switch (type) {
       case 'maven':
         return new BaseHarvestLicenseMatchStrategy('maven', ['manifest.summary.licenses'])
@@ -219,29 +231,20 @@ class HarvestLicenseMatchPolicy {
  * Base strategy for comparing harvest license data
  */
 class BaseHarvestLicenseMatchStrategy {
-  /**
-   * @param {string} type
-   * @param {string[]} [propPaths]
-   */
-  constructor(type, propPaths = []) {
-    /** @type {string} */
+  name: string
+  type: string
+  propPaths: string[]
+
+  constructor(type: string, propPaths: string[] = []) {
     this.name = 'harvest'
-    /** @type {string} */
     this.type = type
-    /** @type {string[]} */
     this.propPaths = propPaths
   }
 
-  /**
-   * @param {LicenseMatchInput} source
-   * @param {LicenseMatchInput} target
-   * @returns {CompareResult}
-   */
-  compare(source, target) {
+  compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult {
     const sourceLatestClearlyDefinedToolHarvest = getLatestToolHarvest(source.harvest, 'clearlydefined')
     const targetLatestClearlyDefinedToolHarvest = getLatestToolHarvest(target.harvest, 'clearlydefined')
-    /** @type {CompareResult} */
-    const result = {
+    const result: CompareResult = {
       match: [],
       mismatch: []
     }
@@ -275,20 +278,19 @@ class BaseHarvestLicenseMatchStrategy {
  * @extends BaseHarvestLicenseMatchStrategy
  */
 class NugetHarvestLicenseMatchStrategy extends BaseHarvestLicenseMatchStrategy {
+  logger: ReturnType<typeof logger>
+  excludedLicenseUrl: string[]
+
   constructor() {
     super('nuget', ['manifest.licenseExpression', 'manifest.licenseUrl'])
     this.logger = logger()
-    /** @type {string[]} */
     this.excludedLicenseUrl = ['github.com', 'aka.ms/deprecateLicenseUrl']
   }
 
   /**
    * @override
-   * @param {LicenseMatchInput} source
-   * @param {LicenseMatchInput} target
-   * @returns {CompareResult}
    */
-  compare(source, target) {
+  override compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult {
     const result = super.compare(source, target)
     // 1. For Nuget component, if the licenseUrl point to github,
     // the content of the license url is tend to change even the url keeps the same
@@ -298,7 +300,7 @@ class NugetHarvestLicenseMatchStrategy extends BaseHarvestLicenseMatchStrategy {
       if (m.propPath === 'manifest.licenseUrl') {
         this.logger.info('NugetHarvestLicenseMatchStrategy.compare.licenseUrl', { url: m.value })
       }
-      const value = /** @type {string | undefined} */ (m.value)
+      const value = m.value as string | undefined
       if (value && this.excludedLicenseUrl.some(url => value.toLowerCase().includes(url.toLowerCase()))) {
         return false
       }
@@ -310,16 +312,13 @@ class NugetHarvestLicenseMatchStrategy extends BaseHarvestLicenseMatchStrategy {
 
 /**
  * Gets the latest version of a tool's harvest data
- * @param {import('./licenseMatcher').CoordinateHarvest} coordinateHarvest
- * @param {string} tool
- * @returns {object | undefined}
  */
-function getLatestToolHarvest(coordinateHarvest, tool) {
+function getLatestToolHarvest(coordinateHarvest: CoordinateHarvest, tool: string): object | undefined {
   if (!coordinateHarvest[tool]) {
     return undefined
   }
   const latestVersion = getLatestVersion(Object.keys(coordinateHarvest[tool]))
-  return /** @type {object | undefined} */ (get(coordinateHarvest, [tool, latestVersion]))
+  return get(coordinateHarvest, [tool, latestVersion]) as object | undefined
 }
 
 export { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher }

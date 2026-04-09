@@ -1,28 +1,32 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { ICache } from '../providers/caching/index.js'
+import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.ts'
+import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.ts'
+import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.ts'
 import memoryCache from '../providers/caching/memory.js'
-import GradleCoordinatesMapper from './gradleCoordinatesMapper.ts'
-import PypiCoordinatesMapper from './pypiCoordinatesMapper.ts'
+import GradleCoordinatesMapperImpl from './gradleCoordinatesMapper.ts'
+import PypiCoordinatesMapperImpl from './pypiCoordinatesMapper.ts'
 
 const defaultcache = memoryCache({ defaultTtlSeconds: 60 * 60 * 24 /* 24 hours */ })
 
-/**
- * @typedef {import('./coordinatesMapper').ICoordinatesMapper} ICoordinatesMapper
- *
- * @typedef {import('./coordinatesMapper').CoordinatesMappers} CoordinatesMappers
- *
- * @typedef {import('./entityCoordinates').EntityCoordinatesSpec} EntityCoordinatesSpec
- *
- * @typedef {import('./entityCoordinates').default} EntityCoordinates
- *
- * @typedef {import('../providers/caching').ICache} ICache
- */
+/** Interface for coordinate mappers that can transform coordinates */
+export interface ICoordinatesMapper {
+  map(coordinates: EntityCoordinatesSpec): Promise<EntityCoordinates | null>
+}
 
-/** @type {CoordinatesMappers} Default Collection of coordinate mappers */
-const defaultMappers = {
-  pypi: new PypiCoordinatesMapper(),
-  gradleplugin: new GradleCoordinatesMapper()
+/** Collection of coordinate mappers indexed by provider name */
+export interface CoordinatesMappers {
+  pypi?: PypiCoordinatesMapper
+  gradleplugin?: GradleCoordinatesMapper
+  [provider: string]: ICoordinatesMapper | undefined
+}
+
+/** Default Collection of coordinate mappers */
+const defaultMappers: CoordinatesMappers = {
+  pypi: new PypiCoordinatesMapperImpl(),
+  gradleplugin: new GradleCoordinatesMapperImpl()
 }
 
 /**
@@ -40,14 +44,13 @@ const defaultMappers = {
  *   ```
  */
 class CoordinatesMapper {
+  mappers: CoordinatesMappers
+  cache: ICache
+
   /**
    * Creates a new CoordinatesMapper instance
-   *
-   * @param {CoordinatesMappers} [mappers=defaultMappers] - Collection of coordinate mappers indexed by provider name.
-   *   Default is `defaultMappers`
-   * @param {ICache} [cache=defaultcache] - Cache instance for storing mapping results. Default is `defaultcache`
    */
-  constructor(mappers = defaultMappers, cache = defaultcache) {
+  constructor(mappers: CoordinatesMappers = defaultMappers, cache: ICache = defaultcache) {
     /** @type {CoordinatesMappers} Collection of provider-specific coordinate mappers */
     this.mappers = mappers
     /** @type {ICache} Cache instance for storing mapping results */
@@ -56,20 +59,9 @@ class CoordinatesMapper {
 
   /**
    * Maps coordinates using the appropriate provider-specific mapper.
-   *
-   * This method:
-   *
-   * 1. Checks the cache for existing mapping results
-   * 2. Delegates to the appropriate provider-specific mapper if no cache hit
-   * 3. Caches successful mapping results
-   * 4. Returns the mapped coordinates or the original coordinates if no mapper is available
-   *
-   * @param {EntityCoordinatesSpec} coordinates - The coordinates to map
-   * @returns {Promise<EntityCoordinates>} Promise that resolves to mapped EntityCoordinates or the original coordinates
-   *   if no mapping is available
    */
-  async map(coordinates) {
-    const mapper = this.mappers[coordinates?.provider]
+  async map(coordinates: EntityCoordinatesSpec): Promise<EntityCoordinates> {
+    const mapper = this.mappers[coordinates?.provider!]
     let mapped = this.cache.get(coordinates?.toString())
     if (mapper && !mapped) {
       mapped = await mapper.map(coordinates)
@@ -83,9 +75,5 @@ class CoordinatesMapper {
 
 /**
  * Factory function to create a new CoordinatesMapper instance
- *
- * @param {CoordinatesMappers} [mappers] - Optional collection of coordinate mappers
- * @param {ICache} [cache] - Optional cache instance
- * @returns {CoordinatesMapper} A new CoordinatesMapper instance
  */
-export default (mappers, cache) => new CoordinatesMapper(mappers, cache)
+export default (mappers?: CoordinatesMappers, cache?: ICache) => new CoordinatesMapper(mappers, cache)

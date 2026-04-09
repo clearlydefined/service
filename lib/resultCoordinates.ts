@@ -1,20 +1,36 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./resultCoordinates').ResultCoordinatesSpec} ResultCoordinatesSpec */
-
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
 import EntityCoordinates from './entityCoordinates.ts'
 
+/** Represents the specification object used to create ResultCoordinates */
+export interface ResultCoordinatesSpec extends EntityCoordinatesSpec {
+  tool?: string
+  toolVersion?: string
+}
+
 /** Represents result coordinates for a software component with associated tool information */
-class ResultCoordinates {
+export class ResultCoordinates {
+  /** The type of the entity (e.g., 'npm', 'maven', 'git') */
+  type?: string
+  /** The provider of the entity (e.g., 'npmjs', 'mavencentral', 'github') */
+  provider?: string
+  /** The namespace of the entity (optional, depends on provider) */
+  namespace?: string
+  /** The name of the entity */
+  name?: string
+  /** The revision/version of the entity */
+  revision?: string
+  /** The tool used to analyze the entity (e.g., 'clearlydefined', 'scancode') */
+  tool?: string
+  /** The version of the tool used to analyze the entity */
+  toolVersion?: string
+
   /**
    * Creates ResultCoordinates from a specification object
-   *
-   * @param {ResultCoordinatesSpec | ResultCoordinates | null | undefined} spec - The specification object or existing
-   *   ResultCoordinates instance
-   * @returns {ResultCoordinates | null} New ResultCoordinates instance or null if spec is falsy
    */
-  static fromObject(spec) {
+  static fromObject(spec: ResultCoordinatesSpec | ResultCoordinates | null | undefined): ResultCoordinates | null {
     if (!spec) {
       return null
     }
@@ -34,12 +50,8 @@ class ResultCoordinates {
 
   /**
    * Creates ResultCoordinates from a path string
-   *
-   * @param {string | null | undefined} path - Path string in format
-   *   "type/provider/namespace/name/revision/tool/toolVersion"
-   * @returns {ResultCoordinates | null} New ResultCoordinates instance or null if path is invalid
    */
-  static fromString(path) {
+  static fromString(path: string | null | undefined): ResultCoordinates | null {
     if (!path) {
       return null
     }
@@ -51,12 +63,8 @@ class ResultCoordinates {
 
   /**
    * Creates ResultCoordinates from a URN string
-   *
-   * @param {string | null | undefined} urn - URN string in format
-   *   "scheme:type:provider:namespace:name:revision:revision:tool:tool:toolVersion"
-   * @returns {ResultCoordinates | null} New ResultCoordinates instance or null if urn is invalid
    */
-  static fromUrn(urn) {
+  static fromUrn(urn: string | null | undefined): ResultCoordinates | null {
     if (!urn) {
       return null
     }
@@ -66,41 +74,32 @@ class ResultCoordinates {
 
   /**
    * Creates a new ResultCoordinates instance
-   *
-   * @param {string} [type] - The type of the entity (e.g., 'npm', 'maven', 'git')
-   * @param {string} [provider] - The provider of the entity (e.g., 'npmjs', 'mavencentral', 'github')
-   * @param {string} [namespace] - The namespace of the entity (optional, depends on provider)
-   * @param {string} [name] - The name of the entity
-   * @param {string} [revision] - The revision/version of the entity
-   * @param {string} [tool] - The tool used to analyze the entity (e.g., 'clearlydefined', 'scancode')
-   * @param {string} [toolVersion] - The version of the tool used to analyze the entity
    */
-  constructor(type, provider, namespace, name, revision, tool, toolVersion) {
+  constructor(
+    type?: string,
+    provider?: string,
+    namespace?: string | null,
+    name?: string,
+    revision?: string,
+    tool?: string,
+    toolVersion?: string
+  ) {
     const entity = new EntityCoordinates(type, provider, namespace, name, revision)
-    /** @type {string | undefined} The Type of the entity */
     this.type = entity.type
-    /** @type {string | undefined} The Provider of the entity */
     this.provider = entity.provider
-    /** @type {string | undefined} The Namespace of the entity */
     if (entity.namespace) {
       this.namespace = entity.namespace
     }
-    /** @type {string | undefined} The Name of the entity */
     this.name = entity.name
-    /** @type {string | undefined} The Revision/version of the entity */
     this.revision = entity.revision
-    /** @type {string | undefined} The Tool used to analyze the entity */
     this.tool = tool?.toLowerCase()
-    /** @type {string | undefined} The Version of the tool used to analyze the entity */
     this.toolVersion = toolVersion
   }
 
   /**
    * Converts the coordinates to a string representation
-   *
-   * @returns {string} String representation in format "type/provider/namespace/name/revision/tool/toolVersion"
    */
-  toString() {
+  toString(): string {
     // if there is a provider then consider the namespace otherwise there can't be one so ignore null
     const namespace = this.provider ? this.namespace || '-' : null
     // TODO validate that there are no intermediate nulls
@@ -111,10 +110,8 @@ class ResultCoordinates {
 
   /**
    * Converts the result coordinates to entity coordinates (without tool information)
-   *
-   * @returns {EntityCoordinates} New EntityCoordinates instance representing the same entity
    */
-  asEntityCoordinates() {
+  asEntityCoordinates(): EntityCoordinates {
     return new EntityCoordinates(this.type, this.provider, this.namespace, this.name, this.revision)
   }
 }

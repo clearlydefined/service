@@ -1,8 +1,21 @@
 // (c) Copyright 2024, Microsoft and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./heapLogger').HeapLoggerConfig} HeapLoggerConfig */
-/** @typedef {import('./heapLogger').HeapLogger} HeapLogger */
+/** Configuration for heap logging */
+export interface HeapLoggerConfig {
+  heapstats: {
+    /** Set to 'true' to enable heap stats logging */
+    logHeapstats?: string
+    /** Logging interval in milliseconds (default: 30000) */
+    logInverval?: string | number
+  }
+}
+
+/** Logger interface for heap logging */
+export interface HeapLogger {
+  debug(message: string): void
+  info(message: string): void
+}
 
 // ===================================================
 // Log the heap statistics at regular intervals
@@ -15,11 +28,8 @@
 
 /**
  * Sets up periodic heap statistics logging if enabled via configuration.
- *
- * @param {HeapLoggerConfig} config - Configuration object with heapstats settings
- * @param {HeapLogger} logger - Logger instance for output
  */
-async function trySetHeapLoggingAtInterval(config, logger) {
+async function trySetHeapLoggingAtInterval(config: HeapLoggerConfig, logger: HeapLogger) {
   logger.debug('heapLogger.js :: Entered "trySetHeapLoggingAtInterval"...')
 
   const shouldLogHeapstats = config.heapstats.logHeapstats
@@ -31,15 +41,12 @@ async function trySetHeapLoggingAtInterval(config, logger) {
   if (shouldLogHeapstats) {
     const v8 = await import('node:v8')
 
-    /** @param {number} num */
-    const addCommas = num => Number(num).toLocaleString()
-    /** @param {string | number} num */
-    const isNumeric = num => !Number.isNaN(Number(num))
+    const addCommas = (num: number) => Number(num).toLocaleString()
+    const isNumeric = (num: string | number) => !Number.isNaN(Number(num))
 
     // Set the heapstats logging interval
     const maybeInterval = config.heapstats.logInverval
-    /** @type {number} */
-    const heapStatsInverval = maybeInterval && isNumeric(maybeInterval) ? Number(maybeInterval) : 30000
+    const heapStatsInverval: number = maybeInterval && isNumeric(maybeInterval) ? Number(maybeInterval) : 30000
 
     logger.debug(`heapLogger.js :: heap stats logging interval will be "${heapStatsInverval}" ms`)
 

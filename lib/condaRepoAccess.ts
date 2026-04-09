@@ -1,6 +1,7 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { ICache } from '../providers/caching/index.js'
 import lodash from 'lodash'
 import { callFetch as requestPromise } from './fetch.ts'
 
@@ -8,24 +9,44 @@ const { uniq } = lodash
 
 import createCache from '../providers/caching/memory.js'
 
-/**
- * @typedef {import('./condaRepoAccess').CondaChannels} CondaChannels
- *
- * @typedef {import('./condaRepoAccess').CondaChannelData} CondaChannelData
- *
- * @typedef {import('./condaRepoAccess').CondaRepoData} CondaRepoData
- *
- * @typedef {import('./condaRepoAccess').CondaPackageMatch} CondaPackageMatch
- *
- * @typedef {import('../providers/caching').ICache} ICache
- */
+/** Configuration mapping of Conda channel names to their base URLs */
+export interface CondaChannels {
+  'anaconda-main': string
+  'anaconda-r': string
+  'conda-forge': string
+  [key: string]: string
+}
+
+/** Package information from Conda channel data */
+export interface CondaPackageInfo {
+  name?: string
+  version?: string
+  build?: string
+  subdirs?: string[]
+}
+
+/** Channel data structure returned by Conda API */
+export interface CondaChannelData {
+  packages: Record<string, CondaPackageInfo>
+  subdirs: string[]
+}
+
+/** Repository data structure for a specific platform */
+export interface CondaRepoData {
+  packages?: Record<string, CondaPackageInfo>
+  'packages.conda'?: Record<string, CondaPackageInfo>
+  [key: string]: any
+}
+
+/** Package search result */
+export interface CondaPackageMatch {
+  id: string
+}
 
 /**
  * Configuration mapping of Conda channel names to their base URLs
- *
- * @type {CondaChannels}
  */
-const condaChannels = {
+const condaChannels: CondaChannels = {
   'anaconda-main': 'https://repo.anaconda.com/pkgs/main',
   'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
   'conda-forge': 'https://conda.anaconda.org/conda-forge'
@@ -36,37 +57,28 @@ const condaChannels = {
  * for packages.
  */
 class CondaRepoAccess {
+  cache: ICache
+
   /**
    * Creates a new CondaRepoAccess instance
-   *
-   * @param {ICache} [cache] - Cache instance to use for storing data. Defaults to memory cache with 8 hour TTL if not
-   *   provided.
    */
-  constructor(cache) {
+  constructor(cache?: ICache) {
     this.cache = cache || createCache({ defaultTtlSeconds: 8 * 60 * 60 }) // 8 hours
   }
 
   /**
    * Validates if a channel is recognized and supported
-   *
-   * @param {string} channel - Channel name to validate
-   * @throws {Error} When channel is not recognized
    */
-  checkIfValidChannel(channel) {
+  checkIfValidChannel(channel: string): void {
     if (!condaChannels[channel]) {
       throw new Error(`Unrecognized Conda channel ${channel}`)
     }
   }
 
   /**
-   * Fetches channel data from cache or network. Channel data contains information about all packages available in a
-   * channel.
-   *
-   * @param {string} channel - Channel name
-   * @returns {Promise<CondaChannelData>} Promise resolving to channel data
-   * @throws {Error} When channel is invalid or fetch fails
+   * Fetches channel data from cache or network.
    */
-  async fetchChannelData(channel) {
+  async fetchChannelData(channel: string): Promise<CondaChannelData> {
     const key = `${channel}-channelData`
     let channelData = this.cache.get(key)
     if (!channelData) {
@@ -78,15 +90,9 @@ class CondaRepoAccess {
   }
 
   /**
-   * Fetches repository data for a specific channel and subdirectory. Repository data contains detailed package
-   * information for a specific platform.
-   *
-   * @param {string} channel - Channel name
-   * @param {string} subdir - Subdirectory name (platform like 'linux-64', 'win-64')
-   * @returns {Promise<CondaRepoData>} Promise resolving to repository data
-   * @throws {Error} When channel is invalid or fetch fails
+   * Fetches repository data for a specific channel and subdirectory.
    */
-  async fetchRepoData(channel, subdir) {
+  async fetchRepoData(channel: string, subdir: string): Promise<CondaRepoData> {
     const key = `${channel}-${subdir}-repoData`
     let repoData = this.cache.get(key)
     if (!repoData) {
@@ -98,16 +104,9 @@ class CondaRepoAccess {
   }
 
   /**
-   * Gets all available revisions for a package across specified subdirectories. Each revision represents a specific
-   * build of a package version.
-   *
-   * @param {string} channel - Channel name
-   * @param {string} subdir - Subdirectory name or '-' to search all available subdirs
-   * @param {string} name - Package name
-   * @returns {Promise<string[]>} Promise resolving to array of revision strings in format "subdir:version-build"
-   * @throws {Error} When package not found or subdir doesn't exist
+   * Gets all available revisions for a package across specified subdirectories.
    */
-  async getRevisions(channel, subdir, name) {
+  async getRevisions(channel: string, subdir: string, name: string): Promise<string[]> {
     channel = encodeURIComponent(channel)
     name = encodeURIComponent(name)
     subdir = encodeURIComponent(subdir)
@@ -119,16 +118,15 @@ class CondaRepoAccess {
     if (subdir !== '-' && !channelData.subdirs.find(x => x === subdir)) {
       throw new Error(`Subdir ${subdir} is non-existent in channel ${channel}, subdirs: ${channelData.subdirs}`)
     }
-    /** @type {string[]} */
-    const revisions = []
-    const subdirs = subdir === '-' ? channelData.packages[name].subdirs : [subdir]
+    const revisions: string[] = []
+    const subdirs = subdir === '-' ? channelData.packages[name]!.subdirs! : [subdir]
     for (const subdir of subdirs) {
       const repoData = await this.fetchRepoData(channel, subdir)
       for (const key of ['packages', 'packages.conda']) {
         if (repoData[key]) {
-          const matchingVersions = Object.entries(repoData[key])
-            .filter(([, packageData]) => packageData.name === name)
-            .map(([, packageData]) => `${subdir}:${packageData.version}-${packageData.build}`)
+          const matchingVersions = Object.entries(repoData[key]!)
+            .filter(([, packageData]) => (packageData as CondaPackageInfo).name === name)
+            .map(([, packageData]) => `${subdir}:${(packageData as CondaPackageInfo).version}-${(packageData as CondaPackageInfo).build}`)
           revisions.push(...matchingVersions)
         }
       }
@@ -137,15 +135,9 @@ class CondaRepoAccess {
   }
 
   /**
-   * Searches for packages by name pattern in the specified channel. Returns packages whose names contain the search
-   * term.
-   *
-   * @param {string} channel - Channel name
-   * @param {string} name - Package name pattern to search for
-   * @returns {Promise<CondaPackageMatch[]>} Promise resolving to array of matching packages
-   * @throws {Error} When channel is invalid or fetch fails
+   * Searches for packages by name pattern in the specified channel.
    */
-  async getPackages(channel, name) {
+  async getPackages(channel: string, name: string): Promise<CondaPackageMatch[]> {
     channel = encodeURIComponent(channel)
     name = encodeURIComponent(name)
     this.checkIfValidChannel(channel)
@@ -159,8 +151,5 @@ class CondaRepoAccess {
 
 /**
  * Factory function that creates a new CondaRepoAccess instance
- *
- * @param {ICache} [cache] - Optional cache instance
- * @returns {CondaRepoAccess} New CondaRepoAccess instance
  */
-export default cache => new CondaRepoAccess(cache)
+export default (cache?: ICache) => new CondaRepoAccess(cache)

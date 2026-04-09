@@ -1,57 +1,64 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from 'axios'
 import axios from 'axios'
 
-/**
- * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
- *
- * @typedef {import('axios').AxiosResponse} AxiosResponse
- *
- * @typedef {import('axios').AxiosInstance} AxiosInstance
- *
- * @typedef {import('axios').AxiosStatic} AxiosStatic
- *
- * @typedef {import('axios').ResponseType} ResponseType
- *
- * @typedef {import('./fetch').FetchRequestOptions} FetchRequestOptions
- *
- * @typedef {import('./fetch').FetchResponse} FetchResponse
- *
- * @typedef {import('./fetch').FetchError} FetchError
- *
- * @typedef {import('./fetch').WithDefaultsOptions} WithDefaultsOptions
- *
- * @typedef {import('./fetch').FetchFunction} FetchFunction
- */
+/** Request options for HTTP calls. */
+export interface FetchRequestOptions {
+  method?: string
+  url?: string
+  uri?: string
+  json?: boolean
+  encoding?: string | null
+  headers?: Record<string, string>
+  body?: unknown
+  withCredentials?: boolean
+  simple?: boolean
+  resolveWithFullResponse?: boolean
+}
+
+/** Extended response object returned when `resolveWithFullResponse` is true. */
+export interface FetchResponse<T = any> extends AxiosResponse<T> {
+  statusCode: number
+  statusMessage: string
+}
+
+/** HTTP error with status code information. */
+export interface FetchError extends Error {
+  statusCode?: number
+  response?: AxiosResponse
+}
+
+/** Options for creating a fetch instance with default settings. */
+export interface WithDefaultsOptions {
+  headers?: Record<string, string>
+  [key: string]: any
+}
+
+/** Function signature for making HTTP requests with default options applied. */
+export type FetchFunction = (request: FetchRequestOptions) => Promise<any>
 
 /**
- * Default headers used for all HTTP requests made by the fetch utilities. These headers identify the ClearlyDefined
- * crawler to external services.
- *
- * @type {Readonly<{ [key: string]: string }>}
+ * Default headers used for all HTTP requests made by the fetch utilities.
  */
-const defaultHeaders = Object.freeze({ 'User-Agent': 'clearlydefined.io crawler (clearlydefined@outlook.com)' })
+const defaultHeaders: Readonly<Record<string, string>> = Object.freeze({ 'User-Agent': 'clearlydefined.io crawler (clearlydefined@outlook.com)' })
 
 // Set default headers for all axios requests
 Object.assign(axios.defaults.headers.common, defaultHeaders)
 
 /**
  * Builds axios request configuration options from a fetch request.
- *
- * @param {FetchRequestOptions} request - The request configuration
- * @returns {AxiosRequestConfig} The axios request configuration
  */
-function buildRequestOptions(request) {
-  /** @type {ResponseType} */
-  let responseType = 'text'
+function buildRequestOptions(request: FetchRequestOptions): AxiosRequestConfig {
+  let responseType: ResponseType = 'text'
   if (request.json) {
     responseType = 'json'
   } else if (request.encoding === null) {
     responseType = 'stream'
   }
 
-  const validateOptions = {}
+  const validateOptions: Record<string, any> = {}
   if (request.simple === false) {
     validateOptions.validateStatus = () => true
   }
@@ -69,27 +76,19 @@ function buildRequestOptions(request) {
 
 /**
  * Makes an HTTP request using axios with the specified options.
- *
- * @param {FetchRequestOptions} request - The request configuration options
- * @param {AxiosStatic | AxiosInstance} [axiosInstance=axios] - Optional axios instance to use for the request. Default
- *   is `axios`
- * @returns {Promise<any | FetchResponse>} Promise that resolves to the response data or full response object
- * @throws {FetchError} When the request fails or returns an error status code
  */
-async function callFetch(request, axiosInstance = axios) {
+async function callFetch<T = any>(request: FetchRequestOptions, axiosInstance: typeof axios | AxiosInstance = axios): Promise<T | FetchResponse<T>> {
   try {
     const options = buildRequestOptions(request)
     const response = await axiosInstance(options)
     if (!request.resolveWithFullResponse) {
       return response.data
     }
-    // @ts-expect-error - Adding custom properties to response object
-    response.statusCode = response.status
-    // @ts-expect-error - Adding custom properties to response object
-    response.statusMessage = response.statusText
-    return response
-  } catch (error) {
-    // @ts-expect-error - Adding statusCode property to error
+    const fullResponse = response as unknown as FetchResponse<T>
+    fullResponse.statusCode = response.status
+    fullResponse.statusMessage = response.statusText
+    return fullResponse
+  } catch (error: any) {
     error.statusCode = error.response?.status
     throw error
   }
@@ -97,11 +96,8 @@ async function callFetch(request, axiosInstance = axios) {
 
 /**
  * Creates a new fetch function with default options applied.
- *
- * @param {WithDefaultsOptions} opts - Default options to apply to all requests made with the returned function
- * @returns {FetchFunction} A function that makes HTTP requests with the default options applied
  */
-function withDefaults(opts) {
+function withDefaults(opts: WithDefaultsOptions): FetchFunction {
   const axiosInstance = axios.create(opts)
   return request => callFetch(request, axiosInstance)
 }

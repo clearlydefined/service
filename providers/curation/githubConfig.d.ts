@@ -3,7 +3,7 @@
 
 import type { CurationHarvestStore, Endpoints, GitHubCurationOptions, ICurationStore } from './index.js'
 import type { ICache } from '../caching/index.js'
-import type { GitHubCurationService } from './github.ts'
+import type { GitHubCurationService } from './github.js'
 
 /**
  * Factory function that creates a GitHubCurationService configured from the environment.
