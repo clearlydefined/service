@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request } from 'express'
-import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
-
 import he from 'he'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
 import semver from 'semver'
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
 import EntityCoordinates from './entityCoordinates.ts'
 import ResultCoordinates from './resultCoordinates.ts'
 
@@ -245,20 +244,17 @@ function getLatestVersion(versions: string | string[]): string | null {
   if (versions.length === 1) {
     return versions[0]!
   }
-  return versions.reduce(
-    (max: string, current: string): string => {
-      const normalizedCurrent = _normalizeVersion(current)
-      if (!normalizedCurrent || semver.prerelease(normalizedCurrent) !== null) {
-        return max
-      }
-      const normalizedMax = _normalizeVersion(max)
-      if (!normalizedMax) {
-        return normalizedCurrent
-      }
-      return semver.gt(normalizedCurrent, normalizedMax) ? current : max
-    },
-    versions[0]!
-  )
+  return versions.reduce((max: string, current: string): string => {
+    const normalizedCurrent = _normalizeVersion(current)
+    if (!normalizedCurrent || semver.prerelease(normalizedCurrent) !== null) {
+      return max
+    }
+    const normalizedMax = _normalizeVersion(max)
+    if (!normalizedMax) {
+      return normalizedCurrent
+    }
+    return semver.gt(normalizedCurrent, normalizedMax) ? current : max
+  }, versions[0]!)
 }
 
 /**
@@ -274,12 +270,11 @@ function simplifyAttributions(entries: string[] | null | undefined): string[] | 
   // return the elements in more or less the same order they arrived
   // TODO that last part about ordering is less than optimal right now.
   // TODO remove whitespace after/before pair punctuation (e.g., < this@that.com >)
-  const decoded = entries.map(
-    (entry: string) =>
-      he
-        .decode(entry)
-        .replace(/(\\[nr]|[\n\r])/g, ' ')
-        .replace(/ +/g, ' ')
+  const decoded = entries.map((entry: string) =>
+    he
+      .decode(entry)
+      .replace(/(\\[nr]|[\n\r])/g, ' ')
+      .replace(/ +/g, ' ')
   )
   const trimmed = decoded.map((entry: string) => trim(entry, ' ~!@#$%^&*_-=+|:;?/,'))
   const sorted = sortBy(trimmed, 'length').reverse()
@@ -370,8 +365,7 @@ function addArrayToSet<T, V>(array: T[] | null | undefined, set: Set<V>, valueEx
   if (!array?.length) {
     return set
   }
-  valueExtractor =
-    valueExtractor || ((value: T) => value as unknown as V)
+  valueExtractor = valueExtractor || ((value: T) => value as unknown as V)
   for (const entry of array) {
     set.add(valueExtractor(entry))
   }
@@ -403,7 +397,11 @@ function extractLicenseFromLicenseUrl(licenseUrl: string | null | undefined): st
 /**
  * Merges the given definition onto the base definition
  */
-function mergeDefinitions(base: Definition | null | undefined, proposed: Partial<Definition> | null | undefined, override?: boolean): void {
+function mergeDefinitions(
+  base: Definition | null | undefined,
+  proposed: Partial<Definition> | null | undefined,
+  override?: boolean
+): void {
   if (!proposed) {
     return
   }
@@ -415,7 +413,11 @@ function mergeDefinitions(base: Definition | null | undefined, proposed: Partial
   setIfValue(base, 'files', _mergeFiles(base.files, proposed.files, override))
 }
 
-function _mergeFiles(base: FileEntry[] | undefined, proposed: FileEntry[] | undefined, override: boolean | undefined): FileEntry[] | undefined {
+function _mergeFiles(
+  base: FileEntry[] | undefined,
+  proposed: FileEntry[] | undefined,
+  override: boolean | undefined
+): FileEntry[] | undefined {
   if (!proposed) {
     return base
   }
@@ -440,7 +442,11 @@ function _mergeFiles(base: FileEntry[] | undefined, proposed: FileEntry[] | unde
   return base
 }
 
-function _mergeFile(base: FileEntry | undefined, proposed: FileEntry | undefined, override: boolean | undefined): FileEntry | undefined {
+function _mergeFile(
+  base: FileEntry | undefined,
+  proposed: FileEntry | undefined,
+  override: boolean | undefined
+): FileEntry | undefined {
   if (!proposed) {
     return base
   }
@@ -459,10 +465,7 @@ function _mergeFile(base: FileEntry | undefined, proposed: FileEntry | undefined
   setIfValue(
     result,
     'attributions',
-    overrideStrategy(
-      proposed.attributions,
-      (p: string[] | undefined) => _mergeArray(base.attributions, p)
-    )
+    overrideStrategy(proposed.attributions, (p: string[] | undefined) => _mergeArray(base.attributions, p))
   )
   setIfValue(
     result,
@@ -472,10 +475,7 @@ function _mergeFile(base: FileEntry | undefined, proposed: FileEntry | undefined
   setIfValue(
     result,
     'hashes',
-    overrideStrategy(
-      proposed.hashes,
-      (p: Record<string, string> | undefined) => _mergeObject(base.hashes, p)
-    )
+    overrideStrategy(proposed.hashes, (p: Record<string, string> | undefined) => _mergeObject(base.hashes, p))
   )
   setIfValue(
     result,
@@ -485,7 +485,10 @@ function _mergeFile(base: FileEntry | undefined, proposed: FileEntry | undefined
   return result
 }
 
-function _mergeDescribed(base: {facets?: object, hashes?: object, files?: number} | undefined, proposed: {facets?: object, hashes?: object, files?: number} | undefined): {facets?: object, hashes?: object, files?: number} | undefined {
+function _mergeDescribed(
+  base: { facets?: object; hashes?: object; files?: number } | undefined,
+  proposed: { facets?: object; hashes?: object; files?: number } | undefined
+): { facets?: object; hashes?: object; files?: number } | undefined {
   if (!proposed) {
     return base
   }
@@ -502,7 +505,11 @@ function _mergeDescribed(base: {facets?: object, hashes?: object, files?: number
 /**
  * Merges licensed section, primarily the declared license
  */
-function _mergeLicensed(base: {declared?: string} | undefined, proposed: {declared?: string} | undefined, override: boolean | undefined): {declared?: string} | undefined {
+function _mergeLicensed(
+  base: { declared?: string } | undefined,
+  proposed: { declared?: string } | undefined,
+  override: boolean | undefined
+): { declared?: string } | undefined {
   if (!proposed) {
     return base
   }
@@ -608,7 +615,11 @@ function updateSourceLocation(spec: SourceLocationSpec): void {
 /**
  * Determine if a given filePath is a license file based on name
  */
-function isLicenseFile(filePath: string | null | undefined, coordinates?: EntityCoordinates, packages?: PackageInfo[]): boolean {
+function isLicenseFile(
+  filePath: string | null | undefined,
+  coordinates?: EntityCoordinates,
+  packages?: PackageInfo[]
+): boolean {
   if (!filePath) {
     return false
   }
@@ -645,7 +656,7 @@ function getLicenseLocations(coordinates: EntityCoordinates, packages?: PackageI
     maven: ['META-INF/'],
     pypi: [`${coordinates.name}-${coordinates.revision}/`],
     go: [goLicenseLocation(coordinates)],
-    debsrc: packages ? debsrcLicenseLocations(packages) : [] as string[]
+    debsrc: packages ? debsrcLicenseLocations(packages) : ([] as string[])
   }
   map.sourcearchive = map.maven!
   return map[coordinates.type!]
@@ -666,7 +677,10 @@ function debsrcLicenseLocations(packages: PackageInfo[]): string[] {
 
   // Split packages of `type: deb` and other packages
   const [debPackages, otherPackages] = packages.reduce(
-    ([debPackages, otherPackages]: [PackageInfo[], PackageInfo[]], pkg: PackageInfo): [PackageInfo[], PackageInfo[]] => {
+    (
+      [debPackages, otherPackages]: [PackageInfo[], PackageInfo[]],
+      pkg: PackageInfo
+    ): [PackageInfo[], PackageInfo[]] => {
       if (pkg.type === 'deb') {
         debPackages.push(pkg)
       } else {
@@ -684,9 +698,8 @@ function debsrcLicenseLocations(packages: PackageInfo[]): string[] {
 
   // Add license locations based on package name and version for other packages
   return licenseLocations.concat(
-    otherPackages.map(
-      (otherPackage: PackageInfo) =>
-        otherPackage.version ? `${otherPackage.name}-${otherPackage.version}/` : `${otherPackage.name}/`
+    otherPackages.map((otherPackage: PackageInfo) =>
+      otherPackage.version ? `${otherPackage.name}-${otherPackage.version}/` : `${otherPackage.name}/`
     )
   )
 }
@@ -711,7 +724,7 @@ function joinExpressions(expressions: Set<string> | null | undefined): string | 
  */
 function normalizeLicenseExpression(
   rawLicenseExpression: string | null | undefined,
-  logger: {info: (message: string) => void},
+  logger: { info: (message: string) => void },
   licenseRefLookup?: (token: string) => string | null | undefined
 ): string | null {
   if (!rawLicenseExpression) {

@@ -1,11 +1,11 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
-import type { FetchResponse } from './fetch.ts'
 import { promisify } from 'node:util'
 import xml2js from 'xml2js'
 import { callFetch as requestPromise } from '../lib/fetch.ts'
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
+import type { FetchResponse } from './fetch.ts'
 
 const parseXml = promisify(xml2js.parseString)
 
@@ -116,14 +116,12 @@ export class GradleCoordinatesMapper {
    * Makes a request and handles 404 errors gracefully.
    */
   async _request(url: string): Promise<string | FetchResponse<string> | null> {
-    return this._handleRequest(url).catch(
-      (error): string | FetchResponse<string> | null => {
-        if (error.statusCode === 404) {
-          return null
-        }
-        throw error
+    return this._handleRequest(url).catch((error): string | FetchResponse<string> | null => {
+      if (error.statusCode === 404) {
+        return null
       }
-    )
+      throw error
+    })
   }
 
   /**
@@ -138,7 +136,7 @@ export class GradleCoordinatesMapper {
    * Handles HTTP requests using the configured fetch function.
    */
   async _handleRequest(url: string): Promise<string> {
-    return await requestPromise({ url, method: 'GET', json: false }) as string
+    return (await requestPromise({ url, method: 'GET', json: false })) as string
   }
 
   /**

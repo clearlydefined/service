@@ -1,8 +1,8 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { ICache } from '../providers/caching/index.js'
 import lodash from 'lodash'
+import type { ICache } from '../providers/caching/index.js'
 import { callFetch as requestPromise } from './fetch.ts'
 
 const { uniq } = lodash
@@ -126,7 +126,10 @@ class CondaRepoAccess {
         if (repoData[key]) {
           const matchingVersions = Object.entries(repoData[key]!)
             .filter(([, packageData]) => (packageData as CondaPackageInfo).name === name)
-            .map(([, packageData]) => `${subdir}:${(packageData as CondaPackageInfo).version}-${(packageData as CondaPackageInfo).build}`)
+            .map(
+              ([, packageData]) =>
+                `${subdir}:${(packageData as CondaPackageInfo).version}-${(packageData as CondaPackageInfo).build}`
+            )
           revisions.push(...matchingVersions)
         }
       }

@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import type { ICache } from '../providers/caching/index.js'
+import memoryCache from '../providers/caching/memory.js'
 import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.ts'
 import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.ts'
-import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.ts'
-import memoryCache from '../providers/caching/memory.js'
 import GradleCoordinatesMapperImpl from './gradleCoordinatesMapper.ts'
+import type { PypiCoordinatesMapper } from './pypiCoordinatesMapper.ts'
 import PypiCoordinatesMapperImpl from './pypiCoordinatesMapper.ts'
 
 const defaultcache = memoryCache({ defaultTtlSeconds: 60 * 60 * 24 /* 24 hours */ })
@@ -61,6 +61,8 @@ class CoordinatesMapper {
    * Maps coordinates using the appropriate provider-specific mapper.
    */
   async map(coordinates: EntityCoordinatesSpec): Promise<EntityCoordinates> {
+    // biome-ignore lint/style/noNonNullAssertion: Existing codebase pattern for accessing provider
+    // biome-ignore lint/suspicious/noNonNullAssertedOptionalChain: Existing codebase pattern for accessing provider
     const mapper = this.mappers[coordinates?.provider!]
     let mapped = this.cache.get(coordinates?.toString())
     if (mapper && !mapped) {

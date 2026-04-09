@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition } from './utils.ts'
 import lodash from 'lodash'
+import type { Definition } from './utils.ts'
 
 const { get, isEqual: isDeepEqual } = lodash
 
@@ -74,12 +74,10 @@ class LicenseMatcher {
   process(source: LicenseMatchInput, target: LicenseMatchInput): LicenseMatchResult {
     const compareResults = this._policies
       .map((policy: LicenseMatchPolicy) => policy.compare(source, target))
-      .reduce(
-        (acc: CompareResult, cur: CompareResult) => ({
-          match: acc.match.concat(cur.match),
-          mismatch: acc.mismatch.concat(cur.mismatch)
-        })
-      )
+      .reduce((acc: CompareResult, cur: CompareResult) => ({
+        match: acc.match.concat(cur.match),
+        mismatch: acc.mismatch.concat(cur.mismatch)
+      }))
     const allInconclusive = compareResults.mismatch.length === 0 && compareResults.match.length === 0
     if (compareResults.mismatch.length || allInconclusive) {
       return {
@@ -114,7 +112,10 @@ class DefinitionLicenseMatchPolicy implements LicenseMatchPolicy {
     return this._compareFileInMap(fileMap)
   }
 
-  _generateFileMap(source: LicenseMatchInput, target: LicenseMatchInput): Map<string, {sourceFile?: object, targetFile?: object}> {
+  _generateFileMap(
+    source: LicenseMatchInput,
+    target: LicenseMatchInput
+  ): Map<string, { sourceFile?: object; targetFile?: object }> {
     const sourceLicenseFiles = this._getLicenseFile(source.definition)
     const targetLicenseFiles = this._getLicenseFile(target.definition)
     const fileMap = new Map()
@@ -123,26 +124,31 @@ class DefinitionLicenseMatchPolicy implements LicenseMatchPolicy {
     return fileMap
   }
 
-  _addFileToMap(fileMap: Map<string, {sourceFile?: object, targetFile?: object}>, files: object[], propName: 'sourceFile' | 'targetFile') {
+  _addFileToMap(
+    fileMap: Map<string, { sourceFile?: object; targetFile?: object }>,
+    files: object[],
+    propName: 'sourceFile' | 'targetFile'
+  ) {
     if (files) {
-      for (const f of files as {path?: string}[]) {
+      for (const f of files as { path?: string }[]) {
         if (!f.path) {
           continue
         }
-        const current = fileMap.get(f.path) || {} as {sourceFile?: object, targetFile?: object}
+        const current = fileMap.get(f.path) || ({} as { sourceFile?: object; targetFile?: object })
         current[propName] = f
         fileMap.set(f.path, current)
       }
     }
   }
 
-  _getLicenseFile(definition: {files?: Array<{path?: string}>, coordinates?: import('./entityCoordinates.ts').default}): object[] | undefined {
-    return definition.files?.filter(
-      (f: {path?: string}) => isLicenseFile(f.path, definition.coordinates)
-    )
+  _getLicenseFile(definition: {
+    files?: Array<{ path?: string }>
+    coordinates?: import('./entityCoordinates.ts').default
+  }): object[] | undefined {
+    return definition.files?.filter((f: { path?: string }) => isLicenseFile(f.path, definition.coordinates))
   }
 
-  _compareFileInMap(fileMap: Map<string, {sourceFile?: object, targetFile?: object}>): CompareResult {
+  _compareFileInMap(fileMap: Map<string, { sourceFile?: object; targetFile?: object }>): CompareResult {
     const result: CompareResult = {
       match: [],
       mismatch: []

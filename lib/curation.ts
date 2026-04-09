@@ -1,11 +1,11 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition } from './utils.ts'
 import SPDX from '@clearlydefined/spdx'
 import yaml from 'js-yaml'
 import validator from '../schemas/validator.js'
 import EntityCoordinates from './entityCoordinates.ts'
+import type { Definition } from './utils.ts'
 import * as utils from './utils.ts'
 
 /** Error entry from curation validation */
@@ -134,7 +134,7 @@ class Curation {
    */
   _validateSpdxCompliance() {
     const revisions = this.data!.revisions!
-    const sourceLicenseList: {source: string, license: string}[] = []
+    const sourceLicenseList: { source: string; license: string }[] = []
     const errors: string[] = []
 
     for (const revision of Object.keys(revisions).filter(revision => revisions[revision]!.licensed)) {

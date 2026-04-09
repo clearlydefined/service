@@ -42,7 +42,9 @@ export type FetchFunction = (request: FetchRequestOptions) => Promise<any>
 /**
  * Default headers used for all HTTP requests made by the fetch utilities.
  */
-const defaultHeaders: Readonly<Record<string, string>> = Object.freeze({ 'User-Agent': 'clearlydefined.io crawler (clearlydefined@outlook.com)' })
+const defaultHeaders: Readonly<Record<string, string>> = Object.freeze({
+  'User-Agent': 'clearlydefined.io crawler (clearlydefined@outlook.com)'
+})
 
 // Set default headers for all axios requests
 Object.assign(axios.defaults.headers.common, defaultHeaders)
@@ -77,7 +79,10 @@ function buildRequestOptions(request: FetchRequestOptions): AxiosRequestConfig {
 /**
  * Makes an HTTP request using axios with the specified options.
  */
-async function callFetch<T = any>(request: FetchRequestOptions, axiosInstance: typeof axios | AxiosInstance = axios): Promise<T | FetchResponse<T>> {
+async function callFetch<T = any>(
+  request: FetchRequestOptions,
+  axiosInstance: typeof axios | AxiosInstance = axios
+): Promise<T | FetchResponse<T>> {
   try {
     const options = buildRequestOptions(request)
     const response = await axiosInstance(options)

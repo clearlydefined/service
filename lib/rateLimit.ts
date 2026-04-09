@@ -3,12 +3,12 @@
 
 import type { NextFunction, Request, Response } from 'express'
 import type { Options as ExpressRateLimitOptions, Store as ExpressRateLimitStore } from 'express-rate-limit'
-import type { RedisClientType } from 'redis'
-import type { ICache } from '../providers/caching/index.js'
-import type { Logger } from '../providers/logging/index.js'
 import { rateLimit } from 'express-rate-limit'
 import { RedisStore } from 'rate-limit-redis'
+import type { RedisClientType } from 'redis'
+import type { ICache } from '../providers/caching/index.js'
 import { RedisCache } from '../providers/caching/redis.js'
+import type { Logger } from '../providers/logging/index.js'
 import logger from '../providers/logging/logger.js'
 
 /** Configuration options for rate limiting window and maximum requests */
@@ -109,7 +109,10 @@ class RateLimiter {
   /**
    * Builds rate limiter options for express-rate-limit from configuration.
    */
-  static buildOptions({ windowMs, max }: RateLimitConfig, store?: ExpressRateLimitStore): Partial<ExpressRateLimitOptions> {
+  static buildOptions(
+    { windowMs, max }: RateLimitConfig,
+    store?: ExpressRateLimitStore
+  ): Partial<ExpressRateLimitOptions> {
     const opts: Partial<ExpressRateLimitOptions> = {
       standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
       legacyHeaders: false // Disable the `X-RateLimit-*` headers
@@ -184,7 +187,12 @@ function createRateLimiter(opts: RateLimiterOptions): RateLimiter | RedisBasedRa
 /**
  * Builds rate limiter options from legacy configuration format.
  */
-function buildOpts(config: LegacyRateLimitConfig = { windowSeconds: 0, max: 0 }, cachingService: ICache, prefix: string, logger?: Logger): RateLimiterOptions {
+function buildOpts(
+  config: LegacyRateLimitConfig = { windowSeconds: 0, max: 0 },
+  cachingService: ICache,
+  prefix: string,
+  logger?: Logger
+): RateLimiterOptions {
   const { windowSeconds = 0, max = 0 } = config
   const limit = { windowMs: windowSeconds * 1000, max }
   const redis = cachingService instanceof RedisCache ? { client: cachingService.client!, prefix } : undefined
@@ -194,14 +202,22 @@ function buildOpts(config: LegacyRateLimitConfig = { windowSeconds: 0, max: 0 },
 /**
  * Creates an API rate limiter instance using the provided configuration.
  */
-function createApiLimiter({ config, cachingService, logger }: RateLimiterFactoryOptions = {}): RateLimiter | RedisBasedRateLimiter {
+function createApiLimiter({
+  config,
+  cachingService,
+  logger
+}: RateLimiterFactoryOptions = {}): RateLimiter | RedisBasedRateLimiter {
   return createRateLimiter(buildOpts(config?.limits, cachingService!, 'api', logger))
 }
 
 /**
  * Creates a batch API rate limiter instance using the provided configuration.
  */
-function createBatchApiLimiter({ config, cachingService, logger }: RateLimiterFactoryOptions = {}): RateLimiter | RedisBasedRateLimiter {
+function createBatchApiLimiter({
+  config,
+  cachingService,
+  logger
+}: RateLimiterFactoryOptions = {}): RateLimiter | RedisBasedRateLimiter {
   const { batchWindowSeconds, batchMax } = config?.limits || {}
   const opts = buildOpts({ windowSeconds: batchWindowSeconds, max: batchMax }, cachingService!, 'batch-api', logger)
   return createRateLimiter(opts)
@@ -326,7 +342,11 @@ class BatchApiMiddlewareDelegate extends AbstractMiddlewareDelegate {
  * @param {Logger} [logger] - Logger instance
  * @returns {RateLimitMiddleware} Express middleware function for API rate limiting
  */
-const setupApiRateLimiterAfterCachingInit = (config: AppConfig, cachingService: ICache, logger?: Logger): RateLimitMiddleware => {
+const setupApiRateLimiterAfterCachingInit = (
+  config: AppConfig,
+  cachingService: ICache,
+  logger?: Logger
+): RateLimitMiddleware => {
   return new ApiMiddlewareDelegate({ config, cachingService, logger }).middleware
 }
 
@@ -345,7 +365,11 @@ const setupApiRateLimiterAfterCachingInit = (config: AppConfig, cachingService: 
  * @param {Logger} [logger] - Logger instance
  * @returns {RateLimitMiddleware} Express middleware function for batch API rate limiting
  */
-const setupBatchApiRateLimiterAfterCachingInit = (config: AppConfig, cachingService: ICache, logger?: Logger): RateLimitMiddleware => {
+const setupBatchApiRateLimiterAfterCachingInit = (
+  config: AppConfig,
+  cachingService: ICache,
+  logger?: Logger
+): RateLimitMiddleware => {
   return new BatchApiMiddlewareDelegate({ config, cachingService, logger }).middleware
 }
 

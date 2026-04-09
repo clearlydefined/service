@@ -1,10 +1,10 @@
 // (c) Copyright 2021, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
-import type { FetchError, FetchFunction } from './fetch.ts'
 import { callFetch as requestPromise } from '../lib/fetch.ts'
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
 import EntityCoordinates from './entityCoordinates.ts'
+import type { FetchError, FetchFunction } from './fetch.ts'
 
 /** Coordinates that can be mapped by PypiCoordinatesMapper */
 export interface PypiCoordinates extends EntityCoordinatesSpec {
