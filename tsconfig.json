@@ -14,12 +14,12 @@
     "app.d.ts",
     "app.js",
     "bin/www",
-    "bin/**/*.{js,d.ts}",
-    "business/**/*.{js,d.ts}",
-    "lib/**/*.{js,d.ts}",
-    "middleware/**/*.{js,d.ts}",
-    "providers/**/*.{js,d.ts}",
-    "routes/**/*.{js,d.ts}",
-    "schemas/**/*.{js,d.ts}"
+    "bin/**/*.{js,ts,d.ts}",
+    "business/**/*.{js,ts,d.ts}",
+    "lib/**/*.{js,ts,d.ts}",
+    "middleware/**/*.{js,ts,d.ts}",
+    "providers/**/*.{js,ts,d.ts}",
+    "routes/**/*.{js,ts,d.ts}",
+    "schemas/**/*.{js,ts,d.ts}"
   ]
 }
