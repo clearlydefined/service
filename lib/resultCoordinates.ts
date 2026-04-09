@@ -12,20 +12,13 @@ export interface ResultCoordinatesSpec extends EntityCoordinatesSpec {
 
 /** Represents result coordinates for a software component with associated tool information */
 export class ResultCoordinates {
-  /** The type of the entity (e.g., 'npm', 'maven', 'git') */
-  type?: string
-  /** The provider of the entity (e.g., 'npmjs', 'mavencentral', 'github') */
-  provider?: string
-  /** The namespace of the entity (optional, depends on provider) */
-  namespace?: string
-  /** The name of the entity */
-  name?: string
-  /** The revision/version of the entity */
-  revision?: string
-  /** The tool used to analyze the entity (e.g., 'clearlydefined', 'scancode') */
-  tool?: string
-  /** The version of the tool used to analyze the entity */
-  toolVersion?: string
+  declare type?: string
+  declare provider?: string
+  declare namespace?: string
+  declare name?: string
+  declare revision?: string
+  declare tool?: string
+  declare toolVersion?: string
 
   /**
    * Creates ResultCoordinates from a specification object

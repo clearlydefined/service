@@ -180,7 +180,7 @@ async function toEntityCoordinatesFromRequest(request: EntityCoordinatesRequest)
  */
 async function toNormalizedEntityCoordinates(spec: EntityCoordinatesSpec): Promise<EntityCoordinates> {
   const coordinates = EntityCoordinates.fromObject(spec)!
-  return await coordinatesMapper.map(coordinates)
+  return (await coordinatesMapper.map(coordinates)) as EntityCoordinates
 }
 
 /**

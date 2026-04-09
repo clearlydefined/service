@@ -64,7 +64,7 @@ export class PypiCoordinatesMapper {
     const url = new URL(`/pypi/${encodedName}/json`, this.baseUrl).toString()
     try {
       const answer = await this._fetch({ url, method: 'GET', json: true })
-      return answer?.info?.name && { name: answer.info.name }
+      return answer?.info?.name ? { name: answer.info.name } : null
     } catch (error) {
       if ((error as FetchError).statusCode === 404) {
         return null

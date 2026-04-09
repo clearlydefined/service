@@ -60,11 +60,14 @@ class CoordinatesMapper {
   /**
    * Maps coordinates using the appropriate provider-specific mapper.
    */
-  async map(coordinates: EntityCoordinatesSpec): Promise<EntityCoordinates> {
+  async map(coordinates: EntityCoordinatesSpec | undefined): Promise<EntityCoordinates | EntityCoordinatesSpec | undefined> {
+    if (!coordinates) {
+      return undefined
+    }
     // biome-ignore lint/style/noNonNullAssertion: Existing codebase pattern for accessing provider
     // biome-ignore lint/suspicious/noNonNullAssertedOptionalChain: Existing codebase pattern for accessing provider
     const mapper = this.mappers[coordinates?.provider!]
-    let mapped = this.cache.get(coordinates?.toString())
+    let mapped = this.cache.get(coordinates.toString())
     if (mapper && !mapped) {
       mapped = await mapper.map(coordinates)
       if (mapped) {
