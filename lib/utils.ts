@@ -725,8 +725,7 @@ function joinExpressions(expressions: Set<string> | null | undefined): string | 
 function normalizeLicenseExpression(
   rawLicenseExpression: string | null | undefined,
   logger: { info: (message: string) => void },
-  licenseRefLookup: ((token: string) => string | null | undefined) | null = (token) =>
-    token && scancodeMap.get(token)
+  licenseRefLookup: ((token: string) => string | null | undefined) | null = token => token && scancodeMap.get(token)
 ): string | null {
   if (!rawLicenseExpression) {
     return null
