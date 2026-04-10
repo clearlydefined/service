@@ -2,14 +2,18 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
+import type { Definition } from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 
 const { get, uniq, values } = lodash
 
+export interface SearchOptions {
+  [key: string]: any
+}
+
 class AbstractSearch {
-  /**
-   * @param {import('./abstractSearch').SearchOptions} options
-   */
-  constructor(options) {
+  declare options: SearchOptions
+  constructor(options: SearchOptions) {
     this.options = options
   }
 
@@ -19,27 +23,21 @@ class AbstractSearch {
    * Get the results of running the tool specified in the coordinates on the entity specified
    * in the coordinates. If a stream is given, write the content directly on the stream and close.
    * Otherwise, return an object that represents the result.
-   *
-   * @param {any} _coordinates - The coordinates of the result to get
-   * @returns The object found at the given coordinates
    */
   // eslint-disable-next-line no-unused-vars
-  async get(_coordinates) {}
-
-  /**
-   * Get a list of suggested coordinates that match the given pattern
-   * @param {string} _pattern - A pattern to look for in the coordinates of a definition
-   * @returns {Promise<string[]>} The list of suggested coordinates found
-   */
-  // eslint-disable-next-line no-unused-vars
-  async suggestCoordinates(_pattern) {
-    return []
+  async get(_coordinates: EntityCoordinates): Promise<Definition | null> {
+    return null
   }
 
   /**
-   * @param {any} definition
+   * Get a list of suggested coordinates that match the given pattern
    */
-  _getLicenses(definition) {
+  // eslint-disable-next-line no-unused-vars
+  async suggestCoordinates(_pattern: string): Promise<string[]> {
+    return []
+  }
+
+  _getLicenses(definition: Definition): string[] {
     const facets = get(definition, 'licensed.facets')
     if (!facets) {
       return []
@@ -50,10 +48,7 @@ class AbstractSearch {
     ).filter(e => e)
   }
 
-  /**
-   * @param {any} definition
-   */
-  _getAttributions(definition) {
+  _getAttributions(definition: Definition): string[] {
     const facets = get(definition, 'licensed.facets')
     if (!facets) {
       return []
@@ -65,29 +60,23 @@ class AbstractSearch {
 
   /**
    * Add the given definition to the index
-   *
-   * @param {any} _definition
    */
   // eslint-disable-next-line no-unused-vars
-  store(_definition) {}
+  store(_definition: Definition) {}
 
   /**
    * Query the definitions in the index
-   *
-   * @param {any} _body
    */
   // eslint-disable-next-line no-unused-vars
-  query(_body) {
+  query(_body: Record<string, unknown>): unknown {
     return {}
   }
 
   /**
    * Remove the given definition from the index
-   *
-   * @param {any} _coordinates
    */
   // eslint-disable-next-line no-unused-vars
-  delete(_coordinates) {}
+  delete(_coordinates: EntityCoordinates) {}
 }
 
 export default AbstractSearch

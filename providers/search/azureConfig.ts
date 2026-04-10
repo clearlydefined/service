@@ -2,12 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import search from './azureSearch.js'
+import type { AzureSearchOptions } from './azureSearch.ts'
+import search from './azureSearch.ts'
 
-/**
- * @param {import('./azureSearch').AzureSearchOptions} [options]
- */
-function serviceFactory(options) {
+function serviceFactory(options?: Partial<AzureSearchOptions>) {
   const realOptions = options || {
     service: config.get('SEARCH_AZURE_SERVICE'),
     apiKey: config.get('SEARCH_AZURE_API_KEY'),
