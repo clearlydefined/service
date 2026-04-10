@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import Store from '../../../providers/stores/azblobAttachmentStore.js'
+import Store from '../../../providers/stores/azblobAttachmentStore.ts'
 
 describe('AzureAttachmentStore list definitions', () => {
   it('throws original error when not ENOENT', async () => {

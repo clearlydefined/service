@@ -3,7 +3,7 @@
 
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
-import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore.js'
+import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore.ts'
 
 /** Definition object with coordinates */
 export interface Definition {

@@ -10,8 +10,8 @@
 
 import lodash from 'lodash'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import AbstractAzBlobStore from './abstractAzblobStore.js'
-import AbstractFileStore from './abstractFileStore.js'
+import AbstractAzBlobStore from './abstractAzblobStore.ts'
+import AbstractFileStore from './abstractFileStore.ts'
 
 const { sortedUniq } = lodash
 

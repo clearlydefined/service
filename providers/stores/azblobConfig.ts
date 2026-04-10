@@ -7,9 +7,9 @@
  */
 
 import config from 'painless-config'
-import azblobAttachmentStore from './azblobAttachmentStore.js'
-import azblobDefinitionStore from './azblobDefinitionStore.js'
-import azblobHarvestStore from './azblobHarvestStore.js'
+import azblobAttachmentStore from './azblobAttachmentStore.ts'
+import azblobDefinitionStore from './azblobDefinitionStore.ts'
+import azblobHarvestStore from './azblobHarvestStore.ts'
 
 const harvestConnectionString = config.get('HARVEST_AZBLOB_CONNECTION_STRING')
 const harvestContainerName = config.get('HARVEST_AZBLOB_CONTAINER_NAME')

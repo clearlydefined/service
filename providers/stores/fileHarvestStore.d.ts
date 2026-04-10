@@ -4,8 +4,8 @@
 import type { Writable } from 'node:stream'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
-import type { FileStoreOptions } from './abstractFileStore.js'
-import type AbstractFileStore from './abstractFileStore.js'
+import type { FileStoreOptions } from './abstractFileStore.ts'
+import type AbstractFileStore from './abstractFileStore.ts'
 
 /** Tool output results organized by tool name and version */
 export interface ToolOutputs {

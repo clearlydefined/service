@@ -5,7 +5,7 @@
  * @typedef {import('./dispatchConfig').DispatchConfigOptions} DispatchConfigOptions
  */
 
-import dispatchDefinitionStore from './dispatchDefinitionStore.js'
+import dispatchDefinitionStore from './dispatchDefinitionStore.ts'
 
 /**
  * Creates a dispatch definition store with the given factory options.

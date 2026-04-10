@@ -7,9 +7,9 @@
  */
 
 import config from 'painless-config'
-import fileAttachmentStore from './fileAttachmentStore.js'
-import fileDefinitionStore from './fileDefinitionStore.js'
-import fileHarvestStore from './fileHarvestStore.js'
+import fileAttachmentStore from './fileAttachmentStore.ts'
+import fileDefinitionStore from './fileDefinitionStore.ts'
+import fileHarvestStore from './fileHarvestStore.ts'
 
 const location = config.get('FILE_STORE_LOCATION') || (process.platform === 'win32' ? 'c:/temp/cd' : '/tmp/cd')
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { DefinitionStore, DispatchDefinitionStore } from './dispatchDefinitionStore.js'
+import type { DefinitionStore, DispatchDefinitionStore } from './dispatchDefinitionStore.ts'
 
 /** Options for configuring a dispatch definition store */
 export interface DispatchConfigOptions {

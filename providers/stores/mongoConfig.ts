@@ -7,7 +7,7 @@
 
 import config from 'painless-config'
 import mongo from './mongo.js'
-import TrimmedMongoDefinitionStore from './trimmedMongoDefinitionStore.js'
+import TrimmedMongoDefinitionStore from './trimmedMongoDefinitionStore.ts'
 
 const dbOptions = {
   connectionString: config.get('DEFINITION_MONGO_CONNECTION_STRING'),

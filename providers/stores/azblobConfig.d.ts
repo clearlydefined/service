@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
-import type { AzBlobAttachmentStore, AzBlobAttachmentStoreOptions } from './azblobAttachmentStore.js'
-import type { AzBlobDefinitionStore } from './azblobDefinitionStore.js'
-import type { AzHarvestBlobStore } from './azblobHarvestStore.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type { AzBlobAttachmentStore, AzBlobAttachmentStoreOptions } from './azblobAttachmentStore.ts'
+import type { AzBlobDefinitionStore } from './azblobDefinitionStore.ts'
+import type { AzHarvestBlobStore } from './azblobHarvestStore.ts'
 
 /**
  * Creates an Azure Blob harvest store with the given options or default configuration.

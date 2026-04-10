@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
-import type { FileStoreOptions } from './abstractFileStore.js'
-import type AbstractFileStore from './abstractFileStore.js'
+import type { FileStoreOptions } from './abstractFileStore.ts'
+import type AbstractFileStore from './abstractFileStore.ts'
 
 /** Definition object with coordinates */
 export interface Definition {

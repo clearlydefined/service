@@ -11,7 +11,7 @@
  */
 
 import lodash from 'lodash'
-import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
+import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'
 
 const { clone } = lodash
 

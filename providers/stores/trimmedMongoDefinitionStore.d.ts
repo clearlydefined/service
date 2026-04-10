@@ -3,8 +3,8 @@
 
 import type { UpdateResult } from 'mongodb'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
-import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.js'
-import type AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
+import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.ts'
+import type AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'
 
 /** Trimmed definition object (without files) */
 export interface TrimmedDefinition {

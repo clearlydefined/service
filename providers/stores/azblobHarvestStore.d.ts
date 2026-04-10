@@ -4,8 +4,8 @@
 import type { Writable } from 'node:stream'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
-import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
-import type AbstractAzBlobStore from './abstractAzblobStore.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type AbstractAzBlobStore from './abstractAzblobStore.ts'
 
 /** Tool output results organized by tool name and version */
 export interface ToolOutputs {

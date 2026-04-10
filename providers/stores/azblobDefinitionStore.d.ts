@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
-import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
-import type AbstractAzBlobStore from './abstractAzblobStore.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type AbstractAzBlobStore from './abstractAzblobStore.ts'
 
 /** Definition object with coordinates */
 export interface Definition {

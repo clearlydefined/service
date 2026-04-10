@@ -9,8 +9,8 @@ import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
-import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+import PagedMongoDefinitionStore from '../../../providers/stores/mongo.ts'
+import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.ts'
 
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 

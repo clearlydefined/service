@@ -12,7 +12,7 @@ import path from 'node:path'
 import lodash from 'lodash'
 import { mkdirp } from 'mkdirp'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import AbstractFileStore from './abstractFileStore.js'
+import AbstractFileStore from './abstractFileStore.ts'
 
 const { sortedUniq } = lodash
 

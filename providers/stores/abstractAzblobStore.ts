@@ -4,7 +4,7 @@
 import { promisify } from 'node:util'
 import azure from 'azure-storage'
 import logger from '../logging/logger.ts'
-import AbstractFileStore from './abstractFileStore.js'
+import AbstractFileStore from './abstractFileStore.ts'
 
 /**
  * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions

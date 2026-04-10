@@ -16,7 +16,7 @@ import lodash from 'lodash'
 
 const { clone, get, range, escapeRegExp } = lodash
 
-import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.js'
+import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'
 
 /**
  * MongoDB implementation for storing component definitions with pagination support.

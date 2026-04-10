@@ -4,8 +4,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
-import FileStore from '../../../providers/stores/fileDefinitionStore.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.ts'
+import FileStore from '../../../providers/stores/fileDefinitionStore.ts'
 
 const data = {
   'npm/npmjs/-/test/0.0': {},

@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import DispatchDefinitionStore from '../../../providers/stores/dispatchDefinitionStore.js'
+import DispatchDefinitionStore from '../../../providers/stores/dispatchDefinitionStore.ts'
 
 describe('Dispatch Definition store', () => {
   let dispatchDefinitionStore

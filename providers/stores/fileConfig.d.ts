@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { FileStoreOptions } from './abstractFileStore.js'
-import type { FileAttachmentStore, FileAttachmentStoreOptions } from './fileAttachmentStore.js'
-import type { FileDefinitionStore } from './fileDefinitionStore.js'
-import type { FileHarvestStore } from './fileHarvestStore.js'
+import type { FileStoreOptions } from './abstractFileStore.ts'
+import type { FileAttachmentStore, FileAttachmentStoreOptions } from './fileAttachmentStore.ts'
+import type { FileDefinitionStore } from './fileDefinitionStore.ts'
+import type { FileHarvestStore } from './fileHarvestStore.ts'
 
 /**
  * Creates a file-based harvest store with the given options or default configuration.
