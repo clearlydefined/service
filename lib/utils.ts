@@ -180,7 +180,7 @@ async function toEntityCoordinatesFromRequest(request: EntityCoordinatesRequest)
  */
 async function toNormalizedEntityCoordinates(spec: EntityCoordinatesSpec): Promise<EntityCoordinates> {
   const coordinates = EntityCoordinates.fromObject(spec)!
-  return (await coordinatesMapper.map(coordinates)) as EntityCoordinates
+  return (await coordinatesMapper.map(coordinates)) ?? coordinates
 }
 
 /**
@@ -460,7 +460,7 @@ function _mergeFile(
   setIfValue(
     result,
     'license',
-    overrideStrategy(proposed.license, (p: string | undefined) => SPDX.merge(p!, base.license!, 'AND'))
+    overrideStrategy(proposed.license, (p: string | undefined) => SPDX.merge(p ?? '', base.license ?? '', 'AND'))
   )
   setIfValue(
     result,

@@ -61,14 +61,13 @@ class CoordinatesMapper {
    * Maps coordinates using the appropriate provider-specific mapper.
    */
   async map(
-    coordinates: EntityCoordinatesSpec | undefined
-  ): Promise<EntityCoordinates | EntityCoordinatesSpec | undefined> {
+    coordinates: EntityCoordinates | undefined
+  ): Promise<EntityCoordinates | undefined> {
     if (!coordinates) {
       return undefined
     }
-    // biome-ignore lint/style/noNonNullAssertion: Existing codebase pattern for accessing provider
-    // biome-ignore lint/suspicious/noNonNullAssertedOptionalChain: Existing codebase pattern for accessing provider
-    const mapper = this.mappers[coordinates?.provider!]
+    // biome-ignore lint/style/noNonNullAssertion: provider may be undefined but mappers index handles it
+    const mapper = this.mappers[coordinates.provider!]
     let mapped = await Promise.resolve(this.cache.get(coordinates.toString()))
     if (mapper && !mapped) {
       mapped = await mapper.map(coordinates)
