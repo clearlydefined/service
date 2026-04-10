@@ -2,24 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import redis from './redis.js'
-
-/**
- * @typedef {import('./redis.d.ts').RedisCacheOptions} RedisCacheOptions
- *
- * @typedef {import('./redis.d.ts').RedisCache} RedisCache
- */
+import type { RedisCache, RedisCacheOptions } from './redis.ts'
+import redis from './redis.ts'
 
 /**
  * Factory function that creates a Redis cache instance with configuration from environment variables or provided
  * options. This function provides a convenient way to create Redis cache instances with sensible defaults while
  * allowing for custom configuration when needed.
- *
- * @param {RedisCacheOptions} [options] - Optional configuration options. If not provided, will use environment
- *   variables CACHING_REDIS_SERVICE and CACHING_REDIS_API_KEY
- * @returns {RedisCache} A new RedisCache instance configured with the provided or default options
  */
-function serviceFactory(options) {
+function serviceFactory(options?: RedisCacheOptions): RedisCache {
   const realOptions = options || {
     service: config.get('CACHING_REDIS_SERVICE'),
     apiKey: config.get('CACHING_REDIS_API_KEY'),

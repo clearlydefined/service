@@ -116,7 +116,7 @@ class Curation {
   validate() {
     this.isValid = validator.validate('curations', this.data)
     if (!this.isValid) {
-      this.errors.push(...validator.errors.map((error: unknown) => ({ message: 'Invalid curation', error })))
+      this.errors.push(...(validator.errors ?? []).map((error: unknown) => ({ message: 'Invalid curation', error })))
       return
     }
 

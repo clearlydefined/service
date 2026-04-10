@@ -3,73 +3,44 @@
 
 import { Cache } from 'memory-cache'
 
-/** @typedef {import('./memory').MemoryCacheOptions} MemoryCacheOptions */
+import type { BaseCacheOptions, ICache } from './index.js'
+
+/** Configuration options for MemoryCache */
+export interface MemoryCacheOptions extends BaseCacheOptions {}
 
 /** In-memory cache implementation using memory-cache library */
-class MemoryCache {
-  /**
-   * Creates a new MemoryCache instance
-   *
-   * @param {MemoryCacheOptions} options - Configuration options for the cache
-   */
-  constructor(options) {
-    /** @private */
+class MemoryCache implements ICache {
+  private declare cache: any
+  private declare defaultTtlSeconds: number | undefined
+
+  /** Creates a new MemoryCache instance */
+  constructor(options: MemoryCacheOptions) {
     this.cache = new Cache()
-    /** @private */
     this.defaultTtlSeconds = options.defaultTtlSeconds
   }
 
-  /**
-   * Initializes the cache (async for interface compatibility)
-   *
-   * @returns {Promise<void>} Promise that resolves when initialization is complete
-   */
-  async initialize() {}
+  /** Initializes the cache (async for interface compatibility) */
+  async initialize(): Promise<void> {}
 
-  /**
-   * Cleanup method called when cache is no longer needed
-   *
-   * @returns {Promise<void>} Promise that resolves when cleanup is complete
-   */
-  async done() {}
+  /** Cleanup method called when cache is no longer needed */
+  async done(): Promise<void> {}
 
-  /**
-   * Retrieves an item from the cache
-   *
-   * @param {string} item - The key of the item to retrieve
-   * @returns {any} The cached value or null if not found or expired
-   */
-  get(item) {
+  /** Retrieves an item from the cache */
+  get(item: string): any {
     return this.cache.get(item)
   }
 
-  /**
-   * Stores an item in the cache
-   *
-   * @param {string} item - The key to store the value under
-   * @param {any} value - The value to cache
-   * @param {number | null} [ttlSeconds=null] - Time-to-live in seconds (optional, uses default if not provided).
-   *   Default is `null`
-   */
-  set(item, value, ttlSeconds = null) {
-    const expiration = 1000 * (ttlSeconds || this.defaultTtlSeconds)
+  /** Stores an item in the cache */
+  set(item: string, value: any, ttlSeconds: number | null = null): void {
+    const expiration = 1000 * (ttlSeconds || this.defaultTtlSeconds || 0)
     this.cache.put(item, value, expiration)
   }
 
-  /**
-   * Removes an item from the cache
-   *
-   * @param {string} item - The key of the item to remove
-   */
-  delete(item) {
+  /** Removes an item from the cache */
+  delete(item: string): void {
     this.cache.del(item)
   }
 }
 
-/**
- * Factory function to create a new MemoryCache instance
- *
- * @param {MemoryCacheOptions} [options] - Configuration options for the cache
- * @returns {MemoryCache} A new MemoryCache instance
- */
-export default options => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })
+/** Factory function to create a new MemoryCache instance */
+export default (options?: MemoryCacheOptions): MemoryCache => new MemoryCache(options || { defaultTtlSeconds: 60 * 60 })
