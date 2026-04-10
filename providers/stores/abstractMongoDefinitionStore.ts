@@ -2,27 +2,77 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
+import type { Collection, Db, Document, Filter } from 'mongodb'
 import { MongoClient } from 'mongodb'
 import promiseRetry from 'promise-retry'
-import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 
 const { get } = lodash
 
 import base64 from 'base-64'
 
-/**
- * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionStoreOptions} MongoDefinitionStoreOptions
- * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionQuery} MongoDefinitionQuery
- * @typedef {import('./abstractMongoDefinitionStore').FindResult} FindResult
- * @typedef {import('../logging').Logger} Logger
- * @typedef {import('mongodb').Db} Db
- * @typedef {import('mongodb').Collection} Collection
- * @typedef {import('mongodb').MongoClient} MongoClientType
- */
+/** Options for configuring an AbstractMongoDefinitionStore */
+export interface MongoDefinitionStoreOptions {
+  /** MongoDB connection string */
+  connectionString: string
+  /** Database name */
+  dbName: string
+  /** Collection name */
+  collectionName: string
+  /** Optional logger instance */
+  logger?: Logger
+}
 
-/** @type {Record<string, string[]>} */
-const sortOptions = {
+/** Query parameters for finding definitions */
+export interface MongoDefinitionQuery {
+  /** Filter by component type */
+  type?: string | null
+  /** Filter by provider */
+  provider?: string | null
+  /** Filter by namespace */
+  namespace?: string | null
+  /** Filter by name */
+  name?: string | null
+  /** Filter by declared license */
+  license?: string
+  /** Filter by release date (after) */
+  releasedAfter?: string
+  /** Filter by release date (before) */
+  releasedBefore?: string
+  /** Filter by minimum effective score */
+  minEffectiveScore?: string | number
+  /** Filter by maximum effective score */
+  maxEffectiveScore?: string | number
+  /** Filter by minimum tool score */
+  minToolScore?: string | number
+  /** Filter by maximum tool score */
+  maxToolScore?: string | number
+  /** Filter by minimum licensed score */
+  minLicensedScore?: string | number
+  /** Filter by maximum licensed score */
+  maxLicensedScore?: string | number
+  /** Filter by minimum described score */
+  minDescribedScore?: string | number
+  /** Filter by maximum described score */
+  maxDescribedScore?: string | number
+  /** Sort field */
+  sort?: string
+  /** Sort descending */
+  sortDesc?: boolean
+}
+
+/** Result from find operation with pagination */
+export interface FindResult<T = any> {
+  /** Array of matching documents */
+  data: T[]
+  /** Continuation token for next page, empty string if no more results */
+  continuationToken: string
+}
+
+const sortOptions: Record<string, string[]> = {
   type: ['coordinates.type'],
   provider: ['coordinates.provider'],
   name: ['coordinates.name', 'coordinates.revision'],
@@ -36,8 +86,7 @@ const sortOptions = {
   toolScore: ['scores.tool']
 }
 
-/** @type {Record<string, (value: any) => number | undefined>} */
-const valueTransformers = {
+const valueTransformers: Record<string, (value: any) => number | undefined> = {
   'licensed.score.total': value => value && Number.parseInt(value, 10),
   'described.score.total': value => value && Number.parseInt(value, 10),
   'scores.effective': value => value && Number.parseInt(value, 10),
@@ -51,24 +100,21 @@ const SEPARATOR = '&'
  * Provides common functionality for querying and storing definitions in MongoDB.
  */
 class AbstractMongoDefinitionStore {
-  /**
-   * Creates a new AbstractMongoDefinitionStore instance
-   *
-   * @param {MongoDefinitionStoreOptions} options - Configuration options for the store
-   */
-  constructor(options) {
-    /** @type {Logger} */
+  logger: Logger
+  options: MongoDefinitionStoreOptions
+  declare client: MongoClient
+  declare db: Db
+  declare collection: Collection
+
+  constructor(options: MongoDefinitionStoreOptions) {
     this.logger = options.logger || logger()
-    /** @type {MongoDefinitionStoreOptions} */
     this.options = options
   }
 
   /**
    * Initializes the MongoDB connection and creates indexes
-   *
-   * @returns {Promise<void>} Promise that resolves when initialization is complete
    */
-  initialize() {
+  initialize(): Promise<void> {
     return promiseRetry(async retry => {
       try {
         this.client = await MongoClient.connect(this.options.connectionString)
@@ -80,7 +126,7 @@ class AbstractMongoDefinitionStore {
         this.collection = this.db.collection(this.options.collectionName)
         await this._createIndexes()
       } catch (error) {
-        const err = /** @type {Error} */ (error)
+        const err = error as Error
         this.logger.info(`retrying mongo connection: ${err.message}`)
         retry(error)
       }
@@ -129,49 +175,37 @@ class AbstractMongoDefinitionStore {
 
   /**
    * Closes the MongoDB connection
-   *
-   * @returns {Promise<void>} Promise that resolves when the connection is closed
    */
-  async close() {
+  async close(): Promise<void> {
     await this.client.close()
   }
 
   /**
    * List all of the matching components for the given coordinates.
-   * Accepts partial coordinates. Must be implemented by subclasses.
-   *
-   * @param {import('../../lib/entityCoordinates')} _coordinates - The coordinates to match
-   * @returns {Promise<string[]>} A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
-   * @throws {Error} If not implemented by subclass
+   * Accepts partial coordinates.
    */
   // eslint-disable-next-line no-unused-vars
-  async list(_coordinates) {
+  async list(_coordinates: EntityCoordinates): Promise<string[]> {
     throw new Error('Unsupported Operation')
   }
 
   /**
    * Get and return the object at the given coordinates.
-   * Must be implemented by subclasses.
-   *
-   * @param {import('../../lib/entityCoordinates')} _coordinates - The coordinates of the object to get
-   * @returns {Promise<any>} The loaded object or null if not found
-   * @throws {Error} If not implemented by subclass
    */
   // eslint-disable-next-line no-unused-vars
-  async get(_coordinates) {
+  async get(_coordinates: EntityCoordinates): Promise<any> {
     throw new Error('Unsupported Operation')
   }
 
   /**
    * Query and return the objects based on the query
-   *
-   * @param {MongoDefinitionQuery} query - The filters and sorts for the request
-   * @param {string} [continuationToken=''] - Token for pagination
-   * @param {number} [pageSize=100] - Number of results per page
-   * @param {object} [projection] - Optional projection for returned documents
-   * @returns {Promise<FindResult>} The data and continuationToken if there are more results
    */
-  async find(query, continuationToken = '', pageSize = 100, projection) {
+  async find(
+    query: MongoDefinitionQuery,
+    continuationToken = '',
+    pageSize = 100,
+    projection?: Document
+  ): Promise<FindResult> {
     const sort = this._buildSort(query)
     const combinedFilters = this._buildQueryWithPaging(query, continuationToken, sort)
     this.logger.debug(`filter: ${JSON.stringify(combinedFilters)}\nsort: ${JSON.stringify(sort)}`)
@@ -187,51 +221,30 @@ class AbstractMongoDefinitionStore {
   }
 
   /**
-   * Store a definition. Must be implemented by subclasses.
-   *
-   * @param {any} _definition - The definition to store
-   * @returns {Promise<void>}
-   * @throws {Error} If not implemented by subclass
+   * Store a definition.
    */
   // eslint-disable-next-line no-unused-vars
-  async store(_definition) {
+  async store(_definition: any): Promise<void> {
     throw new Error('Unsupported Operation')
   }
 
   /**
-   * Delete a definition. Must be implemented by subclasses.
-   *
-   * @param {import('../../lib/entityCoordinates')} _coordinates - The coordinates of the definition to delete
-   * @returns {Promise<void>}
-   * @throws {Error} If not implemented by subclass
+   * Delete a definition.
    */
   // eslint-disable-next-line no-unused-vars
-  async delete(_coordinates) {
+  async delete(_coordinates: EntityCoordinates): Promise<void> {
     throw new Error('Unsupported Operation')
   }
 
-  /**
-   * Gets the ID string from coordinates
-   *
-   * @param {import('../../lib/entityCoordinates') | null | undefined} coordinates - The coordinates
-   * @returns {string} The ID string (lowercased coordinate string)
-   */
-  getId(coordinates) {
+  getId(coordinates: EntityCoordinates | null | undefined): string {
     if (!coordinates) {
       return ''
     }
-    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
+    return EntityCoordinatesClass.fromObject(coordinates).toString().toLowerCase()
   }
 
-  /**
-   * Builds a MongoDB filter from query parameters
-   *
-   * @param {MongoDefinitionQuery} parameters - The query parameters
-   * @returns {Record<string, any>} The MongoDB filter object
-   */
-  buildQuery(parameters) {
-    /** @type {Record<string, any>} */
-    const filter = {}
+  buildQuery(parameters: MongoDefinitionQuery): Filter<Document> {
+    const filter: Record<string, any> = {}
     if (parameters.type) {
       filter['coordinates.type'] = parameters.type
     }
@@ -292,26 +305,13 @@ class AbstractMongoDefinitionStore {
     return filter
   }
 
-  /**
-   * Gets the key field used for coordinates (to be overridden by subclasses)
-   *
-   * @returns {string} The coordinates key field name
-   */
-  getCoordinatesKey() {
+  getCoordinatesKey(): string {
     return '_id'
   }
 
-  /**
-   * Builds a sort clause from query parameters
-   *
-   * @protected
-   * @param {MongoDefinitionQuery} parameters - The query parameters
-   * @returns {Record<string, number>} The MongoDB sort object
-   */
-  _buildSort(parameters) {
+  _buildSort(parameters: MongoDefinitionQuery): Record<string, number> {
     const sort = sortOptions[parameters.sort || ''] || []
-    /** @type {Record<string, number>} */
-    const clause = {}
+    const clause: Record<string, number> = {}
     const sortDirection = parameters.sortDesc ? -1 : 1
     for (const item of sort) {
       clause[item] = sortDirection
@@ -322,30 +322,17 @@ class AbstractMongoDefinitionStore {
     return clause
   }
 
-  /**
-   * Builds a query with pagination filters
-   *
-   * @protected
-   * @param {MongoDefinitionQuery} query - The query parameters
-   * @param {string} continuationToken - The continuation token
-   * @param {Record<string, number>} sort - The sort clause
-   * @returns {Record<string, any>} The combined filter with pagination
-   */
-  _buildQueryWithPaging(query, continuationToken, sort) {
+  _buildQueryWithPaging(
+    query: MongoDefinitionQuery,
+    continuationToken: string,
+    sort: Record<string, number>
+  ): Record<string, any> {
     const filter = this.buildQuery(query)
     const paginationFilter = this._buildPaginationQuery(continuationToken, sort)
     return paginationFilter ? { $and: [filter, paginationFilter] } : filter
   }
 
-  /**
-   * Builds pagination query from continuation token
-   *
-   * @protected
-   * @param {string} continuationToken - The continuation token
-   * @param {Record<string, number>} sort - The sort clause
-   * @returns {Record<string, any> | undefined} The pagination filter or undefined
-   */
-  _buildPaginationQuery(continuationToken, sort) {
+  _buildPaginationQuery(continuationToken: string, sort: Record<string, number>): Record<string, any> | undefined {
     if (!continuationToken.length) {
       return undefined
     }
@@ -353,20 +340,11 @@ class AbstractMongoDefinitionStore {
     return queryExpressions.length <= 1 ? queryExpressions[0] : { $or: [...queryExpressions] }
   }
 
-  /**
-   * Builds query expressions for pagination
-   *
-   * @protected
-   * @param {string} continuationToken - The continuation token
-   * @param {Record<string, number>} sort - The sort clause
-   * @returns {Record<string, any>[]} Array of filter expressions
-   */
-  _buildQueryExpressions(continuationToken, sort) {
+  _buildQueryExpressions(continuationToken: string, sort: Record<string, number>): Record<string, any>[] {
     const lastValues = base64.decode(continuationToken)
     const sortValues = lastValues.split(SEPARATOR).map(value => (value.length ? value : null))
 
-    /** @type {Record<string, any>[]} */
-    const queryExpressions = []
+    const queryExpressions: Record<string, any>[] = []
     const sortConditions = Object.entries(sort)
     for (let nSorts = 1; nSorts <= sortConditions.length; nSorts++) {
       const subList = sortConditions.slice(0, nSorts)
@@ -375,40 +353,26 @@ class AbstractMongoDefinitionStore {
     return queryExpressions
   }
 
-  /**
-   * Builds a single query expression for pagination
-   *
-   * @protected
-   * @param {[string, number][]} sortConditions - The sort conditions
-   * @param {(string | null)[]} sortValues - The values from the continuation token
-   * @returns {Record<string, any>} The filter expression
-   */
-  _buildQueryExpression(sortConditions, sortValues) {
+  _buildQueryExpression(sortConditions: [string, number][], sortValues: (string | null)[]): Record<string, any> {
     return sortConditions.reduce(
       (filter, [sortField, sortDirection], index) => {
         const transform = valueTransformers[sortField]
-        /** @type {string | number | null | undefined} */
-        let sortValue = sortValues[index]
+        let sortValue: string | number | null | undefined = sortValues[index]
         sortValue = transform ? transform(sortValue) : sortValue
         const isLast = index === sortConditions.length - 1
         const filterForSort = this._buildQueryForSort(isLast, sortField, sortValue, sortDirection)
         return Object.assign(filter, filterForSort)
       },
-      /** @type {Record<string, any>} */ ({})
+      {} as Record<string, any>
     )
   }
 
-  /**
-   * Builds a filter for a single sort field
-   *
-   * @protected
-   * @param {boolean} isTieBreaker - Whether this is the tie-breaker field
-   * @param {string} sortField - The field name
-   * @param {string | number | null | undefined} sortValue - The value to compare against
-   * @param {number} sortDirection - The sort direction (1 or -1)
-   * @returns {Record<string, any>} The filter for this sort field
-   */
-  _buildQueryForSort(isTieBreaker, sortField, sortValue, sortDirection) {
+  _buildQueryForSort(
+    isTieBreaker: boolean,
+    sortField: string,
+    sortValue: string | number | null | undefined,
+    sortDirection: number
+  ): Record<string, any> {
     let operator = '$eq'
     if (isTieBreaker) {
       if (sortDirection === 1) {
@@ -428,16 +392,7 @@ class AbstractMongoDefinitionStore {
     return filter
   }
 
-  /**
-   * Gets the continuation token for the next page
-   *
-   * @protected
-   * @param {number} pageSize - The page size
-   * @param {any[]} data - The current page data
-   * @param {Record<string, number>} sortClause - The sort clause
-   * @returns {string} The continuation token or empty string if no more pages
-   */
-  _getContinuationToken(pageSize, data, sortClause) {
+  _getContinuationToken(pageSize: number, data: any[], sortClause: Record<string, number>): string {
     if (data.length !== pageSize) {
       return ''
     }

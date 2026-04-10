@@ -1,15 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
- * @typedef {import('./abstractAzblobStore').BlobEntry} BlobEntry
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinatesType
- * @typedef {import('./azblobDefinitionStore').Definition} Definition
- */
-
 import lodash from 'lodash'
-import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
+import type { AzBlobStoreOptions, BlobEntry } from './abstractAzblobStore.ts'
 import AbstractAzBlobStore from './abstractAzblobStore.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
@@ -17,41 +12,38 @@ const { sortedUniq } = lodash
 
 import { promisify } from 'node:util'
 
+/** Definition object with coordinates */
+export interface Definition {
+  /** The coordinates identifying this definition */
+  coordinates: EntityCoordinates
+  [key: string]: any
+}
+
 /**
  * Azure Blob Storage implementation for storing component definitions.
  * Extends AbstractAzBlobStore with definition-specific functionality.
  */
-class AzBlobDefinitionStore extends AbstractAzBlobStore {
+export class AzBlobDefinitionStore extends AbstractAzBlobStore {
   /**
    * List all of the definitions for the given coordinates.
-   *
-   * @override
-   * @param {EntityCoordinatesType} coordinates - Accepts partial coordinates
-   * @returns {Promise<string[]>} A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   // @ts-expect-error - Simplified list signature (visitor is handled internally)
-  async list(coordinates) {
-    const list = await super.list(
-      coordinates,
-      /** @param {BlobEntry} entry */ entry => {
-        const path = entry.metadata['id']
-        if (!path) {
-          return null
-        }
-        const entryCoordinates = EntityCoordinates.fromString(path)
-        return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? path : null
+  override async list(coordinates: EntityCoordinates): Promise<string[]> {
+    const list = await super.list(coordinates, (entry: BlobEntry) => {
+      const path = entry.metadata['id']
+      if (!path) {
+        return null
       }
-    )
-    return sortedUniq(list.filter(/** @param {string|null} x */ x => x))
+      const entryCoordinates = EntityCoordinatesClass.fromString(path)
+      return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? path : null
+    })
+    return sortedUniq(list.filter((x: string | null) => x))
   }
 
   /**
    * Store a definition in Azure Blob Storage.
-   *
-   * @param {Definition} definition - The definition to store
-   * @returns {Promise<void>} Promise that resolves when the definition is stored
    */
-  store(definition) {
+  async store(definition: Definition): Promise<void> {
     const blobName = `${this._toStoragePathFromCoordinates(definition.coordinates)}.json`
     return promisify(this.blobService.createBlockBlobFromText).bind(this.blobService)(
       this.containerName,
@@ -67,15 +59,12 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
 
   /**
    * Delete a definition from Azure Blob Storage.
-   *
-   * @param {EntityCoordinatesType} coordinates - The coordinates of the definition to delete
-   * @returns {Promise<void>} Promise that resolves when the definition is deleted
    */
-  async delete(coordinates) {
+  async delete(coordinates: EntityCoordinates): Promise<void> {
     const blobName = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       await promisify(this.blobService.deleteBlob).bind(this.blobService)(this.containerName, blobName)
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
       if (error.code !== 'BlobNotFound') {
         throw error
       }
@@ -85,8 +74,5 @@ class AzBlobDefinitionStore extends AbstractAzBlobStore {
 
 /**
  * Factory function to create an AzBlobDefinitionStore instance.
- *
- * @param {AzBlobStoreOptions} options - Configuration options for the store
- * @returns {AzBlobDefinitionStore} A new AzBlobDefinitionStore instance
  */
-export default options => new AzBlobDefinitionStore(options)
+export default (options: AzBlobStoreOptions): AzBlobDefinitionStore => new AzBlobDefinitionStore(options)

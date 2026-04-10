@@ -1,106 +1,93 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../logging').Logger} Logger
- * @typedef {import('./abstractMongoDefinitionStore').FindResult} FindResult
- * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionQuery} MongoDefinitionQuery
- * @typedef {import('./dispatchDefinitionStore').Definition} Definition
- * @typedef {import('./dispatchDefinitionStore').DefinitionStore} DefinitionStore
- * @typedef {import('./dispatchDefinitionStore').DispatchDefinitionStoreOptions} DispatchDefinitionStoreOptions
- */
-
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore.ts'
+
+/** Definition object with coordinates */
+export interface Definition {
+  /** The coordinates identifying this definition */
+  coordinates: EntityCoordinates
+  [key: string]: any
+}
+
+/** Interface for definition stores that can be dispatched to */
+export interface DefinitionStore {
+  initialize(): Promise<void>
+  get(coordinates: EntityCoordinates): Promise<Definition | null>
+  list(coordinates: EntityCoordinates): Promise<string[] | null>
+  store(definition: Definition): Promise<any>
+  delete(coordinates: EntityCoordinates): Promise<any>
+  find(query: MongoDefinitionQuery, continuationToken?: string): Promise<FindResult | null>
+}
+
+/** Options for configuring a DispatchDefinitionStore */
+export interface DispatchDefinitionStoreOptions {
+  /** Array of definition stores to dispatch operations to */
+  stores: DefinitionStore[]
+  /** Optional logger instance */
+  logger?: Logger
+}
 
 /**
  * A definition store that dispatches operations to multiple underlying stores.
  * Sequential operations (get, list, find) return the first successful result.
  * Parallel operations (initialize, store, delete) run on all stores concurrently.
  */
-class DispatchDefinitionStore {
-  /**
-   * Creates a new DispatchDefinitionStore instance.
-   *
-   * @param {DispatchDefinitionStoreOptions} options - Configuration options for the store
-   */
-  constructor(options) {
-    /** @type {DefinitionStore[]} */
+export class DispatchDefinitionStore {
+  stores: DefinitionStore[]
+  logger: Logger
+
+  constructor(options: DispatchDefinitionStoreOptions) {
     this.stores = options.stores
-    /** @type {Logger} */
     this.logger = options.logger || logger()
   }
 
   /**
    * Initialize all underlying stores in parallel.
-   *
-   * @returns {Promise<void>} Promise that resolves when all stores are initialized
    */
-  initialize() {
-    return this._performInParallel(store => store.initialize())
+  initialize(): Promise<void> {
+    return this._performInParallel(store => store.initialize()) as Promise<void>
   }
 
   /**
    * Get a definition from the first store that has it.
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the definition to get
-   * @returns {Promise<Definition | null>} The definition or null if not found
    */
-  get(coordinates) {
+  get(coordinates: EntityCoordinates): Promise<Definition | null> {
     return this._performInSequence(store => store.get(coordinates))
   }
 
   /**
    * List definitions from the first store that returns results.
-   *
-   * @param {EntityCoordinates} coordinates - Accepts partial coordinates
-   * @returns {Promise<string[] | null>} A list of matching coordinates or null
    */
-  list(coordinates) {
+  list(coordinates: EntityCoordinates): Promise<string[] | null> {
     return this._performInSequence(store => store.list(coordinates))
   }
 
   /**
    * Store a definition to all underlying stores in parallel.
-   *
-   * @param {Definition} definition - The definition to store
-   * @returns {Promise<any>} Result from the first successful store
    */
-  store(definition) {
+  store(definition: Definition) {
     return this._performInParallel(store => store.store(definition))
   }
 
   /**
    * Delete a definition from all underlying stores in parallel.
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the definition to delete
-   * @returns {Promise<any>} Result from the first successful delete
    */
-  delete(coordinates) {
+  delete(coordinates: EntityCoordinates) {
     return this._performInParallel(store => store.delete(coordinates))
   }
 
   /**
    * Find definitions from the first store that returns results.
-   *
-   * @param {MongoDefinitionQuery} query - The query parameters
-   * @param {string} [continuationToken=''] - Token for pagination
-   * @returns {Promise<FindResult | null>} The find result or null
    */
-  find(query, continuationToken = '') {
+  find(query: MongoDefinitionQuery, continuationToken = ''): Promise<FindResult | null> {
     return this._performInSequence(store => store.find(query, continuationToken))
   }
 
-  /**
-   * Execute an operation on stores sequentially until one succeeds.
-   *
-   * @private
-   * @template T
-   * @param {function(DefinitionStore): Promise<T>} operation - The operation to perform
-   * @param {boolean} [first=true] - Whether to return on first result
-   * @returns {Promise<T | null>} The first successful result or null
-   */
-  async _performInSequence(operation, first = true) {
+  async _performInSequence<T>(operation: (store: DefinitionStore) => Promise<T>, first = true): Promise<T | null> {
     let result = null
     for (let i = 0; i < this.stores.length; i++) {
       const store = this.stores[i]
@@ -117,15 +104,7 @@ class DispatchDefinitionStore {
     return result
   }
 
-  /**
-   * Execute an operation on all stores in parallel.
-   *
-   * @private
-   * @template T
-   * @param {function(DefinitionStore): Promise<T>} operation - The operation to perform
-   * @returns {Promise<T | undefined>} Result from the first fulfilled promise
-   */
-  async _performInParallel(operation) {
+  async _performInParallel<T>(operation: (store: DefinitionStore) => Promise<T>): Promise<T | undefined> {
     const opPromises = this.stores.map(store => operation(store))
     const results = await Promise.allSettled(opPromises)
     for (const result of results.filter(result => result.status === 'rejected')) {
@@ -138,8 +117,6 @@ class DispatchDefinitionStore {
 
 /**
  * Factory function to create a DispatchDefinitionStore instance.
- *
- * @param {DispatchDefinitionStoreOptions} options - Configuration options for the store
- * @returns {DispatchDefinitionStore} A new DispatchDefinitionStore instance
  */
-export default options => new DispatchDefinitionStore(options)
+export default (options: DispatchDefinitionStoreOptions): DispatchDefinitionStore =>
+  new DispatchDefinitionStore(options)

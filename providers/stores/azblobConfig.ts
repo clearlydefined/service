@@ -1,12 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
- * @typedef {import('./azblobAttachmentStore').AzBlobAttachmentStoreOptions} AzBlobAttachmentStoreOptions
- */
-
 import config from 'painless-config'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type { AzBlobAttachmentStoreOptions } from './azblobAttachmentStore.ts'
 import azblobAttachmentStore from './azblobAttachmentStore.ts'
 import azblobDefinitionStore from './azblobDefinitionStore.ts'
 import azblobHarvestStore from './azblobHarvestStore.ts'
@@ -20,11 +17,8 @@ const attachmentContainerName = config.get('ATTACHMENT_AZBLOB_CONTAINER_NAME') |
 
 /**
  * Creates an Azure Blob harvest store with the given options or default configuration.
- *
- * @param {AzBlobStoreOptions} [options] - Optional configuration options for the store
- * @returns {ReturnType<typeof import('./azblobHarvestStore')>} A new AzHarvestBlobStore instance
  */
-function harvest(options) {
+function harvest(options?: AzBlobStoreOptions) {
   return azblobHarvestStore(
     options || {
       connectionString: harvestConnectionString,
@@ -35,11 +29,8 @@ function harvest(options) {
 
 /**
  * Creates an Azure Blob definition store with the given options or default configuration.
- *
- * @param {AzBlobStoreOptions} [options] - Optional configuration options for the store
- * @returns {ReturnType<typeof import('./azblobDefinitionStore')>} A new AzBlobDefinitionStore instance
  */
-function definition(options) {
+function definition(options?: AzBlobStoreOptions) {
   return azblobDefinitionStore(
     options || {
       connectionString: definitionConnectionString,
@@ -50,11 +41,8 @@ function definition(options) {
 
 /**
  * Creates an Azure Blob attachment store with the given options or default configuration.
- *
- * @param {AzBlobAttachmentStoreOptions} [options] - Optional configuration options for the store
- * @returns {ReturnType<typeof import('./azblobAttachmentStore')>} A new AzBlobAttachmentStore instance
  */
-function attachment(options) {
+function attachment(options?: AzBlobAttachmentStoreOptions) {
   return azblobAttachmentStore(
     options || {
       connectionString: attachmentConnectionString,

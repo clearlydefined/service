@@ -1,57 +1,49 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('stream').Writable} Writable
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinatesType
- * @typedef {import('../../lib/resultCoordinates')} ResultCoordinatesType
- * @typedef {import('./abstractFileStore').FileStoreOptions} FileStoreOptions
- * @typedef {import('./fileHarvestStore').ToolOutputs} ToolOutputs
- */
-
 import fs from 'node:fs'
+import type { Writable } from 'node:stream'
 import lodash from 'lodash'
 import recursive from 'recursive-readdir'
-import ResultCoordinates from '../../lib/resultCoordinates.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
+import ResultCoordinatesClass from '../../lib/resultCoordinates.ts'
+import type { FileStoreOptions } from './abstractFileStore.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
 const { sortedUniq, get } = lodash
+
+/** Tool output results organized by tool name and version */
+export interface ToolOutputs {
+  [toolName: string]: {
+    [toolVersion: string]: any
+  }
+}
 
 /**
  * File system implementation for storing harvest results.
  * Extends AbstractFileStore with harvest-specific functionality.
  */
-class FileHarvestStore extends AbstractFileStore {
+export class FileHarvestStore extends AbstractFileStore {
   /**
    * List all of the results for the given coordinates.
-   *
-   * @override
-   * @param {EntityCoordinatesType | ResultCoordinatesType} coordinates - Accepts partial coordinates
-   * @returns {Promise<string[]>} A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3/tool/scancode/2.9.2' ]
    */
   // @ts-expect-error - Simplified list signature (visitor is handled internally)
-  async list(coordinates) {
-    const list = await super.list(
-      coordinates,
-      /** @param {any} entry */ entry => {
-        const link = get(entry, '_metadata.links.self.href')
-        if (!link) {
-          return null
-        }
-        return ResultCoordinates.fromUrn(link).toString()
+  override async list(coordinates: EntityCoordinates | ResultCoordinates): Promise<string[]> {
+    const list = await super.list(coordinates, (entry: any) => {
+      const link = get(entry, '_metadata.links.self.href')
+      if (!link) {
+        return null
       }
-    )
+      return ResultCoordinatesClass.fromUrn(link).toString()
+    })
     return sortedUniq(list.filter(x => x))
   }
 
   /**
    * Stream the content identified by the coordinates onto the given stream and close the stream.
-   *
-   * @param {ResultCoordinatesType} coordinates - The coordinates of the content to access
-   * @param {Writable} stream - The stream onto which the output is written
-   * @returns {Promise<null>} Promise that resolves when streaming is complete
    */
-  async stream(coordinates, stream) {
+  async stream(coordinates: ResultCoordinates, stream: Writable): Promise<null> {
     const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     return new Promise((resolve, reject) => {
       const read = fs.createReadStream(filePath)
@@ -64,11 +56,8 @@ class FileHarvestStore extends AbstractFileStore {
   /**
    * Get all of the tool outputs for the given coordinates. The coordinates must be all the way down
    * to a revision.
-   *
-   * @param {EntityCoordinatesType} coordinates - The component revision to report on
-   * @returns {Promise<ToolOutputs>} An object with a property for each tool and tool version
    */
-  async getAll(coordinates) {
+  async getAll(coordinates: EntityCoordinates): Promise<ToolOutputs> {
     // TODO validate/enforce that the coordinates are down to the component revision
     // Note that here we are assuming the number of blobs will be small-ish (<10) and
     // a) all fit in memory reasonably, and
@@ -77,18 +66,11 @@ class FileHarvestStore extends AbstractFileStore {
     return await this._getContent(allFilesList)
   }
 
-  /**
-   * Get list of all files for the given coordinates.
-   *
-   * @private
-   * @param {EntityCoordinatesType} coordinates - The coordinates to list files for
-   * @returns {Promise<string[]>} List of file paths
-   */
-  async _getListOfAllFiles(coordinates) {
+  async _getListOfAllFiles(coordinates: EntityCoordinates): Promise<string[]> {
     const root = this._toStoragePathFromCoordinates(coordinates)
     try {
       return await recursive(root, ['.DS_Store'])
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
       if (error.code === 'ENOENT') {
         return []
       }
@@ -96,55 +78,37 @@ class FileHarvestStore extends AbstractFileStore {
     }
   }
 
-  /**
-   * Get content for all provided files and organize by tool/version.
-   *
-   * @private
-   * @param {string[]} files - List of file paths to fetch
-   * @returns {Promise<ToolOutputs>} Tool outputs organized by tool name and version
-   */
-  async _getContent(files) {
+  async _getContent(files: string[]): Promise<ToolOutputs> {
     const contents = await Promise.all(
       files.map(file => {
-        return new Promise((resolve, reject) =>
+        return new Promise<{ name: string; content: any }>((resolve, reject) =>
           fs.readFile(file, (error, data) =>
             error ? reject(error) : resolve({ name: file, content: JSON.parse(data.toString()) })
           )
         )
       })
     )
-    return contents.reduce((result, entry) => {
+    return contents.reduce<ToolOutputs>((result, entry) => {
       const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
       result[tool] = result[tool] || {}
       const current = result[tool]
       current[toolVersion] = entry.content
       return result
-    }, {})
+    }, {} as ToolOutputs)
   }
 
   /**
    * Get the latest version of each tool output for the given coordinates. The coordinates must be all the way down
    * to a revision.
-   *
-   * @param {EntityCoordinatesType} coordinates - The component revision to report on
-   * @returns {Promise<ToolOutputs>} A promise that resolves to an object with a property for each tool and tool version
    */
-  async getAllLatest(coordinates) {
+  async getAllLatest(coordinates: EntityCoordinates): Promise<ToolOutputs> {
     const allFilesList = await this._getListOfAllFiles(coordinates)
     const latestFilesList = this._getListOfLatestFiles(allFilesList)
     return await this._getContent(latestFilesList)
   }
 
-  /**
-   * Filter list of files to only include latest version of each tool.
-   *
-   * @private
-   * @param {string[]} allFiles - All file paths
-   * @returns {string[]} Filtered list with only latest versions
-   */
-  _getListOfLatestFiles(allFiles) {
-    /** @type {string[]} */
-    let latestFiles = []
+  _getListOfLatestFiles(allFiles: string[]): string[] {
+    let latestFiles: string[] = []
     try {
       const latest = this._getLatestToolVersions(allFiles)
       latestFiles = allFiles.filter(file => latest.has(file))
@@ -161,22 +125,12 @@ class FileHarvestStore extends AbstractFileStore {
     return latestFiles
   }
 
-  /**
-   * Get the set of paths that represent the latest tool versions.
-   *
-   * @private
-   * @param {string[]} paths - All file paths
-   * @returns {Set<string>} Set of paths for latest versions
-   */
-  _getLatestToolVersions(paths) {
+  _getLatestToolVersions(paths: string[]): Set<string> {
     return AbstractFileStore.getLatestToolPaths(paths, path => this._toResultCoordinatesFromStoragePath(path))
   }
 }
 
 /**
  * Factory function to create a FileHarvestStore instance.
- *
- * @param {FileStoreOptions} [options] - Configuration options for the store
- * @returns {FileHarvestStore} A new FileHarvestStore instance
  */
-export default options => new FileHarvestStore(options)
+export default (options?: FileStoreOptions): FileHarvestStore => new FileHarvestStore(options)

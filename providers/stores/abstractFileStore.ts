@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 import fs from 'node:fs'
-// @ts-expect-error - JSON schema has no type declarations
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { promisify } from 'node:util'
 import recursive from 'recursive-readdir'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ResultCoordinatesSpec } from '../../lib/resultCoordinates.ts'
 import ResultCoordinates from '../../lib/resultCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 
 const require = createRequire(import.meta.url)
 const schema = require('../../schemas/definition-1.0.json')
@@ -15,41 +17,62 @@ const schema = require('../../schemas/definition-1.0.json')
 import { getLatestVersion } from '../../lib/utils.ts'
 import logger from '../logging/logger.ts'
 
-/**
- * @typedef {import('./abstractFileStore').FileStoreOptions} FileStoreOptions
- * @typedef {import('./abstractFileStore').FileStoreQuery} FileStoreQuery
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../logging').Logger} Logger
- */
+/** Options for configuring an AbstractFileStore */
+export interface FileStoreOptions {
+  /** Base directory location for file storage */
+  location: string
+  /** Optional logger instance */
+  logger?: Logger
+}
+
+/** Query parameters for finding definitions */
+export interface FileStoreQuery {
+  /** Filter by component type */
+  type?: string
+  /** Filter by provider */
+  provider?: string
+  /** Filter by namespace */
+  namespace?: string
+  /** Filter by name */
+  name?: string
+  /** Filter by declared license */
+  license?: string
+  /** Filter by release date (after) */
+  releasedAfter?: string
+  /** Filter by release date (before) */
+  releasedBefore?: string
+  /** Filter by minimum licensed score */
+  minLicensedScore?: number
+  /** Filter by maximum licensed score */
+  maxLicensedScore?: number
+  /** Filter by minimum described score */
+  minDescribedScore?: number
+  /** Filter by maximum described score */
+  maxDescribedScore?: number
+}
+
+/** Visitor function type for list operations */
+export type FileStoreVisitor<T> = (data: any) => T | null
 
 /**
  * Abstract base class for file-based storage implementations.
  * Provides common functionality for reading and writing JSON files to disk.
  */
 class AbstractFileStore {
-  /**
-   * Creates a new AbstractFileStore instance
-   *
-   * @param {FileStoreOptions} [options] - Configuration options for the store
-   */
-  constructor(options) {
-    /** @type {FileStoreOptions} */
-    this.options = options || /** @type {FileStoreOptions} */ ({ location: '' })
-    /** @type {Logger} */
+  options: FileStoreOptions
+  logger: Logger
+
+  constructor(options?: FileStoreOptions) {
+    this.options = options || ({ location: '' } as FileStoreOptions)
     this.logger = this.options.logger || logger()
   }
 
-  async initialize() {}
+  async initialize(): Promise<void> {}
 
   /**
    * Visit all of the files associated with the given coordinates.
-   *
-   * @template T
-   * @param {EntityCoordinates} coordinates - Accepts partial coordinates.
-   * @param {function(any): T | null} visitor - Function to apply to each file's parsed JSON content
-   * @returns {Promise<T[]>} The collection of results returned by the visitor
    */
-  async list(coordinates, visitor) {
+  async list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: FileStoreVisitor<T>): Promise<T[]> {
     try {
       const paths = await recursive(this._toStoragePathFromCoordinates(coordinates), ['.DS_Store'])
       return (
@@ -65,7 +88,7 @@ class AbstractFileStore {
       ).filter(x => x)
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
-      const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
+      const nodeError = error as NodeJS.ErrnoException
       if (nodeError.code === 'ENOENT') {
         return []
       }
@@ -75,17 +98,14 @@ class AbstractFileStore {
 
   /**
    * Get and return the object at the given coordinates.
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the object to get
-   * @returns {Promise<any>} The loaded object or null if not found
    */
-  async get(coordinates) {
+  async get(coordinates: EntityCoordinates | ResultCoordinates): Promise<any> {
     const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       const result = await promisify(fs.readFile)(filePath)
       return JSON.parse(result.toString())
     } catch (error) {
-      const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
+      const nodeError = error as NodeJS.ErrnoException
       this.logger.debug(`Error reading file at ${filePath}: ${nodeError.message}`)
       if (nodeError.code === 'ENOENT') {
         return null
@@ -96,11 +116,8 @@ class AbstractFileStore {
 
   /**
    * Query and return the objects based on the query
-   *
-   * @param {FileStoreQuery} query - The filters and sorts for the request
-   * @returns {Promise<any[]>} Array of matching definitions
    */
-  async find(query) {
+  async find(query: FileStoreQuery): Promise<any[]> {
     const paths = await recursive(this.options.location, ['.DS_Store'])
     return (
       await Promise.all(
@@ -117,7 +134,7 @@ class AbstractFileStore {
             return definition
           } catch (error) {
             // If there is just no entry, that's fine, there is no content.
-            const nodeError = /** @type {NodeJS.ErrnoException} */ (error)
+            const nodeError = error as NodeJS.ErrnoException
             if (nodeError.code === 'ENOENT') {
               return null
             }
@@ -167,71 +184,32 @@ class AbstractFileStore {
     })
   }
 
-  /**
-   * Validates if a storage path represents valid coordinates
-   *
-   * @protected
-   * @param {string} entry - The path to validate
-   * @returns {boolean} True if the path represents valid coordinates
-   */
-  _isValidPath(entry) {
+  _isValidPath(entry: string): boolean {
     return AbstractFileStore.isInterestingCoordinates(this._toResultCoordinatesFromStoragePath(entry))
   }
 
-  /**
-   * Converts coordinates to a storage path
-   *
-   * @protected
-   * @param {EntityCoordinates} coordinates - The coordinates to convert
-   * @returns {string} The storage path
-   */
-  _toStoragePathFromCoordinates(coordinates) {
+  _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string {
     const result = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
     return path.join(this.options.location, result).replace(/\\/g, '/')
   }
 
-  /**
-   * Converts a storage path to ResultCoordinates
-   *
-   * @protected
-   * @param {string} path - The storage path to convert
-   * @returns {ResultCoordinates} The ResultCoordinates
-   */
-  _toResultCoordinatesFromStoragePath(path) {
+  _toResultCoordinatesFromStoragePath(path: string): ResultCoordinates {
     const trimmed = path.slice(this.options.location.length + 1)
     return AbstractFileStore.toResultCoordinatesFromStoragePath(trimmed)
   }
 
   // Static helper methods shared between path-based stores
 
-  /**
-   * Checks if coordinates represent an interesting/valid component type
-   *
-   * @param {ResultCoordinates} coordinates - The coordinates to check
-   * @returns {boolean} True if the coordinates are interesting
-   */
-  static isInterestingCoordinates(coordinates) {
+  static isInterestingCoordinates(coordinates: ResultCoordinates): boolean {
     return schema.definitions.type.enum.includes(coordinates.type)
   }
 
-  /**
-   * Converts a storage path to ResultCoordinates
-   *
-   * @param {string} path - The storage path to convert
-   * @returns {ResultCoordinates} The ResultCoordinates
-   */
-  static toResultCoordinatesFromStoragePath(path) {
+  static toResultCoordinatesFromStoragePath(path: string): ResultCoordinates {
     const trimmed = AbstractFileStore.trimStoragePath(path)
     return ResultCoordinates.fromString(trimmed)
   }
 
-  /**
-   * Trims a storage path to extract coordinate components
-   *
-   * @param {string} path - The storage path to trim
-   * @returns {string} The trimmed path string
-   */
-  static trimStoragePath(path) {
+  static trimStoragePath(path: string): string {
     const normalized = path.replace(/\\/g, '/').replace(/.json$/, '')
     const rawSegments = normalized.split('/')
     const segments = rawSegments[0] === '' ? rawSegments.slice(1) : rawSegments
@@ -241,14 +219,10 @@ class AbstractFileStore {
     return name.concat(revision, toolSpec).join('/')
   }
 
-  /**
-   * Converts coordinates to a storage path
-   *
-   * @param {EntityCoordinates | import('../../lib/resultCoordinates').ResultCoordinatesSpec} coordinates - The coordinates to convert
-   * @returns {string} The storage path string
-   */
-  static toStoragePathFromCoordinates(coordinates) {
-    const c = /** @type {import('../../lib/resultCoordinates').ResultCoordinatesSpec} */ (coordinates)
+  static toStoragePathFromCoordinates(
+    coordinates: EntityCoordinates | ResultCoordinates | ResultCoordinatesSpec
+  ): string {
+    const c = coordinates as ResultCoordinatesSpec
     const revisionPart = c.revision ? `revision/${c.revision}` : null
     const toolVersionPart = c.toolVersion ? c.toolVersion : null
     const toolPart = c.tool ? `tool/${c.tool}` : null
@@ -261,19 +235,12 @@ class AbstractFileStore {
       .toLowerCase()
   }
 
-  /**
-   * Gets the latest tool version paths from a list of paths
-   *
-   * @param {string[]} paths - Array of paths to process
-   * @param {function(string): ResultCoordinates} [toResultCoordinates] - Optional function to convert paths to coordinates
-   * @returns {Set<string>} Set of paths representing the latest tool versions
-   */
   static getLatestToolPaths(
-    paths,
-    toResultCoordinates = path => AbstractFileStore.toResultCoordinatesFromStoragePath(path)
-  ) {
-    /** @type {Record<string, {toolVersion: string, path: string}>} */
-    const entries = paths
+    paths: string[],
+    toResultCoordinates: (path: string) => ResultCoordinates = path =>
+      AbstractFileStore.toResultCoordinatesFromStoragePath(path)
+  ): Set<string> {
+    const entries: Record<string, { toolVersion: string; path: string }> = paths
       .map(path => {
         const { tool, toolVersion } = toResultCoordinates(path)
         return { tool, toolVersion, path }
@@ -290,7 +257,7 @@ class AbstractFileStore {
           }
           return latest
         },
-        /** @type {Record<string, {toolVersion: string, path: string}>} */ ({})
+        {} as Record<string, { toolVersion: string; path: string }>
       )
     const latestPaths = Object.values(entries).map(entry => entry.path)
     return new Set(latestPaths)

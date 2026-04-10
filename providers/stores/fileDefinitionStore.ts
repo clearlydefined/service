@@ -1,54 +1,47 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./abstractFileStore').FileStoreOptions} FileStoreOptions
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinatesType
- * @typedef {import('./fileDefinitionStore').Definition} Definition
- */
-
 import fs from 'node:fs'
 import path from 'node:path'
 import lodash from 'lodash'
 import { mkdirp } from 'mkdirp'
-import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
+import type { FileStoreOptions } from './abstractFileStore.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
 const { sortedUniq } = lodash
 
 import { promisify } from 'node:util'
 
+/** Definition object with coordinates */
+export interface Definition {
+  /** The coordinates identifying this definition */
+  coordinates: EntityCoordinates
+  [key: string]: any
+}
+
 /**
  * File system implementation for storing component definitions.
  * Extends AbstractFileStore with definition-specific functionality.
  */
-class FileDefinitionStore extends AbstractFileStore {
+export class FileDefinitionStore extends AbstractFileStore {
   /**
    * List all of the definitions for the given coordinates.
-   *
-   * @override
-   * @param {EntityCoordinatesType} coordinates - Accepts partial coordinates.
-   * @returns {Promise<string[]>} A list of matching coordinates i.e. [ 'npm/npmjs/-/JSONStream/1.3.3' ]
    */
   // @ts-expect-error - Simplified list signature (visitor is handled internally)
-  async list(coordinates) {
-    const list = await super.list(
-      coordinates,
-      /** @param {any} object */ object => {
-        const definitionCoordinates = EntityCoordinates.fromObject(object.coordinates)
-        return definitionCoordinates ? definitionCoordinates.toString() : null
-      }
-    )
+  override async list(coordinates: EntityCoordinates): Promise<string[]> {
+    const list = await super.list(coordinates, (object: any) => {
+      const definitionCoordinates = EntityCoordinatesClass.fromObject(object.coordinates)
+      return definitionCoordinates ? definitionCoordinates.toString() : null
+    })
     return sortedUniq(list.filter(x => x))
   }
 
   /**
    * Store a definition to the file system.
-   *
-   * @param {Definition} definition - The definition to store
-   * @returns {Promise<void>} Promise that resolves when the definition is stored
    */
-  async store(definition) {
+  async store(definition: Definition): Promise<void> {
     const { coordinates } = definition
     const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     const dirName = path.dirname(filePath)
@@ -58,15 +51,12 @@ class FileDefinitionStore extends AbstractFileStore {
 
   /**
    * Delete a definition from the file system.
-   *
-   * @param {EntityCoordinatesType} coordinates - The coordinates of the definition to delete
-   * @returns {Promise<void>} Promise that resolves when the definition is deleted
    */
-  async delete(coordinates) {
+  async delete(coordinates: EntityCoordinates): Promise<void> {
     const filePath = `${this._toStoragePathFromCoordinates(coordinates)}.json`
     try {
       await promisify(fs.unlink)(filePath)
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
       if (error.code !== 'ENOENT') {
         throw error
       }
@@ -76,8 +66,5 @@ class FileDefinitionStore extends AbstractFileStore {
 
 /**
  * Factory function to create a FileDefinitionStore instance.
- *
- * @param {FileStoreOptions} [options] - Configuration options for the store
- * @returns {FileDefinitionStore} A new FileDefinitionStore instance
  */
-export default options => new FileDefinitionStore(options)
+export default (options?: FileStoreOptions): FileDefinitionStore => new FileDefinitionStore(options)

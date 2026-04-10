@@ -1,12 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./abstractMongoDefinitionStore').MongoDefinitionStoreOptions} MongoDefinitionStoreOptions
- */
-
 import config from 'painless-config'
-import mongo from './mongo.js'
+import type { MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.ts'
+import mongo from './mongo.ts'
 import TrimmedMongoDefinitionStore from './trimmedMongoDefinitionStore.ts'
 
 const dbOptions = {
@@ -17,11 +14,8 @@ const dbOptions = {
 /**
  * Creates a paged MongoDB definition store with the given options or default configuration.
  * This store supports large definitions by paginating file data across multiple documents.
- *
- * @param {MongoDefinitionStoreOptions} [options] - Optional configuration options for the store
- * @returns {ReturnType<typeof import('./mongo')>} A new MongoStore instance
  */
-function definitionPaged(options) {
+function definitionPaged(options?: MongoDefinitionStoreOptions) {
   return mongo(
     options || {
       ...dbOptions,
@@ -33,11 +27,8 @@ function definitionPaged(options) {
 /**
  * Creates a trimmed MongoDB definition store with the given options or default configuration.
  * This store saves definitions without file data for faster queries.
- *
- * @param {MongoDefinitionStoreOptions} [options] - Optional configuration options for the store
- * @returns {ReturnType<typeof import('./trimmedMongoDefinitionStore')>} A new TrimmedMongoDefinitionStore instance
  */
-function definitionTrimmed(options) {
+function definitionTrimmed(options?: MongoDefinitionStoreOptions) {
   const oldConfig = config.get('TRIMMED_DEFINITION_MONGO_COLLECTION_NAME')
   if (oldConfig) {
     console.warn(
