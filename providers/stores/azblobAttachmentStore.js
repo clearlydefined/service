@@ -12,7 +12,7 @@ import Bottleneck from 'bottleneck'
 
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * Azure Blob Storage implementation for storing and retrieving attachments.

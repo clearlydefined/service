@@ -7,7 +7,7 @@ import { callFetch as requestPromise } from './fetch.ts'
 
 const { uniq } = lodash
 
-import createCache from '../providers/caching/memory.js'
+import createCache from '../providers/caching/memory.ts'
 
 /** Configuration mapping of Conda channel names to their base URLs */
 export interface CondaChannels {

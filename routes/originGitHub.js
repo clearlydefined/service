@@ -13,7 +13,7 @@ import lodash from 'lodash'
 
 const { get, uniq } = lodash
 
-import loggerFactory from '../providers/logging/logger.js'
+import loggerFactory from '../providers/logging/logger.ts'
 
 let logger
 

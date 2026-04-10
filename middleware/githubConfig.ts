@@ -4,7 +4,7 @@
 import type { RequestHandler } from 'express'
 import config from 'painless-config'
 import type { ICache } from '../providers/caching/index.js'
-import memoryCache from '../providers/caching/memory.js'
+import memoryCache from '../providers/caching/memory.ts'
 import type { AuthEndpoints } from '../routes/auth.js'
 import * as githubRoute from '../routes/auth.js'
 import type { GitHubMiddlewareOptions } from './github.ts'

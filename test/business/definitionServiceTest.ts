@@ -14,7 +14,7 @@ import { setIfValue } from '../../lib/utils.ts'
 import FileHarvestStore from '../../providers/stores/fileHarvestStore.js'
 import memoryQueue from '../../providers/upgrade/memoryQueueConfig.js'
 import { defaultFactory, delayedFactory } from '../../providers/upgrade/recomputeHandler.js'
-import validator from '../../schemas/validator.js'
+import validator from '../../schemas/validator.ts'
 import { createMockLogger, createSilentLogger } from '../helpers/mockLogger.ts'
 
 const { set } = lodash

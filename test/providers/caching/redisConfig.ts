@@ -19,8 +19,8 @@ describe('redisConfig.serviceFactory', () => {
 
   // Helpers
   async function loadServiceFactory(configGetImpl) {
-    return await esmock.strict('../../../providers/caching/redisConfig.js', {
-      '../../../providers/caching/redis.js': redisStub,
+    return await esmock.strict('../../../providers/caching/redisConfig.ts', {
+      '../../../providers/caching/redis.ts': redisStub,
       'painless-config': { get: configGetImpl }
     })
   }

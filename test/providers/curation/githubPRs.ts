@@ -15,7 +15,7 @@ const sandbox = sinon.createSandbox()
 import base64 from 'base-64'
 import yaml from 'js-yaml'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import initLogger from '../../../providers/logging/logger.js'
+import initLogger from '../../../providers/logging/logger.ts'
 
 const { expect } = chai
 const curationCoordinates = { type: 'npm', provider: 'npmjs', name: 'test' }

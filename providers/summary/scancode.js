@@ -14,7 +14,7 @@ import lodash from 'lodash'
 const { get } = lodash
 
 import { gte } from 'semver'
-import Logger from '../logging/logger.js'
+import Logger from '../logging/logger.ts'
 import ScanCodeLegacySummarizer from './scancode/legacy-summarizer.js'
 import ScanCodeNewSummarizer from './scancode/new-summarizer.js'
 

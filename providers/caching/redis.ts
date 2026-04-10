@@ -3,7 +3,7 @@
 
 import pako from 'pako'
 import { createClient } from 'redis'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * @typedef {import('./redis.d.ts').RedisCacheOptions} RedisCacheOptions

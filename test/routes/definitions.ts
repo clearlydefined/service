@@ -14,7 +14,7 @@ const logger = () => ({
 })
 
 const definitionsRoutes = await esmock('../../routes/definitions.js', {
-  '../../providers/logging/logger.js': logger
+  '../../providers/logging/logger.ts': logger
 })
 
 describe('Definition route', () => {

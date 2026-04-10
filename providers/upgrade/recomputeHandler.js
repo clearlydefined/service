@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 import DefinitionQueueUpgrader from './defUpgradeQueue.js'
 import { factory as versionCheckFactory } from './defVersionCheck.js'
 import { DelayedComputePolicy } from './delayedComputePolicy.js'

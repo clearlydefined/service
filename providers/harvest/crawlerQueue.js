@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * @typedef {import('./crawlerQueue').CrawlerQueueOptions} CrawlerQueueOptions

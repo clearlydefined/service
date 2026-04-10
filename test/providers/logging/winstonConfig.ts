@@ -8,7 +8,7 @@ import winstonFactory, {
   buildProperties,
   sanitizeHeaders,
   sanitizeMeta
-} from '../../../providers/logging/winstonConfig.js'
+} from '../../../providers/logging/winstonConfig.ts'
 
 describe('sanitizeHeaders', () => {
   it('should return empty object for undefined', () => {

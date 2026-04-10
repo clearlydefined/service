@@ -9,7 +9,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * File system implementation for storing and retrieving attachments.

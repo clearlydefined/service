@@ -11,7 +11,7 @@
  * @typedef {import('./dispatchDefinitionStore').DispatchDefinitionStoreOptions} DispatchDefinitionStoreOptions
  */
 
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * A definition store that dispatches operations to multiple underlying stores.

@@ -29,7 +29,7 @@ const TemplateRenderer = require('tiny-attribution-generator/lib/outputs/templat
 const JsonRenderer = require('tiny-attribution-generator/lib/outputs/json').default
 const JsonSource = require('tiny-attribution-generator/lib/inputs/json').default
 
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 /**
  * Service for generating attribution notices from definitions.

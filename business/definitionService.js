@@ -59,9 +59,9 @@ import {
   simplifyAttributions,
   updateSourceLocation
 } from '../lib/utils.ts'
-import memoryCache from '../providers/caching/memory.js'
-import logger from '../providers/logging/logger.js'
-import validator from '../schemas/validator.js'
+import memoryCache from '../providers/caching/memory.ts'
+import logger from '../providers/logging/logger.ts'
+import validator from '../schemas/validator.ts'
 
 const computeLock = memoryCache({
   defaultTtlSeconds: 60 * 5 /* 5 mins */

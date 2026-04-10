@@ -8,7 +8,7 @@ const router = express.Router()
 
 import { callFetch as requestPromise } from '../lib/fetch.ts'
 import { deCodeSlashes } from '../lib/utils.ts'
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 let log
 

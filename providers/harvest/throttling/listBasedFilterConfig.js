@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import loggerFactory from '../../logging/logger.js'
+import loggerFactory from '../../logging/logger.ts'
 import ListBasedFilter from './listBasedFilter.js'
 
 /**

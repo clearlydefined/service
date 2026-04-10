@@ -3,7 +3,7 @@
 
 import SPDX from '@clearlydefined/spdx'
 import yaml from 'js-yaml'
-import validator from '../schemas/validator.js'
+import validator from '../schemas/validator.ts'
 import EntityCoordinates from './entityCoordinates.ts'
 import type { Definition } from './utils.ts'
 import * as utils from './utils.ts'

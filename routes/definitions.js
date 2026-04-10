@@ -8,8 +8,8 @@ const router = express.Router()
 
 import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
-import logger from '../providers/logging/logger.js'
-import validator from '../schemas/validator.js'
+import logger from '../providers/logging/logger.ts'
+import validator from '../schemas/validator.ts'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */

@@ -14,7 +14,7 @@ import CurationStore from '../../../providers/curation/memoryStore.js'
 
 const { find } = lodash
 
-import logger from '../../../providers/logging/logger.js'
+import logger from '../../../providers/logging/logger.ts'
 import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 chai.use(chaiAsPromised)

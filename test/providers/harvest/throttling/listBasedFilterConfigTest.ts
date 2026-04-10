@@ -8,7 +8,7 @@ import EntityCoordinates from '../../../../lib/entityCoordinates.ts'
 describe('ListBasedFilterConfig', () => {
   const makeFactory = async (overrides?: Record<string, unknown>) =>
     await esmock('../../../../providers/harvest/throttling/listBasedFilterConfig.js', {
-      '../../../../providers/logging/logger.js': () => ({
+      '../../../../providers/logging/logger.ts': () => ({
         info: () => {},
         debug: () => {},
         error: () => {},

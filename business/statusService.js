@@ -16,7 +16,7 @@
  */
 
 import { callFetch as requestPromise } from '../lib/fetch.ts'
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 /**
  * Service for retrieving system status information from Application Insights.

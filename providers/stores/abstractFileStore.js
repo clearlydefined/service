@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url)
 const schema = require('../../schemas/definition-1.0.json')
 
 import { getLatestVersion } from '../../lib/utils.ts'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * @typedef {import('./abstractFileStore').FileStoreOptions} FileStoreOptions

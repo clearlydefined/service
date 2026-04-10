@@ -40,7 +40,7 @@ import { Cache } from 'memory-cache'
 import semver from 'semver'
 import { LicenseMatcher } from '../../lib/licenseMatcher.ts'
 import { deCodeSlashes } from '../../lib/utils.ts'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 const hourInMS = 60 * 60 * 1000
 

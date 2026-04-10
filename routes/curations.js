@@ -3,7 +3,7 @@
 
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
-import loggerFactory from '../providers/logging/logger.js'
+import loggerFactory from '../providers/logging/logger.ts'
 
 const router = express.Router()
 

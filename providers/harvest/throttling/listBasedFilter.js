@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import validator from '../../../schemas/validator.js'
-import loggerFactory from '../../logging/logger.js'
+import validator from '../../../schemas/validator.ts'
+import loggerFactory from '../../logging/logger.ts'
 
 /**
  * @typedef {import('./listBasedFilter.d.ts').ListBasedFilterOptions} ListBasedFilterOptions

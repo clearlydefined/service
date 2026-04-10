@@ -43,7 +43,7 @@ import lodash from 'lodash'
 const { flattenDeep, get, set, intersectionBy } = lodash
 
 import { getLatestVersion, mergeDefinitions, setIfValue } from '../lib/utils.ts'
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 /**
  * Service for aggregating summarized tool output into a single definition.

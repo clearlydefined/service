@@ -1,8 +1,8 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import Cache from '../caching/memory.js'
-import logger from '../logging/logger.js'
+import Cache from '../caching/memory.ts'
+import logger from '../logging/logger.ts'
 import { setup } from './process.js'
 import { SkipUpgradePolicy } from './skipUpgradePolicy.js'
 
