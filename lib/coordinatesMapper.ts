@@ -60,9 +60,7 @@ class CoordinatesMapper {
   /**
    * Maps coordinates using the appropriate provider-specific mapper.
    */
-  async map(
-    coordinates: EntityCoordinates | undefined
-  ): Promise<EntityCoordinates | undefined> {
+  async map(coordinates: EntityCoordinates | undefined): Promise<EntityCoordinates | undefined> {
     if (!coordinates) {
       return undefined
     }
