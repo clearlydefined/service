@@ -6,7 +6,7 @@ import lodash from 'lodash'
 const { values, get } = lodash
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import AbstractSearch from './abstractSearch.js'
+import AbstractSearch from './abstractSearch.ts'
 
 class MemorySearch extends AbstractSearch {
   /**

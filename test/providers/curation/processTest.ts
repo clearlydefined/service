@@ -4,7 +4,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import process from '../../../providers/curation/process.js'
-import memoryQueue from '../../../providers/queueing/memoryQueue.js'
+import memoryQueue from '../../../providers/queueing/memoryQueue.ts'
 
 import { createMockLogger } from '../../helpers/mockLogger.ts'
 

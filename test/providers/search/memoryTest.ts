@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import MemorySearch from '../../../providers/search/memory.js'
+import MemorySearch from '../../../providers/search/memory.ts'
 
 describe('memory search tests', () => {
   const searches = {

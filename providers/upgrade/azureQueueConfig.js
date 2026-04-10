@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
 /** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { callFetch as requestPromise } from '../../lib/fetch.ts'
-import AbstractSearch from './abstractSearch.js'
+import AbstractSearch from './abstractSearch.ts'
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2019-05-06'

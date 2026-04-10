@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { AbstractSearch } from './abstractSearch.js'
+import type { AbstractSearch } from './abstractSearch.ts'
 
 export interface AzureSearchOptions {
   /** Azure Search service name (used in the URL template). */

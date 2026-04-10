@@ -4,7 +4,7 @@
 /** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
 
 import config from 'painless-config'
-import AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
 /** @param {AzureStorageQueueOptions} [options] */
 function azure(options) {
