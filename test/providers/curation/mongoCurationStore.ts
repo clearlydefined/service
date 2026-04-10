@@ -3,8 +3,8 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import Curation from '../../../lib/curation.js'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import Curation from '../../../lib/curation.ts'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import Store from '../../../providers/curation/mongoCurationStore.js'
 
 const pr = {

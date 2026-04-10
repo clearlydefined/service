@@ -3,8 +3,8 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import PypiCoordinatesMapper from '../../lib/pypiCoordinatesMapper.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import PypiCoordinatesMapper from '../../lib/pypiCoordinatesMapper.ts'
 
 function mockPypiCoordinates(name: string) {
   const spec = { type: 'pypi', provider: 'pypi', revision: '1.0.0', name }

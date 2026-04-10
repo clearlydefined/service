@@ -10,7 +10,7 @@ import type {
   RecomputeHandler as IRecomputeHandler,
   UpgradeHandler
 } from '../../business/definitionService.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { MissingDefinitionComputePolicy } from './computePolicy.js'
 import type { DefinitionVersionCheckerOptions } from './defVersionCheck.js'
 

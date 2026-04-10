@@ -3,7 +3,7 @@
 
 import type { MissingDefinitionComputePolicy } from './computePolicy.js'
 import type { RecomputeContext } from '../../business/definitionService.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 
 export declare class OnDemandComputePolicy implements MissingDefinitionComputePolicy {
   initialize(): Promise<void>

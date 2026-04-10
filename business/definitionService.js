@@ -49,7 +49,7 @@ import extend from 'extend'
 import { minimatch } from 'minimatch'
 /** @type {(expression: string) => any} */
 import parse from 'spdx-expression-parse'
-import EntityCoordinates from '../lib/entityCoordinates.js'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
 import {
   addArrayToSet,
   buildSourceUrl,
@@ -58,7 +58,7 @@ import {
   setToArray,
   simplifyAttributions,
   updateSourceLocation
-} from '../lib/utils.js'
+} from '../lib/utils.ts'
 import memoryCache from '../providers/caching/memory.js'
 import logger from '../providers/logging/logger.js'
 import validator from '../schemas/validator.js'

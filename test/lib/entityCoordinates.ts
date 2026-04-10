@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 describe('EntityCoordinates', () => {
   it('should have type and provider in lower case', () => {

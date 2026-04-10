@@ -6,8 +6,8 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
 const router = express.Router()
 
-import EntityCoordinates from '../lib/entityCoordinates.js'
-import * as utils from '../lib/utils.js'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
+import * as utils from '../lib/utils.ts'
 import logger from '../providers/logging/logger.js'
 import validator from '../schemas/validator.js'
 

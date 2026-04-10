@@ -7,11 +7,11 @@ const router = express.Router()
 
 import crypto from 'node:crypto'
 import lodash from 'lodash'
-import EntityCoordinates from '../lib/entityCoordinates.js'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
 
 const { get } = lodash
 
-import { parseUrn } from '../lib/utils.js'
+import { parseUrn } from '../lib/utils.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
 /** @typedef {import('express').Request} Request */

@@ -6,8 +6,8 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
 const router = express.Router()
 
-import { callFetch as requestPromise } from '../lib/fetch.js'
-import { deCodeSlashes } from '../lib/utils.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
+import { deCodeSlashes } from '../lib/utils.ts'
 import logger from '../providers/logging/logger.js'
 
 let log

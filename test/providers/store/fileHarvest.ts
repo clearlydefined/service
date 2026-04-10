@@ -8,7 +8,7 @@ import sinon from 'sinon'
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 import FileStore from '../../../providers/stores/fileHarvestStore.js'
 import { createSilentLogger } from '../../helpers/mockLogger.ts'

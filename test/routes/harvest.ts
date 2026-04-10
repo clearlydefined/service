@@ -4,8 +4,8 @@
 import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import * as utils from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import * as utils from '../../lib/utils.ts'
 import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.js'
 import harvestRoutes from '../../routes/harvest.js'
 
@@ -81,7 +81,7 @@ describe('Harvest route', () => {
   it('normalize coordinates', async () => {
     const esmock = (await import('esmock')).default
     const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
-      '../../lib/utils.js': {
+      '../../lib/utils.ts': {
         ...utils,
         toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('one/two/three/four'))
       }
@@ -113,7 +113,7 @@ describe('Harvest route', () => {
   it('throttles via ListBasedFilter (422)', async () => {
     const esmock = (await import('esmock')).default
     const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
-      '../../lib/utils.js': {
+      '../../lib/utils.ts': {
         ...utils,
         toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('git/github/org/name/1.0.0'))
       }

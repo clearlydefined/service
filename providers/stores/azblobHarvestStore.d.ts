@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Writable } from 'node:stream'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
-import type { ResultCoordinates } from '../../lib/resultCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
 import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
 import type AbstractAzBlobStore from './abstractAzblobStore.js'
 

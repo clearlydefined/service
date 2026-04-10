@@ -4,8 +4,8 @@
 import fs from 'node:fs'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import GradleCoordinatesMapper from '../../lib/gradleCoordinatesMapper.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import GradleCoordinatesMapper from '../../lib/gradleCoordinatesMapper.ts'
 
 describe('GradleCoordinatesMapper', () => {
   let coordinatesMapper: any

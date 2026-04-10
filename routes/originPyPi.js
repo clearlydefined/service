@@ -7,7 +7,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 const router = express.Router()
 
 import lodash from 'lodash'
-import { callFetch as requestPromise } from '../lib/fetch.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const { uniq } = lodash
 

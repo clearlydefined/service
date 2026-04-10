@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type EntityCoordinates from '../../../lib/entityCoordinates.js'
-import type { FileEntry } from '../../../lib/utils.js'
+import type EntityCoordinates from '../../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../../lib/utils.ts'
 import type { Logger } from '../../logging/index.js'
 import type { SummarizerOptions } from '../index.js'
 import type { ScanCodeFile, ScanCodeHarvestedData, ScanCodePackage, ScanCodeSummaryResult } from '../scancode.js'

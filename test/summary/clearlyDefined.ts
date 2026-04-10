@@ -6,8 +6,8 @@ import validator from '../../schemas/validator.js'
 
 const { expect } = chai
 
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import { setIfValue } from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import { setIfValue } from '../../lib/utils.ts'
 import Summarizer from '../../providers/summary/clearlydefined.js'
 
 describe('ClearlyDefined Maven summarizer', () => {

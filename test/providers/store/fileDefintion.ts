@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 import FileStore from '../../../providers/stores/fileDefinitionStore.js'
 

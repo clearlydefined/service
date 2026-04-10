@@ -7,8 +7,8 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 const router = express.Router()
 
 import bodyParser from 'body-parser'
-import EntityCoordinates from '../lib/entityCoordinates.js'
-import * as utils from '../lib/utils.js'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
+import * as utils from '../lib/utils.ts'
 import validator from '../schemas/validator.js'
 
 /** @typedef {import('express').Request} Request */

@@ -12,7 +12,7 @@
 
 import SPDX from '@clearlydefined/spdx'
 import lodash from 'lodash'
-import { isDeclaredLicense, isLicenseFile, setIfValue } from '../../lib/utils.js'
+import { isDeclaredLicense, isLicenseFile, setIfValue } from '../../lib/utils.ts'
 
 const { get, uniq } = lodash
 

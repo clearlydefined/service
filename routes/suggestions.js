@@ -10,7 +10,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware.js'
 
 const router = express.Router()
 
-import * as utils from '../lib/utils.js'
+import * as utils from '../lib/utils.ts'
 
 // Get some suggestions for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getSuggestions))

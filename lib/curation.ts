@@ -1,37 +1,79 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./curation').CurationData} CurationData */
-/** @typedef {import('./curation').CurationRevision} CurationRevision */
-/** @typedef {import('./curation').CurationError} CurationError */
-/** @typedef {import('./utils').Definition} Definition */
-
 import SPDX from '@clearlydefined/spdx'
 import yaml from 'js-yaml'
 import validator from '../schemas/validator.js'
-import EntityCoordinates from './entityCoordinates.js'
-import * as utils from './utils.js'
+import EntityCoordinates from './entityCoordinates.ts'
+import type { Definition } from './utils.ts'
+import * as utils from './utils.ts'
+
+/** Error entry from curation validation */
+export interface CurationError {
+  message: string
+  error: unknown
+}
+
+/** Coordinates section of curation data */
+export interface CurationCoordinates {
+  type?: string
+  provider?: string
+  namespace?: string
+  name?: string
+}
+
+/** File-level curation data */
+export interface CurationFileEntry {
+  path: string
+  license?: string
+  attributions?: string[]
+}
+
+/** Revision-level curation data */
+export interface CurationRevision {
+  licensed?: {
+    declared?: string
+  }
+  described?: {
+    releaseDate?: string
+    projectWebsite?: string
+    facets?: Record<string, string[]>
+    sourceLocation?: {
+      type?: string
+      provider?: string
+      namespace?: string
+      name?: string
+      revision?: string
+      url?: string
+    }
+  }
+  files?: CurationFileEntry[]
+}
+
+/** Full curation data structure */
+export interface CurationData {
+  coordinates?: CurationCoordinates
+  revisions?: Record<string, CurationRevision>
+}
 
 /**
  * Represents a curation document that can be applied to definitions
  */
 class Curation {
+  errors: CurationError[]
+  isValid: boolean
+  path: string
+  data: CurationData | undefined
+  shouldValidate: boolean
+
   /**
    * Creates a new Curation instance
-   * @param {string | CurationData} content - YAML string or parsed curation data object
-   * @param {string} [path] - Optional file path for error reporting
-   * @param {boolean} [validate] - Whether to validate the curation (default: true)
    */
-  constructor(content, path = '', validate = true) {
-    /** @type {CurationError[]} */
+  constructor(content?: string | CurationData, path: string = '', validate: boolean = true) {
     this.errors = []
-    /** @type {boolean} */
     this.isValid = false
-    /** @type {string} */
     this.path = path
-    /** @type {CurationData | undefined} */
     this.data = typeof content === 'string' ? this.load(content) : content
-    /** @type {boolean} */
     this.shouldValidate = validate
     if (validate) {
       this.validate()
@@ -40,40 +82,29 @@ class Curation {
 
   /**
    * Applies a curation to a definition
-   * @param {Definition} definition - The definition to modify
-   * @param {CurationRevision} curation - The curation revision data to apply
-   * @returns {Definition} The modified definition
    */
-  static apply(definition, curation) {
+  static apply(definition: Definition, curation: CurationRevision): Definition {
     utils.mergeDefinitions(definition, curation, true)
     return definition
   }
 
   /**
    * Gets all coordinates from multiple curations
-   * @param {Curation[]} curations - Array of Curation instances
-   * @returns {EntityCoordinates[]} Array of all EntityCoordinates from all curations
    */
-  static getAllCoordinates(curations) {
+  static getAllCoordinates(curations: Curation[]): EntityCoordinates[] {
     return curations.reduce(
-      /**
-       * @param {EntityCoordinates[]} list
-       * @param {Curation} curation
-       */
-      (list, curation) => list.concat(curation.getCoordinates()),
+      (list: EntityCoordinates[], curation: Curation) => list.concat(curation.getCoordinates()),
       []
     )
   }
 
   /**
    * Loads YAML content into curation data
-   * @param {string} content - YAML string to parse
-   * @returns {CurationData | undefined} Parsed curation data or undefined on error
    */
-  load(content) {
+  load(content: string): CurationData | undefined {
     try {
-      return yaml.load(content)
-    } catch (error) {
+      return yaml.load(content) as CurationData | undefined
+    } catch (error: any) {
       this.errors.push({ message: 'Invalid yaml', error })
       return undefined
     }
@@ -85,7 +116,7 @@ class Curation {
   validate() {
     this.isValid = validator.validate('curations', this.data)
     if (!this.isValid) {
-      this.errors.push(...validator.errors.map(error => ({ message: 'Invalid curation', error })))
+      this.errors.push(...validator.errors.map((error: unknown) => ({ message: 'Invalid curation', error })))
       return
     }
 
@@ -102,21 +133,19 @@ class Curation {
    * @private
    */
   _validateSpdxCompliance() {
-    const revisions = this.data.revisions
-    /** @type {{source: string, license: string}[]} */
-    const sourceLicenseList = []
-    /** @type {string[]} */
-    const errors = []
+    const revisions = this.data!.revisions!
+    const sourceLicenseList: { source: string; license: string }[] = []
+    const errors: string[] = []
 
-    for (const revision of Object.keys(revisions).filter(revision => revisions[revision].licensed)) {
+    for (const revision of Object.keys(revisions).filter(revision => revisions[revision]!.licensed)) {
       sourceLicenseList.push({
         source: `${revision} licensed.declared`,
-        license: revisions[revision].licensed.declared
+        license: revisions[revision]!.licensed!.declared!
       })
     }
 
-    for (const revision of Object.keys(revisions).filter(revision => revisions[revision].files)) {
-      for (const /** @type {import('./curation').CurationFileEntry} */ file of revisions[revision].files) {
+    for (const revision of Object.keys(revisions).filter(revision => revisions[revision]!.files)) {
+      for (const file of revisions[revision]!.files as CurationFileEntry[]) {
         if (file.license) {
           sourceLicenseList.push({
             source: `${file.path} in ${revision} files`,
@@ -146,11 +175,11 @@ class Curation {
    * @returns {EntityCoordinates[]} Array of EntityCoordinates, one per revision
    */
   getCoordinates() {
-    const c = this.data.coordinates
+    const c = this.data!.coordinates
     if (!c) {
       return []
     }
-    return Object.getOwnPropertyNames(this.data.revisions).map(
+    return Object.getOwnPropertyNames(this.data!.revisions).map(
       key => new EntityCoordinates(c.type, c.provider, c.namespace, c.name, key)
     )
   }

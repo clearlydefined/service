@@ -1,9 +1,9 @@
 import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import { DateTime } from 'luxon'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
-import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.js'
-import * as utils from '../../lib/utils.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { Definition, EntityCoordinatesRequest } from '../../lib/utils.ts'
+import * as utils from '../../lib/utils.ts'
 
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
@@ -594,10 +594,10 @@ describe('Utils toEntityCoordinatesFromRequest', () => {
   before(async () => {
     const esmock = (await import('esmock')).default
     mockedUtils = await esmock(
-      '../../lib/utils.js',
+      '../../lib/utils.ts',
       {},
       {
-        '../../lib/utils.js': {
+        '../../lib/utils.ts': {
           toNormalizedEntityCoordinates: (entry: any) => Promise.resolve(entry)
         }
       }
@@ -683,10 +683,10 @@ describe('Utils getLicenseLocations', () => {
   before(async () => {
     const esmock = (await import('esmock')).default
     mockedUtils2 = await esmock(
-      '../../lib/utils.js',
+      '../../lib/utils.ts',
       {},
       {
-        '../../lib/utils.js': {
+        '../../lib/utils.ts': {
           toNormalizedEntityCoordinates: (entry: any) => Promise.resolve(entry)
         }
       }

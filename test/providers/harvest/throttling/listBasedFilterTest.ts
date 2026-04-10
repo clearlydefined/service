@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import EntityCoordinates from '../../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../../lib/entityCoordinates.ts'
 import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
 import { createSilentLogger } from '../../../helpers/mockLogger.ts'
 

@@ -8,7 +8,7 @@ chai.use(deepEqualInAnyOrder)
 const { expect } = chai
 
 import lodash from 'lodash'
-import EntityCoordinates from '../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import Summarizer from '../../providers/summary/fossology.js'
 import validator from '../../schemas/validator.js'
 

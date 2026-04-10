@@ -15,7 +15,7 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-import { callFetch as requestPromise } from '../lib/fetch.js'
+import { callFetch as requestPromise } from '../lib/fetch.ts'
 import logger from '../providers/logging/logger.js'
 
 /**

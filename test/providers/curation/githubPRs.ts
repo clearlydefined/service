@@ -14,7 +14,7 @@ const sandbox = sinon.createSandbox()
 
 import base64 from 'base-64'
 import yaml from 'js-yaml'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import initLogger from '../../../providers/logging/logger.js'
 
 const { expect } = chai

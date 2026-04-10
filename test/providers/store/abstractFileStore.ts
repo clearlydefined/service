@@ -12,7 +12,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
 
 describe('AbstractFileStore', () => {

@@ -7,9 +7,9 @@ import loggerFactory from '../providers/logging/logger.js'
 
 const router = express.Router()
 
-import Curation from '../lib/curation.js'
-import EntityCoordinates from '../lib/entityCoordinates.js'
-import * as utils from '../lib/utils.js'
+import Curation from '../lib/curation.ts'
+import EntityCoordinates from '../lib/entityCoordinates.ts'
+import * as utils from '../lib/utils.ts'
 import { permissionsCheck } from '../middleware/permissions.js'
 
 /** @typedef {import('express').Request} Request */

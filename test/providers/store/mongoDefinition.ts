@@ -5,7 +5,7 @@ import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
 import sinon from 'sinon'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import Store from '../../../providers/stores/mongo.js'
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 

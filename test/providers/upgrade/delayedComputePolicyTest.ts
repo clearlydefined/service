@@ -9,7 +9,7 @@ chai.use(chaiAsPromised)
 import { expect } from 'chai'
 import sinon from 'sinon'
 import type { Definition, DefinitionService, RecomputeContext } from '../../../business/definitionService.js'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import type { ICache } from '../../../providers/caching/index.js'
 import type { IQueue } from '../../../providers/queueing/index.js'
 import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputePolicy.js'

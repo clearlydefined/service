@@ -2,7 +2,7 @@ import { fail } from 'node:assert'
 import fs from 'node:fs'
 import { expect } from 'chai'
 import mockttp from 'mockttp'
-import { callFetch, defaultHeaders, withDefaults } from '../../lib/fetch.js'
+import { callFetch, defaultHeaders, withDefaults } from '../../lib/fetch.ts'
 
 function checkDefaultHeaders(headers: Record<string, string | string[] | undefined>) {
   for (const [key, value] of Object.entries(defaultHeaders)) {

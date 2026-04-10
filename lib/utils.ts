@@ -1,36 +1,154 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./utils').EntityCoordinatesRequest} EntityCoordinatesRequest */
-/** @typedef {import('./utils').Definition} Definition */
-/** @typedef {import('./utils').FileEntry} FileEntry */
-/** @typedef {import('./utils').SourceLocationSpec} SourceLocationSpec */
-/** @typedef {import('./utils').PackageInfo} PackageInfo */
-/** @typedef {import('./utils').ParsedUrn} ParsedUrn */
-/** @typedef {import('./entityCoordinates').EntityCoordinatesSpec} EntityCoordinatesSpec */
-
+import type { Request } from 'express'
 import he from 'he'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
 import semver from 'semver'
-import EntityCoordinates from './entityCoordinates.js'
-import ResultCoordinates from './resultCoordinates.js'
+import type { EntityCoordinatesSpec } from './entityCoordinates.ts'
+import EntityCoordinates from './entityCoordinates.ts'
+import ResultCoordinates from './resultCoordinates.ts'
 
 const { set, unset, union, sortBy, trim, uniqBy } = lodash
 
 import SPDX from '@clearlydefined/spdx'
 import extend from 'extend'
-import coordinatesMapperFactory from './coordinatesMapper.js'
-import scancodeMap from './scancodeMap.js'
+import coordinatesMapperFactory from './coordinatesMapper.ts'
+import scancodeMap from './scancodeMap.ts'
+
+/** Express request with route params for entity coordinates */
+export interface EntityCoordinatesRequest extends Request {
+  params: {
+    type?: string
+    provider?: string
+    namespace?: string
+    name?: string
+    revision?: string
+    tool?: string
+    toolVersion?: string
+    extra1?: string
+    extra2?: string
+    extra3?: string
+  }
+}
+
+/** Source location specification for a component */
+export interface SourceLocationSpec {
+  type?: string
+  provider?: string
+  namespace?: string
+  name?: string
+  revision?: string
+  url?: string
+}
+
+/** File entry in a definition */
+export interface FileEntry {
+  path: string
+  license?: string
+  attributions?: string[]
+  facets?: string[]
+  hashes?: Record<string, string>
+  natures?: string[]
+  token?: string
+}
+
+/** Described section of a definition */
+export interface DescribedSection {
+  releaseDate?: string
+  projectWebsite?: string
+  urls?: Record<string, string>
+  sourceLocation?: SourceLocationSpec
+  facets?: Record<string, string[]>
+  hashes?: Record<string, string>
+  files?: number
+  tools?: string[]
+  toolScore?: ScoreSection
+  score?: ScoreSection
+}
+
+/** Licensed section of a definition */
+export interface LicensedSection {
+  declared?: string
+  toolScore?: LicensedScoreSection
+  score?: LicensedScoreSection
+  facets?: Record<string, FacetInfo>
+}
+
+/** Score breakdown for described section */
+export interface ScoreSection {
+  total: number
+  date: number
+  source: number
+}
+
+/** Score breakdown for licensed section */
+export interface LicensedScoreSection {
+  total: number
+  declared: number
+  discovered: number
+  consistency: number
+  spdx: number
+  texts: number
+}
+
+/** Facet information for a set of files */
+export interface FacetInfo {
+  files: number
+  attribution?: {
+    parties?: string[]
+    unknown: number
+  }
+  discovered?: {
+    expressions?: string[]
+    unknown: number
+  }
+}
+
+/** Full definition object */
+export interface Definition {
+  coordinates?: EntityCoordinates
+  described?: DescribedSection
+  licensed?: LicensedSection
+  files?: FileEntry[]
+  scores?: {
+    effective: number
+    tool: number
+  }
+  _meta?: {
+    schemaVersion: string
+    updated: string
+  }
+}
+
+/** Package info for debsrc license locations */
+export interface PackageInfo {
+  type?: string
+  name?: string
+  version?: string
+}
+
+/** Parsed URN components */
+export interface ParsedUrn {
+  scheme?: string
+  type?: string
+  provider?: string
+  namespace?: string
+  name?: string
+  revToken?: string
+  revision?: string
+  toolToken?: string
+  tool?: string
+  toolRevision?: string
+}
 
 const coordinatesMapper = coordinatesMapperFactory()
 
 /**
  * Creates ResultCoordinates from an Express request with tool parameters
- * @param {EntityCoordinatesRequest} request - Express request with entity and tool params
- * @returns {Promise<ResultCoordinates>} ResultCoordinates instance
  */
-async function toResultCoordinatesFromRequest(request) {
+async function toResultCoordinatesFromRequest(request: EntityCoordinatesRequest): Promise<ResultCoordinates> {
   const coordinates = await toNormalizedEntityCoordinates(request.params)
   return new ResultCoordinates(
     coordinates.type,
@@ -45,14 +163,12 @@ async function toResultCoordinatesFromRequest(request) {
 
 /**
  * Creates EntityCoordinates from an Express request
- * @param {EntityCoordinatesRequest} request - Express request with entity params
- * @returns {Promise<EntityCoordinates>} EntityCoordinates instance
  */
-async function toEntityCoordinatesFromRequest(request) {
+async function toEntityCoordinatesFromRequest(request: EntityCoordinatesRequest): Promise<EntityCoordinates> {
   const coordinates = new EntityCoordinates(
     request.params.type,
     request.params.provider,
-    request.params.namespace === '-' ? null : reEncodeSlashes(request.params.namespace),
+    request.params.namespace === '-' ? null : reEncodeSlashes(request.params.namespace!),
     request.params.name,
     request.params.revision
   )
@@ -61,24 +177,20 @@ async function toEntityCoordinatesFromRequest(request) {
 
 /**
  * Normalizes EntityCoordinates using coordinate mappers
- * @param {EntityCoordinatesSpec} spec - Entity coordinates specification
- * @returns {Promise<EntityCoordinates>} Normalized EntityCoordinates
  */
-async function toNormalizedEntityCoordinates(spec) {
-  const coordinates = EntityCoordinates.fromObject(spec)
-  return await coordinatesMapper.map(coordinates)
+async function toNormalizedEntityCoordinates(spec: EntityCoordinatesSpec): Promise<EntityCoordinates> {
+  const coordinates = EntityCoordinates.fromObject(spec)!
+  return (await coordinatesMapper.map(coordinates)) ?? coordinates
 }
 
 /**
  * Creates EntityCoordinates from command-line style arguments
- * @param {Record<string, string>} args - Object with type, provider, namespace, name, revision keys
- * @returns {EntityCoordinates} EntityCoordinates instance
  */
-function toEntityCoordinatesFromArgs(args) {
+function toEntityCoordinatesFromArgs(args: Record<string, string>): EntityCoordinates {
   return new EntityCoordinates(
     args['type'],
     args['provider'],
-    args['namespace'] === '-' ? null : reEncodeSlashes(args['namespace']),
+    args['namespace'] === '-' ? null : reEncodeSlashes(args['namespace']!),
     args['name'],
     args['revision']
   )
@@ -93,19 +205,15 @@ function toEntityCoordinatesFromArgs(args) {
 // We need to re-encode them before sending the request to the Crawler
 /**
  * Re-encodes slashes in a namespace
- * @param {string} namespace - Namespace string
- * @returns {string} Namespace with slashes encoded as %2f
  */
-function reEncodeSlashes(namespace) {
+function reEncodeSlashes(namespace: string): string {
   return `${namespace.replace(/\//g, '%2f')}`
 }
 
 /**
  * Parses namespace/name/revision from request params including extras
- * @param {EntityCoordinatesRequest} request - Express request with params
- * @returns {string} Combined path string
  */
-function parseNamespaceNameRevision(request) {
+function parseNamespaceNameRevision(request: EntityCoordinatesRequest): string {
   let namespaceNameRevision = `${request.params.namespace}/${request.params.name}/${request.params.revision}`
 
   if (request.params.extra1) {
@@ -125,10 +233,8 @@ function parseNamespaceNameRevision(request) {
 
 /**
  * Gets the latest semantic version from an array of versions
- * @param {string | string[]} versions - Array of version strings or a single version
- * @returns {string | null} The latest non-prerelease version, or null if none found
  */
-function getLatestVersion(versions) {
+function getLatestVersion(versions: string | string[]): string | null {
   if (!Array.isArray(versions)) {
     return versions
   }
@@ -136,34 +242,25 @@ function getLatestVersion(versions) {
     return null
   }
   if (versions.length === 1) {
-    return versions[0]
+    return versions[0]!
   }
-  return versions.reduce(
-    /**
-     * @param {string} max
-     * @param {string} current
-     */
-    (max, current) => {
-      const normalizedCurrent = _normalizeVersion(current)
-      if (!normalizedCurrent || semver.prerelease(normalizedCurrent) !== null) {
-        return max
-      }
-      const normalizedMax = _normalizeVersion(max)
-      if (!normalizedMax) {
-        return normalizedCurrent
-      }
-      return semver.gt(normalizedCurrent, normalizedMax) ? current : max
-    },
-    versions[0]
-  )
+  return versions.reduce((max: string, current: string): string => {
+    const normalizedCurrent = _normalizeVersion(current)
+    if (!normalizedCurrent || semver.prerelease(normalizedCurrent) !== null) {
+      return max
+    }
+    const normalizedMax = _normalizeVersion(max)
+    if (!normalizedMax) {
+      return normalizedCurrent
+    }
+    return semver.gt(normalizedCurrent, normalizedMax) ? current : max
+  }, versions[0]!)
 }
 
 /**
  * Simplifies and deduplicates attribution strings
- * @param {string[] | null | undefined} entries - Array of attribution strings
- * @returns {string[] | null} Simplified array or null if empty
  */
-function simplifyAttributions(entries) {
+function simplifyAttributions(entries: string[] | null | undefined): string[] | null {
   if (!entries?.length) {
     return null
   }
@@ -173,14 +270,13 @@ function simplifyAttributions(entries) {
   // return the elements in more or less the same order they arrived
   // TODO that last part about ordering is less than optimal right now.
   // TODO remove whitespace after/before pair punctuation (e.g., < this@that.com >)
-  const decoded = entries.map(
-    /** @param {string} entry */ entry =>
-      he
-        .decode(entry)
-        .replace(/(\\[nr]|[\n\r])/g, ' ')
-        .replace(/ +/g, ' ')
+  const decoded = entries.map((entry: string) =>
+    he
+      .decode(entry)
+      .replace(/(\\[nr]|[\n\r])/g, ' ')
+      .replace(/ +/g, ' ')
   )
-  const trimmed = decoded.map(/** @param {string} entry */ entry => trim(entry, ' ~!@#$%^&*_-=+|:;?/,'))
+  const trimmed = decoded.map((entry: string) => trim(entry, ' ~!@#$%^&*_-=+|:;?/,'))
   const sorted = sortBy(trimmed, 'length').reverse()
   return uniqBy(sorted, value => trim(value, '.')).reverse()
 }
@@ -188,10 +284,8 @@ function simplifyAttributions(entries) {
 const dateTimeFormats = ['MM-dd-yyyy']
 /**
  * Parses a date/time string into a Luxon DateTime in UTC
- * @param {string} dateAndTime - Date string in various formats
- * @returns {import('luxon').DateTime | null} DateTime instance or null if invalid
  */
-function utcDateTime(dateAndTime) {
+function utcDateTime(dateAndTime: string): DateTime | null {
   const utcOpt = { zone: 'utc' }
   let result = DateTime.fromISO(dateAndTime, utcOpt)
   if (!result.isValid) {
@@ -205,17 +299,15 @@ function utcDateTime(dateAndTime) {
   }
 
   for (let index = 0; !result.isValid && index < dateTimeFormats.length; index++) {
-    result = DateTime.fromFormat(dateAndTime, dateTimeFormats[index], utcOpt)
+    result = DateTime.fromFormat(dateAndTime, dateTimeFormats[index]!, utcOpt)
   }
   return result.isValid ? result : null
 }
 
 /**
  * Extracts and validates a date from various date/time formats
- * @param {string | null | undefined} dateAndTime - Date string in various formats
- * @returns {string | null} ISO date string (yyyy-MM-dd) or null if invalid
  */
-function extractDate(dateAndTime) {
+function extractDate(dateAndTime: string | null | undefined): string | null {
   if (!dateAndTime) {
     return null
   }
@@ -223,7 +315,7 @@ function extractDate(dateAndTime) {
   if (!result) {
     return null
   }
-  const validStart = utcDateTime('1950-01-01')
+  const validStart = utcDateTime('1950-01-01')!
   const validEnd = DateTime.utc().plus({ days: 30 })
   if (result < validStart || result > validEnd) {
     return null
@@ -233,11 +325,8 @@ function extractDate(dateAndTime) {
 
 /**
  * Compares two ISO date strings
- * @param {string | null | undefined} dateA - First date string
- * @param {string | null | undefined} dateB - Second date string
- * @returns {number} Negative if dateA < dateB, positive if dateA > dateB, 0 if equal
  */
-function compareDates(dateA, dateB) {
+function compareDates(dateA: string | null | undefined, dateB: string | null | undefined): number {
   if (!dateA || !dateB) {
     return dateA ? 1 : dateB ? -1 : 0
   }
@@ -247,12 +336,8 @@ function compareDates(dateA, dateB) {
 
 /**
  * Sets a value at the given path if the value is truthy and not an empty array
- * @param {object} target - Object to set the value on
- * @param {string} path - Lodash-style path string
- * @param {unknown} value - Value to set
- * @returns {boolean} true if value was set, false otherwise
  */
-function setIfValue(target, path, value) {
+function setIfValue(target: object, path: string, value: unknown): boolean {
   if (!value) {
     return false
   }
@@ -265,11 +350,8 @@ function setIfValue(target, path, value) {
 
 /**
  * Converts a Set to a sorted array, filtering out falsy values
- * @template T
- * @param {Set<T>} values - Set of values
- * @returns {T[] | null} Sorted array or null if empty
  */
-function setToArray(values) {
+function setToArray<T>(values: Set<T>): T[] | null {
   const result = Array.from(values)
     .filter(e => e)
     .sort()
@@ -278,18 +360,12 @@ function setToArray(values) {
 
 /**
  * Adds array elements to a Set, optionally extracting values
- * @template T, V
- * @param {T[] | null | undefined} array - Array of values to add
- * @param {Set<V>} set - Set to add values to
- * @param {((value: T) => V) | undefined} [valueExtractor] - Optional function to extract value from each element
- * @returns {Set<V>} The modified Set
  */
-function addArrayToSet(array, set, valueExtractor) {
+function addArrayToSet<T, V>(array: T[] | null | undefined, set: Set<V>, valueExtractor?: (value: T) => V): Set<V> {
   if (!array?.length) {
     return set
   }
-  valueExtractor =
-    valueExtractor || /** @param {T} value */ (value => /** @type {V} */ (/** @type {unknown} */ (value)))
+  valueExtractor = valueExtractor || ((value: T) => value as unknown as V)
   for (const entry of array) {
     set.add(valueExtractor(entry))
   }
@@ -298,10 +374,8 @@ function addArrayToSet(array, set, valueExtractor) {
 
 /**
  * Extracts an SPDX license identifier from a license URL
- * @param {string | null | undefined} licenseUrl - URL pointing to a license
- * @returns {string | null} SPDX license identifier or null
  */
-function extractLicenseFromLicenseUrl(licenseUrl) {
+function extractLicenseFromLicenseUrl(licenseUrl: string | null | undefined): string | null {
   if (!licenseUrl) {
     return null
   }
@@ -312,7 +386,7 @@ function extractLicenseFromLicenseUrl(licenseUrl) {
         return licenseUrlOverride.license
       }
       if (licenseUrlOverride.licenseMatchGroup) {
-        const parsed = SPDX.normalize(licenseUrlMatch[licenseUrlOverride.licenseMatchGroup])
+        const parsed = SPDX.normalize(licenseUrlMatch[licenseUrlOverride.licenseMatchGroup]!)
         return parsed === 'NOASSERTION' ? null : parsed
       }
     }
@@ -322,12 +396,12 @@ function extractLicenseFromLicenseUrl(licenseUrl) {
 
 /**
  * Merges the given definition onto the base definition
- * @param {Definition | null | undefined} base - Base definition to merge onto
- * @param {Partial<Definition> | null | undefined} proposed - Proposed changes to merge
- * @param {boolean} [override] - If true, proposed values override rather than merge
- * @returns {void}
  */
-function mergeDefinitions(base, proposed, override) {
+function mergeDefinitions(
+  base: Definition | null | undefined,
+  proposed: Partial<Definition> | null | undefined,
+  override?: boolean
+): void {
   if (!proposed) {
     return
   }
@@ -339,32 +413,25 @@ function mergeDefinitions(base, proposed, override) {
   setIfValue(base, 'files', _mergeFiles(base.files, proposed.files, override))
 }
 
-/**
- * @param {FileEntry[] | undefined} base
- * @param {FileEntry[] | undefined} proposed
- * @param {boolean | undefined} override
- * @returns {FileEntry[] | undefined}
- */
-function _mergeFiles(base, proposed, override) {
+function _mergeFiles(
+  base: FileEntry[] | undefined,
+  proposed: FileEntry[] | undefined,
+  override: boolean | undefined
+): FileEntry[] | undefined {
   if (!proposed) {
     return base
   }
   if (!base) {
     return proposed
   }
-  /** @type {Record<string, FileEntry>} */
-  const baseLookup = base.reduce(
-    /**
-     * @param {Record<string, FileEntry>} result
-     * @param {FileEntry} item
-     */
-    (result, item) => {
+  const baseLookup: Record<string, FileEntry> = base.reduce(
+    (result: Record<string, FileEntry>, item: FileEntry) => {
       result[item.path] = item
       return result
     },
-    /** @type {Record<string, FileEntry>} */ ({})
+    {} as Record<string, FileEntry>
   )
-  for (const /** @type {FileEntry} */ file of proposed) {
+  for (const file of proposed as FileEntry[]) {
     const entry = baseLookup[file.path]
     if (entry) {
       _mergeFile(entry, file, override)
@@ -375,68 +442,53 @@ function _mergeFiles(base, proposed, override) {
   return base
 }
 
-/**
- * @param {FileEntry | undefined} base
- * @param {FileEntry | undefined} proposed
- * @param {boolean | undefined} override
- * @returns {FileEntry | undefined}
- */
-function _mergeFile(base, proposed, override) {
+function _mergeFile(
+  base: FileEntry | undefined,
+  proposed: FileEntry | undefined,
+  override: boolean | undefined
+): FileEntry | undefined {
   if (!proposed) {
     return base
   }
   if (!base) {
     return proposed
   }
-  const result = /** @type {FileEntry} */ (
-    _mergeExcept(base, proposed, ['license', 'attributions', 'facets', 'hashes', 'natures'])
-  )
-  /** @type {<T>(proposed: T, mergeStrategy?: (p: T) => T) => T} */
-  const overrideStrategy = override
-    ? /** @type {<T>(proposed: T) => T} */ (proposed => proposed)
-    : /** @type {<T>(proposed: T, mergeStrategy: (p: T) => T) => T} */ (
-        (proposed, mergeStrategy) => mergeStrategy(proposed)
-      )
+  const result = _mergeExcept(base, proposed, ['license', 'attributions', 'facets', 'hashes', 'natures']) as FileEntry
+  const overrideStrategy: <T>(proposed: T, mergeStrategy?: (p: T) => T) => T = override
+    ? <T>(proposed: T): T => proposed
+    : <T>(proposed: T, mergeStrategy?: (p: T) => T): T => mergeStrategy!(proposed)
   setIfValue(
     result,
     'license',
-    overrideStrategy(proposed.license, /** @param {string | undefined} p */ p => SPDX.merge(p, base.license, 'AND'))
+    overrideStrategy(proposed.license, (p: string | undefined) => SPDX.merge(p ?? '', base.license ?? '', 'AND'))
   )
   setIfValue(
     result,
     'attributions',
-    overrideStrategy(
-      proposed.attributions,
-      /** @param {string[] | undefined} p */ p => _mergeArray(base.attributions, p)
-    )
+    overrideStrategy(proposed.attributions, (p: string[] | undefined) => _mergeArray(base.attributions, p))
   )
   setIfValue(
     result,
     'facets',
-    overrideStrategy(proposed.facets, /** @param {string[] | undefined} p */ p => _mergeArray(base.facets, p))
+    overrideStrategy(proposed.facets, (p: string[] | undefined) => _mergeArray(base.facets, p))
   )
   setIfValue(
     result,
     'hashes',
-    overrideStrategy(
-      proposed.hashes,
-      /** @param {Record<string, string> | undefined} p */ p => _mergeObject(base.hashes, p)
-    )
+    overrideStrategy(proposed.hashes, (p: Record<string, string> | undefined) => _mergeObject(base.hashes, p))
   )
   setIfValue(
     result,
     'natures',
-    overrideStrategy(proposed.natures, /** @param {string[] | undefined} p */ p => _mergeArray(base.natures, p))
+    overrideStrategy(proposed.natures, (p: string[] | undefined) => _mergeArray(base.natures, p))
   )
   return result
 }
 
-/**
- * @param {{facets?: object, hashes?: object, files?: number} | undefined} base
- * @param {{facets?: object, hashes?: object, files?: number} | undefined} proposed
- * @returns {{facets?: object, hashes?: object, files?: number} | undefined}
- */
-function _mergeDescribed(base, proposed) {
+function _mergeDescribed(
+  base: { facets?: object; hashes?: object; files?: number } | undefined,
+  proposed: { facets?: object; hashes?: object; files?: number } | undefined
+): { facets?: object; hashes?: object; files?: number } | undefined {
   if (!proposed) {
     return base
   }
@@ -452,12 +504,12 @@ function _mergeDescribed(base, proposed) {
 
 /**
  * Merges licensed section, primarily the declared license
- * @param {{declared?: string} | undefined} base
- * @param {{declared?: string} | undefined} proposed
- * @param {boolean | undefined} override
- * @returns {{declared?: string} | undefined}
  */
-function _mergeLicensed(base, proposed, override) {
+function _mergeLicensed(
+  base: { declared?: string } | undefined,
+  proposed: { declared?: string } | undefined,
+  override: boolean | undefined
+): { declared?: string } | undefined {
   if (!proposed) {
     return base
   }
@@ -465,17 +517,11 @@ function _mergeLicensed(base, proposed, override) {
     return proposed
   }
   const result = _mergeExcept(base, proposed, ['declared'])
-  setIfValue(result, 'declared', override ? proposed.declared : SPDX.merge(proposed.declared, base.declared, 'AND'))
+  setIfValue(result, 'declared', override ? proposed.declared : SPDX.merge(proposed.declared!, base.declared!, 'AND'))
   return result
 }
 
-/**
- * @template T
- * @param {T | undefined} base
- * @param {T | undefined} proposed
- * @returns {T | undefined}
- */
-function _mergeObject(base, proposed) {
+function _mergeObject<T>(base: T | undefined, proposed: T | undefined): T | undefined {
   if (!proposed) {
     return base
   }
@@ -485,13 +531,7 @@ function _mergeObject(base, proposed) {
   return extend(base, proposed)
 }
 
-/**
- * @template T
- * @param {T[] | undefined} base
- * @param {T[] | undefined} proposed
- * @returns {T[] | undefined}
- */
-function _mergeArray(base, proposed) {
+function _mergeArray<T>(base: T[] | undefined, proposed: T[] | undefined): T[] | undefined {
   if (!proposed) {
     return base
   }
@@ -501,13 +541,7 @@ function _mergeArray(base, proposed) {
   return union(base, proposed)
 }
 
-/**
- * @param {object} base
- * @param {object} proposed
- * @param {string[]} [paths]
- * @returns {object}
- */
-function _mergeExcept(base, proposed, paths = []) {
+function _mergeExcept(base: object, proposed: object, paths: string[] = []): object {
   const overlay = {}
   extend(true, overlay, proposed)
   for (const path of paths) {
@@ -519,10 +553,8 @@ function _mergeExcept(base, proposed, paths = []) {
 
 /**
  * Builds a source URL for the given coordinates
- * @param {EntityCoordinatesSpec} spec - Entity coordinates specification
- * @returns {string | null} Source URL or null if provider not supported
  */
-function buildSourceUrl(spec) {
+function buildSourceUrl(spec: EntityCoordinatesSpec): string | null {
   // TODO for now throw away any URL that might be there already due to variances in quality of the data
   // We only support two source providers so anything else is likely bogus.
   switch (spec.provider) {
@@ -552,32 +584,29 @@ function buildSourceUrl(spec) {
 
 /**
  * Decodes percent-encoded slashes in a namespace
- * @param {string} namespace - Namespace string with possible %2f encodings
- * @returns {string} Decoded namespace string
  */
-function deCodeSlashes(namespace) {
+function deCodeSlashes(namespace: string): string {
   return `${namespace.replace(/%2f/gi, '/')}`
 }
 
 /**
  * Updates a source location spec to the current format
- * @param {SourceLocationSpec} spec - Source location to update in place
  */
-function updateSourceLocation(spec) {
+function updateSourceLocation(spec: SourceLocationSpec): void {
   // if there is a name then this is the new style source location so just use it
   if (spec.name) {
     return
   }
 
   if (spec.provider === 'github' || spec.provider === 'gitlab') {
-    const segments = spec.url.split('/')
+    const segments = spec.url!.split('/')
     spec.namespace = segments[3]
     spec.name = segments[4]
   }
 
   if (spec.provider === 'mavencentral' || spec.provider === 'mavengoogle') {
     // handle old style maven data
-    const [namespace, name] = spec.url.split('/')
+    const [namespace, name] = spec.url!.split('/')
     spec.namespace = namespace
     spec.name = name
   }
@@ -585,19 +614,17 @@ function updateSourceLocation(spec) {
 
 /**
  * Determine if a given filePath is a license file based on name
- * Checks deeper than the root depending on coordinate type
- *
- * @param {string} filePath
- * @param {EntityCoordinates} [coordinates] - optional to look deeper than the root based on coordinate type
- * @param {PackageInfo[]} [packages] - optional, to look at package directories
- * @returns {boolean}
  */
-function isLicenseFile(filePath, coordinates, packages) {
+function isLicenseFile(
+  filePath: string | null | undefined,
+  coordinates?: EntityCoordinates,
+  packages?: PackageInfo[]
+): boolean {
   if (!filePath) {
     return false
   }
   filePath = filePath.toLowerCase()
-  const basePath = filePath.split('/')[0]
+  const basePath = filePath.split('/')[0]!
   if (_licenseFileNames.includes(basePath)) {
     return true
   }
@@ -615,39 +642,27 @@ function isLicenseFile(filePath, coordinates, packages) {
 
 /**
  * Determine if a given string is a declared license
- * To be a declared license it must be set and not be NOASSERTION nor NONE
- *
- * @param {string} identifier
- * @returns {boolean}
  */
-function isDeclaredLicense(identifier) {
-  return identifier && identifier !== 'NOASSERTION' && identifier !== 'NONE'
+function isDeclaredLicense(identifier: string | null | undefined): boolean {
+  return !!(identifier && identifier !== 'NOASSERTION' && identifier !== 'NONE')
 }
 
 /**
  * Gets the license file location prefixes for a given coordinate type
- * @param {EntityCoordinates} coordinates - Entity coordinates
- * @param {PackageInfo[]} [packages] - Optional package info for debsrc
- * @returns {string[] | undefined} Array of path prefixes where license files may be found
  */
-function getLicenseLocations(coordinates, packages) {
-  /** @type {Record<string, string[]>} */
-  const map = {
+function getLicenseLocations(coordinates: EntityCoordinates, packages?: PackageInfo[]): string[] | undefined {
+  const map: Record<string, string[]> = {
     npm: ['package/'],
     maven: ['META-INF/'],
     pypi: [`${coordinates.name}-${coordinates.revision}/`],
     go: [goLicenseLocation(coordinates)],
-    debsrc: packages ? debsrcLicenseLocations(packages) : []
+    debsrc: packages ? debsrcLicenseLocations(packages) : ([] as string[])
   }
-  map.sourcearchive = map.maven
-  return map[coordinates.type]
+  map.sourcearchive = map.maven!
+  return map[coordinates.type!]
 }
 
-/**
- * @param {EntityCoordinates} coordinates
- * @returns {string}
- */
-function goLicenseLocation(coordinates) {
+function goLicenseLocation(coordinates: EntityCoordinates): string {
   if (coordinates.namespace?.toLowerCase().includes('%2f')) {
     return `${deCodeSlashes(coordinates.namespace)}/${coordinates.name}@${coordinates.revision}/`
   }
@@ -656,21 +671,16 @@ function goLicenseLocation(coordinates) {
 
 /**
  * Gets license locations for debsrc packages
- * @param {PackageInfo[]} packages
- * @returns {string[]}
  */
-function debsrcLicenseLocations(packages) {
-  /** @type {string[]} */
-  const licenseLocations = []
+function debsrcLicenseLocations(packages: PackageInfo[]): string[] {
+  const licenseLocations: string[] = []
 
   // Split packages of `type: deb` and other packages
   const [debPackages, otherPackages] = packages.reduce(
-    /**
-     * @param {[PackageInfo[], PackageInfo[]]} acc
-     * @param {PackageInfo} pkg
-     * @returns {[PackageInfo[], PackageInfo[]]}
-     */
-    ([debPackages, otherPackages], pkg) => {
+    (
+      [debPackages, otherPackages]: [PackageInfo[], PackageInfo[]],
+      pkg: PackageInfo
+    ): [PackageInfo[], PackageInfo[]] => {
       if (pkg.type === 'deb') {
         debPackages.push(pkg)
       } else {
@@ -678,7 +688,7 @@ function debsrcLicenseLocations(packages) {
       }
       return [debPackages, otherPackages]
     },
-    [[], []]
+    [[], []] as [PackageInfo[], PackageInfo[]]
   )
 
   // Add default location for debian packages
@@ -688,19 +698,16 @@ function debsrcLicenseLocations(packages) {
 
   // Add license locations based on package name and version for other packages
   return licenseLocations.concat(
-    otherPackages.map(
-      /** @param {PackageInfo} otherPackage */ otherPackage =>
-        otherPackage.version ? `${otherPackage.name}-${otherPackage.version}/` : `${otherPackage.name}/`
+    otherPackages.map((otherPackage: PackageInfo) =>
+      otherPackage.version ? `${otherPackage.name}-${otherPackage.version}/` : `${otherPackage.name}/`
     )
   )
 }
 
 /**
  * Joins a set of license expressions with AND
- * @param {Set<string> | null | undefined} expressions - Set of SPDX expressions
- * @returns {string | null} Normalized combined expression or null
  */
-function joinExpressions(expressions) {
+function joinExpressions(expressions: Set<string> | null | undefined): string | null {
   if (!expressions) {
     return null
   }
@@ -714,24 +721,19 @@ function joinExpressions(expressions) {
 
 /**
  * Normalizes a raw license expression to SPDX format
- * @param {string | null | undefined} rawLicenseExpression - Raw license expression string
- * @param {{info: (message: string) => void}} logger - Logger instance for warnings
- * @param {((token: string) => string | undefined)} [licenseRefLookup] - Optional function to resolve license references
- * @returns {string | null} Normalized SPDX expression or null
  */
 function normalizeLicenseExpression(
-  rawLicenseExpression,
-  logger,
-  licenseRefLookup = /** @param {string} token */ token => token && scancodeMap.get(token)
-) {
+  rawLicenseExpression: string | null | undefined,
+  logger: { info: (message: string) => void },
+  licenseRefLookup: ((token: string) => string | null | undefined) | null = token => token && scancodeMap.get(token)
+): string | null {
   if (!rawLicenseExpression) {
     return null
   }
 
-  /** @param {string} licenseExpression */
-  const licenseVisitor = licenseExpression =>
+  const licenseVisitor = (licenseExpression: string) =>
     scancodeMap.get(licenseExpression) || SPDX.normalizeSingle(licenseExpression)
-  const parsed = SPDX.parse(rawLicenseExpression, licenseVisitor, licenseRefLookup)
+  const parsed = SPDX.parse(rawLicenseExpression, licenseVisitor, licenseRefLookup as any)
   const result = SPDX.stringify(parsed)
   if (result === 'NOASSERTION') {
     logger.info(`ScanCode NOASSERTION from ${rawLicenseExpression}`)
@@ -742,10 +744,8 @@ function normalizeLicenseExpression(
 
 /**
  * Normalizes a version string to semver format
- * @param {string} version
- * @returns {string | null}
  */
-function _normalizeVersion(version) {
+function _normalizeVersion(version: string): string | null {
   if (version === '1') {
     return '1.0.0' // version '1' is not semver valid see https://github.com/clearlydefined/crawler/issues/124
   }
@@ -754,10 +754,8 @@ function _normalizeVersion(version) {
 
 /**
  * Parses a URN string into its component parts
- * @param {string | null | undefined} urn - URN string to parse
- * @returns {ParsedUrn} Object with parsed URN components
  */
-function parseUrn(urn) {
+function parseUrn(urn: string | null | undefined): ParsedUrn {
   if (!urn) {
     return {}
   }

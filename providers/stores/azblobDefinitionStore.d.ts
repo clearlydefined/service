@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { AzBlobStoreOptions } from './abstractAzblobStore.js'
 import type AbstractAzBlobStore from './abstractAzblobStore.js'
 

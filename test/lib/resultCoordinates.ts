@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import ResultCoordinates from '../../lib/resultCoordinates.js'
+import ResultCoordinates from '../../lib/resultCoordinates.ts'
 
 describe('ResultCoordinates', () => {
   it('should create from urn', () => {

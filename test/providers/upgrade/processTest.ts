@@ -8,7 +8,7 @@ chai.use(chaiAsPromised)
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import EntityCoordinates from '../../../lib/entityCoordinates.js'
+import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import { DefinitionUpgrader, QueueHandler } from '../../../providers/upgrade/process.js'
 
 describe('Definition Upgrade Queue Processing', () => {

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Definition } from '../../business/definitionService.js'
-import type { EntityCoordinates } from '../../lib/entityCoordinates.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 
 export interface SearchOptions {
   [key: string]: any
