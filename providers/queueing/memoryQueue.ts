@@ -10,10 +10,10 @@ export interface MemoryQueueOptions {
   logger?: Logger
 }
 
-class MemoryQueue implements IQueue {
+export class MemoryQueue implements IQueue {
   declare options: MemoryQueueOptions
   declare logger: Logger
-  declare decoder: ((text: string) => string) | undefined
+  declare decoder: (text: string) => string
   data: QueueMessage[]
   messageId: number
 
@@ -22,7 +22,7 @@ class MemoryQueue implements IQueue {
     this.logger = this.options.logger || logger()
     this.data = []
     this.messageId = 0
-    this.decoder = options.decoder
+    this.decoder = options.decoder || ((text: string) => text)
   }
 
   async initialize(): Promise<void> {}
@@ -84,12 +84,6 @@ class MemoryQueue implements IQueue {
   }
 }
 
-const factory = (opts: MemoryQueueOptions = {}) => {
-  const defaultOpts = {
-    decoder: (text: string) => text
-  }
-  const mergedOpts = { ...defaultOpts, ...opts }
-  return new MemoryQueue(mergedOpts)
-}
+const factory = (opts: MemoryQueueOptions = {}) => new MemoryQueue(opts)
 
 export default factory
