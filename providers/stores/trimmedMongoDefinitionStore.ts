@@ -29,9 +29,9 @@ export class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore im
    * List operation is not supported by this store.
    */
   // eslint-disable-next-line no-unused-vars
-  override async list(_coordinates: EntityCoordinates): Promise<null> {
+  override async list(_coordinates: EntityCoordinates): Promise<string[]> {
     //This store does not support list for coordinates
-    return null
+    return []
   }
 
   /**
@@ -71,10 +71,9 @@ export class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore im
   /**
    * Delete a definition from MongoDB.
    */
-  override async delete(coordinates: EntityCoordinates): Promise<null> {
+  override async delete(coordinates: EntityCoordinates): Promise<void> {
     // @ts-expect-error - String _id is valid for MongoDB
     await this.collection.deleteOne({ _id: this.getId(coordinates) })
-    return null
   }
 
   /**

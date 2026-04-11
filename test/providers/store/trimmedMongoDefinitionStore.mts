@@ -61,10 +61,10 @@ describe('Trimmed Mongo Definition store', () => {
     expect(defs).to.be.not.ok
   })
 
-  it('should return falsy for list', async () => {
+  it('should return empty array for list', async () => {
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics')
     const defs = await mongoStore.list(coordinate)
-    expect(defs).to.be.not.ok
+    expect(defs).to.deep.equal([])
   })
 
   describe('store', () => {
