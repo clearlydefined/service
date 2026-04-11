@@ -32,8 +32,8 @@ class MemoryCache implements ICache {
 
   /** Stores an item in the cache */
   set(item: string, value: any, ttlSeconds: number | null = null): void {
-    const expiration = 1000 * (ttlSeconds || this.defaultTtlSeconds || 0)
-    this.cache.put(item, value, expiration)
+    const expiration = ttlSeconds || this.defaultTtlSeconds
+    this.cache.put(item, value, expiration ? expiration * 1000 : undefined)
   }
 
   /** Removes an item from the cache */

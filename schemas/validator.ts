@@ -35,9 +35,11 @@ const ajvOptions = {
 const ajv = new Ajv.default(ajvOptions)
 
 // Add formats and error messages support
-;(addFormats as unknown as (ajv: InstanceType<typeof Ajv.default>) => void)(ajv)
+// @ts-expect-error - ajv-formats/ajv-errors default exports are callable but typed as modules
+addFormats(ajv)
 if (allErrorsEnabled) {
-  ;(ajvErrors as unknown as (ajv: InstanceType<typeof Ajv.default>) => void)(ajv)
+  // @ts-expect-error - ajv-formats/ajv-errors default exports are callable but typed as modules
+  ajvErrors(ajv)
 }
 
 // Register JSON schemas
