@@ -8,14 +8,21 @@ import { MockInsights } from '../../lib/mockInsights.ts'
 
 const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
 
-/** @typedef {import('./winstonConfig.d.ts').WinstonLoggerOptions} WinstonLoggerOptions */
+/** Configuration options for creating a Winston logger instance. */
+interface WinstonLoggerOptions {
+  /**
+   * Application Insights connection string for logging. If not provided, uses APPLICATIONINSIGHTS_CONNECTION_STRING
+   * from config.
+   */
+  connectionString?: string
+  /** Whether to echo log messages to the console. */
+  echo?: boolean
+  /** The minimum log level to capture. */
+  level?: string
+}
 
-/**
- * Sanitizes headers by redacting sensitive values.
- * @param {Record<string, string> | null | undefined} headers
- * @returns {Record<string, string>}
- */
-const sanitizeHeaders = headers =>
+/** Sanitizes headers by redacting sensitive values. */
+const sanitizeHeaders = (headers: Record<string, string> | null | undefined): Record<string, string> =>
   Object.fromEntries(
     Object.entries(headers || {}).map(([key, value]) =>
       SENSITIVE_HEADERS.includes(key.toLowerCase()) ? [key, '<REDACTED>'] : [key, value]
@@ -29,7 +36,7 @@ const sanitizeHeaders = headers =>
 const sanitizeMeta = winston.format(info => {
   // Summarize HTTP request
   if (info['req'] && typeof info['req'] === 'object') {
-    const req = /** @type {any} */ (info['req'])
+    const req = info['req'] as any
     info['req'] = {
       method: req['method'],
       url: req['originalUrl'] || req['url'],
@@ -40,7 +47,7 @@ const sanitizeMeta = winston.format(info => {
 
   // Summarize HTTP response
   if (info['res'] && typeof info['res'] === 'object') {
-    const res = /** @type {any} */ (info['res'])
+    const res = info['res'] as any
     info['res'] = {
       statusCode: res['statusCode']
     }
@@ -56,7 +63,7 @@ const sanitizeMeta = winston.format(info => {
 
   // Summarize Axios config
   if (info['config'] && typeof info['config'] === 'object') {
-    const cfg = /** @type {any} */ (info['config'])
+    const cfg = info['config'] as any
     info['config'] = {
       method: cfg.method,
       url: cfg.url,
@@ -72,10 +79,8 @@ const sanitizeMeta = winston.format(info => {
  * telemetry properties to log records. Objects with a null prototype (e.g.,
  * Express req.params via Object.create(null)) lack .constructor, causing
  * TypeError. This function rehydrates such objects into plain Objects.
- * @param {Record<string, any>} info
- * @returns {Record<string, any>}
  */
-function buildProperties(info) {
+function buildProperties(info: Record<string, any>): Record<string, any> {
   return Object.fromEntries(
     Object.entries(info || {}).map(([key, value]) => {
       // Fix null-prototype objects
@@ -100,10 +105,8 @@ function buildProperties(info) {
 
 /**
  * Factory function to create a Winston logger instance.
- * @param {WinstonLoggerOptions} [options] - Configuration options for the logger.
- * @returns {winston.Logger} A configured Winston logger instance with Application Insights transport.
  */
-function factory(options) {
+function factory(options?: WinstonLoggerOptions): winston.Logger {
   const realOptions = {
     connectionString: config.get('APPLICATIONINSIGHTS_CONNECTION_STRING'),
     echo: config.get('LOGGER_LOG_TO_CONSOLE') === 'true',
@@ -179,12 +182,8 @@ const levelMap = new Map([
   ['silly', appInsights.KnownSeverityLevel.Verbose]
 ])
 
-/**
- * Maps Winston log levels to Application Insights severity levels
- * @param {string} level - The Winston log level
- * @returns {string} - The corresponding Application Insights severity level
- */
-function mapLevel(level) {
+/** Maps Winston log levels to Application Insights severity levels */
+function mapLevel(level: string): string {
   return levelMap.get(level) ?? appInsights.KnownSeverityLevel.Information
 }
 

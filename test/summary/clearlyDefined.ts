@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import * as chai from 'chai'
-import validator from '../../schemas/validator.js'
+import validator from '../../schemas/validator.ts'
 
 const { expect } = chai
 

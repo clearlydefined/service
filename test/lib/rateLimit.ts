@@ -14,8 +14,8 @@ import {
   setupApiRateLimiterAfterCachingInit,
   setupBatchApiRateLimiterAfterCachingInit
 } from '../../lib/rateLimit.ts'
-import MemoryCache from '../../providers/caching/memory.js'
-import { RedisCache } from '../../providers/caching/redis.js'
+import MemoryCache from '../../providers/caching/memory.ts'
+import { RedisCache } from '../../providers/caching/redis.ts'
 
 const logger: any = {
   info: () => {},

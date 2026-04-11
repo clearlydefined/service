@@ -7,9 +7,9 @@ import { rateLimit } from 'express-rate-limit'
 import { RedisStore } from 'rate-limit-redis'
 import type { RedisClientType } from 'redis'
 import type { ICache } from '../providers/caching/index.js'
-import { RedisCache } from '../providers/caching/redis.js'
+import { RedisCache } from '../providers/caching/redis.ts'
 import type { Logger } from '../providers/logging/index.js'
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 /** Configuration options for rate limiting window and maximum requests */
 export interface RateLimitConfig {

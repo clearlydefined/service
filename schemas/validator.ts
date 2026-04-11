@@ -21,22 +21,24 @@ const versionlessCoordinatesSchema = require('./versionless-coordinates-1.0.json
 const restDebug = process.env['ENABLE_REST_VALIDATION_ERRORS'] || config.get('ENABLE_REST_VALIDATION_ERRORS')
 const allErrorsEnabled = restDebug === 'true'
 
-const ajvOptions = /** @type {import('ajv').Options} */ ({
+const ajvOptions = {
   allErrors: allErrorsEnabled,
-  strict: 'log',
+  strict: 'log' as const,
   useDefaults: true,
   maxItems: 1000,
   maxProperties: 100,
   maxLength: 10000,
   maxErrors: 10,
   coerceTypes: true
-})
+}
 
-const ajv = new Ajv(ajvOptions)
+const ajv = new Ajv.default(ajvOptions)
 
 // Add formats and error messages support
+// @ts-expect-error - ajv-formats/ajv-errors default exports are callable but typed as modules
 addFormats(ajv)
 if (allErrorsEnabled) {
+  // @ts-expect-error - ajv-formats/ajv-errors default exports are callable but typed as modules
   ajvErrors(ajv)
 }
 

@@ -3,7 +3,7 @@
 
 import * as chai from 'chai'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
-import validator from '../../schemas/validator.js'
+import validator from '../../schemas/validator.ts'
 
 chai.use(deepEqualInAnyOrder)
 const { expect } = chai

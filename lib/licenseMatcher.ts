@@ -6,7 +6,7 @@ import type { Definition } from './utils.ts'
 
 const { get, isEqual: isDeepEqual } = lodash
 
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 import { getLatestVersion, isLicenseFile } from './utils.ts'
 
 /** Harvest data for a coordinate, organized by tool and version */

@@ -6,7 +6,7 @@ const router = express.Router()
 import config from 'painless-config'
 import * as gitLabApi from '../lib/gitlab.ts'
 
-import loggerFactory from '../providers/logging/logger.js'
+import loggerFactory from '../providers/logging/logger.ts'
 
 let logger
 

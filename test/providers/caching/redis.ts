@@ -9,7 +9,7 @@ import assert from 'node:assert'
 import pako2 from 'pako'
 import pako1 from 'pako-1'
 import { GenericContainer } from 'testcontainers'
-import redisCache, { RedisCache } from '../../../providers/caching/redis.js'
+import redisCache, { RedisCache } from '../../../providers/caching/redis.ts'
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const logger = createSilentLogger()

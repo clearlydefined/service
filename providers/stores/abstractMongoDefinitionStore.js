@@ -5,7 +5,7 @@ import lodash from 'lodash'
 import { MongoClient } from 'mongodb'
 import promiseRetry from 'promise-retry'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 const { get } = lodash
 

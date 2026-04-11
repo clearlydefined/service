@@ -12,7 +12,7 @@
  * @typedef {import('../providers/logging').Logger} Logger
  */
 
-import logger from '../providers/logging/logger.js'
+import logger from '../providers/logging/logger.ts'
 
 /**
  * Service for computing and caching statistics about definitions.

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { ICache } from '../providers/caching/index.js'
-import memoryCache from '../providers/caching/memory.js'
+import memoryCache from '../providers/caching/memory.ts'
 import type { EntityCoordinates, EntityCoordinatesSpec } from './entityCoordinates.ts'
 import type { GradleCoordinatesMapper } from './gradleCoordinatesMapper.ts'
 import GradleCoordinatesMapperImpl from './gradleCoordinatesMapper.ts'

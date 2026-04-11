@@ -3,7 +3,7 @@
 
 import lodash from 'lodash'
 import { gte } from 'semver'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 const { get } = lodash
 

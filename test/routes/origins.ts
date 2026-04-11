@@ -252,7 +252,7 @@ describe('GitHub origin routes', () => {
     }
 
     const proxiedOriginGitHubRoutes = await esmock('../../routes/originGitHub.js', {
-      '../../providers/logging/logger.js': () => loggerStub
+      '../../providers/logging/logger.ts': () => loggerStub
     })
 
     // Inject the real router

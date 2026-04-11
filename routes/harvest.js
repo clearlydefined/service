@@ -9,7 +9,7 @@ const router = express.Router()
 import bodyParser from 'body-parser'
 import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
-import validator from '../schemas/validator.js'
+import validator from '../schemas/validator.ts'
 
 /** @typedef {import('express').Request} Request */
 /** @typedef {import('express').Response} Response */

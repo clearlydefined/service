@@ -3,7 +3,7 @@
 
 import lodash from 'lodash'
 import throat from 'throat'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 const { uniqBy, isEqual } = lodash
 

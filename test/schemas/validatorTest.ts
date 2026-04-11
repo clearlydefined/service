@@ -5,7 +5,7 @@ import * as chai from 'chai'
 
 const { expect } = chai
 
-import validator from '../../schemas/validator.js'
+import validator from '../../schemas/validator.ts'
 
 describe('Validator - Coordinates Schema Tests', () => {
   describe('Valid coordinates validation', () => {

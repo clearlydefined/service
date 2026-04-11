@@ -2,18 +2,25 @@
 // SPDX-License-Identifier: MIT
 
 import pako from 'pako'
+import type { RedisClientOptions, RedisClientType } from 'redis'
 import { createClient } from 'redis'
-import logger from '../logging/logger.js'
+import type { Logger } from '../logging/index.js'
+import logger from '../logging/logger.ts'
+import type { BaseCacheOptions, ICache } from './index.js'
 
-/**
- * @typedef {import('./redis.d.ts').RedisCacheOptions} RedisCacheOptions
- *
- * @typedef {import('redis').RedisClientType} RedisClientType
- *
- * @typedef {import('../logging').Logger} Logger
- *
- * @typedef {import('redis').RedisClientOptions['socket']} RedisSocketOptions
- */
+type RedisSocketOptions = RedisClientOptions['socket']
+
+/** Configuration options for Redis cache connection */
+export interface RedisCacheOptions extends BaseCacheOptions {
+  /** Redis API key/password for authentication */
+  apiKey?: string
+  /** Redis server hostname or IP address */
+  service: string
+  /** Redis server port number (defaults to 6380) */
+  port?: number
+  /** Whether to use TLS encryption (defaults to true) */
+  tls?: boolean
+}
 
 /** Prefix used to identify serialized objects in cache */
 const objectPrefix = '*!~%'
@@ -24,25 +31,25 @@ const objectPrefix = '*!~%'
  * This class provides a caching interface using Redis as the backing store. All cached values are compressed using pako
  * (zlib) to reduce memory usage. Objects are automatically serialized as JSON with a special prefix.
  */
-class RedisCache {
-  /**
-   * Creates a new RedisCache instance
-   *
-   * @param {RedisCacheOptions} options - Configuration options for the Redis connection
-   */
-  constructor(options) {
+class RedisCache implements ICache {
+  private declare options: RedisCacheOptions
+  private declare logger: Logger
+  private declare _client: RedisClientType | null
+  private declare _clientReady: Promise<void> | null
+
+  /** Creates a new RedisCache instance */
+  constructor(options: RedisCacheOptions) {
     this.options = options
     this.logger = options.logger || logger()
   }
 
   /**
-   * Initializes the Redis client connection This method is idempotent - multiple calls will not create multiple
-   * connections
+   * Initializes the Redis client connection. This method is idempotent - multiple calls will not create multiple
+   * connections.
    *
-   * @returns {Promise<void>} Promise that resolves when the connection is established
    * @throws {Error} Will throw an error if the Redis connection fails
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     if (this._client) {
       return Promise.resolve()
     }
@@ -59,35 +66,21 @@ class RedisCache {
     return this._clientReady
   }
 
-  /**
-   * Closes the Redis connection and cleans up resources
-   *
-   * @returns {Promise<string>} Promise that resolves when the connection is closed
-   */
-  async done() {
+  /** Closes the Redis connection and cleans up resources */
+  async done(): Promise<void> {
     const client = this._client
     this._client = null
-    return client?.quit()
+    await client?.quit()
   }
 
-  /**
-   * Gets the underlying Redis client instance
-   *
-   * @returns {RedisClientType} The Redis client or null if not initialized
-   */
-  get client() {
+  /** Gets the underlying Redis client instance */
+  get client(): RedisClientType | null {
     return this._client
   }
 
-  /**
-   * Retrieves an item from the Redis cache Items are automatically decompressed and deserialized
-   *
-   * @param {string} item - The key of the item to retrieve
-   * @returns {Promise<any>} The cached value or null if not found
-   * @throws Will log errors but return null for parsing failures
-   */
-  async get(item) {
-    const cacheItem = await this._client.get(item)
+  /** Retrieves an item from the Redis cache. Items are automatically decompressed and deserialized. */
+  async get(item: string): Promise<any> {
+    const cacheItem = await this._client!.get(item)
     if (!cacheItem) {
       return null
     }
@@ -129,46 +122,28 @@ class RedisCache {
     }
   }
 
-  /**
-   * Stores an item in the Redis cache Items are automatically serialized and compressed
-   *
-   * @param {string} item - The key to store the value under
-   * @param {any} value - The value to cache (any serializable type)
-   * @param {number} [ttlSeconds] - Optional time-to-live in seconds
-   * @returns {Promise<void>} Promise that resolves when the item is stored
-   */
-  async set(item, value, ttlSeconds) {
+  /** Stores an item in the Redis cache. Items are automatically serialized and compressed. */
+  async set(item: string, value: any, ttlSeconds?: number): Promise<void> {
     if (typeof value !== 'string') {
       value = objectPrefix + JSON.stringify(value)
     }
     const deflated = pako.deflate(value)
     const data = Buffer.from(deflated).toString('base64')
     if (ttlSeconds) {
-      await this._client.set(item, data, { EX: ttlSeconds })
+      await this._client!.set(item, data, { EX: ttlSeconds })
     } else {
-      await this._client.set(item, data)
+      await this._client!.set(item, data)
     }
   }
 
-  /**
-   * Removes an item from the Redis cache
-   *
-   * @param {string} item - The key of the item to remove
-   * @returns {Promise<void>} Promise that resolves when the item is removed
-   */
-  async delete(item) {
-    await this._client.del(item)
+  /** Removes an item from the Redis cache */
+  async delete(item: string): Promise<void> {
+    await this._client!.del(item)
   }
 
-  /**
-   * Creates a configured Redis client instance
-   *
-   * @param {RedisCacheOptions} options - Redis connection configuration
-   * @returns {RedisClientType} A new Redis client instance
-   */
-  static buildRedisClient({ apiKey, service, port = 6380, tls = true }) {
-    /** @type {RedisSocketOptions} Socket configuration options for Redis connection */
-    let socketOptions
+  /** Creates a configured Redis client instance */
+  static buildRedisClient({ apiKey, service, port = 6380, tls = true }: RedisCacheOptions): RedisClientType {
+    let socketOptions: RedisSocketOptions
 
     if (tls === true) {
       socketOptions = {
@@ -191,14 +166,11 @@ class RedisCache {
   }
 
   /**
-   * Initializes a Redis client with connection and error handling
+   * Initializes a Redis client with connection and error handling.
    *
-   * @param {RedisCacheOptions} options - Redis connection configuration
-   * @param {Logger} logger - Logger instance for connection events
-   * @returns {Promise<RedisClientType>} Promise that resolves to the connected Redis client
    * @throws {Error} Will throw an error if the connection fails
    */
-  static async initializeClient(options, logger) {
+  static async initializeClient(options: RedisCacheOptions, logger: Logger): Promise<RedisClientType> {
     const client = RedisCache.buildRedisClient(options)
     try {
       await client.connect()
@@ -214,11 +186,6 @@ class RedisCache {
   }
 }
 
-/**
- * Factory function to create a new RedisCache instance
- *
- * @param {RedisCacheOptions} options - Configuration options for the Redis connection
- * @returns {RedisCache} A new RedisCache instance
- */
-export default options => new RedisCache(options)
+/** Factory function to create a new RedisCache instance */
+export default (options: RedisCacheOptions): RedisCache => new RedisCache(options)
 export { RedisCache }

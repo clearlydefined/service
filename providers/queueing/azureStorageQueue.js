@@ -3,7 +3,7 @@
 
 import { promisify } from 'node:util'
 import azure from 'azure-storage'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /** @typedef {import('.').DequeuedMessage} DequeuedMessage */
 

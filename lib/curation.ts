@@ -3,7 +3,7 @@
 
 import SPDX from '@clearlydefined/spdx'
 import yaml from 'js-yaml'
-import validator from '../schemas/validator.js'
+import validator from '../schemas/validator.ts'
 import EntityCoordinates from './entityCoordinates.ts'
 import type { Definition } from './utils.ts'
 import * as utils from './utils.ts'
@@ -116,7 +116,7 @@ class Curation {
   validate() {
     this.isValid = validator.validate('curations', this.data)
     if (!this.isValid) {
-      this.errors.push(...validator.errors.map((error: unknown) => ({ message: 'Invalid curation', error })))
+      this.errors.push(...(validator.errors ?? []).map((error: unknown) => ({ message: 'Invalid curation', error })))
       return
     }
 

@@ -1,14 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('.').Logger} Logger */
+import type { Logger } from './index.js'
 
-/**
- * Global logger instance storage
- *
- * @type {Logger | undefined}
- */
-let logger
+/** Global logger instance storage */
+let logger: Logger | undefined
 
 /**
  * Logger factory function that manages a singleton logger instance. This function follows the singleton pattern - it
@@ -27,12 +23,11 @@ let logger
  *   const logger = loggerFactory()
  *   logger.info('Hello world')
  *
- * @param {Logger} [loggerValue] - Optional logger instance to set as the global logger. If provided and no logger is
+ * @param loggerValue - Optional logger instance to set as the global logger. If provided and no logger is
  *   currently set, this becomes the global logger. If not provided, returns the existing global logger.
- * @returns {Logger} The global logger instance
  * @throws {Error} If no logger has been initialized and none is provided
  */
-export default loggerValue => {
+export default (loggerValue?: Logger): Logger => {
   if (loggerValue && !logger) {
     logger = loggerValue
   }

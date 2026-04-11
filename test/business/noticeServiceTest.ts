@@ -5,7 +5,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import spdxLicenseList from 'spdx-license-list/full.js'
 import NoticeService from '../../business/noticeService.js'
-import logger from '../../providers/logging/logger.js'
+import logger from '../../providers/logging/logger.ts'
 import { createSilentLogger } from '../helpers/mockLogger.ts'
 
 describe('Notice Service', () => {

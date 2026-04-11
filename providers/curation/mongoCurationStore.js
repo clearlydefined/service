@@ -19,7 +19,7 @@ import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 const { get } = lodash
 
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 class MongoCurationStore {
   /** @param {MongoCurationStoreOptions} options */

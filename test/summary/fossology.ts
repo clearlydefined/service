@@ -10,7 +10,7 @@ const { expect } = chai
 import lodash from 'lodash'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import Summarizer from '../../providers/summary/fossology.js'
-import validator from '../../schemas/validator.js'
+import validator from '../../schemas/validator.ts'
 
 const { groupBy, omit } = lodash
 

@@ -12,8 +12,8 @@ const router = express.Router()
 
 import bodyParser from 'body-parser'
 import EntityCoordinates from '../lib/entityCoordinates.ts'
-import logger from '../providers/logging/logger.js'
-import validator from '../schemas/validator.js'
+import logger from '../providers/logging/logger.ts'
+import validator from '../schemas/validator.ts'
 
 // Post a (set of) component to be included in a single NOTICE file
 router.post('/', bodyParser.json({ limit: '0.6mb' }), asyncMiddleware(generateNotices))

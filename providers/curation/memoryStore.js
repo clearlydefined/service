@@ -7,7 +7,7 @@
 /** @typedef {import('.').Contribution} Contribution */
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 class MemoryStore {
   /** @param {Record<string, unknown>} [options] */

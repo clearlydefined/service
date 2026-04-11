@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { callFetch as requestPromise } from '../../lib/fetch.ts'
-import logger from '../logging/logger.js'
+import logger from '../logging/logger.ts'
 
 /**
  * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
