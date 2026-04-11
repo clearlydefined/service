@@ -1,24 +1,41 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('../queueing').IQueue<CurationWebhookPayload>} CurationQueue */
-/** @typedef {import('./process').CurationWebhookPayload} CurationWebhookPayload */
-/** @typedef {import('./process').CurationProcessService} CurationProcessService */
-/** @typedef {import('../logging').Logger} Logger */
+import type Curation from '../../lib/curation.ts'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
+import type { GitHubPR } from './index.js'
+
+/** Minimum curation-service shape required by the queue processor */
+export interface CurationProcessService {
+  getContributedCurations(number: number, sha: string): Promise<Curation[]>
+  validateContributions(number: number, sha: string, curations: Curation[]): Promise<void>
+  updateContribution(pr: GitHubPR, curations?: Curation[] | null): Promise<void>
+  addByMergedCuration(pr: GitHubPR): Promise<void>
+}
+
+/** Payload shape expected inside dequeued webhook messages */
+export interface CurationWebhookPayload {
+  pull_request: GitHubPR
+  action: string
+}
 
 import lodash from 'lodash'
 
 const { get } = lodash
 
-/** @param {boolean} once */
-async function work(once) {
+async function work(once: boolean) {
   try {
     const message = await queue.dequeue()
-    if (!get(message, 'data.pull_request') || !get(message, 'data.action')) {
+    if (!message || !get(message, 'data.pull_request') || !get(message, 'data.action')) {
       return
     }
-    const pr = message.data.pull_request
-    const action = message.data.action
+    const { data } = message
+    if (!data) {
+      return
+    }
+    const pr = data.pull_request
+    const action = data.action
     switch (action) {
       case 'opened':
       case 'synchronize': {
@@ -39,8 +56,8 @@ async function work(once) {
     }
     logger.info(`Handled GitHub event "${action}" for PR#${pr.number}`)
     await queue.delete(message)
-  } catch (/** @type {*} */ error) {
-    logger.error(error)
+  } catch (error) {
+    logger.error(String(error))
   } finally {
     if (!once) {
       setTimeout(work, 30000, once)
@@ -48,20 +65,16 @@ async function work(once) {
   }
 }
 
-/** @type {CurationQueue} */
-let queue
-/** @type {CurationProcessService} */
-let curationService
-/** @type {Logger} */
-let logger
+let queue: IQueue<CurationWebhookPayload>
+let curationService: CurationProcessService
+let logger: Logger
 
-/**
- * @param {CurationQueue} _queue
- * @param {CurationProcessService} _curationService
- * @param {Logger} _logger
- * @param {boolean} [once]
- */
-function setup(_queue, _curationService, _logger, once = false) {
+function setup(
+  _queue: IQueue<CurationWebhookPayload>,
+  _curationService: CurationProcessService,
+  _logger: Logger,
+  once: boolean = false
+) {
   queue = _queue
   curationService = _curationService
   logger = _logger

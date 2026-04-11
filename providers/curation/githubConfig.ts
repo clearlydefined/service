@@ -1,23 +1,18 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('.').GitHubCurationOptions} GitHubCurationOptions */
-/** @typedef {import('.').ICurationStore} ICurationStore */
-/** @typedef {import('.').Endpoints} Endpoints */
-/** @typedef {import('.').CurationHarvestStore} CurationHarvestStore */
-/** @typedef {import('../caching').ICache} ICache */
-
 import config from 'painless-config'
-import githubService from './github.js'
+import type { ICache } from '../caching/index.js'
+import githubService from './github.ts'
+import type { CurationHarvestStore, Endpoints, GitHubCurationOptions, ICurationStore } from './index.js'
 
-/**
- * @param {GitHubCurationOptions | null | undefined} options
- * @param {ICurationStore} store
- * @param {Endpoints} endpoints
- * @param {ICache} cache
- * @param {CurationHarvestStore} harvestStore
- */
-function github(options, store, endpoints, cache, harvestStore) {
+function github(
+  options: GitHubCurationOptions | null | undefined,
+  store: ICurationStore,
+  endpoints: Endpoints,
+  cache: ICache,
+  harvestStore: CurationHarvestStore
+) {
   const realOptions = options || {
     owner: config.get('CURATION_GITHUB_OWNER') || 'clearlydefined',
     repo: config.get('CURATION_GITHUB_REPO') || 'curated-data',

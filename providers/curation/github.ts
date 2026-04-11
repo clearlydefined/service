@@ -1,25 +1,35 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('../../lib/curation').CurationData} CurationData */
-/** @typedef {import('../../lib/curation').CurationRevision} CurationRevision */
-/** @typedef {import('../../lib/utils').Definition} Definition */
-/** @typedef {import('../../lib/github').GitHubClient} GitHubClient */
-/** @typedef {import('../caching').ICache} ICache */
-/** @typedef {import('.').GitHubCurationOptions} GitHubCurationOptions */
-/** @typedef {import('.').Endpoints} Endpoints */
-/** @typedef {import('.').ICurationStore} ICurationStore */
-/** @typedef {import('.').CurationDefinitionService} CurationDefinitionService */
-/** @typedef {import('.').CurationHarvestStore} CurationHarvestStore */
-/** @typedef {import('.').GitHubPR} GitHubPR */
-/** @typedef {import('./github').GitHubUserInfo} GitHubUserInfo */
-/** @typedef {import('.').ContributionInfo} ContributionInfo */
-/** @typedef {import('.').CurationPatch} CurationPatch */
-/** @typedef {import('.').CurationPatchEntry} CurationPatchEntry */
-/** @typedef {import('.').CurationListResult} CurationListResult */
-/** @typedef {import('.').MatchingRevisionAndReason} MatchingRevisionAndReason */
-/** @typedef {import('.').MatchingProperty} MatchingProperty */
-/** @typedef {import('./github').CommitStatusState} CommitStatusState */
+import type { CurationData, CurationRevision } from '../../lib/curation.ts'
+import type { GitHubClient } from '../../lib/github.ts'
+import type { Definition } from '../../lib/utils.ts'
+import type { ICache } from '../caching/index.js'
+import type { Logger } from '../logging/index.js'
+import type {
+  ContributionInfo,
+  CurationDefinitionService,
+  CurationHarvestStore,
+  CurationListResult,
+  CurationPatch,
+  CurationPatchEntry,
+  Endpoints,
+  GitHubCurationOptions,
+  GitHubPR,
+  ICurationStore,
+  MatchingProperty,
+  MatchingRevisionAndReason
+} from './index.js'
+
+/** User info returned from the GitHub API */
+export interface GitHubUserInfo {
+  name?: string | null
+  email?: string | null
+  login?: string | null
+}
+
+/** GitHub commit status state values */
+export type CommitStatusState = 'error' | 'failure' | 'pending' | 'success'
 
 import lodash from 'lodash'
 
@@ -36,6 +46,7 @@ import * as Github from '../../lib/github.ts'
 
 tmp.setGracefulCleanup()
 
+import type { CacheClass } from 'memory-cache'
 import { Cache } from 'memory-cache'
 import semver from 'semver'
 import { LicenseMatcher } from '../../lib/licenseMatcher.ts'
@@ -49,16 +60,29 @@ const hourInMS = 60 * 60 * 1000
 // TODO:
 // Validate the schema of the curation patch
 class GitHubCurationService {
-  /**
-   * @param {GitHubCurationOptions} options
-   * @param {ICurationStore} store
-   * @param {Endpoints} endpoints
-   * @param {CurationDefinitionService} definition
-   * @param {ICache} cache
-   * @param {CurationHarvestStore} harvestStore
-   * @param {LicenseMatcher} [licenseMatcher]
-   */
-  constructor(options, store, endpoints, definition, cache, harvestStore, licenseMatcher) {
+  declare logger: Logger
+  declare options: GitHubCurationOptions
+  declare store: ICurationStore
+  declare endpoints: Endpoints
+  declare definitionService: CurationDefinitionService
+  declare curationUpdateTime: Date | null
+  declare tempLocation: string | null
+  declare github: GitHubClient
+  declare cache: ICache
+  declare harvestStore: CurationHarvestStore
+  declare licenseMatcher: LicenseMatcher
+  declare smartGit: ReturnType<typeof geit>
+  declare treeCache: CacheClass<string, unknown>
+
+  constructor(
+    options: GitHubCurationOptions,
+    store: ICurationStore,
+    endpoints: Endpoints,
+    definition: CurationDefinitionService,
+    cache: ICache,
+    harvestStore: CurationHarvestStore,
+    licenseMatcher?: LicenseMatcher
+  ) {
     this.logger = logger()
     this.options = options
     this.store = store
@@ -86,13 +110,10 @@ class GitHubCurationService {
    * Enumerate all contributions in GitHub and in the store and updates any out of sync
    * @returns Promise indicating the operation is complete. The value of the resolved promise is undefined.
    */
-  /** @param {*} client */
-  async syncAllContributions(client) {
-    /** @type {string[]} */
-    const states = ['open', 'closed']
+  async syncAllContributions(client: GitHubClient) {
+    const states: string[] = ['open', 'closed']
     for (const state of states) {
-      /** @type {*} */
-      let prOptions = {
+      let prOptions: Record<string, unknown> = {
         owner: this.options.owner,
         repo: this.options.repo,
         per_page: 100,
@@ -102,17 +123,19 @@ class GitHubCurationService {
       if (state === 'closed') {
         prOptions = { ...prOptions, sort: 'updated', direction: 'asc' }
       }
+      // @ts-expect-error legacy GitHub client API
       let response = await client.pullRequests.getAll(prOptions)
       this._processContributions(response.data)
-      while (/** @type {*} */ (this.github).hasNextPage(response)) {
-        response = await /** @type {*} */ (this.github).getNextPage(response)
+      // @ts-expect-error legacy GitHub client API
+      while (this.github.hasNextPage(response)) {
+        // @ts-expect-error legacy GitHub client API
+        response = await this.github.getNextPage(response)
         this._processContributions(response.data)
       }
     }
   }
 
-  /** @param {GitHubPR[]} prs */
-  async _processContributions(prs) {
+  async _processContributions(prs: GitHubPR[]) {
     for (const pr of prs) {
       const storedContribution = await this.store.getContribution(pr.number)
       const storedUpdated = get(storedContribution, 'pr.updated_at')
@@ -125,11 +148,11 @@ class GitHubCurationService {
 
   /**
    * Persist the updated contribution in the store and handle newly merged contributions
-   * @param {GitHubPR} pr - The GitHub PR object
-   * @param {Curation[] | null} [curations] - Optional. The contributed curations for this PR
-   * @returns {Promise<void>} Promise indicating the operation is complete.
+   * @param pr - The GitHub PR object
+   * @param curations - Optional. The contributed curations for this PR
+   * @returns Promise indicating the operation is complete.
    */
-  async updateContribution(pr, curations = null) {
+  async updateContribution(pr: GitHubPR, curations: Curation[] | null = null) {
     curations = curations || (await this.getContributedCurations(pr.number, pr.head.sha))
     const data = {
       ...pick(pr, [
@@ -163,10 +186,9 @@ class GitHubCurationService {
 
   /**
    * Process the fact that the given PR has been merged by persisting the curation and invalidating the definition
-   * @param {Curation[]} curations - The set of actual proposed changes
-   * @returns {Promise<(void | Definition)[]>}
+   * @param curations - The set of actual proposed changes
    */
-  async _prMerged(curations) {
+  async _prMerged(curations: Curation[]): Promise<(void | Definition)[]> {
     this._cleanCurationTree()
     await this.store.updateCurations(curations)
     // invalidate all affected definitions then recompute. This ensures the changed defs are cleared out
@@ -178,25 +200,16 @@ class GitHubCurationService {
         throat(5, coordinates => {
           return this.definitionService
             .computeAndStore(coordinates)
-            .catch(
-              /** @type {*} */ error =>
-                this.logger.info(`Failed to compute/store ${coordinates.toString()}: ${error.toString()}`)
-            )
+            .catch((error: unknown) => this.logger.info(`Failed to compute/store ${coordinates.toString()}: ${error}`))
         })
       )
     )
   }
 
-  /**
-   * @param {number} number
-   * @param {string} sha
-   * @param {Curation[]} curations
-   */
-  async validateContributions(number, sha, curations) {
+  async validateContributions(number: number, sha: string, curations: Curation[]) {
     await this._postCommitStatus(sha, number, 'pending', 'Validation in progress')
     const invalidCurations = curations.filter(x => !x.isValid)
-    /** @type {CommitStatusState} */
-    let state = 'success'
+    let state: CommitStatusState = 'success'
     let description = 'All curations are valid'
     if (invalidCurations.length) {
       state = 'error'
@@ -215,15 +228,10 @@ class GitHubCurationService {
     return this._postCommitStatus(sha, number, state, description)
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @param {EntityCoordinates[]} otherCoordinatesList
-   */
-  async _startMatching(coordinates, otherCoordinatesList) {
+  async _startMatching(coordinates: EntityCoordinates, otherCoordinatesList: EntityCoordinates[]) {
     const definition = await this.definitionService.getStored(coordinates)
     const harvest = await this.harvestStore.getAll(coordinates)
-    /** @type {MatchingRevisionAndReason[]} */
-    const matches = []
+    const matches: MatchingRevisionAndReason[] = []
 
     await Promise.all(
       otherCoordinatesList.map(async otherCoordinates => {
@@ -251,19 +259,18 @@ class GitHubCurationService {
     return matches
   }
 
-  /** @param {CurationListResult} curations */
-  _getRevisionsFromCurations(curations) {
-    /** @type {string[]} */
-    let revisions = []
+  _getRevisionsFromCurations(curations: CurationListResult) {
+    let revisions: string[] = []
 
     for (const coordinate of Object.keys(curations.curations)) {
       const coordinateObject = EntityCoordinates.fromString(coordinate)
       revisions.push(coordinateObject.revision)
     }
 
-    for (const contribution of /** @type {any[]} */ (curations.contributions)) {
-      for (const file of /** @type {any[]} */ (contribution.files)) {
-        const fileRevisions = get(file, 'revisions', {}).map(/** @param {*} revision */ revision => revision.revision)
+    for (const contribution of curations.contributions) {
+      // @ts-expect-error files may be array or record depending on store
+      for (const file of contribution.files) {
+        const fileRevisions = get(file, 'revisions', {}).map((/** @type {*} */ revision) => revision.revision)
         revisions = union(revisions, fileRevisions)
       }
     }
@@ -271,8 +278,7 @@ class GitHubCurationService {
     return revisions
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  async _calculateMatchingRevisionAndReason(coordinates) {
+  async _calculateMatchingRevisionAndReason(coordinates: EntityCoordinates) {
     const revisionlessCoords = coordinates.asRevisionless()
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
@@ -285,21 +291,20 @@ class GitHubCurationService {
       )
 
     const matchingRevisionsAndReasons = await this._startMatching(coordinates, filteredCoordinatesList)
-    const curations = /** @type {CurationListResult} */ (await this.list(revisionlessCoords))
+    // @ts-expect-error list returns CurationListResult for GitHubCurationService
+    const curations: CurationListResult = await this.list(revisionlessCoords)
     const existingRevisions = this._getRevisionsFromCurations(curations)
-
     const uncuratedMatchingRevisions = matchingRevisionsAndReasons.filter(
       versionAndReason => existingRevisions.indexOf(versionAndReason.version) === -1
     )
     return uncuratedMatchingRevisions
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @param {CurationRevision} curation
-   * @param {MatchingRevisionAndReason[]} matchingRevisionAndReason
-   */
-  async _filterRevisionWithDeclaredLicense(coordinates, curation, matchingRevisionAndReason) {
+  async _filterRevisionWithDeclaredLicense(
+    coordinates: EntityCoordinates,
+    curation: CurationRevision,
+    matchingRevisionAndReason: MatchingRevisionAndReason[]
+  ) {
     const filtered = []
     for (const revisionAndReason of matchingRevisionAndReason) {
       const { version } = revisionAndReason
@@ -325,12 +330,11 @@ class GitHubCurationService {
     return filtered
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @param {CurationData} currentContent
-   * @param {Record<string, CurationRevision>} newContent
-   */
-  _updateContent(coordinates, currentContent, newContent) {
+  _updateContent(
+    coordinates: EntityCoordinates,
+    currentContent: CurationData,
+    newContent: Record<string, CurationRevision>
+  ) {
     const newCoordinates = EntityCoordinates.fromObject(coordinates).asRevisionless()
     const result = {
       coordinates: newCoordinates,
@@ -340,14 +344,13 @@ class GitHubCurationService {
     return yaml.dump(result, { sortKeys: true, lineWidth: 150 })
   }
 
-  /**
-   * @param {GitHubClient | null} userGithub
-   * @param {GitHubClient} serviceGithub
-   * @param {GitHubUserInfo} info
-   * @param {CurationPatchEntry} patch
-   * @param {string} branch
-   */
-  async _writePatch(userGithub, serviceGithub, info, patch, branch) {
+  async _writePatch(
+    userGithub: GitHubClient | null,
+    serviceGithub: GitHubClient,
+    info: GitHubUserInfo,
+    patch: CurationPatchEntry,
+    branch: string
+  ) {
     const { owner, repo } = this.options
     const coordinates = EntityCoordinates.fromObject(patch.coordinates)
     const currentContent = await this._getCurations(coordinates)
@@ -356,8 +359,16 @@ class GitHubCurationService {
     const content = Buffer.from(updatedContent).toString('base64')
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
-    /** @type {{ owner: string, repo: string, path: string, message: string, content: string, branch: string, committer?: { name: string, email: string }, sha?: string }} */
-    const fileBody = {
+    const fileBody: {
+      owner: string
+      repo: string
+      path: string
+      message: string
+      content: string
+      branch: string
+      committer?: { name: string; email: string }
+      sha?: string
+    } = {
       owner,
       repo,
       path,
@@ -378,30 +389,28 @@ class GitHubCurationService {
       fileBody.committer = { name: info.name || info.login, email: info.email }
     }
     if (get(currentContent, '_origin.sha')) {
-      fileBody.sha = /** @type {*} */ (currentContent)._origin.sha
+      fileBody.sha = get(currentContent, '_origin.sha')
       return serviceGithub.rest.repos.createOrUpdateFileContents(fileBody)
     }
     return serviceGithub.rest.repos.createOrUpdateFileContents(fileBody)
   }
 
-  /** @param {GitHubClient} githubCli */
-  async _getUserInfo(githubCli) {
-    const user = await /** @type {*} */ (githubCli.rest.users).get()
+  async _getUserInfo(githubCli: GitHubClient) {
+    // @ts-expect-error legacy GitHub client API shape
+    const user = await githubCli.rest.users.get()
     const name = get(user, 'data.name')
     const email = get(user, 'data.email')
     const login = get(user, 'data.login')
     return { name, email, login }
   }
 
-  /** @param {CurationPatchEntry[]} patches */
-  _isEligibleForMultiversionCuration(patches) {
+  _isEligibleForMultiversionCuration(patches: CurationPatchEntry[]) {
     return patches.length === 1 && Object.keys(patches[0].revisions).length === 1
   }
 
   // Return an array of valid patches that exist
   // and a list of definitions that do not exist in the store
-  /** @param {CurationPatchEntry[]} patches */
-  async _validateDefinitionsExist(patches) {
+  async _validateDefinitionsExist(patches: CurationPatchEntry[]) {
     const targetCoordinates = patches.reduce((result, patch) => {
       for (const key in patch.revisions) {
         result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
@@ -420,15 +429,15 @@ class GitHubCurationService {
     )
   }
 
-  /** @param {Definition} definition */
-  async autoCurate(definition) {
+  async autoCurate(definition: Definition) {
     try {
       if (!this.options.multiversionCurationFeatureFlag) {
         return
       }
 
       const revisionLessCoordinates = definition.coordinates.asRevisionless()
-      const curationAndContributions = /** @type {CurationListResult} */ (await this.list(revisionLessCoordinates))
+      // @ts-expect-error list returns CurationListResult for GitHubCurationService
+      const curationAndContributions: CurationListResult = await this.list(revisionLessCoordinates)
 
       if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         this.logger.info('GitHubCurationService.autoCurate.notApplicable', {
@@ -511,11 +520,7 @@ class GitHubCurationService {
     }
   }
 
-  /**
-   * @param {Definition} definition
-   * @param {CurationListResult} curationAndContributions
-   */
-  _canBeAutoCurated(definition, curationAndContributions) {
+  _canBeAutoCurated(definition: Definition, curationAndContributions: CurationListResult) {
     const tools = get(definition, 'described.tools') || []
     const hasClearlyDefinedInTools = tools.some(tool => tool.startsWith('clearlydefined'))
     const hasCurations =
@@ -523,22 +528,17 @@ class GitHubCurationService {
     return hasClearlyDefinedInTools && !this._hasExistingCurations(definition, curationAndContributions) && hasCurations
   }
 
-  /**
-   * @param {Definition} definition
-   * @param {CurationListResult} curationAndContributions
-   */
-  _hasExistingCurations(definition, curationAndContributions) {
+  _hasExistingCurations(definition: Definition, curationAndContributions: CurationListResult) {
     const revisions = this._getRevisionsFromCurations(curationAndContributions)
     return revisions.includes(definition.coordinates.revision)
   }
 
-  /**
-   * @param {GitHubClient | null} userGithub
-   * @param {GitHubClient} serviceGithub
-   * @param {ContributionInfo} info
-   * @param {CurationPatch} patch
-   */
-  async addOrUpdate(userGithub, serviceGithub, info, patch) {
+  async addOrUpdate(
+    userGithub: GitHubClient | null,
+    serviceGithub: GitHubClient,
+    info: ContributionInfo,
+    patch: CurationPatch
+  ) {
     const { missing } = await this._validateDefinitionsExist(patch.patches)
     if (missing.length > 0) {
       throw new Error('The contribution has failed because some of the supplied component definitions do not exist')
@@ -546,14 +546,13 @@ class GitHubCurationService {
     return this._addOrUpdate(userGithub, serviceGithub, info, patch)
   }
 
-  /** @param {GitHubPR} pr */
-  async addByMergedCuration(pr) {
+  async addByMergedCuration(pr: GitHubPR) {
     try {
       if (!this.options.multiversionCurationFeatureFlag || !pr.merged_at) {
         return undefined
       }
-      const patches = /** @type {CurationPatchEntry[]} */ (await this._getPatchesFromMergedPullRequest(pr))
-
+      // @ts-expect-error patches returned from _getPatchesFromMergedPullRequest match CurationPatchEntry shape
+      const patches: CurationPatchEntry[] = await this._getPatchesFromMergedPullRequest(pr)
       const component = first(patches)
       const curationRevisions = get(component, 'revisions')
       const revision = first(Object.keys(curationRevisions))
@@ -598,8 +597,7 @@ class GitHubCurationService {
     }
   }
 
-  /** @param {GitHubPR} pr */
-  async _getPatchesFromMergedPullRequest(pr) {
+  async _getPatchesFromMergedPullRequest(pr: GitHubPR) {
     const curations = await this.getContributedCurations(pr.number, pr.head.sha)
     const preCurations = await this.getContributedCurations(pr.number, pr.base.sha)
     for (const curation of curations) {
@@ -616,13 +614,12 @@ class GitHubCurationService {
     return curations.map(c => c.data)
   }
 
-  /**
-   * @param {GitHubClient | null} userGithub
-   * @param {GitHubClient} serviceGithub
-   * @param {GitHubUserInfo} info
-   * @param {CurationPatch} patch
-   */
-  async _addOrUpdate(userGithub, serviceGithub, info, patch) {
+  async _addOrUpdate(
+    userGithub: GitHubClient | null,
+    serviceGithub: GitHubClient,
+    info: GitHubUserInfo,
+    patch: CurationPatch
+  ) {
     const { owner, repo, branch } = this.options
     const masterBranch = await serviceGithub.rest.repos.getBranch({ owner, repo, branch: `refs/heads/${branch}` })
     const sha = masterBranch.data.commit.sha
@@ -653,8 +650,7 @@ class GitHubCurationService {
     return result
   }
 
-  /** @param {CurationPatch} patch */
-  _generateContributionDescription(patch) {
+  _generateContributionDescription(patch: CurationPatch) {
     const { type, details, summary, resolution } = patch.contributionInfo
     const Type = type.charAt(0).toUpperCase() + type.substr(1)
     return `
@@ -673,8 +669,7 @@ ${resolution}
 ${this._formatDefinitions(patch.patches)}`
   }
 
-  /** @param {CurationPatchEntry[]} definitions */
-  _formatDefinitions(definitions) {
+  _formatDefinitions(definitions: CurationPatchEntry[]) {
     return definitions.map(
       def =>
         `- [${def.coordinates.name} ${
@@ -685,8 +680,7 @@ ${this._formatDefinitions(patch.patches)}`
     )
   }
 
-  /** @param {MatchingRevisionAndReason[]} multiversionSearchResults */
-  _formatMultiversionCuratedRevisions(multiversionSearchResults) {
+  _formatMultiversionCuratedRevisions(multiversionSearchResults: MatchingRevisionAndReason[]) {
     let output = ''
     const sortedVersions = multiversionSearchResults
       .map(result => result.version)
@@ -705,13 +699,10 @@ ${this._formatDefinitions(patch.patches)}`
     return output
   }
 
-  /** @param {MatchingProperty[]} matchingResults */
-  _generateMatchingDescription(matchingResults) {
+  _generateMatchingDescription(matchingResults: MatchingProperty[]) {
     let output = ''
-    /** @type {string[]} */
-    const matchingLicenses = []
-    /** @type {Record<string, unknown>} */
-    const matchingMetadata = {}
+    const matchingLicenses: string[] = []
+    const matchingMetadata: Record<string, unknown> = {}
     for (const match of matchingResults) {
       if (match.file) {
         if (matchingLicenses.indexOf(match.file) === -1) {
@@ -746,12 +737,14 @@ ${this._formatDefinitions(patch.patches)}`
    * held in that PR. The curation arg might be the actual curation to use. If so, just
    * return it.
    *
-   * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation. Must include revision.
-   * @param {number | string | CurationRevision | null} [curation] - The curation identifier if any. Could be a PR number,
+   * @param coordinates - The entity for which we are looking for a curation. Must include revision.
+   * @param curation - The curation identifier if any. Could be a PR number,
    * an actual curation object or null.
-   * @returns {Promise<CurationRevision | null>} The requested curation revision data, or null
    */
-  async get(coordinates, curation = null) {
+  async get(
+    coordinates: EntityCoordinates,
+    curation: number | string | CurationRevision | null = null
+  ): Promise<CurationRevision | null> {
     if (!coordinates.revision) {
       throw new Error(
         `Coordinates ${coordinates.toString()} appear to be malformed. Are they missing a namespace or revision?`
@@ -760,7 +753,8 @@ ${this._formatDefinitions(patch.patches)}`
     if (curation && typeof curation !== 'number' && typeof curation !== 'string') {
       return curation
     }
-    const all = await this._getCurations(coordinates, /** @type {number | string | null} */ (curation))
+    const prId = typeof curation === 'number' || typeof curation === 'string' ? curation : null
+    const all = await this._getCurations(coordinates, prId)
     if (!all?.revisions) {
       return null
     }
@@ -776,11 +770,13 @@ ${this._formatDefinitions(patch.patches)}`
   /**
    * Get the curations for the revisions of the entity at the given coordinates.
    *
-   * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation.
-   * @param {number | string | null} [pr] - The curation identifier if any.
-   * @returns {Promise<CurationData & { _origin?: { sha: string } } | null>}
+   * @param coordinates - The entity for which we are looking for a curation.
+   * @param pr - The curation identifier if any.
    */
-  async _getCurations(coordinates, pr = null) {
+  async _getCurations(
+    coordinates: EntityCoordinates,
+    pr: number | string | null = null
+  ): Promise<(CurationData & { _origin?: { sha: string } }) | null> {
     const path = this._getCurationPath(coordinates)
     this.logger.debug('7:compute:curation_source:start', {
       ts: new Date().toISOString(),
@@ -807,7 +803,7 @@ ${this._formatDefinitions(patch.patches)}`
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
-    const content = /** @type {CurationData & { _origin?: { sha: string } }} */ (yaml.load(data.toString()))
+    const content: CurationData & { _origin?: { sha: string } } = yaml.load(data.toString())
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
     return content
@@ -815,15 +811,11 @@ ${this._formatDefinitions(patch.patches)}`
 
   /**
    * get the content for all curations in a given PR
-   * @param {*} number - The GitHub PR number
-   * @param {*} sha - The GitHub PR head sha
-   * @returns {[Curation]} Promise for an array of Curations
+   * @param number - The GitHub PR number
+   * @param sha - The GitHub PR head sha
+   * @returns Promise for an array of Curations
    */
-  /**
-   * @param {number} number
-   * @param {string} sha
-   */
-  async getContributedCurations(number, sha) {
+  async getContributedCurations(number: number, sha: string) {
     const prFiles = await this._getPrFiles(number)
     const curationFilenames = prFiles.map(x => x.filename).filter(this.isCurationFile)
     const result = await Promise.all(
@@ -840,23 +832,18 @@ ${this._formatDefinitions(patch.patches)}`
     return result.filter(i => i)
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @param {number | string | CurationRevision | null} curationSpec
-   * @param {Definition} definition
-   */
-  async apply(coordinates, curationSpec, definition) {
+  async apply(
+    coordinates: EntityCoordinates,
+    curationSpec: number | string | CurationRevision | null,
+    definition: Definition
+  ) {
     const curation = await this.get(coordinates, curationSpec)
     const result = Curation.apply(definition, curation)
     this._ensureCurationInfo(result, curation)
     return result
   }
 
-  /**
-   * @param {Definition} definition
-   * @param {CurationRevision} curation
-   */
-  _ensureCurationInfo(definition, curation) {
+  _ensureCurationInfo(definition: Definition, curation: CurationRevision) {
     if (!curation) {
       return
     }
@@ -869,21 +856,19 @@ ${this._formatDefinitions(patch.patches)}`
     definition.described.tools.push(`curation/${origin ? origin : 'supplied'}`)
   }
 
-  /**
-   * @param {string} ref
-   * @param {string} path
-   */
-  async _getContent(ref, path) {
+  async _getContent(ref: string, path: string) {
     const { owner, repo } = this.options
     try {
       const response = await this.github.rest.repos.getContent({ owner, repo, ref, path })
-      const data = /** @type {{ content?: string }} */ (response.data)
-      if (!data?.content) {
+      // @ts-expect-error response.data may be a file object with content
+      const content: string | undefined = response.data?.content
+      if (!content) {
         this.logger.info(`No content found for ${owner}/${repo}/${ref}/${path}.`)
         return null
       }
-      return Buffer.from(data.content, 'base64').toString('utf8')
-    } catch (/** @type {*} */ error) {
+      return Buffer.from(content, 'base64').toString('utf8')
+    } catch (error: unknown) {
+      // @ts-expect-error error may have code property
       if (error.code === 404) {
         this.logger.info(`The ${owner}/${repo}/${ref}/${path} file is not found.`)
       } else {
@@ -893,13 +878,7 @@ ${this._formatDefinitions(patch.patches)}`
     }
   }
 
-  /**
-   * @param {string} sha
-   * @param {number} number
-   * @param {CommitStatusState} state
-   * @param {string} description
-   */
-  async _postCommitStatus(sha, number, state, description) {
+  async _postCommitStatus(sha: string, number: number, state: CommitStatusState, description: string) {
     const { owner, repo } = this.options
     const target_url = this._getCurationReviewUrl(number)
     try {
@@ -912,7 +891,7 @@ ${this._formatDefinitions(patch.patches)}`
         target_url,
         context: 'ClearlyDefined'
       })
-    } catch (/** @type {*} */ error) {
+    } catch (error: unknown) {
       this.logger.info(
         `Failed to create status for PR #${number}. Error: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
       )
@@ -920,16 +899,11 @@ ${this._formatDefinitions(patch.patches)}`
     }
   }
 
-  /** @param {number} number */
-  _getCurationReviewUrl(number) {
+  _getCurationReviewUrl(number: number) {
     return `${this.endpoints.website}/curations/${number}`
   }
 
-  /**
-   * @param {number} number
-   * @param {string} body
-   */
-  async _postErrorsComment(number, body) {
+  async _postErrorsComment(number: number, body: string) {
     const { owner, repo } = this.options
     try {
       return this.github.rest.issues.createComment({
@@ -938,7 +912,7 @@ ${this._formatDefinitions(patch.patches)}`
         issue_number: number,
         body
       })
-    } catch (/** @type {*} */ error) {
+    } catch (error: unknown) {
       this.logger.info(`Failed to comment on PR #${number}: ${error}`)
       return undefined
     }
@@ -946,10 +920,9 @@ ${this._formatDefinitions(patch.patches)}`
 
   /**
    * Given partial coordinates, return a list of Curations and Contributions
-   * @param {EntityCoordinates} coordinates - the partial coordinates that describe the sort of curation to look for.
-   * @returns {Promise<CurationListResult | CurationData[] | null>}
+   * @param coordinates - the partial coordinates that describe the sort of curation to look for.
    */
-  async list(coordinates) {
+  async list(coordinates: EntityCoordinates): Promise<CurationListResult | CurationData[] | null> {
     const cacheKey = this._getCacheKey(coordinates)
     const existing = await this.cache.get(cacheKey)
     if (existing) {
@@ -965,12 +938,10 @@ ${this._formatDefinitions(patch.patches)}`
   /**
    * Return a list of Curations and Contributions for each coordinates provided
    *
-   * @param {EntityCoordinates[]} coordinatesList - an array of coordinate paths to list
-   * @returns {Promise<Record<string, CurationListResult>>}
+   * @param coordinatesList - an array of coordinate paths to list
    */
-  async listAll(coordinatesList) {
-    /** @type {Record<string, CurationListResult>} */
-    const result = {}
+  async listAll(coordinatesList: EntityCoordinates[]): Promise<Record<string, CurationListResult>> {
+    const result: Record<string, CurationListResult> = {}
     const promises = coordinatesList.map(
       throat(10, async coordinates => {
         const data = await this.list(coordinates)
@@ -978,47 +949,42 @@ ${this._formatDefinitions(patch.patches)}`
           return
         }
         const key = coordinates.toString()
-        result[key] = /** @type {CurationListResult} */ (data)
+        // @ts-expect-error list returns CurationListResult for GitHubCurationService
+        result[key] = data
       })
     )
     await Promise.all(promises)
     return result
   }
 
-  /** @param {number} number */
-  getCurationUrl(number) {
+  getCurationUrl(number: number) {
     return `https://github.com/${this.options.owner}/${this.options.repo}/pull/${number}`
   }
 
   // get the list of files changed in the given PR.
-  /** @param {number} number */
-  async _getPrFiles(number) {
+  async _getPrFiles(number: number) {
     const { owner, repo } = this.options
     try {
       const response = await this.github.rest.pulls.listFiles({ owner, repo, pull_number: number })
       return response.data
-    } catch (/** @type {*} */ error) {
+    } catch (error: unknown) {
+      // @ts-expect-error error may have code property
       if (error.code === 404) {
         throw error
       }
+      // @ts-expect-error error may have code property
       throw new Error(`Error calling GitHub to get pr#${number}. Code ${error.code}`, { cause: error })
     }
   }
 
-  /** @param {number} number */
-  async getChangedDefinitions(number) {
+  async getChangedDefinitions(number: number) {
     const files = await this._getPrFiles(number)
-    /** @type {string[]} */
-    const changedCoordinates = []
+    const changedCoordinates: string[] = []
     for (let i = 0; i < files.length; ++i) {
       const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
       const coordinates = EntityCoordinates.fromString(fileName)
-      const prDefinitions = /** @type {{ revisions: Record<string, *> }} */ (
-        (await this._getCurations(coordinates, number)) || { revisions: {} }
-      )
-      const masterDefinitions = /** @type {{ revisions: Record<string, *> }} */ (
-        (await this._getCurations(coordinates)) || { revisions: {} }
-      )
+      const prDefinitions = (await this._getCurations(coordinates, number)) || { revisions: {} }
+      const masterDefinitions = (await this._getCurations(coordinates)) || { revisions: {} }
       const allUnfilteredRevisions = concat(
         Object.keys(prDefinitions.revisions),
         Object.keys(masterDefinitions.revisions)
@@ -1034,53 +1000,44 @@ ${this._formatDefinitions(patch.patches)}`
     return changedCoordinates
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _getPrTitle(coordinates) {
+  _getPrTitle(coordinates: EntityCoordinates) {
     // Structure the PR title to match the entity coordinates so we can hackily reverse engineer that to build a URL... :-/
     return coordinates.toString()
   }
 
-  /** @param {{ login?: string }} info */
-  _getBranchName(info) {
+  _getBranchName(info: { login?: string }) {
     return `${info.login}_${DateTime.now().toFormat('yyMMdd_HHmmss.SSS')}`
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _getCurationPath(coordinates) {
+  _getCurationPath(coordinates: EntityCoordinates) {
     const path = coordinates.asRevisionless().toString()
     return `curations/${path}.yaml`
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _getSearchRoot(coordinates) {
+  _getSearchRoot(coordinates: EntityCoordinates) {
     const path = coordinates.asRevisionless().toString()
     return `curations/${path}`
   }
 
-  /** @param {string} path */
-  isCurationFile(path) {
+  isCurationFile(path: string) {
     return path.startsWith('curations/') && path.endsWith('.yaml')
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _getCacheKey(coordinates) {
+  _getCacheKey(coordinates: EntityCoordinates) {
     return `cur_${EntityCoordinates.fromObject(coordinates).toString().toLowerCase()}`
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @param {CurationRevision} curation
-   * @param {ContributionInfo} info
-   * @param {MatchingRevisionAndReason[]} matchingRevisionAndReason
-   */
-  async _addCurationWithMatchingRevisions(coordinates, curation, info, matchingRevisionAndReason) {
+  async _addCurationWithMatchingRevisions(
+    coordinates: EntityCoordinates,
+    curation: CurationRevision,
+    info: ContributionInfo,
+    matchingRevisionAndReason: MatchingRevisionAndReason[]
+  ) {
     const license = get(curation, 'licensed.declared')
     if (!license) {
       return undefined
     }
-    /** @type {Record<string, CurationRevision>} */
-    /** @type {Record<string, CurationRevision>} */
-    const newRevisions = {}
+    const newRevisions: Record<string, CurationRevision> = {}
     for (const versionAndReason of matchingRevisionAndReason) {
       newRevisions[versionAndReason.version] = { licensed: { declared: license } }
     }
@@ -1097,17 +1054,16 @@ ${this._formatDefinitions(patch.patches)}`
     return this._addOrUpdate(null, this.github, userInfo, patch)
   }
 
-  /** @param {EntityCoordinates[]} coordinatesList */
-  async reprocessMergedCurations(coordinatesList) {
+  async reprocessMergedCurations(coordinatesList: EntityCoordinates[]) {
     const uniqueCoordinatesList = uniqWith(
       coordinatesList,
       (a, b) => a.type === b.type && a.provider === b.provider && a.namespace === b.namespace && a.name === b.name
     )
-    /** @type {{ coordinates: string, contributions?: *, error?: string }[]} */
-    const results = []
+    const results: { coordinates: string; contributions?: unknown; error?: string }[] = []
     for (const coordinates of uniqueCoordinatesList) {
-      /** @type {{ coordinates: string, contributions?: *, error?: string }} */
-      const result = { coordinates: coordinates.toString() }
+      const result: { coordinates: string; contributions?: unknown; error?: string } = {
+        coordinates: coordinates.toString()
+      }
       try {
         this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationStart', {
           coordinate: coordinates.toString()
@@ -1116,8 +1072,8 @@ ${this._formatDefinitions(patch.patches)}`
         this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationSuccess', {
           coordinate: coordinates.toString()
         })
-      } catch (/** @type {*} */ err) {
-        result.error = err.message
+      } catch (err: unknown) {
+        result.error = err instanceof Error ? err.message : String(err)
         this.logger.info('GitHubCurationService.reprocessMergedCurations.reprocessMergedCurationFailed', {
           err,
           coordinate: coordinates.toString()
@@ -1128,11 +1084,11 @@ ${this._formatDefinitions(patch.patches)}`
     return results
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  async _reprocessMergedCuration(coordinates) {
+  async _reprocessMergedCuration(coordinates: EntityCoordinates) {
     const contributions = []
     coordinates = coordinates.asRevisionless()
-    const { curations } = /** @type {CurationListResult} */ (await this.list(coordinates))
+    // @ts-expect-error list returns CurationListResult for GitHubCurationService
+    const { curations } = await this.list(coordinates)
     if (!curations || Object.keys(curations).length === 0) {
       return undefined
     }
@@ -1177,13 +1133,11 @@ ${this._formatDefinitions(patch.patches)}`
     return contributions
   }
 
-  /** @param {{ owner: string, repo: string }} options */
-  _initSmartGit({ owner, repo }) {
+  _initSmartGit({ owner, repo }: { owner: string; repo: string }) {
     return geit(`https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.git`)
   }
 
-  /** @param {number | string | null} [pr] */
-  async _getCurationTree(pr) {
+  async _getCurationTree(pr?: number | string | null) {
     const key = this._generateCurationTreeKey(pr)
     const cached = this.treeCache.get(key)
     if (cached) {
@@ -1196,26 +1150,22 @@ ${this._formatDefinitions(patch.patches)}`
     return tree
   }
 
-  /** @param {number | string | null} [pr] */
-  _cleanCurationTree(pr) {
+  _cleanCurationTree(pr?: number | string | null) {
     const key = this._generateCurationTreeKey(pr)
     this.treeCache.del(key)
   }
 
-  /** @param {number | string | null} [pr] */
-  _generateCurationTreeKey(pr) {
+  _generateCurationTreeKey(pr?: number | string | null) {
     return pr ? `refs/pull/${encodeURIComponent(pr)}/head` : this.options.branch
   }
 }
 
-export default /**
- * @param {GitHubCurationOptions} options
- * @param {ICurationStore} store
- * @param {Endpoints} endpoints
- * @param {CurationDefinitionService} definition
- * @param {ICache} cache
- * @param {CurationHarvestStore} harvestService
- * @param {LicenseMatcher} [licenseMatcher]
- */
-(options, store, endpoints, definition, cache, harvestService, licenseMatcher) =>
-  new GitHubCurationService(options, store, endpoints, definition, cache, harvestService, licenseMatcher)
+export default (
+  options: GitHubCurationOptions,
+  store: ICurationStore,
+  endpoints: Endpoints,
+  definition: CurationDefinitionService,
+  cache: ICache,
+  harvestService: CurationHarvestStore,
+  licenseMatcher?: LicenseMatcher
+) => new GitHubCurationService(options, store, endpoints, definition, cache, harvestService, licenseMatcher)
