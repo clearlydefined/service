@@ -1,27 +1,15 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type {
+  Definition,
+  DefinitionFindQuery,
+  DefinitionFindResult,
+  DefinitionStore
+} from '../../business/definitionService.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
-import type { FindResult, MongoDefinitionQuery } from './abstractMongoDefinitionStore.ts'
-
-/** Definition object with coordinates */
-export interface Definition {
-  /** The coordinates identifying this definition */
-  coordinates: EntityCoordinates
-  [key: string]: any
-}
-
-/** Interface for definition stores that can be dispatched to */
-export interface DefinitionStore {
-  initialize(): Promise<void>
-  get(coordinates: EntityCoordinates): Promise<Definition | null>
-  list(coordinates: EntityCoordinates): Promise<string[] | null>
-  store(definition: Definition): Promise<any>
-  delete(coordinates: EntityCoordinates): Promise<any>
-  find(query: MongoDefinitionQuery, continuationToken?: string): Promise<FindResult | null>
-}
 
 /** Options for configuring a DispatchDefinitionStore */
 export interface DispatchDefinitionStoreOptions {
@@ -36,7 +24,7 @@ export interface DispatchDefinitionStoreOptions {
  * Sequential operations (get, list, find) return the first successful result.
  * Parallel operations (initialize, store, delete) run on all stores concurrently.
  */
-export class DispatchDefinitionStore {
+export class DispatchDefinitionStore implements DefinitionStore {
   stores: DefinitionStore[]
   logger: Logger
 
@@ -83,7 +71,7 @@ export class DispatchDefinitionStore {
   /**
    * Find definitions from the first store that returns results.
    */
-  find(query: MongoDefinitionQuery, continuationToken = ''): Promise<FindResult | null> {
+  find(query: DefinitionFindQuery, continuationToken = ''): Promise<DefinitionFindResult> {
     return this._performInSequence(store => store.find(query, continuationToken))
   }
 

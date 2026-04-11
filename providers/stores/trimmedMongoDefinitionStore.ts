@@ -3,6 +3,7 @@
 
 import lodash from 'lodash'
 import type { UpdateResult } from 'mongodb'
+import type { DefinitionStore } from '../../business/definitionService.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.ts'
 import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'
@@ -23,7 +24,7 @@ export interface TrimmedDefinition {
  * Stores definitions without file data for faster queries and smaller storage.
  * Does not support get or list operations - use for find queries only.
  */
-export class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore {
+export class TrimmedMongoDefinitionStore extends AbstractMongoDefinitionStore implements DefinitionStore {
   /**
    * List operation is not supported by this store.
    */

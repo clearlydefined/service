@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
+import type { Definition, DefinitionStore } from '../../business/definitionService.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
 import type { AzBlobStoreOptions, BlobEntry } from './abstractAzblobStore.ts'
@@ -12,18 +13,11 @@ const { sortedUniq } = lodash
 
 import { promisify } from 'node:util'
 
-/** Definition object with coordinates */
-export interface Definition {
-  /** The coordinates identifying this definition */
-  coordinates: EntityCoordinates
-  [key: string]: any
-}
-
 /**
  * Azure Blob Storage implementation for storing component definitions.
  * Extends AbstractAzBlobStore with definition-specific functionality.
  */
-export class AzBlobDefinitionStore extends AbstractAzBlobStore {
+export class AzBlobDefinitionStore extends AbstractAzBlobStore implements DefinitionStore {
   /**
    * List all of the definitions for the given coordinates.
    */

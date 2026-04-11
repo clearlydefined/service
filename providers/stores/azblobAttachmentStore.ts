@@ -5,30 +5,23 @@ import { promisify } from 'node:util'
 import azure from 'azure-storage'
 import Bottleneck from 'bottleneck'
 import type { Logger } from '../logging/index.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
 
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 
 import logger from '../logging/logger.ts'
-
-/** Options for configuring an AzBlobAttachmentStore */
-export interface AzBlobAttachmentStoreOptions {
-  /** Azure Storage connection string */
-  connectionString: string
-  /** Name of the blob container */
-  containerName: string
-}
 
 /**
  * Azure Blob Storage implementation for storing and retrieving attachments.
  * Uses rate limiting to control concurrent access.
  */
 export class AzBlobAttachmentStore {
-  options: AzBlobAttachmentStoreOptions
+  options: AzBlobStoreOptions
   containerName: string
   logger: Logger
   declare blobService: any
 
-  constructor(options: AzBlobAttachmentStoreOptions) {
+  constructor(options: AzBlobStoreOptions) {
     this.options = options
     this.containerName = options.containerName
     this.logger = logger()
@@ -68,4 +61,4 @@ export class AzBlobAttachmentStore {
 /**
  * Factory function to create an AzBlobAttachmentStore instance.
  */
-export default (options: AzBlobAttachmentStoreOptions): AzBlobAttachmentStore => new AzBlobAttachmentStore(options)
+export default (options: AzBlobStoreOptions): AzBlobAttachmentStore => new AzBlobAttachmentStore(options)

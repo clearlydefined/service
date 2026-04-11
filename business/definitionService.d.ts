@@ -234,6 +234,8 @@ export interface CurationService {
 
 /** Definition store interface */
 export interface DefinitionStore {
+  /** Initialize the store (connect to backing service, etc.) */
+  initialize(): Promise<void>
   /** Get a definition by coordinates */
   get(coordinates: EntityCoordinates): Promise<Definition | null>
   /** Store a definition */

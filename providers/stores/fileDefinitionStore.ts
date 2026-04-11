@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import lodash from 'lodash'
 import { mkdirp } from 'mkdirp'
+import type { Definition } from '../../business/definitionService.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
 import type { FileStoreOptions } from './abstractFileStore.ts'
@@ -13,13 +14,6 @@ import AbstractFileStore from './abstractFileStore.ts'
 const { sortedUniq } = lodash
 
 import { promisify } from 'node:util'
-
-/** Definition object with coordinates */
-export interface Definition {
-  /** The coordinates identifying this definition */
-  coordinates: EntityCoordinates
-  [key: string]: any
-}
 
 /**
  * File system implementation for storing component definitions.

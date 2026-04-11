@@ -8,6 +8,7 @@ import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } fr
 
 const { clone, get, range, escapeRegExp } = lodash
 
+import type { DefinitionStore } from '../../business/definitionService.js'
 import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'
 
 /** Definition object with coordinates and files */
@@ -25,7 +26,7 @@ export interface Definition {
  * MongoDB implementation for storing component definitions with pagination support.
  * Stores large definitions across multiple pages to handle MongoDB document size limits.
  */
-export class MongoStore extends AbstractMongoDefinitionStore {
+export class MongoStore extends AbstractMongoDefinitionStore implements DefinitionStore {
   /**
    * List all of the matching components for the given coordinates.
    * Accepts partial coordinates.
