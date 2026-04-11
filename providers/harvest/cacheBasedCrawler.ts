@@ -34,7 +34,7 @@ export interface CacheEntry {
 }
 
 export interface Harvester {
-  harvest(entries: HarvestEntry[], turbo?: boolean): Promise<void>
+  harvest(entries: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void>
   toHarvestItem(entry: HarvestEntry): HarvestCallItem
 }
 
