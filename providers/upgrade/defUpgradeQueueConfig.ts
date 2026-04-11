@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import memory from '../queueing/memoryQueue.ts'
-import DefinitionQueueUpgrader from './defUpgradeQueue.js'
+import DefinitionQueueUpgrader from './defUpgradeQueue.ts'
 
 /**
  * @param {Partial<import('./defUpgradeQueue').DefinitionQueueUpgraderOptions>} [options]

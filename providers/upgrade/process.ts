@@ -6,7 +6,7 @@ import lodash from 'lodash'
 const { get } = lodash
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import { factory } from './defVersionCheck.js'
+import { factory } from './defVersionCheck.ts'
 
 /**
  * @typedef {import('../queueing').IQueue} IQueue

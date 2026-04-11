@@ -1,8 +1,8 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type DefinitionQueueUpgrader from './defUpgradeQueue.js'
-import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.js'
+import type DefinitionQueueUpgrader from './defUpgradeQueue.ts'
+import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.ts'
 
 /**
  * Factory function that creates a DefinitionQueueUpgrader with a default memory queue.

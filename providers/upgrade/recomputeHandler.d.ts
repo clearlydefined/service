@@ -12,7 +12,7 @@ import type {
 } from '../../business/definitionService.js'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { MissingDefinitionComputePolicy } from './computePolicy.js'
-import type { DefinitionVersionCheckerOptions } from './defVersionCheck.js'
+import type { DefinitionVersionCheckerOptions } from './defVersionCheck.ts'
 
 /** Upgrade policy accepted by RecomputeHandler: an UpgradeHandler with optional lifecycle hooks */
 export interface UpgradePolicy extends UpgradeHandler {

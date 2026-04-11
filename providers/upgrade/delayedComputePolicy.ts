@@ -4,7 +4,7 @@
 import Cache from '../caching/memory.ts'
 import logger from '../logging/logger.ts'
 import { setup } from './process.js'
-import { SkipUpgradePolicy } from './skipUpgradePolicy.js'
+import { SkipUpgradePolicy } from './skipUpgradePolicy.ts'
 
 /** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
 /** @typedef {import('./delayedComputePolicy').DelayedComputePolicyOptions} DelayedComputePolicyOptions */

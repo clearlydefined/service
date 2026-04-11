@@ -4,7 +4,7 @@
 import type { Definition, DefinitionService } from '../../business/definitionService.js'
 import type { IQueue } from '../queueing/index.js'
 import type { Logger } from '../logging/index.js'
-import type { DefinitionVersionChecker, DefinitionVersionCheckerOptions } from './defVersionCheck.js'
+import type { DefinitionVersionChecker, DefinitionVersionCheckerOptions } from './defVersionCheck.ts'
 
 /** Configuration options for DefinitionQueueUpgrader */
 export interface DefinitionQueueUpgraderOptions extends DefinitionVersionCheckerOptions {

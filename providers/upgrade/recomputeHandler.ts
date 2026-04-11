@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import logger from '../logging/logger.ts'
-import DefinitionQueueUpgrader from './defUpgradeQueue.js'
-import { factory as versionCheckFactory } from './defVersionCheck.js'
-import { DelayedComputePolicy } from './delayedComputePolicy.js'
+import DefinitionQueueUpgrader from './defUpgradeQueue.ts'
+import { factory as versionCheckFactory } from './defVersionCheck.ts'
+import { DelayedComputePolicy } from './delayedComputePolicy.ts'
 import memoryQueueConfig from './memoryQueueConfig.js'
-import { OnDemandComputePolicy } from './onDemandComputePolicy.js'
+import { OnDemandComputePolicy } from './onDemandComputePolicy.ts'
 
 /** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
 /** @typedef {import('../../business/definitionService').Definition} Definition */

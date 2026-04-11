@@ -5,7 +5,7 @@ import type { Definition, DefinitionService, RecomputeContext } from '../../busi
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 import type { ICache } from '../caching/index.js'
-import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.js'
+import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.ts'
 import type { MissingDefinitionComputePolicy } from './computePolicy.js'
 
 export interface DelayedComputePolicyOptions extends DefinitionQueueUpgraderOptions {
