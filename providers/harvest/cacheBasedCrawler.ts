@@ -97,7 +97,7 @@ export class CacheBasedHarvester {
         )
       )
     )
-    return filteredEntries.filter(e => e)
+    return filteredEntries.filter((entry): entry is HarvestEntry => entry !== null)
   }
 
   async _isTrackedHarvest(entry: HarvestEntry): Promise<boolean> {
