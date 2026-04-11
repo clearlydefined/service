@@ -3,8 +3,8 @@
 
 import config from 'painless-config'
 import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
-import cacheBasedCrawler from './cacheBasedCrawler.js'
-import crawler from './crawlerQueue.js'
+import cacheBasedCrawler from './cacheBasedCrawler.ts'
+import crawler from './crawlerQueue.ts'
 
 /**
  * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions

@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import * as utils from '../../lib/utils.ts'
-import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.js'
+import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.ts'
 import harvestRoutes from '../../routes/harvest.js'
 
 // Shared noop logger for tests

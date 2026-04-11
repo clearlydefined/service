@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { ICache } from '../caching/index.js'
-import type { CacheBasedHarvester } from './cacheBasedCrawler.js'
-import type { CrawlerQueueOptions } from './crawlerQueue.js'
+import type { CacheBasedHarvester } from './cacheBasedCrawler.ts'
+import type { CrawlerQueueOptions } from './crawlerQueue.ts'
 
 /** Configuration options for the queue-based crawler service factory */
 export interface CrawlerQueueConfigOptions extends Partial<CrawlerQueueOptions> {

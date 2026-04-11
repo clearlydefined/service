@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import process from '../../../providers/harvest/process.js'
+import process from '../../../providers/harvest/process.ts'
 import memoryQueue from '../../../providers/queueing/memoryQueue.ts'
 
 describe('Harvest queue processing', () => {

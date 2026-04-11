@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { ICache } from '../caching/index.js'
-import type { CacheBasedHarvester } from './cacheBasedCrawler.js'
+import type { CacheBasedHarvester } from './cacheBasedCrawler.ts'
 import type { CrawlerOptions } from './crawler.js'
 
 /** Options for the crawler service factory, combining crawler and cache settings */

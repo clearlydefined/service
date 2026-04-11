@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import EntityCoordinates from '../../../../lib/entityCoordinates.ts'
-import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.js'
+import ListBasedFilter from '../../../../providers/harvest/throttling/listBasedFilter.ts'
 import { createSilentLogger } from '../../../helpers/mockLogger.ts'
 
 describe('ListBasedFilter', () => {

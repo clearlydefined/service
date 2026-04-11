@@ -3,7 +3,7 @@
 
 import config from 'painless-config'
 import loggerFactory from '../../logging/logger.ts'
-import ListBasedFilter from './listBasedFilter.js'
+import ListBasedFilter from './listBasedFilter.ts'
 
 /**
  * @typedef {import('../../logging').Logger} Logger

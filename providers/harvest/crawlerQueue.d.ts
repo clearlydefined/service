@@ -3,7 +3,7 @@
 
 import type { Logger } from '../logging/index.js'
 import type { IQueue } from '../queueing/index.js'
-import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.js'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.ts'
 
 /** Configuration options for CrawlingQueueHarvester */
 export interface CrawlerQueueOptions {

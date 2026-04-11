@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import cacheBasedCrawler from './cacheBasedCrawler.js'
+import cacheBasedCrawler from './cacheBasedCrawler.ts'
 import crawler from './crawler.js'
 
 /**

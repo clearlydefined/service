@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Logger } from '../../logging/index.js'
-import type ListBasedFilter from './listBasedFilter.js'
+import type ListBasedFilter from './listBasedFilter.ts'
 
 /**
  * Parses a JSON array string from environment variable
