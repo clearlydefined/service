@@ -1,58 +1,55 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ICache } from '../caching/index.js'
 import Cache from '../caching/memory.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
-import { setup } from './process.js'
+import type { IQueue } from '../queueing/index.js'
+import type { MissingDefinitionComputePolicy } from './computePolicy.js'
+import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.ts'
+import { setup } from './process.ts'
 import { SkipUpgradePolicy } from './skipUpgradePolicy.ts'
 
-/** @typedef {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} DefinitionQueueUpgraderOptions */
-/** @typedef {import('./delayedComputePolicy').DelayedComputePolicyOptions} DelayedComputePolicyOptions */
-/** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
-/** @typedef {import('../../business/definitionService').Definition} Definition */
-/** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
-/** @typedef {import('../logging').Logger} Logger */
+export interface DelayedComputePolicyOptions extends DefinitionQueueUpgraderOptions {
+  /** Injectable for testing; defaults to an in-memory cache with 20-minute TTL */
+  enqueueCache?: ICache
+}
 
-class DelayedComputePolicy {
+class DelayedComputePolicy implements MissingDefinitionComputePolicy {
   static _enqueueCacheTtlSeconds =
     60 * 20 /* 20 mins; matches visibilityTimeout to avoid re-enqueuing in-flight items */
 
-  /** @param {DelayedComputePolicyOptions} options */
-  constructor(options) {
+  options: DelayedComputePolicyOptions
+  logger: Logger
+  declare _enqueueCache: ICache
+  declare _compute: IQueue
+
+  constructor(options: DelayedComputePolicyOptions) {
     this.options = options
     this.logger = options.logger || logger()
     this._enqueueCache =
       options.enqueueCache || Cache({ defaultTtlSeconds: DelayedComputePolicy._enqueueCacheTtlSeconds })
   }
 
-  async initialize() {
-    const options = /** @type {DelayedComputePolicyOptions} */ (this.options)
-    this._compute = options.queue()
+  async initialize(): Promise<void> {
+    this._compute = this.options.queue()
     return this._compute.initialize()
   }
 
-  /**
-   * @param {DefinitionService} definitionService
-   * @param {Logger} logger
-   * @param {boolean} [once]
-   */
-  setupProcessing(definitionService, logger, once) {
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): void {
     const upgradePolicy = new SkipUpgradePolicy()
-    return setup(this._compute, definitionService, logger, once, upgradePolicy)
+    setup(this._compute, definitionService, logger, once, upgradePolicy)
   }
 
-  /**
-   * @param {DefinitionService} definitionService
-   * @param {EntityCoordinates} coordinates
-   * @returns {Promise<Definition>}
-   */
-  async compute(definitionService, coordinates) {
+  async compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition> {
     await this._queueCompute(coordinates)
     return definitionService.buildEmptyDefinition(coordinates)
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  async _queueCompute(coordinates) {
+  async _queueCompute(coordinates: EntityCoordinates): Promise<void> {
     if (!this._compute) {
       throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
@@ -69,11 +66,7 @@ class DelayedComputePolicy {
     })
   }
 
-  /**
-   * @param {EntityCoordinates} coordinates
-   * @returns {string}
-   */
-  _constructMessage(coordinates) {
+  _constructMessage(coordinates: EntityCoordinates): string {
     return Buffer.from(JSON.stringify({ coordinates })).toString('base64')
   }
 }

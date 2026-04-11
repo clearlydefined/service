@@ -63,7 +63,7 @@ export interface CachingProviders {
 
 /** Provider configuration for authentication */
 export interface AuthProviders {
-  github: ProviderFactory
+  github: any
 }
 
 /** Paired queue factories used by recompute handlers */
@@ -102,7 +102,7 @@ export interface CurationQueueProviders {
 
 /** Provider configuration for curation service */
 export interface CurationServiceProviders {
-  github: ProviderFactory
+  github: (...args: any[]) => any
 }
 
 /** Provider configuration for curation store */
@@ -141,6 +141,7 @@ export interface HarvestProviders {
   queue: HarvestQueueProviders
   service: HarvestServiceProviders
   store: HarvestStoreProviders
+  throttler: Record<string, ProviderFactory>
 }
 
 /** Central provider registry containing all provider factories */
