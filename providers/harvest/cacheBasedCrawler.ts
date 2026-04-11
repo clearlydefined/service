@@ -17,7 +17,7 @@ export interface HarvestPolicy {
 }
 
 export interface HarvestEntry {
-  coordinates: EntityCoordinates
+  coordinates: EntityCoordinates | string
   tool?: string
   policy?: HarvestPolicy
 }
@@ -115,7 +115,7 @@ export class CacheBasedHarvester {
     return trackedHarvests.length > 0
   }
 
-  async _getTrackedForCoordinates(coordinates: EntityCoordinates): Promise<CacheEntry> {
+  async _getTrackedForCoordinates(coordinates: EntityCoordinates | string): Promise<CacheEntry> {
     const key = this._getCacheKey(coordinates)
     const harvests = await this._getCached(key)
     return { key, harvests }
@@ -174,7 +174,7 @@ export class CacheBasedHarvester {
     }
   }
 
-  _getCacheKey(coordinates: EntityCoordinates): string {
+  _getCacheKey(coordinates: EntityCoordinates | string): string {
     //Cache key is generated from the coordinates, same as in definition service.
     return coordinates && `hrv_${coordinates.toString().toLowerCase()}`
   }
