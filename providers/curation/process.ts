@@ -57,7 +57,7 @@ async function work(once: boolean) {
     logger.info(`Handled GitHub event "${action}" for PR#${pr.number}`)
     await queue.delete(message)
   } catch (error) {
-    logger.error(String(error))
+    logger.error('Failed to process curation webhook message', { error })
   } finally {
     if (!once) {
       setTimeout(work, 30000, once)
