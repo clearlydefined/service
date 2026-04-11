@@ -2,26 +2,25 @@
 // SPDX-License-Identifier: MIT
 
 import { callFetch as requestPromise } from '../../lib/fetch.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.ts'
 
-/**
- * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
- * @typedef {import('./cacheBasedCrawler').HarvestEntry} HarvestEntry
- * @typedef {import('./cacheBasedCrawler').HarvestCallItem} HarvestCallItem
- */
+export interface CrawlerOptions {
+  authToken: string
+  url: string
+}
 
-class CrawlingHarvester {
-  /** @param {CrawlerOptions} options */
-  constructor(options) {
+export class CrawlingHarvester implements Harvester {
+  declare logger: Logger
+  declare options: CrawlerOptions
+
+  constructor(options: CrawlerOptions) {
     this.logger = logger()
     this.options = options
   }
 
-  /**
-   * @param {HarvestEntry | HarvestEntry[]} spec
-   * @param {boolean} [turbo]
-   */
-  async harvest(spec, turbo) {
+  async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean) {
     const headers = {
       'X-token': this.options.authToken
     }
@@ -39,11 +38,7 @@ class CrawlingHarvester {
     })
   }
 
-  /**
-   * @param {HarvestEntry} entry
-   * @returns {HarvestCallItem}
-   */
-  toHarvestItem(entry) {
+  toHarvestItem(entry: HarvestEntry): HarvestCallItem {
     return {
       type: entry.tool || 'component',
       url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
@@ -52,4 +47,4 @@ class CrawlingHarvester {
   }
 }
 
-export default /** @param {CrawlerOptions} options */ options => new CrawlingHarvester(options)
+export default (options: CrawlerOptions): CrawlingHarvester => new CrawlingHarvester(options)

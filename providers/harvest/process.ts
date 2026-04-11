@@ -5,20 +5,13 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
+import type { DefinitionService } from '../../business/definitionService.js'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { parseUrn } from '../../lib/utils.ts'
+import type { Logger } from '../logging/index.js'
+import type { DequeuedMessage, IQueue } from '../queueing/index.js'
 
-/**
- * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage
- * @typedef {import('../queueing').IQueue} IQueue
- * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
- * @typedef {import('../logging').Logger} Logger
- */
-
-/**
- * @param {boolean} [once]
- */
-async function work(once) {
+async function work(once?: boolean): Promise<void> {
   let isQueueEmpty = true
   try {
     const messages = await queue.dequeueMultiple()
@@ -35,39 +28,33 @@ async function work(once) {
   }
 }
 
-/**
- * @param {DequeuedMessage} message
- */
-async function processMessage(message) {
+async function processMessage(message: DequeuedMessage): Promise<void> {
   const urn = get(message, 'data._metadata.links.self.href')
   if (!urn) {
     return
   }
   const coordinates = EntityCoordinates.fromUrn(urn)
+  if (!coordinates) {
+    return
+  }
   const { tool, toolRevision } = parseUrn(urn)
+  if (!tool) {
+    return
+  }
   if (tool === 'clearlydefined') {
     await definitionService.computeStoreAndCurate(coordinates)
   } else {
-    await definitionService.computeAndStoreIfNecessary(coordinates, tool, toolRevision)
+    await definitionService.computeAndStoreIfNecessary(coordinates, tool, toolRevision!)
   }
   await queue.delete(message)
   logger.info(`Handled Crawler update event for ${urn}`)
 }
 
-/** @type {IQueue} */
-let queue
-/** @type {DefinitionService} */
-let definitionService
-/** @type {Logger} */
-let logger
+let queue: IQueue
+let definitionService: DefinitionService
+let logger: Logger
 
-/**
- * @param {IQueue} _queue
- * @param {DefinitionService} _definitionService
- * @param {Logger} _logger
- * @param {boolean} [once]
- */
-function setup(_queue, _definitionService, _logger, once = false) {
+function setup(_queue: IQueue, _definitionService: DefinitionService, _logger: Logger, once = false): Promise<void> {
   queue = _queue
   definitionService = _definitionService
   logger = _logger

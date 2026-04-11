@@ -3,20 +3,21 @@
 
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import validator from '../../../schemas/validator.ts'
+import type { Logger } from '../../logging/index.js'
 import loggerFactory from '../../logging/logger.ts'
 
-/**
- * @typedef {import('./listBasedFilter.d.ts').ListBasedFilterOptions} ListBasedFilterOptions
- *
- * @typedef {import('../../logging').Logger} Logger
- */
+export interface ListBasedFilterOptions {
+  blacklist?: string[]
+  logger?: Logger
+}
 
 class ListBasedFilter {
-  /**
-   * Creates a new ListBasedFilter instance
-   * @param {ListBasedFilterOptions} [options={}] - Configuration options including blacklist and logger
-   */
-  constructor(options = {}) {
+  declare options: ListBasedFilterOptions
+  declare logger: Logger
+  private declare _targetTypes: Set<string>
+  private declare _blacklist: Set<string>
+
+  constructor(options: ListBasedFilterOptions = {}) {
     this.options = options
     this.logger = options.logger || loggerFactory()
     const raw = options.blacklist || []
@@ -32,13 +33,7 @@ class ListBasedFilter {
     })
   }
 
-  /**
-   * Quick predicate to check if a coordinate is blacklisted.
-   * Accepts coordinate, matches by versionless form.
-   * @param {EntityCoordinates} coord
-   * @returns {boolean} true if blocked
-   */
-  isBlocked(coord) {
+  isBlocked(coord: EntityCoordinates): boolean {
     if (!coord || this._blacklist.size === 0) {
       return false
     }
@@ -49,13 +44,7 @@ class ListBasedFilter {
     return this._blacklist.has(versionless)
   }
 
-  /**
-   * Convert coordinate string to versionless form
-   * Transforms "type/provider/namespace/name[/revision]" -> "type/provider/namespace/name"
-   * @param {string} coordString - The coordinate string to convert
-   * @returns {EntityCoordinates|null} The versionless EntityCoordinates or null if invalid
-   */
-  _toVersionless(coordString) {
+  _toVersionless(coordString: string): EntityCoordinates | null {
     try {
       const coordinates = EntityCoordinates.fromString(coordString)
       if (!validator.validate('versionless-coordinates-1.0', coordinates)) {

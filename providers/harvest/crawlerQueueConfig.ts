@@ -2,20 +2,19 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
+import type { ICache } from '../caching/index.js'
+import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue.ts'
 import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
+import type { CacheBasedHarvester } from './cacheBasedCrawler.ts'
 import cacheBasedCrawler from './cacheBasedCrawler.ts'
+import type { CrawlerQueueOptions } from './crawlerQueue.ts'
 import crawler from './crawlerQueue.ts'
 
-/**
- * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions
- * @typedef {import('./crawlerQueueConfig').CrawlerQueueConfigOptions} CrawlerQueueConfigOptions
- */
+export interface CrawlerQueueConfigOptions extends Partial<CrawlerQueueOptions> {
+  cachingService: ICache
+}
 
-/**
- * @param {AzureStorageQueueOptions} [options]
- * @returns {AzureStorageQueue}
- */
-function later(options) {
+function later(options?: AzureStorageQueueOptions): AzureStorageQueue {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
     queueName: `${config.get('HARVEST_QUEUE_PREFIX') || 'cdcrawlerdev'}-later`
@@ -23,11 +22,7 @@ function later(options) {
   return new AzureStorageQueue(realOptions)
 }
 
-/**
- * @param {AzureStorageQueueOptions} [options]
- * @returns {AzureStorageQueue}
- */
-function normal(options) {
+function normal(options?: AzureStorageQueueOptions): AzureStorageQueue {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
     queueName: `${config.get('HARVEST_QUEUE_PREFIX') || 'cdcrawlerdev'}-normal`
@@ -35,11 +30,7 @@ function normal(options) {
   return new AzureStorageQueue(realOptions)
 }
 
-/**
- * @param {CrawlerQueueConfigOptions} [options]
- * @returns {import('./cacheBasedCrawler').CacheBasedHarvester}
- */
-function serviceFactory(options) {
+function serviceFactory(options?: CrawlerQueueConfigOptions): CacheBasedHarvester {
   const crawlerOptions = {
     later: options?.later || later(),
     normal: options?.normal || normal()

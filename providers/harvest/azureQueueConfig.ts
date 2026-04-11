@@ -2,17 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
+import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue.ts'
 import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
-/**
- * @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions
- */
-
-/**
- * @param {AzureStorageQueueOptions} [options]
- * @returns {AzureStorageQueue}
- */
-function azure(options) {
+function azure(options?: AzureStorageQueueOptions): AzureStorageQueue {
   const realOptions = options || {
     connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
     queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests',
