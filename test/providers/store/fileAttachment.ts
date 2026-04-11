@@ -32,7 +32,7 @@ describe('FileAttachmentStore list definitions', () => {
         cb(error)
       }
     }
-    FileStore = await esmock('../../../providers/stores/fileAttachmentStore.js', { 'node:fs': fsStub })
+    FileStore = await esmock('../../../providers/stores/fileAttachmentStore.ts', { 'node:fs': fsStub })
   })
 
   after(() => sandbox.restore())

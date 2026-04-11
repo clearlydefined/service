@@ -3,42 +3,53 @@
 
 import { promisify } from 'node:util'
 import azure from 'azure-storage'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
-import AbstractFileStore from './abstractFileStore.js'
+import AbstractFileStore from './abstractFileStore.ts'
 
-/**
- * @typedef {import('./abstractAzblobStore').AzBlobStoreOptions} AzBlobStoreOptions
- * @typedef {import('./abstractAzblobStore').BlobEntry} BlobEntry
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../../lib/resultCoordinates')} ResultCoordinates
- * @typedef {import('../logging').Logger} Logger
- */
+/** Options for configuring an AbstractAzBlobStore */
+export interface AzBlobStoreOptions {
+  /** Azure Storage connection string */
+  connectionString: string
+  /** Name of the blob container */
+  containerName: string
+  /** Optional logger instance */
+  logger?: Logger
+}
+
+/** Azure blob entry metadata */
+export interface BlobEntry {
+  /** Name of the blob */
+  name: string
+  /** Blob metadata */
+  metadata: Record<string, string>
+}
+
+/** Visitor function type for list operations */
+export type BlobStoreVisitor<T> = (entry: BlobEntry) => T | null
 
 /**
  * Abstract base class for Azure Blob Storage implementations.
  * Provides common functionality for reading and writing JSON to Azure Blob Storage.
  */
 class AbstractAzBlobStore {
-  /**
-   * Creates a new AbstractAzBlobStore instance
-   *
-   * @param {AzBlobStoreOptions} options - Configuration options for the store
-   */
-  constructor(options) {
-    /** @type {AzBlobStoreOptions} */
+  options: AzBlobStoreOptions
+  containerName: string
+  logger: Logger
+  declare blobService: any
+
+  constructor(options: AzBlobStoreOptions) {
     this.options = options
-    /** @type {string} */
     this.containerName = options.containerName
-    /** @type {Logger} */
     this.logger = this.options.logger || logger()
   }
 
   /**
    * Initializes the blob service and creates the container if needed
-   *
-   * @returns {Promise<void>} Promise that resolves when initialization is complete
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
@@ -47,15 +58,9 @@ class AbstractAzBlobStore {
 
   /**
    * Visit all of the blobs associated with the given coordinates.
-   *
-   * @template T
-   * @param {EntityCoordinates} coordinates - Accepts partial coordinates.
-   * @param {function(BlobEntry): T | null} visitor - Function to apply to each blob entry
-   * @returns {Promise<T[]>} The collection of results returned by the visitor
    */
-  async list(coordinates, visitor) {
-    /** @type {any[]} */
-    const list = []
+  async list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]> {
+    const list: any[] = []
     let continuation = null
     do {
       const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
@@ -63,13 +68,12 @@ class AbstractAzBlobStore {
         this.containerName,
         name,
         continuation,
-        // @ts-expect-error - azure-storage expects 4 args for this operation
         {
           include: azure.BlobUtilities.BlobListingDetails.METADATA
         }
       )
       continuation = result.continuationToken
-      for (const /** @type {BlobEntry} */ entry of result.entries) {
+      for (const entry of result.entries as BlobEntry[]) {
         const visitResult = visitor(entry)
         if (visitResult !== null) {
           list.push(visitResult)
@@ -81,11 +85,8 @@ class AbstractAzBlobStore {
 
   /**
    * Get and return the object at the given coordinates.
-   *
-   * @param {EntityCoordinates} coordinates - The coordinates of the object to get
-   * @returns {Promise<any>} The loaded object or null if not found
    */
-  async get(coordinates) {
+  async get(coordinates: EntityCoordinates | ResultCoordinates): Promise<any> {
     let name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
     if (!name.endsWith('.json')) {
       name += '.json'
@@ -94,7 +95,7 @@ class AbstractAzBlobStore {
       const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
       return JSON.parse(result)
     } catch (error) {
-      const azureError = /** @type {{statusCode?: number}} */ (error)
+      const azureError = error as { statusCode?: number }
       if (azureError.statusCode === 404) {
         return null
       }
@@ -104,32 +105,16 @@ class AbstractAzBlobStore {
 
   /**
    * Unsupported. The Blob definition store is not queryable.
-   *
-   * @returns {Promise<null>} Always returns null
    */
-  async find() {
+  async find(): Promise<null> {
     return null
   }
 
-  /**
-   * Converts coordinates to a storage path
-   *
-   * @protected
-   * @param {EntityCoordinates} coordinates - The coordinates to convert
-   * @returns {string} The storage path
-   */
-  _toStoragePathFromCoordinates(coordinates) {
+  _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string {
     return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }
 
-  /**
-   * Converts a storage path to ResultCoordinates
-   *
-   * @protected
-   * @param {string} path - The storage path to convert
-   * @returns {ResultCoordinates} The ResultCoordinates
-   */
-  _toResultCoordinatesFromStoragePath(path) {
+  _toResultCoordinatesFromStoragePath(path: string): ResultCoordinates {
     return AbstractFileStore.toResultCoordinatesFromStoragePath(path)
   }
 }

@@ -1,7 +1,7 @@
 // (c) Copyright 2023, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import Store from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+import Store from '../../../providers/stores/trimmedMongoDefinitionStore.ts'
 import shouldPaginateSearchCorrectly from './mongoDefinitionPagination.mts'
 
 const dbOptions = {

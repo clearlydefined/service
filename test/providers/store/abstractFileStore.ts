@@ -13,7 +13,7 @@ chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.ts'
 
 describe('AbstractFileStore', () => {
   const logger = {
@@ -50,7 +50,7 @@ describe('AbstractFileStore', () => {
           cb(null, JSON.stringify({ path }))
         }
       }
-      FileStore = await esmock('../../../providers/stores/abstractFileStore.js', {
+      FileStore = await esmock('../../../providers/stores/abstractFileStore.ts', {
         'recursive-readdir': recursiveStub,
         'node:fs': fsStub
       })
@@ -315,7 +315,7 @@ describe('AbstractFileStore', () => {
     ]
 
     beforeEach(async () => {
-      FileStore = await esmock('../../../providers/stores/abstractFileStore.js', {
+      FileStore = await esmock('../../../providers/stores/abstractFileStore.ts', {
         'recursive-readdir': async path =>
           Object.keys({
             '/foo/npm/npmjs/-/test/revision/1.0/tool/toolA/1.0.json': {},

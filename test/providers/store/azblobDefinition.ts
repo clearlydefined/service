@@ -4,7 +4,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import Store from '../../../providers/stores/azblobDefinitionStore.js'
+import Store from '../../../providers/stores/azblobDefinitionStore.ts'
 
 describe('azblob Definition store', () => {
   it('throws original error', async () => {

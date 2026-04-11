@@ -6,7 +6,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import Store from '../../../providers/stores/mongo.js'
+import Store from '../../../providers/stores/mongo.ts'
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const { range } = lodash

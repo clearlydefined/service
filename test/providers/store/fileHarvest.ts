@@ -9,8 +9,8 @@ chai.use(deepEqualInAnyOrder)
 const expect = chai.expect
 
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import AbstractFileStore from '../../../providers/stores/abstractFileStore.js'
-import FileStore from '../../../providers/stores/fileHarvestStore.js'
+import AbstractFileStore from '../../../providers/stores/abstractFileStore.ts'
+import FileStore from '../../../providers/stores/fileHarvestStore.ts'
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
 const data = {

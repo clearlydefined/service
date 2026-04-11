@@ -1,14 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('../logging').Logger} Logger
- * @typedef {import('./azblobAttachmentStore').AzBlobAttachmentStoreOptions} AzBlobAttachmentStoreOptions
- */
-
 import { promisify } from 'node:util'
 import azure from 'azure-storage'
 import Bottleneck from 'bottleneck'
+import type { Logger } from '../logging/index.js'
+import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
 
 const limiter = new Bottleneck({ maxConcurrent: 1000 })
 
@@ -18,27 +15,22 @@ import logger from '../logging/logger.ts'
  * Azure Blob Storage implementation for storing and retrieving attachments.
  * Uses rate limiting to control concurrent access.
  */
-class AzBlobAttachmentStore {
-  /**
-   * Creates a new AzBlobAttachmentStore instance.
-   *
-   * @param {AzBlobAttachmentStoreOptions} options - Configuration options for the store
-   */
-  constructor(options) {
-    /** @type {AzBlobAttachmentStoreOptions} */
+export class AzBlobAttachmentStore {
+  options: AzBlobStoreOptions
+  containerName: string
+  logger: Logger
+  declare blobService: any
+
+  constructor(options: AzBlobStoreOptions) {
     this.options = options
-    /** @type {string} */
     this.containerName = options.containerName
-    /** @type {Logger} */
     this.logger = logger()
   }
 
   /**
    * Initializes the blob service and creates the container if needed.
-   *
-   * @returns {Promise<void>} Promise that resolves when initialization is complete
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     this.blobService = azure
       .createBlobService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
@@ -47,11 +39,8 @@ class AzBlobAttachmentStore {
 
   /**
    * Get the attachment object by the given key.
-   *
-   * @param {string} key - The key that identifies the attachment to get
-   * @returns {Promise<any | null>} The requested attachment or null if not found
    */
-  get(key) {
+  get(key: string): Promise<any | null> {
     return limiter.wrap(async () => {
       try {
         const name = `attachment/${key}.json`
@@ -59,7 +48,7 @@ class AzBlobAttachmentStore {
         const result = await promisify(this.blobService.getBlobToText).bind(this.blobService)(this.containerName, name)
         this.logger.info('2:1:1:notice_generate:get_single_file:end', { ts: new Date().toISOString(), file: key })
         return JSON.parse(result).attachment
-      } catch (/** @type {any} */ error) {
+      } catch (error: any) {
         if (error.statusCode === 404) {
           return null
         }
@@ -71,8 +60,5 @@ class AzBlobAttachmentStore {
 
 /**
  * Factory function to create an AzBlobAttachmentStore instance.
- *
- * @param {AzBlobAttachmentStoreOptions} options - Configuration options for the store
- * @returns {AzBlobAttachmentStore} A new AzBlobAttachmentStore instance
  */
-export default options => new AzBlobAttachmentStore(options)
+export default (options: AzBlobStoreOptions): AzBlobAttachmentStore => new AzBlobAttachmentStore(options)

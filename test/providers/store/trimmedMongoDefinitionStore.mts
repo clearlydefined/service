@@ -9,8 +9,8 @@ import lodash from 'lodash'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import PagedMongoDefinitionStore from '../../../providers/stores/mongo.js'
-import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.js'
+import PagedMongoDefinitionStore from '../../../providers/stores/mongo.ts'
+import TrimmedMongoDefinitionStore from '../../../providers/stores/trimmedMongoDefinitionStore.ts'
 
 import { createSilentLogger } from '../../helpers/mockLogger.ts'
 
@@ -61,10 +61,10 @@ describe('Trimmed Mongo Definition store', () => {
     expect(defs).to.be.not.ok
   })
 
-  it('should return falsy for list', async () => {
+  it('should return empty array for list', async () => {
     const coordinate = EntityCoordinates.fromString('maven/mavencentral/io.jenetics/jenetics')
     const defs = await mongoStore.list(coordinate)
-    expect(defs).to.be.not.ok
+    expect(defs).to.deep.equal([])
   })
 
   describe('store', () => {
