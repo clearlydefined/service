@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
-import Summarizer from '../../providers/summary/clearlydefined.js'
+import Summarizer from '../../providers/summary/clearlydefined.ts'
 
 const summarizer = (Summarizer as (...args: any[]) => any)()
 

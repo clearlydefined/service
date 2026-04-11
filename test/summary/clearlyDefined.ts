@@ -8,7 +8,7 @@ const { expect } = chai
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { setIfValue } from '../../lib/utils.ts'
-import Summarizer from '../../providers/summary/clearlydefined.js'
+import Summarizer from '../../providers/summary/clearlydefined.ts'
 
 describe('ClearlyDefined Maven summarizer', () => {
   it('handles with all the data', () => {

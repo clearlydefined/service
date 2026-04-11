@@ -15,8 +15,8 @@ const { get } = lodash
 
 import { gte } from 'semver'
 import Logger from '../logging/logger.ts'
-import ScanCodeLegacySummarizer from './scancode/legacy-summarizer.js'
-import ScanCodeNewSummarizer from './scancode/new-summarizer.js'
+import ScanCodeLegacySummarizer from './scancode/legacy-summarizer.ts'
+import ScanCodeNewSummarizer from './scancode/new-summarizer.ts'
 
 /**
  * ScanCode delegator class that routes summarization to the appropriate

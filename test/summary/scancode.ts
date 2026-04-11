@@ -10,8 +10,8 @@ const { expect } = chai
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { joinExpressions } from '../../lib/utils.ts'
-import ScanCodeLegacySummarizer from '../../providers/summary/scancode/legacy-summarizer.js'
-import Summarizer from '../../providers/summary/scancode.js'
+import ScanCodeLegacySummarizer from '../../providers/summary/scancode/legacy-summarizer.ts'
+import Summarizer from '../../providers/summary/scancode.ts'
 
 describe('ScanCode summarizer', () => {
   it('has the no coordinates info', () => {

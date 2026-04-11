@@ -6,7 +6,7 @@ import config from 'painless-config'
 
 const { get } = lodash
 
-import providers from '../providers/index.js'
+import providers from '../providers/index.ts'
 
 /**
  * Loads the given factory for the indicated namespace. The namespace can be a subcomponent
