@@ -1,43 +1,79 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./index').SummarizerOptions} SummarizerOptions
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('./licensee').LicenseeHarvestedData} LicenseeHarvestedData
- * @typedef {import('./licensee').LicenseeSummaryResult} LicenseeSummaryResult
- * @typedef {import('./licensee').LicenseeMatchedFile} LicenseeMatchedFile
- * @typedef {import('../../lib/utils').FileEntry} FileEntry
- */
-
 import SPDX from '@clearlydefined/spdx'
 import lodash from 'lodash'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../lib/utils.ts'
 import { isDeclaredLicense, isLicenseFile, setIfValue } from '../../lib/utils.ts'
+import type { SummarizerOptions } from './index.ts'
 
 const { get, uniq } = lodash
+
+/** Licensee matched file information */
+export interface LicenseeMatchedFile {
+  filename: string
+  matched_license?: string
+  matcher?: {
+    name?: string
+    confidence?: number | string
+  }
+  [key: string]: unknown
+}
+
+/** Licensee output content */
+export interface LicenseeOutputContent {
+  matched_files?: LicenseeMatchedFile[]
+  [key: string]: unknown
+}
+
+/** Licensee output wrapper */
+export interface LicenseeOutput {
+  content?: LicenseeOutputContent
+  [key: string]: unknown
+}
+
+/** Licensee tool information */
+export interface LicenseeTool {
+  version?: string
+  output?: LicenseeOutput
+  [key: string]: unknown
+}
+
+/** Attachment information */
+export interface LicenseeAttachment {
+  path: string
+  token?: string
+  [key: string]: unknown
+}
+
+/** Harvested data structure for Licensee tool */
+export interface LicenseeHarvestedData {
+  licensee?: LicenseeTool
+  attachments?: LicenseeAttachment[]
+  [key: string]: unknown
+}
+
+/** Result of Licensee summarization (partial Definition) */
+export interface LicenseeSummaryResult {
+  licensed?: {
+    declared?: string
+  }
+  files?: FileEntry[]
+}
 
 /**
  * Licensee summarizer class that processes harvested data from the Licensee tool.
  * Extracts license information from matched license files.
- * @class
  */
-class LicenseeSummarizer {
-  /**
-   * Creates a new LicenseeSummarizer instance
-   * @param {SummarizerOptions} options - Configuration options for the summarizer
-   */
-  constructor(options) {
+export class LicenseeSummarizer {
+  declare options: SummarizerOptions
+
+  constructor(options: SummarizerOptions) {
     this.options = options
   }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * @param {EntityCoordinates} coordinates - The entity for which we are summarizing
-   * @param {LicenseeHarvestedData} harvested - the set of raw tool outputs related to the identified entity
-   * @returns {LicenseeSummaryResult} - a summary of the given raw information
-   * @throws {Error} If Licensee data is invalid
-   */
-  summarize(coordinates, harvested) {
+  summarize(coordinates: EntityCoordinates, harvested: LicenseeHarvestedData): LicenseeSummaryResult {
     if (!harvested?.licensee?.version) {
       throw new Error('Invalid Licensee data')
     }
@@ -47,16 +83,8 @@ class LicenseeSummarizer {
     return result
   }
 
-  /**
-   * Summarizes matched files into FileEntry format
-   * @param {LicenseeHarvestedData} harvested - The harvested data
-   * @returns {FileEntry[] | null} Array of file entries or null
-   * @private
-   */
-  _summarizeFiles(harvested) {
-    const files = /** @type {LicenseeMatchedFile[] | undefined} */ (
-      get(harvested, 'licensee.output.content.matched_files')
-    )
+  _summarizeFiles(harvested: LicenseeHarvestedData): FileEntry[] | null {
+    const files = get(harvested, 'licensee.output.content.matched_files') as LicenseeMatchedFile[] | undefined
     const attachments = harvested.attachments || []
     if (!files) {
       return null
@@ -73,23 +101,16 @@ class LicenseeSummarizer {
         const attachment = attachments.find(x => x.path === path)
         const license = SPDX.normalize(file.matched_license)
         if (path && isDeclaredLicense(license)) {
-          /** @type {FileEntry} */
-          const resultFile = { path, license, natures: ['license'] }
+          const resultFile: FileEntry = { path, license, natures: ['license'] }
           setIfValue(resultFile, 'token', get(attachment, 'token'))
           return resultFile
         }
         return null
       })
-      .filter(/** @param {FileEntry | null} e */ e => e !== null)
+      .filter((e: FileEntry | null) => e !== null)
   }
 
-  /**
-   * Adds declared license from license files to the result
-   * @param {LicenseeSummaryResult} result - The result object to modify
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @private
-   */
-  _addLicenseFromFiles(result, coordinates) {
+  _addLicenseFromFiles(result: LicenseeSummaryResult, coordinates: EntityCoordinates) {
     if (!result.files) {
       return
     }
@@ -100,9 +121,4 @@ class LicenseeSummarizer {
   }
 }
 
-/**
- * Factory function that creates a LicenseeSummarizer instance
- * @param {SummarizerOptions} [options] - Configuration options for the summarizer
- * @returns {LicenseeSummarizer} A new LicenseeSummarizer instance
- */
-export default options => new LicenseeSummarizer(options)
+export default (options?: SummarizerOptions) => new LicenseeSummarizer(options)

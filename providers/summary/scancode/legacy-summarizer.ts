@@ -1,19 +1,18 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('../index').SummarizerOptions} SummarizerOptions
- * @typedef {import('../../logging').Logger} Logger
- * @typedef {import('../../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../scancode').ScanCodeHarvestedData} ScanCodeHarvestedData
- * @typedef {import('../scancode').ScanCodeSummaryResult} ScanCodeSummaryResult
- * @typedef {import('../scancode').ScanCodeFile} ScanCodeFile
- * @typedef {import('../scancode').ScanCodeLicense} ScanCodeLicense
- * @typedef {import('../scancode').ScanCodePackage} ScanCodePackage
- * @typedef {import('../../../lib/utils').FileEntry} FileEntry
- */
-
 import lodash from 'lodash'
+import type EntityCoordinates from '../../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../../lib/utils.ts'
+import type { Logger } from '../../logging/index.js'
+import type { SummarizerOptions } from '../index.ts'
+import type {
+  ScanCodeFile,
+  ScanCodeHarvestedData,
+  ScanCodeLicense,
+  ScanCodePackage,
+  ScanCodeSummaryResult
+} from '../scancode.ts'
 
 const { get, flatten, uniq } = lodash
 
@@ -32,28 +31,22 @@ import {
 /**
  * ScanCode Legacy summarizer class that processes harvested data from older
  * versions of ScanCode (2.2.1 through 30.1.0).
- * @class
  */
-class ScanCodeLegacySummarizer {
-  /**
-   * Creates a new ScanCodeLegacySummarizer instance
-   * @param {SummarizerOptions} options - Configuration options for the summarizer
-   * @param {Logger} logger - Logger instance for logging
-   */
-  constructor(options, logger) {
+export class ScanCodeLegacySummarizer {
+  declare options: SummarizerOptions
+  declare logger: Logger
+
+  constructor(options: SummarizerOptions, logger: Logger) {
     this.options = options
     this.logger = logger
   }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * @param {string} scancodeVersion - The version of ScanCode used to generate the harvested data. e.g. '2.2.1' or '3.0.2'
-   * @param {EntityCoordinates} coordinates - The entity for which we are summarizing
-   * @param {ScanCodeHarvestedData} harvested - the set of raw tool outputs related to the identified entity
-   * @returns {ScanCodeSummaryResult} - a summary of the given raw information
-   */
-  summarize(scancodeVersion, coordinates, harvested) {
-    const result = {}
+  summarize(
+    scancodeVersion: string,
+    coordinates: EntityCoordinates,
+    harvested: ScanCodeHarvestedData
+  ): ScanCodeSummaryResult {
+    const result: ScanCodeSummaryResult = {}
     this.addDescribedInfo(result, harvested)
     let declaredLicense = this._getDeclaredLicenseFromSummary(scancodeVersion, harvested)
     if (!isDeclaredLicense(declaredLicense)) {
@@ -64,26 +57,14 @@ class ScanCodeLegacySummarizer {
     return result
   }
 
-  /**
-   * Adds described info (release date) to the result
-   * @param {ScanCodeSummaryResult} result - The result object to modify
-   * @param {ScanCodeHarvestedData} harvested - The harvested data
-   */
-  addDescribedInfo(result, harvested) {
+  addDescribedInfo(result: ScanCodeSummaryResult, harvested: ScanCodeHarvestedData) {
     const releaseDate = harvested._metadata.releaseDate
     if (releaseDate) {
       result.described = { releaseDate: extractDate(releaseDate.trim()) }
     }
   }
 
-  /**
-   * Gets declared license from the summary section
-   * @param {string} scancodeVersion - The ScanCode version
-   * @param {ScanCodeHarvestedData} harvested - The harvested data
-   * @returns {string | null} Declared license expression or null
-   * @private
-   */
-  _getDeclaredLicenseFromSummary(scancodeVersion, harvested) {
+  _getDeclaredLicenseFromSummary(scancodeVersion: string, harvested: ScanCodeHarvestedData): string | null {
     let declaredLicense = this._readDeclaredLicenseFromSummary(scancodeVersion, harvested)
     if (!isDeclaredLicense(declaredLicense)) {
       declaredLicense = this._readLicenseExpressionFromSummary(harvested) || declaredLicense
@@ -91,14 +72,7 @@ class ScanCodeLegacySummarizer {
     return declaredLicense
   }
 
-  /**
-   * Reads declared license from the summary packages
-   * @param {string} scancodeVersion - The ScanCode version
-   * @param {ScanCodeHarvestedData} harvested - The harvested data
-   * @returns {string | null} Declared license expression or null
-   * @private
-   */
-  _readDeclaredLicenseFromSummary(scancodeVersion, harvested) {
+  _readDeclaredLicenseFromSummary(scancodeVersion: string, harvested: ScanCodeHarvestedData): string | null {
     switch (scancodeVersion) {
       case '2.2.1':
       case '2.9.1':
@@ -106,15 +80,18 @@ class ScanCodeLegacySummarizer {
       case '2.9.8':
       case '3.0.0':
       case '3.0.2':
-        return SPDX.normalize(
-          /** @type {string | undefined} */ (get(harvested, 'content.summary.packages[0].declared_license'))
-        )
+        return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license') as string | undefined)
       case '30.1.0': {
-        const rawDeclaredLicense =
-          /** @type {string | { name?: string; license?: string } | string[] | undefined} */
-          (get(harvested, 'content.summary.packages[0].declared_license'))
-        /** @type {string | { name?: string; license?: string } | undefined} */
-        let declared_license = Array.isArray(rawDeclaredLicense) ? rawDeclaredLicense[0] : rawDeclaredLicense
+        const rawDeclaredLicense = get(harvested, 'content.summary.packages[0].declared_license') as
+          | string
+          | { name?: string; license?: string }
+          | string[]
+          | undefined
+        let declared_license: string | { name?: string; license?: string } | undefined = Array.isArray(
+          rawDeclaredLicense
+        )
+          ? rawDeclaredLicense[0]
+          : rawDeclaredLicense
         // Some Maven packages have this value as an object rather than a string
         // Example: for maven/mavencentral/redis.clients/jedis/4.1.1
         // declared_license would be { "name": "MIT", "url": "http://github.com/redis/jedis/raw/master/LICENSE.txt", "comments": null, "distribution": "repo" }'
@@ -126,37 +103,20 @@ class ScanCodeLegacySummarizer {
           declared_license = declared_license.name || declared_license.license
         }
 
-        return SPDX.normalize(/** @type {string | undefined} */ (declared_license))
+        return SPDX.normalize(declared_license as string | undefined)
       }
       default:
         throw new Error(`Invalid version of ScanCode: ${scancodeVersion}`)
     }
   }
 
-  /**
-   * Reads license expression from the summary
-   * @param {ScanCodeHarvestedData} harvested - The harvested data
-   * @returns {string | null} License expression or null
-   * @private
-   */
-  _readLicenseExpressionFromSummary(harvested) {
-    const licenseExpression = /** @type {string | undefined} */ (
-      get(harvested, 'content.summary.packages[0].license_expression')
-    )
+  _readLicenseExpressionFromSummary(harvested: ScanCodeHarvestedData): string | null {
+    const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression') as string | undefined
     const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger, null)
     return result?.includes('NOASSERTION') ? null : result
   }
 
-  /**
-   * Gets the root files that should be considered for license determination
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @param {ScanCodeFile[]} files - All files from the scan
-   * @param {ScanCodePackage[] | undefined} packages - Package information from the scan
-   * @returns {ScanCodeFile[]} Array of root files
-   * @private
-   */
-  // find and return the files that should be considered for as a license determinator for this summarization
-  _getRootFiles(coordinates, files, packages) {
+  _getRootFiles(coordinates: EntityCoordinates, files: ScanCodeFile[], packages?: ScanCodePackage[]): ScanCodeFile[] {
     const roots = getLicenseLocations(coordinates, packages) || []
     roots.push('') // for no prefix
     let rootFiles = this._findRootFiles(files, roots)
@@ -167,14 +127,7 @@ class ScanCodeLegacySummarizer {
     return rootFiles
   }
 
-  /**
-   * Finds files at the root level given a set of root prefixes
-   * @param {ScanCodeFile[]} files - All files to filter
-   * @param {string[]} roots - Root path prefixes to match
-   * @returns {ScanCodeFile[]} Filtered array of root files
-   * @private
-   */
-  _findRootFiles(files, roots) {
+  _findRootFiles(files: ScanCodeFile[], roots: string[]): ScanCodeFile[] {
     return files.filter(file => {
       for (const root of roots) {
         if (file.path.startsWith(root) && file.path.slice(root.length).indexOf('/') === -1) {
@@ -185,15 +138,11 @@ class ScanCodeLegacySummarizer {
     })
   }
 
-  /**
-   * Gets declared license by analyzing root files
-   * @param {string} scancodeVersion - The ScanCode version
-   * @param {ScanCodeHarvestedData} harvested - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @returns {string | null} Declared license expression or null
-   * @private
-   */
-  _getDeclaredLicenseFromFiles(scancodeVersion, harvested, coordinates) {
+  _getDeclaredLicenseFromFiles(
+    scancodeVersion: string,
+    harvested: ScanCodeHarvestedData,
+    coordinates: EntityCoordinates
+  ): string | null {
     const rootFile = this._getRootFiles(coordinates, harvested.content.files, harvested.content.packages)
     switch (scancodeVersion) {
       case '2.2.1':
@@ -211,72 +160,46 @@ class ScanCodeLegacySummarizer {
     }
   }
 
-  /**
-   * Gets license from files marked as license text
-   * @param {ScanCodeFile[]} files - Files to analyze
-   * @returns {string | null} License expression or null
-   * @private
-   */
-  _getLicenseByIsLicenseText(files) {
+  _getLicenseByIsLicenseText(files: ScanCodeFile[]): string | null {
     const fullLicenses = files
       .filter(file => file.is_license_text && file.licenses)
-      .reduce(
-        (licenses, file) => {
-          if (file.licenses) {
-            for (const license of file.licenses) {
+      .reduce((licenses, file) => {
+        if (file.licenses) {
+          for (const license of file.licenses) {
+            licenses.add(this._createExpressionFromLicense(license))
+          }
+        }
+        return licenses
+      }, new Set<string | null>())
+    return joinExpressions(fullLicenses)
+  }
+
+  _getLicenseByFileName(files: ScanCodeFile[], coordinates: EntityCoordinates): string | null {
+    const fullLicenses = files
+      .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
+      .reduce((licenses, file) => {
+        if (file.licenses) {
+          for (const license of file.licenses) {
+            if (license.score && license.score >= 90) {
               licenses.add(this._createExpressionFromLicense(license))
             }
           }
-          return licenses
-        },
-        /** @type {Set<string | null>} */ (new Set())
-      )
+        }
+        return licenses
+      }, new Set<string | null>())
     return joinExpressions(fullLicenses)
   }
 
-  /**
-   * Gets license from files matching license file naming patterns
-   * @param {ScanCodeFile[]} files - Files to analyze
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @returns {string | null} License expression or null
-   * @private
-   */
-  _getLicenseByFileName(files, coordinates) {
-    const fullLicenses = files
-      .filter(file => isLicenseFile(file.path, coordinates) && file.licenses)
-      .reduce(
-        (licenses, file) => {
-          if (file.licenses) {
-            for (const license of file.licenses) {
-              if (license.score && license.score >= 90) {
-                licenses.add(this._createExpressionFromLicense(license))
-              }
-            }
-          }
-          return licenses
-        },
-        /** @type {Set<string | null>} */ (new Set())
-      )
-    return joinExpressions(fullLicenses)
-  }
-
-  /**
-   * Gets license from package assertion information
-   * @param {ScanCodeFile[]} files - Files containing package information
-   * @returns {string | null} License expression or null
-   * @private
-   */
-  // Create a license expression from all of the package info in the output
-  _getLicenseByPackageAssertion(files) {
+  _getLicenseByPackageAssertion(files: ScanCodeFile[]): string | null {
     for (const file of files) {
-      const asserted = /** @type {{ license?: string; spdx_license_key?: string }[] | undefined} */ (
-        get(file, 'packages[0].asserted_licenses')
-      )
+      const asserted = get(file, 'packages[0].asserted_licenses') as
+        | { license?: string; spdx_license_key?: string }[]
+        | undefined
       // Find the first package file and treat it as the authority
       if (asserted) {
         const packageLicenses = addArrayToSet(
           asserted,
-          new Set(),
+          new Set<string>(),
           // TODO, is `license.license` real?
           license => license.license || license.spdx_license_key
         )
@@ -286,31 +209,21 @@ class ScanCodeLegacySummarizer {
     return null
   }
 
-  /**
-   * Summarizes file information into FileEntry format
-   * @param {ScanCodeFile[]} files - ScanCode file entries to summarize
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @returns {FileEntry[]} Array of summarized file entries
-   * @private
-   */
-  _summarizeFileInfo(files, coordinates) {
+  _summarizeFileInfo(files: ScanCodeFile[], coordinates: EntityCoordinates): FileEntry[] {
     return files
       .map(file => {
         if (file.type !== 'file') {
           return null
         }
-        /** @type {FileEntry} */
-        const result = { path: file.path }
-        const asserted = /** @type {ScanCodeLicense[] | undefined} */ (get(file, 'packages[0].asserted_licenses'))
+        const result: FileEntry = { path: file.path }
+        const asserted = get(file, 'packages[0].asserted_licenses') as ScanCodeLicense[] | undefined
         const fileLicense = asserted || file.licenses || []
-        let licenses = new Set(
-          fileLicense.map(/** @param {ScanCodeLicense} x */ x => x.license).filter(/** @param {unknown} x */ x => x)
-        )
+        let licenses = new Set(fileLicense.map((x: ScanCodeLicense) => x.license).filter((x: unknown) => x))
         if (!licenses.size) {
           licenses = new Set(
             fileLicense
-              .filter(/** @param {ScanCodeLicense} x */ x => x.score !== undefined && x.score >= 80)
-              .map(/** @param {ScanCodeLicense} x */ x => this._createExpressionFromLicense(x))
+              .filter((x: ScanCodeLicense) => x.score !== undefined && x.score >= 80)
+              .map((x: ScanCodeLicense) => this._createExpressionFromLicense(x))
           )
         }
         const licenseExpression = joinExpressions(licenses)
@@ -326,27 +239,17 @@ class ScanCodeLegacySummarizer {
           'attributions',
           file.copyrights
             ? uniq(
-                flatten(
-                  file.copyrights.map(
-                    /** @param {import('../scancode').ScanCodeCopyright} c */ c => c.statements || c.value
-                  )
-                )
-              ).filter(/** @param {unknown} x */ x => x)
+                flatten(file.copyrights.map((c: import('../scancode.ts').ScanCodeCopyright) => c.statements || c.value))
+              ).filter((x: unknown) => x)
             : null
         )
         setIfValue(result, 'hashes.sha1', file.sha1)
         return result
       })
-      .filter(/** @param {FileEntry | null} e */ e => e !== null)
+      .filter((e: FileEntry | null) => e !== null)
   }
 
-  /**
-   * Creates a normalized license expression from a license object
-   * @param {ScanCodeLicense} license - The license object from ScanCode
-   * @returns {string | null} Normalized SPDX license expression or null
-   * @private
-   */
-  _createExpressionFromLicense(license) {
+  _createExpressionFromLicense(license: ScanCodeLicense): string | null {
     const rule = license.matched_rule
     if (!rule?.license_expression) {
       return SPDX.normalize(license.spdx_license_key)
@@ -355,10 +258,4 @@ class ScanCodeLegacySummarizer {
   }
 }
 
-/**
- * Factory function that creates a ScanCodeLegacySummarizer instance
- * @param {SummarizerOptions} options - Configuration options for the summarizer
- * @param {Logger} logger - Logger instance for logging
- * @returns {ScanCodeLegacySummarizer} A new ScanCodeLegacySummarizer instance
- */
-export default (options, logger) => new ScanCodeLegacySummarizer(options, logger)
+export default (options?: SummarizerOptions, logger?: Logger) => new ScanCodeLegacySummarizer(options, logger)

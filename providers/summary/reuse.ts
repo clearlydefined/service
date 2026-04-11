@@ -1,44 +1,80 @@
 // Copyright (c) SAP SE and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./index').SummarizerOptions} SummarizerOptions
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('./reuse').ReuseHarvestedData} ReuseHarvestedData
- * @typedef {import('./reuse').ReuseSummaryResult} ReuseSummaryResult
- * @typedef {import('./reuse').ReuseFile} ReuseFile
- * @typedef {import('./reuse').ReuseLicense} ReuseLicense
- * @typedef {import('../../lib/utils').FileEntry} FileEntry
- */
-
 import SPDX from '@clearlydefined/spdx'
 import lodash from 'lodash'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../lib/utils.ts'
 import { isDeclaredLicense, setIfValue } from '../../lib/utils.ts'
+import type { SummarizerOptions } from './index.ts'
 
 const { get, uniq } = lodash
+
+/** REUSE license information */
+export interface ReuseLicense {
+  spdxId?: string
+  filePath?: string
+  [key: string]: unknown
+}
+
+/** REUSE file information */
+export interface ReuseFile {
+  FileName: string
+  LicenseConcluded?: string
+  LicenseInfoInFile?: string
+  FileChecksumSHA1?: string
+  FileCopyrightText?: string
+  [key: string]: unknown
+}
+
+/** REUSE metadata */
+export interface ReuseMetadata {
+  CreatorTool?: string
+  [key: string]: unknown
+}
+
+/** REUSE tool output */
+export interface ReuseTool {
+  metadata?: ReuseMetadata
+  files?: ReuseFile[]
+  licenses?: ReuseLicense[]
+  [key: string]: unknown
+}
+
+/** Attachment information */
+export interface ReuseAttachment {
+  path: string
+  token?: string
+  [key: string]: unknown
+}
+
+/** Harvested data structure for REUSE tool */
+export interface ReuseHarvestedData {
+  reuse?: ReuseTool
+  attachments?: ReuseAttachment[]
+  [key: string]: unknown
+}
+
+/** Result of REUSE summarization (partial Definition) */
+export interface ReuseSummaryResult {
+  licensed?: {
+    declared?: string
+  }
+  files?: FileEntry[]
+}
 
 /**
  * FSFE REUSE summarizer class that processes harvested data from the REUSE tool.
  * Extracts license and copyright information following the REUSE specification.
- * @class
  */
-class FsfeReuseSummarizer {
-  /**
-   * Creates a new FsfeReuseSummarizer instance
-   * @param {SummarizerOptions} options - Configuration options for the summarizer
-   */
-  constructor(options) {
+export class ReuseSummarizer {
+  declare options: SummarizerOptions
+
+  constructor(options: SummarizerOptions) {
     this.options = options
   }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * @param {EntityCoordinates} _coordinates - The entity for which we are summarizing
-   * @param {ReuseHarvestedData} harvested - the set of raw tool outputs related to the identified entity
-   * @returns {ReuseSummaryResult} - a summary of the given raw information
-   * @throws {Error} If REUSE data is invalid
-   */
-  summarize(_coordinates, harvested) {
+  summarize(_coordinates: EntityCoordinates, harvested: ReuseHarvestedData): ReuseSummaryResult {
     if (!harvested?.reuse?.metadata.CreatorTool) {
       throw new Error('Invalid REUSE data')
     }
@@ -49,28 +85,20 @@ class FsfeReuseSummarizer {
     return result
   }
 
-  /**
-   * Summarizes REUSE files into FileEntry format
-   * @param {ReuseHarvestedData} harvested - The harvested data
-   * @returns {FileEntry[] | null} Array of file entries or null
-   * @private
-   */
-  _summarizeFiles(harvested) {
-    const files = /** @type {ReuseFile[] | undefined} */ (get(harvested, 'reuse.files'))
+  _summarizeFiles(harvested: ReuseHarvestedData): FileEntry[] | null {
+    const files = get(harvested, 'reuse.files') as ReuseFile[] | undefined
     if (!files) {
       return null
     }
-    /** @type {FileEntry[]} */
-    const licenseFiles = []
+    const licenseFiles: FileEntry[] = []
     const attachments = harvested.attachments || []
-    const licenses = /** @type {ReuseLicense[] | undefined} */ (get(harvested, 'reuse.licenses'))
+    const licenses = get(harvested, 'reuse.licenses') as ReuseLicense[] | undefined
     if (licenses) {
       for (const license of licenses) {
         const licenseSpdxId = SPDX.normalize(license.spdxId)
         if (license.filePath && isDeclaredLicense(licenseSpdxId)) {
           const attachment = attachments.find(x => x.path === license.filePath)
-          /** @type {FileEntry} */
-          const licenseFile = { path: license.filePath, license: licenseSpdxId, natures: ['license'] }
+          const licenseFile: FileEntry = { path: license.filePath, license: licenseSpdxId, natures: ['license'] }
           setIfValue(licenseFile, 'token', get(attachment, 'token'))
           licenseFiles.push(licenseFile)
         }
@@ -85,8 +113,7 @@ class FsfeReuseSummarizer {
         }
         const license = SPDX.normalize(declaredLicense)
         if (path && isDeclaredLicense(license)) {
-          /** @type {FileEntry} */
-          const resultFile = { path, license, hashes: { sha1: file.FileChecksumSHA1 } }
+          const resultFile: FileEntry = { path, license, hashes: { sha1: file.FileChecksumSHA1 } }
           if (file.FileCopyrightText && file.FileCopyrightText !== 'NONE') {
             resultFile.attributions = [file.FileCopyrightText]
           }
@@ -95,16 +122,10 @@ class FsfeReuseSummarizer {
         return null
       })
       .concat(licenseFiles)
-      .filter(/** @param {FileEntry | null} e */ e => e !== null)
+      .filter((e: FileEntry | null) => e !== null)
   }
 
-  /**
-   * Adds declared license from REUSE licenses to the result
-   * @param {ReuseHarvestedData} harvested - The harvested data
-   * @param {ReuseSummaryResult} result - The result object to modify
-   * @private
-   */
-  _addLicenseDeclaration(harvested, result) {
+  _addLicenseDeclaration(harvested: ReuseHarvestedData, result: ReuseSummaryResult) {
     if (!harvested.reuse.licenses) {
       return
     }
@@ -115,9 +136,4 @@ class FsfeReuseSummarizer {
   }
 }
 
-/**
- * Factory function that creates a FsfeReuseSummarizer instance
- * @param {SummarizerOptions} [options] - Configuration options for the summarizer
- * @returns {FsfeReuseSummarizer} A new FsfeReuseSummarizer instance
- */
-export default options => new FsfeReuseSummarizer(options)
+export default (options?: SummarizerOptions) => new ReuseSummarizer(options)

@@ -1,43 +1,74 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./index').SummarizerOptions} SummarizerOptions
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('./fossology').FossologyHarvestedData} FossologyHarvestedData
- * @typedef {import('./fossology').FossologySummaryResult} FossologySummaryResult
- * @typedef {import('../../lib/utils').FileEntry} FileEntry
- */
-
 import SPDX from '@clearlydefined/spdx'
 import lodash from 'lodash'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry } from '../../lib/utils.ts'
 import { isLicenseFile, mergeDefinitions, setIfValue } from '../../lib/utils.ts'
+import type { SummarizerOptions } from './index.ts'
 
 const { get, uniq } = lodash
 
 const noOpLicenseIds = new Set(['No_license_found', 'See-file', 'See-URL'])
 
+/** FOSSology Nomos output */
+export interface FossologyNomosOutput {
+  output?: {
+    content?: string
+  }
+  [key: string]: unknown
+}
+
+/** FOSSology Monk output */
+export interface FossologyMonkOutput {
+  output?: {
+    content?: string
+  }
+  [key: string]: unknown
+}
+
+/** FOSSology Copyright output (currently not used) */
+export interface FossologyCopyrightOutput {
+  output?: {
+    content?: {
+      path: string
+      output: {
+        results?: { type: string; content?: string }[]
+      }
+    }[]
+  }
+  [key: string]: unknown
+}
+
+/** Harvested data structure for FOSSology tool */
+export interface FossologyHarvestedData {
+  nomos?: FossologyNomosOutput
+  monk?: FossologyMonkOutput
+  copyright?: FossologyCopyrightOutput
+  [key: string]: unknown
+}
+
+/** Result of FOSSology summarization (partial Definition) */
+export interface FossologySummaryResult {
+  licensed?: {
+    declared?: string
+  }
+  files?: FileEntry[]
+}
+
 /**
  * FOSSology summarizer class that processes harvested data from FOSSology tools.
  * Combines license information from Nomos and Monk scanners.
- * @class
  */
-class FOSSologySummarizer {
-  /**
-   * Creates a new FOSSologySummarizer instance
-   * @param {SummarizerOptions} options - Configuration options for the summarizer
-   */
-  constructor(options) {
+export class FOSSologySummarizer {
+  declare options: SummarizerOptions
+
+  constructor(options: SummarizerOptions) {
     this.options = options
   }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * @param {EntityCoordinates} coordinates - The entity for which we are summarizing
-   * @param {FossologyHarvestedData} harvested - the set of raw tool outputs related to the identified entity
-   * @returns {FossologySummaryResult} - a summary of the given raw information
-   */
-  summarize(coordinates, harvested) {
+  summarize(coordinates: EntityCoordinates, harvested: FossologyHarvestedData): FossologySummaryResult {
     const result = {}
     // TODO currently definition merging does not union values (licenses, copyrights) at the file level.
     // That means the order here matters. Later merges overwrite earlier. So here we are explicitly taking
@@ -50,84 +81,61 @@ class FOSSologySummarizer {
     return result
   }
 
-  /**
-   * Summarizes Nomos scanner output
-   * @param {FossologySummaryResult} result - The result object to modify
-   * @param {FossologyHarvestedData} output - The harvested data
-   * @private
-   */
-  _summarizeNomos(result, output) {
-    const content = /** @type {string | undefined} */ (get(output, 'nomos.output.content'))
+  _summarizeNomos(result: FossologySummaryResult, output: FossologyHarvestedData) {
+    const content = get(output, 'nomos.output.content') as string | undefined
     if (!content) {
       return
     }
     const files = content
       .split('\n')
-      .map(
-        /** @param {string} file */ file => {
-          // File package/dist/ajv.min.js contains license(s) No_license_found
-          const match = /^File (.*?) contains license\(s\) (.*?)$/.exec(file)
-          if (!match) {
-            return null
-          }
-          const [, path, rawLicense] = match
-          const license = noOpLicenseIds.has(rawLicense) ? null : SPDX.normalize(rawLicense)
-          if (path && license) {
-            return { path, license }
-          }
-          if (path) {
-            return { path }
-          }
+      .map((file: string) => {
+        // File package/dist/ajv.min.js contains license(s) No_license_found
+        const match = /^File (.*?) contains license\(s\) (.*?)$/.exec(file)
+        if (!match) {
           return null
         }
-      )
-      .filter(/** @param {FileEntry | null} e */ e => e !== null)
+        const [, path, rawLicense] = match
+        const license = noOpLicenseIds.has(rawLicense) ? null : SPDX.normalize(rawLicense)
+        if (path && license) {
+          return { path, license }
+        }
+        if (path) {
+          return { path }
+        }
+        return null
+      })
+      .filter((e: FileEntry | null) => e !== null)
     mergeDefinitions(result, { files })
   }
 
-  /**
-   * Summarizes Monk scanner output
-   * @param {FossologySummaryResult} result - The result object to modify
-   * @param {FossologyHarvestedData} output - The harvested data
-   * @private
-   */
-  _summarizeMonk(result, output) {
-    const content = /** @type {string | undefined} */ (get(output, 'monk.output.content'))
+  _summarizeMonk(result: FossologySummaryResult, output: FossologyHarvestedData) {
+    const content = get(output, 'monk.output.content') as string | undefined
     if (!content) {
       return
     }
     const files = content
       .split('\n')
-      .map(
-        /** @param {string} file */ file => {
-          const fullMatch = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
-          if (!fullMatch) {
-            return null
-          }
-          const [, path, rawLicense] = fullMatch
-          const license = SPDX.normalize(rawLicense)
-          if (path && license) {
-            return { path, license }
-          }
-          if (path) {
-            return { path }
-          }
+      .map((file: string) => {
+        const fullMatch = /^found full match between \\"(.*?)\\" and \\"(.*?)\\"/.exec(file)
+        if (!fullMatch) {
           return null
         }
-      )
-      .filter(/** @param {FileEntry | null} e */ e => e !== null)
+        const [, path, rawLicense] = fullMatch
+        const license = SPDX.normalize(rawLicense)
+        if (path && license) {
+          return { path, license }
+        }
+        if (path) {
+          return { path }
+        }
+        return null
+      })
+      .filter((e: FileEntry | null) => e !== null)
     mergeDefinitions(result, { files })
   }
 
-  /**
-   * Summarizes copyright information (currently disabled)
-   * @param {FossologySummaryResult} _result - The result object to modify
-   * @param {FossologyHarvestedData} _output - The harvested data
-   * @see https://github.com/fossology/fossology/issues/1292
-   * @private
-   */
   // eslint-disable-next-line no-unused-vars
-  _summarizeCopyright(_result, _output) {
+  _summarizeCopyright(_result: FossologySummaryResult, _output: FossologyHarvestedData) {
     // see https://github.com/fossology/fossology/issues/1292
     return
     // const content = get(output, 'copyright.output.content')
@@ -150,13 +158,7 @@ class FOSSologySummarizer {
     // mergeDefinitions(result, { files })
   }
 
-  /**
-   * Declares license from analyzed license files
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @param {FossologySummaryResult} result - The result object to modify
-   * @private
-   */
-  _declareLicense(coordinates, result) {
+  _declareLicense(coordinates: EntityCoordinates, result: FossologySummaryResult) {
     if (!result.files) {
       return
     }
@@ -169,9 +171,4 @@ class FOSSologySummarizer {
   }
 }
 
-/**
- * Factory function that creates a FOSSologySummarizer instance
- * @param {SummarizerOptions} [options] - Configuration options for the summarizer
- * @returns {FOSSologySummarizer} A new FOSSologySummarizer instance
- */
-export default options => new FOSSologySummarizer(options)
+export default (options?: SummarizerOptions) => new FOSSologySummarizer(options)
