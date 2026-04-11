@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 import cacheBasedCrawler from './cacheBasedCrawler.js'
 import crawler from './crawlerQueue.js'
 

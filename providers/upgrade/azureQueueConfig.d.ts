@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { RecomputeQueueFactories } from '...js'
-import type AzureStorageQueue from '../queueing/azureStorageQueue.js'
+import type AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
 /**
  * Queue factories for upgrade and delayed compute processing.

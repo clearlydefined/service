@@ -2,7 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 import { callFetch as requestPromise } from '../../lib/fetch.ts'
-import AbstractSearch from './abstractSearch.js'
+import AbstractSearch from './abstractSearch.ts'
+
+export interface AzureSearchOptions {
+  service: string
+  apiKey: string
+  dataSourceConnectionString: string
+  dataSourceContainerName: string
+}
 
 const serviceUrlTemplate = 'https://$service$.search.windows.net'
 const apiVersion = '2019-05-06'
@@ -11,8 +18,10 @@ const definitionsDataSourceName = 'definitionsdatasource'
 const definitionsIndexerName = 'definitionsindexer'
 
 class AzureSearch extends AbstractSearch {
+  declare options: AzureSearchOptions
+
   /** @override */
-  async initialize() {
+  async initialize(): Promise<void> {
     super.initialize()
     if (!(await this._hasIndex(definitionsIndexName))) {
       await this._createIndex(this._buildDefinitionsIndex())
@@ -27,11 +36,9 @@ class AzureSearch extends AbstractSearch {
 
   /**
    * Get a list of coordinates suggested for the given pattern
-   * @param {string} pattern - A pattern to look for in the coordinates of a definition
-   * @returns {Promise<string[]>} The list of suggested coordinates found
    * @override
    */
-  async suggestCoordinates(pattern) {
+  async suggestCoordinates(pattern: string): Promise<string[]> {
     const baseUrl = this._buildUrl(`indexes/${definitionsIndexName}/docs/suggest`)
     const validPattern = pattern.substring(0, 100)
     const url = `${baseUrl}&search=${validPattern}&suggesterName=suggester&$select=coordinates&$top=50`
@@ -42,16 +49,14 @@ class AzureSearch extends AbstractSearch {
       json: true,
       withCredentials: false
     })
-    return searchResult.value.map(/** @param {any} result */ result => result.coordinates)
+    return searchResult.value.map((result: any) => result.coordinates)
   }
 
   /**
    * Query the search index. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#request-body
-   * @param {any} body - the request body to send to search
-   * @returns {Promise<any>} The search response
    * @override
    */
-  async query(body) {
+  async query(body: any): Promise<any> {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${definitionsIndexName}/docs/search`),
@@ -62,10 +67,7 @@ class AzureSearch extends AbstractSearch {
     })
   }
 
-  /**
-   * @param {string} endpoint
-   */
-  _buildUrl(endpoint) {
+  _buildUrl(endpoint: string) {
     const baseUrl = serviceUrlTemplate.replace('$service$', this.options.service)
     return `${baseUrl}/${endpoint}?api-version=${apiVersion}`
   }
@@ -336,10 +338,7 @@ class AzureSearch extends AbstractSearch {
     }
   }
 
-  /**
-   * @param {any} body
-   */
-  _createIndex(body) {
+  _createIndex(body: any) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl('indexes'),
@@ -351,10 +350,7 @@ class AzureSearch extends AbstractSearch {
     // TODO handle the status codes as described https://docs.microsoft.com/en-us/azure/search/search-import-data-rest-api
   }
 
-  /**
-   * @param {string} name
-   */
-  async _hasIndex(name) {
+  async _hasIndex(name: string) {
     const index = await requestPromise({
       method: 'GET',
       url: this._buildUrl(`indexes/${name}`),
@@ -378,10 +374,7 @@ class AzureSearch extends AbstractSearch {
     }
   }
 
-  /**
-   * @param {any} body
-   */
-  _createDataSource(body) {
+  _createDataSource(body: any) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl('datasources'),
@@ -392,10 +385,7 @@ class AzureSearch extends AbstractSearch {
     })
   }
 
-  /**
-   * @param {string} name
-   */
-  async _hasDataSource(name) {
+  async _hasDataSource(name: string) {
     const dataSource = await requestPromise({
       method: 'GET',
       url: this._buildUrl(`datasources/${name}`),
@@ -447,10 +437,7 @@ class AzureSearch extends AbstractSearch {
     }
   }
 
-  /**
-   * @param {any} body
-   */
-  _createIndexer(body) {
+  _createIndexer(body: any) {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl('indexers'),
@@ -461,10 +448,7 @@ class AzureSearch extends AbstractSearch {
     })
   }
 
-  /**
-   * @param {string} name
-   */
-  async _hasIndexer(name) {
+  async _hasIndexer(name: string) {
     const indexer = await requestPromise({
       method: 'GET',
       url: this._buildUrl(`indexers/${name}`),
@@ -478,4 +462,4 @@ class AzureSearch extends AbstractSearch {
   }
 }
 
-export default /** @param {import('./azureSearch').AzureSearchOptions} options */ options => new AzureSearch(options)
+export default (options: AzureSearchOptions) => new AzureSearch(options)

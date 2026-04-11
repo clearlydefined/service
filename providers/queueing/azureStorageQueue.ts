@@ -3,20 +3,27 @@
 
 import { promisify } from 'node:util'
 import azure from 'azure-storage'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { DequeuedMessage, IQueue } from './index.js'
 
-/** @typedef {import('.').DequeuedMessage} DequeuedMessage */
+export interface AzureStorageQueueOptions {
+  connectionString: string
+  queueName: string
+  dequeueOptions?: Record<string, any>
+}
 
-class AzureStorageQueue {
-  /**
-   * @param {import('./azureStorageQueue').AzureStorageQueueOptions} options
-   */
-  constructor(options) {
+class AzureStorageQueue implements IQueue {
+  options: AzureStorageQueueOptions
+  logger: Logger
+  declare queueService: ReturnType<typeof azure.createQueueService>
+
+  constructor(options: AzureStorageQueueOptions) {
     this.options = options
     this.logger = logger()
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     this.queueService = azure
       .createQueueService(this.options.connectionString)
       .withFilter(new azure.LinearRetryPolicyFilter())
@@ -26,10 +33,8 @@ class AzureStorageQueue {
   /**
    * Add a message to the queue. Any encoding/stringifying is up to the caller
    * Max size of message is 64KB
-   *
-   * @param {string} message
    */
-  async queue(message) {
+  async queue(message: string): Promise<void> {
     await promisify(this.queueService.createMessage).bind(this.queueService)(this.options.queueName, message)
   }
 
@@ -38,10 +43,8 @@ class AzureStorageQueue {
    * If processing is successful, the caller is expected to call delete()
    * Returns null if the queue is empty
    * If DQ count exceeds 5 the message will be deleted and the next message will be returned
-   *
-   * @returns {Promise<DequeuedMessage | null>}
    */
-  async dequeue() {
+  async dequeue(): Promise<DequeuedMessage | null> {
     const message = await promisify(this.queueService.getMessage).bind(this.queueService)(this.options.queueName)
     if (!message) {
       return null
@@ -57,10 +60,8 @@ class AzureStorageQueue {
 
   /**
    * Similar to dequeue() but returns multiple messages to improve performance
-   *
-   * @returns {Promise<DequeuedMessage[]>}
    */
-  async dequeueMultiple() {
+  async dequeueMultiple(): Promise<DequeuedMessage[]> {
     const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
       this.options.queueName,
       // @ts-expect-error - azure-storage getMessages accepts options as second arg
@@ -88,10 +89,8 @@ class AzureStorageQueue {
   /**
    * Delete a recently DQ'd message from the queue
    * pass dequeue().original as the message to delete
-   *
-   * @param {DequeuedMessage} message
    */
-  async delete(message) {
+  async delete(message: DequeuedMessage): Promise<void> {
     await promisify(this.queueService.deleteMessage).bind(this.queueService)(
       this.options.queueName,
       String(message.original.messageId),

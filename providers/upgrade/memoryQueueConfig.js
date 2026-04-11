@@ -1,7 +1,7 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import MemoryQueue from '../queueing/memoryQueue.js'
+import MemoryQueue from '../queueing/memoryQueue.ts'
 
 /** @typedef {import('../queueing/memoryQueue').MemoryQueueOptions} MemoryQueueOptions */
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { RecomputeQueueFactories } from '...js'
-import type { MemoryQueue } from '../queueing/memoryQueue.js'
+import type { MemoryQueue } from '../queueing/memoryQueue.ts'
 
 /**
  * Queue factories for upgrade and delayed compute processing.

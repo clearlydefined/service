@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import assert from 'node:assert'
-import MemoryQueue from '../../../providers/queueing/memoryQueue.js'
+import MemoryQueue from '../../../providers/queueing/memoryQueue.ts'
 
 describe('memory queue operations', () => {
   let memQueue

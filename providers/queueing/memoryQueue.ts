@@ -1,32 +1,36 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { DequeuedMessage, IQueue, QueueMessage } from './index.js'
 
-/** @typedef {import('.').QueueMessage} QueueMessage */
-/** @typedef {import('.').DequeuedMessage} DequeuedMessage */
+export interface MemoryQueueOptions {
+  decoder?: (text: string) => string
+  logger?: Logger
+}
 
-class MemoryQueue {
-  /**
-   * @param {import('./memoryQueue').MemoryQueueOptions} options
-   */
-  constructor(options) {
+export class MemoryQueue implements IQueue {
+  declare options: MemoryQueueOptions
+  declare logger: Logger
+  declare decoder: (text: string) => string
+  data: QueueMessage[]
+  messageId: number
+
+  constructor(options: MemoryQueueOptions) {
     this.options = options
     this.logger = this.options.logger || logger()
-    /** @type {QueueMessage[]} */
     this.data = []
     this.messageId = 0
-    this.decoder = options.decoder
+    this.decoder = options.decoder || ((text: string) => text)
   }
 
-  async initialize() {}
+  async initialize(): Promise<void> {}
 
   /**
    * Add a message to the queue. Any encoding/stringifying is up to the caller
-   *
-   * @param {string} message
    */
-  async queue(message) {
+  async queue(message: string): Promise<void> {
     this.data.push({
       messageText: message,
       dequeueCount: 0,
@@ -38,10 +42,8 @@ class MemoryQueue {
    * Return the top message from the queue
    * If processing is successful, the caller is expected to call delete()
    * Returns null if the queue is empty
-   *
-   * @returns {Promise<DequeuedMessage | null>}
    */
-  async dequeue() {
+  async dequeue(): Promise<DequeuedMessage | null> {
     const message = this.data[0]
     if (!message) {
       return null
@@ -57,15 +59,12 @@ class MemoryQueue {
     return this.dequeue()
   }
 
-  /**
-   * @param {QueueMessage} message
-   */
-  _parseData({ messageText }) {
+  _parseData({ messageText }: QueueMessage) {
     return JSON.parse(this.decoder(messageText))
   }
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
-  async dequeueMultiple() {
+  async dequeueMultiple(): Promise<DequeuedMessage[]> {
     const message = await this.dequeue()
     return message ? [message] : []
   }
@@ -73,10 +72,8 @@ class MemoryQueue {
   /**
    * Delete a recently DQ'd message from the queue
    * pass dequeue() result as the message to delete
-   *
-   * @param {DequeuedMessage} message
    */
-  async delete(message) {
+  async delete(message: DequeuedMessage): Promise<void> {
     const newData = []
     for (let i = 0; i < this.data.length; i++) {
       if (this.data[i].messageId !== message.original.messageId) {
@@ -87,12 +84,6 @@ class MemoryQueue {
   }
 }
 
-const factory = (opts = {}) => {
-  const defaultOpts = {
-    decoder: /** @param {string} text */ text => text
-  }
-  const mergedOpts = { ...defaultOpts, ...opts }
-  return new MemoryQueue(mergedOpts)
-}
+const factory = (opts: MemoryQueueOptions = {}) => new MemoryQueue(opts)
 
 export default factory
