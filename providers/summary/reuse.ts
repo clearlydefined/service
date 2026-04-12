@@ -126,12 +126,12 @@ export class ReuseSummarizer {
   }
 
   _addLicenseDeclaration(harvested: ReuseHarvestedData, result: ReuseSummaryResult) {
-    if (!harvested.reuse.licenses) {
+    if (!harvested.reuse?.licenses) {
       return
     }
     const declaredLicenses = harvested.reuse.licenses
       .map(license => (isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null))
-      .filter(x => x)
+      .filter((x): x is string => x !== null)
     setIfValue(result, 'licensed.declared', uniq(declaredLicenses).join(' AND '))
   }
 }

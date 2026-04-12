@@ -36,7 +36,7 @@ export class ScanCodeNewSummarizer {
   declare options: SummarizerOptions
   declare logger: Logger
 
-  constructor(options?: SummarizerOptions, logger?: Logger) {
+  constructor(options: SummarizerOptions = {} as SummarizerOptions, logger: Logger = {} as Logger) {
     this.options = options
     this.logger = logger
   }

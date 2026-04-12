@@ -36,7 +36,7 @@ export class ScanCodeLegacySummarizer {
   declare options: SummarizerOptions
   declare logger: Logger
 
-  constructor(options?: SummarizerOptions, logger?: Logger) {
+  constructor(options: SummarizerOptions = {} as SummarizerOptions, logger: Logger = {} as Logger) {
     this.options = options
     this.logger = logger
   }
@@ -220,7 +220,7 @@ export class ScanCodeLegacySummarizer {
         const result: FileEntry = { path: file.path }
         const asserted = get(file, 'packages[0].asserted_licenses') as ScanCodeLicense[] | undefined
         const fileLicense = asserted || file.licenses || []
-        let licenses = new Set(fileLicense.map((x: ScanCodeLicense) => x.license).filter((x: unknown) => x))
+        let licenses = new Set(fileLicense.map((x: ScanCodeLicense) => x.license).filter((x): x is string => typeof x === 'string'))
         if (!licenses.size) {
           licenses = new Set(
             fileLicense
