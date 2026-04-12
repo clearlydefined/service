@@ -68,7 +68,7 @@ export interface ReuseSummaryResult {
  * Extracts license and copyright information following the REUSE specification.
  */
 export class ReuseSummarizer {
-  declare options: SummarizerOptions
+  declare options: SummarizerOptions | undefined
 
   constructor(options?: SummarizerOptions) {
     this.options = options

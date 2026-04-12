@@ -67,7 +67,7 @@ export interface LicenseeSummaryResult {
  * Extracts license information from matched license files.
  */
 export class LicenseeSummarizer {
-  declare options: SummarizerOptions
+  declare options: SummarizerOptions | undefined
 
   constructor(options?: SummarizerOptions) {
     this.options = options

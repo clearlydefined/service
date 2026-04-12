@@ -25,7 +25,7 @@ export interface CdSourceSummaryResult {
  * source tool. Extracts basic release date and facet information.
  */
 export class CdSourceSummarizer {
-  declare options: SummarizerOptions
+  declare options: SummarizerOptions | undefined
 
   constructor(options?: SummarizerOptions) {
     this.options = options
