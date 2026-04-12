@@ -63,7 +63,7 @@ export interface CachingProviders {
 
 /** Provider configuration for authentication */
 export interface AuthProviders {
-  github: any
+  github: typeof githubAuthConfig
 }
 
 /** Paired queue factories used by recompute handlers */
@@ -102,7 +102,7 @@ export interface CurationQueueProviders {
 
 /** Provider configuration for curation service */
 export interface CurationServiceProviders {
-  github: (...args: any[]) => any
+  github: typeof curationGithubConfig
 }
 
 /** Provider configuration for curation store */

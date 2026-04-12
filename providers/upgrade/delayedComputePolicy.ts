@@ -39,9 +39,9 @@ class DelayedComputePolicy implements MissingDefinitionComputePolicy {
     return this._compute.initialize()
   }
 
-  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): void {
+  setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void> | void {
     const upgradePolicy = new SkipUpgradePolicy()
-    setup(this._compute, definitionService, logger, once, upgradePolicy)
+    return setup(this._compute, definitionService, logger, once, upgradePolicy)
   }
 
   async compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition> {
@@ -54,13 +54,14 @@ class DelayedComputePolicy implements MissingDefinitionComputePolicy {
       throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
     const key = coordinates.toString()
-    if (this._enqueueCache.get(key)) {
+    const alreadyQueued = await this._enqueueCache.get(key)
+    if (alreadyQueued) {
       this.logger.debug('Skipped duplicate enqueue for delayed definition compute', { coordinates: key })
       return
     }
     const message = this._constructMessage(coordinates)
     await this._compute.queue(message)
-    this._enqueueCache.set(key, true)
+    await this._enqueueCache.set(key, true, DelayedComputePolicy._enqueueCacheTtlSeconds)
     this.logger.info('Queued for delayed definition compute', {
       coordinates: key
     })
