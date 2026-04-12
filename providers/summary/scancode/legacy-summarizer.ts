@@ -36,7 +36,7 @@ export class ScanCodeLegacySummarizer {
   declare options: SummarizerOptions
   declare logger: Logger
 
-  constructor(options: SummarizerOptions, logger: Logger) {
+  constructor(options?: SummarizerOptions, logger?: Logger) {
     this.options = options
     this.logger = logger
   }
@@ -166,11 +166,12 @@ export class ScanCodeLegacySummarizer {
       .reduce((licenses, file) => {
         if (file.licenses) {
           for (const license of file.licenses) {
-            licenses.add(this._createExpressionFromLicense(license))
+            const expr = this._createExpressionFromLicense(license)
+            if (expr) licenses.add(expr)
           }
         }
         return licenses
-      }, new Set<string | null>())
+      }, new Set<string>())
     return joinExpressions(fullLicenses)
   }
 
@@ -181,12 +182,13 @@ export class ScanCodeLegacySummarizer {
         if (file.licenses) {
           for (const license of file.licenses) {
             if (license.score && license.score >= 90) {
-              licenses.add(this._createExpressionFromLicense(license))
+              const expr = this._createExpressionFromLicense(license)
+              if (expr) licenses.add(expr)
             }
           }
         }
         return licenses
-      }, new Set<string | null>())
+      }, new Set<string>())
     return joinExpressions(fullLicenses)
   }
 
@@ -224,6 +226,7 @@ export class ScanCodeLegacySummarizer {
             fileLicense
               .filter((x: ScanCodeLicense) => x.score !== undefined && x.score >= 80)
               .map((x: ScanCodeLicense) => this._createExpressionFromLicense(x))
+              .filter((x): x is string => x !== null)
           )
         }
         const licenseExpression = joinExpressions(licenses)

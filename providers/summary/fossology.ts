@@ -64,7 +64,7 @@ export interface FossologySummaryResult {
 export class FOSSologySummarizer {
   declare options: SummarizerOptions
 
-  constructor(options: SummarizerOptions) {
+  constructor(options?: SummarizerOptions) {
     this.options = options
   }
 

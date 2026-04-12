@@ -69,7 +69,7 @@ export interface LicenseeSummaryResult {
 export class LicenseeSummarizer {
   declare options: SummarizerOptions
 
-  constructor(options: SummarizerOptions) {
+  constructor(options?: SummarizerOptions) {
     this.options = options
   }
 

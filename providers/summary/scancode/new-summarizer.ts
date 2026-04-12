@@ -36,7 +36,7 @@ export class ScanCodeNewSummarizer {
   declare options: SummarizerOptions
   declare logger: Logger
 
-  constructor(options: SummarizerOptions, logger: Logger) {
+  constructor(options?: SummarizerOptions, logger?: Logger) {
     this.options = options
     this.logger = logger
   }
@@ -164,7 +164,7 @@ export class ScanCodeNewSummarizer {
             if (licenseDetection.matches) {
               for (const match of licenseDetection.matches as { score?: number; spdx_license_expression?: string }[]) {
                 // Only consider matches with high clarity score of 90 or higher
-                if (match.score >= 90) {
+                if (match.score >= 90 && match.spdx_license_expression) {
                   licenses.add(match.spdx_license_expression)
                 }
               }
@@ -187,7 +187,7 @@ export class ScanCodeNewSummarizer {
         } else if (licenseDetection.matches) {
           for (const match of licenseDetection.matches as { score?: number; spdx_license_expression?: string }[]) {
             // Only consider matches with a reasonably high score of 80 or higher
-            if (match.score >= 80) {
+            if (match.score >= 80 && match.spdx_license_expression) {
               licenseExpressions.add(match.spdx_license_expression)
             }
           }

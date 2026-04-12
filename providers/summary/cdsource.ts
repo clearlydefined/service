@@ -27,7 +27,7 @@ export interface CdSourceSummaryResult {
 export class CdSourceSummarizer {
   declare options: SummarizerOptions
 
-  constructor(options: SummarizerOptions) {
+  constructor(options?: SummarizerOptions) {
     this.options = options
   }
 

@@ -70,7 +70,7 @@ export interface ReuseSummaryResult {
 export class ReuseSummarizer {
   declare options: SummarizerOptions
 
-  constructor(options: SummarizerOptions) {
+  constructor(options?: SummarizerOptions) {
     this.options = options
   }
 
