@@ -27,6 +27,7 @@ export interface MongoCurationStoreOptions {
   collectionName: string
 }
 
+// TODO: implements ICurationStore once return types are aligned
 class MongoCurationStore {
   declare logger: Logger
   declare options: MongoCurationStoreOptions

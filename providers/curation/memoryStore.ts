@@ -8,6 +8,7 @@ import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 import type { Contribution, ContributionPR } from './index.js'
 
+// TODO: implements ICurationStore once return types are aligned
 class MemoryStore {
   declare logger: Logger
   declare options: Record<string, unknown> | undefined
