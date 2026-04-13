@@ -2,20 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
+import type { Logger } from '../../logging/index.js'
 import loggerFactory from '../../logging/logger.ts'
-import ListBasedFilter from './listBasedFilter.js'
+import ListBasedFilter from './listBasedFilter.ts'
 
-/**
- * @typedef {import('../../logging').Logger} Logger
- */
-
-/**
- * Parses a JSON array string from environment variable
- * @param {string|undefined} value - The string value to parse (expected to be JSON array)
- * @param {Logger} logger - Logger instance for error reporting
- * @returns {string[]} Parsed array or empty array if parsing fails
- */
-function parseListEnv(value, logger) {
+function parseListEnv(value: string | undefined, logger: Logger): string[] {
   if (!value || value.trim() === '') {
     return []
   }
@@ -31,12 +22,7 @@ function parseListEnv(value, logger) {
   }
 }
 
-/**
- * Factory function that creates a ListBasedFilter instance from configuration
- * @param {string} [listSpec] - Optional override for the blacklist configuration
- * @returns {ListBasedFilter} A configured ListBasedFilter instance
- */
-function throttlerFactory(listSpec) {
+function throttlerFactory(listSpec?: string): ListBasedFilter {
   const listEnv = listSpec || config.get('HARVEST_THROTTLER_BLACKLIST')
   const logger = loggerFactory()
   const blacklist = parseListEnv(listEnv, logger)

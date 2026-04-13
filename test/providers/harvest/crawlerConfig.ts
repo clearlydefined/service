@@ -21,9 +21,9 @@ describe('crawlerConfig.serviceFactory (TTL cases)', () => {
 
   // Minimal helpers
   async function loadServiceFactory(configGetImpl) {
-    return await esmock.strict('../../../providers/harvest/crawlerConfig.js', {
-      '../../../providers/harvest/crawler.js': crawlerStub,
-      '../../../providers/harvest/cacheBasedCrawler.js': cacheBasedCrawlerStub,
+    return await esmock.strict('../../../providers/harvest/crawlerConfig.ts', {
+      '../../../providers/harvest/crawler.ts': crawlerStub,
+      '../../../providers/harvest/cacheBasedCrawler.ts': cacheBasedCrawlerStub,
       'painless-config': { get: configGetImpl }
     })
   }

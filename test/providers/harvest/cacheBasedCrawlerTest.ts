@@ -3,7 +3,7 @@
 
 import assert from 'node:assert'
 import sinon from 'sinon'
-import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.js'
+import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.ts'
 
 function createCacheMock() {
   return {

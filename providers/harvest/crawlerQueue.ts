@@ -1,27 +1,28 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { IQueue } from '../queueing/index.js'
+import type { HarvestCallItem, HarvestEntry, Harvester } from './cacheBasedCrawler.ts'
 
-/**
- * @typedef {import('./crawlerQueue').CrawlerQueueOptions} CrawlerQueueOptions
- * @typedef {import('./cacheBasedCrawler').HarvestEntry} HarvestEntry
- * @typedef {import('./cacheBasedCrawler').HarvestCallItem} HarvestCallItem
- */
+export interface CrawlerQueueOptions {
+  normal: IQueue
+  later: IQueue
+}
 
-class CrawlingQueueHarvester {
-  /** @param {CrawlerQueueOptions} options */
-  constructor(options) {
+export class CrawlingQueueHarvester implements Harvester {
+  declare logger: Logger
+  declare normalQueue: IQueue
+  declare laterQueue: IQueue
+
+  constructor(options: CrawlerQueueOptions) {
     this.logger = logger()
     this.normalQueue = options.normal
     this.laterQueue = options.later
   }
 
-  /**
-   * @param {HarvestEntry | HarvestEntry[]} spec
-   * @param {boolean} [turbo]
-   */
-  async harvest(spec, turbo) {
+  async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
     const entries = Array.isArray(spec) ? spec : [spec]
     for (const entry of entries) {
       const message = JSON.stringify(this.toHarvestItem(entry))
@@ -33,11 +34,7 @@ class CrawlingQueueHarvester {
     }
   }
 
-  /**
-   * @param {HarvestEntry} entry
-   * @returns {HarvestCallItem}
-   */
-  toHarvestItem(entry) {
+  toHarvestItem(entry: HarvestEntry): HarvestCallItem {
     return {
       type: entry.tool || 'component',
       url: `cd:/${entry.coordinates.toString().replace(/[/]+/g, '/')}`,
@@ -50,4 +47,4 @@ class CrawlingQueueHarvester {
   }
 }
 
-export default /** @param {CrawlerQueueOptions} options */ options => new CrawlingQueueHarvester(options)
+export default (options: CrawlerQueueOptions): CrawlingQueueHarvester => new CrawlingQueueHarvester(options)

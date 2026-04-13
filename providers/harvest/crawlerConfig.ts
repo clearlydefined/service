@@ -2,24 +2,22 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
-import cacheBasedCrawler from './cacheBasedCrawler.js'
-import crawler from './crawler.js'
+import type { ICache } from '../caching/index.js'
+import type { CacheBasedHarvester } from './cacheBasedCrawler.ts'
+import cacheBasedCrawler from './cacheBasedCrawler.ts'
+import type { CrawlerOptions } from './crawler.ts'
+import crawler from './crawler.ts'
 
-/**
- * @typedef {import('./crawler').CrawlerOptions} CrawlerOptions
- * @typedef {import('./crawlerConfig').CrawlerConfigOptions} CrawlerConfigOptions
- */
+export interface CrawlerConfigOptions extends Partial<CrawlerOptions> {
+  cachingService: ICache
+}
 
 const crawlerConfig = {
   authToken: config.get('CRAWLER_API_AUTH_TOKEN'),
   url: config.get('CRAWLER_API_URL') || 'http://localhost:5000'
 }
 
-/**
- * @param {CrawlerConfigOptions} [options]
- * @returns {import('./cacheBasedCrawler').CacheBasedHarvester}
- */
-function serviceFactory(options) {
+function serviceFactory(options?: CrawlerConfigOptions): CacheBasedHarvester {
   const crawlerOptions = { ...crawlerConfig, ...options }
   const harvester = crawler(crawlerOptions)
   const cacheTTLSeconds = Number.parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS'), 10)
