@@ -1,37 +1,43 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('../../lib/entityCoordinates').EntityCoordinatesSpec} EntityCoordinatesSpec */
-/** @typedef {import('../../lib/curation')} Curation */
-/** @typedef {import('../../lib/curation').CurationData} CurationData */
-/** @typedef {import('../../lib/curation').CurationRevision} CurationRevision */
-/** @typedef {import('./mongoCurationStore').MongoCurationStoreOptions} MongoCurationStoreOptions */
-/** @typedef {import('.').ContributionPR} ContributionPR */
-/** @typedef {import('mongodb').MongoClient} MongoClientType */
-/** @typedef {import('mongodb').Db} Db */
-/** @typedef {import('mongodb').Collection<{ _id: string | number, [key: string]: unknown }>} CurationCollection */
-
 import lodash from 'lodash'
+import type { Collection, Db, MongoClient as MongoClientType } from 'mongodb'
 import { MongoClient } from 'mongodb'
 import promiseRetry from 'promise-retry'
 import throat from 'throat'
+import type Curation from '../../lib/curation.ts'
+import type { CurationData, CurationRevision } from '../../lib/curation.ts'
+import type { EntityCoordinatesSpec } from '../../lib/entityCoordinates.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { Logger } from '../logging/index.js'
+import type { ContributionPR } from './index.js'
 
 const { get } = lodash
 
 import logger from '../logging/logger.ts'
 
+/** Options for MongoDB-backed curation store */
+export interface MongoCurationStoreOptions {
+  /** MongoDB connection string */
+  connectionString: string
+  /** Database name */
+  dbName: string
+  /** Collection name */
+  collectionName: string
+}
+
+// TODO: implements ICurationStore once return types are aligned
 class MongoCurationStore {
-  /** @param {MongoCurationStoreOptions} options */
-  constructor(options) {
+  declare logger: Logger
+  declare options: MongoCurationStoreOptions
+  declare client: MongoClientType
+  declare db: Db
+  declare collection: Collection<{ _id: string | number; [key: string]: unknown }>
+
+  constructor(options: MongoCurationStoreOptions) {
     this.logger = logger()
     this.options = options
-    /** @type {MongoClientType} */
-    this.client = /** @type {*} */ (undefined)
-    /** @type {Db} */
-    this.db = /** @type {*} */ (undefined)
-    /** @type {CurationCollection} */
-    this.collection = /** @type {*} */ (undefined)
   }
 
   initialize() {
@@ -44,8 +50,8 @@ class MongoCurationStore {
         })
         this.db = this.client.db(this.options.dbName)
         this.collection = this.db.collection(this.options.collectionName)
-      } catch (/** @type {*} */ error) {
-        this.logger.info(`retrying mongo connection: ${error.message}`)
+      } catch (error: unknown) {
+        this.logger.info(`retrying mongo connection: ${(error as Error).message}`)
         retry(error)
       }
     })
@@ -54,10 +60,8 @@ class MongoCurationStore {
   /**
    * Store the given set of curations overwriting any previous content. This effectively replicates the
    * content of the files in the GitHub curation repo.
-   * @param {Curation[]} curations
-   * @returns {Promise<null>}
    */
-  async updateCurations(curations) {
+  async updateCurations(curations: Curation[]): Promise<null> {
     await Promise.all(
       curations.map(
         throat(10, async curation => {
@@ -73,10 +77,10 @@ class MongoCurationStore {
 
   /**
    * Retrieve the contribution by number
-   * @param {Number} prNumber - the PR number as provided by GitHub
+   * @param prNumber - the PR number as provided by GitHub
    * @returns the Curations found if any
    */
-  getContribution(prNumber) {
+  getContribution(prNumber: number) {
     return this.collection.findOne({ _id: prNumber })
   }
 
@@ -84,10 +88,10 @@ class MongoCurationStore {
    * Update the contribution entry for the given PR and record the associated curations -- the
    * actual file content in the PR. If the curations are not provided, just the PR data is updated,
    * any existing curation data is preserved.
-   * @param {ContributionPR} pr - the PR object as provided by GitHub
-   * @param {Curation[] | null} [curations] - The set of actual proposed changes.
+   * @param pr - the PR object as provided by GitHub
+   * @param curations - The set of actual proposed changes.
    */
-  updateContribution(pr, curations = null) {
+  updateContribution(pr: ContributionPR, curations: Curation[] | null = null) {
     if (!curations?.some(curation => get(curation, 'data.coordinates') && get(curation, 'data.revisions'))) {
       return this.collection.updateOne({ _id: pr.number }, { $set: { pr: pr } }, { upsert: true })
     }
@@ -111,11 +115,11 @@ class MongoCurationStore {
 
   /**
    * List all of the Curations and Contributions whose coordinates match the given partial coordinates.
-   * @param {EntityCoordinates} coordinates - partial coordinates to look for
+   * @param coordinates - partial coordinates to look for
    * @returns the Curations and Contributions found
    */
   // TODO need to do something about paging
-  async list(coordinates) {
+  async list(coordinates: EntityCoordinates) {
     if (!coordinates) {
       throw new Error('must specify coordinates to list')
     }
@@ -144,18 +148,15 @@ class MongoCurationStore {
     return { curations, contributions }
   }
 
-  /** @param {EntityCoordinatesSpec} coordinates */
-  _getCurationId(coordinates) {
+  _getCurationId(coordinates: EntityCoordinatesSpec) {
     if (!coordinates) {
       return ''
     }
     return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _buildContributionQuery(coordinates) {
-    /** @type {Record<string, string>} */
-    const result = {}
+  _buildContributionQuery(coordinates: EntityCoordinates) {
+    const result: Record<string, string> = {}
     if (coordinates.type) {
       result['files.coordinates.type'] = coordinates.type.toLowerCase()
     }
@@ -174,12 +175,8 @@ class MongoCurationStore {
     return result
   }
 
-  /**
-   * @param {CurationData[]} curations
-   * @returns {Record<string, CurationRevision>}
-   */
-  _formatCurations(curations) {
-    return curations.reduce((/** @type {Record<string, CurationRevision>} */ result, entry) => {
+  _formatCurations(curations: CurationData[]): Record<string, CurationRevision> {
+    return curations.reduce((result: Record<string, CurationRevision>, entry) => {
       for (const revision of Object.keys(entry.revisions)) {
         const coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
         result[coordinates] = entry.revisions[revision]
@@ -188,14 +185,12 @@ class MongoCurationStore {
     }, {})
   }
 
-  /** @param {EntityCoordinatesSpec} input */
-  _lowercaseCoordinates(input) {
+  _lowercaseCoordinates(input: EntityCoordinatesSpec) {
     return EntityCoordinates.fromString(EntityCoordinates.fromObject(input).toString().toLowerCase())
   }
-  /** @param {string} string */
-  _escapeRegex(string) {
+  _escapeRegex(string: string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
 }
 
-export default /** @param {MongoCurationStoreOptions} options */ options => new MongoCurationStore(options)
+export default (options: MongoCurationStoreOptions) => new MongoCurationStore(options)

@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('./mongoCurationStore').MongoCurationStoreOptions} MongoCurationStoreOptions */
-
 import config from 'painless-config'
-import storeFactory from './mongoCurationStore.js'
+import type { MongoCurationStoreOptions } from './mongoCurationStore.ts'
+import storeFactory from './mongoCurationStore.ts'
 
-/** @param {MongoCurationStoreOptions} [options] */
-function store(options) {
+function store(options?: MongoCurationStoreOptions) {
   const realOptions = options || {
     connectionString: config.get('CURATION_MONGO_CONNECTION_STRING'),
     dbName: config.get('CURATION_MONGO_DB_NAME') || 'clearlydefined',

@@ -1,48 +1,43 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('../../lib/curation')} Curation */
-/** @typedef {import('../../lib/curation').CurationData} CurationData */
-/** @typedef {import('.').ContributionPR} ContributionPR */
-/** @typedef {import('.').Contribution} Contribution */
-
+import type Curation from '../../lib/curation.ts'
+import type { CurationData } from '../../lib/curation.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
+import type { Contribution, ContributionPR } from './index.js'
 
+// TODO: implements ICurationStore once return types are aligned
 class MemoryStore {
-  /** @param {Record<string, unknown>} [options] */
-  constructor(options) {
+  declare logger: Logger
+  declare options: Record<string, unknown> | undefined
+  declare curations: Record<string, CurationData>
+  declare contributions: Record<number, Contribution>
+
+  constructor(options?: Record<string, unknown>) {
     this.logger = logger()
     this.options = options
-    /** @type {Record<string, CurationData>} */
     this.curations = {}
-    /** @type {Record<number, Contribution>} */
     this.contributions = {}
   }
 
   initialize() {}
 
-  /** @param {Curation[]} curations */
-  updateCurations(curations) {
+  updateCurations(curations: Curation[]) {
     for (const curation of curations) {
       const coordinates = EntityCoordinates.fromObject(curation.data.coordinates)
       this.curations[this._getCurationId(coordinates)] = curation.data
     }
   }
 
-  /** @param {number} prNumber */
-  getContribution(prNumber) {
+  getContribution(prNumber: number) {
     return this.contributions[prNumber]
   }
 
-  /**
-   * @param {ContributionPR} pr
-   * @param {Curation[] | null} [curations]
-   */
-  updateContribution(pr, curations = null) {
+  updateContribution(pr: ContributionPR, curations: Curation[] | null = null) {
     if (curations) {
-      /** @type {Record<string, CurationData>} */
-      const files = {}
+      const files: Record<string, CurationData> = {}
       for (const curation of curations) {
         files[curation.path] = curation.data
       }
@@ -50,12 +45,11 @@ class MemoryStore {
       return
     }
     const current = this.contributions[pr.number]
-    const files = current ? current.files : /** @type {Record<string, CurationData>} */ ({})
+    const files: Record<string, CurationData> = current ? (current.files as Record<string, CurationData>) : {}
     this.contributions[pr.number] = { pr, files }
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  list(coordinates) {
+  list(coordinates: EntityCoordinates) {
     if (!coordinates) {
       throw new Error('must specify coordinates to list')
     }
@@ -65,10 +59,8 @@ class MemoryStore {
       .map(key => this.curations[key])
   }
 
-  /** @param {EntityCoordinates[]} coordinatesList */
-  listAll(coordinatesList) {
-    /** @type {Record<string, CurationData[]>} */
-    const result = {}
+  listAll(coordinatesList: EntityCoordinates[]) {
+    const result: Record<string, CurationData[]> = {}
     for (const coordinates of coordinatesList) {
       const data = this.list(coordinates)
       if (!data) {
@@ -80,8 +72,7 @@ class MemoryStore {
     return result
   }
 
-  /** @param {EntityCoordinates} coordinates */
-  _getCurationId(coordinates) {
+  _getCurationId(coordinates: EntityCoordinates) {
     if (!coordinates) {
       return ''
     }
@@ -89,4 +80,4 @@ class MemoryStore {
   }
 }
 
-export default /** @param {Record<string, unknown>} [options] */ options => new MemoryStore(options)
+export default (options?: Record<string, unknown>) => new MemoryStore(options)
