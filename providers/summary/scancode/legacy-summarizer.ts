@@ -170,7 +170,9 @@ export class ScanCodeLegacySummarizer {
         if (file.licenses) {
           for (const license of file.licenses) {
             const expr = this._createExpressionFromLicense(license)
-            if (expr) licenses.add(expr)
+            if (expr) {
+              licenses.add(expr)
+            }
           }
         }
         return licenses
@@ -186,7 +188,9 @@ export class ScanCodeLegacySummarizer {
           for (const license of file.licenses) {
             if (license.score && license.score >= 90) {
               const expr = this._createExpressionFromLicense(license)
-              if (expr) licenses.add(expr)
+              if (expr) {
+                licenses.add(expr)
+              }
             }
           }
         }
@@ -223,7 +227,9 @@ export class ScanCodeLegacySummarizer {
         const result: FileEntry = { path: file.path }
         const asserted = get(file, 'packages[0].asserted_licenses') as ScanCodeLicense[] | undefined
         const fileLicense = asserted || file.licenses || []
-        let licenses = new Set(fileLicense.map((x: ScanCodeLicense) => x.license).filter((x): x is string => typeof x === 'string'))
+        let licenses = new Set(
+          fileLicense.map((x: ScanCodeLicense) => x.license).filter((x): x is string => typeof x === 'string')
+        )
         if (!licenses.size) {
           licenses = new Set(
             fileLicense
