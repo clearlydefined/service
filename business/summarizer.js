@@ -7,7 +7,7 @@
  * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
  */
 
-import summarizers from '../providers/summary/index.js'
+import summarizers from '../providers/summary/index.ts'
 
 /**
  * Service for summarizing tool output data.

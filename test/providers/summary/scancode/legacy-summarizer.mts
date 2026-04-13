@@ -10,7 +10,7 @@ import lodash from 'lodash'
 const { get, uniq, flatten } = lodash
 
 import { expect } from 'chai'
-import Summarizer from '../../../../providers/summary/scancode.js'
+import Summarizer from '../../../../providers/summary/scancode.ts'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const summarizer = (Summarizer as (...args: any[]) => any)({}, { info: () => {} })

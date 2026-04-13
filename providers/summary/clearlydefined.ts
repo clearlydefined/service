@@ -1,20 +1,10 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./index').SummarizerOptions} SummarizerOptions
- * @typedef {import('./clearlydefined').ClearlyDefinedHarvestedData} ClearlyDefinedHarvestedData
- * @typedef {import('./clearlydefined').SummaryResult} SummaryResult
- * @typedef {import('./clearlydefined').ComponentUrls} ComponentUrls
- * @typedef {import('./clearlydefined').DebianRegistryEntry} DebianRegistryEntry
- * @typedef {import('./clearlydefined').NpmManifest} NpmManifest
- * @typedef {import('./clearlydefined').ComposerManifest} ComposerManifest
- * @typedef {import('./clearlydefined').MavenLicenseInfo} MavenLicenseInfo
- * @typedef {import('../../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../../lib/utils').FileEntry} FileEntry
- */
-
 import lodash from 'lodash'
+import type EntityCoordinates from '../../lib/entityCoordinates.ts'
+import type { FileEntry, SourceLocationSpec } from '../../lib/utils.ts'
+import type { SummarizerOptions } from './index.ts'
 
 const { get, set, isArray, uniq, cloneDeep, flatten, find } = lodash
 
@@ -31,14 +21,174 @@ import {
   updateSourceLocation
 } from '../../lib/utils.ts'
 
-/** @type {Record<string, string>} */
-const mavenBasedUrls = {
+/** Registry entry for Debian packages */
+export interface DebianRegistryEntry {
+  Architecture?: string
+  Path: string
+  [key: string]: unknown
+}
+
+/** Registry data for Conda packages */
+export interface CondaRegistryData {
+  downloadUrl?: string
+  channelData?: {
+    home?: string
+    source_url?: string
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
+
+/** Registry data for NPM packages */
+export interface NpmRegistryData {
+  releaseDate?: string
+  manifest?: NpmManifest
+  [key: string]: unknown
+}
+
+/** NPM package manifest */
+export interface NpmManifest {
+  license?: string | string[] | { type: string } | { type: string[] }
+  licenses?: string | string[] | { type: string } | { type: string[] }
+  homepage?: string | string[]
+  bugs?: string | { url?: string; email?: string }
+  [key: string]: unknown
+}
+
+/** Registry data for Composer packages */
+export interface ComposerRegistryData {
+  releaseDate?: string
+  manifest?: ComposerManifest
+  [key: string]: unknown
+}
+
+/** Composer package manifest */
+export interface ComposerManifest {
+  license?: string | string[] | { type: string } | { type: string[] }
+  homepage?: string
+  version?: string
+  dist?: { url?: string }
+  [key: string]: unknown
+}
+
+/** Registry data for Crate packages */
+export interface CrateRegistryData {
+  created_at?: string
+  license?: string
+  [key: string]: unknown
+}
+
+/** Registry data for Gem packages */
+export interface GemRegistryData {
+  license?: string
+  licenses?: string[]
+  [key: string]: unknown
+}
+
+/** Registry data for Pod packages */
+export interface PodRegistryData {
+  homepage?: string
+  license?: string | { type: string }
+  source?: { http?: string; git?: string }
+  [key: string]: unknown
+}
+
+/** Registry data for PyPI packages */
+export interface PyPiRegistryData {
+  releases?: Record<string, { filename?: string; url?: string }[]>
+  [key: string]: unknown
+}
+
+/** Registry data for Go packages */
+export interface GoRegistryData {
+  licenses?: string[]
+  [key: string]: unknown
+}
+
+/** Maven license information */
+export interface MavenLicenseInfo {
+  name?: string
+  url?: string
+  license?: MavenLicenseInfo | MavenLicenseInfo[]
+  [key: string]: unknown
+}
+
+/** Maven manifest summary */
+export interface MavenManifestSummary {
+  licenses?: MavenLicenseInfo[]
+  project?: { licenses?: MavenLicenseInfo[] }
+  [key: string]: unknown
+}
+
+/** NuGet package manifest */
+export interface NuGetManifest {
+  licenseExpression?: string
+  licenseUrl?: string
+  packageEntries?: { fullName: string }[]
+  [key: string]: unknown
+}
+
+/** Harvested data structure for ClearlyDefined tool */
+export interface ClearlyDefinedHarvestedData {
+  facets?: Record<string, string[]>
+  sourceInfo?: SourceLocationSpec
+  summaryInfo?: {
+    hashes?: Record<string, string>
+    count?: number
+  }
+  files?: { path: string; hashes?: Record<string, string> }[]
+  attachments?: { path: string; token?: string }[]
+  interestingFiles?: { path: string; license?: string; natures?: string[] }[]
+  releaseDate?: string
+  registryData?:
+    | NpmRegistryData
+    | ComposerRegistryData
+    | CrateRegistryData
+    | GemRegistryData
+    | PodRegistryData
+    | PyPiRegistryData
+    | GoRegistryData
+    | DebianRegistryEntry[]
+  manifest?: NuGetManifest | { summary?: MavenManifestSummary; homepage?: string; licenseExpression?: string }
+  declaredLicenses?: string | string[]
+  [key: string]: unknown
+}
+
+/** URL information for download and registry */
+export interface ComponentUrls {
+  download: string
+  registry: string
+  version?: string
+}
+
+/** Result of summarization (partial Definition) */
+export interface SummaryResult {
+  described?: {
+    releaseDate?: string
+    projectWebsite?: string
+    issueTracker?: string
+    hashes?: Record<string, string>
+    files?: number
+    facets?: Record<string, string[]>
+    sourceLocation?: SourceLocationSpec
+    urls?: {
+      registry?: string
+      version?: string
+      download?: string
+    }
+  }
+  licensed?: {
+    declared?: string
+  }
+  files?: FileEntry[]
+}
+
+const mavenBasedUrls: Record<string, string> = {
   mavencentral: 'https://repo1.maven.org/maven2',
   gradleplugin: 'https://plugins.gradle.org/m2'
 }
 
-/** @type {Record<string, string>} */
-const condaChannels = {
+const condaChannels: Record<string, string> = {
   'anaconda-main': 'https://repo.anaconda.com/pkgs/main',
   'anaconda-r': 'https://repo.anaconda.com/pkgs/r',
   'conda-forge': 'https://conda.anaconda.org/conda-forge'
@@ -47,24 +197,15 @@ const condaChannels = {
 /**
  * ClearlyDefined summarizer class that processes harvested data from the ClearlyDefined tool.
  * Handles summarization for multiple package types including npm, maven, nuget, gem, etc.
- * @class
  */
-class ClearlyDescribedSummarizer {
-  /**
-   * Creates a new ClearlyDescribedSummarizer instance
-   * @param {SummarizerOptions} options - Configuration options for the summarizer
-   */
-  constructor(options) {
+export class ClearlyDescribedSummarizer {
+  declare options: SummarizerOptions
+
+  constructor(options: SummarizerOptions) {
     this.options = options
   }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * @param {EntityCoordinates} coordinates - The entity for which we are summarizing
-   * @param {ClearlyDefinedHarvestedData} data - The set of raw tool outputs related to the identified entity
-   * @returns {SummaryResult} A summary of the given raw information
-   */
-  summarize(coordinates, data) {
+  summarize(coordinates: EntityCoordinates, data: ClearlyDefinedHarvestedData): SummaryResult {
     const result = {}
     this.addFacetInfo(result, data)
     this.addSourceLocation(result, data)
@@ -124,31 +265,16 @@ class ClearlyDescribedSummarizer {
     return result
   }
 
-  /**
-   * Adds summary info (hashes and file count) to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   */
-  addSummaryInfo(result, data) {
+  addSummaryInfo(result: SummaryResult, data: ClearlyDefinedHarvestedData) {
     setIfValue(result, 'described.hashes', get(data, 'summaryInfo.hashes'))
     setIfValue(result, 'described.files', get(data, 'summaryInfo.count'))
   }
 
-  /**
-   * Adds facet information to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   */
-  addFacetInfo(result, data) {
+  addFacetInfo(result: SummaryResult, data: ClearlyDefinedHarvestedData) {
     setIfValue(result, 'described.facets', data.facets)
   }
 
-  /**
-   * Adds source location to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   */
-  addSourceLocation(result, data) {
+  addSourceLocation(result: SummaryResult, data: ClearlyDefinedHarvestedData) {
     if (!data.sourceInfo) {
       return
     }
@@ -158,12 +284,7 @@ class ClearlyDescribedSummarizer {
     set(result, 'described.sourceLocation', spec)
   }
 
-  /**
-   * Adds file information to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   */
-  addFiles(result, data) {
+  addFiles(result: SummaryResult, data: ClearlyDefinedHarvestedData) {
     if (!data.files) {
       return
     }
@@ -172,13 +293,7 @@ class ClearlyDescribedSummarizer {
     })
   }
 
-  /**
-   * Adds attached file information (tokens) to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addAttachedFiles(result, data, coordinates) {
+  addAttachedFiles(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     if (!data.attachments || !result.files) {
       return
     }
@@ -194,20 +309,13 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  /**
-   * Deprecated in favor of attachments from when licensee was a part of the CD tool
-   * TODO: remove when interestingFiles is no longer in harvested data
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addInterestingFiles(result, data, coordinates) {
+  addInterestingFiles(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     if (!data.interestingFiles) {
       return
     }
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
-    for (const /** @type {{ license?: string; path: string; natures?: string[] }} */ file of newFiles) {
+    for (const file of newFiles as { license?: string; path: string; natures?: string[] }[]) {
       file.license = SPDX.normalize(file.license)
       if (!file.license) {
         delete file.license
@@ -219,32 +327,19 @@ class ClearlyDescribedSummarizer {
     mergeDefinitions(result, newDefinition)
   }
 
-  /**
-   * Deprecated in favor of attachments from when licensee was a part of the CD tool
-   * TODO: remove when interestingFiles is no longer in harvested data
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addLicenseFromFiles(result, data, coordinates) {
+  addLicenseFromFiles(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     if (!data.interestingFiles) {
       return
     }
     const licenses = data.interestingFiles
-      .map(
-        /** @param {{ license?: string; path: string }} file */
-        file => (isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null)
+      .map((file: { license?: string; path: string }) =>
+        isDeclaredLicense(file.license) && isLicenseFile(file.path, coordinates) ? file.license : null
       )
-      .filter(/** @param {unknown} x */ x => x)
+      .filter((x: unknown) => x)
     setIfValue(result, 'licensed.declared', uniq(licenses).join(' AND '))
   }
 
-  /**
-   * Gets Maven registry and download URLs for the given coordinates
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @returns {ComponentUrls} Object containing download and registry URLs
-   */
-  getMavenUrls(coordinates) {
+  getMavenUrls(coordinates: EntityCoordinates): ComponentUrls {
     const urls = { download: '', registry: '' }
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
@@ -264,48 +359,28 @@ class ClearlyDescribedSummarizer {
     return urls
   }
 
-  /**
-   * Extracts declared license from Maven manifest data
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @returns {string[] | undefined} Array of license identifiers or undefined
-   */
-  getDeclaredLicenseMaven(data) {
-    const projectSummaryLicenses = /** @type {MavenLicenseInfo[] | undefined} */ (
-      get(data, 'manifest.summary.licenses') || get(data, 'manifest.summary.project.licenses')
-    ) // the project layer was removed in 1.2.0
+  getDeclaredLicenseMaven(data: ClearlyDefinedHarvestedData): string[] | undefined {
+    const projectSummaryLicenses = (get(data, 'manifest.summary.licenses') ||
+      get(data, 'manifest.summary.project.licenses')) as MavenLicenseInfo[] | undefined
     if (!projectSummaryLicenses) {
       return undefined
     }
-    const licenseSummaries = /** @type {MavenLicenseInfo[]} */ (
-      flatten(projectSummaryLicenses.map(/** @param {MavenLicenseInfo} x */ x => x.license)).filter(
-        /** @param {unknown} x */ x => x
-      )
-    )
+    const licenseSummaries = flatten(projectSummaryLicenses.map((x: MavenLicenseInfo) => x.license)).filter(
+      (x: unknown) => x
+    ) as MavenLicenseInfo[]
     const licenseUrls = uniq([
-      ...flatten(licenseSummaries.map(/** @param {MavenLicenseInfo} license */ license => license.url)),
-      ...flatten(projectSummaryLicenses.map(/** @param {MavenLicenseInfo} x */ x => x.url))
-    ]).filter(/** @param {unknown} x */ x => x)
-    const licenseNames = uniq(
-      flatten(licenseSummaries.map(/** @param {MavenLicenseInfo} license */ license => license.name))
-    )
-    let licenses = licenseUrls
-      .map(/** @param {string} url */ url => extractLicenseFromLicenseUrl(url))
-      .filter(/** @param {unknown} x */ x => x)
+      ...flatten(licenseSummaries.map((license: MavenLicenseInfo) => license.url)),
+      ...flatten(projectSummaryLicenses.map((x: MavenLicenseInfo) => x.url))
+    ]).filter((x: unknown) => x)
+    const licenseNames = uniq(flatten(licenseSummaries.map((license: MavenLicenseInfo) => license.name)))
+    let licenses = licenseUrls.map((url: string) => extractLicenseFromLicenseUrl(url)).filter((x: unknown) => x)
     if (!licenses.length) {
-      licenses = licenseNames
-        .map(/** @param {string} x */ x => SPDX.lookupByName(x) || x)
-        .filter(/** @param {unknown} x */ x => x)
+      licenses = licenseNames.map((x: string) => SPDX.lookupByName(x) || x).filter((x: unknown) => x)
     }
     return licenses
   }
 
-  /**
-   * Adds Maven data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addMavenData(result, data, coordinates) {
+  addMavenData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     const urls = this.getMavenUrls(coordinates)
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
@@ -318,13 +393,7 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  /**
-   * Adds Conda data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addCondaData(result, data, coordinates) {
+  addCondaData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'releaseDate')))
     setIfValue(result, 'described.urls.download', get(data, 'registryData.downloadUrl'))
     setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
@@ -335,13 +404,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', SPDX.normalize(condaLicense))
   }
 
-  /**
-   * Adds CondaSrc data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addCondaSrcData(result, data, coordinates) {
+  addCondaSrcData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'described.urls.download', get(data, 'registryData.channelData.source_url'))
     setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
@@ -352,20 +415,10 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', SPDX.normalize(condaSrcLicense))
   }
 
-  /**
-   * Adds Crate data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addCrateData(result, data, coordinates) {
-    setIfValue(
-      result,
-      'described.releaseDate',
-      extractDate(/** @type {string | undefined} */ (get(data, 'registryData.created_at')))
-    )
+  addCrateData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
+    setIfValue(result, 'described.releaseDate', extractDate(get(data, 'registryData.created_at') as string | undefined))
     setIfValue(result, 'described.projectWebsite', get(data, 'manifest.homepage'))
-    const license = /** @type {string | undefined} */ (get(data, 'registryData.license'))
+    const license = get(data, 'registryData.license') as string | undefined
     if (license) {
       setIfValue(result, 'licensed.declared', SPDX.normalize(license.split('/').join(' OR ')))
     }
@@ -378,13 +431,7 @@ class ClearlyDescribedSummarizer {
     )
   }
 
-  /**
-   * Adds Source Archive data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addSourceArchiveData(result, data, coordinates) {
+  addSourceArchiveData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
     setIfValue(
@@ -404,18 +451,10 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  /**
-   * Adds NuGet data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addNuGetData(result, data, coordinates) {
+  addNuGetData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const licenseExpression = SPDX.normalize(
-      /** @type {string | undefined} */ (get(data, 'manifest.licenseExpression'))
-    )
-    const licenseUrl = /** @type {string | undefined} */ (get(data, 'manifest.licenseUrl'))
+    const licenseExpression = SPDX.normalize(get(data, 'manifest.licenseExpression') as string | undefined)
+    const licenseUrl = get(data, 'manifest.licenseUrl') as string | undefined
     if (licenseExpression) {
       set(result, 'licensed.declared', licenseExpression)
     } else if (licenseUrl?.trim()) {
@@ -428,42 +467,25 @@ class ClearlyDescribedSummarizer {
       'described.urls.download',
       `https://nuget.org/api/v2/package/${coordinates.name}/${coordinates.revision}`
     )
-    const packageEntries = /** @type {{ fullName: string }[] | undefined} */ (get(data, 'manifest.packageEntries'))
+    const packageEntries = get(data, 'manifest.packageEntries') as { fullName: string }[] | undefined
     if (!packageEntries) {
       return
     }
     const newDefinition = cloneDeep(result)
-    newDefinition.files = packageEntries.map(
-      /** @param {{ fullName: string }} file */ file => {
-        return { path: file.fullName }
-      }
-    )
+    newDefinition.files = packageEntries.map((file: { fullName: string }) => {
+      return { path: file.fullName }
+    })
     mergeDefinitions(result, newDefinition, get(result, 'licensed.declared') === 'OTHER')
   }
 
-  /**
-   * Parses license expression from manifest, handling various formats
-   * @param {NpmManifest | ComposerManifest} manifest - The package manifest
-   * @param {string} packageType - The type of package ('npm', 'composer', etc.)
-   * @returns {string | null} Parsed license expression or null
-   */
-  parseLicenseExpression(manifest, packageType) {
-    /**
-     * @param {string | null} exp
-     * @param {unknown} license
-     * @returns {string | null}
-     */
-    const combineLicenses = (exp, license) => {
+  parseLicenseExpression(manifest: NpmManifest | ComposerManifest, packageType: string): string | null {
+    const combineLicenses = (exp: string | null, license: unknown): string | null => {
       if (exp) {
         return `${exp} ${packageType === 'npm' ? 'AND' : 'OR'} ${stringObjectArray(license)}`
       }
       return stringObjectArray(license)
     }
-    /**
-     * @param {unknown} value
-     * @returns {string | null}
-     */
-    const stringObjectArray = value => {
+    const stringObjectArray = (value: unknown): string | null => {
       if (!value) {
         return null
       }
@@ -471,33 +493,27 @@ class ClearlyDescribedSummarizer {
         return value
       }
       if (Array.isArray(value)) {
-        return value.reduce(combineLicenses, null)
+        return value.reduce(combineLicenses, null) as string | null
       }
-      if (typeof (/** @type {{ type?: unknown }} */ (value).type) === 'string') {
-        return /** @type {{ type: string }} */ (value).type
+      if (typeof (value as { type?: unknown }).type === 'string') {
+        return (value as { type: string }).type
       }
-      if (Array.isArray(/** @type {{ type?: unknown }} */ (value).type)) {
-        return /** @type {{ type: unknown[] }} */ (value).type.reduce(combineLicenses, null)
+      if (Array.isArray((value as { type?: unknown }).type)) {
+        return (value as { type: unknown[] }).type.reduce(combineLicenses, null) as string | null
       }
       return null
     }
     return (
       stringObjectArray(manifest.license) ||
-      (packageType === 'npm' && stringObjectArray(/** @type {NpmManifest} */ (manifest).licenses))
+      (packageType === 'npm' && stringObjectArray((manifest as NpmManifest).licenses))
     )
   }
 
-  /**
-   * Adds NPM data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addNpmData(result, data, coordinates) {
+  addNpmData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     if (!data.registryData) {
       return
     }
-    const registryData = /** @type {import('./clearlydefined').NpmRegistryData} */ (data.registryData)
+    const registryData = data.registryData as NpmRegistryData
     setIfValue(result, 'described.releaseDate', extractDate(registryData.releaseDate))
     setIfValue(
       result,
@@ -540,17 +556,11 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
-  /**
-   * Adds Composer data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addComposerData(result, data, coordinates) {
+  addComposerData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     if (!data.registryData) {
       return
     }
-    const registryData = /** @type {import('./clearlydefined').ComposerRegistryData} */ (data.registryData)
+    const registryData = data.registryData as ComposerRegistryData
     setIfValue(result, 'described.releaseDate', extractDate(registryData.releaseDate))
     setIfValue(
       result,
@@ -573,16 +583,10 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', SPDX.normalize(expression))
   }
 
-  /**
-   * Adds Pod data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addPodData(result, data, coordinates) {
+  addPodData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.homepage'))
-    const license = /** @type {string | { type?: string } | undefined} */ (get(data, 'registryData.license'))
+    const license = get(data, 'registryData.license') as string | { type?: string } | undefined
     if (license) {
       setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))
     }
@@ -602,19 +606,13 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  /**
-   * Adds Gem data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addGemData(result, data, coordinates) {
+  addGemData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const license = SPDX.normalize(/** @type {string | undefined} */ (get(data, 'registryData.license')))
+    const license = SPDX.normalize(get(data, 'registryData.license') as string | undefined)
     if (license) {
       set(result, 'licensed.declared', license)
     } else {
-      const gemLicenses = /** @type {string[] | undefined} */ (get(data, 'registryData.licenses')) || []
+      const gemLicenses = (get(data, 'registryData.licenses') as string[] | undefined) || []
       const licenses = SPDX.normalize(gemLicenses.join(' OR '))
       setIfValue(result, 'licensed.declared', licenses)
     }
@@ -631,22 +629,16 @@ class ClearlyDescribedSummarizer {
     )
   }
 
-  /**
-   * Adds PyPi data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addPyPiData(result, data, coordinates) {
+  addPyPiData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'licensed.declared', data['declaredLicense'])
     setIfValue(result, 'described.urls.registry', `https://pypi.org/project/${coordinates.name}`)
     setIfValue(result, 'described.urls.version', `${get(result, 'described.urls.registry')}/${coordinates.revision}`)
     // TODO: we are currently picking the first url that contains a tar.gz or zip extension
     // we should understand what's the correct process on a pypi definition that contains multiple object for the same release
-    const releases = /** @type {Record<string, { filename?: string; url?: string }[]> | undefined} */ (
-      get(data, 'registryData.releases')
-    )
+    const releases = get(data, 'registryData.releases') as
+      | Record<string, { filename?: string; url?: string }[]>
+      | undefined
     if (releases) {
       const revision = find(releases[coordinates.revision], revision =>
         revision.filename ? revision.filename.includes('tar.gz') || revision.filename.includes('zip') : false
@@ -657,12 +649,7 @@ class ClearlyDescribedSummarizer {
     }
   }
 
-  /**
-   * Gets Git registry, download, and version URLs for the given coordinates
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   * @returns {ComponentUrls} Object containing download, registry, and version URLs
-   */
-  getGitUrls(coordinates) {
+  getGitUrls(coordinates: EntityCoordinates): ComponentUrls {
     const urls = { download: '', registry: '', version: '' }
     const namespaceAsFolders = coordinates.namespace ? coordinates.namespace.replace(/\./g, '/') : coordinates.namespace
 
@@ -683,13 +670,7 @@ class ClearlyDescribedSummarizer {
     return urls
   }
 
-  /**
-   * Adds Git data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addGitData(result, data, coordinates) {
+  addGitData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     const urls = this.getGitUrls(coordinates)
 
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
@@ -698,18 +679,12 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.download', urls.download)
   }
 
-  /**
-   * Adds Debian data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addDebData(result, data, coordinates) {
+  addDebData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     if (!data.registryData) {
       return
     }
-    const registryData = /** @type {DebianRegistryEntry[]} */ (data.registryData)
+    const registryData = data.registryData as DebianRegistryEntry[]
     const registryUrl = this.getDebianRegistryUrl(registryData)
     if (registryUrl) {
       set(result, 'described.urls.registry', registryUrl)
@@ -720,25 +695,19 @@ class ClearlyDescribedSummarizer {
     }
     const architecture = coordinates.revision.split('_')[1]
     const downloadUrl = new URL(
-      `http://ftp.debian.org/debian/${registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Architecture === architecture).Path}`
+      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Architecture === architecture).Path}`
     ).href
     setIfValue(result, 'described.urls.download', downloadUrl)
     const license = uniq(data.declaredLicenses || []).join(' AND ')
     setIfValue(result, 'licensed.declared', SPDX.normalize(license))
   }
 
-  /**
-   * Adds Debian source data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addDebSrcData(result, data, coordinates) {
+  addDebSrcData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     if (!data.registryData) {
       return
     }
-    const registryData = /** @type {DebianRegistryEntry[]} */ (data.registryData)
+    const registryData = data.registryData as DebianRegistryEntry[]
     const registryUrl = this.getDebianRegistryUrl(registryData)
     if (registryUrl) {
       set(result, 'described.urls.registry', registryUrl)
@@ -746,7 +715,7 @@ class ClearlyDescribedSummarizer {
       result.described.sourceLocation = { ...coordinates, url: registryUrl }
     }
     const downloadUrl = new URL(
-      `http://ftp.debian.org/debian/${registryData.find(/** @param {DebianRegistryEntry} entry */ entry => entry.Path.includes('.orig.tar.')).Path}`
+      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Path.includes('.orig.tar.')).Path}`
     ).href
     // There is also patches URL which is related to sources but it's not part of the schema
     setIfValue(result, 'described.urls.download', downloadUrl)
@@ -754,12 +723,7 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'licensed.declared', SPDX.normalize(license))
   }
 
-  /**
-   * Gets the Debian registry URL from registry data
-   * @param {DebianRegistryEntry[]} registryData - The registry data entries
-   * @returns {string | null} Registry URL or null
-   */
-  getDebianRegistryUrl(registryData) {
+  getDebianRegistryUrl(registryData: DebianRegistryEntry[]): string | null {
     const registryPath = registryData[0].Path
     if (registryPath) {
       // Example: ./pool/main/0/0ad/0ad_0.0.17-1.debian.tar.xz -> http://ftp.debian.org/debian/pool/main/0/0ad
@@ -769,13 +733,7 @@ class ClearlyDescribedSummarizer {
     return null
   }
 
-  /**
-   * Adds Go data to the result
-   * @param {SummaryResult} result - The result object to modify
-   * @param {ClearlyDefinedHarvestedData} data - The harvested data
-   * @param {EntityCoordinates} coordinates - The entity coordinates
-   */
-  addGoData(result, data, coordinates) {
+  addGoData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     const urls = { download: '', registry: '', version: '' }
 
     const namespaceAsFolders = coordinates.namespace ? deCodeSlashes(coordinates.namespace) : coordinates.namespace
@@ -790,20 +748,13 @@ class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.urls.registry', urls.registry)
     setIfValue(result, 'described.urls.version', urls.version)
     setIfValue(result, 'described.urls.download', urls.download)
-    const licenses = /** @type {string[]} */ (get(data, 'registryData.licenses')) || []
+    const licenses = (get(data, 'registryData.licenses') as string[]) || []
     // Based on the https://pkg.go.dev/license-policy and github.com/google/licensecheck,
     // ',' means use AND logic.
     const andClause = ' AND '
-    const declaredLicense = licenses
-      .map(/** @param {string} license */ license => license.replace(/, /g, andClause))
-      .join(andClause)
+    const declaredLicense = licenses.map((license: string) => license.replace(/, /g, andClause)).join(andClause)
     setIfValue(result, 'licensed.declared', SPDX.normalize(declaredLicense))
   }
 }
 
-/**
- * Factory function that creates a ClearlyDescribedSummarizer instance
- * @param {SummarizerOptions} [options] - Configuration options for the summarizer
- * @returns {ClearlyDescribedSummarizer} A new ClearlyDescribedSummarizer instance
- */
-export default options => new ClearlyDescribedSummarizer(options)
+export default (options?: SummarizerOptions) => new ClearlyDescribedSummarizer(options)

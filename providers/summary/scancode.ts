@@ -1,10 +1,18 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import lodash from 'lodash'
 import type EntityCoordinates from '../../lib/entityCoordinates.ts'
 import type { FileEntry } from '../../lib/utils.ts'
 import type { Logger } from '../logging/index.js'
-import type { SummarizerOptions } from './index.js'
+import type { SummarizerOptions } from './index.ts'
+
+const { get } = lodash
+
+import { gte } from 'semver'
+import LoggerFactory from '../logging/logger.ts'
+import ScanCodeLegacySummarizer from './scancode/legacy-summarizer.ts'
+import ScanCodeNewSummarizer from './scancode/new-summarizer.ts'
 
 /** ScanCode file license information */
 export interface ScanCodeLicense {
@@ -114,41 +122,28 @@ export interface ScanCodeSummaryResult {
  * ScanCode delegator class that routes summarization to the appropriate
  * version-specific summarizer based on the ScanCode version.
  */
-export declare class ScanCodeSummarizer {
-  /** Options passed to the summarizer */
-  options: SummarizerOptions
+export class ScanCodeSummarizer {
+  declare options: SummarizerOptions
+  declare logger: Logger
 
-  /** Logger instance */
-  logger: Logger
+  constructor(options: SummarizerOptions, logger: Logger = LoggerFactory()) {
+    this.options = options
+    this.logger = logger
+  }
 
-  /**
-   * Creates a new ScanCodeDelegator instance
-   *
-   * @param options - Configuration options for the summarizer
-   * @param logger - Logger instance for logging
-   */
-  constructor(options: SummarizerOptions, logger?: Logger)
+  summarize(coordinates: EntityCoordinates, harvested: ScanCodeHarvestedData): ScanCodeSummaryResult {
+    const scancodeVersion = (get(harvested, 'content.headers[0].tool_version') ||
+      get(harvested, 'content.scancode_version')) as string | undefined
+    if (!scancodeVersion) {
+      throw new Error('Not valid ScanCode data')
+    }
 
-  /**
-   * Summarize the raw information related to the given coordinates.
-   * Routes to the appropriate version-specific summarizer based on the
-   * ScanCode version detected in the harvested data.
-   *
-   * @param coordinates - The entity for which we are summarizing
-   * @param harvested - The set of raw tool outputs related to the identified entity
-   * @returns A summary of the given raw information
-   * @throws Error if the ScanCode version is invalid or data is not valid
-   */
-  summarize(coordinates: EntityCoordinates, harvested: ScanCodeHarvestedData): ScanCodeSummaryResult
+    if (gte(scancodeVersion, '32.1.0')) {
+      return ScanCodeNewSummarizer(this.options, this.logger).summarize(scancodeVersion, coordinates, harvested)
+    }
+
+    return ScanCodeLegacySummarizer(this.options, this.logger).summarize(scancodeVersion, coordinates, harvested)
+  }
 }
 
-/**
- * Factory function that creates a ScanCodeDelegator instance
- *
- * @param options - Configuration options for the summarizer
- * @param logger - Optional logger instance
- * @returns A new ScanCodeDelegator instance
- */
-declare function scancodeSummarizerFactory(options?: SummarizerOptions, logger?: Logger): ScanCodeSummarizer
-
-export default scancodeSummarizerFactory
+export default (options?: SummarizerOptions, logger?: Logger) => new ScanCodeSummarizer(options, logger)

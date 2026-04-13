@@ -1,12 +1,18 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { CdSourceSummarizer } from './cdsource.js'
-import type { Summarizer } from './clearlydefined.js'
-import type { FOSSologySummarizer } from './fossology.js'
-import type { LicenseeSummarizer } from './licensee.js'
-import type { ReuseSummarizer } from './reuse.js'
-import type { ScanCodeSummarizer } from './scancode.js'
+import type { CdSourceSummarizer } from './cdsource.ts'
+import cdsource from './cdsource.ts'
+import type { ClearlyDescribedSummarizer } from './clearlydefined.ts'
+import clearlydefined from './clearlydefined.ts'
+import type { FOSSologySummarizer } from './fossology.ts'
+import fossology from './fossology.ts'
+import type { LicenseeSummarizer } from './licensee.ts'
+import licensee from './licensee.ts'
+import type { ReuseSummarizer } from './reuse.ts'
+import reuse from './reuse.ts'
+import type { ScanCodeSummarizer } from './scancode.ts'
+import scancode from './scancode.ts'
 
 /** Base interface for all summarizers */
 export interface BaseSummarizer {
@@ -27,11 +33,18 @@ export interface SummaryProviders {
   licensee: SummarizerFactory<LicenseeSummarizer>
   scancode: SummarizerFactory<ScanCodeSummarizer>
   fossology: SummarizerFactory<FOSSologySummarizer>
-  clearlydefined: SummarizerFactory<Summarizer>
+  clearlydefined: SummarizerFactory<ClearlyDescribedSummarizer>
   cdsource: SummarizerFactory<CdSourceSummarizer>
   [key: string]: SummarizerFactory | undefined
 }
 
-declare const summaryProviders: SummaryProviders
+const summaryProviders: SummaryProviders = {
+  reuse,
+  licensee,
+  scancode,
+  fossology,
+  clearlydefined,
+  cdsource
+}
 
 export default summaryProviders

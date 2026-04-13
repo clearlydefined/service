@@ -5,7 +5,7 @@ import assert from 'node:assert'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import Summarizer from '../../../providers/summary/fossology.js'
+import Summarizer from '../../../providers/summary/fossology.ts'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const summarizer = (Summarizer as (...args: any[]) => any)()
