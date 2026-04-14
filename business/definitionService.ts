@@ -1,30 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('@clearlydefined/spdx').SpdxExpression} SpdxExpression
- */
-
-/**
- * @typedef {import('./definitionService')} DefinitionServiceModule
- * @typedef {import('./definitionService').Definition} Definition
- * @typedef {import('./definitionService').DefinitionFile} DefinitionFile
- * @typedef {import('./definitionService').DefinitionFindQuery} DefinitionFindQuery
- * @typedef {import('./definitionService').DefinitionFindResult} DefinitionFindResult
- * @typedef {import('./definitionService').HarvestStore} HarvestStore
- * @typedef {import('./definitionService').HarvestService} HarvestService
- * @typedef {import('./definitionService').SummaryService} SummaryService
- * @typedef {import('./definitionService').AggregationService} AggregationService
- * @typedef {import('./definitionService').CurationService} CurationService
- * @typedef {import('./definitionService').DefinitionStore} DefinitionStore
- * @typedef {import('./definitionService').SearchService} SearchService
- * @typedef {import('./definitionService').RecomputeHandler} RecomputeHandler
- * @typedef {import('./definitionService').DescribedScore} DescribedScore
- * @typedef {import('./definitionService').LicensedScore} LicensedScore
- * @typedef {import('./definitionService').FacetInfo} FacetInfo
- * @typedef {import('../providers/caching').ICache} ICache
- * @typedef {import('../providers/logging').Logger} Logger
- */
+import type { SpdxExpression } from '@clearlydefined/spdx'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 import lodash from 'lodash'
 import throat from 'throat'
@@ -47,7 +26,6 @@ const {
 import SPDX from '@clearlydefined/spdx'
 import extend from 'extend'
 import { minimatch } from 'minimatch'
-/** @type {(expression: string) => any} */
 import parse from 'spdx-expression-parse'
 import EntityCoordinates from '../lib/entityCoordinates.ts'
 import {
@@ -62,6 +40,194 @@ import {
 import memoryCache from '../providers/caching/memory.ts'
 import logger from '../providers/logging/logger.ts'
 import validator from '../schemas/validator.ts'
+
+/** Score breakdown for the described dimension */
+export interface DescribedScore {
+  total: number
+  date: number
+  source: number
+}
+
+/** Score breakdown for the licensed dimension */
+export interface LicensedScore {
+  total: number
+  declared: number
+  discovered: number
+  consistency: number
+  spdx: number
+  texts: number
+}
+
+/** Combined scores for a definition */
+export interface DefinitionScores {
+  effective: number
+  tool: number
+}
+
+/** Source location information */
+export interface SourceLocation {
+  type?: string
+  provider?: string
+  namespace?: string
+  name?: string
+  revision?: string
+  url?: string
+}
+
+/** Described section of a definition */
+export interface DefinitionDescribed {
+  releaseDate?: string
+  sourceLocation?: SourceLocation
+  tools?: string[]
+  toolScore?: DescribedScore
+  score?: DescribedScore
+  projectWebsite?: string
+  facets?: Record<string, string[]>
+}
+
+/** Attribution information for a facet */
+export interface FacetAttribution {
+  unknown: number
+  parties?: string[]
+}
+
+/** Discovered license information for a facet */
+export interface FacetDiscovered {
+  unknown: number
+  expressions?: string[]
+}
+
+/** Facet summary information */
+export interface FacetInfo {
+  attribution: FacetAttribution
+  discovered: FacetDiscovered
+  files: number
+}
+
+/** Licensed section of a definition */
+export interface DefinitionLicensed {
+  declared?: string
+  toolScore?: LicensedScore
+  score?: LicensedScore
+  facets?: Record<string, FacetInfo>
+}
+
+/** File entry in a definition */
+export interface DefinitionFile {
+  path: string
+  license?: string
+  attributions?: string[]
+  hashes?: Record<string, string>
+  token?: string
+  natures?: string[]
+  facets?: string[]
+}
+
+/** Metadata section of a definition */
+export interface DefinitionMeta {
+  schemaVersion: string
+  updated: string
+}
+
+/** Complete definition object */
+export interface Definition {
+  coordinates: EntityCoordinates
+  described?: DefinitionDescribed
+  licensed?: DefinitionLicensed
+  files?: DefinitionFile[]
+  scores?: DefinitionScores
+  _meta?: DefinitionMeta
+}
+
+/** Query parameters for finding definitions */
+export interface DefinitionFindQuery {
+  type?: string
+  provider?: string
+  namespace?: string
+  name?: string
+  license?: string
+  releasedAfter?: string
+  releasedBefore?: string
+  minLicensedScore?: number
+  maxLicensedScore?: number
+  minDescribedScore?: number
+  maxDescribedScore?: number
+  continuationToken?: string
+}
+
+/** Result of a find operation */
+export interface DefinitionFindResult {
+  data: Definition[]
+  continuationToken?: string
+}
+
+/** Harvest store interface */
+export interface HarvestStore {
+  list(coordinates: EntityCoordinates): Promise<string[]>
+  getAllLatest(coordinates: EntityCoordinates): Promise<Record<string, Record<string, any>>>
+}
+
+/** Harvest service interface */
+export interface HarvestService {
+  harvest(request: { tool: string; coordinates: EntityCoordinates }, rebuild?: boolean): Promise<void>
+  done(coordinates: EntityCoordinates): Promise<void>
+}
+
+/** Summary service interface */
+export interface SummaryService {
+  summarizeAll(
+    coordinates: EntityCoordinates,
+    data: Record<string, Record<string, any>>
+  ): Record<string, Record<string, any>>
+}
+
+/** Aggregation service interface */
+export interface AggregationService {
+  process(summarized: Record<string, Record<string, any>>, coordinates: EntityCoordinates): Partial<Definition> | null
+}
+
+/** Curation service interface */
+export interface CurationService {
+  get(coordinates: EntityCoordinates, pr: number | string): Promise<any>
+  list(coordinates: EntityCoordinates): Promise<EntityCoordinates[]>
+  apply(coordinates: EntityCoordinates, curationSpec: any, definition: Partial<Definition>): Promise<Definition>
+  autoCurate(definition: Definition): Promise<void>
+}
+
+/** Definition store interface */
+export interface DefinitionStore {
+  initialize(): Promise<void>
+  get(coordinates: EntityCoordinates): Promise<Definition | null>
+  store(definition: Definition): Promise<void>
+  delete(coordinates: EntityCoordinates): Promise<void>
+  list(coordinates: EntityCoordinates): Promise<string[]>
+  find(query: DefinitionFindQuery, continuationToken?: string): Promise<DefinitionFindResult>
+}
+
+/** Search service interface */
+export interface SearchService {
+  suggestCoordinates(pattern: string): Promise<string[]>
+  store?(definition: Definition): Promise<void>
+}
+
+/** Upgrade handler interface */
+export interface UpgradeHandler {
+  currentSchema?: string
+  validate(definition: Definition | null): Promise<Definition | null | undefined>
+}
+
+/** Minimal DefinitionService shape required by recompute compute policies */
+export type RecomputeContext = Pick<
+  DefinitionService,
+  'currentSchema' | 'computeStoreAndCurate' | 'buildEmptyDefinition'
+>
+
+/** Unified recompute handler interface (upgrade + non-force compute fallback) */
+export interface RecomputeHandler extends UpgradeHandler {
+  initialize(): Promise<void> | void
+  setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
+  compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition | undefined>
+}
 
 const computeLock = memoryCache({
   defaultTtlSeconds: 60 * 5 /* 5 mins */
@@ -86,19 +252,28 @@ const weights = {
  * Handles computation, caching, storage, and retrieval of definitions.
  */
 class DefinitionService {
-  /**
-   * Creates a new DefinitionService instance
-   * @param {HarvestStore} harvestStore - Store for harvest data
-   * @param {HarvestService} harvestService - Service for triggering harvests
-   * @param {SummaryService} summary - Service for summarizing tool output
-   * @param {AggregationService} aggregator - Service for aggregating summaries
-   * @param {CurationService} curation - Service for managing curations
-   * @param {DefinitionStore} store - Store for definitions
-   * @param {SearchService} search - Service for searching definitions
-   * @param {ICache} cache - Cache for definitions
-   * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
-   */
-  constructor(harvestStore, harvestService, summary, aggregator, curation, store, search, cache, recomputeHandler) {
+  harvestStore: HarvestStore
+  harvestService: HarvestService
+  summaryService: SummaryService
+  aggregationService: AggregationService
+  curationService: CurationService
+  definitionStore: DefinitionStore
+  search: SearchService
+  cache: ICache
+  recomputeHandler: RecomputeHandler
+  logger: Logger
+
+  constructor(
+    harvestStore: HarvestStore,
+    harvestService: HarvestService,
+    summary: SummaryService,
+    aggregator: AggregationService,
+    curation: CurationService,
+    store: DefinitionStore,
+    search: SearchService,
+    cache: ICache,
+    recomputeHandler: RecomputeHandler
+  ) {
     this.harvestStore = harvestStore
     this.harvestService = harvestService
     this.summaryService = summary
@@ -121,14 +296,13 @@ class DefinitionService {
   /**
    * Get the final representation of the specified definition and optionally apply the indicated
    * curation.
-   *
-   * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation
-   * @param {number | string | null} [pr] - A PR number (string or number) for a proposed curation
-   * @param {boolean} [force] - whether or not to force re-computation of the requested definition
-   * @param {string | null} [expand] - hints for parts to include/exclude; e.g. "-files"
-   * @returns {Promise<Definition | undefined>} The fully rendered definition
    */
-  async get(coordinates, pr = null, force = false, expand = null) {
+  async get(
+    coordinates: EntityCoordinates,
+    pr: number | string | null = null,
+    force: boolean = false,
+    expand: string | null = null
+  ): Promise<Definition | undefined> {
     if (!validator.validate('coordinates-1.0', coordinates)) {
       return undefined
     }
@@ -151,12 +325,8 @@ class DefinitionService {
     return this._trimDefinition(this._cast(result), expand)
   }
 
-  /**
-   * Get directly from cache or store without any side effect, like compute
-   * @param {EntityCoordinates} coordinates - The coordinates to look up
-   * @returns {Promise<Definition | null>} The definition in store.
-   */
-  async getStored(coordinates) {
+  /** Get directly from cache or store without any side effect, like compute */
+  async getStored(coordinates: EntityCoordinates): Promise<Definition | null> {
     const cacheKey = this._getCacheKey(coordinates)
     this.logger.debug('1:Redis:start', {
       ts: new Date().toISOString(),
@@ -177,13 +347,7 @@ class DefinitionService {
     return stored
   }
 
-  /**
-   * Log the status of a definition
-   * @param {Definition} definition - The definition to check
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @private
-   */
-  _logDefinitionStatus(definition, coordinates) {
+  _logDefinitionStatus(definition: Definition, coordinates: EntityCoordinates): void {
     if (this._isEmpty(definition)) {
       this.logger.debug('definition harvest in progress', {
         coordinates: coordinates.toString()
@@ -196,27 +360,14 @@ class DefinitionService {
     }
   }
 
-  /**
-   * Get from cache if not forcing refresh
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {boolean} force - Whether to force refresh
-   * @returns {Promise<Definition | null>}
-   * @private
-   */
-  async _cacheExistingAside(coordinates, force) {
+  async _cacheExistingAside(coordinates: EntityCoordinates, force: boolean): Promise<Definition | null> {
     if (force) {
       return null
     }
     return await this.getStored(coordinates)
   }
 
-  /**
-   * Store a definition in cache if it's not too large
-   * @param {string} cacheKey - The cache key
-   * @param {Definition} itemToStore - The definition to cache
-   * @private
-   */
-  async _setDefinitionInCache(cacheKey, itemToStore) {
+  async _setDefinitionInCache(cacheKey: string, itemToStore: Definition): Promise<void> {
     // 1000 is a magic number here -- we don't want to cache very large definitions, as it can impact redis ops
     if (itemToStore.files && itemToStore.files.length > 1000) {
       this.logger.debug('Skipping caching for key', {
@@ -231,27 +382,14 @@ class DefinitionService {
     await this.cache.set(cacheKey, itemToStore, 60 * 60 * 24 * 2)
   }
 
-  /**
-   * Trim definition based on expand parameter
-   * @param {Definition} definition - The definition
-   * @param {string | null} expand - Expand hints
-   * @returns {Definition} The trimmed definition
-   * @private
-   */
-  _trimDefinition(definition, expand) {
+  _trimDefinition(definition: Definition, expand: string | null): any {
     if (expand === '-files') {
       return omit(definition, 'files')
     }
     return definition
   }
 
-  /**
-   * Ensure the definition is a properly classed object
-   * @param {Definition} definition - The definition to cast
-   * @returns {Definition} The cast definition
-   * @private
-   */
-  _cast(definition) {
+  _cast(definition: Definition): Definition {
     definition.coordinates = EntityCoordinates.fromObject(definition.coordinates)
     return definition
   }
@@ -259,17 +397,15 @@ class DefinitionService {
   /**
    * Get all of the definition entries available for the given coordinates. The coordinates must be
    * specified down to the revision. The result will have an entry per discovered definition.
-   *
-   * @param {EntityCoordinates[]} coordinatesList - an array of coordinate paths to list
-   * @param {boolean} [force] - whether or not to force re-computation of the requested definitions
-   * @param {string | null} [expand] - hints for parts to include/exclude
-   * @returns {Promise<Record<string, Definition>>} A map of coordinates to definitions
    */
-  async getAll(coordinatesList, force = false, expand = null) {
-    /** @type {Record<string, Definition>} */
-    const result = {}
+  async getAll(
+    coordinatesList: EntityCoordinates[],
+    force: boolean = false,
+    expand: string | null = null
+  ): Promise<Record<string, Definition>> {
+    const result: Record<string, Definition> = {}
     const promises = coordinatesList.map(
-      throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
+      throat(10, async (coordinates: EntityCoordinates) => {
         this.logger.debug(`1:1:notice_generate:get_single_start:${coordinates}`, { ts: new Date().toISOString() })
         const definition = await this.get(coordinates, null, force, expand)
         this.logger.debug(`1:1:notice_generate:get_single_end:${coordinates}`, {
@@ -286,13 +422,8 @@ class DefinitionService {
     return result
   }
 
-  /**
-   * Get a list of coordinates for all known definitions that match the given coordinates
-   * @param {EntityCoordinates} coordinates - the coordinates to query
-   * @param {boolean} [recompute] - whether to recompute from harvest/curation stores
-   * @returns {Promise<string[]>} the list of all coordinates for all discovered definitions
-   */
-  async list(coordinates, recompute = false) {
+  /** Get a list of coordinates for all known definitions that match the given coordinates */
+  async list(coordinates: EntityCoordinates, recompute: boolean = false): Promise<string[]> {
     if (!recompute) {
       return this.definitionStore.list(coordinates)
     }
@@ -302,23 +433,19 @@ class DefinitionService {
     return sortedUniq([...harvest, ...curated])
   }
 
-  /**
-   * Get a list of all the definitions that exist in the store matching the given coordinates
-   * @param {EntityCoordinates[]} coordinatesList - Array of coordinates to check
-   * @returns {Promise<EntityCoordinates[]>} A list of all components that have definitions that are available
-   */
-  async listAll(coordinatesList) {
+  /** Get a list of all the definitions that exist in the store matching the given coordinates */
+  async listAll(coordinatesList: EntityCoordinates[]): Promise<EntityCoordinates[]> {
     //Take the array of coordinates, strip out the revision and only return uniques
     const searchCoordinates = uniqWith(
       coordinatesList.map(coordinates => coordinates.asRevisionless()),
       isEqual
     )
     const promises = searchCoordinates.map(
-      throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
+      throat(10, async (coordinates: EntityCoordinates) => {
         try {
           return await this.list(coordinates)
         } catch (error) {
-          const err = /** @type {Error} */ (error)
+          const err = error as Error
           this.logger.error('failed to list definitions', {
             error: err.message
           })
@@ -335,27 +462,20 @@ class DefinitionService {
     )
   }
 
-  /**
-   * Get the definitions that exist in the store matching the given query
-   * @param {DefinitionFindQuery} query - Query parameters
-   * @returns {Promise<DefinitionFindResult>} The data and continuationToken if there is more results
-   */
-  find(query) {
+  /** Get the definitions that exist in the store matching the given query */
+  find(query: DefinitionFindQuery): Promise<DefinitionFindResult> {
     return this.definitionStore.find(query, query.continuationToken)
   }
 
   /**
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
-   *
-   * @param {EntityCoordinates | EntityCoordinates[]} coordinates - individual or array of coordinates to invalidate
-   * @returns {Promise<void[]>}
    */
-  invalidate(coordinates) {
+  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<undefined[]> {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
     return Promise.all(
       coordinateList.map(
-        throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
+        throat(10, async (coordinates: EntityCoordinates) => {
           await this.definitionStore.delete(coordinates)
           await this.cache.delete(this._getCacheKey(coordinates))
         })
@@ -363,24 +483,14 @@ class DefinitionService {
     )
   }
 
-  /**
-   * Validate a definition against the schema
-   * @param {Definition} definition - The definition to validate
-   * @throws {Error} If validation fails
-   * @private
-   */
-  _validate(definition) {
+  _validate(definition: Definition): void {
     if (!validator.validate('definition', definition)) {
       throw new Error(validator.errorsText())
     }
   }
 
-  /**
-   * Compute and store a definition, then trigger auto-curation
-   * @param {EntityCoordinates} coordinates - The coordinates to compute
-   * @returns {Promise<Definition>} The computed definition
-   */
-  async computeStoreAndCurate(coordinates) {
+  /** Compute and store a definition, then trigger auto-curation */
+  async computeStoreAndCurate(coordinates: EntityCoordinates): Promise<Definition> {
     return this._withComputeLock(coordinates, async () => {
       const definition = await this._computeAndStore(coordinates)
       await this.curationService.autoCurate(definition)
@@ -390,12 +500,12 @@ class DefinitionService {
 
   /**
    * Acquire computeLock, evaluate shouldCompute(), and conditionally compute+store+curate.
-   * @param {EntityCoordinates} coordinates
-   * @param {() => Promise<boolean>} shouldCompute - Returns true to proceed, false to skip.
-   *   Should be lightweight and read-only (e.g. getStored + validate); it runs inside the lock.
-   * @returns {Promise<Definition | undefined>}
+   * Serializes compute per coordinate — check-then-act is atomic inside the lock.
    */
-  async computeStoreAndCurateIf(coordinates, shouldCompute) {
+  async computeStoreAndCurateIf(
+    coordinates: EntityCoordinates,
+    shouldCompute: () => Promise<boolean>
+  ): Promise<Definition | undefined> {
     return this._withComputeLock(coordinates, async () => {
       if (!(await shouldCompute())) {
         return undefined
@@ -406,15 +516,8 @@ class DefinitionService {
     })
   }
 
-  /**
-   * Acquire computeLock and run the action while holding the lock.
-   * @param {EntityCoordinates} coordinates
-   * @param {() => Promise<T>} action - Work to perform while holding the lock.
-   * @returns {Promise<T>}
-   * @template T
-   * @private
-   */
-  async _withComputeLock(coordinates, action) {
+  /** Acquire computeLock and run the action while holding the lock. */
+  async _withComputeLock<T>(coordinates: EntityCoordinates, action: () => Promise<T>): Promise<T> {
     this.logger.debug('3:memory_lock:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
@@ -440,23 +543,17 @@ class DefinitionService {
     }
   }
 
-  /**
-   * Compute and store a definition
-   * @param {EntityCoordinates} coordinates - The coordinates to compute
-   * @returns {Promise<Definition>} The computed definition
-   */
-  async computeAndStore(coordinates) {
+  /** Compute and store a definition */
+  async computeAndStore(coordinates: EntityCoordinates): Promise<Definition> {
     return this._withComputeLock(coordinates, () => this._computeAndStore(coordinates))
   }
 
-  /**
-   * Compute and store a definition if the tool result is new
-   * @param {EntityCoordinates} coordinates - The coordinates to compute
-   * @param {string} tool - The tool name
-   * @param {string} toolRevision - The tool revision
-   * @returns {Promise<Definition | undefined>} The computed definition or undefined if skipped
-   */
-  async computeAndStoreIfNecessary(coordinates, tool, toolRevision) {
+  /** Compute and store a definition if the tool result is new */
+  async computeAndStoreIfNecessary(
+    coordinates: EntityCoordinates,
+    tool: string,
+    toolRevision: string
+  ): Promise<Definition | undefined> {
     return this._withComputeLock(coordinates, async () => {
       if (!(await this._isToolResultNew(coordinates, tool, toolRevision))) {
         this.logger.info('definition computation skipped: tool result processed', {
@@ -470,28 +567,14 @@ class DefinitionService {
     })
   }
 
-  /**
-   * Check if a tool result is new compared to stored definition
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {string} tool - The tool name
-   * @param {string} toolRevision - The tool revision
-   * @returns {Promise<boolean>} True if the tool result is new
-   * @private
-   */
-  async _isToolResultNew(coordinates, tool, toolRevision) {
+  async _isToolResultNew(coordinates: EntityCoordinates, tool: string, toolRevision: string): Promise<boolean> {
     const definitionFound = await this.getStored(coordinates)
     const toolVersionToAdd = `${tool}/${toolRevision}`
     const tools = definitionFound?.described?.tools || []
     return !tools.includes(toolVersionToAdd)
   }
 
-  /**
-   * Internal method to compute and store a definition
-   * @param {EntityCoordinates} coordinates - The coordinates to compute
-   * @returns {Promise<Definition>} The computed definition
-   * @private
-   */
-  async _computeAndStore(coordinates) {
+  async _computeAndStore(coordinates: EntityCoordinates): Promise<Definition> {
     const definition = await this.compute(coordinates)
     // If no tools participated in the creation of the definition then don't bother storing.
     if (this._isEmpty(definition)) {
@@ -513,13 +596,7 @@ class DefinitionService {
     return definition
   }
 
-  /**
-   * Trigger a harvest for the given coordinates
-   * @param {EntityCoordinates} coordinates - The coordinates to harvest
-   * @returns {Promise<void>}
-   * @private
-   */
-  async _harvest(coordinates) {
+  async _harvest(coordinates: EntityCoordinates): Promise<void> {
     try {
       this.logger.debug('trigger_harvest:start', {
         ts: new Date().toISOString(),
@@ -537,13 +614,7 @@ class DefinitionService {
       })
     }
   }
-  /**
-   * Store a definition in the store and cache
-   * @param {Definition} definition - The definition to store
-   * @returns {Promise<void>}
-   * @private
-   */
-  async _store(definition) {
+  async _store(definition: Definition): Promise<void> {
     this.logger.debug('storing definition', {
       coordinates: definition.coordinates.toString()
     })
@@ -558,13 +629,8 @@ class DefinitionService {
   /**
    * Compute the final representation of the specified definition and optionally apply the indicated
    * curation.
-   *
-   * @param {EntityCoordinates} coordinates - The entity for which we are looking for a curation
-   * @param {number | string | any} [curationSpec] - A PR number (string or number) for a proposed
-   * curation or an actual curation object.
-   * @returns {Promise<Definition>} The fully rendered definition
    */
-  async compute(coordinates, curationSpec) {
+  async compute(coordinates: EntityCoordinates, curationSpec?: any): Promise<Definition> {
     this.logger.debug('4:compute:blob:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
@@ -590,19 +656,14 @@ class DefinitionService {
       coordinates: coordinates.toString()
     })
     aggregatedDefinition.coordinates = coordinates
-    this._ensureToolScores(coordinates, /** @type {Definition} */ (aggregatedDefinition))
+    this._ensureToolScores(coordinates, aggregatedDefinition as Definition)
     const definition = await this.curationService.apply(coordinates, curationSpec, aggregatedDefinition)
     this._calculateValidate(coordinates, definition)
     return definition
   }
 
-  /**
-   * Build a valid empty definition for the provided coordinates.
-   *
-   * @param {EntityCoordinates} givenCoordinates
-   * @returns {Definition}
-   */
-  buildEmptyDefinition(givenCoordinates) {
+  /** Build a valid empty definition for the provided coordinates. */
+  buildEmptyDefinition(givenCoordinates: EntityCoordinates): Definition {
     const coordinates = this._getCasedCoordinates({}, givenCoordinates)
     const definition = { coordinates }
     this._ensureToolScores(coordinates, definition)
@@ -610,13 +671,7 @@ class DefinitionService {
     return definition
   }
 
-  /**
-   * Calculate scores and validate the definition
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {Definition} definition - The definition to calculate and validate
-   * @private
-   */
-  _calculateValidate(coordinates, definition) {
+  _calculateValidate(coordinates: EntityCoordinates, definition: Definition): void {
     this.logger.debug('9:compute:calculate:start', {
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
@@ -633,14 +688,7 @@ class DefinitionService {
     })
   }
 
-  /**
-   * Get properly cased coordinates from raw harvest data
-   * @param {Object<string, Object<string, any>>} raw - Raw harvest data by tool and version
-   * @param {EntityCoordinates} coordinates - Original coordinates
-   * @returns {EntityCoordinates} Properly cased coordinates
-   * @private
-   */
-  _getCasedCoordinates(raw, coordinates) {
+  _getCasedCoordinates(raw: Record<string, Record<string, any>>, coordinates: EntityCoordinates): EntityCoordinates {
     if (!raw || !Object.keys(raw).length) {
       return coordinates
     }
@@ -658,10 +706,8 @@ class DefinitionService {
   /**
    * Ensure that the given object (e.g., a definition) does not have any null properties.
    * Recursively removes null values from the object.
-   * @param {Record<string, any>} object - The object to clean
-   * @private
    */
-  _ensureNoNulls(object) {
+  _ensureNoNulls(object: Record<string, any>): void {
     for (const key of Object.keys(object)) {
       if (object[key] && typeof object[key] === 'object') {
         this._ensureNoNulls(object[key])
@@ -674,11 +720,8 @@ class DefinitionService {
   /**
    * Compute and store the scores for the given definition but do it in a way that does not affect the
    * definition so that further curations can be done.
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {Definition} definition - The definition to score
-   * @private
    */
-  _ensureToolScores(coordinates, definition) {
+  _ensureToolScores(coordinates: EntityCoordinates, definition: Definition): void {
     const rawDefinition = extend(true, {}, definition)
     this._finalizeDefinition(coordinates, rawDefinition)
     const { describedScore, licensedScore } = this._computeScores(rawDefinition)
@@ -686,74 +729,40 @@ class DefinitionService {
     set(definition, 'licensed.toolScore', licensedScore)
   }
 
-  /**
-   * Compute and set scores after curation has been applied
-   * @param {Definition} definition - The definition to score
-   * @private
-   */
-  _ensureCuratedScores(definition) {
+  _ensureCuratedScores(definition: Definition): void {
     const { describedScore, licensedScore } = this._computeScores(definition)
     set(definition, 'described.score', describedScore)
     set(definition, 'licensed.score', licensedScore)
   }
 
-  /**
-   * Compute and set the final effective and tool scores on the definition
-   * @param {Definition} definition - The definition to update
-   * @private
-   */
-  _ensureFinalScores(definition) {
+  _ensureFinalScores(definition: Definition): void {
     const { described, licensed } = definition
     set(definition, 'scores.effective', Math.floor((described.score.total + licensed.score.total) / 2))
     set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
   }
 
-  /**
-   * Finalize the definition by ensuring facets, source location, and metadata
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {Definition} definition - The definition to finalize
-   * @private
-   */
-  _finalizeDefinition(coordinates, definition) {
+  _finalizeDefinition(coordinates: EntityCoordinates, definition: Definition): void {
     this._ensureFacets(definition)
     this._ensureSourceLocation(coordinates, definition)
     set(definition, '_meta.schemaVersion', currentSchema)
     set(definition, '_meta.updated', new Date().toISOString())
   }
 
-  /**
-   * Given a definition, calculate the scores for the definition and return an object with a score per dimension
-   * @param {Definition} definition - The definition to score
-   * @returns {{licensedScore: LicensedScore, describedScore: DescribedScore}} The computed scores
-   * @private
-   */
-  _computeScores(definition) {
+  _computeScores(definition: Definition): { licensedScore: LicensedScore; describedScore: DescribedScore } {
     return {
       licensedScore: this._computeLicensedScore(definition),
       describedScore: this._computeDescribedScore(definition)
     }
   }
 
-  /**
-   * Given a definition, calculate and return the score for the described dimension
-   * @param {Definition} definition - The definition to score
-   * @returns {DescribedScore} The described score
-   * @private
-   */
-  _computeDescribedScore(definition) {
+  _computeDescribedScore(definition: Definition): DescribedScore {
     const date = get(definition, 'described.releaseDate') ? weights.date : 0
     const source = get(definition, 'described.sourceLocation.url') ? weights.source : 0
     const total = date + source
     return { total, date, source }
   }
 
-  /**
-   * Given a definition, calculate and return the score for the licensed dimension
-   * @param {Definition} definition - The definition to score
-   * @returns {LicensedScore} The licensed score
-   * @private
-   */
-  _computeLicensedScore(definition) {
+  _computeLicensedScore(definition: Definition): LicensedScore {
     const declared = this._computeDeclaredScore(definition)
     const discovered = this._computeDiscoveredScore(definition)
     const consistency = this._computeConsistencyScore(definition)
@@ -763,24 +772,12 @@ class DefinitionService {
     return { total, declared, discovered, consistency, spdx, texts }
   }
 
-  /**
-   * Compute the declared license score component
-   * @param {Definition} definition - The definition to score
-   * @returns {number} The declared score (0 or weights.declared)
-   * @private
-   */
-  _computeDeclaredScore(definition) {
+  _computeDeclaredScore(definition: Definition): number {
     const declared = get(definition, 'licensed.declared')
     return isDeclaredLicense(declared) ? weights.declared : 0
   }
 
-  /**
-   * Compute the discovered license score component based on file coverage
-   * @param {Definition} definition - The definition to score
-   * @returns {number} The discovered score (0 to weights.discovered)
-   * @private
-   */
-  _computeDiscoveredScore(definition) {
+  _computeDiscoveredScore(definition: Definition): number {
     if (!definition.files) {
       return 0
     }
@@ -792,13 +789,7 @@ class DefinitionService {
     return Math.round((completeFiles.length / coreFiles.length) * weights.discovered)
   }
 
-  /**
-   * Compute the consistency score between declared and discovered licenses
-   * @param {Definition} definition - The definition to score
-   * @returns {number} The consistency score (0 or weights.consistency)
-   * @private
-   */
-  _computeConsistencyScore(definition) {
+  _computeConsistencyScore(definition: Definition): number {
     const declared = get(definition, 'licensed.declared')
     // Note here that we are saying that every discovered license is satisfied by the declared
     // license. If there are no discovered licenses then all is good.
@@ -808,13 +799,7 @@ class DefinitionService {
     }
     return discovered.every(expression => SPDX.satisfies(expression, declared)) ? weights.consistency : 0
   }
-  /**
-   * Compute the SPDX validity score for the declared license
-   * @param {Definition} definition - The definition to score
-   * @returns {number} The SPDX score (0 or weights.spdx)
-   * @private
-   */
-  _computeSPDXScore(definition) {
+  _computeSPDXScore(definition: Definition): number {
     const declaredLicense = get(definition, 'licensed.declared')
     if (!declaredLicense) {
       return 0
@@ -824,19 +809,13 @@ class DefinitionService {
       return weights.spdx
     } catch (e) {
       this.logger.debug('Could not parse declared license expression.', {
-        errorMessage: /** @type {Error} */ (e).message
+        errorMessage: (e as Error).message
       })
       return 0
     }
   }
 
-  /**
-   * Compute the license texts score based on whether all referenced licenses have text files
-   * @param {Definition} definition - The definition to score
-   * @returns {number} The texts score (0 or weights.texts)
-   * @private
-   */
-  _computeTextsScore(definition) {
+  _computeTextsScore(definition: Definition): number {
     if (!definition.files?.length) {
       return 0
     }
@@ -854,54 +833,32 @@ class DefinitionService {
     return found.length === referencedLicenses.length ? weights.texts : 0
   }
 
-  /**
-   * Get all the licenses that have been referenced anywhere in the definition (declared and core)
-   * @param {Definition} definition - The definition to analyze
-   * @returns {string[]} Array of unique license identifiers
-   * @private
-   */
-  _collectReferencedLicenses(definition) {
+  _collectReferencedLicenses(definition: Definition): string[] {
     const referencedExpressions = new Set(get(definition, 'licensed.facets.core.discovered.expressions') || [])
     const declared = get(definition, 'licensed.declared')
     if (declared) {
       referencedExpressions.add(declared)
     }
-    /** @type {Set<string>} */
-    const result = new Set()
+    const result: Set<string> = new Set()
     for (const expression of referencedExpressions) {
       this._extractLicensesFromExpression(expression, result)
     }
     return Array.from(result)
   }
 
-  /**
-   * Get the full set of license texts captured in the definition
-   * @param {Definition} definition - The definition to analyze
-   * @returns {string[]} Array of unique license identifiers from license files
-   * @private
-   */
-  _collectLicenseTexts(definition) {
-    /** @type {Set<string>} */
-    const result = new Set()
+  _collectLicenseTexts(definition: Definition): string[] {
+    const result: Set<string> = new Set()
     for (const file of definition.files.filter(DefinitionService._isLicenseFile)) {
       this._extractLicensesFromExpression(file.license, result)
     }
     return Array.from(result)
   }
 
-  /**
-   * Recursively add all licenses mentioned in the given expression to the given set
-   * @param {string | SpdxExpression | null | undefined} expression - SPDX expression string or parsed object
-   * @param {Set<string>} seen - Set to add license identifiers to
-   * @returns {void}
-   * @private
-   */
-  _extractLicensesFromExpression(expression, seen) {
+  _extractLicensesFromExpression(expression: string | SpdxExpression | null | undefined, seen: Set<string>): void {
     if (!expression) {
       return
     }
-    /** @type {SpdxExpression} */
-    const parsed = typeof expression === 'string' ? SPDX.parse(expression) : expression
+    const parsed: SpdxExpression = typeof expression === 'string' ? SPDX.parse(expression) : expression
     if (parsed.license) {
       seen.add(parsed.license)
       return
@@ -910,49 +867,31 @@ class DefinitionService {
     this._extractLicensesFromExpression(parsed.right, seen)
   }
 
-  /**
-   * Check if a file is in the core facet
-   * @param {DefinitionFile} file - The file to check
-   * @returns {boolean} True if the file is in the core facet
-   * @private
-   */
-  static _isInCoreFacet(file) {
+  static _isInCoreFacet(file: DefinitionFile): boolean {
     return !file.facets || file.facets.includes('core')
   }
 
-  /**
-   * Answer whether or not the given file is a license text file
-   * @param {DefinitionFile} file - The file to check
-   * @returns {boolean} True if the file is a license text file
-   * @private
-   */
-  static _isLicenseFile(file) {
+  /** Answer whether or not the given file is a license text file */
+  static _isLicenseFile(file: DefinitionFile): boolean {
     return file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
   }
 
-  /**
-   * Suggest a set of definition coordinates that match the given pattern. Only existing definitions are searched.
-   * @param {string} pattern - A pattern to look for in the coordinates of a definition
-   * @returns {Promise<string[]>} The list of suggested coordinates found
-   */
-  suggestCoordinates(pattern) {
+  /** Suggest a set of definition coordinates that match the given pattern. Only existing definitions are searched. */
+  suggestCoordinates(pattern: string): Promise<string[]> {
     return this.search.suggestCoordinates(pattern)
   }
 
   /**
    * Helper method to prime the search store while getting the system up and running.
    * Should not be needed in general.
-   * @param {string} mode - Can be 'definitions' or 'index' (default)
-   * @param {string[] | null} [coordinatesList] - Optional list of coordinate strings to reload
-   * @returns {Promise<(void | null)[]>} Promise resolving when reload is complete
    */
-  async reload(mode, coordinatesList = null) {
+  async reload(mode: string, coordinatesList: string[] | null = null): Promise<(undefined | null)[]> {
     const recompute = mode === 'definitions'
     const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
     const list = baseList.map(entry => EntityCoordinates.fromString(entry))
     return await Promise.all(
       list.map(
-        throat(10, async (/** @type {EntityCoordinates} */ coordinates) => {
+        throat(10, async (coordinates: EntityCoordinates) => {
           try {
             const definition = await this.get(coordinates, null, recompute)
             if (recompute) {
@@ -972,12 +911,7 @@ class DefinitionService {
     )
   }
 
-  /**
-   * Ensure all the right facet information has been computed and added to the given definition
-   * @param {Definition} definition - The definition to update
-   * @private
-   */
-  _ensureFacets(definition) {
+  _ensureFacets(definition: Definition): void {
     if (!definition.files) {
       return
     }
@@ -987,21 +921,16 @@ class DefinitionService {
     }
   }
 
-  /**
-   * Figure out which files are in which facets
-   * @param {DefinitionFile[]} files - Array of files to categorize
-   * @param {Object<string, string[]>} [facets] - Facet definitions with glob patterns
-   * @returns {Object<string, DefinitionFile[]>} Files grouped by facet name
-   * @private
-   */
-  _computeFacetFiles(files, facets = {}) {
+  _computeFacetFiles(
+    files: DefinitionFile[],
+    facets: Record<string, string[]> = {}
+  ): Record<string, DefinitionFile[]> {
     const facetList = Object.getOwnPropertyNames(facets)
     remove(facetList, 'core')
     if (facetList.length === 0) {
       return { core: files }
     }
-    /** @type {Record<string, DefinitionFile[]>} */
-    const result = { core: [...files] }
+    const result: Record<string, DefinitionFile[]> = { core: [...files] }
     for (const facet in facetList) {
       const facetKey = facetList[facet]
       const filters = facets[facetKey]
@@ -1017,19 +946,13 @@ class DefinitionService {
   /**
    * Create the data object for the identified facet containing the given files. Also destructively brand
    * the individual file objects with the facet.
-   * @param {string} facet - The facet name
-   * @param {DefinitionFile[]} facetFiles - Files in this facet
-   * @returns {FacetInfo | null} Summary information for the facet or null if no files
-   * @private
    */
-  _summarizeFacetInfo(facet, facetFiles) {
+  _summarizeFacetInfo(facet: string, facetFiles: DefinitionFile[]): FacetInfo | null {
     if (!facetFiles || facetFiles.length === 0) {
       return null
     }
-    /** @type {Set<string>} */
-    const attributions = new Set()
-    /** @type {Set<string>} */
-    const licenseExpressions = new Set()
+    const attributions: Set<string> = new Set()
+    const licenseExpressions: Set<string> = new Set()
     let unknownParties = 0
     let unknownLicenses = 0
     // accumulate all the licenses and attributions, and count anything that's missing
@@ -1059,22 +982,11 @@ class DefinitionService {
     return result
   }
 
-  /**
-   * Ensure the definition has a described property
-   * @param {Definition} definition - The definition to update
-   * @private
-   */
-  _ensureDescribed(definition) {
+  _ensureDescribed(definition: Definition): void {
     definition.described = definition.described || {}
   }
 
-  /**
-   * Ensure source location is set on the definition for source-type components
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @param {Definition} definition - The definition to update
-   * @private
-   */
-  _ensureSourceLocation(coordinates, definition) {
+  _ensureSourceLocation(coordinates: EntityCoordinates, definition: Definition): void {
     if (get(definition, 'described.sourceLocation')) {
       return updateSourceLocation(definition.described.sourceLocation)
     }
@@ -1098,15 +1010,9 @@ class DefinitionService {
     }
   }
 
-  /**
-   * Get coordinates with definition tool metadata
-   * @param {EntityCoordinates} coordinates - The base coordinates
-   * @returns {Object} Coordinates with tool and toolVersion added
-   * @private
-   * @deprecated This method is currently unused
-   */
+  /** @deprecated This method is currently unused */
   // @ts-expect-error - unused but kept for API compatibility
-  _getDefinitionCoordinates(coordinates) {
+  _getDefinitionCoordinates(coordinates: EntityCoordinates): object {
     return Object.assign({}, coordinates, {
       tool: 'definition',
       toolVersion: 1
@@ -1116,40 +1022,28 @@ class DefinitionService {
   /**
    * Check if a definition is empty (no tools have contributed to it).
    * Note that curation is a tool so no tools really means the definition is effectively empty.
-   * @param {Definition} definition - The definition to check
-   * @returns {boolean} True if the definition is empty
-   * @private
    */
-  _isEmpty(definition) {
+  _isEmpty(definition: Definition): boolean {
     const tools = get(definition, 'described.tools')
     return !tools || tools.length === 0
   }
 
-  /**
-   * Generate a cache key for the given coordinates
-   * @param {EntityCoordinates} coordinates - The coordinates
-   * @returns {string} The cache key
-   * @private
-   */
-  _getCacheKey(coordinates) {
+  _getCacheKey(coordinates: EntityCoordinates): string {
     return `def_${EntityCoordinates.fromObject(coordinates).toString().toLowerCase()}`
   }
 }
 
-/**
- * Factory function to create a DefinitionService instance
- * @param {HarvestStore} harvestStore - Store for harvest data
- * @param {HarvestService} harvestService - Service for triggering harvests
- * @param {SummaryService} summary - Service for summarizing tool output
- * @param {AggregationService} aggregator - Service for aggregating summaries
- * @param {CurationService} curation - Service for managing curations
- * @param {DefinitionStore} store - Store for definitions
- * @param {SearchService} search - Service for searching definitions
- * @param {ICache} cache - Cache for definitions
- * @param {RecomputeHandler} recomputeHandler - Handler for schema upgrades and non-force recompute fallback
- * @returns {DefinitionService} A new DefinitionService instance
- */
-export default (harvestStore, harvestService, summary, aggregator, curation, store, search, cache, recomputeHandler) =>
+export default (
+  harvestStore: HarvestStore,
+  harvestService: HarvestService,
+  summary: SummaryService,
+  aggregator: AggregationService,
+  curation: CurationService,
+  store: DefinitionStore,
+  search: SearchService,
+  cache: ICache,
+  recomputeHandler: RecomputeHandler
+): DefinitionService =>
   new DefinitionService(
     harvestStore,
     harvestService,

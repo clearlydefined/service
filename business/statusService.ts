@@ -1,48 +1,79 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./statusService').StatusServiceOptions} StatusServiceOptions
- * @typedef {import('./statusService').StatusData} StatusData
- * @typedef {import('./statusService').StatusKey} StatusKey
- * @typedef {import('./statusService').StatusLookupFn} StatusLookupFn
- * @typedef {import('./statusService').RequestCountData} RequestCountData
- * @typedef {import('./statusService').ProcessedPerDayEntry} ProcessedPerDayEntry
- * @typedef {import('./statusService').RecentlyCrawledEntry} RecentlyCrawledEntry
- * @typedef {import('./statusService').CrawlBreakdownEntry} CrawlBreakdownEntry
- * @typedef {import('./statusService').ToolsRanPerDayEntry} ToolsRanPerDayEntry
- * @typedef {import('../providers/caching').ICache} ICache
- * @typedef {import('../providers/logging').Logger} Logger
- */
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 import { callFetch as requestPromise } from '../lib/fetch.ts'
 import logger from '../providers/logging/logger.ts'
+
+/** Options for the StatusService */
+export interface StatusServiceOptions {
+  serviceId: string
+  serviceKey: string
+  crawlerId: string
+  crawlerKey: string
+}
+
+/** Request count data - date to count mapping */
+export type RequestCountData = Record<string, number>
+
+/** Processed per day entry */
+export interface ProcessedPerDayEntry {
+  date: string
+  [host: string]: string | number
+}
+
+/** Recently crawled entry */
+export interface RecentlyCrawledEntry {
+  coordinates: string
+  timestamp: string
+}
+
+/** Crawl breakdown entry */
+export interface CrawlBreakdownEntry {
+  date: string
+  [tool: string]: string | Record<string, number>
+}
+
+/** Tools ran per day entry */
+export interface ToolsRanPerDayEntry {
+  date: string
+  [tool: string]: string | number
+}
+
+/** Available status keys */
+export type StatusKey = 'requestcount' | 'processedperday' | 'recentlycrawled' | 'crawlbreakdown' | 'toolsranperday'
+
+/** Status data union type */
+export type StatusData =
+  | RequestCountData
+  | ProcessedPerDayEntry[]
+  | RecentlyCrawledEntry[]
+  | CrawlBreakdownEntry[]
+  | ToolsRanPerDayEntry[]
+
+/** Status lookup function type */
+export type StatusLookupFn = () => Promise<StatusData>
 
 /**
  * Service for retrieving system status information from Application Insights.
  * Provides various metrics about system usage and crawler activity.
  */
 class StatusService {
-  /**
-   * Creates a new StatusService instance
-   * @param {StatusServiceOptions} options - Configuration options for Application Insights
-   * @param {ICache} cache - Cache for storing results
-   */
-  constructor(options, cache) {
+  options: StatusServiceOptions
+  logger: Logger
+  cache: ICache
+  statusLookup: Record<string, StatusLookupFn>
+
+  constructor(options: StatusServiceOptions, cache: ICache) {
     this.options = options
-    /** @type {Logger} */
     this.logger = logger()
     this.cache = cache
     this.statusLookup = this._getStatusLookup()
   }
 
-  /**
-   * Get status data for a specific key
-   * @param {string} key - The status key to retrieve
-   * @returns {Promise<StatusData>} The status data
-   * @throws {Error} If key is not found or if an unexpected error occurs
-   */
-  async get(key) {
+  async get(key: string): Promise<StatusData> {
     key = key.toLowerCase()
     if (!this.statusLookup[key]) {
       throw new Error('Not found')
@@ -64,20 +95,11 @@ class StatusService {
     }
   }
 
-  /**
-   * List all available status keys
-   * @returns {string[]} Array of available status keys
-   */
-  list() {
-    return Object.keys(this.statusLookup)
+  list(): StatusKey[] {
+    return Object.keys(this.statusLookup) as StatusKey[]
   }
 
-  /**
-   * Get the status lookup table
-   * @returns {Record<string, StatusLookupFn>} The status lookup table
-   * @private
-   */
-  _getStatusLookup() {
+  _getStatusLookup(): Record<string, StatusLookupFn> {
     return {
       requestcount: this._requestCount,
       processedperday: this._processedPerDay,
@@ -87,12 +109,7 @@ class StatusService {
     }
   }
 
-  /**
-   * Get request count data for the last 90 days
-   * @returns {Promise<RequestCountData>} Request counts by date
-   * @private
-   */
-  async _requestCount() {
+  async _requestCount(): Promise<RequestCountData> {
     const data = await requestPromise(
       this._serviceQuery(`
       requests
@@ -101,24 +118,15 @@ class StatusService {
       | order by timestamp asc`)
     )
     return data.tables[0].rows.reduce(
-      /**
-       * @param {RequestCountData} result
-       * @param {any[]} row
-       */
-      (result, row) => {
+      (result: RequestCountData, row: any[]) => {
         result[row[0]] = row[1]
         return result
       },
-      /** @type {RequestCountData} */ ({})
+      {} as RequestCountData
     )
   }
 
-  /**
-   * Get processed items per day for the last 90 days
-   * @returns {Promise<ProcessedPerDayEntry[]>} Processed counts by date and host
-   * @private
-   */
-  async _processedPerDay() {
+  async _processedPerDay(): Promise<ProcessedPerDayEntry[]> {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
@@ -128,31 +136,21 @@ class StatusService {
       | summarize count() by bin(timestamp, 1d) , tostring(customDimensions.crawlerHost)
       | order by timestamp asc`)
     )
-    /** @type {Record<string, Record<string, number>>} */
-    const grouped = data.tables[0].rows.reduce(
-      /**
-       * @param {Record<string, Record<string, number>>} result
-       * @param {any[]} row
-       */
-      (result, row) => {
+    const grouped: Record<string, Record<string, number>> = data.tables[0].rows.reduce(
+      (result: Record<string, Record<string, number>>, row: any[]) => {
         const date = row[0]
         result[date] = result[date] || {}
         result[date][row[1]] = row[2]
         return result
       },
-      /** @type {Record<string, Record<string, number>>} */ ({})
+      {} as Record<string, Record<string, number>>
     )
     return Object.keys(grouped).map(date => {
       return { ...grouped[date], date }
     })
   }
 
-  /**
-   * Get recently crawled items from the last day
-   * @returns {Promise<RecentlyCrawledEntry[]>} Recently crawled items
-   * @private
-   */
-  async _recentlyCrawled() {
+  async _recentlyCrawled(): Promise<RecentlyCrawledEntry[]> {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
@@ -167,19 +165,13 @@ class StatusService {
       | take 50`)
     )
     return data.tables[0].rows.map(
-      /** @param {any[]} row */
-      row => {
+      (row: any[]) => {
         return { coordinates: row[0], timestamp: row[1] }
       }
     )
   }
 
-  /**
-   * Get crawl breakdown by tool and type for the last 90 days
-   * @returns {Promise<CrawlBreakdownEntry[]>} Crawl breakdown data
-   * @private
-   */
-  async _crawlbreakdown() {
+  async _crawlbreakdown(): Promise<CrawlBreakdownEntry[]> {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
@@ -190,13 +182,8 @@ class StatusService {
       | summarize count() by when=bin(timestamp, 1d), tool, type
       | order by when asc, type`)
     )
-    /** @type {Record<string, Record<string, Record<string, number>>>} */
-    const grouped = data.tables[0].rows.reduce(
-      /**
-       * @param {Record<string, Record<string, Record<string, number>>>} result
-       * @param {any[]} row
-       */
-      (result, row) => {
+    const grouped: Record<string, Record<string, Record<string, number>>> = data.tables[0].rows.reduce(
+      (result: Record<string, Record<string, Record<string, number>>>, row: any[]) => {
         const date = row[0]
         const tool = row[1]
         const type = row[2]
@@ -206,19 +193,14 @@ class StatusService {
         result[date][tool][type] = count
         return result
       },
-      /** @type {Record<string, Record<string, Record<string, number>>>} */ ({})
+      {} as Record<string, Record<string, Record<string, number>>>
     )
     return Object.keys(grouped).map(date => {
       return { ...grouped[date], date }
     })
   }
 
-  /**
-   * Get tools ran per day for the last 90 days
-   * @returns {Promise<ToolsRanPerDayEntry[]>} Tools ran per day data
-   * @private
-   */
-  async _toolsranperday() {
+  async _toolsranperday(): Promise<ToolsRanPerDayEntry[]> {
     const data = await requestPromise(
       this._crawlerQuery(`
       traces
@@ -229,13 +211,8 @@ class StatusService {
       | summarize count() by when=bin(timestamp, 1d), tool
       | order by when asc, tool`)
     )
-    /** @type {Record<string, Record<string, number>>} */
-    const grouped = data.tables[0].rows.reduce(
-      /**
-       * @param {Record<string, Record<string, number>>} result
-       * @param {any[]} row
-       */
-      (result, row) => {
+    const grouped: Record<string, Record<string, number>> = data.tables[0].rows.reduce(
+      (result: Record<string, Record<string, number>>, row: any[]) => {
         const date = row[0]
         const tool = row[1]
         const count = row[2]
@@ -243,20 +220,14 @@ class StatusService {
         result[date][tool] = count
         return result
       },
-      /** @type {Record<string, Record<string, number>>} */ ({})
+      {} as Record<string, Record<string, number>>
     )
     return Object.keys(grouped).map(date => {
       return { ...grouped[date], date }
     })
   }
 
-  /**
-   * Build a query options object for the service Application Insights
-   * @param {string} query - The Kusto query
-   * @returns {Object} The fetch options
-   * @private
-   */
-  _serviceQuery(query) {
+  _serviceQuery(query: string): object {
     return {
       method: 'POST',
       url: `https://api.applicationinsights.io/v1/apps/${this.options.serviceId}/query`,
@@ -267,13 +238,7 @@ class StatusService {
     }
   }
 
-  /**
-   * Build a query options object for the crawler Application Insights
-   * @param {string} query - The Kusto query
-   * @returns {Object} The fetch options
-   * @private
-   */
-  _crawlerQuery(query) {
+  _crawlerQuery(query: string): object {
     return {
       method: 'POST',
       url: `https://api.applicationinsights.io/v1/apps/${this.options.crawlerId}/query`,
@@ -284,21 +249,9 @@ class StatusService {
     }
   }
 
-  /**
-   * Generate a cache key for the given status key
-   * @param {string} key - The status key
-   * @returns {string} The cache key
-   * @private
-   */
-  _getCacheKey(key) {
+  _getCacheKey(key: string): string {
     return `status_${key.toLowerCase()}`
   }
 }
 
-/**
- * Factory function to create a StatusService instance
- * @param {StatusServiceOptions} options - Configuration options for Application Insights
- * @param {ICache} cache - Cache for storing results
- * @returns {StatusService} A new StatusService instance
- */
-export default (options, cache) => new StatusService(options, cache)
+export default (options: StatusServiceOptions, cache: ICache): StatusService => new StatusService(options, cache)
