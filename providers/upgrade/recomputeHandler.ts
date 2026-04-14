@@ -7,7 +7,7 @@ import type {
   RecomputeHandler as IRecomputeHandler,
   RecomputeContext,
   UpgradeHandler
-} from '../../business/definitionService.js'
+} from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'

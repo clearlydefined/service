@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
-import type { Definition } from '../../business/definitionService.js'
+import type { Definition } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 
 const { get, uniq, values } = lodash

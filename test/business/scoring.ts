@@ -3,7 +3,7 @@
 
 import { expect } from 'chai'
 import lodash from 'lodash'
-import DefinitionService from '../../business/definitionService.js'
+import DefinitionService from '../../business/definitionService.ts'
 import { setIfValue } from '../../lib/utils.ts'
 
 const { set } = lodash

@@ -8,7 +8,7 @@ chai.use(chaiAsPromised)
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import type { RecomputeContext } from '../../../business/definitionService.js'
+import type { RecomputeContext } from '../../../business/definitionService.ts'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import { OnDemandComputePolicy } from '../../../providers/upgrade/onDemandComputePolicy.ts'
 

@@ -11,9 +11,9 @@ import type {
   HarvestStore,
   RecomputeHandler,
   SearchService
-} from '../business/definitionService.js'
-import type { AttachmentStore } from '../business/noticeService.js'
-import type { StatsSearchService } from '../business/statsService.js'
+} from '../business/definitionService.ts'
+import type { AttachmentStore } from '../business/noticeService.ts'
+import type { StatsSearchService } from '../business/statsService.ts'
 import type { PermissionsConfig } from '../middleware/permissions.ts'
 import type { ICache } from '../providers/caching/index.js'
 import type { CurationHarvestStore, ICurationStore } from '../providers/curation/index.js'

@@ -5,7 +5,7 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import type { DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
+import type { DefinitionService, UpgradeHandler } from '../../business/definitionService.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import type { Logger } from '../logging/index.js'
 import type { DequeuedMessage, IQueue } from '../queueing/index.js'

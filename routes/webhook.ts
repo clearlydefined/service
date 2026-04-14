@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request, Response } from 'express'
-import type { DefinitionService } from '../business/definitionService.js'
+import type { DefinitionService } from '../business/definitionService.ts'
 import type { Logger } from '../providers/logging/index.js'
 
 import express from 'express'

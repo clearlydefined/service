@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import StatsService from '../../business/statsService.js'
+import StatsService from '../../business/statsService.ts'
 
 describe('Stats Service', () => {
   it('calculates median score given frequency table', () => {

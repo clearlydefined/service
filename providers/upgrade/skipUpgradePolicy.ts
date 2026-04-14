@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition, UpgradeHandler } from '../../business/definitionService.js'
+import type { Definition, UpgradeHandler } from '../../business/definitionService.ts'
 
 /**
  * Upgrade policy for delayed compute queue processing.
