@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -21,10 +22,10 @@ router.get(
       const { group, artifact } = request.params
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&core=gav&rows=100&wt=json`
       const answer = await requestPromise({ url, method: 'GET', json: true })
-      const result = answer.response.docs.map((/** @type {any} */ item) => item.v)
+      const result = answer.response.docs.map((item: any) => item.v)
       return response.status(200).send(uniq(result))
     } catch (e) {
-      const error = /** @type {any} */ (e)
+      const error = e as any
       if (error.code === 404) {
         return response.status(200).send([])
       }
@@ -38,7 +39,7 @@ router.get(
 router.get(
   '/:group{/:artifact}',
   asyncMiddleware(async (request, response) => {
-    const group = /** @type {string} */ (request.params.group)
+    const group = request.params.group as string
     const artifact = request.params.artifact
     if (request.path.indexOf('/', 1) > 0) {
       const url = `https://search.maven.org/solrsearch/select?q=g:"${group}"+AND+a:"${artifact}"&rows=100&wt=json`
@@ -53,27 +54,23 @@ router.get(
   })
 )
 
-/**
- * @param {any} answer
- * @param {string} [group]
- */
-function getSuggestions(answer, group) {
+function getSuggestions(answer: any, group?: string) {
   const docs = answer.response.docs
   if (docs.length) {
-    return docs.map((/** @type {any} */ item) => {
+    return docs.map((item: any) => {
       return { id: escapeHTML(item.id) }
     })
   }
   const suggestions = answer.spellcheck?.suggestions?.[1]
   const result = suggestions ? suggestions.suggestion : []
   return group
-    ? result.map((/** @type {string | undefined} */ entry) => `${escapeHTML(group)}:${escapeHTML(entry)}`)
-    : result.map((/** @type {string | undefined} */ entry) => escapeHTML(entry))
+    ? result.map((entry: string | undefined) => `${escapeHTML(group)}:${escapeHTML(entry)}`)
+    : result.map((entry: string | undefined) => escapeHTML(entry))
 }
 
-function setup(testFlag = false) {
+function setup(testFlag = false): Router {
   if (testFlag) {
-    const _router = /** @type {any} */ (router)
+    const _router = router as any
     _router._getSuggestions = getSuggestions
   }
   return router

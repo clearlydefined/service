@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -15,7 +16,7 @@ const { uniq } = lodash
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const name = /** @type {string} */ (request.params.name)
+    const name = request.params.name as string
     const answer = await getPypiData(name)
     const result = answer?.releases ? Object.keys(answer.releases) : []
     result.reverse()
@@ -26,28 +27,27 @@ router.get(
 router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
-    const name = /** @type {string} */ (request.params.name)
+    const name = request.params.name as string
     const answer = await getPypiData(name)
     const result = answer?.info ? [{ id: answer.info.name }] : []
     return response.status(200).send(result)
   })
 )
-/** @param {string} name */
-async function getPypiData(name) {
+async function getPypiData(name: string) {
   const url = `https://pypi.org/pypi/${encodeURIComponent(name)}/json`
   try {
     return await requestPromise({ url, method: 'GET', json: true })
   } catch (e) {
-    const error = /** @type {any} */ (e)
+    const error = e as any
     if (error.statusCode === 404) {
       return {}
     }
     throw error
   }
 }
-function setup(testflag = false) {
+function setup(testflag = false): Router {
   if (testflag) {
-    const _router = /** @type {any} */ (router)
+    const _router = router as any
     _router._getPypiData = getPypiData
   }
   return router

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -18,7 +19,7 @@ router.get(
     const { name } = request.params
     const url = `https://trunk.cocoapods.org/api/v1/pods/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(/** @param {any} x */ x => x.name)))
+    return response.status(200).send(uniq(answer.versions.map((x: any) => x.name)))
   })
 )
 
@@ -40,7 +41,7 @@ router.get(
       json: true
     })
     const result = answer.hits.map(
-      /** @param {any} x */ x => {
+      (x: any) => {
         return { id: x.name }
       }
     )
@@ -48,7 +49,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

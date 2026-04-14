@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -19,7 +20,7 @@ router.get(
   '/:group/:artifact/revisions',
   asyncMiddleware(async (request, response) => {
     try {
-      const group = /** @type {string} */ (request.params.group)
+      const group = request.params.group as string
       const { artifact } = request.params
       const groupFullPath = `${group.replace(/\./g, '/')}`
       const url = `https://dl.google.com/android/maven2/${groupFullPath}/group-index.xml`
@@ -42,7 +43,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

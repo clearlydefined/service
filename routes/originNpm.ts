@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -16,8 +17,8 @@ router.get(
   '{/:namespace}/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const baseUrl = 'https://registry.npmjs.com'
-    const namespace = /** @type {string} */ (request.params.namespace)
-    const name = /** @type {string} */ (request.params.name)
+    const namespace = request.params.namespace as string
+    const name = request.params.name as string
     const fullName = namespace ? `${namespace}/${name}` : name
     const url = `${baseUrl}/${encodeURIComponent(fullName).replace(/%40/g, '@')}` // npmjs doesn't handle the escaped version
     const answer = await requestPromise({ url, method: 'GET', json: true })
@@ -35,7 +36,7 @@ router.get(
     const url = `https://api.npms.io/v2/search?q=${searchTerm}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.results.map(
-      /** @param {any} entry */ entry => {
+      (entry: any) => {
         return { id: entry.package.name }
       }
     )
@@ -43,7 +44,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -18,7 +19,7 @@ router.get(
     const { name } = request.params
     const url = `https://sources.debian.org/api/src/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.versions.map(/** @param {any} version */ version => version.version)
+    const result = answer.versions.map((version: any) => version.version)
     return response.send(uniq(result))
   })
 )
@@ -30,7 +31,7 @@ router.get(
     const url = `https://sources.debian.org/api/search/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.results.other.map(
-      /** @param {any} entry */ entry => {
+      (entry: any) => {
         return { id: entry.name }
       }
     )
@@ -41,7 +42,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -21,8 +22,8 @@ router.get(
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = Object.getOwnPropertyNames(answer.package.versions)
       .map(
-        /** @param {string} version */ version =>
-          version.startsWith('v') && version[1] >= '0' && version[1] <= '9' ? version.substring(1) : version
+        (version: string) =>
+          version.startsWith('v') && version[1]! >= '0' && version[1]! <= '9' ? version.substring(1) : version
       )
       .sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
@@ -37,7 +38,7 @@ router.get(
     const url = `https://packagist.org/search.json?q=${searchTerm}&per_page=100`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.results.map(
-      /** @param {any} entry */ entry => {
+      (entry: any) => {
         return { id: entry.name }
       }
     )
@@ -45,7 +46,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

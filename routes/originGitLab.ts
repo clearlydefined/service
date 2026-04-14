@@ -1,3 +1,4 @@
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -6,22 +7,23 @@ const router = express.Router()
 import config from 'painless-config'
 import * as gitLabApi from '../lib/gitlab.ts'
 
+import type { Logger } from '../providers/logging/index.js'
 import loggerFactory from '../providers/logging/logger.ts'
 
-let logger
+let logger: Logger
 
 function gitLabClient() {
-  return gitLabApi.getClient(/** @type {any} */ (config.get('GITLAB_TOKEN')))
+  return gitLabApi.getClient(config.get('GITLAB_TOKEN') as any)
 }
 
-const gitlab = /** @type {any} */ (gitLabClient())
+const gitlab = gitLabClient() as any
 
 router.get(
   '/:namespace/:project/:revisions',
   asyncMiddleware(async (request, response) => {
     try {
-      const namespace = /** @type {string} */ (request.params.namespace)
-      const project = /** @type {string} */ (request.params.project)
+      const namespace = request.params.namespace as string
+      const project = request.params.project as string
 
       const project_info = await gitlab.Projects.search(project)
       const project_match = getExactProjectMatch(namespace, project, project_info)
@@ -31,7 +33,7 @@ router.get(
 
       const tags = await gitlab.Tags.all(project_match.id)
 
-      const unsorted = tags.map((/** @type {any} */ tag) => {
+      const unsorted = tags.map((tag: any) => {
         return {
           tag: tag.name,
           sha: tag.commit.id
@@ -39,11 +41,11 @@ router.get(
       })
 
       const result = unsorted
-        .filter((/** @type {any} */ x) => x)
-        .sort((/** @type {any} */ a, /** @type {any} */ b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
+        .filter((x: any) => x)
+        .sort((a: any, b: any) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
       return response.status(200).send(result)
     } catch (e) {
-      const err = /** @type {any} */ (e)
+      const err = e as any
       logger.info(err)
       if (err.code === 404) {
         return response.status(200).send([])
@@ -57,8 +59,8 @@ router.get(
 router.get(
   '/:namespace{/:project}',
   asyncMiddleware(async (request, response) => {
-    const namespace = /** @type {string} */ (request.params.namespace)
-    const project = /** @type {string | undefined} */ (request.params.project)
+    const namespace = request.params.namespace as string
+    const project = request.params.project as string | undefined
 
     if (request.path.indexOf('/', 1) > 0) {
       const projects = await projectsByProjectName(namespace, project)
@@ -77,7 +79,7 @@ router.get(
       const projects = await getUserProjects(namespace)
       return response.status(200).send(projects)
     } catch (e) {
-      const err = /** @type {any} */ (e)
+      const err = e as any
       logger.info(`Not able to find GitLab user ${namespace}`)
       logger.info(err)
       const projects = await getGroupProjects(namespace)
@@ -86,7 +88,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   logger = loggerFactory()
   return router
 }
@@ -95,13 +97,7 @@ function setup() {
 // by name through the GitLab API, it will return all projects
 // with matches for the search text in their project name
 // This filters them by namespace
-/**
- * @param {string} namespace
- * @param {string} project
- * @param {any[]} projects
- * @returns {any}
- */
-function getExactProjectMatch(namespace, project, projects) {
+function getExactProjectMatch(namespace: string, project: string, projects: any[]): any {
   let exact_match
 
   projects.filter(item => {
@@ -113,14 +109,10 @@ function getExactProjectMatch(namespace, project, projects) {
   return exact_match
 }
 
-/**
- * @param {string} _namespace
- * @param {string} project
- */
-async function projectsByProjectName(_namespace, project) {
+async function projectsByProjectName(_namespace: string, project: string | undefined) {
   const projects = await gitlab.Projects.search(project)
 
-  const project_names = projects.map((/** @type {any} */ project) => {
+  const project_names = projects.map((project: any) => {
     return {
       id: project.path_with_namespace
     }
@@ -129,24 +121,22 @@ async function projectsByProjectName(_namespace, project) {
   return project_names
 }
 
-/** @param {string} username */
-async function getUserProjects(username) {
+async function getUserProjects(username: string) {
   const user_response = await getUsers(username)
 
   const user_projects = await gitlab.Users.projects(user_response[0].id)
 
-  const user_project_names = user_projects.map((/** @type {any} */ project) => {
+  const user_project_names = user_projects.map((project: any) => {
     return project.name
   })
 
   return user_project_names
 }
 
-/** @param {string} userName */
-async function getUsers(userName) {
+async function getUsers(userName: string) {
   const users = await gitlab.Users.search(userName)
 
-  const user_names = users.map((/** @type {any} */ user) => {
+  const user_names = users.map((user: any) => {
     return {
       id: user.id,
       username: user.username
@@ -156,31 +146,29 @@ async function getUsers(userName) {
   return user_names
 }
 
-/** @param {string} groupName */
-async function getGroupProjects(groupName) {
+async function getGroupProjects(groupName: string) {
   try {
     const group_response = await getGroups(groupName)
 
     const group_projects = await gitlab.Groups.projects(group_response[0])
 
-    const group_project_names = group_projects.map((/** @type {any} */ project) => {
+    const group_project_names = group_projects.map((project: any) => {
       return project.name
     })
 
     return group_project_names
   } catch (e) {
-    const err = /** @type {any} */ (e)
+    const err = e as any
     logger.info(`Not able to find GitLab group ${groupName}`)
     logger.info(err)
     return []
   }
 }
 
-/** @param {string} groupName */
-async function getGroups(groupName) {
+async function getGroups(groupName: string) {
   const groups = await gitlab.Groups.search(groupName)
 
-  const group_names = groups.map((/** @type {any} */ group) => {
+  const group_names = groups.map((group: any) => {
     return group.id
   })
 

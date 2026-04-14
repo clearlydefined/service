@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -18,7 +19,7 @@ router.get(
     const { name } = request.params
     const url = `https://crates.io/api/v1/crates/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(/** @param {any} x */ x => x.num)))
+    return response.status(200).send(uniq(answer.versions.map((x: any) => x.num)))
   })
 )
 
@@ -29,7 +30,7 @@ router.get(
     const url = `https://crates.io/api/v1/crates?per_page=100&q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.crates.map(
-      /** @param {any} x */ x => {
+      (x: any) => {
         return { id: x.name }
       }
     )
@@ -37,7 +38,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

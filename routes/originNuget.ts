@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import express from 'express'
+import type { Router } from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -31,7 +32,7 @@ router.get(
     const url = `${baseUrl}/query?q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = answer.data.map(
-      /** @param {any} entry */ entry => {
+      (entry: any) => {
         return { id: entry.id }
       }
     )
@@ -39,7 +40,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 
