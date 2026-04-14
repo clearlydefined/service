@@ -67,10 +67,10 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     return this._upgrade.initialize()
   }
 
-  override setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): void {
+  override setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void> {
     // Use a plain DefinitionVersionChecker (not `this`) so the queue processor returns undefined
     // for stale definitions and triggers recompute — rather than re-queuing them again.
-    setup(this._upgrade, definitionService, logger, once, new DefinitionVersionChecker(this.options))
+    return setup(this._upgrade, definitionService, logger, once, new DefinitionVersionChecker(this.options))
   }
 }
 

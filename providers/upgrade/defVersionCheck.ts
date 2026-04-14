@@ -20,7 +20,7 @@ export interface DefinitionVersionCheckerOptions {
 class DefinitionVersionChecker implements UpgradeHandler {
   options: DefinitionVersionCheckerOptions
   logger: Logger
-  declare _currentSchema: string
+  declare _currentSchema: string | undefined
 
   constructor(options: DefinitionVersionCheckerOptions = {}) {
     this.options = options
@@ -31,7 +31,7 @@ class DefinitionVersionChecker implements UpgradeHandler {
     this._currentSchema = schemaVersion
   }
 
-  get currentSchema(): string {
+  get currentSchema(): string | undefined {
     return this._currentSchema
   }
 
