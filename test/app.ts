@@ -4,12 +4,12 @@
 import assert from 'node:assert'
 import esmock from 'esmock'
 import sinon from 'sinon'
-import Application from '../app.js'
+import Application from '../app.ts'
 
 process.env['CURATION_GITHUB_TOKEN'] = '123'
 process.env['GITLAB_TOKEN'] = 'abc'
 
-const config = await esmock('../bin/config.js', {
+const config = await esmock('../bin/config.ts', {
   ['painless-config']: {
     get: (name: string) => {
       return (

@@ -59,7 +59,7 @@ import setupWebhookRoute from './routes/webhook.ts'
 
 const v1 = '1.0.0'
 
-/** @param {import('./bin/config.js').AppConfig} config */
+/** @param {import('./bin/config.ts').AppConfig} config */
 function createApp(config) {
   /** @type {(() => Promise<void>)[]} */
   const initializers = []
@@ -266,8 +266,8 @@ function createApp(config) {
     )
   }
   const appAsUnknown = /** @type {unknown} */ (app)
-  /** @type {import('./app.js').App} */
-  const appWithInit = /** @type {import('./app.js').App} */ (appAsUnknown)
+  /** @type {import('./app.ts').App} */
+  const appWithInit = /** @type {import('./app.ts').App} */ (appAsUnknown)
   appWithInit.init = requestHandler.init
 
   /** @param {Error & {status?: number}} error @param {import('express').Request} request @param {import('express').Response} response @param {import('express').NextFunction} next */
