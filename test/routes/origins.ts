@@ -8,8 +8,8 @@ import esmock from 'esmock'
 import httpMocks from 'node-mocks-http'
 import type { SinonStub } from 'sinon'
 import sinon from 'sinon'
-import originCondaRoutes from '../../routes/originConda.js'
-import originMavenRoutes from '../../routes/originMaven.js'
+import originCondaRoutes from '../../routes/originConda.ts'
+import originMavenRoutes from '../../routes/originMaven.ts'
 
 describe('Pypi origin routes', () => {
   let router: Record<string, (...args: any[]) => any>
@@ -17,7 +17,7 @@ describe('Pypi origin routes', () => {
   const fixturePath = 'test/fixtures/origins/pypi'
   beforeEach(async () => {
     requestPromiseStub = sinon.stub()
-    const createRoute = await esmock('../../routes/originPyPi.js', {
+    const createRoute = await esmock('../../routes/originPyPi.ts', {
       '../../lib/fetch.ts': { callFetch: requestPromiseStub }
     })
     router = createRoute(true)
@@ -251,7 +251,7 @@ describe('GitHub origin routes', () => {
       }
     }
 
-    const proxiedOriginGitHubRoutes = await esmock('../../routes/originGitHub.js', {
+    const proxiedOriginGitHubRoutes = await esmock('../../routes/originGitHub.ts', {
       '../../providers/logging/logger.ts': () => loggerStub
     })
 
