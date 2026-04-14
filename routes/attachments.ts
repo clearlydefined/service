@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('../business/noticeService').AttachmentStore} AttachmentStore */
+import type { Request, Response, Router } from 'express'
+import type { AttachmentStore } from '../business/noticeService.js'
 
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
@@ -13,24 +12,17 @@ const router = express.Router()
 // Get a proposed patch for a specific revision of a component
 router.get('/:id', asyncMiddleware(getAttachment))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getAttachment(request, response) {
-  const result = await attachmentStore.get(/** @type {string} */ (request.params.id))
+async function getAttachment(request: Request, response: Response) {
+  const result = await attachmentStore.get(request.params.id as string)
   if (!result) {
     return response.sendStatus(404)
   }
   return response.status(200).send(result)
 }
 
-/** @type {AttachmentStore} */
-let attachmentStore
-/**
- * @param {AttachmentStore} attachment
- */
-function setup(attachment) {
+let attachmentStore: AttachmentStore
+
+function setup(attachment: AttachmentStore): Router {
   attachmentStore = attachment
   return router
 }

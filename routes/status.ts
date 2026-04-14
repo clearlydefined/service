@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('../business/statusService').StatusService} StatusService */
+import type { Request, Response, Router } from 'express'
+import type { StatusService } from '../business/statusService.js'
 
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
@@ -15,22 +14,15 @@ router.get('/', (_request, response) => {
 })
 
 router.get('/:status', asyncMiddleware(getRequests))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getRequests(request, response) {
-  const status = await statusService.get(/** @type {string} */ (request.params.status))
+
+async function getRequests(request: Request, response: Response) {
+  const status = await statusService.get(request.params.status as string)
   response.send(status)
 }
 
-/** @type {StatusService} */
-let statusService
+let statusService: StatusService
 
-/**
- * @param {StatusService} service
- */
-function setup(service) {
+function setup(service: StatusService): Router {
   statusService = service
   return router
 }

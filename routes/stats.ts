@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('../business/statsService').StatsService} StatsService */
+import type { Request, Response, Router } from 'express'
+import type { StatsService } from '../business/statsService.js'
 
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
@@ -15,22 +14,15 @@ router.get('/', (_request, response) => {
 })
 
 router.get('/:stat', asyncMiddleware(getStat))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getStat(request, response) {
-  const stat = await statsService.get(/** @type {string} */ (request.params.stat))
+
+async function getStat(request: Request, response: Response) {
+  const stat = await statsService.get(request.params.stat as string)
   response.send({ value: stat })
 }
 
-/** @type {StatsService} */
-let statsService
+let statsService: StatsService
 
-/**
- * @param {StatsService} stats
- */
-function setup(stats) {
+function setup(stats: StatsService): Router {
   statsService = stats
   return router
 }
