@@ -6,7 +6,124 @@ import config from 'painless-config'
 
 const { get } = lodash
 
+import type { RequestHandler, Router } from 'express'
+import type { Strategy as GitHubStrategy } from 'passport-github'
+import type {
+  CurationService,
+  DefinitionService,
+  DefinitionStore,
+  HarvestService,
+  HarvestStore,
+  RecomputeHandler,
+  SearchService
+} from '../business/definitionService.ts'
+import type { AttachmentStore } from '../business/noticeService.ts'
+import type { StatsSearchService } from '../business/statsService.ts'
+import type { SummaryServiceOptions } from '../business/summarizer.ts'
+import type { PermissionsConfig } from '../middleware/permissions.ts'
+import type { ICache } from '../providers/caching/index.js'
+import type { CurationHarvestStore, ICurationStore } from '../providers/curation/index.js'
+import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process.ts'
+import type { RecomputeQueueFactories } from '../providers/index.ts'
+import type { Logger } from '../providers/logging/index.js'
+import type { IQueue } from '../providers/queueing/index.js'
+
 import providers from '../providers/index.ts'
+
+/** Provider instance that supports async initialization */
+export interface Initializable {
+  initialize(): Promise<void> | void
+}
+
+/** Service endpoint URLs */
+export interface ConfigEndpoints {
+  service: string
+  website: string
+}
+
+/** Auth route module returned by auth.service.route() */
+export interface AuthRouteModule {
+  router: Router
+  usePassport(): boolean
+  getStrategy(): GitHubStrategy
+}
+
+/** Auth service module with permission, route, and middleware setup */
+export interface AuthServiceModule {
+  permissionsSetup(options?: PermissionsConfig): void
+  route(options: unknown, endpoints: ConfigEndpoints): AuthRouteModule
+  middleware(options?: unknown, cache?: ICache): RequestHandler
+}
+
+/** Application configuration built from environment variables and provider factories */
+export interface AppConfig {
+  summary: SummaryServiceOptions
+  logging: {
+    logger: () => Logger
+  }
+  auth: {
+    service: AuthServiceModule
+  }
+  curation: {
+    queue: () => IQueue<CurationWebhookPayload> & Initializable
+    service: (
+      options: unknown,
+      store: ICurationStore,
+      endpoints: ConfigEndpoints,
+      cache: ICache,
+      harvestStore: CurationHarvestStore
+    ) => CurationService & CurationProcessService & { definitionService?: DefinitionService }
+    store: () => ICurationStore & Initializable
+  }
+  harvest: {
+    queue: () => IQueue & Initializable
+    service: (options?: { cachingService: ICache }) => HarvestService
+    store: () => HarvestStore & CurationHarvestStore & Initializable
+    throttler: () => unknown
+  }
+  aggregator: {
+    precedence: string[][]
+  }
+  definition: {
+    store: () => DefinitionStore & Initializable
+  }
+  upgrade: {
+    queue: RecomputeQueueFactories<IQueue & Initializable>
+    service: (options: { queue: RecomputeQueueFactories<IQueue & Initializable> }) => RecomputeHandler & Initializable
+  }
+  attachment: {
+    store: () => AttachmentStore & Initializable
+  }
+  caching: {
+    service: () => ICache & Initializable
+  }
+  endpoints: ConfigEndpoints
+  limits: {
+    windowSeconds: number
+    max: number
+    batchWindowSeconds: number
+    batchMax: number
+  }
+  webhook: {
+    githubSecret: string
+    crawlerSecret: string
+  }
+  search: {
+    service: () => SearchService & StatsSearchService & Initializable
+  }
+  insights: {
+    serviceId: string
+    serviceKey: string
+    crawlerId: string
+    crawlerKey: string
+  }
+  appVersion: string
+  buildsha: string
+  heapstats: {
+    logHeapstats: string
+    logInverval: string
+  }
+}
 
 /**
  * Loads the given factory for the indicated namespace. The namespace can be a subcomponent
@@ -14,15 +131,8 @@ import providers from '../providers/index.ts'
  * file, memory, mongo) and an optional object path within that module that leads to the
  * desired factory.
  * Dispatch to multiple with + (e.g. spec=dispatch+mongo+azblob)
- * @param {*} spec - indicator of the module and factory to load
- * @param {*} namespace - an optional place to look for built in factories
  */
-
-/**
- * @param {string} spec
- * @param {string} [namespace]
- */
-function loadFactory(spec, namespace) {
+function loadFactory(spec: string, namespace?: string) {
   const names = spec.split('+')
   const factory = loadOne(names[0], namespace)
   const factories = names.slice(1).map(name => loadOne(name, namespace))
@@ -32,11 +142,7 @@ function loadFactory(spec, namespace) {
   return factory
 }
 
-/**
- * @param {string} spec
- * @param {string} [namespace]
- */
-function loadOne(spec, namespace) {
+function loadOne(spec: string, namespace?: string) {
   const [requirePath, objectPath] = spec.split('|')
   const getPath = (namespace ? `${namespace}.` : '') + requirePath
   const target = get(providers, getPath)

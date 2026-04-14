@@ -6,6 +6,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
+import type { Express, NextFunction, Request, Response } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { serializeError } from 'serialize-error'
@@ -23,6 +24,7 @@ import createStatsService from './business/statsService.ts'
 import createStatusService from './business/statusService.ts'
 import createSuggestionService from './business/suggestionService.ts'
 import createSummaryService from './business/summarizer.ts'
+import type { AppConfig } from './bin/config.ts'
 import createCondaRepoAccess from './lib/condaRepoAccess.ts'
 import trySetHeapLoggingAtInterval from './lib/heapLogger.ts'
 import { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } from './lib/rateLimit.ts'
@@ -57,12 +59,22 @@ import setupStatusRoute from './routes/status.ts'
 import setupSuggestionsRoute from './routes/suggestions.ts'
 import setupWebhookRoute from './routes/webhook.ts'
 
+/** Express application with an async initialization hook */
+export interface App extends Express {
+  init(app: App, callback: (error?: Error) => void): Promise<void>
+}
+
 const v1 = '1.0.0'
 
-/** @param {import('./bin/config.ts').AppConfig} config */
-function createApp(config) {
-  /** @type {(() => Promise<void>)[]} */
-  const initializers = []
+/**
+ * Creates and configures the Express application.
+ *
+ * Wires up all providers, services, routes, middleware, error handling,
+ * and returns an {@link App} with an `init` method that must be called
+ * to complete async initialization (stores, queues, queue processors, etc.).
+ */
+function createApp(config: AppConfig): App {
+  const initializers: (() => Promise<void>)[] = []
 
   const logger = loggerFactory(config.logging.logger())
   process.on('unhandledRejection', exception => logger.error('unhandledRejection', exception))
@@ -226,24 +238,22 @@ function createApp(config) {
   app.use('/status', statusRoute)
 
   // catch 404 and forward to error handler
-  /** @param {import('express').Request} req @param {import('express').Response} _res @param {import('express').NextFunction} next */
-  const requestHandler = (req, _res, next) => {
+  const requestHandler = (req: Request, _res: Response, next: NextFunction) => {
     logger.info('Error when handling a request', {
-      rawUrl: req._parsedUrl?._raw,
+      rawUrl: (req as any)._parsedUrl?._raw,
       baseUrl: req.baseUrl,
       originalUrl: req.originalUrl,
       params: req.params,
       route: req.route,
       url: req.url
     })
-    const err = /** @type {Error & { status?: number }} */ (new Error('Not Found'))
+    const err = new Error('Not Found') as Error & { status?: number }
     err.status = 404
     next(err)
   }
   app.use(requestHandler)
 
-  /** @param {unknown} _app @param {(error?: Error) => void} callback */
-  requestHandler.init = async (_app, callback) => {
+  requestHandler.init = async (_app: unknown, callback: (error?: Error) => void) => {
     Promise.all(initializers.map(init => init())).then(
       async () => {
         // Bit of trick for local hosting. Preload search if using an in-memory search service
@@ -265,13 +275,10 @@ function createApp(config) {
       }
     )
   }
-  const appAsUnknown = /** @type {unknown} */ (app)
-  /** @type {import('./app.ts').App} */
-  const appWithInit = /** @type {import('./app.ts').App} */ (appAsUnknown)
+  const appWithInit = app as unknown as App
   appWithInit.init = requestHandler.init
 
-  /** @param {Error & {status?: number}} error @param {import('express').Request} request @param {import('express').Response} response @param {import('express').NextFunction} next */
-  const errorHandler = (error, request, response, next) => {
+  const errorHandler = (error: Error & { status?: number }, request: Request, response: Response, next: NextFunction) => {
     if (response.headersSent) {
       next(error)
     } else {

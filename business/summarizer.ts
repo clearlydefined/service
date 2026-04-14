@@ -1,72 +1,65 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/**
- * @typedef {import('./summarizer').SummaryServiceOptions} SummaryServiceOptions
- * @typedef {import('./summarizer').SummarizedData} SummarizedData
- * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
- */
+import type { EntityCoordinates } from '../lib/entityCoordinates.ts'
 
 import summarizers from '../providers/summary/index.ts'
+
+/** Summarizer function interface */
+export interface Summarizer {
+  summarize(coordinates: EntityCoordinates, data: any): any
+}
+
+/** Summarizer factory function type */
+export type SummarizerFactory = (options: Record<string, any>) => Summarizer
+
+/** Options for the SummaryService */
+export interface SummaryServiceOptions {
+  [tool: string]: Record<string, any>
+}
+
+/** Summarized data structure - tool -> version -> summary */
+export type SummarizedData = Record<string, Record<string, any>>
 
 /**
  * Service for summarizing tool output data.
  * Delegates to tool-specific summarizers to process raw harvest data.
  */
 class SummaryService {
-  /**
-   * Creates a new SummaryService instance
-   * @param {SummaryServiceOptions} options - Tool-specific configuration options
-   */
-  constructor(options) {
+  options: SummaryServiceOptions
+
+  constructor(options: SummaryServiceOptions) {
     this.options = options
   }
 
   /**
    * Summarize the data for each of the supplied data points for different versions of an
    * identified tool.
-   *
-   * @param {EntityCoordinates} coordinates - The component being summarized
-   * @param {string} tool - The name of the tool whose output is being summarized
-   * @param {Record<string, any>} data - The data to summarize (keyed by version)
-   * @returns {Record<string, any>} Summarized data keyed by version
-   * @private
    */
-  _summarizeTool(coordinates, tool, data) {
+  _summarizeTool(coordinates: EntityCoordinates, tool: string, data: Record<string, any>): Record<string, any> {
     if (!summarizers[tool]) {
       return data
     }
     const summarizer = summarizers[tool](this.options[tool] || {})
     return Object.getOwnPropertyNames(data).reduce(
-      (result, version) => {
+      (result: Record<string, any>, version) => {
         result[version] = summarizer.summarize(coordinates, data[version])
         return result
       },
-      /** @type {Record<string, any>} */ ({})
+      {}
     )
   }
 
-  /**
-   * Summarize all of the data for the identified component.
-   *
-   * @param {EntityCoordinates} coordinates - The component being summarized
-   * @param {SummarizedData} data - The data to summarize (keyed by tool name and version)
-   * @returns {SummarizedData} Summarized data for all tools
-   */
-  summarizeAll(coordinates, data) {
+  /** Summarize all of the data for the identified component. */
+  summarizeAll(coordinates: EntityCoordinates, data: SummarizedData): SummarizedData {
     return Object.getOwnPropertyNames(data || {}).reduce(
-      (result, tool) => {
+      (result: SummarizedData, tool) => {
         result[tool] = this._summarizeTool(coordinates, tool, data[tool])
         return result
       },
-      /** @type {SummarizedData} */ ({})
+      {}
     )
   }
 }
 
-/**
- * Factory function to create a SummaryService instance
- * @param {SummaryServiceOptions} options - Tool-specific configuration options
- * @returns {SummaryService} A new SummaryService instance
- */
-export default options => new SummaryService(options)
+export default (options: SummaryServiceOptions): SummaryService => new SummaryService(options)
