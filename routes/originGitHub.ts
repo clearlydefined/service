@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Router, Request } from 'express'
+import type { Request, Router } from 'express'
 import express from 'express'
 import throat from 'throat'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'

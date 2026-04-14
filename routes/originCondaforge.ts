@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Router } from 'express'
-import type createCondaRepoAccess from '../lib/condaRepoAccess.ts'
 import express from 'express'
+import type createCondaRepoAccess from '../lib/condaRepoAccess.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Router, Request, Response } from 'express'
-import type createCondaRepoAccess from '../lib/condaRepoAccess.ts'
+import type { Request, Response, Router } from 'express'
 import express from 'express'
+import type createCondaRepoAccess from '../lib/condaRepoAccess.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()

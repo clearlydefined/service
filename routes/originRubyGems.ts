@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import express from 'express'
 import type { Router } from 'express'
+import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -30,11 +30,9 @@ router.get(
     const { name } = request.params
     const url = `https://rubygems.org/api/v1/search.json?query=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.map(
-      (entry: any) => {
-        return { id: entry.name }
-      }
-    )
+    const result = answer.map((entry: any) => {
+      return { id: entry.name }
+    })
     return response.status(200).send(result)
   })
 )

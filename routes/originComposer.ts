@@ -21,9 +21,8 @@ router.get(
     const url = `https://packagist.org/packages/${fullName}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
     const result = Object.getOwnPropertyNames(answer.package.versions)
-      .map(
-        (version: string) =>
-          version.startsWith('v') && version[1]! >= '0' && version[1]! <= '9' ? version.substring(1) : version
+      .map((version: string) =>
+        version.startsWith('v') && version[1]! >= '0' && version[1]! <= '9' ? version.substring(1) : version
       )
       .sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
@@ -37,11 +36,9 @@ router.get(
     const searchTerm = name ? `${namespace}/${name}` : namespace
     const url = `https://packagist.org/search.json?q=${searchTerm}&per_page=100`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.map(
-      (entry: any) => {
-        return { id: entry.name }
-      }
-    )
+    const result = answer.results.map((entry: any) => {
+      return { id: entry.name }
+    })
     return response.status(200).send(result)
   })
 )

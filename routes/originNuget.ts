@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import express from 'express'
 import type { Router } from 'express'
+import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -31,11 +31,9 @@ router.get(
     const { name } = request.params
     const url = `${baseUrl}/query?q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.data.map(
-      (entry: any) => {
-        return { id: entry.id }
-      }
-    )
+    const result = answer.data.map((entry: any) => {
+      return { id: entry.id }
+    })
     return response.status(200).send(result)
   })
 )

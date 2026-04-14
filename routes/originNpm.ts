@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import express from 'express'
 import type { Router } from 'express'
+import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -35,11 +35,9 @@ router.get(
     const searchTerm = name ? `${namespace}/${name}` : namespace
     const url = `https://api.npms.io/v2/search?q=${searchTerm}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.map(
-      (entry: any) => {
-        return { id: entry.package.name }
-      }
-    )
+    const result = answer.results.map((entry: any) => {
+      return { id: entry.package.name }
+    })
     return response.status(200).send(result)
   })
 )

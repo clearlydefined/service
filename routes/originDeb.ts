@@ -30,11 +30,9 @@ router.get(
     const { name } = request.params
     const url = `https://sources.debian.org/api/search/${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.other.map(
-      (entry: any) => {
-        return { id: entry.name }
-      }
-    )
+    const result = answer.results.other.map((entry: any) => {
+      return { id: entry.name }
+    })
     if (answer.results.exact) {
       result.unshift({ id: answer.results.exact.name })
     }

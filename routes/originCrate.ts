@@ -29,11 +29,9 @@ router.get(
     const { name } = request.params
     const url = `https://crates.io/api/v1/crates?per_page=100&q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.crates.map(
-      (x: any) => {
-        return { id: x.name }
-      }
-    )
+    const result = answer.crates.map((x: any) => {
+      return { id: x.name }
+    })
     return response.status(200).send(result)
   })
 )
