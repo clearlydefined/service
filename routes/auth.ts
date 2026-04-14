@@ -1,16 +1,8 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('express').NextFunction} NextFunction */
-/** @typedef {import('express').RequestHandler} RequestHandler */
-/** @typedef {import('@octokit/rest').Octokit} OctokitType */
-/** @typedef {import('passport-github').Strategy} GitHubStrategyType */
-/** @typedef {import('./auth').AuthOptions} AuthOptions */
-/** @typedef {import('./auth').AuthEndpoints} AuthEndpoints */
-/** @typedef {import('./auth').UserDetails} UserDetails */
-/** @typedef {import('./auth').GitHubEmail} GitHubEmail */
+import type { Request, Response, NextFunction, RequestHandler } from 'express'
+import type { PermissionsConfig } from '../middleware/permissions.ts'
 
 import { URL } from 'node:url'
 import { Octokit } from '@octokit/rest'
@@ -19,30 +11,69 @@ import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github'
 import { defaultHeaders } from '../lib/fetch.ts'
 
+/**
+ * Configuration options for the auth route module.
+ */
+export interface AuthOptions {
+  /** GitHub OAuth App client ID (optional, falls back to PAT auth if not set) */
+  clientId?: string
+  /** GitHub OAuth App client secret */
+  clientSecret?: string
+  /** GitHub Personal Access Token for service-level operations */
+  token: string
+  /** GitHub organization name for filtering team memberships */
+  org: string
+  /** Permission configuration mapping permission names to team names */
+  permissions: PermissionsConfig
+}
+
+/**
+ * Endpoint URLs for OAuth callbacks and redirects.
+ */
+export interface AuthEndpoints {
+  /** URL of the service API (used for OAuth callback URL) */
+  service: string
+  /** URL of the website/frontend (used for postMessage origin) */
+  website: string
+}
+
+/**
+ * GitHub user email information.
+ */
+export interface GitHubEmail {
+  /** Email address */
+  email: string
+  /** Whether this is the primary email */
+  primary: boolean
+  /** Whether the email is verified */
+  verified: boolean
+  /** Email visibility setting */
+  visibility: string | null
+}
+
+/**
+ * Result from getUserDetails containing user permissions and email.
+ */
+export interface UserDetails {
+  /** The user's public email, if available */
+  publicEmails: GitHubEmail | undefined
+  /** List of permission names the user has based on team membership */
+  permissions: string[]
+}
+
 const router = express.Router()
 
-/** @type {AuthOptions | null} */
-let options = null
+let options: AuthOptions | null = null
 
-/** @type {AuthEndpoints | null} */
-let endpoints = null
+let endpoints: AuthEndpoints | null = null
 
 /**
  * Creates middleware that uses Passport OAuth if configured, otherwise falls back to PAT.
  * If an OAuth token hasn't been configured, use a Personal Access Token instead.
- *
- * @returns {RequestHandler} Express middleware for authentication
  */
-function passportOrPat() {
-  /** @type {RequestHandler | null} */
-  let passportAuth = null
-  /**
-   * @param {Request} request
-   * @param {Response} response
-   * @param {NextFunction} next
-   * @returns {void}
-   */
-  function handler(request, response, next) {
+function passportOrPat(): RequestHandler {
+  let passportAuth: RequestHandler | null = null
+  function handler(request: Request, response: Response, next: NextFunction): void {
     if (options.clientId) {
       passportAuth = passportAuth || passport.authenticate('github', { session: false })
       passportAuth(request, response, next)
@@ -109,12 +140,8 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
 /**
  * Fetch user details including public emails and ClearlyDefined permissions
  * based on GitHub team membership in the identified org.
- *
- * @param {string} token - GitHub API token
- * @param {string} org - Organization name to filter teams
- * @returns {Promise<UserDetails>} User details including public email and permissions
  */
-async function getUserDetails(token, org) {
+async function getUserDetails(token: string, org: string): Promise<UserDetails> {
   const client = new Octokit({
     auth: token,
     headers: defaultHeaders
@@ -132,7 +159,7 @@ async function getUserDetails(token, org) {
 
     return { publicEmails, permissions }
   } catch (err) {
-    const error = /** @type {Error & { code?: number; status?: number }} */ (err)
+    const error = err as Error & { code?: number; status?: number }
     if (error.status === 404 || error.code === 404) {
       console.error(
         'GitHub returned a 404 when trying to read team data. ' +
@@ -152,11 +179,8 @@ async function getUserDetails(token, org) {
 
 /**
  * Finds the permission name associated with a team.
- *
- * @param {string} team - Team name to look up
- * @returns {string | null} Permission name if found, null otherwise
  */
-function findPermissions(team) {
+function findPermissions(team: string): string | null {
   const permissions = options.permissions
   for (const permission in permissions) {
     if (permissions[permission].includes(team)) {
@@ -169,31 +193,24 @@ function findPermissions(team) {
 /**
  * Configures the auth module with options and endpoints.
  * Must be called before using the router.
- *
- * @param {AuthOptions} authOptions - Authentication configuration options
- * @param {AuthEndpoints} authEndpoints - Service endpoint URLs for OAuth callbacks
  */
-function setup(authOptions, authEndpoints) {
+function setup(authOptions: AuthOptions, authEndpoints: AuthEndpoints): void {
   options = authOptions
   endpoints = authEndpoints
 }
 
 /**
  * Returns whether passport should be used for OAuth authentication.
- *
- * @returns {boolean} True if OAuth is configured (clientId present), false if using PAT fallback
  */
-function usePassport() {
+function usePassport(): boolean {
   return !!options.clientId
 }
 
 /**
  * Creates and returns the Passport GitHub strategy for OAuth.
  * Should only be called after setup() and if usePassport() returns true.
- *
- * @returns {GitHubStrategy} Configured Passport GitHub strategy
  */
-function getStrategy() {
+function getStrategy(): GitHubStrategy {
   return new GitHubStrategy(
     {
       clientID: options.clientId,

@@ -1,6 +1,10 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Request, Response } from 'express'
+import type { DefinitionService } from '../business/definitionService.js'
+import type { Logger } from '../providers/logging/index.js'
+
 import express from 'express'
 
 const router = express.Router()
@@ -14,39 +18,23 @@ const { get } = lodash
 import { parseUrn } from '../lib/utils.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-
 const validPrActions = ['opened', 'reopened', 'synchronize', 'closed']
-/** @type {string | null} */
-let githubSecret = null
-/** @type {string | null} */
-let crawlerSecret = null
-/** @type {any} */
-let logger = null
-/** @type {any} */
-let curationService
-/** @type {any} */
-let definitionService
+let githubSecret: string | null = null
+let crawlerSecret: string | null = null
+let logger: Logger | null = null
+let curationService: any
+let definitionService: DefinitionService
 let test = false
 
 router.post('/', asyncMiddleware(handlePost))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-function handlePost(request, response) {
+function handlePost(request: Request, response: Response) {
   if (request.headers['x-crawler']) {
     return handleCrawlerCall(request, response)
   }
   return handleGitHubCall(request, response)
 }
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function handleGitHubCall(request, response) {
+async function handleGitHubCall(request: Request, response: Response) {
   const body = validateGitHubCall(request, response)
   if (!body) {
     return
@@ -72,23 +60,19 @@ async function handleGitHubCall(request, response) {
         break
       }
     }
-    logger.info(`Handled GitHub event "${body.action}" for PR#${pr.number}`)
+    logger!.info(`Handled GitHub event "${body.action}" for PR#${pr.number}`)
   } catch (exception) {
-    const ex = /** @type {Error & {code?: number}} */ (exception)
+    const ex = exception as Error & { code?: number }
     if (ex.code === 404) {
       info(request, response, 200, `Bad GitHub PR event: Non-existant PR#${pr.number}, action: ${body.action}`)
       return
     }
-    logger.error(ex)
+    logger!.error(ex as any)
   }
   response.status(200).end()
 }
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function handleCrawlerCall(request, response) {
+async function handleCrawlerCall(request: Request, response: Response) {
   if (request.headers['x-crawler'] !== crawlerSecret) {
     info(request, response, 400, 'Invalid token')
     return
@@ -108,42 +92,32 @@ async function handleCrawlerCall(request, response) {
   // TODO validate the coordinates are complete
   const { tool, toolRevision } = parseUrn(urn)
   if (tool === 'clearlydefined') {
-    await definitionService.computeStoreAndCurate(coordinates)
+    await definitionService.computeStoreAndCurate(coordinates!)
   } else {
-    await definitionService.computeAndStoreIfNecessary(coordinates, tool, toolRevision)
+    await definitionService.computeAndStoreIfNecessary(coordinates!, tool!, toolRevision!)
   }
-  logger.info(`Handled Crawler update event for ${urn}`)
+  logger!.info(`Handled Crawler update event for ${urn}`)
   response.status(200).end()
 }
 
-/**
- * @param {Request} request
- * @param {Response} response
- * @returns {boolean}
- */
-function validateGitHubSignature(request, response) {
+function validateGitHubSignature(request: Request, response: Response): boolean {
   if (request.hostname?.includes('localhost')) {
     return true
   }
   const isGithubEvent = request.headers['x-github-event']
-  const signature = /** @type {string | undefined} */ (request.headers['x-hub-signature'])
+  const signature = request.headers['x-hub-signature'] as string | undefined
   if (!isGithubEvent || !signature) {
     return info(request, response, 400, 'Missing signature or event type on GitHub webhook')
   }
 
-  const computedSignature = `sha1=${crypto.createHmac('sha1', githubSecret).update(request.body).digest('hex')}`
+  const computedSignature = `sha1=${crypto.createHmac('sha1', githubSecret!).update(request.body).digest('hex')}`
   if (!test && !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computedSignature))) {
     return info(request, response, 400, 'X-Hub-Signature does not match blob signature')
   }
   return true
 }
 
-/**
- * @param {Request} request
- * @param {Response} response
- * @returns {any}
- */
-function validateGitHubCall(request, response) {
+function validateGitHubCall(request: Request, response: Response): any {
   if (!validateGitHubSignature(request, response)) {
     return false
   }
@@ -161,30 +135,15 @@ function validateGitHubCall(request, response) {
   return body
 }
 
-/**
- * @param {Request} _request
- * @param {Response} response
- * @param {number} code
- * @param {string | null} [error]
- * @returns {false}
- */
-function info(_request, response, code, error = null) {
-  error && logger.info(`Fatal webhook error: ${error}`)
+function info(_request: Request, response: Response, code: number, error: string | null = null): false {
+  error && logger!.info(`Fatal webhook error: ${error}`)
   response.status(code)
   response.setHeader('content-type', 'text/plain')
   response.end(error)
   return false
 }
 
-/**
- * @param {any} curation
- * @param {any} definition
- * @param {any} appLogger
- * @param {string} githubToken
- * @param {string} crawlerToken
- * @param {boolean} [testFlag]
- */
-function setup(curation, definition, appLogger, githubToken, crawlerToken, testFlag = false) {
+function setup(curation: any, definition: DefinitionService, appLogger: Logger, githubToken: string, crawlerToken: string, testFlag: boolean = false): import('express').Router {
   curationService = curation
   definitionService = definition
   githubSecret = githubToken
@@ -192,7 +151,7 @@ function setup(curation, definition, appLogger, githubToken, crawlerToken, testF
   logger = appLogger
   test = testFlag
   if (test) {
-    const _router = /** @type {any} */ (router)
+    const _router = router as any
     _router._handlePost = handlePost
     _router._validateGitHubCall = validateGitHubCall
   }
