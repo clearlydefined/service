@@ -60,7 +60,7 @@ export type StatusLookupFn = () => Promise<StatusData>
  * Service for retrieving system status information from Application Insights.
  * Provides various metrics about system usage and crawler activity.
  */
-class StatusService {
+export class StatusService {
   options: StatusServiceOptions
   logger: Logger
   cache: ICache

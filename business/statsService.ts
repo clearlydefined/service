@@ -65,7 +65,7 @@ export interface StatsSearchResponse {
  * Service for computing and caching statistics about definitions.
  * Provides aggregate metrics broken down by component type.
  */
-class StatsService {
+export class StatsService {
   definitionService: DefinitionService
   searchService: StatsSearchService
   logger: Logger

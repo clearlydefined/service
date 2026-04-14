@@ -61,10 +61,10 @@ async function getDefinition(request: Request, response: Response) {
   }
 
   const pr = request.params.pr as string | undefined
-  const force = request.query.force as string | undefined
+  const force = !!request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   log.debug('get_definition:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
-  const result = await definitionService.get(coordinates, pr, force as boolean | undefined, expand)
+  const result = await definitionService.get(coordinates, pr, force, expand)
   log.debug('get_definition:prepared', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
   response.status(200).send(result)
   log.debug('get_definition:sent', { ts: new Date().toISOString(), coordinates: coordinates.toString() })

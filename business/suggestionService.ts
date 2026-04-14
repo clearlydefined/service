@@ -33,7 +33,7 @@ export interface RelatedDefinitions {
  * Service for generating suggestions to improve definitions.
  * Analyzes related versions and discovered data to suggest curations.
  */
-class SuggestionService {
+export class SuggestionService {
   definitionService: DefinitionService
 
   constructor(definitionService: DefinitionService) {

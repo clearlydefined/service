@@ -654,7 +654,9 @@ function setup(definition?, coordinateSpec?, curation?) {
     aggregator as any,
     curator as any,
     store as any,
-    search as any
+    search as any,
+    { initialize: sinon.stub(), done: sinon.stub(), get: sinon.stub(), set: sinon.stub(), delete: sinon.stub() } as any,
+    { validate: sinon.stub().resolves(null), initialize: sinon.stub(), setupProcessing: sinon.stub(), compute: sinon.stub() } as any
   )
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
 

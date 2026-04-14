@@ -47,7 +47,6 @@ function middleware(options?: GitHubConfigOptions, cache?: ICache): RequestHandl
  * Sets up and returns the GitHub OAuth authentication route module.
  */
 function route(options?: GitHubConfigOptions, endpoints?: AuthEndpoints) {
-  // @ts-expect-error - routes/auth.js namespace export not fully typed yet
   githubRoute.setup(options || defaultOptions, endpoints)
   return githubRoute
 }

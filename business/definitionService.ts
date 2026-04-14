@@ -251,7 +251,7 @@ const weights = {
  * Service for managing component definitions.
  * Handles computation, caching, storage, and retrieval of definitions.
  */
-class DefinitionService {
+export class DefinitionService {
   harvestStore: HarvestStore
   harvestService: HarvestService
   summaryService: SummaryService
@@ -471,7 +471,7 @@ class DefinitionService {
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
    */
-  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<undefined[]> {
+  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<void[]> {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
     return Promise.all(
       coordinateList.map(
@@ -1011,7 +1011,6 @@ class DefinitionService {
   }
 
   /** @deprecated This method is currently unused */
-  // @ts-expect-error - unused but kept for API compatibility
   _getDefinitionCoordinates(coordinates: EntityCoordinates): object {
     return Object.assign({}, coordinates, {
       tool: 'definition',

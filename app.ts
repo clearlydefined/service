@@ -60,7 +60,7 @@ import setupSuggestionsRoute from './routes/suggestions.ts'
 import setupWebhookRoute from './routes/webhook.ts'
 
 /** Express application with an async initialization hook */
-export interface App extends Express {
+export interface App extends Omit<Express, 'init'> {
   init(app: App, callback: (error?: Error) => void): Promise<void>
 }
 

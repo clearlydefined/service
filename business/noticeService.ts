@@ -76,7 +76,7 @@ export interface AttachmentStore {
  * Service for generating attribution notices from definitions.
  * Supports multiple output formats including text, HTML, and JSON.
  */
-class NoticeService {
+export class NoticeService {
   definitionService: DefinitionService
   attachmentStore: AttachmentStore
   logger: Logger
