@@ -46,7 +46,7 @@ function middleware(options?: GitHubConfigOptions, cache?: ICache): RequestHandl
 /**
  * Sets up and returns the GitHub OAuth authentication route module.
  */
-function route(options?: GitHubConfigOptions, endpoints?: AuthEndpoints) {
+function route(options: GitHubConfigOptions | undefined, endpoints: AuthEndpoints) {
   githubRoute.setup(options || defaultOptions, endpoints)
   return githubRoute
 }
