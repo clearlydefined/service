@@ -8,6 +8,10 @@ import type { Definition, UpgradeHandler } from '../../business/definitionServic
  * Always treats the stored definition as valid, effectively skipping staleness checks.
  * Used by the delayed compute path to implement missing-only semantics.
  */
-export declare class SkipUpgradePolicy implements UpgradeHandler {
-  validate(definition: Definition | null): Promise<Definition | null>
+class SkipUpgradePolicy implements UpgradeHandler {
+  async validate(definition: Definition | null): Promise<Definition | null> {
+    return definition || null
+  }
 }
+
+export { SkipUpgradePolicy }

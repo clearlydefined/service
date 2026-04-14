@@ -3,40 +3,39 @@
 
 import lodash from 'lodash'
 import { gte } from 'semver'
+import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 
 const { get } = lodash
 
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
-/**
- * @typedef {import('../logging').Logger} Logger
- * @typedef {import('../../business/definitionService').Definition} Definition
- * @typedef {import('../caching').ICache} ICache
- */
+/** Configuration options for DefinitionVersionChecker */
+export interface DefinitionVersionCheckerOptions {
+  /** Logger instance for logging operations */
+  logger?: Logger
+}
 
-class DefinitionVersionChecker {
-  /** @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options] */
-  constructor(options = {}) {
+class DefinitionVersionChecker implements UpgradeHandler {
+  options: DefinitionVersionCheckerOptions
+  logger: Logger
+  declare _currentSchema: string | undefined
+
+  constructor(options: DefinitionVersionCheckerOptions = {}) {
     this.options = options
     this.logger = this.options.logger || logger()
   }
 
-  /** @param {string} schemaVersion */
-  set currentSchema(schemaVersion) {
+  set currentSchema(schemaVersion: string) {
     this._currentSchema = schemaVersion
   }
 
-  /** @returns {string} */
-  get currentSchema() {
+  get currentSchema(): string | undefined {
     return this._currentSchema
   }
 
-  /**
-   * @param {Definition | null} definition
-   * @returns {Promise<Definition | undefined>}
-   */
-  async validate(definition) {
+  async validate(definition: Definition | null): Promise<Definition | undefined> {
     if (!this._currentSchema) {
       throw new Error('Current schema version is not set')
     }
@@ -50,33 +49,20 @@ class DefinitionVersionChecker {
     return undefined
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     //do nothing for initialization
   }
 
-  /**
-   * @param {import('../../business/definitionService').DefinitionService} [_definitionService]
-   * @param {Logger} [_logger]
-   * @param {boolean} [_once]
-   * @param {ICache} [_cache]
-   */
-  setupProcessing(_definitionService, _logger, _once, _cache) {
+  setupProcessing(_definitionService?: DefinitionService, _logger?: Logger, _once?: boolean): void {
     //do nothing for set up processing
   }
 
-  /**
-   * @param {Definition} definition
-   * @returns {string | undefined}
-   */
-  static getCoordinates(definition) {
+  static getCoordinates(definition: Definition): string | undefined {
     return definition?.coordinates && EntityCoordinates.fromObject(definition.coordinates).toString()
   }
 }
 
-/**
- * @param {import('./defVersionCheck').DefinitionVersionCheckerOptions} [options]
- * @returns {DefinitionVersionChecker}
- */
-const factory = options => new DefinitionVersionChecker(options)
+const factory = (options?: DefinitionVersionCheckerOptions): DefinitionVersionChecker =>
+  new DefinitionVersionChecker(options)
 
 export { DefinitionVersionChecker, factory }

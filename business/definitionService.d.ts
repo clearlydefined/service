@@ -261,7 +261,7 @@ export interface UpgradeHandler {
   /** Current schema version */
   currentSchema?: string
   /** Validate and potentially upgrade a definition */
-  validate(definition: Definition | null): Promise<Definition | null>
+  validate(definition: Definition | null): Promise<Definition | null | undefined>
 }
 
 /** Minimal DefinitionService shape required by recompute compute policies */

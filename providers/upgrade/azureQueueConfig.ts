@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 import config from 'painless-config'
+import type { RecomputeQueueFactories } from '../index.ts'
+import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue.ts'
 import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
-/** @typedef {import('../queueing/azureStorageQueue').AzureStorageQueueOptions} AzureStorageQueueOptions */
-
-const upgradeDefaultOptions = {
+const upgradeDefaultOptions: AzureStorageQueueOptions = {
   connectionString:
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
   queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
@@ -16,7 +16,7 @@ const upgradeDefaultOptions = {
   }
 }
 
-const computeDefaultOptions = {
+const computeDefaultOptions: AzureStorageQueueOptions = {
   connectionString:
     config.get('DEFINITION_COMPUTE_QUEUE_CONNECTION_STRING') ||
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') ||
@@ -28,20 +28,13 @@ const computeDefaultOptions = {
   }
 }
 
-/**
- * @param {AzureStorageQueueOptions} [options]
- * @returns {import('../queueing/azureStorageQueue')}
- */
-function azure(options) {
+function azure(options?: AzureStorageQueueOptions): AzureStorageQueue {
   return new AzureStorageQueue(options || upgradeDefaultOptions)
 }
 
-/**
- * @param {AzureStorageQueueOptions} [options]
- * @returns {import('../queueing/azureStorageQueue')}
- */
-function computeQueueFactory(options) {
+function computeQueueFactory(options?: AzureStorageQueueOptions): AzureStorageQueue {
   return new AzureStorageQueue(options || computeDefaultOptions)
 }
 
-export default { upgrade: azure, compute: computeQueueFactory }
+const queues: RecomputeQueueFactories<AzureStorageQueue> = { upgrade: azure, compute: computeQueueFactory }
+export default queues

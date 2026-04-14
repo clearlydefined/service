@@ -3,7 +3,6 @@
 
 import config from 'painless-config'
 import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
-import type { AzBlobAttachmentStoreOptions } from './azblobAttachmentStore.ts'
 import azblobAttachmentStore from './azblobAttachmentStore.ts'
 import azblobDefinitionStore from './azblobDefinitionStore.ts'
 import azblobHarvestStore from './azblobHarvestStore.ts'
@@ -42,7 +41,7 @@ function definition(options?: AzBlobStoreOptions) {
 /**
  * Creates an Azure Blob attachment store with the given options or default configuration.
  */
-function attachment(options?: AzBlobAttachmentStoreOptions) {
+function attachment(options?: AzBlobStoreOptions) {
   return azblobAttachmentStore(
     options || {
       connectionString: attachmentConnectionString,

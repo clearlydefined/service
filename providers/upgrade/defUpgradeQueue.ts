@@ -1,22 +1,29 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import { DefinitionVersionChecker } from './defVersionCheck.js'
-import { setup } from './process.js'
+import type { Definition, DefinitionService } from '../../business/definitionService.js'
+import type { Logger } from '../logging/index.js'
+import type { IQueue } from '../queueing/index.js'
+import type { DefinitionVersionCheckerOptions } from './defVersionCheck.ts'
+import { DefinitionVersionChecker } from './defVersionCheck.ts'
+import { setup } from './process.ts'
 
-/**
- * @typedef {import('../../business/definitionService').Definition} Definition
- * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
- * @typedef {import('../logging').Logger} Logger
- */
+/** Configuration options for DefinitionQueueUpgrader */
+export interface DefinitionQueueUpgraderOptions extends DefinitionVersionCheckerOptions {
+  /** Factory function that creates the upgrade queue */
+  queue: () => IQueue
+}
 
 class DefinitionQueueUpgrader extends DefinitionVersionChecker {
-  /**
-   * @override
-   * @param {Definition | null} definition
-   * @returns {Promise<Definition | undefined>}
-   */
-  async validate(definition) {
+  declare options: DefinitionQueueUpgraderOptions
+  declare _upgrade: IQueue
+
+  constructor(options: DefinitionQueueUpgraderOptions) {
+    super(options)
+    this.options = options
+  }
+
+  override async validate(definition: Definition | null): Promise<Definition | undefined> {
     if (!definition) {
       return undefined
     }
@@ -29,8 +36,7 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     return definition
   }
 
-  /** @param {Definition} definition */
-  async _queueUpgrade(definition) {
+  async _queueUpgrade(definition: Definition): Promise<void> {
     if (!this._upgrade) {
       throw new Error('Upgrade queue is not set')
     }
@@ -50,30 +56,18 @@ class DefinitionQueueUpgrader extends DefinitionVersionChecker {
     }
   }
 
-  /**
-   * @param {Definition} definition
-   * @returns {string}
-   */
-  _constructMessage(definition) {
+  _constructMessage(definition: Definition): string {
     const { coordinates, _meta } = definition
     const content = { coordinates, _meta }
     return Buffer.from(JSON.stringify(content)).toString('base64')
   }
 
-  /** @override */
-  async initialize() {
-    const options = /** @type {import('./defUpgradeQueue').DefinitionQueueUpgraderOptions} */ (this.options)
-    this._upgrade = options.queue()
+  override async initialize(): Promise<void> {
+    this._upgrade = this.options.queue()
     return this._upgrade.initialize()
   }
 
-  /**
-   * @override
-   * @param {DefinitionService} definitionService
-   * @param {Logger} logger
-   * @param {boolean} [once]
-   */
-  setupProcessing(definitionService, logger, once) {
+  override setupProcessing(definitionService: DefinitionService, logger: Logger, once?: boolean): Promise<void> {
     // Use a plain DefinitionVersionChecker (not `this`) so the queue processor returns undefined
     // for stale definitions and triggers recompute — rather than re-queuing them again.
     return setup(this._upgrade, definitionService, logger, once, new DefinitionVersionChecker(this.options))

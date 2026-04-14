@@ -19,9 +19,9 @@ import azblobConfig from '../providers/stores/azblobConfig.ts'
 import dispatchConfig from '../providers/stores/dispatchConfig.ts'
 import fileConfig from '../providers/stores/fileConfig.ts'
 import mongoConfig from '../providers/stores/mongoConfig.ts'
-import upgradeAzureQueueConfig from '../providers/upgrade/azureQueueConfig.js'
-import upgradeMemoryQueueConfig from '../providers/upgrade/memoryQueueConfig.js'
-import * as recomputeHandler from '../providers/upgrade/recomputeHandler.js'
+import upgradeAzureQueueConfig from '../providers/upgrade/azureQueueConfig.ts'
+import upgradeMemoryQueueConfig from '../providers/upgrade/memoryQueueConfig.ts'
+import * as recomputeHandler from '../providers/upgrade/recomputeHandler.ts'
 import type { ICache } from './caching/index.js'
 import listBasedFilterConfig from './harvest/throttling/listBasedFilterConfig.ts'
 import type { Logger } from './logging/index.js'
@@ -63,7 +63,7 @@ export interface CachingProviders {
 
 /** Provider configuration for authentication */
 export interface AuthProviders {
-  github: ProviderFactory
+  github: typeof githubAuthConfig
 }
 
 /** Paired queue factories used by recompute handlers */
@@ -102,7 +102,7 @@ export interface CurationQueueProviders {
 
 /** Provider configuration for curation service */
 export interface CurationServiceProviders {
-  github: ProviderFactory
+  github: typeof curationGithubConfig
 }
 
 /** Provider configuration for curation store */
@@ -141,6 +141,7 @@ export interface HarvestProviders {
   queue: HarvestQueueProviders
   service: HarvestServiceProviders
   store: HarvestStoreProviders
+  throttler: Record<string, ProviderFactory>
 }
 
 /** Central provider registry containing all provider factories */

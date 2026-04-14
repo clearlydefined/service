@@ -50,10 +50,8 @@ class AzureStorageQueue implements IQueue {
       return null
     }
     if (message.dequeueCount <= 5) {
-      // @ts-expect-error - azure-storage QueueMessageResult is structurally compatible at runtime
       return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
     }
-    // @ts-expect-error - azure-storage QueueMessageResult used as QueueMessage
     await this.delete({ original: message })
     return this.dequeue()
   }
@@ -64,7 +62,6 @@ class AzureStorageQueue implements IQueue {
   async dequeueMultiple(): Promise<DequeuedMessage[]> {
     const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
       this.options.queueName,
-      // @ts-expect-error - azure-storage getMessages accepts options as second arg
       this.options.dequeueOptions
     )
     if (!messages || messages.length === 0) {
@@ -73,16 +70,13 @@ class AzureStorageQueue implements IQueue {
     for (const i in messages) {
       if (messages[i].dequeueCount <= 5) {
         messages[i] = {
-          // @ts-expect-error
           original: messages[i],
           data: JSON.parse(Buffer.from(messages[i].messageText, 'base64').toString('utf8'))
         }
       } else {
-        // @ts-expect-error - azure-storage QueueMessageResult used as QueueMessage
         await this.delete({ original: messages[i] })
       }
     }
-    // @ts-expect-error - array has been mutated to DequeuedMessage[]
     return messages
   }
 

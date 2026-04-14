@@ -5,31 +5,29 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
+import type { DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import { factory } from './defVersionCheck.js'
+import type { Logger } from '../logging/index.js'
+import type { DequeuedMessage, IQueue } from '../queueing/index.js'
+import { factory } from './defVersionCheck.ts'
 
-/**
- * @typedef {import('../queueing').IQueue} IQueue
- * @typedef {import('../queueing').DequeuedMessage} DequeuedMessage
- * @typedef {import('../../business/definitionService').DefinitionService} DefinitionService
- * @typedef {import('../../business/definitionService').UpgradeHandler} UpgradeHandler
- * @typedef {import('../logging').Logger} Logger
- */
+/** Handler that processes individual dequeued messages */
+export interface MessageHandler {
+  processMessage(message: DequeuedMessage): Promise<void>
+}
 
 class QueueHandler {
-  /**
-   * @param {IQueue} queue
-   * @param {Logger} logger
-   * @param {import('./process').MessageHandler} [messageHandler]
-   */
-  constructor(queue, logger, messageHandler = { processMessage: async () => {} }) {
+  logger: Logger
+  declare _queue: IQueue
+  declare _messageHandler: MessageHandler
+
+  constructor(queue: IQueue, logger: Logger, messageHandler: MessageHandler = { processMessage: async () => {} }) {
     this._queue = queue
     this.logger = logger
     this._messageHandler = messageHandler
   }
 
-  /** @param {boolean} [once] */
-  async work(once) {
+  async work(once?: boolean): Promise<void> {
     let isQueueEmpty = true
     try {
       const messages = await this._queue.dequeueMultiple()
@@ -60,21 +58,19 @@ class QueueHandler {
   }
 }
 
-class DefinitionUpgrader {
-  /**
-   * @param {DefinitionService} definitionService
-   * @param {Logger} logger
-   * @param {UpgradeHandler} upgradePolicy
-   */
-  constructor(definitionService, logger, upgradePolicy) {
+class DefinitionUpgrader implements MessageHandler {
+  logger: Logger
+  declare _definitionService: DefinitionService
+  declare _upgradePolicy: UpgradeHandler
+
+  constructor(definitionService: DefinitionService, logger: Logger, upgradePolicy: UpgradeHandler) {
     this.logger = logger
     this._definitionService = definitionService
     this._upgradePolicy = upgradePolicy
     this._upgradePolicy.currentSchema = definitionService.currentSchema
   }
 
-  /** @param {DequeuedMessage} message */
-  async processMessage(message) {
+  async processMessage(message: DequeuedMessage): Promise<void> {
     let coordinates = get(message, 'data.coordinates')
     if (!coordinates) {
       return
@@ -101,14 +97,13 @@ class DefinitionUpgrader {
   }
 }
 
-/**
- * @param {IQueue} _queue
- * @param {DefinitionService} _definitionService
- * @param {Logger} _logger
- * @param {boolean} [once]
- * @param {UpgradeHandler} [_upgradePolicy]
- */
-function setup(_queue, _definitionService, _logger, once = false, _upgradePolicy = factory({ logger: _logger })) {
+function setup(
+  _queue: IQueue,
+  _definitionService: DefinitionService,
+  _logger: Logger,
+  once: boolean = false,
+  _upgradePolicy: UpgradeHandler = factory({ logger: _logger })
+): Promise<void> {
   const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy)
   const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
   return queueHandler.work(once)

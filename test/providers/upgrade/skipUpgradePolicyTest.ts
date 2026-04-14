@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import { SkipUpgradePolicy } from '../../../providers/upgrade/skipUpgradePolicy.js'
+import { SkipUpgradePolicy } from '../../../providers/upgrade/skipUpgradePolicy.ts'
 
 describe('SkipUpgradePolicy', () => {
   let policy

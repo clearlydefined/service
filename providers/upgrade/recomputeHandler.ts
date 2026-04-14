@@ -1,48 +1,69 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type {
+  Definition,
+  DefinitionService,
+  RecomputeHandler as IRecomputeHandler,
+  RecomputeContext,
+  UpgradeHandler
+} from '../../business/definitionService.js'
+import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
+import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
-import DefinitionQueueUpgrader from './defUpgradeQueue.js'
-import { factory as versionCheckFactory } from './defVersionCheck.js'
-import { DelayedComputePolicy } from './delayedComputePolicy.js'
-import memoryQueueConfig from './memoryQueueConfig.js'
-import { OnDemandComputePolicy } from './onDemandComputePolicy.js'
+import type { IQueue } from '../queueing/index.js'
+import type { MissingDefinitionComputePolicy } from './computePolicy.js'
+import DefinitionQueueUpgrader from './defUpgradeQueue.ts'
+import type { DefinitionVersionCheckerOptions } from './defVersionCheck.ts'
+import { factory as versionCheckFactory } from './defVersionCheck.ts'
+import { DelayedComputePolicy } from './delayedComputePolicy.ts'
+import memoryQueueConfig from './memoryQueueConfig.ts'
+import { OnDemandComputePolicy } from './onDemandComputePolicy.ts'
 
-/** @typedef {import('../../business/definitionService').DefinitionService} DefinitionService */
-/** @typedef {import('../../business/definitionService').Definition} Definition */
-/** @typedef {import('../logging').Logger} Logger */
-/** @typedef {import('../../lib/entityCoordinates')} EntityCoordinates */
-/** @typedef {import('./computePolicy').MissingDefinitionComputePolicy} MissingDefinitionComputePolicy */
-/** @typedef {import('./recomputeHandler').UpgradePolicy} UpgradePolicy */
+/** Upgrade policy accepted by RecomputeHandler: an UpgradeHandler with optional lifecycle hooks */
+export interface UpgradePolicy extends UpgradeHandler {
+  initialize?(): Promise<void> | void
+  setupProcessing?(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> | void
+}
 
-/** @typedef {{ upgradePolicy: UpgradePolicy, computePolicy: MissingDefinitionComputePolicy, logger?: Logger }} RecomputeHandlerOptions */
+export interface DelayedFactoryOptions {
+  queue?: {
+    upgrade?: () => IQueue
+    compute?: () => IQueue
+  }
+  logger?: Logger
+}
 
-/** @typedef {import('./recomputeHandler').DelayedFactoryOptions} DelayedFactoryOptions */
+interface RecomputeHandlerOptions {
+  upgradePolicy: UpgradePolicy
+  computePolicy: MissingDefinitionComputePolicy
+  logger?: Logger
+}
 
-class RecomputeHandler {
-  /** @param {RecomputeHandlerOptions} options */
-  constructor(options) {
+class RecomputeHandler implements IRecomputeHandler {
+  declare _upgradePolicy: UpgradePolicy
+  declare _computePolicy: MissingDefinitionComputePolicy
+  declare _logger: Logger
+
+  constructor(options: RecomputeHandlerOptions) {
     this._upgradePolicy = options.upgradePolicy
     this._computePolicy = options.computePolicy
     this._logger = options.logger || logger()
   }
 
-  /** @param {string} schemaVersion */
-  set currentSchema(schemaVersion) {
+  set currentSchema(schemaVersion: string) {
     this._upgradePolicy.currentSchema = schemaVersion
   }
 
-  /** @returns {string | undefined} */
-  get currentSchema() {
+  get currentSchema(): string | undefined {
     return this._upgradePolicy.currentSchema
   }
 
-  /** @param {Definition | null} definition */
-  async validate(definition) {
+  async validate(definition: Definition | null): Promise<Definition | null> {
     return this._upgradePolicy.validate(definition)
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     this._logger.debug('Initializing recompute handler policies', {
       upgradePolicy: getPolicyName(this._upgradePolicy),
       computePolicy: getPolicyName(this._computePolicy)
@@ -54,12 +75,7 @@ class RecomputeHandler {
     })
   }
 
-  /**
-   * @param {DefinitionService} [definitionService]
-   * @param {Logger} [logger]
-   * @param {boolean} [once]
-   */
-  async setupProcessing(definitionService, logger, once) {
+  async setupProcessing(definitionService?: DefinitionService, logger?: Logger, once?: boolean): Promise<void> {
     // Resolves after the first polling batch from each queue. Queue consumers
     // continue running indefinitely in the background via setTimeout — "setup
     // complete" means "first batch processed and polling loop started", not
@@ -80,26 +96,20 @@ class RecomputeHandler {
     })
   }
 
-  /**
-   * @param {DefinitionService} definitionService
-   * @param {EntityCoordinates} coordinates
-   */
-  async compute(definitionService, coordinates) {
+  async compute(definitionService: RecomputeContext, coordinates: EntityCoordinates): Promise<Definition> {
     return this._computePolicy.compute(definitionService, coordinates)
   }
 }
 
-/** @param {unknown} policy */
-function getPolicyName(policy) {
+function getPolicyName(policy: any): string {
   return policy?.constructor ? policy.constructor.name : 'UnknownPolicy'
 }
 
 /**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
  * Only `logger` is used from options; any other properties (e.g. `queue`) are intentionally ignored.
- * @param {{ logger?: import('../logging').Logger }} [options]
  */
-function defaultFactory({ logger } = {}) {
+function defaultFactory({ logger }: Pick<DefinitionVersionCheckerOptions, 'logger'> = {}): RecomputeHandler {
   return new RecomputeHandler({
     upgradePolicy: versionCheckFactory({ logger }),
     computePolicy: new OnDemandComputePolicy(),
@@ -109,9 +119,8 @@ function defaultFactory({ logger } = {}) {
 
 /**
  * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=upgradeQueue.
- * @param {DelayedFactoryOptions} [options]
  */
-function delayedFactory(options = {}) {
+function delayedFactory(options: DelayedFactoryOptions = {}): RecomputeHandler {
   const shared = {
     logger: options.logger
   }

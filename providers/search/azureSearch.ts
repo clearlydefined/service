@@ -21,7 +21,7 @@ class AzureSearch extends AbstractSearch {
   declare options: AzureSearchOptions
 
   /** @override */
-  async initialize(): Promise<void> {
+  override async initialize(): Promise<void> {
     super.initialize()
     if (!(await this._hasIndex(definitionsIndexName))) {
       await this._createIndex(this._buildDefinitionsIndex())
@@ -38,7 +38,7 @@ class AzureSearch extends AbstractSearch {
    * Get a list of coordinates suggested for the given pattern
    * @override
    */
-  async suggestCoordinates(pattern: string): Promise<string[]> {
+  override async suggestCoordinates(pattern: string): Promise<string[]> {
     const baseUrl = this._buildUrl(`indexes/${definitionsIndexName}/docs/suggest`)
     const validPattern = pattern.substring(0, 100)
     const url = `${baseUrl}&search=${validPattern}&suggesterName=suggester&$select=coordinates&$top=50`
@@ -56,7 +56,7 @@ class AzureSearch extends AbstractSearch {
    * Query the search index. See https://docs.microsoft.com/en-us/rest/api/searchservice/search-documents#request-body
    * @override
    */
-  async query(body: any): Promise<any> {
+  override async query(body: any): Promise<any> {
     return requestPromise({
       method: 'POST',
       url: this._buildUrl(`indexes/${definitionsIndexName}/docs/search`),

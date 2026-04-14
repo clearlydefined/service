@@ -12,7 +12,7 @@ import type { Definition, DefinitionService, RecomputeContext } from '../../../b
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import type { ICache } from '../../../providers/caching/index.js'
 import type { IQueue } from '../../../providers/queueing/index.js'
-import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputePolicy.js'
+import { DelayedComputePolicy } from '../../../providers/upgrade/delayedComputePolicy.ts'
 import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 const TEST_COORDINATES = 'npm/npmjs/-/leftpad/1.0.0'

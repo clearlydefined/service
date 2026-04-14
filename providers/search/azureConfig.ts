@@ -5,8 +5,8 @@ import config from 'painless-config'
 import type { AzureSearchOptions } from './azureSearch.ts'
 import search from './azureSearch.ts'
 
-function serviceFactory(options?: Partial<AzureSearchOptions>) {
-  const realOptions = options || {
+function serviceFactory(options?: AzureSearchOptions) {
+  const realOptions: AzureSearchOptions = options || {
     service: config.get('SEARCH_AZURE_SERVICE'),
     apiKey: config.get('SEARCH_AZURE_API_KEY'),
     dataSourceConnectionString:

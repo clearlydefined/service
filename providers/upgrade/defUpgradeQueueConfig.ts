@@ -2,13 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import memory from '../queueing/memoryQueue.ts'
-import DefinitionQueueUpgrader from './defUpgradeQueue.js'
+import type { DefinitionQueueUpgraderOptions } from './defUpgradeQueue.ts'
+import DefinitionQueueUpgrader from './defUpgradeQueue.ts'
 
-/**
- * @param {Partial<import('./defUpgradeQueue').DefinitionQueueUpgraderOptions>} [options]
- * @returns {import('./defUpgradeQueue')}
- */
-function serviceFactory(options = {}) {
+function serviceFactory(options: Partial<DefinitionQueueUpgraderOptions> = {}): DefinitionQueueUpgrader {
   const mergedOptions = { queue: memory, ...options }
   return new DefinitionQueueUpgrader(mergedOptions)
 }
