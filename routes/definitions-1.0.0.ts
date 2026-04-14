@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request, Response, Router } from 'express'
-import type { DefinitionService } from '../business/definitionService.js'
-
 import express from 'express'
+import type { DefinitionService } from '../business/definitionService.js'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
