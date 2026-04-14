@@ -14,7 +14,7 @@ export interface GitlabClientOptions {
  */
 const getClient = (options?: GitlabClientOptions): InstanceType<typeof Gitlab> => {
   const gitlab = new Gitlab({
-    token: options?.token
+    token: options?.token as string
   })
   return gitlab
 }
