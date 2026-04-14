@@ -3,7 +3,7 @@
 
 import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
-import type { Logger } from '../logging/index.js'
+import type { Logger } from '../logging/index.ts'
 
 export interface MissingDefinitionComputePolicy {
   initialize?(): Promise<void> | void
