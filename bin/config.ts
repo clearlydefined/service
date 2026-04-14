@@ -25,10 +25,9 @@ import type { ICache } from '../providers/caching/index.js'
 import type { CurationHarvestStore, ICurationStore } from '../providers/curation/index.js'
 import type { CurationProcessService, CurationWebhookPayload } from '../providers/curation/process.ts'
 import type { RecomputeQueueFactories } from '../providers/index.ts'
+import providers from '../providers/index.ts'
 import type { Logger } from '../providers/logging/index.js'
 import type { IQueue } from '../providers/queueing/index.js'
-
-import providers from '../providers/index.ts'
 
 /** Provider instance that supports async initialization */
 export interface Initializable {

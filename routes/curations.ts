@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request, Response } from 'express'
-import type { Logger } from '../providers/logging/index.js'
-import type { CurationError, CurationData } from '../lib/curation.ts'
-
 import express from 'express'
+import type { CurationData, CurationError } from '../lib/curation.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
+import type { Logger } from '../providers/logging/index.js'
 import loggerFactory from '../providers/logging/logger.ts'
 
 const router = express.Router()
@@ -75,9 +74,7 @@ async function listCurations(request: Request, response: Response) {
 router.post('/', asyncMiddleware(listAllCurations))
 
 async function listAllCurations(request: Request, response: Response) {
-  const coordinatesList = request.body.map((entry: string | null | undefined) =>
-    EntityCoordinates.fromString(entry)
-  )
+  const coordinatesList = request.body.map((entry: string | null | undefined) => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   }

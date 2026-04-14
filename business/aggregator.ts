@@ -29,11 +29,10 @@
 // The function should return a summary schema.
 //
 
+import lodash from 'lodash'
 import type { EntityCoordinates } from '../lib/entityCoordinates.ts'
 import type { Logger } from '../providers/logging/index.js'
 import type { Definition } from './definitionService.ts'
-
-import lodash from 'lodash'
 
 const { flattenDeep, get, set, intersectionBy } = lodash
 

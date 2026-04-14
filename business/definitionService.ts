@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import type { SpdxExpression } from '@clearlydefined/spdx'
-import type { ICache } from '../providers/caching/index.js'
-import type { Logger } from '../providers/logging/index.js'
-
 import lodash from 'lodash'
 import throat from 'throat'
+import type { ICache } from '../providers/caching/index.js'
+import type { Logger } from '../providers/logging/index.js'
 
 const {
   get,
@@ -921,10 +920,7 @@ export class DefinitionService {
     }
   }
 
-  _computeFacetFiles(
-    files: DefinitionFile[],
-    facets: Record<string, string[]> = {}
-  ): Record<string, DefinitionFile[]> {
+  _computeFacetFiles(files: DefinitionFile[], facets: Record<string, string[]> = {}): Record<string, DefinitionFile[]> {
     const facetList = Object.getOwnPropertyNames(facets)
     remove(facetList, 'core')
     if (facetList.length === 0) {
@@ -988,7 +984,8 @@ export class DefinitionService {
 
   _ensureSourceLocation(coordinates: EntityCoordinates, definition: Definition): void {
     if (get(definition, 'described.sourceLocation')) {
-      return updateSourceLocation(definition.described.sourceLocation)
+      updateSourceLocation(definition.described.sourceLocation)
+      return
     }
     // For source components there may not be an explicit harvested source location (it is self-evident)
     // Make it explicit in the definition

@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request, Response } from 'express'
+import express from 'express'
 import type { DefinitionService } from '../business/definitionService.ts'
 import type { Logger } from '../providers/logging/index.js'
-
-import express from 'express'
 
 const router = express.Router()
 
@@ -143,7 +142,14 @@ function info(_request: Request, response: Response, code: number, error: string
   return false
 }
 
-function setup(curation: any, definition: DefinitionService, appLogger: Logger, githubToken: string, crawlerToken: string, testFlag: boolean = false): import('express').Router {
+function setup(
+  curation: any,
+  definition: DefinitionService,
+  appLogger: Logger,
+  githubToken: string,
+  crawlerToken: string,
+  testFlag: boolean = false
+): import('express').Router {
   curationService = curation
   definitionService = definition
   githubSecret = githubToken

@@ -1,15 +1,14 @@
 // Copyright (c) Amazon.com, Inc. or its affiliates and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Request, Response, NextFunction, RequestHandler } from 'express'
-import type { PermissionsConfig } from '../middleware/permissions.ts'
-
 import { URL } from 'node:url'
 import { Octokit } from '@octokit/rest'
+import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import express from 'express'
 import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github'
 import { defaultHeaders } from '../lib/fetch.ts'
+import type { PermissionsConfig } from '../middleware/permissions.ts'
 
 /**
  * Configuration options for the auth route module.

@@ -18,7 +18,7 @@ router.get('/:type/:provider/:namespace/:name/:revision/:tool/:toolVersion', asy
 
 async function get(request: Request, response: Response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)
-  switch ((request.query.form as string || 'summary').toLowerCase()) {
+  switch (((request.query.form as string) || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
       const result = await harvestStore.get(coordinates, response)
@@ -50,7 +50,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getAll
 
 async function getAll(request: Request, response: Response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
-  switch ((request.query.form as string || 'summary').toLowerCase()) {
+  switch (((request.query.form as string) || 'summary').toLowerCase()) {
     case 'streamed':
     case 'raw': {
       const result = await harvestStore.getAll(coordinates)
@@ -127,7 +127,13 @@ let harvestStore: any
 let summarizeService: any
 let harvestThrottler: any
 
-function setup(harvester: any, store: any, summarizer: any, throttler: any, testFlag: boolean = false): import('express').Router {
+function setup(
+  harvester: any,
+  store: any,
+  summarizer: any,
+  throttler: any,
+  testFlag: boolean = false
+): import('express').Router {
   harvestService = harvester
   harvestStore = store
   summarizeService = summarizer

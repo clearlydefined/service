@@ -41,24 +41,18 @@ class SummaryService {
       return data
     }
     const summarizer = summarizers[tool](this.options[tool] || {})
-    return Object.getOwnPropertyNames(data).reduce(
-      (result: Record<string, any>, version) => {
-        result[version] = summarizer.summarize(coordinates, data[version])
-        return result
-      },
-      {}
-    )
+    return Object.getOwnPropertyNames(data).reduce((result: Record<string, any>, version) => {
+      result[version] = summarizer.summarize(coordinates, data[version])
+      return result
+    }, {})
   }
 
   /** Summarize all of the data for the identified component. */
   summarizeAll(coordinates: EntityCoordinates, data: SummarizedData): SummarizedData {
-    return Object.getOwnPropertyNames(data || {}).reduce(
-      (result: SummarizedData, tool) => {
-        result[tool] = this._summarizeTool(coordinates, tool, data[tool])
-        return result
-      },
-      {}
-    )
+    return Object.getOwnPropertyNames(data || {}).reduce((result: SummarizedData, tool) => {
+      result[tool] = this._summarizeTool(coordinates, tool, data[tool])
+      return result
+    }, {})
   }
 }
 

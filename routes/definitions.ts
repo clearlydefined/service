@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Request, Response } from 'express'
-import type { DefinitionService } from '../business/definitionService.ts'
-
 import express from 'express'
+import type { DefinitionService } from '../business/definitionService.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -109,9 +108,7 @@ router.post(
 router.post('/', asyncMiddleware(listDefinitions))
 async function listDefinitions(request: Request, response: Response) {
   const log = logger()
-  const coordinatesList = request.body.map((entry: string | null | undefined) =>
-    EntityCoordinates.fromString(entry)
-  )
+  const coordinatesList = request.body.map((entry: string | null | undefined) => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   }
@@ -162,7 +159,12 @@ function mapCoordinates(request: Request, normalizedCoordinates: any[]) {
   return coordinatesLookup
 }
 
-function adaptResultKeys(result: Record<string, any>, requestedKeys: string[], coordinatesLookup: Map<string, string>, matchCase: boolean) {
+function adaptResultKeys(
+  result: Record<string, any>,
+  requestedKeys: string[],
+  coordinatesLookup: Map<string, string>,
+  matchCase: boolean
+) {
   const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
   if (!shouldAdaptKeys) {
     return result

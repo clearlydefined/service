@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { callFetch as requestPromise } from '../lib/fetch.ts'
 import type { ICache } from '../providers/caching/index.js'
 import type { Logger } from '../providers/logging/index.js'
-
-import { callFetch as requestPromise } from '../lib/fetch.ts'
 import logger from '../providers/logging/logger.ts'
 
 /** Options for the StatusService */
@@ -117,13 +116,10 @@ export class StatusService {
       | summarize count() by bin(timestamp, 1d)
       | order by timestamp asc`)
     )
-    return data.tables[0].rows.reduce(
-      (result: RequestCountData, row: any[]) => {
-        result[row[0]] = row[1]
-        return result
-      },
-      {} as RequestCountData
-    )
+    return data.tables[0].rows.reduce((result: RequestCountData, row: any[]) => {
+      result[row[0]] = row[1]
+      return result
+    }, {} as RequestCountData)
   }
 
   async _processedPerDay(): Promise<ProcessedPerDayEntry[]> {
@@ -164,11 +160,9 @@ export class StatusService {
       | order by when desc
       | take 50`)
     )
-    return data.tables[0].rows.map(
-      (row: any[]) => {
-        return { coordinates: row[0], timestamp: row[1] }
-      }
-    )
+    return data.tables[0].rows.map((row: any[]) => {
+      return { coordinates: row[0], timestamp: row[1] }
+    })
   }
 
   async _crawlbreakdown(): Promise<CrawlBreakdownEntry[]> {

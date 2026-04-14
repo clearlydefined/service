@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import lodash from 'lodash'
 import type { EntityCoordinates } from '../lib/entityCoordinates.ts'
 import type { DefinitionService, SourceLocation } from './definitionService.ts'
-
-import lodash from 'lodash'
 
 const { get } = lodash
 

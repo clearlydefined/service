@@ -3,9 +3,8 @@
 
 import type { ICache } from '../providers/caching/index.js'
 import type { Logger } from '../providers/logging/index.js'
-import type { DefinitionService } from './definitionService.ts'
-
 import logger from '../providers/logging/logger.ts'
+import type { DefinitionService } from './definitionService.ts'
 
 /** Facet entry in a frequency table */
 export interface FacetEntry {

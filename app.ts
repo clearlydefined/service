@@ -5,8 +5,8 @@ import { createRequire } from 'node:module'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import express from 'express'
 import type { Express, NextFunction, Request, Response } from 'express'
+import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { serializeError } from 'serialize-error'
@@ -17,6 +17,7 @@ const requestId = _require('request-id/express')
 import routesVersioning from 'express-routes-versioning'
 import passport from 'passport'
 import swaggerUi from 'swagger-ui-express'
+import type { AppConfig } from './bin/config.ts'
 import createAggregatorService from './business/aggregator.ts'
 import createDefinitionService from './business/definitionService.ts'
 import createNoticeService from './business/noticeService.ts'
@@ -24,7 +25,6 @@ import createStatsService from './business/statsService.ts'
 import createStatusService from './business/statusService.ts'
 import createSuggestionService from './business/suggestionService.ts'
 import createSummaryService from './business/summarizer.ts'
-import type { AppConfig } from './bin/config.ts'
 import createCondaRepoAccess from './lib/condaRepoAccess.ts'
 import trySetHeapLoggingAtInterval from './lib/heapLogger.ts'
 import { setupApiRateLimiterAfterCachingInit, setupBatchApiRateLimiterAfterCachingInit } from './lib/rateLimit.ts'
@@ -278,7 +278,12 @@ function createApp(config: AppConfig): App {
   const appWithInit = app as unknown as App
   appWithInit.init = requestHandler.init
 
-  const errorHandler = (error: Error & { status?: number }, request: Request, response: Response, next: NextFunction) => {
+  const errorHandler = (
+    error: Error & { status?: number },
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
     if (response.headersSent) {
       next(error)
     } else {
