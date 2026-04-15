@@ -12,7 +12,7 @@ describe('AzureAttachmentStore list definitions', () => {
       await store.get('error')
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      expect((error as Error).message).to.eq('test error')
     }
   })
 

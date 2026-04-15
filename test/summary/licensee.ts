@@ -70,7 +70,7 @@ describe('LicenseeSummarizer', () => {
       summarizer.summarize(null, {})
       assert.equal(true, false)
     } catch (error) {
-      assert.equal(error.message, 'Invalid Licensee data')
+      assert.equal((error as Error).message, 'Invalid Licensee data')
     }
   })
 })

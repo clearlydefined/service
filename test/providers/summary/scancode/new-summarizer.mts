@@ -129,7 +129,7 @@ describe('ScanCodeNewSummarizer basic compatability', () => {
     try {
       summarizer.summarize(coordinates, harvestData)
     } catch (error) {
-      expect(error.message).to.eq(`Invalid version of ScanCode: ${version}`)
+      expect((error as Error).message).to.eq(`Invalid version of ScanCode: ${version}`)
     }
   })
 

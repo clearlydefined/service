@@ -73,7 +73,7 @@ describe('Redis Cache', () => {
       try {
         await cache.initialize()
       } catch (error) {
-        assert.strictEqual(error.message, 'Connection failed')
+        assert.strictEqual((error as Error).message, 'Connection failed')
       }
     })
 
@@ -95,7 +95,7 @@ describe('Redis Cache', () => {
         await cache.initialize()
         assert.fail('Expected error was not thrown')
       } catch (error) {
-        assert.strictEqual(error.message, 'Connection failed')
+        assert.strictEqual((error as Error).message, 'Connection failed')
       }
       // Second call to initialize will succeed
       await cache.initialize()
