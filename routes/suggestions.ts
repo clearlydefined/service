@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('../business/suggestionService').SuggestionService} SuggestionService */
-
+import type { Request, Response, Router } from 'express'
 import express from 'express'
+import type { SuggestionService } from '../business/suggestionService.js'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -14,11 +12,8 @@ import * as utils from '../lib/utils.ts'
 
 // Get some suggestions for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getSuggestions))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getSuggestions(request, response) {
+
+async function getSuggestions(request: Request, response: Response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await suggestionService.get(coordinates)
   if (result) {
@@ -27,13 +22,9 @@ async function getSuggestions(request, response) {
   return response.sendStatus(404)
 }
 
-/** @type {SuggestionService} */
-let suggestionService
+let suggestionService: SuggestionService
 
-/**
- * @param {SuggestionService} service
- */
-function setup(service) {
+function setup(service: SuggestionService): Router {
   suggestionService = service
   return router
 }

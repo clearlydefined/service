@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Request, Response, Router } from 'express'
 import express from 'express'
+import type { DefinitionService } from '../business/definitionService.js'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -10,20 +12,13 @@ import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
 import validator from '../schemas/validator.ts'
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-
 router.get('/', asyncMiddleware(getDefinition))
 
-/**
- * @param {Request} req
- * @param {Response} resp
- */
-async function getDefinition(req, resp) {
-  const coordinates = /** @type {string} */ (req.query.coordinates)
+async function getDefinition(req: Request, resp: Response) {
+  const coordinates = req.query.coordinates as string
   const pr = req.query.pr
-  const expand = /** @type {string|undefined} */ (req.query.expand)
-  const force = /** @type {string | undefined} */ (req.query.force) === 'true'
+  const expand = req.query.expand as string | undefined
+  const force = (req.query.force as string | undefined) === 'true'
   let coordinatesEntity = EntityCoordinates.fromString(coordinates)
   const isValid = validator.validate('definitions-get-dto', {
     coordinates: coordinatesEntity || undefined,
@@ -32,30 +27,25 @@ async function getDefinition(req, resp) {
     expand: expand?.split(',')
   })
   if (!isValid) {
-    return resp.status(400).send(validator.errors.map(e => e.message))
+    return resp.status(400).send(validator.errors!.map(e => e.message))
   }
   try {
-    coordinatesEntity = await utils.toNormalizedEntityCoordinates(coordinatesEntity)
+    coordinatesEntity = await utils.toNormalizedEntityCoordinates(coordinatesEntity!)
   } catch {
     return resp.status(404).send(`The ${encodeURIComponent(coordinates)} is not public. An internal error occurred.`)
   }
-  const result = await definitionService.get(coordinatesEntity, pr, force, expand)
+  const result = await definitionService.get(coordinatesEntity, pr as string | undefined, force, expand)
 
   return resp.status(200).send(result)
 }
 
-/** @type {any} */
-let definitionService
+let definitionService: DefinitionService
 
-/**
- * @param {any} definition
- * @param {boolean} [testFlag]
- */
-function setup(definition, testFlag = false) {
+function setup(definition: DefinitionService, testFlag = false): Router {
   definitionService = definition
 
   if (testFlag) {
-    const _router = /** @type {any} */ (router)
+    const _router = router as any
     _router._getDefinition = getDefinition
   }
   return router

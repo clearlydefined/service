@@ -5,7 +5,7 @@ import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
-import definitionsRoutes from '../../routes/definitions-1.0.0.js'
+import definitionsRoutes from '../../routes/definitions-1.0.0.ts'
 
 describe('Definition v1.0.0 route', () => {
   it('accepts a good GET request', async () => {

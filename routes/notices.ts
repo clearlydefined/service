@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-/** @typedef {import('../business/noticeService').NoticeService} NoticeService */
-
+import type { Request, Response, Router } from 'express'
 import express from 'express'
+import type { NoticeService } from '../business/noticeService.js'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -19,24 +17,18 @@ import validator from '../schemas/validator.ts'
 router.post('/', bodyParser.json({ limit: '0.6mb' }), asyncMiddleware(generateNotices))
 
 /**
- *
  * {
  *   coordinates: [""],
  *   output: "text|html|template|json",
  *   options: { "template": ""}
  * }
  */
-/**
- * @param {Request} request
- * @param {Response} response
- * @returns {Promise<void>}
- */
-async function generateNotices(request, response) {
+async function generateNotices(request: Request, response: Response): Promise<void> {
   if (!validator.validate('notice-request', request.body)) {
     response.status(400).send(validator.errorsText())
     return
   }
-  const coordinates = request.body.coordinates.map((/** @type {any} */ entry) => EntityCoordinates.fromString(entry))
+  const coordinates = request.body.coordinates.map((entry: any) => EntityCoordinates.fromString(entry))
   const log = logger()
   log.info('notice_generate:start', { ts: new Date().toISOString(), cnt: coordinates.length })
   const result = await noticeService.generate(coordinates, request.body.renderer, request.body.options)
@@ -46,13 +38,9 @@ async function generateNotices(request, response) {
   return
 }
 
-/** @type {NoticeService} */
-let noticeService
+let noticeService: NoticeService
 
-/**
- * @param {NoticeService} notice
- */
-function setup(notice) {
+function setup(notice: NoticeService): Router {
   noticeService = notice
   return router
 }
