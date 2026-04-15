@@ -303,7 +303,7 @@ describe('licenseMatcher.js', () => {
           definition: {
             coordinates: EntityCoordinates.fromString(
               `maven/mavencentral/io.opentelemetry/opentelemetry-sdk-common/${revision}`
-            )
+            )!
           },
           harvest: {
             clearlydefined: {
@@ -370,7 +370,7 @@ describe('licenseMatcher.js', () => {
       function generateCrateDefinitionAndHarvest(revision: string, license?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`crate/cratesio/-/libc/${revision}`)
+            coordinates: EntityCoordinates.fromString(`crate/cratesio/-/libc/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -431,7 +431,7 @@ describe('licenseMatcher.js', () => {
       ): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`nuget/nuget/-/Microsoft.Identity.Web.MicrosoftGraph/${revision}`)
+            coordinates: EntityCoordinates.fromString(`nuget/nuget/-/Microsoft.Identity.Web.MicrosoftGraph/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -533,7 +533,7 @@ describe('licenseMatcher.js', () => {
       function generateNpmDefinitionAndHarvest(revision: string, license?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`npm/npmjs/-/mongoose/${revision}`)
+            coordinates: EntityCoordinates.fromString(`npm/npmjs/-/mongoose/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -589,7 +589,7 @@ describe('licenseMatcher.js', () => {
       function generateComposerDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`composer/packagist/codeinwp/themeisle-sdk/$${revision}`)
+            coordinates: EntityCoordinates.fromString(`composer/packagist/codeinwp/themeisle-sdk/$${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -645,7 +645,7 @@ describe('licenseMatcher.js', () => {
       function generateGemDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`gem/rubygems/-/reline/${revision}`)
+            coordinates: EntityCoordinates.fromString(`gem/rubygems/-/reline/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -704,7 +704,7 @@ describe('licenseMatcher.js', () => {
       ): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)
+            coordinates: EntityCoordinates.fromString(`pypi/pypi/-/distributed/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -790,7 +790,7 @@ describe('licenseMatcher.js', () => {
       function generateDebDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`deb/debian/-/kopano-contacts/${revision}`)
+            coordinates: EntityCoordinates.fromString(`deb/debian/-/kopano-contacts/${revision}`)!
           },
           harvest: {
             clearlydefined: {
@@ -842,7 +842,7 @@ describe('licenseMatcher.js', () => {
       function generateDebDefinitionAndHarvest(revision: string, licenses?: unknown): LicenseMatchInput {
         return {
           definition: {
-            coordinates: EntityCoordinates.fromString(`debsrc/debian/-/lava/${revision}`)
+            coordinates: EntityCoordinates.fromString(`debsrc/debian/-/lava/${revision}`)!
           },
           harvest: {
             clearlydefined: {

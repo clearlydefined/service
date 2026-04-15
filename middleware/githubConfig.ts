@@ -25,11 +25,11 @@ export interface GitHubConfigOptions extends GitHubMiddlewareOptions {
 const defaultOptions: GitHubConfigOptions = {
   clientId: config.get('AUTH_GITHUB_CLIENT_ID'),
   clientSecret: config.get('AUTH_GITHUB_CLIENT_SECRET'),
-  token: config.get('CURATION_GITHUB_TOKEN'),
+  token: config.get('CURATION_GITHUB_TOKEN')!,
   org: config.get('AUTH_GITHUB_ORG') || 'clearlydefined',
   permissions: {
     harvest: [config.get('AUTH_HARVEST_TEAM') || 'harvest-dev'],
-    curate: [config.get('AUTH_CURATION_TEAM'), 'curation-dev']
+    curate: [config.get('AUTH_CURATION_TEAM')!, 'curation-dev']
   }
 }
 const defaultCache = memoryCache({ defaultTtlSeconds: 10 * 60 /* 10 mins */ })

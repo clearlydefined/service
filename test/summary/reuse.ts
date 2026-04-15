@@ -98,7 +98,7 @@ describe('FsfeReuseSummarizer', () => {
       summarizer.summarize(null, {})
       assert.equal(true, false)
     } catch (error) {
-      assert.equal(error.message, 'Invalid REUSE data')
+      assert.equal((error as Error).message, 'Invalid REUSE data')
     }
   })
 })

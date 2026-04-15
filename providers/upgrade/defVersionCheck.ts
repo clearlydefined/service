@@ -41,10 +41,10 @@ class DefinitionVersionChecker implements UpgradeHandler {
     }
     const defSchemaVersion = get(definition, '_meta.schemaVersion')
     this.logger.debug(
-      `Definition version: ${defSchemaVersion}, Current schema version: ${this._currentSchema}, Coordinates: ${DefinitionVersionChecker.getCoordinates(definition)}`
+      `Definition version: ${defSchemaVersion}, Current schema version: ${this._currentSchema}, Coordinates: ${DefinitionVersionChecker.getCoordinates(definition!)}`
     )
     if (defSchemaVersion && gte(defSchemaVersion, this._currentSchema)) {
-      return definition
+      return definition!
     }
     return undefined
   }
@@ -57,8 +57,8 @@ class DefinitionVersionChecker implements UpgradeHandler {
     //do nothing for set up processing
   }
 
-  static getCoordinates(definition: Definition): string | undefined {
-    return definition?.coordinates && EntityCoordinates.fromObject(definition.coordinates).toString()
+  static getCoordinates(definition: Definition | null): string | undefined {
+    return definition?.coordinates && EntityCoordinates.fromObject(definition.coordinates)!.toString()
   }
 }
 

@@ -73,7 +73,7 @@ const middleware: RequestHandler = asyncMiddleware(async (req, res, next) => {
     return
   }
 
-  const serviceToken = options.token
+  const serviceToken = options!.token
   const serviceClient = await setupServiceClient(req, serviceToken)
   const userToken = authHeader ? authHeader.split(' ')[1] : null
   const userClient = await setupUserClient(req, userToken)
@@ -81,21 +81,21 @@ const middleware: RequestHandler = asyncMiddleware(async (req, res, next) => {
   req.app.locals.user.github.getInfo = async () => {
     if (!req.app.locals.user.github._info) {
       const infoCacheKey = userClient
-        ? await getCacheKey('github.user', userToken)
+        ? await getCacheKey('github.user', userToken!)
         : await getCacheKey('github.user', serviceToken)
       await setupInfo(req, infoCacheKey, userClient || serviceClient)
     }
 
-    return req.app.locals.user.github._info
+    return req.app.locals.user.github._info!
   }
 
-  req.app.locals.user.github.getTeams = async () => {
+  req.app.locals.user.github.getTeams = async (): Promise<string[]> => {
     if (!req.app.locals.user.github._teams) {
-      const teamCacheKey = userClient ? await getCacheKey('github.team', userToken) : null
+      const teamCacheKey = userClient ? await getCacheKey('github.team', userToken!) : null
       await setupTeams(req, teamCacheKey, userClient)
     }
 
-    return req.app.locals.user.github._teams
+    return req.app.locals.user.github._teams!
   }
 
   next()
@@ -128,11 +128,11 @@ async function setupUserClient(req: Request, token: string | null): Promise<Octo
 
 // Get GitHub user info and attach it to the request
 async function setupInfo(req: Request, cacheKey: string, client: Octokit): Promise<void> {
-  let info = await cache.get(cacheKey)
+  let info = await cache!.get(cacheKey)
   if (!info) {
     info = await client.rest.users.getAuthenticated()
     info = { name: info.data.name, login: info.data.login, email: info.data.email }
-    await cache.set(cacheKey, info)
+    await cache!.set(cacheKey, info)
   }
   req.app.locals.user.github._info = info
 }
@@ -144,10 +144,10 @@ async function setupTeams(req: Request, cacheKey: string | null, client: Octokit
     return
   }
   // check cache for team data; hash the token so we're not storing them raw
-  let teams = await cache.get(cacheKey)
+  let teams = await cache!.get(cacheKey)
   if (!teams) {
-    teams = await getTeams(client, options.org)
-    await cache.set(cacheKey, teams)
+    teams = await getTeams(client, options!.org)
+    await cache!.set(cacheKey, teams)
   }
   req.app.locals.user.github._teams = teams
 }

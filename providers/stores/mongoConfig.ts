@@ -17,10 +17,10 @@ const dbOptions = {
  */
 function definitionPaged(options?: MongoDefinitionStoreOptions) {
   return mongo(
-    options || {
+    options || ({
       ...dbOptions,
       collectionName: config.get('DEFINITION_MONGO_COLLECTION_NAME') || 'definitions-paged'
-    }
+    } as MongoDefinitionStoreOptions)
   )
 }
 
@@ -36,10 +36,10 @@ function definitionTrimmed(options?: MongoDefinitionStoreOptions) {
     )
   }
   return TrimmedMongoDefinitionStore(
-    options || {
+    options || ({
       ...dbOptions,
       collectionName: config.get('DEFINITION_MONGO_TRIMMED_COLLECTION_NAME') || oldConfig || 'definitions-trimmed'
-    }
+    } as MongoDefinitionStoreOptions)
   )
 }
 

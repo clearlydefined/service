@@ -119,8 +119,8 @@ class DefinitionLicenseMatchPolicy implements LicenseMatchPolicy {
     const sourceLicenseFiles = this._getLicenseFile(source.definition)
     const targetLicenseFiles = this._getLicenseFile(target.definition)
     const fileMap = new Map()
-    this._addFileToMap(fileMap, sourceLicenseFiles, 'sourceFile')
-    this._addFileToMap(fileMap, targetLicenseFiles, 'targetFile')
+    this._addFileToMap(fileMap, sourceLicenseFiles || [], 'sourceFile')
+    this._addFileToMap(fileMap, targetLicenseFiles || [], 'targetFile')
     return fileMap
   }
 
@@ -196,7 +196,7 @@ class HarvestLicenseMatchPolicy implements LicenseMatchPolicy {
    * Compare harvest license data between source and target
    */
   compare(source: LicenseMatchInput, target: LicenseMatchInput): CompareResult {
-    const type = source.definition.coordinates.type
+    const type = source.definition.coordinates!.type!
     const strategy = this._getStrategy(type)
     return strategy.compare(source, target)
   }
@@ -324,7 +324,7 @@ function getLatestToolHarvest(coordinateHarvest: CoordinateHarvest, tool: string
     return undefined
   }
   const latestVersion = getLatestVersion(Object.keys(coordinateHarvest[tool]))
-  return get(coordinateHarvest, [tool, latestVersion]) as object | undefined
+  return get(coordinateHarvest, [tool, latestVersion!]) as object | undefined
 }
 
 export { DefinitionLicenseMatchPolicy, HarvestLicenseMatchPolicy, LicenseMatcher }

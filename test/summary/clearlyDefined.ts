@@ -16,7 +16,7 @@ describe('ClearlyDefined Maven summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles licenseUrl', () => {
@@ -25,8 +25,8 @@ describe('ClearlyDefined Maven summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles licenseName', () => {
@@ -35,8 +35,8 @@ describe('ClearlyDefined Maven summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles missing license of projectSummary', () => {
@@ -44,7 +44,7 @@ describe('ClearlyDefined Maven summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles projectSummaryLicenses with just url', () => {
@@ -53,8 +53,8 @@ describe('ClearlyDefined Maven summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles data with source location', () => {
@@ -62,8 +62,8 @@ describe('ClearlyDefined Maven summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -71,12 +71,12 @@ describe('ClearlyDefined Maven summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
 function setupMaven(releaseDate?, sourceInfo?, projectSummary?) {
-  const coordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')
+  const coordinates = EntityCoordinates.fromString('maven/mavencentral/io.clearlydefined/test/1.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.summary.project', projectSummary)
@@ -92,7 +92,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles data with source location', () => {
@@ -100,8 +100,8 @@ describe('ClearlyDefined NuGet summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -109,7 +109,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 
   it('includes files from manifest', () => {
@@ -131,7 +131,7 @@ describe('ClearlyDefined NuGet summarizer', () => {
 })
 
 function setupNuGet({ releaseDate, sourceInfo, packageEntries }: any = {}) {
-  const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString('nuget/nuget/-/test/1.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'manifest.packageEntries', packageEntries)
@@ -147,7 +147,7 @@ describe('ClearlyDefined Source Archive summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles data with source location', () => {
@@ -155,8 +155,8 @@ describe('ClearlyDefined Source Archive summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -164,12 +164,12 @@ describe('ClearlyDefined Source Archive summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
 function setupSourceArchive(releaseDate?, sourceInfo?) {
-  const coordinates = EntityCoordinates.fromString('sourcearchive/github/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString('sourcearchive/github/-/test/1.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   if (sourceInfo) {
@@ -186,10 +186,10 @@ describe('ClearlyDefined NPM summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.issueTracker).to.eq('http://bugs')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles with all the data and a license array of one string', () => {
@@ -199,10 +199,10 @@ describe('ClearlyDefined NPM summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.issueTracker).to.eq('http://bugs')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles with all the data and a license array of strings', () => {
@@ -212,26 +212,26 @@ describe('ClearlyDefined NPM summarizer', () => {
     })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT AND Apache-2.0')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT AND Apache-2.0')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.issueTracker).to.eq('http://bugs')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles a license as an object', () => {
     const { coordinates, harvested } = setupNpm(null, { type: 'MIT' })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.urls).not.to.be.undefined
   })
 
   it('handles a license as an object with an array of strings ', () => {
     const { coordinates, harvested } = setupNpm(null, { type: ['MIT', 'Apache-2.0'] })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT AND Apache-2.0')
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.licensed!.declared).to.eq('MIT AND Apache-2.0')
+    expect(summary.described!.urls).not.to.be.undefined
   })
 
   it('handles data with source location', () => {
@@ -239,8 +239,8 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -248,7 +248,7 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 
   it('handles only releaseDate', () => {
@@ -256,9 +256,9 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.be.undefined
-    expect(summary.described.projectWebsite).to.be.undefined
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.issueTracker).to.be.undefined
+    expect(summary.described!.projectWebsite).to.be.undefined
   })
 
   it('handles string issueTracker', () => {
@@ -266,9 +266,9 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.be.undefined
-    expect(summary.described.issueTracker).to.eq('http://bugs')
-    expect(summary.described.projectWebsite).to.be.undefined
+    expect(summary.described!.releaseDate).to.be.undefined
+    expect(summary.described!.issueTracker).to.eq('http://bugs')
+    expect(summary.described!.projectWebsite).to.be.undefined
   })
 
   it('handles non url string issueTracker', () => {
@@ -276,7 +276,7 @@ describe('ClearlyDefined NPM summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
@@ -290,7 +290,7 @@ function setupNpm(releaseDate?, license?, homepage?, bugs?, sourceInfo?) {
   if (sourceInfo) {
     harvested.sourceInfo = createSourceLocation(sourceInfo)
   }
-  const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0')!
   return { coordinates, harvested }
 }
 
@@ -299,29 +299,29 @@ describe('ClearlyDefined Gem summarizer', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT'])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles multiple licenses', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT', 'BSD-2-Clause'])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT OR BSD-2-Clause')
+    expect(summary.licensed!.declared).to.eq('MIT OR BSD-2-Clause')
   })
 
   it('normalizes multiple licenses', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', ['MIT', 'JUNK'])
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT OR NOASSERTION')
+    expect(summary.licensed!.declared).to.eq('MIT OR NOASSERTION')
   })
 
   it('handles singular license', () => {
     const { coordinates, harvested } = setupGem('2018-03-06T11:38:10.284Z', 'MIT')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.licensed!.declared).to.eq('MIT')
   })
 
   it('handles data with source location', () => {
@@ -329,8 +329,8 @@ describe('ClearlyDefined Gem summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -338,12 +338,12 @@ describe('ClearlyDefined Gem summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
 function setupGem(releaseDate?, licenses?, sourceInfo?) {
-  const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString('gem/rubygems/-/test/1.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   if (typeof licenses === 'string') {
@@ -362,8 +362,8 @@ describe('ClearlyDefined Pypi summarizer', () => {
     const { coordinates, harvested } = setupPypi('2018-03-06T11:38:10.284Z', 'MIT')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
   })
 
   it('handles data with source location', () => {
@@ -371,8 +371,8 @@ describe('ClearlyDefined Pypi summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.sourceLocation.url).to.eq(getSourceUrl())
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.sourceLocation!.url).to.eq(getSourceUrl())
   })
 
   it('handles no data', () => {
@@ -380,12 +380,12 @@ describe('ClearlyDefined Pypi summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
 function setupPypi(releaseDate?, license?, sourceInfo?) {
-  const coordinates = EntityCoordinates.fromString('pypi/pypi/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString('pypi/pypi/-/test/1.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'declaredLicense', license)
@@ -403,23 +403,23 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
     const { coordinates, harvested } = setupCocoaPod('MIT', '2018-03-06T11:38:10.284Z', 'https://clearlydefined.com')
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.projectWebsite).to.eq('https://clearlydefined.com')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.projectWebsite).to.eq('https://clearlydefined.com')
   })
 
   it('handles license type', () => {
     const { coordinates, harvested } = setupCocoaPod({ type: 'MIT' })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
+    expect(summary.licensed!.declared).to.eq('MIT')
   })
 
   it('Sets noassertion for license', () => {
     const { coordinates, harvested } = setupCocoaPod({ type: 'Commercial' })
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
-    expect(summary.licensed.declared).to.eq('NOASSERTION')
+    expect(summary.licensed!.declared).to.eq('NOASSERTION')
   })
 
   it('handles no data', () => {
@@ -427,12 +427,12 @@ describe('ClearlyDefined CocoaPod summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 })
 
 function setupCocoaPod(license?, releaseDate?, homepage?) {
-  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')
+  const coordinates = EntityCoordinates.fromString('pod/cocoapods/-/test/1.0.0')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'registryData.license', license)
   setIfValue(harvested, 'releaseDate', releaseDate)
@@ -447,9 +447,9 @@ describe('ClearlyDefined PHP composer summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
 
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles with all the data and a single license string', () => {
@@ -457,9 +457,9 @@ describe('ClearlyDefined PHP composer summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
 
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles with all the data and a disjunctive license array', () => {
@@ -472,9 +472,9 @@ describe('ClearlyDefined PHP composer summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
 
     validate(summary)
-    expect(summary.licensed.declared).to.eq('MIT OR Apache-2.0')
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.projectWebsite).to.eq('http://homepage')
+    expect(summary.licensed!.declared).to.eq('MIT OR Apache-2.0')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.projectWebsite).to.eq('http://homepage')
   })
 
   it('handles no data', () => {
@@ -482,7 +482,7 @@ describe('ClearlyDefined PHP composer summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.urls).not.to.be.undefined
+    expect(summary.described!.urls).not.to.be.undefined
   })
 
   it('handles only releaseDate', () => {
@@ -490,9 +490,9 @@ describe('ClearlyDefined PHP composer summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.issueTracker).to.be.undefined
-    expect(summary.described.projectWebsite).to.be.undefined
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.issueTracker).to.be.undefined
+    expect(summary.described!.projectWebsite).to.be.undefined
   })
 })
 
@@ -503,7 +503,7 @@ function setupComposer(releaseDate?, version?, license?, homepage?) {
   setIfValue(registryData, 'manifest.license', license)
   setIfValue(registryData, 'manifest.homepage', homepage)
   const harvested = { registryData }
-  const coordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0.0')
+  const coordinates = EntityCoordinates.fromString('composer/packagist/vendor/test/1.0.0')!
 
   return { coordinates, harvested }
 }
@@ -591,12 +591,12 @@ describe('ClearlyDefined Debian summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
     validate(summary)
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls.registry).to.eq(registryUrl)
-    expect(summary.described.urls.version).to.eq(registryUrl)
-    expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
-    expect(summary.described.sourceLocation.url).to.eq(registryUrl)
-    expect(summary.licensed.declared).to.eq(
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.urls!.registry).to.eq(registryUrl)
+    expect(summary.described!.urls!.version).to.eq(registryUrl)
+    expect(summary.described!.urls!.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17-1_i386.deb')
+    expect(summary.described!.sourceLocation!.url).to.eq(registryUrl)
+    expect(summary.licensed!.declared).to.eq(
       'GPL-2.0+ AND (CPL-1.0 OR MIT) AND (BSD-3-Clause OR GPL-3.0 AND LGPL-2.1+) AND NOASSERTION'
     )
   })
@@ -614,8 +614,8 @@ describe('ClearlyDefined Debian summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls).to.be.undefined
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.urls).to.be.undefined
   })
 })
 
@@ -630,12 +630,12 @@ describe('ClearlyDefined Debian source summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     const registryUrl = 'http://ftp.debian.org/debian/pool/main/0/0ad'
     validate(summary)
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls.registry).to.eq(registryUrl)
-    expect(summary.described.urls.version).to.eq(registryUrl)
-    expect(summary.described.urls.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17.orig.tar.xz')
-    expect(summary.described.sourceLocation.url).to.eq(registryUrl)
-    expect(summary.licensed.declared).to.eq('MPL-1.1 AND (MIT OR Artistic-1.0 AND Artistic-2.0)')
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.urls!.registry).to.eq(registryUrl)
+    expect(summary.described!.urls!.version).to.eq(registryUrl)
+    expect(summary.described!.urls!.download).to.eq('http://ftp.debian.org/debian/pool/main/0/0ad/0ad_0.0.17.orig.tar.xz')
+    expect(summary.described!.sourceLocation!.url).to.eq(registryUrl)
+    expect(summary.licensed!.declared).to.eq('MPL-1.1 AND (MIT OR Artistic-1.0 AND Artistic-2.0)')
   })
 
   it('handles no data', () => {
@@ -651,15 +651,15 @@ describe('ClearlyDefined Debian source summarizer', () => {
     const summary = Summarizer().summarize(coordinates, harvested)
     validate(summary)
     expect(summary.licensed).to.be.undefined
-    expect(summary.described.releaseDate).to.eq('2018-03-06')
-    expect(summary.described.urls).to.be.undefined
+    expect(summary.described!.releaseDate).to.eq('2018-03-06')
+    expect(summary.described!.urls).to.be.undefined
   })
 })
 
 function setupDebian({ isSrc, releaseDate, registryData, sourceInfo, declaredLicenses }: any = {}) {
   const coordinates = isSrc
-    ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')
-    : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')
+    ? EntityCoordinates.fromString('debsrc/debian/-/test/1.0.0')!
+    : EntityCoordinates.fromString('deb/debian/-/test/1.0.0_i386')!
   const harvested: Record<string, any> = {}
   setIfValue(harvested, 'releaseDate', releaseDate)
   setIfValue(harvested, 'registryData', registryData)

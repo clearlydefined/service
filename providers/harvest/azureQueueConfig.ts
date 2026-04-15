@@ -6,8 +6,8 @@ import type { AzureStorageQueueOptions } from '../queueing/azureStorageQueue.ts'
 import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
 function azure(options?: AzureStorageQueueOptions): AzureStorageQueue {
-  const realOptions = options || {
-    connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+  const realOptions: AzureStorageQueueOptions = options || {
+    connectionString: (config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'))!,
     queueName: config.get('HARVEST_QUEUE_NAME') || 'harvests',
     dequeueOptions: {
       numOfMessages: 32,

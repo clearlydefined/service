@@ -50,8 +50,8 @@ export class DispatchDefinitionStore implements DefinitionStore {
   /**
    * List definitions from the first store that returns results.
    */
-  list(coordinates: EntityCoordinates): Promise<string[] | null> {
-    return this._performInSequence(store => store.list(coordinates))
+  list(coordinates: EntityCoordinates): Promise<string[]> {
+    return this._performInSequence(store => store.list(coordinates)) as Promise<string[]>
   }
 
   /**
@@ -72,18 +72,18 @@ export class DispatchDefinitionStore implements DefinitionStore {
    * Find definitions from the first store that returns results.
    */
   find(query: DefinitionFindQuery, continuationToken = ''): Promise<DefinitionFindResult> {
-    return this._performInSequence(store => store.find(query, continuationToken))
+    return this._performInSequence(store => store.find(query, continuationToken)) as Promise<DefinitionFindResult>
   }
 
   async _performInSequence<T>(operation: (store: DefinitionStore) => Promise<T>, first = true): Promise<T | null> {
-    let result = null
+    let result: T | null = null
     for (let i = 0; i < this.stores.length; i++) {
       const store = this.stores[i]
       try {
         const opResult = await operation(store)
         result = result || opResult
         if (result && first) {
-          return result
+          return result as T
         }
       } catch (error) {
         this.logger.error('DispatchDefinitionStore failure', error)

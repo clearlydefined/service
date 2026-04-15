@@ -85,7 +85,7 @@ class AbstractFileStore {
             return data ? visitor(JSON.parse(data.toString())) : null
           })
         )
-      ).filter(x => x)
+      ).filter((x): x is Awaited<T> => x != null)
     } catch (error) {
       // If there is just no entry, that's fine, there is no content.
       const nodeError = error as NodeJS.ErrnoException
@@ -206,7 +206,7 @@ class AbstractFileStore {
 
   static toResultCoordinatesFromStoragePath(path: string): ResultCoordinates {
     const trimmed = AbstractFileStore.trimStoragePath(path)
-    return ResultCoordinates.fromString(trimmed)
+    return ResultCoordinates.fromString(trimmed)!
   }
 
   static trimStoragePath(path: string): string {

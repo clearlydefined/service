@@ -186,7 +186,7 @@ function setup(files, coordinateSpec?) {
   setupNomos(harvested, grouped.nomos)
   setupMonk(harvested, grouped.monk)
   setupCopyright(harvested, grouped.copyright)
-  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')!
   return { coordinates, harvested }
 }
 

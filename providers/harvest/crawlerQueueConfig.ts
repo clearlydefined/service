@@ -15,16 +15,16 @@ export interface CrawlerQueueConfigOptions extends Partial<CrawlerQueueOptions> 
 }
 
 function later(options?: AzureStorageQueueOptions): AzureStorageQueue {
-  const realOptions = options || {
-    connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+  const realOptions: AzureStorageQueueOptions = options || {
+    connectionString: (config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'))!,
     queueName: `${config.get('HARVEST_QUEUE_PREFIX') || 'cdcrawlerdev'}-later`
   }
   return new AzureStorageQueue(realOptions)
 }
 
 function normal(options?: AzureStorageQueueOptions): AzureStorageQueue {
-  const realOptions = options || {
-    connectionString: config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+  const realOptions: AzureStorageQueueOptions = options || {
+    connectionString: (config.get('HARVEST_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'))!,
     queueName: `${config.get('HARVEST_QUEUE_PREFIX') || 'cdcrawlerdev'}-normal`
   }
   return new AzureStorageQueue(realOptions)
@@ -38,9 +38,9 @@ function serviceFactory(options?: CrawlerQueueConfigOptions): CacheBasedHarveste
   crawlerOptions.later.initialize()
   crawlerOptions.normal.initialize()
   const harvester = crawler(crawlerOptions)
-  const cacheTTLSeconds = Number.parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS'), 10)
+  const cacheTTLSeconds = Number.parseInt(config.get('HARVEST_CACHE_TTL_IN_SECONDS')!, 10)
   const cacheTTLInSeconds = Number.isFinite(cacheTTLSeconds) && cacheTTLSeconds > 0 ? cacheTTLSeconds : undefined
-  return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester })
+  return cacheBasedCrawler({ ...options, cacheTTLInSeconds, harvester } as import('./cacheBasedCrawler.ts').Options)
 }
 
 export default serviceFactory

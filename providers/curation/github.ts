@@ -173,14 +173,14 @@ class GitHubCurationService {
     }
     this._cleanCurationTree(pr.number)
     await this.store.updateContribution(data, curations)
-    let toBeCleaned = flatten(curations.map(curation => curation.getCoordinates()))
+    let toBeCleaned = flatten(curations!.map(curation => curation.getCoordinates()))
     // Should also delete revision less coordinate curation cache
     toBeCleaned = uniqWith(toBeCleaned.concat(toBeCleaned.map(c => c.asRevisionless())), isEqual)
     await Promise.all(
       toBeCleaned.map(throat(10, async coordinates => this.cache.delete(this._getCacheKey(coordinates))))
     )
     if (data.merged_at) {
-      await this._prMerged(curations)
+      await this._prMerged(curations!)
     }
   }
 
@@ -238,14 +238,14 @@ class GitHubCurationService {
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         const otherHarvest = await this.harvestStore.getAll(otherCoordinates)
         const result = this.licenseMatcher.process(
-          { definition, harvest },
-          { definition: otherDefinition, harvest: otherHarvest }
+          { definition: definition!, harvest },
+          { definition: otherDefinition!, harvest: otherHarvest }
         )
 
         if (result.isMatching) {
           matches.push({
-            version: otherCoordinates.revision,
-            matchingProperties: result.match.map(reason => {
+            version: otherCoordinates.revision!,
+            matchingProperties: result.match!.map(reason => {
               if (reason.file) {
                 return { file: reason.file }
               }
@@ -263,8 +263,8 @@ class GitHubCurationService {
     let revisions: string[] = []
 
     for (const coordinate of Object.keys(curations.curations)) {
-      const coordinateObject = EntityCoordinates.fromString(coordinate)
-      revisions.push(coordinateObject.revision)
+      const coordinateObject = EntityCoordinates.fromString(coordinate)!
+      revisions.push(coordinateObject.revision!)
     }
 
     for (const contribution of curations.contributions) {
@@ -282,7 +282,7 @@ class GitHubCurationService {
     const revisionlessCoords = coordinates.asRevisionless()
     const coordinatesList = await this.definitionService.list(revisionlessCoords)
     const filteredCoordinatesList = coordinatesList
-      .map(stringCoords => EntityCoordinates.fromString(stringCoords))
+      .map(stringCoords => EntityCoordinates.fromString(stringCoords)!)
       .filter(
         coords =>
           coordinates.name === coords.name &&
@@ -305,10 +305,10 @@ class GitHubCurationService {
     curation: CurationRevision,
     matchingRevisionAndReason: MatchingRevisionAndReason[]
   ) {
-    const filtered = []
+    const filtered: MatchingRevisionAndReason[] = []
     for (const revisionAndReason of matchingRevisionAndReason) {
       const { version } = revisionAndReason
-      const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version })
+      const matchingCoordinates = EntityCoordinates.fromObject({ ...coordinates, revision: version })!
       const matchingDefinition = await this.definitionService.getStored(matchingCoordinates)
       const existingDeclaredLicense = get(matchingDefinition, 'licensed.declared')
       if (!existingDeclaredLicense || existingDeclaredLicense === 'NOASSERTION') {
@@ -335,7 +335,7 @@ class GitHubCurationService {
     currentContent: CurationData,
     newContent: Record<string, CurationRevision>
   ) {
-    const newCoordinates = EntityCoordinates.fromObject(coordinates).asRevisionless()
+    const newCoordinates = EntityCoordinates.fromObject(coordinates)!.asRevisionless()
     const result = {
       coordinates: newCoordinates,
       revisions: get(currentContent, 'revisions') || {}
@@ -352,10 +352,10 @@ class GitHubCurationService {
     branch: string
   ) {
     const { owner, repo } = this.options
-    const coordinates = EntityCoordinates.fromObject(patch.coordinates)
+    const coordinates = EntityCoordinates.fromObject(patch.coordinates)!
     const currentContent = await this._getCurations(coordinates)
     const newContent = patch.revisions
-    const updatedContent = this._updateContent(coordinates, currentContent, newContent)
+    const updatedContent = this._updateContent(coordinates, currentContent!, newContent)
     const content = Buffer.from(updatedContent).toString('base64')
     const path = this._getCurationPath(coordinates)
     const message = `Update ${path}`
@@ -386,7 +386,7 @@ class GitHubCurationService {
 
     // Github requires name/email to set committer
     if ((info.name || info.login) && info.email) {
-      fileBody.committer = { name: info.name || info.login, email: info.email }
+      fileBody.committer = { name: (info.name || info.login)!, email: info.email }
     }
     if (get(currentContent, '_origin.sha')) {
       fileBody.sha = get(currentContent, '_origin.sha')
@@ -411,9 +411,9 @@ class GitHubCurationService {
   // Return an array of valid patches that exist
   // and a list of definitions that do not exist in the store
   async _validateDefinitionsExist(patches: CurationPatchEntry[]) {
-    const targetCoordinates = patches.reduce((result, patch) => {
+    const targetCoordinates = patches.reduce((result: EntityCoordinates[], patch) => {
       for (const key in patch.revisions) {
-        result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key }))
+        result.push(EntityCoordinates.fromObject({ ...patch.coordinates, revision: key })!)
       }
       return result
     }, [])
@@ -425,7 +425,7 @@ class GitHubCurationService {
         )
         return result
       },
-      { valid: [], missing: [] }
+      { valid: [] as EntityCoordinates[], missing: [] as EntityCoordinates[] }
     )
   }
 
@@ -435,24 +435,24 @@ class GitHubCurationService {
         return
       }
 
-      const revisionLessCoordinates = definition.coordinates.asRevisionless()
+      const revisionLessCoordinates = definition.coordinates!.asRevisionless()
       // @ts-expect-error list returns CurationListResult for GitHubCurationService
       const curationAndContributions: CurationListResult = await this.list(revisionLessCoordinates)
 
       if (!this._canBeAutoCurated(definition, curationAndContributions)) {
         this.logger.info('GitHubCurationService.autoCurate.notApplicable', {
-          coordinates: definition.coordinates.toString()
+          coordinates: definition.coordinates!.toString()
         })
         return
       }
 
       // TODO: Only need to get the clearlydefined tool harvest data. Other tools' harvest data is not necessary.
-      const harvest = await this.harvestStore.getAll(definition.coordinates)
+      const harvest = await this.harvestStore.getAll(definition.coordinates!)
       const orderedCoordinates = Object.keys(curationAndContributions.curations || {}).sort((a, b) => {
-        const aRevision = EntityCoordinates.fromString(a).revision
-        const bRevision = EntityCoordinates.fromString(b).revision
+        const aRevision = EntityCoordinates.fromString(a)!.revision
+        const bRevision = EntityCoordinates.fromString(b)!.revision
         if (semver.valid(aRevision) && semver.valid(bRevision)) {
-          return semver.rcompare(aRevision, bRevision)
+          return semver.rcompare(aRevision!, bRevision!)
         }
         return 0
       })
@@ -461,7 +461,7 @@ class GitHubCurationService {
         const curation = curationAndContributions.curations[coordinateStr]
         const declaredLicense = get(curation, 'licensed.declared')
         const logProps = {
-          source: definition.coordinates.toString(),
+          source: definition.coordinates!.toString(),
           target: coordinateStr
         }
         if (!declaredLicense) {
@@ -469,7 +469,7 @@ class GitHubCurationService {
           continue
         }
 
-        const otherCoordinates = EntityCoordinates.fromString(coordinateStr)
+        const otherCoordinates = EntityCoordinates.fromString(coordinateStr)!
         const otherDefinition = await this.definitionService.getStored(otherCoordinates)
         if (!otherDefinition) {
           this.logger.info('GitHubCurationService.autoCurate.otherDefinitionEmpty', logProps)
@@ -483,11 +483,11 @@ class GitHubCurationService {
         )
         if (result.isMatching) {
           const info = await this._getUserInfo(this.github)
-          const resolution = `Auto-generated curation. Newly harvested version ${definition.coordinates.revision} matches existing version ${otherCoordinates.revision}. ${this._generateMatchingDescription(result.match)}`
+          const resolution = `Auto-generated curation. Newly harvested version ${definition.coordinates!.revision} matches existing version ${otherCoordinates.revision}. ${this._generateMatchingDescription(result.match!)}`
           const patch = {
             contributionInfo: {
               type: 'auto',
-              summary: definition.coordinates.toString(),
+              summary: definition.coordinates!.toString(),
               details: `Add ${declaredLicense} license`,
               resolution
             },
@@ -495,7 +495,7 @@ class GitHubCurationService {
               {
                 coordinates: revisionLessCoordinates,
                 revisions: {
-                  [definition.coordinates.revision]: curation
+                  [definition.coordinates!.revision!]: curation
                 }
               }
             ]
@@ -530,7 +530,7 @@ class GitHubCurationService {
 
   _hasExistingCurations(definition: Definition, curationAndContributions: CurationListResult) {
     const revisions = this._getRevisionsFromCurations(curationAndContributions)
-    return revisions.includes(definition.coordinates.revision)
+    return revisions.includes(definition.coordinates!.revision!)
   }
 
   async addOrUpdate(
@@ -553,10 +553,10 @@ class GitHubCurationService {
       }
       // @ts-expect-error patches returned from _getPatchesFromMergedPullRequest match CurationPatchEntry shape
       const patches: CurationPatchEntry[] = await this._getPatchesFromMergedPullRequest(pr)
-      const component = first(patches)
-      const curationRevisions = get(component, 'revisions')
+      const component = first(patches)!
+      const curationRevisions = get(component, 'revisions')!
       const revision = first(Object.keys(curationRevisions))
-      const curatedCoordinates = EntityCoordinates.fromObject({ ...component.coordinates, revision })
+      const curatedCoordinates = EntityCoordinates.fromObject({ ...component.coordinates, revision })!
 
       const { missing } = await this._validateDefinitionsExist(patches)
       if (missing.length > 0) {
@@ -565,29 +565,29 @@ class GitHubCurationService {
       if (!this._isEligibleForMultiversionCuration(patches)) {
         return undefined
       }
-      this.logger.info('eligible component for multiversion curation', { coordinates: curatedCoordinates.toString() })
+      this.logger.info('eligible component for multiversion curation', { coordinates: curatedCoordinates!.toString() })
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
       matchingRevisionAndReason = await this._filterRevisionWithDeclaredLicense(
-        curatedCoordinates,
-        get(curationRevisions, [revision]),
+        curatedCoordinates!,
+        get(curationRevisions, [revision!]),
         matchingRevisionAndReason
       )
       if (matchingRevisionAndReason.length === 0) {
         return undefined
       }
       this.logger.info('found additional versions to curate', {
-        coordinates: curatedCoordinates.toString(),
+        coordinates: curatedCoordinates!.toString(),
         additionalRevisionCount: matchingRevisionAndReason.length
       })
       const info = {
         type: 'auto',
-        summary: curatedCoordinates.toString(),
-        details: `Add ${get(curationRevisions, [revision, 'licensed', 'declared'])} license`,
+        summary: curatedCoordinates!.toString(),
+        details: `Add ${get(curationRevisions, [revision!, 'licensed', 'declared'])} license`,
         resolution: `Automatically added versions based on ${pr.html_url}\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`
       }
       return this._addCurationWithMatchingRevisions(
-        curatedCoordinates,
-        curationRevisions[revision],
+        curatedCoordinates!,
+        curationRevisions[revision!],
         info,
         matchingRevisionAndReason
       )
@@ -601,8 +601,8 @@ class GitHubCurationService {
     const curations = await this.getContributedCurations(pr.number, pr.head.sha)
     const preCurations = await this.getContributedCurations(pr.number, pr.base.sha)
     for (const curation of curations) {
-      const preCuration = preCurations.find(x => x.path === curation.path)
-      for (const revision of Object.keys(curation.data.revisions)) {
+      const preCuration = preCurations.find(x => x!.path === curation!.path)
+      for (const revision of Object.keys(curation!.data!.revisions!)) {
         const current = get(curation, ['data', 'revisions', revision])
         const previous = get(preCuration, ['data', 'revisions', revision])
         // biome-ignore lint/suspicious/noDoubleEquals: intentional loose equality to catch both null and undefined
@@ -611,7 +611,7 @@ class GitHubCurationService {
         }
       }
     }
-    return curations.map(c => c.data)
+    return curations.map(c => c!.data!)
   }
 
   async _addOrUpdate(
@@ -709,7 +709,7 @@ ${this._formatDefinitions(patch.patches)}`
           matchingLicenses.push(match.file)
         }
       } else {
-        matchingMetadata[match.propPath] = match.value
+        matchingMetadata[match.propPath!] = match.value
       }
     }
 
@@ -803,7 +803,7 @@ ${this._formatDefinitions(patch.patches)}`
       ts: new Date().toISOString(),
       coordinates: coordinates.toString()
     })
-    const content: CurationData & { _origin?: { sha: string } } = yaml.load(data.toString())
+    const content: CurationData & { _origin?: { sha: string } } = yaml.load(data.toString()) as CurationData & { _origin?: { sha: string } }
     // Stash the sha of the content as a NON-enumerable prop so it does not get merged into the patch
     Object.defineProperty(content, '_origin', { value: { sha: blob.object }, enumerable: false })
     return content
@@ -829,7 +829,7 @@ ${this._formatDefinitions(patch.patches)}`
         })
       )
     )
-    return result.filter(i => i)
+    return result.filter((i): i is Curation => !!i)
   }
 
   async apply(
@@ -838,8 +838,8 @@ ${this._formatDefinitions(patch.patches)}`
     definition: Definition
   ) {
     const curation = await this.get(coordinates, curationSpec)
-    const result = Curation.apply(definition, curation)
-    this._ensureCurationInfo(result, curation)
+    const result = Curation.apply(definition, curation!)
+    this._ensureCurationInfo(result, curation!)
     return result
   }
 
@@ -982,16 +982,16 @@ ${this._formatDefinitions(patch.patches)}`
     const changedCoordinates: string[] = []
     for (let i = 0; i < files.length; ++i) {
       const fileName = files[i].filename.replace(/\.yaml$/, '').replace(/^curations\//, '')
-      const coordinates = EntityCoordinates.fromString(fileName)
+      const coordinates = EntityCoordinates.fromString(fileName)!
       const prDefinitions = (await this._getCurations(coordinates, number)) || { revisions: {} }
       const masterDefinitions = (await this._getCurations(coordinates)) || { revisions: {} }
       const allUnfilteredRevisions = concat(
-        Object.keys(prDefinitions.revisions),
-        Object.keys(masterDefinitions.revisions)
+        Object.keys(prDefinitions.revisions!),
+        Object.keys(masterDefinitions.revisions!)
       )
       const allRevisions = uniq(allUnfilteredRevisions)
       const changedRevisions = allRevisions.filter(
-        revision => !isEqual(prDefinitions.revisions[revision], masterDefinitions.revisions[revision])
+        revision => !isEqual(prDefinitions.revisions![revision], masterDefinitions.revisions![revision])
       )
       for (const revision of changedRevisions) {
         changedCoordinates.push(`${fileName}/${revision}`)
@@ -1005,7 +1005,7 @@ ${this._formatDefinitions(patch.patches)}`
     return coordinates.toString()
   }
 
-  _getBranchName(info: { login?: string }) {
+  _getBranchName(info: { login?: string | null }) {
     return `${info.login}_${DateTime.now().toFormat('yyMMdd_HHmmss.SSS')}`
   }
 
@@ -1024,7 +1024,7 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   _getCacheKey(coordinates: EntityCoordinates) {
-    return `cur_${EntityCoordinates.fromObject(coordinates).toString().toLowerCase()}`
+    return `cur_${EntityCoordinates.fromObject(coordinates)!.toString().toLowerCase()}`
   }
 
   async _addCurationWithMatchingRevisions(
@@ -1085,7 +1085,7 @@ ${this._formatDefinitions(patch.patches)}`
   }
 
   async _reprocessMergedCuration(coordinates: EntityCoordinates) {
-    const contributions = []
+    const contributions: { coordinates: string; contribution?: string }[] = []
     coordinates = coordinates.asRevisionless()
     // @ts-expect-error list returns CurationListResult for GitHubCurationService
     const { curations } = await this.list(coordinates)
@@ -1094,12 +1094,12 @@ ${this._formatDefinitions(patch.patches)}`
     }
     const processedRevisions = new Set()
     for (const [curatedCoordinatesStr, curation] of Object.entries(curations)) {
-      const curatedCoordinates = EntityCoordinates.fromString(curatedCoordinatesStr)
+      const curatedCoordinates = EntityCoordinates.fromString(curatedCoordinatesStr)!
       let matchingRevisionAndReason = await this._calculateMatchingRevisionAndReason(curatedCoordinates)
       matchingRevisionAndReason = matchingRevisionAndReason.filter(r => !processedRevisions.has(r.version))
       matchingRevisionAndReason = await this._filterRevisionWithDeclaredLicense(
         curatedCoordinates,
-        curation,
+        curation as CurationRevision,
         matchingRevisionAndReason
       )
       if (matchingRevisionAndReason.length === 0) {
@@ -1112,13 +1112,13 @@ ${this._formatDefinitions(patch.patches)}`
       })
       const info = {
         type: 'auto',
-        summary: `Reprocess merged curation for ${EntityCoordinates.fromObject(curatedCoordinates).toString()}`,
+        summary: `Reprocess merged curation for ${EntityCoordinates.fromObject(curatedCoordinates)!.toString()}`,
         details: `Curated ${get(curation, ['licensed.declared'])} license`,
         resolution: `Automatically added versions based on merged curation:\n ${this._formatMultiversionCuratedRevisions(matchingRevisionAndReason)}`
       }
       const contribution = await this._addCurationWithMatchingRevisions(
         curatedCoordinates,
-        curation,
+        curation as CurationRevision,
         info,
         matchingRevisionAndReason
       )
@@ -1126,7 +1126,7 @@ ${this._formatDefinitions(patch.patches)}`
         processedRevisions.add(r.version)
       }
       contributions.push({
-        coordinates: curatedCoordinates.toString(),
+        coordinates: curatedCoordinates!.toString(),
         contribution: get(contribution, 'data.html_url')
       })
     }

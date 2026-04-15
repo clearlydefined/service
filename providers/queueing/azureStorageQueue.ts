@@ -5,7 +5,7 @@ import { promisify } from 'node:util'
 import azure from 'azure-storage'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
-import type { DequeuedMessage, IQueue } from './index.js'
+import type { DequeuedMessage, IQueue, QueueMessage } from './index.js'
 
 export interface AzureStorageQueueOptions {
   connectionString: string
@@ -49,10 +49,13 @@ class AzureStorageQueue implements IQueue {
     if (!message) {
       return null
     }
-    if (message.dequeueCount <= 5) {
-      return { original: message, data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8')) }
+    if (message.dequeueCount! <= 5) {
+      return {
+        original: message as unknown as QueueMessage,
+        data: JSON.parse(Buffer.from(message.messageText!, 'base64').toString('utf8'))
+      }
     }
-    await this.delete({ original: message })
+    await this.delete({ original: message as unknown as QueueMessage })
     return this.dequeue()
   }
 
@@ -60,24 +63,26 @@ class AzureStorageQueue implements IQueue {
    * Similar to dequeue() but returns multiple messages to improve performance
    */
   async dequeueMultiple(): Promise<DequeuedMessage[]> {
-    const messages = await promisify(this.queueService.getMessages).bind(this.queueService)(
-      this.options.queueName,
-      this.options.dequeueOptions
-    )
+    const boundGetMessages = promisify(this.queueService.getMessages).bind(this.queueService) as (
+      queueName: string,
+      options?: Record<string, any>
+    ) => Promise<QueueMessage[]>
+    const messages = await boundGetMessages(this.options.queueName, this.options.dequeueOptions)
     if (!messages || messages.length === 0) {
       return []
     }
-    for (const i in messages) {
-      if (messages[i].dequeueCount <= 5) {
-        messages[i] = {
-          original: messages[i],
-          data: JSON.parse(Buffer.from(messages[i].messageText, 'base64').toString('utf8'))
-        }
+    const result: DequeuedMessage[] = []
+    for (const msg of messages) {
+      if (msg.dequeueCount <= 5) {
+        result.push({
+          original: msg,
+          data: JSON.parse(Buffer.from(msg.messageText!, 'base64').toString('utf8'))
+        })
       } else {
-        await this.delete({ original: messages[i] })
+        await this.delete({ original: msg })
       }
     }
-    return messages
+    return result
   }
 
   /**
@@ -88,7 +93,7 @@ class AzureStorageQueue implements IQueue {
     await promisify(this.queueService.deleteMessage).bind(this.queueService)(
       this.options.queueName,
       String(message.original.messageId),
-      message.original.popReceipt
+      message.original.popReceipt!
     )
   }
 }

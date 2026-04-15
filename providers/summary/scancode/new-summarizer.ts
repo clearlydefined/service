@@ -70,7 +70,7 @@ export class ScanCodeNewSummarizer {
   addDescribedInfo(result: ScanCodeSummaryResult, harvestedData: ScanCodeHarvestedData) {
     const releaseDate = harvestedData._metadata.releaseDate
     if (releaseDate) {
-      result.described = { releaseDate: extractDate(releaseDate.trim()) }
+      result.described = { releaseDate: extractDate(releaseDate.trim())! }
     }
   }
 
@@ -95,7 +95,7 @@ export class ScanCodeNewSummarizer {
     const licenseExpression = get(content, 'summary.declared_license_expression') as string | undefined
     const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger)
 
-    return result?.includes('NOASSERTION') ? null : result
+    return result?.includes('NOASSERTION') ? null : result ?? null
   }
 
   _readDeclaredLicenseExpressionFromPackage({ content }: ScanCodeHarvestedData): string | null {
@@ -110,12 +110,12 @@ export class ScanCodeNewSummarizer {
 
     const licenseExpression = firstPackage.declared_license_expression_spdx
 
-    return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression
+    return licenseExpression?.includes('NOASSERTION') ? null : licenseExpression ?? null
   }
 
   _readExtractedLicenseStatementFromPackage({ content }: ScanCodeHarvestedData): string | null {
     const declared_license = get(content, 'packages[0].extracted_license_statement') as string | undefined
-    return SPDX.normalize(declared_license)
+    return declared_license ? SPDX.normalize(declared_license) ?? null : null
   }
 
   _getRootFiles(coordinates: EntityCoordinates, files: ScanCodeFile[], packages?: ScanCodePackage[]): ScanCodeFile[] {
@@ -148,7 +148,7 @@ export class ScanCodeNewSummarizer {
   _getFileLicensesFromDetectedLicenseExpressions(files: ScanCodeFile[]): string | null {
     const fullLicenses = new Set(
       files
-        .filter((file: ScanCodeFile) => file.percentage_of_license_text >= 90 && file.detected_license_expression_spdx)
+        .filter((file: ScanCodeFile) => file.percentage_of_license_text! >= 90 && file.detected_license_expression_spdx)
         .map((file: ScanCodeFile) => file.detected_license_expression_spdx as string)
     )
     return joinExpressions(fullLicenses)
@@ -167,7 +167,7 @@ export class ScanCodeNewSummarizer {
             if (licenseDetection.matches) {
               for (const match of licenseDetection.matches as { score?: number; spdx_license_expression?: string }[]) {
                 // Only consider matches with high clarity score of 90 or higher
-                if (match.score >= 90 && match.spdx_license_expression) {
+                if (match.score! >= 90 && match.spdx_license_expression) {
                   licenses.add(match.spdx_license_expression)
                 }
               }
@@ -190,7 +190,7 @@ export class ScanCodeNewSummarizer {
         } else if (licenseDetection.matches) {
           for (const match of licenseDetection.matches as { score?: number; spdx_license_expression?: string }[]) {
             // Only consider matches with a reasonably high score of 80 or higher
-            if (match.score >= 80 && match.spdx_license_expression) {
+            if (match.score! >= 80 && match.spdx_license_expression) {
               licenseExpressions.add(match.spdx_license_expression)
             }
           }

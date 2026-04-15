@@ -65,7 +65,7 @@ export class FOSSologySummarizer {
   declare options: SummarizerOptions
 
   constructor(options?: SummarizerOptions) {
-    this.options = options
+    this.options = options!
   }
 
   summarize(coordinates: EntityCoordinates, harvested: FossologyHarvestedData): FossologySummaryResult {

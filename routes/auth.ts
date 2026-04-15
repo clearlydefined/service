@@ -73,11 +73,11 @@ let endpoints: AuthEndpoints | null = null
 function passportOrPat(): RequestHandler {
   let passportAuth: RequestHandler | null = null
   function handler(request: Request, response: Response, next: NextFunction): void {
-    if (options.clientId) {
+    if (options!.clientId) {
       passportAuth = passportAuth || passport.authenticate('github', { session: false })
-      passportAuth(request, response, next)
+      passportAuth!(request, response, next)
     } else {
-      request.user = { githubAccessToken: options.token }
+      request.user = { githubAccessToken: options!.token }
       next()
     }
   }
@@ -108,21 +108,21 @@ router.get('/github', (req, res) => {
 router.get('/github/start', passportOrPat(), (_req, res) => {
   // this only runs if passport didn't kick in above, but double
   // check for sanity in case upstream changes
-  if (!options.clientId) {
+  if (!options!.clientId) {
     res.redirect('finalize')
   }
 })
 
 router.get('/github/finalize', passportOrPat(), async (req, res) => {
-  const token = req.user.githubAccessToken
-  const { publicEmails, permissions } = await getUserDetails(token, options.org)
-  const username = req.user.username
+  const token = req.user!.githubAccessToken
+  const { publicEmails, permissions } = await getUserDetails(token, options!.org)
+  const username = req.user!.username
 
   const result = JSON.stringify({ type: 'github-token', token, permissions, username, publicEmails })
   // allow for sending auth responses to localhost on dev site; see /github
   // route above. real origin is stored in cookie.
-  let origin = endpoints.website
-  if (endpoints.service.includes('dev-api') && req.cookies.localhostOrigin) {
+  let origin = endpoints!.website
+  if (endpoints!.service.includes('dev-api') && req.cookies.localhostOrigin) {
     origin = req.cookies.localhostOrigin
   }
 
@@ -154,7 +154,7 @@ async function getUserDetails(token: string, org: string): Promise<UserDetails> 
       .filter(entry => entry.organization.login === org)
       .map(entry => entry.name)
       .map(findPermissions)
-      .filter(e => e)
+      .filter((e): e is string => e !== null)
 
     return { publicEmails, permissions }
   } catch (err) {
@@ -180,7 +180,7 @@ async function getUserDetails(token: string, org: string): Promise<UserDetails> 
  * Finds the permission name associated with a team.
  */
 function findPermissions(team: string): string | null {
-  const permissions = options.permissions
+  const permissions = options!.permissions
   for (const permission in permissions) {
     if (permissions[permission].includes(team)) {
       return permission
@@ -202,7 +202,7 @@ function setup(authOptions: AuthOptions, authEndpoints: AuthEndpoints): void {
  * Returns whether passport should be used for OAuth authentication.
  */
 function usePassport(): boolean {
-  return !!options.clientId
+  return !!options!.clientId
 }
 
 /**
@@ -212,10 +212,10 @@ function usePassport(): boolean {
 function getStrategy(): GitHubStrategy {
   return new GitHubStrategy(
     {
-      clientID: options.clientId,
-      clientSecret: options.clientSecret,
+      clientID: options!.clientId!,
+      clientSecret: options!.clientSecret!,
       // this needs to match the callback url on the oauth app on github
-      callbackURL: `${endpoints.service}/auth/github/finalize`,
+      callbackURL: `${endpoints!.service}/auth/github/finalize`,
       scope: ['public_repo', 'read:user', 'read:org', 'user:email']
     },
     (access, _refresh, profile, done) =>

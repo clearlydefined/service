@@ -91,17 +91,17 @@ export class LicenseeSummarizer {
     }
     return files
       .map(file => {
-        if (get(file, 'matcher.name') !== 'exact') {
+        if (file.matcher?.name !== 'exact') {
           return null
         }
-        if (80 > +get(file, 'matcher.confidence')) {
+        if (80 > +(file.matcher?.confidence ?? 0)) {
           return null
         }
         const path = file.filename
         const attachment = attachments.find(x => x.path === path)
-        const license = SPDX.normalize(file.matched_license)
+        const license = file.matched_license ? SPDX.normalize(file.matched_license) : null
         if (path && isDeclaredLicense(license)) {
-          const resultFile: FileEntry = { path, license, natures: ['license'] }
+          const resultFile: FileEntry = { path, license: license!, natures: ['license'] }
           setIfValue(resultFile, 'token', get(attachment, 'token'))
           return resultFile
         }

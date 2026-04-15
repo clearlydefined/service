@@ -20,7 +20,7 @@ export class MemoryQueue implements IQueue {
   constructor(options: MemoryQueueOptions) {
     this.options = options
     this.logger = this.options.logger || logger()
-    this.data = []
+    this.data = [] as QueueMessage[]
     this.messageId = 0
     this.decoder = options.decoder || ((text: string) => text)
   }
@@ -60,7 +60,7 @@ export class MemoryQueue implements IQueue {
   }
 
   _parseData({ messageText }: QueueMessage) {
-    return JSON.parse(this.decoder(messageText))
+    return JSON.parse(this.decoder(messageText!))
   }
 
   /** Similar to dequeue() but returns an array instead. See AzureStorageQueue.dequeueMultiple() */
@@ -74,7 +74,7 @@ export class MemoryQueue implements IQueue {
    * pass dequeue() result as the message to delete
    */
   async delete(message: DequeuedMessage): Promise<void> {
-    const newData = []
+    const newData: QueueMessage[] = []
     for (let i = 0; i < this.data.length; i++) {
       if (this.data[i].messageId !== message.original.messageId) {
         newData.push(this.data[i])

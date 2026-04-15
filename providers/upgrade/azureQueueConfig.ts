@@ -8,7 +8,7 @@ import AzureStorageQueue from '../queueing/azureStorageQueue.ts'
 
 const upgradeDefaultOptions: AzureStorageQueueOptions = {
   connectionString:
-    config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+    (config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') || config.get('HARVEST_AZBLOB_CONNECTION_STRING'))!,
   queueName: config.get('DEFINITION_UPGRADE_QUEUE_NAME') || 'definitions-upgrade',
   dequeueOptions: {
     numOfMessages: config.get('DEFINITION_UPGRADE_DEQUEUE_BATCH_SIZE') || 16,
@@ -18,9 +18,9 @@ const upgradeDefaultOptions: AzureStorageQueueOptions = {
 
 const computeDefaultOptions: AzureStorageQueueOptions = {
   connectionString:
-    config.get('DEFINITION_COMPUTE_QUEUE_CONNECTION_STRING') ||
+    (config.get('DEFINITION_COMPUTE_QUEUE_CONNECTION_STRING') ||
     config.get('DEFINITION_UPGRADE_QUEUE_CONNECTION_STRING') ||
-    config.get('HARVEST_AZBLOB_CONNECTION_STRING'),
+    config.get('HARVEST_AZBLOB_CONNECTION_STRING'))!,
   queueName: config.get('DEFINITION_COMPUTE_QUEUE_NAME') || 'recompute',
   dequeueOptions: {
     numOfMessages: 32, // Azure Storage Queue maximum; compute queue is high-traffic (~10K/hr)
