@@ -60,7 +60,7 @@ class RecomputeHandler implements IRecomputeHandler {
   }
 
   async validate(definition: Definition | null): Promise<Definition | null> {
-    return this._upgradePolicy.validate(definition)
+    return this._upgradePolicy.validate(definition) as Promise<Definition | null>
   }
 
   async initialize(): Promise<void> {

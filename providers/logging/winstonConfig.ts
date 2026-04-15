@@ -157,16 +157,16 @@ function factory(options?: WinstonLoggerOptions): winston.Logger {
       if (info.stack) {
         const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
         exception.stack = info.stack
-        aiClient.trackException({ exception, properties })
+        aiClient!.trackException({ exception, properties })
       } else {
-        aiClient.trackTrace({
+        aiClient!.trackTrace({
           message: info.message,
           severity: appInsights.KnownSeverityLevel.Error,
           properties
         })
       }
     } else {
-      aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties })
+      aiClient!.trackTrace({ message: info.message, severity: mapLevel(info.level), properties })
     }
   })
 

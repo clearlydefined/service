@@ -26,8 +26,8 @@ class MemoryStore {
 
   updateCurations(curations: Curation[]) {
     for (const curation of curations) {
-      const coordinates = EntityCoordinates.fromObject(curation.data.coordinates)
-      this.curations[this._getCurationId(coordinates)] = curation.data
+      const coordinates = EntityCoordinates.fromObject(curation.data!.coordinates!)!
+      this.curations[this._getCurationId(coordinates)] = curation.data!
     }
   }
 
@@ -39,7 +39,7 @@ class MemoryStore {
     if (curations) {
       const files: Record<string, CurationData> = {}
       for (const curation of curations) {
-        files[curation.path] = curation.data
+        files[curation.path] = curation.data!
       }
       this.contributions[pr.number] = { pr, files }
       return
@@ -76,7 +76,7 @@ class MemoryStore {
     if (!coordinates) {
       return ''
     }
-    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
+    return EntityCoordinates.fromObject(coordinates)!.toString().toLowerCase()
   }
 }
 

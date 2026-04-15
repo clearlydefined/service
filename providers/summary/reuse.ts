@@ -75,7 +75,7 @@ export class ReuseSummarizer {
   }
 
   summarize(_coordinates: EntityCoordinates, harvested: ReuseHarvestedData): ReuseSummaryResult {
-    if (!harvested?.reuse?.metadata.CreatorTool) {
+    if (!harvested?.reuse?.metadata!.CreatorTool) {
       throw new Error('Invalid REUSE data')
     }
     const result = {}
@@ -95,10 +95,10 @@ export class ReuseSummarizer {
     const licenses = get(harvested, 'reuse.licenses') as ReuseLicense[] | undefined
     if (licenses) {
       for (const license of licenses) {
-        const licenseSpdxId = SPDX.normalize(license.spdxId)
+        const licenseSpdxId = license.spdxId ? SPDX.normalize(license.spdxId) : null
         if (license.filePath && isDeclaredLicense(licenseSpdxId)) {
           const attachment = attachments.find(x => x.path === license.filePath)
-          const licenseFile: FileEntry = { path: license.filePath, license: licenseSpdxId, natures: ['license'] }
+          const licenseFile: FileEntry = { path: license.filePath, license: licenseSpdxId!, natures: ['license'] }
           setIfValue(licenseFile, 'token', get(attachment, 'token'))
           licenseFiles.push(licenseFile)
         }
@@ -111,9 +111,9 @@ export class ReuseSummarizer {
         if (!isDeclaredLicense(declaredLicense)) {
           declaredLicense = file.LicenseInfoInFile
         }
-        const license = SPDX.normalize(declaredLicense)
+        const license = declaredLicense ? SPDX.normalize(declaredLicense) : null
         if (path && isDeclaredLicense(license)) {
-          const resultFile: FileEntry = { path, license, hashes: { sha1: file.FileChecksumSHA1 } }
+          const resultFile: FileEntry = { path, license: license!, hashes: { sha1: file.FileChecksumSHA1! } }
           if (file.FileCopyrightText && file.FileCopyrightText !== 'NONE') {
             resultFile.attributions = [file.FileCopyrightText]
           }
@@ -130,7 +130,7 @@ export class ReuseSummarizer {
       return
     }
     const declaredLicenses = harvested.reuse.licenses
-      .map(license => (isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null))
+      .map(license => (license.spdxId && isDeclaredLicense(SPDX.normalize(license.spdxId)) ? license.spdxId : null))
       .filter((x): x is string => x !== null)
     setIfValue(result, 'licensed.declared', uniq(declaredLicenses).join(' AND '))
   }

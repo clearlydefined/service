@@ -49,10 +49,10 @@ class AzureStorageQueue implements IQueue {
     if (!message) {
       return null
     }
-    if (message.dequeueCount <= 5) {
+    if (message.dequeueCount! <= 5) {
       return {
         original: message as unknown as QueueMessage,
-        data: JSON.parse(Buffer.from(message.messageText, 'base64').toString('utf8'))
+        data: JSON.parse(Buffer.from(message.messageText!, 'base64').toString('utf8'))
       }
     }
     await this.delete({ original: message as unknown as QueueMessage })
@@ -93,7 +93,7 @@ class AzureStorageQueue implements IQueue {
     await promisify(this.queueService.deleteMessage).bind(this.queueService)(
       this.options.queueName,
       String(message.original.messageId),
-      message.original.popReceipt
+      message.original.popReceipt!
     )
   }
 }

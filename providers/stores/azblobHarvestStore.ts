@@ -46,7 +46,7 @@ export class AzHarvestBlobStore extends AbstractAzBlobStore {
       if (!urn) {
         return null
       }
-      const entryCoordinates = ResultCoordinatesClass.fromUrn(urn)
+      const entryCoordinates = ResultCoordinatesClass.fromUrn(urn)!
       return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
     })
     return sortedUniq(list.filter((x: any) => x))

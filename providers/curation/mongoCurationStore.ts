@@ -65,7 +65,7 @@ class MongoCurationStore {
     await Promise.all(
       curations.map(
         throat(10, async curation => {
-          const _id = this._getCurationId(curation.data.coordinates)
+          const _id = this._getCurationId(curation.data!.coordinates!)
           if (_id) {
             await this.collection.replaceOne({ _id }, { _id, ...curation.data }, { upsert: true })
           }
@@ -100,11 +100,11 @@ class MongoCurationStore {
       .map(curation => {
         return {
           path: curation.path,
-          coordinates: this._lowercaseCoordinates(curation.data.coordinates),
-          revisions: Object.keys(curation.data.revisions).map(revision => {
+          coordinates: this._lowercaseCoordinates(curation.data!.coordinates!),
+          revisions: Object.keys(curation.data!.revisions!).map(revision => {
             return {
               revision: revision.toLowerCase(),
-              data: curation.data.revisions[revision]
+              data: curation.data!.revisions![revision]
             }
           })
         }
@@ -152,7 +152,7 @@ class MongoCurationStore {
     if (!coordinates) {
       return ''
     }
-    return EntityCoordinates.fromObject(coordinates).toString().toLowerCase()
+    return EntityCoordinates.fromObject(coordinates)!.toString().toLowerCase()
   }
 
   _buildContributionQuery(coordinates: EntityCoordinates) {
@@ -177,16 +177,16 @@ class MongoCurationStore {
 
   _formatCurations(curations: CurationData[]): Record<string, CurationRevision> {
     return curations.reduce((result: Record<string, CurationRevision>, entry) => {
-      for (const revision of Object.keys(entry.revisions)) {
-        const coordinates = EntityCoordinates.fromObject({ ...entry.coordinates, revision }).toString()
-        result[coordinates] = entry.revisions[revision]
+      for (const revision of Object.keys(entry.revisions!)) {
+        const coordinates = EntityCoordinates.fromObject({ ...entry.coordinates!, revision })!.toString()
+        result[coordinates] = entry.revisions![revision]
       }
       return result
     }, {})
   }
 
   _lowercaseCoordinates(input: EntityCoordinatesSpec) {
-    return EntityCoordinates.fromString(EntityCoordinates.fromObject(input).toString().toLowerCase())
+    return EntityCoordinates.fromString(EntityCoordinates.fromObject(input)!.toString().toLowerCase())!
   }
   _escapeRegex(string: string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

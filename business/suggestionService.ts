@@ -87,7 +87,7 @@ export class SuggestionService {
    */
   async _getRelatedDefinitions(coordinates: EntityCoordinates): Promise<RelatedDefinitions | null> {
     const query = coordinates.asRevisionless()
-    query.namespace = query.namespace ? query.namespace : null // explicitly exclude namespace
+    query.namespace = query.namespace ? query.namespace : (null as unknown as string) // explicitly exclude namespace
     const results = await this.definitionService.find(query)
     const definitions = results.data.sort((a, b) =>
       compareDates(get(a, 'described.releaseDate'), get(b, 'described.releaseDate'))

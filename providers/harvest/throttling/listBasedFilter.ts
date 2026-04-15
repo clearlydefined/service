@@ -22,9 +22,9 @@ class ListBasedFilter {
     this.logger = options.logger || loggerFactory()
     const raw = options.blacklist || []
     // Normalize blacklist entries to versionless coordinates for broad matching
-    const versionlessCoordinates = raw.map(c => this._toVersionless(c)).filter(Boolean)
+    const versionlessCoordinates = raw.map(c => this._toVersionless(c)).filter((c): c is EntityCoordinates => c !== null)
     // Store as a Set for quick type lookup
-    this._targetTypes = new Set(versionlessCoordinates.map(c => c.type))
+    this._targetTypes = new Set(versionlessCoordinates.map(c => c.type!))
     this._blacklist = new Set(versionlessCoordinates.map(c => c.toString()))
     this.logger.info('ListBasedFilter initialized', {
       blockedCount: this._blacklist.size,
@@ -37,7 +37,7 @@ class ListBasedFilter {
     if (!coord || this._blacklist.size === 0) {
       return false
     }
-    if (!this._targetTypes.has(coord.type)) {
+    if (!this._targetTypes.has(coord.type!)) {
       return false
     }
     const versionless = coord.asRevisionless().toString()
@@ -48,10 +48,10 @@ class ListBasedFilter {
     try {
       const coordinates = EntityCoordinates.fromString(coordString)
       if (!validator.validate('versionless-coordinates-1.0', coordinates)) {
-        const errorMessage = validator.errors.map(e => `${e.instancePath} ${e.message}`).join(', ')
+        const errorMessage = validator.errors!.map(e => `${e.instancePath} ${e.message}`).join(', ')
         throw new Error(errorMessage)
       }
-      return coordinates.asRevisionless()
+      return coordinates!.asRevisionless()
     } catch (e) {
       this.logger.warn(
         `Invalid coordinates in blacklist, ignoring: ${coordString}, ${e instanceof Error ? e.message : String(e)}`

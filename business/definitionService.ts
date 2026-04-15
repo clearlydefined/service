@@ -321,7 +321,7 @@ export class DefinitionService {
     } else {
       result = await this.recomputeHandler.compute(this, coordinates)
     }
-    return this._trimDefinition(this._cast(result), expand)
+    return this._trimDefinition(this._cast(result!), expand)
   }
 
   /** Get directly from cache or store without any side effect, like compute */
@@ -389,7 +389,7 @@ export class DefinitionService {
   }
 
   _cast(definition: Definition): Definition {
-    definition.coordinates = EntityCoordinates.fromObject(definition.coordinates)
+    definition.coordinates = EntityCoordinates.fromObject(definition.coordinates)!
     return definition
   }
 
@@ -428,7 +428,7 @@ export class DefinitionService {
     }
     const curated = (await this.curationService.list(coordinates)).map(c => c.toString())
     const tools = await this.harvestStore.list(coordinates)
-    const harvest = tools.map(tool => EntityCoordinates.fromString(tool).toString())
+    const harvest = tools.map(tool => EntityCoordinates.fromString(tool)!.toString())
     return sortedUniq([...harvest, ...curated])
   }
 
@@ -452,12 +452,12 @@ export class DefinitionService {
         }
       })
     )
-    const foundDefinitions = flatten(await Promise.all(concat(promises)))
+    const foundDefinitions = flatten(await Promise.all(concat(promises))).filter((x): x is string => x !== null)
     // Filter only the revisions matching the found definitions
     return intersectionWith(
       coordinatesList,
       foundDefinitions,
-      (a, b) => a && b && a.toString().toLowerCase() === b.toString().toLowerCase()
+      (a, b) => a.toString().toLowerCase() === b.toString().toLowerCase()
     )
   }
 
@@ -695,7 +695,7 @@ export class DefinitionService {
       for (const version in raw[tool]) {
         const cased = get(raw[tool][version], '_metadata.links.self.href')
         if (cased) {
-          return EntityCoordinates.fromUrn(cased)
+          return EntityCoordinates.fromUrn(cased)!
         }
       }
     }
@@ -736,8 +736,8 @@ export class DefinitionService {
 
   _ensureFinalScores(definition: Definition): void {
     const { described, licensed } = definition
-    set(definition, 'scores.effective', Math.floor((described.score.total + licensed.score.total) / 2))
-    set(definition, 'scores.tool', Math.floor((described.toolScore.total + licensed.toolScore.total) / 2))
+    set(definition, 'scores.effective', Math.floor((described!.score!.total + licensed!.score!.total) / 2))
+    set(definition, 'scores.tool', Math.floor((described!.toolScore!.total + licensed!.toolScore!.total) / 2))
   }
 
   _finalizeDefinition(coordinates: EntityCoordinates, definition: Definition): void {
@@ -847,7 +847,7 @@ export class DefinitionService {
 
   _collectLicenseTexts(definition: Definition): string[] {
     const result: Set<string> = new Set()
-    for (const file of definition.files.filter(DefinitionService._isLicenseFile)) {
+    for (const file of definition.files!.filter(DefinitionService._isLicenseFile)) {
       this._extractLicensesFromExpression(file.license, result)
     }
     return Array.from(result)
@@ -872,7 +872,7 @@ export class DefinitionService {
 
   /** Answer whether or not the given file is a license text file */
   static _isLicenseFile(file: DefinitionFile): boolean {
-    return file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
+    return !!file.token && DefinitionService._isInCoreFacet(file) && (file.natures || []).includes('license')
   }
 
   /** Suggest a set of definition coordinates that match the given pattern. Only existing definitions are searched. */
@@ -884,20 +884,20 @@ export class DefinitionService {
    * Helper method to prime the search store while getting the system up and running.
    * Should not be needed in general.
    */
-  async reload(mode: string, coordinatesList: string[] | null = null): Promise<(undefined | null)[]> {
+  async reload(mode: string, coordinatesList: string[] | null = null): Promise<(void | null | undefined)[]> {
     const recompute = mode === 'definitions'
     const baseList = coordinatesList || (await this.list(new EntityCoordinates(), recompute))
-    const list = baseList.map(entry => EntityCoordinates.fromString(entry))
+    const list = baseList.map(entry => EntityCoordinates.fromString(entry)!)
     return await Promise.all(
       list.map(
         throat(10, async (coordinates: EntityCoordinates) => {
           try {
             const definition = await this.get(coordinates, null, recompute)
             if (recompute) {
-              return Promise.resolve(null)
+              return null
             }
             if (this.search.store) {
-              return this.search.store(definition)
+              return this.search.store(definition!)
             }
           } catch (error) {
             this.logger.info('failed to reload in definition service', {
@@ -984,7 +984,7 @@ export class DefinitionService {
 
   _ensureSourceLocation(coordinates: EntityCoordinates, definition: Definition): void {
     if (get(definition, 'described.sourceLocation')) {
-      updateSourceLocation(definition.described.sourceLocation)
+      updateSourceLocation(definition.described!.sourceLocation!)
       return
     }
     // For source components there may not be an explicit harvested source location (it is self-evident)
@@ -999,7 +999,7 @@ export class DefinitionService {
           return
         }
         this._ensureDescribed(definition)
-        definition.described.sourceLocation = { ...coordinates, url }
+        definition.described!.sourceLocation = { ...coordinates, url }
         break
       }
       default:
@@ -1025,7 +1025,7 @@ export class DefinitionService {
   }
 
   _getCacheKey(coordinates: EntityCoordinates): string {
-    return `def_${EntityCoordinates.fromObject(coordinates).toString().toLowerCase()}`
+    return `def_${EntityCoordinates.fromObject(coordinates)!.toString().toLowerCase()}`
   }
 }
 
