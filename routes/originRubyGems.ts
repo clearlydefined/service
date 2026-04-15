@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -11,14 +12,15 @@ import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const { uniq } = lodash
 
-// crates.io API https://github.com/rust-lang/crates.io/blob/03666dd7e35d5985504087f7bf0553fa16380fac/src/router.rs
+// RubyGems API documentation: https://guides.rubygems.org/rubygems-org-api-v2/
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://crates.io/api/v1/crates/${name}`
+    const url = `https://rubygems.org/api/v1/versions/${name}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    return response.status(200).send(uniq(answer.versions.map(/** @param {any} x */ x => x.num)))
+    const result = answer.map((entry: any) => entry.number)
+    return response.status(200).send(uniq(result))
   })
 )
 
@@ -26,18 +28,16 @@ router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
     const { name } = request.params
-    const url = `https://crates.io/api/v1/crates?per_page=100&q=${name}`
+    const url = `https://rubygems.org/api/v1/search.json?query=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.crates.map(
-      /** @param {any} x */ x => {
-        return { id: x.name }
-      }
-    )
+    const result = answer.map((entry: any) => {
+      return { id: entry.name }
+    })
     return response.status(200).send(result)
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

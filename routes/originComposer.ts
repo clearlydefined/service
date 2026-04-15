@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -11,17 +12,19 @@ import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const { uniq } = lodash
 
-// NPM API documentation: https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#:~:text=NPM%20Registry%20API%201%20Overview%202%20Schema.%20All,Authentication%20required.%20...%2010%20Search%20More%20items...%20
+// Packagist API Documentation https://packagist.org/apidoc
 router.get(
   '{/:namespace}/:name/revisions',
   asyncMiddleware(async (request, response) => {
-    const baseUrl = 'https://registry.npmjs.com'
-    const namespace = /** @type {string} */ (request.params.namespace)
-    const name = /** @type {string} */ (request.params.name)
+    const { namespace, name } = request.params
     const fullName = namespace ? `${namespace}/${name}` : name
-    const url = `${baseUrl}/${encodeURIComponent(fullName).replace(/%40/g, '@')}` // npmjs doesn't handle the escaped version
+    const url = `https://packagist.org/packages/${fullName}.json`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = Object.getOwnPropertyNames(answer.versions).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
+    const result = Object.getOwnPropertyNames(answer.package.versions)
+      .map((version: string) =>
+        version.startsWith('v') && version[1]! >= '0' && version[1]! <= '9' ? version.substring(1) : version
+      )
+      .sort((a, b) => (a < b ? 1 : a > b ? -1 : 0))
     return response.status(200).send(uniq(result))
   })
 )
@@ -30,20 +33,17 @@ router.get(
   '/:namespace{/:name}',
   asyncMiddleware(async (request, response) => {
     const { namespace, name } = request.params
-    // TODO decide if we want to tone down their scoring effect
     const searchTerm = name ? `${namespace}/${name}` : namespace
-    const url = `https://api.npms.io/v2/search?q=${searchTerm}`
+    const url = `https://packagist.org/search.json?q=${searchTerm}&per_page=100`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.map(
-      /** @param {any} entry */ entry => {
-        return { id: entry.package.name }
-      }
-    )
+    const result = answer.results.map((entry: any) => {
+      return { id: entry.name }
+    })
     return response.status(200).send(result)
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

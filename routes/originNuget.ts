@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -11,37 +12,33 @@ import { callFetch as requestPromise } from '../lib/fetch.ts'
 
 const { uniq } = lodash
 
-// Debian API documentation: https://sources.debian.org/doc/api/
+// Nuget API documentation: https://docs.microsoft.com/en-us/nuget/api/overview
 router.get(
   '/:name/revisions',
   asyncMiddleware(async (request, response) => {
+    const baseUrl = 'https://api-v2v3search-0.nuget.org'
     const { name } = request.params
-    const url = `https://sources.debian.org/api/src/${name}`
+    const url = `${baseUrl}/autocomplete?id=${name}&prerelease=true`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.versions.map(/** @param {any} version */ version => version.version)
-    return response.send(uniq(result))
+    return response.status(200).send(uniq(answer.data))
   })
 )
 
 router.get(
   '/:name',
   asyncMiddleware(async (request, response) => {
+    const baseUrl = 'https://api-v2v3search-0.nuget.org'
     const { name } = request.params
-    const url = `https://sources.debian.org/api/search/${name}`
+    const url = `${baseUrl}/query?q=${name}`
     const answer = await requestPromise({ url, method: 'GET', json: true })
-    const result = answer.results.other.map(
-      /** @param {any} entry */ entry => {
-        return { id: entry.name }
-      }
-    )
-    if (answer.results.exact) {
-      result.unshift({ id: answer.results.exact.name })
-    }
-    return response.send(result)
+    const result = answer.data.map((entry: any) => {
+      return { id: entry.id }
+    })
+    return response.status(200).send(result)
   })
 )
 
-function setup() {
+function setup(): Router {
   return router
 }
 

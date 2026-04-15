@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
@@ -8,9 +9,10 @@ const router = express.Router()
 
 import { callFetch as requestPromise } from '../lib/fetch.ts'
 import { deCodeSlashes } from '../lib/utils.ts'
+import type { Logger } from '../providers/logging/index.js'
 import logger from '../providers/logging/logger.ts'
 
-let log
+let log: Logger
 
 // Get versions
 router.get(
@@ -18,7 +20,7 @@ router.get(
   asyncMiddleware(async (request, response) => {
     try {
       const { name } = request.params
-      const namespace = /** @type {string} */ (request.params.namespace)
+      const namespace = request.params.namespace as string
       const namespacePath = `${deCodeSlashes(namespace)}`
       const url = `https://proxy.golang.org/${namespacePath}/${name}/@v/list`
       const answer = await requestPromise({ url, method: 'GET', json: true })
@@ -32,7 +34,7 @@ router.get(
 
       return response.status(200).send(result)
     } catch (e) {
-      const error = /** @type {Error} */ (e)
+      const error = e as Error
       log.error('Error fetching Go module revisions.', {
         errorMessage: error.message
       })
@@ -49,7 +51,7 @@ router.get(
   })
 )
 
-function setup() {
+function setup(): Router {
   log = logger()
   return router
 }

@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-/** @typedef {import('express').Request} Request */
-
+import type { Request, Router } from 'express'
 import express from 'express'
 import throat from 'throat'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
@@ -13,12 +12,12 @@ import lodash from 'lodash'
 
 const { get, uniq } = lodash
 
+import type { Logger } from '../providers/logging/index.js'
 import loggerFactory from '../providers/logging/logger.ts'
 
-let logger
+let logger: Logger
 
-/** @param {Request} request */
-function getClient(request) {
+function getClient(request: Request) {
   return get(request, 'app.locals.user.github.client') || get(request, 'app.locals.service.github.client')
 }
 
@@ -27,8 +26,8 @@ router.get(
   '/:login/:repo/revisions',
   asyncMiddleware(async (request, response) => {
     try {
-      const login = /** @type {string} */ (request.params.login)
-      const repo = /** @type {string} */ (request.params.repo)
+      const login = request.params.login as string
+      const repo = request.params.repo as string
       const github = getClient(request)
 
       // check response schema: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
@@ -46,7 +45,7 @@ router.get(
 
               return { tag: item.name, sha: response.data.object.sha }
             } catch (e) {
-              const err = /** @type {any} */ (e)
+              const err = e as any
               // If the tag_sha is not an annotated tag (likely 404), fallback to lightweight tag
               if (err.status === 404) {
                 logger.warn('Annotated tag not found, using lightweight tag', {
@@ -67,7 +66,7 @@ router.get(
       const result = unsorted.filter(x => x).sort((a, b) => (a.tag < b.tag ? 1 : a.tag > b.tag ? -1 : 0))
       return response.status(200).send(uniq(result))
     } catch (e) {
-      const error = /** @type {any} */ (e)
+      const error = e as any
       logger.error('Error in /:login/:repo/revisions route', { error })
       if (error.code === 404) {
         return response.status(200).send([])
@@ -81,8 +80,8 @@ router.get(
 router.get(
   '/:login{/:repo}',
   asyncMiddleware(async (request, response) => {
-    const login = /** @type {string} */ (request.params.login)
-    const repo = /** @type {string} */ (request.params.repo)
+    const login = request.params.login as string
+    const repo = request.params.repo as string
     const github = getClient(request)
     if (request.path.indexOf('/', 1) > 0) {
       const answer = await github.search.repos({
@@ -90,20 +89,20 @@ router.get(
         sort: 'stars',
         per_page: 100
       })
-      const result = answer.data.items.map((/** @type {any} */ item) => {
+      const result = answer.data.items.map((item: any) => {
         return { id: item.full_name }
       })
       return response.status(200).send(result)
     }
     const answer = await github.search.users({ q: `${login}+repos:>0`, per_page: 100 })
-    const result = answer.data.items.map((/** @type {any} */ item) => {
+    const result = answer.data.items.map((item: any) => {
       return { id: item.login }
     })
     return response.status(200).send(result)
   })
 )
 
-function setup() {
+function setup(): Router {
   logger = loggerFactory()
   return router
 }

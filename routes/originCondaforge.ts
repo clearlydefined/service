@@ -1,14 +1,15 @@
 // (c) Copyright 2025, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Router } from 'express'
 import express from 'express'
+import type createCondaRepoAccess from '../lib/condaRepoAccess.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
 
 const channel = 'conda-forge'
-/** @type {any} */
-let repoAccess
+let repoAccess: any
 
 router.get(
   '/:subdir/:name/revisions',
@@ -18,7 +19,7 @@ router.get(
       const revisions = await repoAccess.getRevisions(channel, subdir, name)
       res.status(200).send(revisions)
     } catch (e) {
-      const error = /** @type {Error} */ (e)
+      const error = e as Error
       res.status(404).send(error.message)
     }
   })
@@ -32,14 +33,13 @@ router.get(
       const matches = await repoAccess.getPackages(channel, name)
       res.status(200).send(matches)
     } catch (e) {
-      const error = /** @type {Error} */ (e)
+      const error = e as Error
       res.status(404).send(error.message)
     }
   })
 )
 
-/** @param {any} condaForgeRepoAccess */
-function setup(condaForgeRepoAccess) {
+function setup(condaForgeRepoAccess: ReturnType<typeof createCondaRepoAccess>): Router {
   repoAccess = condaForgeRepoAccess
   return router
 }
