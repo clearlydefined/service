@@ -20,7 +20,7 @@ describe('Utils latest version', () => {
       '4.0.0': ['4.0.0', '4.0.1-rc.2'],
       '5.0.0': ['5.0.0', '5.0.1-beta'],
       '6.0.0': ['6.0.0', 'undefined'],
-      '7.0.0': [undefined, '7.0.0'],
+      '7.0.0': [undefined as unknown as string, '7.0.0'],
       '8.0.0': ['2.9.0b1', '8.0.0'],
       notarray: 'notarray',
       null: [],
@@ -28,7 +28,7 @@ describe('Utils latest version', () => {
     }
 
     for (const expected of Object.getOwnPropertyNames(inputs)) {
-      const result = `${utils.getLatestVersion(inputs[expected])}`
+      const result = `${utils.getLatestVersion(inputs[expected]!)}`
       expect(result).to.equal(expected)
     }
   })
@@ -149,9 +149,9 @@ describe('Utils merge Licenses', () => {
       ['MIT AND Apache-2.0', 'MIT OR Apache-2.0', 'Apache-2.0 AND MIT']
     ]
     for (const input of inputs) {
-      const base = { licensed: { declared: input[0] } }
-      utils.mergeDefinitions(base, { licensed: { declared: input[1] } })
-      expect(base.licensed.declared).to.eq(input[2])
+      const base = { licensed: { declared: input[0] } } as unknown as Definition
+      utils.mergeDefinitions(base, { licensed: { declared: input[1] } } as unknown as Partial<Definition>)
+      expect(base.licensed!.declared).to.eq(input[2])
     }
   })
 })
@@ -161,21 +161,21 @@ describe('Utils mergeDefinitions', () => {
     const base: Definition = { described: { releaseDate: '2018-6-3' } }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
+    expect(base.described!.releaseDate).to.eq('2018-6-3')
+    expect(base.files!.length).to.eq(1)
+    expect(base.files![0].path).to.eq('1.txt')
+    expect(base.files![0].token).to.eq('13')
   })
 
   it('should merge entries as needed', () => {
     const base: Definition = { described: { releaseDate: '2018-6-3' }, files: [{ path: '1.txt', license: 'MIT' }] }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
-    expect(base.files[0].license).to.eq('MIT')
+    expect(base.described!.releaseDate).to.eq('2018-6-3')
+    expect(base.files!.length).to.eq(1)
+    expect(base.files![0].path).to.eq('1.txt')
+    expect(base.files![0].token).to.eq('13')
+    expect(base.files![0].license).to.eq('MIT')
   })
 
   it('does not mess with existing entries', () => {
@@ -188,13 +188,13 @@ describe('Utils mergeDefinitions', () => {
     }
     const newDefinition = { described: { issueTracker: 'http://bugs' }, files: [{ path: '1.txt', token: '13' }] }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.releaseDate).to.eq('2018-6-3')
-    expect(base.files.length).to.eq(2)
-    expect(base.files[0].path).to.eq('1.txt')
-    expect(base.files[0].token).to.eq('13')
-    expect(base.files[0].license).to.eq('MIT')
-    expect(base.files[1].path).to.eq('2.txt')
-    expect(base.files[1].license).to.eq('GPL')
+    expect(base.described!.releaseDate).to.eq('2018-6-3')
+    expect(base.files!.length).to.eq(2)
+    expect(base.files![0].path).to.eq('1.txt')
+    expect(base.files![0].token).to.eq('13')
+    expect(base.files![0].license).to.eq('MIT')
+    expect(base.files![1].path).to.eq('2.txt')
+    expect(base.files![1].license).to.eq('GPL')
   })
 
   it('overrides NOASSERTION', () => {
@@ -204,9 +204,9 @@ describe('Utils mergeDefinitions', () => {
     }
     const newDefinition = { licensed: { declared: 'MIT' }, files: [{ path: '1.txt', license: 'GPL-3.0' }] }
     utils.mergeDefinitions(base, newDefinition)
-    expect(base.licensed.declared).to.eq('MIT')
-    expect(base.files.length).to.eq(1)
-    expect(base.files[0].license).to.eq('GPL-3.0')
+    expect(base.licensed!.declared).to.eq('MIT')
+    expect(base.files!.length).to.eq(1)
+    expect(base.files![0].license).to.eq('GPL-3.0')
   })
 
   it('merges files correctly', () => {
@@ -235,12 +235,12 @@ describe('Utils mergeDefinitions', () => {
       ]
     }
     utils.mergeDefinitions(base, newDefinition)
-    const file = base.files[0]
+    const file = base.files![0]
     expect(file.attributions).to.have.members(['1', '2', '3'])
     expect(file.license).to.eq('GPL-3.0 AND MIT')
     expect(file.facets).to.have.members(['core', 'dev'])
-    expect(file.hashes.sha1).to.eq('1')
-    expect(file.hashes.sha256).to.eq('257')
+    expect(file.hashes!.sha1).to.eq('1')
+    expect(file.hashes!.sha256).to.eq('257')
     expect(file.natures).to.have.members(['license', 'test'])
   })
 
@@ -259,12 +259,12 @@ describe('Utils mergeDefinitions', () => {
       }
     }
     utils.mergeDefinitions(base, newDefinition as unknown as Partial<Definition>)
-    expect(base.described.projectWebsite).to.eq('https://test')
-    expect(base.described.hashes.sha1).to.eq('1')
-    expect(base.described.hashes.sha256).to.eq('257')
-    expect(base.described.facets.dev).to.eq('foo')
-    expect(base.described.facets.core).to.eq('test')
-    expect(base.described.facets.doc).to.eq('this')
+    expect(base.described!.projectWebsite).to.eq('https://test')
+    expect(base.described!.hashes!.sha1).to.eq('1')
+    expect(base.described!.hashes!.sha256).to.eq('257')
+    expect(base.described!.facets!.dev).to.eq('foo')
+    expect(base.described!.facets!.core).to.eq('test')
+    expect(base.described!.facets!.doc).to.eq('this')
   })
 })
 
@@ -326,7 +326,7 @@ describe('Utils isLicenseFile', () => {
       'package/COPYING.md',
       'package/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
+    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
@@ -345,7 +345,7 @@ describe('Utils isLicenseFile', () => {
       'meta-inf/COPYING.md',
       'meta-inf/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
+    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
@@ -364,7 +364,7 @@ describe('Utils isLicenseFile', () => {
       'meta-inf/COPYING.md',
       'meta-inf/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('sourcearchive/mavencentral/group/artifact/version')
+    const coordinate = EntityCoordinates.fromString('sourcearchive/mavencentral/group/artifact/version')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
@@ -383,7 +383,7 @@ describe('Utils isLicenseFile', () => {
       'redis-3.1/COPYING.md',
       'redis-3.1/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
+    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.true
     }
@@ -402,7 +402,7 @@ describe('Utils isLicenseFile', () => {
       'tenacity-8.2.1/COPYING.md',
       'tenacity-8.2.1/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')
+    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')!
     const packages = [
       { name: 'python-tenacity-doc' },
       { name: 'python3-tenacity' },
@@ -426,7 +426,7 @@ describe('Utils isLicenseFile', () => {
       'package/COPYING.md',
       'package/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('nuget/nuget/-/redis/3.1')
+    const coordinate = EntityCoordinates.fromString('nuget/nuget/-/redis/3.1')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
@@ -445,7 +445,7 @@ describe('Utils isLicenseFile', () => {
       '.package/COPYING.md',
       'package2/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')
+    const coordinate = EntityCoordinates.fromString('npm/npm/-/name/version')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
@@ -464,7 +464,7 @@ describe('Utils isLicenseFile', () => {
       '.package/COPYING.md',
       'package2/COPYING.HTML'
     ]
-    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')
+    const coordinate = EntityCoordinates.fromString('maven/mavencentral/group/artifact/version')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
@@ -483,7 +483,7 @@ describe('Utils isLicenseFile', () => {
       'other-3.1/COPYING',
       'package/COPYING'
     ]
-    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')
+    const coordinate = EntityCoordinates.fromString('pypi/pypi/-/redis/3.1')!
     for (const input of inputs) {
       expect(utils.isLicenseFile(input, coordinate), `input: ${input}`).to.be.false
     }
@@ -512,7 +512,7 @@ describe('Utils isLicenseFile', () => {
       'other-8.2.1/COPYING',
       'package/COPYING'
     ]
-    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')
+    const coordinate = EntityCoordinates.fromString('debsrc/debian/-/python-tenacity/8.2.1-1')!
     const packages = [
       { name: 'python-tenacity-doc' },
       { name: 'python3-tenacity' },
