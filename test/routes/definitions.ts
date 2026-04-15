@@ -13,7 +13,7 @@ const logger = () => ({
   info: () => {}
 })
 
-const definitionsRoutes = await esmock('../../routes/definitions.js', {
+const definitionsRoutes = await esmock('../../routes/definitions.ts', {
   '../../providers/logging/logger.ts': logger
 })
 

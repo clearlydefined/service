@@ -7,6 +7,7 @@
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
     "types": ["mocha", "node"]
   },
   "include": [

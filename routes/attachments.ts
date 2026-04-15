@@ -3,7 +3,7 @@
 
 import type { Request, Response, Router } from 'express'
 import express from 'express'
-import type { AttachmentStore } from '../business/noticeService.js'
+import type { AttachmentStore } from '../business/noticeService.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()

@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised'
 import extend from 'extend'
 import lodash from 'lodash'
 import sinon from 'sinon'
-import DefinitionService from '../../../business/definitionService.js'
+import DefinitionService from '../../../business/definitionService.ts'
 import Curation from '../../../lib/curation.ts'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import GitHubCurationService from '../../../providers/curation/github.ts'
@@ -654,7 +654,14 @@ function setup(definition?, coordinateSpec?, curation?) {
     aggregator as any,
     curator as any,
     store as any,
-    search as any
+    search as any,
+    { initialize: sinon.stub(), done: sinon.stub(), get: sinon.stub(), set: sinon.stub(), delete: sinon.stub() } as any,
+    {
+      validate: sinon.stub().resolves(null),
+      initialize: sinon.stub(),
+      setupProcessing: sinon.stub(),
+      compute: sinon.stub()
+    } as any
   )
   const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
 

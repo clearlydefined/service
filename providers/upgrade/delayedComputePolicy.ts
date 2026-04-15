@@ -1,7 +1,7 @@
 // (c) Copyright 2026, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.js'
+import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { ICache } from '../caching/index.js'
 import Cache from '../caching/memory.ts'

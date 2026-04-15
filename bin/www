@@ -2,8 +2,8 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import config from './config.js'
-import createApp from '../app.js'
+import config from './config.ts'
+import createApp from '../app.ts'
 import createDebug from 'debug'
 import http from 'node:http'
 

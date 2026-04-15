@@ -3,7 +3,7 @@
 
 import lodash from 'lodash'
 import type { UpdateResult } from 'mongodb'
-import type { DefinitionStore } from '../../business/definitionService.js'
+import type { DefinitionStore } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { FindResult, MongoDefinitionQuery, MongoDefinitionStoreOptions } from './abstractMongoDefinitionStore.ts'
 import AbstractMongoDefinitionStore from './abstractMongoDefinitionStore.ts'

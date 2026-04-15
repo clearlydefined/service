@@ -3,7 +3,7 @@
 
 import type { Request, Response, Router } from 'express'
 import express from 'express'
-import type { DefinitionService } from '../business/definitionService.js'
+import type { DefinitionService } from '../business/definitionService.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()

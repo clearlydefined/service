@@ -4,7 +4,7 @@
 import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
-import webhookRoutes from '../../routes/webhook.js'
+import webhookRoutes from '../../routes/webhook.ts'
 
 describe('Webhook Route for Crawler calls', () => {
   it('handles basic header signature', () => {

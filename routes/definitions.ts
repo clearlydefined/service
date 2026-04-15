@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Request, Response } from 'express'
 import express from 'express'
+import type { DefinitionService } from '../business/definitionService.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
 
 const router = express.Router()
@@ -10,9 +12,6 @@ import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
 import logger from '../providers/logging/logger.ts'
 import validator from '../schemas/validator.ts'
-
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
 
 // Gets the definition for a component with any applicable patches. This is the main
 // API for serving consumers and API
@@ -27,11 +26,7 @@ router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getDef
 // We currently allow up to three extra fields (that means up to three slashes in the namespace)
 router.get('/:type/:provider/:namespace/:name/:revision{/:extra1}{/:extra2}{/:extra3}', asyncMiddleware(getDefinition))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getDefinition(request, response) {
+async function getDefinition(request: Request, response: Response) {
   const log = logger()
   log.info('getDefinition route hit', { ts: new Date().toISOString(), requestParams: request.params })
 
@@ -45,10 +40,10 @@ async function getDefinition(request, response) {
     const splitString = namespaceNameRevision.split('/')
 
     // Pull off the last part of the string as the revision
-    const revision = splitString.pop()
+    const revision = splitString.pop()!
 
     // Pull of next part of the string as the name
-    const name = splitString.pop()
+    const name = splitString.pop()!
 
     // Join the rest of the string as the namespace
     const nameSpace = splitString.join('/')
@@ -64,8 +59,8 @@ async function getDefinition(request, response) {
     coordinates = await utils.toEntityCoordinatesFromRequest(request)
   }
 
-  const pr = request.params.pr
-  const force = request.query.force
+  const pr = request.params.pr as string | undefined
+  const force = !!request.query.force
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   log.debug('get_definition:start', { ts: new Date().toISOString(), coordinates: coordinates.toString() })
   const result = await definitionService.get(coordinates, pr, force, expand)
@@ -78,12 +73,8 @@ async function getDefinition(request, response) {
 // Get a list of autocomplete suggestions of components for which we have any kind of definition.
 // and match the given query
 router.get('/', asyncMiddleware(getDefinitions))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getDefinitions(request, response) {
-  const pattern = request.query.pattern
+async function getDefinitions(request: Request, response: Response) {
+  const pattern = request.query.pattern as string | undefined
   if (pattern) {
     return response.send(await definitionService.suggestCoordinates(pattern))
   }
@@ -99,7 +90,7 @@ async function getDefinitions(request, response) {
 // Typically used by a UI to preview the effect of a patch
 router.post(
   '/:type/:provider/:namespace/:name/:revision',
-  asyncMiddleware(async (/** @type {Request} */ request, /** @type {Response} */ response) => {
+  asyncMiddleware(async (request: Request, response: Response) => {
     if (!request.query.preview) {
       return response.status(400).send('Only valid for previews. Use the "preview" query parameter')
     }
@@ -115,15 +106,9 @@ router.post(
 // POST a request to create a resource that is the list of definitions available for
 // the components outlined in the POST body
 router.post('/', asyncMiddleware(listDefinitions))
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function listDefinitions(request, response) {
+async function listDefinitions(request: Request, response: Response) {
   const log = logger()
-  const coordinatesList = request.body.map((/** @type {string | null | undefined} */ entry) =>
-    EntityCoordinates.fromString(entry)
-  )
+  const coordinatesList = request.body.map((entry: string | null | undefined) => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 500) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   }
@@ -131,7 +116,7 @@ async function listDefinitions(request, response) {
   const coordinatesLookup = mapCoordinates(request, normalizedCoordinates)
 
   // if running on localhost, allow a force arg for testing without webhooks to invalidate the caches
-  const force = request.hostname.includes('localhost') ? request.query.force || false : false
+  const force = request.hostname.includes('localhost') ? (request.query.force as string | undefined) || false : false
   const expand = request.query.expand === '-files' ? '-files' : null // only support '-files' for now
   try {
     // Temporarily adding this verbose logging to find perf issues
@@ -144,25 +129,21 @@ async function listDefinitions(request, response) {
       expand,
       userAgent: request.get('User-Agent')
     })
-    let result = await definitionService.getAll(normalizedCoordinates, force, expand)
+    let result = await definitionService.getAll(normalizedCoordinates, force as boolean | undefined, expand)
 
     const matchCasing = !(request.query.matchCasing === 'false')
     // enforce request casing on keys as per issue #589
     result = adaptResultKeys(result, request.body, coordinatesLookup, matchCasing)
     return response.send(result)
   } catch (err) {
-    const error = /** @type {Error} */ (err)
+    const error = err as Error
     return response.send(
       `An error occurred when trying to fetch coordinates for one of the components: ${error.message}`
     )
   }
 }
 
-/**
- * @param {Request} request
- * @param {any[]} normalizedCoordinates
- */
-function mapCoordinates(request, normalizedCoordinates) {
+function mapCoordinates(request: Request, normalizedCoordinates: any[]) {
   const coordinatesLookup = new Map()
   if (!Array.isArray(request.body) || !request.body.every(item => typeof item === 'string')) {
     return coordinatesLookup // or throw new Error("Invalid input format")
@@ -178,13 +159,12 @@ function mapCoordinates(request, normalizedCoordinates) {
   return coordinatesLookup
 }
 
-/**
- * @param {Record<string, any>} result
- * @param {string[]} requestedKeys
- * @param {Map<string, string>} coordinatesLookup
- * @param {boolean} matchCase
- */
-function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
+function adaptResultKeys(
+  result: Record<string, any>,
+  requestedKeys: string[],
+  coordinatesLookup: Map<string, string>,
+  matchCase: boolean
+) {
   const shouldAdaptKeys = coordinatesLookup.size > 0 || matchCase
   if (!shouldAdaptKeys) {
     return result
@@ -197,28 +177,23 @@ function adaptResultKeys(result, requestedKeys, coordinatesLookup, matchCase) {
         mapped = mapped || resultKeyLookup.get(requested.toLowerCase())
       }
       const resultKey = mapped || resultKeyLookup.get(requested.toLowerCase())
-      const value = result[resultKey]
+      const value = resultKey ? result[resultKey] : undefined
       if (value) {
-        total[mapped ? requested : resultKey] = value
+        total[mapped ? requested : resultKey!] = value
       }
       return total
     },
-    /** @type {Record<string, any>} */ ({})
+    {} as Record<string, any>
   )
 }
 
-/** @type {any} */
-let definitionService
+let definitionService: DefinitionService
 
-/**
- * @param {any} definition
- * @param {boolean} [testFlag]
- */
-function setup(definition, testFlag = false) {
+function setup(definition: DefinitionService, testFlag: boolean = false): import('express').Router {
   definitionService = definition
 
   if (testFlag) {
-    const _router = /** @type {any} */ (router)
+    const _router = router as any
     _router._getDefinition = getDefinition
     _router._adaptResultKeys = adaptResultKeys
   }

@@ -1,7 +1,7 @@
 // (c) Copyright 2024, SAP SE and ClearlyDefined contributors. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
-import type { Definition, DefinitionService } from '../../business/definitionService.js'
+import type { Definition, DefinitionService } from '../../business/definitionService.ts'
 import type { Logger } from '../logging/index.js'
 import type { IQueue } from '../queueing/index.js'
 import type { DefinitionVersionCheckerOptions } from './defVersionCheck.ts'

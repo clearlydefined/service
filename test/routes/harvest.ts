@@ -7,7 +7,7 @@ import sinon from 'sinon'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import * as utils from '../../lib/utils.ts'
 import ListBasedFilter from '../../providers/harvest/throttling/listBasedFilter.ts'
-import harvestRoutes from '../../routes/harvest.js'
+import harvestRoutes from '../../routes/harvest.ts'
 
 // Shared noop logger for tests
 const logger = {
@@ -80,7 +80,7 @@ describe('Harvest route', () => {
 
   it('normalize coordinates', async () => {
     const esmock = (await import('esmock')).default
-    const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
+    const mockedHarvestRoutes = (await esmock('../../routes/harvest.ts', {
       '../../lib/utils.ts': {
         ...utils,
         toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('one/two/three/four'))
@@ -112,7 +112,7 @@ describe('Harvest route', () => {
 
   it('throttles via ListBasedFilter (422)', async () => {
     const esmock = (await import('esmock')).default
-    const mockedHarvestRoutes = (await esmock('../../routes/harvest.js', {
+    const mockedHarvestRoutes = (await esmock('../../routes/harvest.ts', {
       '../../lib/utils.ts': {
         ...utils,
         toNormalizedEntityCoordinates: () => Promise.resolve(EntityCoordinates.fromString('git/github/org/name/1.0.0'))

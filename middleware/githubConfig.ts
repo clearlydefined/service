@@ -5,8 +5,8 @@ import type { RequestHandler } from 'express'
 import config from 'painless-config'
 import type { ICache } from '../providers/caching/index.js'
 import memoryCache from '../providers/caching/memory.ts'
-import type { AuthEndpoints } from '../routes/auth.js'
-import * as githubRoute from '../routes/auth.js'
+import type { AuthEndpoints } from '../routes/auth.ts'
+import * as githubRoute from '../routes/auth.ts'
 import type { GitHubMiddlewareOptions } from './github.ts'
 import githubMiddleware from './github.ts'
 import type { PermissionsConfig } from './permissions.ts'
@@ -46,8 +46,7 @@ function middleware(options?: GitHubConfigOptions, cache?: ICache): RequestHandl
 /**
  * Sets up and returns the GitHub OAuth authentication route module.
  */
-function route(options?: GitHubConfigOptions, endpoints?: AuthEndpoints) {
-  // @ts-expect-error - routes/auth.js namespace export not fully typed yet
+function route(options: GitHubConfigOptions | undefined, endpoints: AuthEndpoints) {
   githubRoute.setup(options || defaultOptions, endpoints)
   return githubRoute
 }

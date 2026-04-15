@@ -8,8 +8,8 @@ chai.use(chaiAsPromised)
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import type { Definition, DefinitionService, RecomputeContext } from '../../../business/definitionService.js'
-import DefinitionServiceFactory from '../../../business/definitionService.js'
+import type { Definition, DefinitionService, RecomputeContext } from '../../../business/definitionService.ts'
+import DefinitionServiceFactory from '../../../business/definitionService.ts'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
 import type { IQueue } from '../../../providers/queueing/index.js'
 import DefinitionQueueUpgrader from '../../../providers/upgrade/defUpgradeQueue.ts'

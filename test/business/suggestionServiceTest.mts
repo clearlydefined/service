@@ -9,7 +9,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import lodash from 'lodash'
 import { DateTime } from 'luxon'
 import sinon from 'sinon'
-import SuggestionService from '../../business/suggestionService.js'
+import SuggestionService from '../../business/suggestionService.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { setIfValue } from '../../lib/utils.ts'
 

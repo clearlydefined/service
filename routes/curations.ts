@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import type { Request, Response } from 'express'
 import express from 'express'
+import type { CurationData, CurationError } from '../lib/curation.ts'
 import asyncMiddleware from '../middleware/asyncMiddleware.ts'
+import type { Logger } from '../providers/logging/index.js'
 import loggerFactory from '../providers/logging/logger.ts'
 
 const router = express.Router()
@@ -12,17 +15,10 @@ import EntityCoordinates from '../lib/entityCoordinates.ts'
 import * as utils from '../lib/utils.ts'
 import { permissionsCheck } from '../middleware/permissions.ts'
 
-/** @typedef {import('express').Request} Request */
-/** @typedef {import('express').Response} Response */
-
 // Get a proposed patch for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision/pr/:pr', asyncMiddleware(getChangesForCoordinatesInPr))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getChangesForCoordinatesInPr(request, response) {
+async function getChangesForCoordinatesInPr(request: Request, response: Response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.get(coordinates, request.params.pr)
   if (result) {
@@ -34,17 +30,13 @@ async function getChangesForCoordinatesInPr(request, response) {
 // Get data needed by review UI
 router.get('/pr/:pr', asyncMiddleware(getPr))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getPr(request, response) {
+async function getPr(request: Request, response: Response) {
   try {
     const url = curationService.getCurationUrl(request.params.pr)
     const changes = await curationService.getChangedDefinitions(request.params.pr)
     return response.status(200).send({ url, changes })
   } catch (exception) {
-    const error = /** @type {Error & {code?: number}} */ (exception)
+    const error = exception as Error & { code?: number }
     if (error.code === 404) {
       return response.sendStatus(404)
     }
@@ -55,11 +47,7 @@ async function getPr(request, response) {
 // Get an existing patch for a specific revision of a component
 router.get('/:type/:provider/:namespace/:name/:revision', asyncMiddleware(getCurationForCoordinates))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function getCurationForCoordinates(request, response) {
+async function getCurationForCoordinates(request: Request, response: Response) {
   if (request.query.expand === 'prs') {
     return listCurations(request, response)
   }
@@ -74,11 +62,7 @@ async function getCurationForCoordinates(request, response) {
 // Search for any patches related to the given path, as much as is given
 router.get('{/:type}{/:provider}{/:namespace}{/:name}', asyncMiddleware(listCurations))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function listCurations(request, response) {
+async function listCurations(request: Request, response: Response) {
   const coordinates = await utils.toEntityCoordinatesFromRequest(request)
   const result = await curationService.list(coordinates)
   if (!result?.contributions.length) {
@@ -89,14 +73,8 @@ async function listCurations(request, response) {
 
 router.post('/', asyncMiddleware(listAllCurations))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function listAllCurations(request, response) {
-  const coordinatesList = request.body.map((/** @type {string | null | undefined} */ entry) =>
-    EntityCoordinates.fromString(entry)
-  )
+async function listAllCurations(request: Request, response: Response) {
+  const coordinatesList = request.body.map((entry: string | null | undefined) => EntityCoordinates.fromString(entry))
   if (coordinatesList.length > 1000) {
     return response.status(400).send(`Body contains too many coordinates: ${coordinatesList.length}`)
   }
@@ -108,19 +86,13 @@ async function listAllCurations(request, response) {
 
 router.patch('', asyncMiddleware(updateCurations))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function updateCurations(request, response) {
+async function updateCurations(request: Request, response: Response) {
   const serviceGithub = request.app.locals.service.github.client
   const userGithub = request.app.locals.user.github.client
-  const info = await request.app.locals.user.github.getInfo()
-  /** @type {import('../lib/curation').CurationError[][]} */
-  let curationErrors = []
-  /** @type {any[]} */
-  const patchesInError = []
-  for (const /** @type {string | import('../lib/curation').CurationData} */ entry of request.body.patches) {
+  const info = await request.app.locals.user.github.getInfo!()
+  let curationErrors: CurationError[][] = []
+  const patchesInError: any[] = []
+  for (const entry of request.body.patches as (string | CurationData)[]) {
     const curation = new Curation(entry)
     if (curation.errors.length > 0) {
       curationErrors = [...curationErrors, curation.errors]
@@ -134,8 +106,8 @@ async function updateCurations(request, response) {
   }
 
   const normalizedPatches = await Promise.all(
-    request.body.patches.map(async (/** @type {import('../lib/curation').CurationData} */ entry) => {
-      return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates) }
+    request.body.patches.map(async (entry: CurationData) => {
+      return { ...entry, coordinates: await utils.toNormalizedEntityCoordinates(entry.coordinates!) }
     })
   )
   const normalizedBody = { ...request.body, patches: normalizedPatches }
@@ -149,11 +121,7 @@ async function updateCurations(request, response) {
 
 router.post('/sync', permissionsCheck('curate'), asyncMiddleware(syncAllContributions))
 
-/**
- * @param {Request} request
- * @param {Response} response
- */
-async function syncAllContributions(request, response) {
+async function syncAllContributions(request: Request, response: Response) {
   const userGithub = request.app.locals.user.github.client
   if (!userGithub) {
     return response.status(400).send('Invalid Github user')
@@ -165,11 +133,7 @@ async function syncAllContributions(request, response) {
 
 router.post('/reprocess', permissionsCheck('curate'), asyncMiddleware(reprocessMergedCurations))
 
-/**
- * @param {Request} request
- * @param {Response} respond
- */
-async function reprocessMergedCurations(request, respond) {
+async function reprocessMergedCurations(request: Request, respond: Response) {
   const coordinatesArray = request.body.map(EntityCoordinates.fromString)
   // Reprocess consume a lot of resource. Limit the size of the reprocess request.
   const reprocessThreshold = 100
@@ -181,16 +145,10 @@ async function reprocessMergedCurations(request, respond) {
   return respond.status(200).send(result)
 }
 
-/** @type {any} */
-let curationService
-/** @type {any} */
-let logger
+let curationService: any
+let logger: Logger
 
-/**
- * @param {any} service
- * @param {any} [appLogger]
- */
-function setup(service, appLogger) {
+function setup(service: any, appLogger?: Logger): import('express').Router {
   curationService = service
   logger = appLogger || loggerFactory()
   return router

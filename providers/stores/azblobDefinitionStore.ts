@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
-import type { Definition, DefinitionStore } from '../../business/definitionService.js'
+import type { Definition, DefinitionStore } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
 import type { AzBlobStoreOptions, BlobEntry } from './abstractAzblobStore.ts'

@@ -3,7 +3,7 @@
 
 import lodash from 'lodash'
 import { gte } from 'semver'
-import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService.js'
+import type { Definition, DefinitionService, UpgradeHandler } from '../../business/definitionService.ts'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 

@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect } from 'chai'
-import SummaryService from '../../business/summarizer.js'
+import SummaryService from '../../business/summarizer.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 const testDir = dirname(fileURLToPath(import.meta.url))

@@ -9,7 +9,7 @@ import type { Definition } from '../../lib/utils.ts'
 /** Subset of DefinitionService methods used by GitHubCurationService */
 export interface CurationDefinitionService {
   getStored(coordinates: EntityCoordinates): Promise<Definition | null>
-  invalidate(coordinateList: EntityCoordinates[]): Promise<undefined[]>
+  invalidate(coordinateList: EntityCoordinates[]): Promise<void[]>
   computeAndStore(coordinates: EntityCoordinates): Promise<Definition>
   list(coordinates: EntityCoordinates): Promise<string[]>
   listAll(coordinatesList: EntityCoordinates[]): Promise<EntityCoordinates[]>

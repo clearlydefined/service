@@ -29,52 +29,55 @@
 // The function should return a summary schema.
 //
 
-/**
- * @typedef {import('./aggregator').AggregationServiceOptions} AggregationServiceOptions
- * @typedef {import('./aggregator').SummarizedData} SummarizedData
- * @typedef {import('./aggregator').ToolDataResult} ToolDataResult
- * @typedef {import('./definitionService').Definition} Definition
- * @typedef {import('../lib/entityCoordinates')} EntityCoordinates
- * @typedef {import('../providers/logging').Logger} Logger
- */
-
 import lodash from 'lodash'
+import type { EntityCoordinates } from '../lib/entityCoordinates.ts'
+import type { Logger } from '../providers/logging/index.js'
+import type { Definition } from './definitionService.ts'
 
 const { flattenDeep, get, set, intersectionBy } = lodash
 
 import { getLatestVersion, mergeDefinitions, setIfValue } from '../lib/utils.ts'
 import logger from '../providers/logging/logger.ts'
 
+/** Tool precedence configuration */
+export type ToolPrecedence = string[][]
+
+/** Options for the AggregationService */
+export interface AggregationServiceOptions {
+  precedence?: ToolPrecedence
+}
+
+/** Summarized data structure - tool -> version -> summary */
+export type SummarizedData = Record<string, Record<string, any>>
+
+/** Result of finding tool data */
+export interface ToolDataResult {
+  toolSpec: string
+  summary: Partial<Definition>
+}
+
 /**
  * Service for aggregating summarized tool output into a single definition.
  * Handles tool precedence and merging of data from multiple sources.
  */
 class AggregationService {
-  /**
-   * Creates a new AggregationService instance
-   * @param {AggregationServiceOptions} options - Configuration options including tool precedence
-   */
-  constructor(options) {
+  options: AggregationServiceOptions
+  workingPrecedence: string[] | undefined
+  logger: Logger
+
+  constructor(options: AggregationServiceOptions) {
     this.options = options
     // we take the configured precedence expected to be highest first
     this.workingPrecedence =
       options.precedence && flattenDeep(options.precedence.map(group => [...group].reverse()).reverse())
-    /** @type {Logger} */
     this.logger = logger()
   }
 
-  /**
-   * Process summarized data from multiple tools into a single definition.
-   * @param {SummarizedData} summarized - Summarized data from all tools
-   * @param {EntityCoordinates} coordinates - The component coordinates
-   * @returns {Partial<Definition> | null} The aggregated partial definition, or null if no tools contributed
-   */
-  process(summarized, coordinates) {
-    /** @type {Partial<Definition>} */
-    const result = {}
+  /** Process summarized data from multiple tools into a single definition. */
+  process(summarized: SummarizedData, coordinates: EntityCoordinates): Partial<Definition> | null {
+    const result: Partial<Definition> = {}
     const order = this.workingPrecedence || []
-    /** @type {string[]} */
-    const tools = []
+    const tools: string[] = []
     for (const tool of order) {
       const data = this._findData(tool, summarized)
       if (data) {
@@ -92,14 +95,12 @@ class AggregationService {
     return result
   }
 
-  /**
-   * Override declared license for certain component types based on ClearlyDefined data
-   * @param {Partial<Definition>} result - The aggregated result
-   * @param {ToolDataResult | null} cdSummarized - ClearlyDefined summarized data
-   * @param {EntityCoordinates} coordinates - The component coordinates
-   * @private
-   */
-  _overrideDeclaredLicense(result, cdSummarized, coordinates) {
+  /** Override declared license for certain component types based on ClearlyDefined data */
+  _overrideDeclaredLicense(
+    result: Partial<Definition>,
+    cdSummarized: ToolDataResult | null,
+    coordinates: EntityCoordinates
+  ): void {
     const declaredByCD = cdSummarized?.summary?.licensed?.declared
     const isCrateComponent = get(coordinates, 'type') === 'crate'
     if (isCrateComponent && declaredByCD !== 'NOASSERTION') {
@@ -108,14 +109,8 @@ class AggregationService {
     }
   }
 
-  /**
-   * Search the summarized data for an entry that best matches the given tool spec
-   * @param {string} toolSpec - The tool specification (e.g., "scancode/3.0" or "scancode")
-   * @param {SummarizedData} summarized - The summarized data
-   * @returns {ToolDataResult | null} The matching tool data or null if not found
-   * @private
-   */
-  _findData(toolSpec, summarized) {
+  /** Search the summarized data for an entry that best matches the given tool spec */
+  _findData(toolSpec: string, summarized: SummarizedData): ToolDataResult | null {
     const [tool, toolVersion] = toolSpec.split('/')
     if (!summarized[tool]) {
       return null
@@ -130,14 +125,14 @@ class AggregationService {
   }
 
   /**
-   * Take the clearlydefined tool as the source of truth for file paths as it is just a recursive dir
-   * Intersect the summarized file list with the clearlydefined file list by path
-   * @param {Partial<Definition>} result - The aggregated result
-   * @param {ToolDataResult | null} cdSummarized - ClearlyDefined summarized data
-   * @param {EntityCoordinates} coordinates - The component coordinates
-   * @private
+   * Take the clearlydefined tool as the source of truth for file paths as it is just a recursive dir.
+   * Intersect the summarized file list with the clearlydefined file list by path.
    */
-  _normalizeFiles(result, cdSummarized, coordinates) {
+  _normalizeFiles(
+    result: Partial<Definition>,
+    cdSummarized: ToolDataResult | null,
+    coordinates: EntityCoordinates
+  ): void {
     const cdFiles = get(cdSummarized, 'summary.files')
     if (!cdFiles?.length) {
       return
@@ -154,9 +149,4 @@ class AggregationService {
   }
 }
 
-/**
- * Factory function to create an AggregationService instance
- * @param {AggregationServiceOptions} options - Configuration options including tool precedence
- * @returns {AggregationService} A new AggregationService instance
- */
-export default options => new AggregationService(options)
+export default (options: AggregationServiceOptions): AggregationService => new AggregationService(options)

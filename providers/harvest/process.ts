@@ -5,7 +5,7 @@ import lodash from 'lodash'
 
 const { get } = lodash
 
-import type { DefinitionService } from '../../business/definitionService.js'
+import type { DefinitionService } from '../../business/definitionService.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { parseUrn } from '../../lib/utils.ts'
 import type { Logger } from '../logging/index.js'

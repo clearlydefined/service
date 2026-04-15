@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect } from 'chai'
-import Summarizer from '../../business/summarizer.js'
+import Summarizer from '../../business/summarizer.ts'
 
 describe('Summarizer service', () => {
   it('has the correct coordinates and tool info', () => {
