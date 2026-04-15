@@ -200,7 +200,7 @@ describe('Curation service pr events', () => {
 
   it('gets null curation if blob does not exist', async () => {
     const service = await createService({
-      geitStubOverride: () => {
+      geitStubOverride: (() => {
         return {
           tree: ref => {
             expect(ref).to.eq('branch')
@@ -208,7 +208,7 @@ describe('Curation service pr events', () => {
           },
           blob: () => Promise.resolve(Buffer.alloc(0))
         }
-      }
+      }) as any
     })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
     const content = await service._getCurations(coordinates)
@@ -226,7 +226,7 @@ revisions:
       declared: MIT
 `
     const service = await createService({
-      geitStubOverride: () => {
+      geitStubOverride: (() => {
         return {
           tree: ref => {
             expect(ref).to.eq('branch')
@@ -245,7 +245,7 @@ revisions:
             return Promise.resolve(Buffer.from(theYaml))
           }
         }
-      }
+      }) as any
     })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
     const content = await service._getCurations(coordinates)
@@ -266,7 +266,7 @@ revisions:
 
   it('getCurations should use pr ref', async () => {
     const service = await createService({
-      geitStubOverride: () => {
+      geitStubOverride: (() => {
         return {
           tree: ref => {
             expect(ref).to.eq('refs/pull/123/head')
@@ -274,7 +274,7 @@ revisions:
           },
           blob: () => Promise.resolve(Buffer.alloc(0))
         }
-      }
+      }) as any
     })
     const coordinates = EntityCoordinates.fromString('npm/npmjs/-/test/1.0.0')
     const content = await service._getCurations(coordinates, 123)

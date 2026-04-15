@@ -9,8 +9,8 @@ import { createSilentLogger } from '../../../helpers/mockLogger.ts'
 describe('ListBasedFilter', () => {
   const logger = createSilentLogger()
 
-  function createCoord(coordString) {
-    return EntityCoordinates.fromString(coordString)
+  function createCoord(coordString): EntityCoordinates {
+    return EntityCoordinates.fromString(coordString)!
   }
 
   describe('isBlocked', () => {
@@ -96,8 +96,8 @@ describe('ListBasedFilter', () => {
       it('should return false for null or undefined coordinates', () => {
         const filter = new ListBasedFilter({ blacklist: ['npm/npmjs/-/test'], logger })
 
-        expect(filter.isBlocked(null)).to.be.false
-        expect(filter.isBlocked(undefined)).to.be.false
+        expect(filter.isBlocked(null as any)).to.be.false
+        expect(filter.isBlocked(undefined as any)).to.be.false
       })
     })
   })
@@ -111,7 +111,7 @@ describe('ListBasedFilter', () => {
       })
 
       it('should log warnings for invalid coordinates', () => {
-        const warnings = []
+        const warnings: string[] = []
         const mockLogger = {
           ...createSilentLogger(),
           warn: (msg: string) => warnings.push(msg)

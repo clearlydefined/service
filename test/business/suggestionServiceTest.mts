@@ -20,7 +20,7 @@ const expect = chai.expect
 
 const testDir = dirname(fileURLToPath(import.meta.url))
 
-const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')
+const testCoordinates = EntityCoordinates.fromString('npm/npmjs/-/test/10.0')!
 
 describe('Suggestion Service', () => {
   it('gets suggestion for missing declared license', async () => {
@@ -99,7 +99,7 @@ describe('Suggestion Service', () => {
 
   it('queries related definitions with namespace', async () => {
     const now = DateTime.now()
-    const coordinates = EntityCoordinates.fromString('npm/npmjs/@scope/scope-test/1.0.0')
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/@scope/scope-test/1.0.0')!
     const definition = createDefinition(coordinates, now, null, files)
     const service = setup(definition, [])
     await service.get(coordinates)
@@ -135,8 +135,8 @@ function createModifiedDefinition(
 ) {
   const newCoordinates = EntityCoordinates.fromObject({
     ...coordinates,
-    revision: `${coordinates.revision.split('.')[0] + amount}.0`
-  })
+    revision: `${coordinates.revision!.split('.')[0] + amount}.0`
+  })!
   const newFiles = files.map(file => {
     return { ...file, license, attributions }
   })

@@ -167,6 +167,6 @@ function createRequest(action: string, merged = true) {
           sha: '24'
         }
       }
-    }) as unknown
+    }) as any
   })
 }

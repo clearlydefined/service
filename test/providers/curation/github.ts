@@ -155,7 +155,7 @@ describe('Github Curation Service', () => {
 
   it('fails if definition exists', async () => {
     const { service } = setup()
-    const gitHubService = createService(service)
+    const gitHubService = createService(service as any)
     const contributionPatch = {
       contributionInfo: {
         summary: 'test',
@@ -184,9 +184,9 @@ describe('Github Curation Service', () => {
     sinon
       .stub(service, 'listAll')
       .callsFake(async () => [
-        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+        EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })!
       ])
-    const gitHubService = createService(service)
+    const gitHubService = createService(service as any)
     sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
 
     const contributionPatch = {
@@ -267,7 +267,7 @@ describe('Github Curation Service', () => {
       sinon
         .stub(service, 'listAll')
         .callsFake(async () => [
-          EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })
+          EntityCoordinates.fromObject({ type: 'npm', provider: 'npmjs', name: 'test', revision: '1.0' })!
         ])
       sinon.stub(service, 'list').callsFake(async () => [
         'npm/npmjs/-/test/1.0', // curated revision
@@ -278,7 +278,7 @@ describe('Github Curation Service', () => {
       ])
       sinon.stub(service, 'getStored').callsFake(async () => undefined as any)
 
-      const gitHubService = createService(service, licenseMatcher, harvestStore)
+      const gitHubService = createService(service as any, licenseMatcher as any, harvestStore as any)
       sinon.stub(gitHubService, '_getPatchesFromMergedPullRequest').resolves([component])
       sinon.stub(gitHubService, '_writePatch').callsFake(() => Promise.resolve())
       sinon.stub(gitHubService, 'list').callsFake(async () => {
@@ -350,7 +350,7 @@ describe('Github Curation Service', () => {
     beforeEach(() => {
       const { service } = setup()
       sinon.stub(service, 'getStored').resolves({
-        coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')
+        coordinates: EntityCoordinates.fromString('npm/npmjs/-/express/5.0.0')!
       })
       const licenseMatcher = {
         process: sinon.stub().callsFake(() => matcherResult)
@@ -361,7 +361,7 @@ describe('Github Curation Service', () => {
       const harvestStore = {
         getAll: sinon.stub().resolves({})
       }
-      gitHubService = createService(service, licenseMatcher, harvestStore, {} as any, store as any)
+      gitHubService = createService(service as any, licenseMatcher as any, harvestStore as any, {} as any, store as any)
       // TODO: Should not stub private functions and private properties
       sinon.stub(gitHubService, 'github').value({
         rest: { users: { get: sinon.stub() } }
@@ -426,7 +426,7 @@ describe('Github Curation Service', () => {
       const store = {
         list: sinon.stub().callsFake(() => curationsAndContributions)
       }
-      gitHubService = createService(definitionService, licenseMatcher, harvestStore, {} as any, store as any)
+      gitHubService = createService(definitionService as any, licenseMatcher as any, harvestStore as any, {} as any, store as any)
       gitHubService.github = {
         rest: {
           users: { get: () => ({ name: 'clearlydefined-bot' }) },

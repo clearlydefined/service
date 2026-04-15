@@ -14,7 +14,7 @@ describe('azblob Definition store', () => {
     }
     const store = createStore(data)
     try {
-      await store.list(EntityCoordinates.fromString('npm/npmjs/-/error/4.6.0'))
+      await store.list(EntityCoordinates.fromString('npm/npmjs/-/error/4.6.0')!)
       throw new Error('should have thrown error')
     } catch (error) {
       expect((error as Error).message).to.eq('test error')
@@ -27,7 +27,7 @@ describe('azblob Definition store', () => {
       'npm/npmjs/-/co/revision/4.6.1.json': { metadata: { id: 'npm/npmjs/-/co/4.6.1' } }
     }
     const store = createStore(data)
-    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/bogus/4.6.0'))
+    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/bogus/4.6.0')!)
     expect(result.length).to.eq(0)
   })
 
@@ -37,7 +37,7 @@ describe('azblob Definition store', () => {
       'npm/npmjs/-/co/revision/4.6.1.json': { metadata: { id: 'npm/npmjs/-/co/4.6.1' } }
     }
     const store = createStore(data)
-    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.0'))
+    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.0')!)
     expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/co/4.6.0'])
   })
 
@@ -47,7 +47,7 @@ describe('azblob Definition store', () => {
       'npm/npmjs/-/co/revision/4.6.1.json': { metadata: { id: 'npm/npmjs/-/Co/4.6.1' } }
     }
     const store = createStore(data)
-    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
+    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1')!)
     expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.1'])
   })
 
@@ -57,7 +57,7 @@ describe('azblob Definition store', () => {
       'npm/npmjs/-/co/revision/4.6.1.json': { metadata: { id: 'npm/npmjs/-/Co/4.6.1' } }
     }
     const store = createStore(data)
-    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co'))
+    const result = await store.list(EntityCoordinates.fromString('npm/npmjs/-/co')!)
     expect(result).to.deep.equalInAnyOrder(['npm/npmjs/-/Co/4.6.0', 'npm/npmjs/-/Co/4.6.1'])
   })
 
@@ -71,14 +71,14 @@ describe('azblob Definition store', () => {
 
   it('deletes a definition', async () => {
     const store = createStore()
-    await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0'))
+    await store.delete(EntityCoordinates.fromString('npm/npmjs/-/foo/1.0')!)
     expect((store as any).blobService.deleteBlob.callCount).to.eq(1)
     expect((store as any).blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/foo/revision/1.0.json')
   })
 
   it('does not throw deleting missing definition', async () => {
     const store = createStore()
-    await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0'))
+    await store.delete(EntityCoordinates.fromString('npm/npmjs/-/missing/1.0')!)
     expect((store as any).blobService.deleteBlob.callCount).to.eq(1)
     expect((store as any).blobService.deleteBlob.args[0][1]).to.eq('npm/npmjs/-/missing/revision/1.0.json')
   })
@@ -90,13 +90,13 @@ describe('azblob Definition store', () => {
       'npm/npmjs/-/co/revision/4.6.2.json': createDefinitionJson('npm/npmjs/-/co/4.6.2')
     }
     const store = createStore(data)
-    const result = await store.get(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
-    expect(result.coordinates).to.deep.eq(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1'))
+    const result = await store.get(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1')!)
+    expect(result.coordinates).to.deep.eq(EntityCoordinates.fromString('npm/npmjs/-/co/4.6.1')!)
   })
 })
 
 function createDefinition(coordinates) {
-  return { coordinates: EntityCoordinates.fromString(coordinates) }
+  return { coordinates: EntityCoordinates.fromString(coordinates)! }
 }
 
 function createDefinitionJson(coordinates) {

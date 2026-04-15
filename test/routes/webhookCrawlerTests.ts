@@ -83,6 +83,6 @@ function createRequest(urn?: string, links?: Record<string, unknown>) {
       _metadata: {
         links: links || { self: { href: urn } }
       }
-    }) as unknown
+    }) as any
   })
 }
