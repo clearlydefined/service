@@ -22,7 +22,8 @@ const REVISION = 0x1
  */
 const toLowerCaseMap: Record<string, number> = {
   github: NAMESPACE | NAME,
-  pypi: NAME
+  pypi: NAME,
+  clojars: NAMESPACE | NAME
 }
 
 /**
