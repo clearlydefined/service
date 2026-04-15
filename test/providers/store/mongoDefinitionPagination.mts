@@ -89,8 +89,8 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].described.releaseDate).not.to.be.ok
-      expect(defs[3].described.releaseDate).to.be.ok
+      expect((defs[0] as any).described.releaseDate).not.to.be.ok
+      expect((defs[3] as any).described.releaseDate).to.be.ok
 
       expect(defs.length).to.be.equal(12)
       const coordinates = verifyUniqueCoordinates(defs)
@@ -121,8 +121,8 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].described.releaseDate).not.to.be.ok
-      expect(defs[1].described.releaseDate).to.be.ok
+      expect((defs[0] as any).described.releaseDate).not.to.be.ok
+      expect((defs[1] as any).described.releaseDate).to.be.ok
       expect(defs.length).to.be.equal(12)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
@@ -152,8 +152,8 @@ const shouldPaginateSearchCorrectly = () => {
         sortDesc: false
       }
       const defs = await fetchAll(mongoStore, query)
-      expect(defs[0].coordinates.namespace).not.to.be.ok
-      expect(defs[2].coordinates.namespace).to.be.ok
+      expect((defs[0] as any).coordinates.namespace).not.to.be.ok
+      expect((defs[2] as any).coordinates.namespace).to.be.ok
       expect(defs.length).to.be.equal(4)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
@@ -193,10 +193,10 @@ const shouldPaginateSearchCorrectly = () => {
       }
       const defs = await fetchAll(mongoStore, query)
       expect(defs.length).to.be.equal(4)
-      expect(defs[0].scores.tool).to.be.equal(80)
-      expect(defs[1].scores.tool).to.be.equal(84)
-      expect(defs[2].scores.tool).to.be.equal(90)
-      expect(defs[3].scores.tool).to.be.equal(94)
+      expect((defs[0] as any).scores.tool).to.be.equal(80)
+      expect((defs[1] as any).scores.tool).to.be.equal(84)
+      expect((defs[2] as any).scores.tool).to.be.equal(90)
+      expect((defs[3] as any).scores.tool).to.be.equal(94)
       const coordinates = verifyUniqueCoordinates(defs)
       verifyExpectedCoordinates(coordinates, expected)
     })
@@ -234,7 +234,7 @@ function verifyExpectedCoordinates(allCoordinates, expected) {
 }
 
 function verifyUniqueCoordinates(defs) {
-  const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates).toString())
+  const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates)!.toString())
   const uniqTokens = uniq(allCoordinates)
   expect(uniqTokens.length).to.be.equal(allCoordinates.length)
   return allCoordinates
@@ -246,7 +246,7 @@ async function fetchAll(mongoStore, query, pageSize?) {
 
 //Default pageSize set to 1 to verify null value handling
 async function fetchUpToNTimes(mongoStore, query, nTimes, pageSize = 1) {
-  const allData = []
+  const allData: any[] = []
   const fetchOperation = async params => {
     const { continuationToken, ...query } = params
     const result = await mongoStore.find(query, continuationToken, pageSize)
@@ -284,13 +284,13 @@ class ContinousFetch {
   async fetchUpToNtimes(params, nTime) {
     let dispatchCounter = 0
     let fetchedCounter = 0
-    let retrieved: Record<string, any> = {}
+    let retrieved: Record<string, any> = {} as Record<string, any>
 
     while (dispatchCounter < nTime) {
-      retrieved = await this._delayedFetch({
+      retrieved = (await this._delayedFetch({
         ...params,
         continuationToken: retrieved.continuationToken
-      })
+      })) as Record<string, any>
 
       fetchedCounter += retrieved.count
       dispatchCounter++

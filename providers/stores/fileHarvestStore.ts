@@ -35,7 +35,7 @@ export class FileHarvestStore extends AbstractFileStore {
       if (!link) {
         return null
       }
-      return ResultCoordinatesClass.fromUrn(link).toString()
+      return ResultCoordinatesClass.fromUrn(link)!.toString()
     })
     return sortedUniq(list.filter(x => x))
   }
@@ -90,9 +90,9 @@ export class FileHarvestStore extends AbstractFileStore {
     )
     return contents.reduce<ToolOutputs>((result, entry) => {
       const { tool, toolVersion } = this._toResultCoordinatesFromStoragePath(entry.name)
-      result[tool] = result[tool] || {}
-      const current = result[tool]
-      current[toolVersion] = entry.content
+      result[tool!] = result[tool!] || {}
+      const current = result[tool!]
+      current[toolVersion!] = entry.content
       return result
     }, {} as ToolOutputs)
   }

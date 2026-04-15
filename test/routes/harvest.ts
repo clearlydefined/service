@@ -148,7 +148,7 @@ function createRequest(entries?: unknown) {
   return httpMocks.createRequest({
     method: 'POST',
     url: '/',
-    body: entries
+    body: entries as any
   })
 }
 

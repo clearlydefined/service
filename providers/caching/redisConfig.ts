@@ -11,9 +11,9 @@ import redis from './redis.ts'
  * allowing for custom configuration when needed.
  */
 function serviceFactory(options?: RedisCacheOptions): RedisCache {
-  const realOptions = options || {
-    service: config.get('CACHING_REDIS_SERVICE'),
-    apiKey: config.get('CACHING_REDIS_API_KEY'),
+  const realOptions: RedisCacheOptions = options || {
+    service: config.get('CACHING_REDIS_SERVICE')!,
+    apiKey: config.get('CACHING_REDIS_API_KEY')!,
     port: Number(config.get('CACHING_REDIS_PORT')) || 6380
   }
   return redis(realOptions)

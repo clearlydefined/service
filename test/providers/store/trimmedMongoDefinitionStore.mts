@@ -84,7 +84,7 @@ describe('Trimmed Mongo Definition store', () => {
       const defs = await mongoStore.find({ name: 'foo' }, '')
       expect(defs.data.length).to.be.eq(1)
       const coordinates = EntityCoordinates.fromObject(defs.data[0].coordinates)
-      expect(coordinates.toString()).to.be.eq('npm/npmjs/-/foo/1.0')
+      expect(coordinates!.toString()).to.be.eq('npm/npmjs/-/foo/1.0')
     })
   })
 
@@ -337,7 +337,7 @@ function verifyExpectedCoordinates(allCoordinates, expected) {
 }
 
 function verifyUniqueCoordinates(defs) {
-  const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates).toString())
+  const allCoordinates = defs.map(e => EntityCoordinates.fromObject(e.coordinates)!.toString())
   const uniqTokens = uniq(allCoordinates)
   expect(uniqTokens.length).to.be.equal(allCoordinates.length)
   return allCoordinates

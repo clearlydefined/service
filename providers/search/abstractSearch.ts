@@ -44,7 +44,7 @@ class AbstractSearch {
     }
     // TODO probably need to use a better comparison here that compares actual expressions rather than just the strings
     return uniq(
-      values(facets).reduce((result, facet) => result.concat(get(facet, 'discovered.expressions')), [])
+      values(facets).reduce((result, facet) => result.concat(get(facet, 'discovered.expressions') || []), [] as string[])
     ).filter(e => e)
   }
 
@@ -53,7 +53,7 @@ class AbstractSearch {
     if (!facets) {
       return []
     }
-    return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties')), [])).filter(
+    return uniq(values(facets).reduce((result, facet) => result.concat(get(facet, 'attribution.parties') || []), [] as string[])).filter(
       e => e
     )
   }

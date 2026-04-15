@@ -6,8 +6,8 @@ import type { MongoCurationStoreOptions } from './mongoCurationStore.ts'
 import storeFactory from './mongoCurationStore.ts'
 
 function store(options?: MongoCurationStoreOptions) {
-  const realOptions = options || {
-    connectionString: config.get('CURATION_MONGO_CONNECTION_STRING'),
+  const realOptions: MongoCurationStoreOptions = options || {
+    connectionString: config.get('CURATION_MONGO_CONNECTION_STRING')!,
     dbName: config.get('CURATION_MONGO_DB_NAME') || 'clearlydefined',
     collectionName: config.get('CURATION_MONGO_COLLECTION_NAME') || 'curations'
   }

@@ -32,7 +32,7 @@ describe('OnDemandComputePolicy', () => {
   })
 
   it('computes and delegates to computeStoreAndCurate', async () => {
-    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')
+    const coordinates = EntityCoordinates.fromString('npm/npmjs/-/leftpad/1.0.0')!
     const definition = createDefinition(coordinates)
     const computeStoreAndCurate = sinon.stub().resolves(definition)
     const definitionService = { computeStoreAndCurate } as unknown as RecomputeContext

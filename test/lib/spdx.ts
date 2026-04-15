@@ -236,7 +236,7 @@ describe('SPDX utility functions', () => {
     }
     for (let input of Object.keys(data)) {
       if (input === 'null') {
-        input = null
+        input = null as any
       }
       expect(SPDX.normalize(input)).to.eq(data[input])
     }
@@ -254,7 +254,7 @@ describe('SPDX utility functions', () => {
     }
     for (let input of Object.keys(data)) {
       if (input === 'null') {
-        input = null
+        input = null as any
       }
       expect(SPDX.lookupByName(input)).to.eq(data[input])
     }

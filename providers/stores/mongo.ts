@@ -45,7 +45,7 @@ export class MongoStore extends AbstractMongoDefinitionStore implements Definiti
    * Get and return the object at the given coordinates.
    * Reassembles paginated definitions automatically.
    */
-  override async get(coordinates: EntityCoordinates): Promise<Definition | undefined> {
+  override async get(coordinates: EntityCoordinates): Promise<Definition | null> {
     const cursor = await this.collection.find(
       { '_mongo.partitionKey': this.getId(coordinates) },
       { projection: { _id: 0, _mongo: 0 }, sort: { '_mongo.page': 1 } }
@@ -55,10 +55,10 @@ export class MongoStore extends AbstractMongoDefinitionStore implements Definiti
       if (!definition) {
         definition = page
       } else {
-        definition.files = definition.files.concat(page['files'])
+        definition.files = definition.files!.concat(page['files'])
       }
     }
-    return definition
+    return definition ?? null
   }
 
   /**
@@ -102,7 +102,7 @@ export class MongoStore extends AbstractMongoDefinitionStore implements Definiti
               page: index + 1,
               totalPages: pages
             },
-            files: definition.files.slice(index * pageSize, index * pageSize + pageSize)
+            files: definition.files!.slice(index * pageSize, index * pageSize + pageSize)
           }
         },
         { ordered: false }
@@ -115,9 +115,8 @@ export class MongoStore extends AbstractMongoDefinitionStore implements Definiti
    * Delete a definition from MongoDB.
    * Removes all pages of the definition.
    */
-  override async delete(coordinates: EntityCoordinates): Promise<null> {
+  override async delete(coordinates: EntityCoordinates): Promise<void> {
     await this.collection.deleteMany({ '_mongo.partitionKey': this.getId(coordinates) })
-    return null
   }
 
   /**

@@ -280,7 +280,7 @@ export class ClearlyDescribedSummarizer {
     }
     const spec = data.sourceInfo
     updateSourceLocation(spec)
-    spec.url = buildSourceUrl(spec)
+    spec.url = buildSourceUrl(spec) ?? undefined
     set(result, 'described.sourceLocation', spec)
   }
 
@@ -316,7 +316,7 @@ export class ClearlyDescribedSummarizer {
     const newDefinition = cloneDeep(result)
     const newFiles = cloneDeep(data.interestingFiles)
     for (const file of newFiles as { license?: string; path: string; natures?: string[] }[]) {
-      file.license = SPDX.normalize(file.license)
+      file.license = file.license ? (SPDX.normalize(file.license) ?? undefined) : undefined
       if (!file.license) {
         delete file.license
       } else if (isLicenseFile(file.path, coordinates)) {
@@ -352,8 +352,8 @@ export class ClearlyDescribedSummarizer {
         break
 
       default:
-        urls.registry = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}`
-        urls.download = `${mavenBasedUrls[coordinates.provider]}/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
+        urls.registry = `${mavenBasedUrls[coordinates.provider!]}/${namespaceAsFolders}/${coordinates.name}`
+        urls.download = `${mavenBasedUrls[coordinates.provider!]}/${namespaceAsFolders}/${coordinates.name}/${coordinates.revision}/${coordinates.name}-${coordinates.revision}.jar`
     }
 
     return urls
@@ -373,9 +373,9 @@ export class ClearlyDescribedSummarizer {
       ...flatten(projectSummaryLicenses.map((x: MavenLicenseInfo) => x.url))
     ]).filter((x: unknown) => x)
     const licenseNames = uniq(flatten(licenseSummaries.map((license: MavenLicenseInfo) => license.name)))
-    let licenses = licenseUrls.map((url: string) => extractLicenseFromLicenseUrl(url)).filter((x: unknown) => x)
+    let licenses = licenseUrls.map(url => extractLicenseFromLicenseUrl(url!)).filter((x): x is string => !!x)
     if (!licenses.length) {
-      licenses = licenseNames.map((x: string) => SPDX.lookupByName(x) || x).filter((x: unknown) => x)
+      licenses = licenseNames.map(x => SPDX.lookupByName(x!) || x!).filter((x): x is string => !!x)
     }
     return licenses
   }
@@ -396,23 +396,23 @@ export class ClearlyDescribedSummarizer {
   addCondaData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(get(data, 'releaseDate')))
     setIfValue(result, 'described.urls.download', get(data, 'registryData.downloadUrl'))
-    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider!]}`).href)
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
     const condaLicense = Array.isArray(data.declaredLicenses)
       ? data.declaredLicenses.join(' AND ')
       : data.declaredLicenses
-    setIfValue(result, 'licensed.declared', SPDX.normalize(condaLicense))
+    if (condaLicense) setIfValue(result, 'licensed.declared', SPDX.normalize(condaLicense))
   }
 
   addCondaSrcData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
     setIfValue(result, 'described.urls.download', get(data, 'registryData.channelData.source_url'))
-    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider]}`).href)
+    setIfValue(result, 'described.urls.registry', new URL(`${condaChannels[coordinates.provider!]}`).href)
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.channelData.home'))
     const condaSrcLicense = Array.isArray(data.declaredLicenses)
       ? data.declaredLicenses.join(' AND ')
       : data.declaredLicenses
-    setIfValue(result, 'licensed.declared', SPDX.normalize(condaSrcLicense))
+    if (condaSrcLicense) setIfValue(result, 'licensed.declared', SPDX.normalize(condaSrcLicense))
   }
 
   addCrateData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
@@ -453,10 +453,11 @@ export class ClearlyDescribedSummarizer {
 
   addNuGetData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const licenseExpression = SPDX.normalize(get(data, 'manifest.licenseExpression') as string | undefined)
+    const licenseExpression = get(data, 'manifest.licenseExpression') as string | undefined
+    const normalizedLicenseExpression = licenseExpression ? SPDX.normalize(licenseExpression) : null
     const licenseUrl = get(data, 'manifest.licenseUrl') as string | undefined
-    if (licenseExpression) {
-      set(result, 'licensed.declared', licenseExpression)
+    if (normalizedLicenseExpression) {
+      set(result, 'licensed.declared', normalizedLicenseExpression)
     } else if (licenseUrl?.trim()) {
       set(result, 'licensed.declared', extractLicenseFromLicenseUrl(licenseUrl) || 'NOASSERTION')
     }
@@ -505,7 +506,7 @@ export class ClearlyDescribedSummarizer {
     }
     return (
       stringObjectArray(manifest.license) ||
-      (packageType === 'npm' && stringObjectArray((manifest as NpmManifest).licenses))
+      (packageType === 'npm' ? stringObjectArray((manifest as NpmManifest).licenses) : null)
     )
   }
 
@@ -588,7 +589,8 @@ export class ClearlyDescribedSummarizer {
     setIfValue(result, 'described.projectWebsite', get(data, 'registryData.homepage'))
     const license = get(data, 'registryData.license') as string | { type?: string } | undefined
     if (license) {
-      setIfValue(result, 'licensed.declared', SPDX.normalize(typeof license === 'string' ? license : license.type))
+      const licenseStr = typeof license === 'string' ? license : license.type
+      if (licenseStr) setIfValue(result, 'licensed.declared', SPDX.normalize(licenseStr))
     }
 
     setIfValue(result, 'described.urls.registry', `https://cocoapods.org/pods/${coordinates.name}`)
@@ -608,7 +610,8 @@ export class ClearlyDescribedSummarizer {
 
   addGemData(result: SummaryResult, data: ClearlyDefinedHarvestedData, coordinates: EntityCoordinates) {
     setIfValue(result, 'described.releaseDate', extractDate(data.releaseDate))
-    const license = SPDX.normalize(get(data, 'registryData.license') as string | undefined)
+    const gemLicenseRaw = get(data, 'registryData.license') as string | undefined
+    const license = gemLicenseRaw ? SPDX.normalize(gemLicenseRaw) : null
     if (license) {
       set(result, 'licensed.declared', license)
     } else {
@@ -640,7 +643,7 @@ export class ClearlyDescribedSummarizer {
       | Record<string, { filename?: string; url?: string }[]>
       | undefined
     if (releases) {
-      const revision = find(releases[coordinates.revision], revision =>
+      const revision = find(releases[coordinates.revision!], revision =>
         revision.filename ? revision.filename.includes('tar.gz') || revision.filename.includes('zip') : false
       )
       if (revision) {
@@ -689,13 +692,13 @@ export class ClearlyDescribedSummarizer {
     if (registryUrl) {
       set(result, 'described.urls.registry', registryUrl)
       set(result, 'described.urls.version', registryUrl)
-      if (result.described.sourceLocation) {
+      if (result.described?.sourceLocation) {
         result.described.sourceLocation.url = registryUrl
       }
     }
-    const architecture = coordinates.revision.split('_')[1]
+    const architecture = coordinates.revision!.split('_')[1]
     const downloadUrl = new URL(
-      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Architecture === architecture).Path}`
+      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Architecture === architecture)!.Path}`
     ).href
     setIfValue(result, 'described.urls.download', downloadUrl)
     const license = uniq(data.declaredLicenses || []).join(' AND ')
@@ -712,10 +715,10 @@ export class ClearlyDescribedSummarizer {
     if (registryUrl) {
       set(result, 'described.urls.registry', registryUrl)
       set(result, 'described.urls.version', registryUrl)
-      result.described.sourceLocation = { ...coordinates, url: registryUrl }
+      result.described!.sourceLocation = { ...coordinates, url: registryUrl }
     }
     const downloadUrl = new URL(
-      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Path.includes('.orig.tar.')).Path}`
+      `http://ftp.debian.org/debian/${registryData.find((entry: DebianRegistryEntry) => entry.Path.includes('.orig.tar.'))!.Path}`
     ).href
     // There is also patches URL which is related to sources but it's not part of the schema
     setIfValue(result, 'described.urls.download', downloadUrl)
@@ -757,4 +760,4 @@ export class ClearlyDescribedSummarizer {
   }
 }
 
-export default (options?: SummarizerOptions) => new ClearlyDescribedSummarizer(options)
+export default (options?: SummarizerOptions) => new ClearlyDescribedSummarizer(options!)

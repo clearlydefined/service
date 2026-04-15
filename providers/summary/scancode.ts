@@ -146,4 +146,4 @@ export class ScanCodeSummarizer {
   }
 }
 
-export default (options?: SummarizerOptions, logger?: Logger) => new ScanCodeSummarizer(options, logger)
+export default (options?: SummarizerOptions, logger?: Logger) => new ScanCodeSummarizer(options!, logger)

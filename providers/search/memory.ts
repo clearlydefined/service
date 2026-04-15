@@ -59,7 +59,7 @@ class MemorySearch extends AbstractSearch {
   _getEntries(definitions: any[]) {
     return definitions.map((definition: any) => {
       return {
-        coordinates: EntityCoordinates.fromObject(definition.coordinates).toString(),
+        coordinates: EntityCoordinates.fromObject(definition.coordinates)!.toString(),
         releaseDate: get(definition, 'described.releaseDate'),
         declaredLicense: get(definition, 'licensed.declared'),
         discoveredLicenses: this._getLicenses(definition),

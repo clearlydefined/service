@@ -7,7 +7,7 @@ import coordinatesMapper from '../../lib/coordinatesMapper.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 
 function pypiCoordinates(name: string) {
-  return EntityCoordinates.fromString(`pypi/pypi/-/${name}/1.1.0a4`)
+  return EntityCoordinates.fromString(`pypi/pypi/-/${name}/1.1.0a4`)!
 }
 
 function fakeCache(cache: Record<string, EntityCoordinates>) {
@@ -43,13 +43,13 @@ describe('CoordinatesMapper', () => {
 
     //cached after map
     let mapped = await mapper.map(coordinates)
-    expect(mapped.name).to.be.eq('0-core-client')
+    expect(mapped!.name).to.be.eq('0-core-client')
     expect(mapStub.calledOnce).to.be.true
     expect(cacheStub.size()).to.be.eq(1)
 
     //2nd time, should use cache, map should not be called.
     mapped = await mapper.map(coordinates)
-    expect(mapped.name).to.be.eq('0-core-client')
+    expect(mapped!.name).to.be.eq('0-core-client')
     expect(mapStub.calledOnce).to.be.true
     expect(cacheStub.size()).to.be.eq(1)
   })

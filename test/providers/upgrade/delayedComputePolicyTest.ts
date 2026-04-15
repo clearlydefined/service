@@ -25,7 +25,7 @@ describe('DelayedComputePolicy', () => {
   beforeEach(async () => {
     queue = createQueue()
     policy = new DelayedComputePolicy({ logger: createMockLogger(), queue: () => queue })
-    coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
     await policy.initialize()
   })
 
@@ -82,7 +82,7 @@ describe('DelayedComputePolicy', () => {
       })
 
       it('enqueues independently for different coordinates', async () => {
-        const other = EntityCoordinates.fromString('npm/npmjs/-/debug/4.3.4')
+        const other = EntityCoordinates.fromString('npm/npmjs/-/debug/4.3.4')!
 
         await dedupPolicy.compute(definitionService(), coordinates)
         await dedupPolicy.compute(definitionService(), other)
@@ -158,15 +158,15 @@ const definitionService = (): RecomputeContext =>
 
 function validateEmptyDefinition(result: Definition, coordinates: EntityCoordinates) {
   expect(result.coordinates).to.deep.equal(coordinates)
-  expect(result.described.tools).to.deep.equal([])
-  expect(result._meta.schemaVersion).to.equal('1.7.0')
-  expect(result._meta.updated).to.be.a('string')
+  expect(result.described!.tools).to.deep.equal([])
+  expect(result._meta!.schemaVersion).to.equal('1.7.0')
+  expect(result._meta!.updated).to.be.a('string')
 }
 
 function validateQueuedCoordinates(queue: { [K in keyof IQueue]: sinon.SinonStub }, coordinates: EntityCoordinates) {
   expect(queue.queue.calledOnce).to.be.true
   const queued = JSON.parse(Buffer.from(queue.queue.getCall(0).args[0], 'base64').toString())
-  expect(EntityCoordinates.fromObject(queued.coordinates).toString()).to.equal(coordinates.toString())
+  expect(EntityCoordinates.fromObject(queued.coordinates)!.toString()).to.equal(coordinates.toString())
   expect(queued._meta).to.be.undefined
 }
 

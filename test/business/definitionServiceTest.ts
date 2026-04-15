@@ -54,7 +54,7 @@ describe('Definition Service', () => {
   })
 
   it('stores new definitions', async () => {
-    const { service, coordinates } = setup(createDefinition(null, null, ['foo']))
+    const { service, coordinates } = setup(createDefinition(undefined, undefined, ['foo']))
     await service.get(coordinates)
     expect(service.definitionStore.store.calledOnce).to.be.true
     expect(service.search.store.notCalled).to.be.true
@@ -79,7 +79,7 @@ describe('Definition Service', () => {
   })
 
   it('logs and harvest new definitions with empty tools', async () => {
-    const { service, coordinates } = setup(createDefinition(null, null, []))
+    const { service, coordinates } = setup(createDefinition(undefined, undefined, []))
     await service.get(coordinates)
     // expect(service.logger.info.calledOnce).to.be.true
     // expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
@@ -88,7 +88,7 @@ describe('Definition Service', () => {
   })
 
   it('logs and harvests new definitions with undefined tools', async () => {
-    const { service, coordinates } = setup(createDefinition(null, null, undefined))
+    const { service, coordinates } = setup(createDefinition(undefined, undefined, undefined))
     await service.get(coordinates)
     // expect(service.logger.info.calledOnce).to.be.true
     // expect(service.logger.info.getCall(0).args[0]).to.eq('definition not available')
@@ -104,7 +104,7 @@ describe('Definition Service', () => {
       files: [{ path: 'bar.txt', attributions: ['Copyright Bob'] }],
       described: { releaseDate: '2018-08-09' }
     }
-    const { service, coordinates } = setup(raw, null, curation)
+    const { service, coordinates } = setup(raw, undefined, curation)
     const definition = await service.compute(coordinates)
     expect(definition.described.score.total).to.eq(30)
     expect(definition.described.toolScore.total).to.eq(0)
@@ -229,7 +229,7 @@ describe('Definition Service', () => {
 
     data.forEach((expected, coordinatesString) => {
       it(`should have source location for ${coordinatesString} package`, async () => {
-        const { service, coordinates } = setup(createDefinition(null, null, []), coordinatesString)
+        const { service, coordinates } = setup(createDefinition(undefined, undefined, []), coordinatesString)
         const definition = await service.compute(coordinates)
         expect(definition.described.sourceLocation).to.be.deep.equal(expected)
       })
@@ -332,7 +332,7 @@ describe('Definition Service', () => {
 
     beforeEach(() => {
       autoCurate = sinon.stub().resolves()
-      ;({ service, coordinates } = setup(createDefinition(null, null, ['scancode/3.2.2'])))
+      ;({ service, coordinates } = setup(createDefinition(undefined, undefined, ['scancode/3.2.2'])))
       service.curationService = {
         apply: (_coordinates, _curationSpec, definition) => Promise.resolve(definition),
         autoCurate
@@ -409,7 +409,7 @@ describe('Definition Service', () => {
         const firstCompute = new Promise(resolve => {
           resolveFirstCompute = resolve
         })
-        deferredDefinition = createDefinition(null, null, ['scancode/3.2.2'])
+        deferredDefinition = createDefinition(undefined, undefined, ['scancode/3.2.2'])
         sinon
           .stub(service, '_computeAndStore')
           .onFirstCall()
@@ -649,7 +649,11 @@ describe('Integration test', () => {
 
       context('with stale definitions', () => {
         it('recomputes a definition with the updated schema version', async () => {
-          const staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
+          const staleDef = {
+            ...createDefinition(undefined, undefined, ['foo']),
+            _meta: { schemaVersion: '1.0.0' },
+            coordinates
+          }
           const { service, store } = setupServiceForUpgrade(staleDef, recomputeHandler)
           const result = await service.get(coordinates)
           expect(result._meta.schemaVersion).to.eq('1.7.0')
@@ -666,7 +670,11 @@ describe('Integration test', () => {
         queue = memoryQueue.upgrade()
         recomputeHandler = delayedFactory({ logger, queue: { upgrade: () => queue, compute: memoryQueue.compute } })
         await recomputeHandler.initialize()
-        staleDef = { ...createDefinition(null, null, ['foo']), _meta: { schemaVersion: '1.0.0' }, coordinates }
+        staleDef = {
+          ...createDefinition(undefined, undefined, ['foo']),
+          _meta: { schemaVersion: '1.0.0' },
+          coordinates
+        }
       })
 
       handleVersionedDefinition()
@@ -781,7 +789,7 @@ describe('Integration test', () => {
     })
 
     it('returns placeholder when no definition exists, then returns real definition after queue processed', async () => {
-      const computedDef = { ...createDefinition(null, null, ['clearlydefined']), coordinates }
+      const computedDef = { ...createDefinition(undefined, undefined, ['clearlydefined']), coordinates }
       const { service, store } = setupServiceForUpgrade(computedDef, recomputeHandler)
       store.get.resolves(null) // no stored definition initially — triggers delayed compute path
 
@@ -811,7 +819,7 @@ describe('Integration test', () => {
     let harvestService
 
     it('deletes the tracked in progress harvest after definition is computed', async () => {
-      ;({ service, coordinates, harvestService } = setup(createDefinition(null, null, ['foo'])))
+      ;({ service, coordinates, harvestService } = setup(createDefinition(undefined, undefined, ['foo'])))
       harvestService.done = sinon.stub().resolves(true)
       await service.computeAndStore(coordinates)
       expect(harvestService.done.calledOnce).to.be.true
@@ -938,7 +946,7 @@ function setup(
   const curator = {
     get: () => Promise.resolve(curation),
     apply: (_coordinates: unknown, _curationSpec: unknown, definition: unknown) =>
-      Promise.resolve(Curation.apply(definition, curation)),
+      Promise.resolve(Curation.apply(definition as any, curation as any)),
     autoCurate: () => {
       return
     }
@@ -962,7 +970,7 @@ function setup(
   )
   service.logger = { info: sinon.stub(), debug: sinon.stub() }
   service._harvest = sinon.stub()
-  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')
+  const coordinates = EntityCoordinates.fromString(coordinateSpec || 'npm/npmjs/-/test/1.0')!
   return { coordinates, service, harvestService }
 }
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
-import type { Definition, DefinitionStore } from '../../business/definitionService.ts'
+import type { Definition, DefinitionFindQuery, DefinitionFindResult, DefinitionStore } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import EntityCoordinatesClass from '../../lib/entityCoordinates.ts'
 import type { AzBlobStoreOptions, BlobEntry } from './abstractAzblobStore.ts'
@@ -28,7 +28,7 @@ export class AzBlobDefinitionStore extends AbstractAzBlobStore implements Defini
       if (!path) {
         return null
       }
-      const entryCoordinates = EntityCoordinatesClass.fromString(path)
+      const entryCoordinates = EntityCoordinatesClass.fromString(path)!
       return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? path : null
     })
     return sortedUniq(list.filter((x: string | null) => x))
@@ -63,6 +63,11 @@ export class AzBlobDefinitionStore extends AbstractAzBlobStore implements Defini
         throw error
       }
     }
+  }
+
+  // @ts-expect-error - AzBlob store does not support find; satisfies DefinitionStore interface
+  override async find(_query: DefinitionFindQuery, _continuationToken?: string): Promise<DefinitionFindResult> {
+    return super.find() as unknown as DefinitionFindResult
   }
 }
 

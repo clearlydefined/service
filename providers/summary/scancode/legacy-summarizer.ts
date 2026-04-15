@@ -63,7 +63,7 @@ export class ScanCodeLegacySummarizer {
   addDescribedInfo(result: ScanCodeSummaryResult, harvested: ScanCodeHarvestedData) {
     const releaseDate = harvested._metadata.releaseDate
     if (releaseDate) {
-      result.described = { releaseDate: extractDate(releaseDate.trim()) }
+      result.described = { releaseDate: extractDate(releaseDate.trim())! }
     }
   }
 
@@ -83,7 +83,8 @@ export class ScanCodeLegacySummarizer {
       case '2.9.8':
       case '3.0.0':
       case '3.0.2':
-        return SPDX.normalize(get(harvested, 'content.summary.packages[0].declared_license') as string | undefined)
+        const declLicense = get(harvested, 'content.summary.packages[0].declared_license') as string | undefined
+        return declLicense ? SPDX.normalize(declLicense) ?? null : null
       case '30.1.0': {
         const rawDeclaredLicense = get(harvested, 'content.summary.packages[0].declared_license') as
           | string
@@ -106,7 +107,8 @@ export class ScanCodeLegacySummarizer {
           declared_license = declared_license.name || declared_license.license
         }
 
-        return SPDX.normalize(declared_license as string | undefined)
+        const finalLicense = declared_license as string | undefined
+        return finalLicense ? SPDX.normalize(finalLicense) ?? null : null
       }
       default:
         throw new Error(`Invalid version of ScanCode: ${scancodeVersion}`)
@@ -116,7 +118,7 @@ export class ScanCodeLegacySummarizer {
   _readLicenseExpressionFromSummary(harvested: ScanCodeHarvestedData): string | null {
     const licenseExpression = get(harvested, 'content.summary.packages[0].license_expression') as string | undefined
     const result = licenseExpression && normalizeLicenseExpression(licenseExpression, this.logger, null)
-    return result?.includes('NOASSERTION') ? null : result
+    return result?.includes('NOASSERTION') ? null : result ?? null
   }
 
   _getRootFiles(coordinates: EntityCoordinates, files: ScanCodeFile[], packages?: ScanCodePackage[]): ScanCodeFile[] {
@@ -210,7 +212,7 @@ export class ScanCodeLegacySummarizer {
           asserted,
           new Set<string>(),
           // TODO, is `license.license` real?
-          license => license.license || license.spdx_license_key
+          license => (license.license || license.spdx_license_key)!
         )
         return joinExpressions(packageLicenses)
       }
@@ -264,7 +266,7 @@ export class ScanCodeLegacySummarizer {
   _createExpressionFromLicense(license: ScanCodeLicense): string | null {
     const rule = license.matched_rule
     if (!rule?.license_expression) {
-      return SPDX.normalize(license.spdx_license_key)
+      return license.spdx_license_key ? SPDX.normalize(license.spdx_license_key) ?? null : null
     }
     return normalizeLicenseExpression(rule.license_expression, this.logger, null)
   }

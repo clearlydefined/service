@@ -100,7 +100,7 @@ describe('RecomputeHandler', () => {
   })
 
   it('delegates compute to compute policy', async () => {
-    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
     const definitionService = {
       currentSchema: '1.7.0',
       buildEmptyDefinition: sinon.stub()
@@ -138,7 +138,7 @@ describe('defaultFactory', () => {
   })
 
   it('ignores queue option — computes on-demand via computeStoreAndCurate', async () => {
-    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
     const computeStoreAndCurate = sinon.stub().resolves({ coordinates })
     const definitionService = { computeStoreAndCurate } as unknown as RecomputeContext
 
@@ -170,7 +170,7 @@ describe('delayedFactory', () => {
   it('wires custom queue factories to correct policies', async () => {
     const upgradeQueue = createQueue()
     const computeQueue = createQueue()
-    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
     handler = delayedFactory({
       logger: createMockLogger(),
       queue: { upgrade: () => upgradeQueue, compute: () => computeQueue }
@@ -184,18 +184,18 @@ describe('delayedFactory', () => {
     expect(computeQueue.queue.calledOnce).to.be.true
     expect(upgradeQueue.queue.notCalled).to.be.true
     expect(result.coordinates).to.deep.equal(coordinates)
-    expect(result._meta.schemaVersion).to.equal('1.7.0')
+    expect(result._meta!.schemaVersion).to.equal('1.7.0')
   })
 
   it('falls back to memoryQueueConfig when no queue option provided', async () => {
     handler = delayedFactory({ logger: createMockLogger() })
-    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
 
     await handler.initialize()
     const result = await handler.compute(createDefinitionService(), coordinates)
 
     expect(result.coordinates).to.deep.equal(coordinates)
-    expect(result._meta.schemaVersion).to.equal('1.7.0')
+    expect(result._meta!.schemaVersion).to.equal('1.7.0')
   })
 })
 
@@ -230,7 +230,7 @@ describe('upgrade and compute queue wiring', () => {
   it('computes only once when both queues race for the same coordinates', async () => {
     const upgradeQueue = memoryQueueConfig.upgrade()
     const computeQueue = memoryQueueConfig.compute()
-    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)
+    const coordinates = EntityCoordinates.fromString(TEST_COORDINATES)!
     const logger = createMockLogger()
     const handler = delayedFactory({
       logger,

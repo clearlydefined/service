@@ -44,7 +44,7 @@ describe('FileDefinitionStore list definitions', () => {
       await fileStore.list(new EntityCoordinates('npm', 'npmjs', null, 'error', '0.0'))
       throw new Error('should have thrown error')
     } catch (error) {
-      expect(error.message).to.eq('test error')
+      expect((error as Error).message).to.eq('test error')
     }
   })
 

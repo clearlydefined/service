@@ -240,7 +240,7 @@ class AbstractMongoDefinitionStore {
     if (!coordinates) {
       return ''
     }
-    return EntityCoordinatesClass.fromObject(coordinates).toString().toLowerCase()
+    return EntityCoordinatesClass.fromObject(coordinates)!.toString().toLowerCase()
   }
 
   buildQuery(parameters: MongoDefinitionQuery): Filter<Document> {

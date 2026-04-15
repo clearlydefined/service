@@ -193,7 +193,7 @@ describe('Validator - Coordinates Schema Tests', () => {
             .false
           expect(validator.errors).to.not.be.null
           expect(validator.errors).to.be.an('array')
-          expect(validator.errors.length).to.be.greaterThan(0)
+          expect(validator.errors!.length).to.be.greaterThan(0)
         }
       })
     }
