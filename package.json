@@ -74,7 +74,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.11",
+    "@biomejs/biome": "2.4.12",
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
@@ -113,7 +113,7 @@
     "deep-equal-in-any-order": "2.2.0",
     "esmock": "2.7.3",
     "mocha": "11.7.5",
-    "mockttp": "4.3.0",
+    "mockttp": "4.3.1",
     "mongodb-memory-server": "11.0.1",
     "node-mocks-http": "1.17.2",
     "nodemon": "3.1.14",
@@ -122,6 +122,6 @@
     "sinon": "21.1.2",
     "supertest": "7.2.2",
     "testcontainers": "11.14.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   }
 }
