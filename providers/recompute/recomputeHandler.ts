@@ -141,3 +141,4 @@ function delayedFactory(options: DelayedFactoryOptions = {}): RecomputeHandler {
 }
 
 export { defaultFactory, delayedFactory, RecomputeHandler }
+export default { defaultFactory, delayedFactory }
