@@ -12,8 +12,8 @@ import Curation from '../../lib/curation.ts'
 import EntityCoordinates from '../../lib/entityCoordinates.ts'
 import { setIfValue } from '../../lib/utils.ts'
 import FileHarvestStore from '../../providers/stores/fileHarvestStore.ts'
-import memoryQueue from '../../providers/upgrade/memoryQueueConfig.ts'
-import { defaultFactory, delayedFactory } from '../../providers/upgrade/recomputeHandler.ts'
+import memoryQueue from '../../providers/recompute/memoryQueueConfig.ts'
+import { defaultFactory, delayedFactory } from '../../providers/recompute/recomputeHandler.ts'
 import validator from '../../schemas/validator.ts'
 import { createMockLogger, createSilentLogger } from '../helpers/mockLogger.ts'
 
@@ -76,6 +76,15 @@ describe('Definition Service', () => {
     expect(definition._meta.schemaVersion).to.eq(service.currentSchema)
     expect(definition._meta.updated).to.be.a('string')
     expect(validator.validate('definition', definition)).to.be.true
+  })
+
+  it('output matches definition returned by get when no tools exist', async () => {
+    const { service, coordinates } = setup(createDefinition(null, null, null))
+    const fromGet = await service.get(coordinates)
+    const fromBuild = service.buildEmptyDefinition(coordinates)
+    fromGet._meta.updated = 'ignore'
+    fromBuild._meta.updated = 'ignore'
+    expect(fromBuild).to.deep.equal(fromGet)
   })
 
   it('logs and harvest new definitions with empty tools', async () => {
