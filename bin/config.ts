@@ -179,7 +179,7 @@ export default {
       'recompute.queue'
     ),
     service: loadFactory(
-      config.get('DEFINITION_RECOMPUTE_PROVIDER') || config.get('DEFINITION_UPGRADE_PROVIDER') || 'versionCheck',
+      config.get('DEFINITION_RECOMPUTE_PROVIDER') || config.get('DEFINITION_UPGRADE_PROVIDER') || 'onDemand',
       'recompute.service'
     )
   },

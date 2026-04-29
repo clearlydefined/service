@@ -13,8 +13,8 @@ import crawlerConfig from '../providers/harvest/crawlerConfig.ts'
 import crawlerQueueConfig from '../providers/harvest/crawlerQueueConfig.ts'
 import winstonConfig from '../providers/logging/winstonConfig.ts'
 import memoryQueue from '../providers/queueing/memoryQueue.ts'
-import upgradeAzureQueueConfig from '../providers/recompute/azureQueueConfig.ts'
-import upgradeMemoryQueueConfig from '../providers/recompute/memoryQueueConfig.ts'
+import recomputeAzureQueueConfig from '../providers/recompute/azureQueueConfig.ts'
+import recomputeMemoryQueueConfig from '../providers/recompute/memoryQueueConfig.ts'
 import recomputeHandler from '../providers/recompute/recomputeHandler.ts'
 import azureSearchConfig from '../providers/search/azureConfig.ts'
 import memorySearch from '../providers/search/memory.ts'
@@ -185,8 +185,8 @@ const providers: Providers = {
   },
   recompute: {
     queue: {
-      azure: upgradeAzureQueueConfig,
-      memory: upgradeMemoryQueueConfig
+      azure: recomputeAzureQueueConfig,
+      memory: recomputeMemoryQueueConfig
     },
     service: {
       onDemand: recomputeHandler.defaultFactory,
