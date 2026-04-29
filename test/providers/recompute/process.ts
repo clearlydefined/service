@@ -9,9 +9,9 @@ chai.use(chaiAsPromised)
 import { expect } from 'chai'
 import sinon from 'sinon'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import { DefinitionUpgrader, QueueHandler } from '../../../providers/recompute/process.ts'
+import { DefinitionRecomputer, QueueHandler } from '../../../providers/recompute/process.ts'
 
-describe('Definition Upgrade Queue Processing', () => {
+describe('Definition Recompute Queue Processing', () => {
   let logger
 
   beforeEach(() => {
@@ -87,13 +87,13 @@ describe('Definition Upgrade Queue Processing', () => {
     })
   })
 
-  describe('DefinitionUpgrader', () => {
+  describe('DefinitionRecomputer', () => {
     const coordinates = 'pypi/pypi/-/test/revision'
     const definition = Object.freeze({ coordinates: EntityCoordinates.fromString(coordinates) })
     const message = Object.freeze({ data: { coordinates: definition.coordinates } })
     let definitionService
     let upgradePolicy
-    let upgrader
+    let recomputer
 
     beforeEach(() => {
       definitionService = {
@@ -103,13 +103,13 @@ describe('Definition Upgrade Queue Processing', () => {
       upgradePolicy = {
         validate: sinon.stub()
       }
-      upgrader = new DefinitionUpgrader(definitionService, logger, upgradePolicy)
+      recomputer = new DefinitionRecomputer(definitionService, logger, upgradePolicy)
     })
 
     it('delegates to computeStoreAndCurateIf and logs when definition was recomputed', async () => {
       definitionService.computeStoreAndCurateIf.resolves(definition)
 
-      await upgrader.processMessage(message)
+      await recomputer.processMessage(message)
       expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
       expect(definitionService.computeStoreAndCurateIf.getCall(0).args[0]).to.deep.eq(
         EntityCoordinates.fromObject(definition.coordinates)
@@ -120,23 +120,23 @@ describe('Definition Upgrade Queue Processing', () => {
     it('delegates to computeStoreAndCurateIf and logs debug when compute was skipped', async () => {
       definitionService.computeStoreAndCurateIf.resolves(undefined)
 
-      await upgrader.processMessage(message)
+      await recomputer.processMessage(message)
       expect(definitionService.computeStoreAndCurateIf.calledOnce).to.be.true
       expect(logger.debug.calledOnce).to.be.true
       expect(logger.info.notCalled).to.be.true
     })
 
     it('skips if there is no coordinates', async () => {
-      await upgrader.processMessage({ data: {} })
+      await recomputer.processMessage({ data: {} })
       expect(definitionService.computeStoreAndCurateIf.notCalled).to.be.true
     })
 
     it('handles exception by rethrowing with coordinates and the original error message', async () => {
       definitionService.computeStoreAndCurateIf.rejects(new Error('test'))
 
-      await expect(upgrader.processMessage(message)).to.be.rejectedWith(
+      await expect(recomputer.processMessage(message)).to.be.rejectedWith(
         Error,
-        /Error handling definition upgrade for pypi\/pypi\/-\/test\/revision/
+        /Error handling definition recompute for pypi\/pypi\/-\/test\/revision/
       )
     })
 
@@ -145,7 +145,7 @@ describe('Definition Upgrade Queue Processing', () => {
       definitionService.computeStoreAndCurateIf.rejects(originalError)
 
       try {
-        await upgrader.processMessage(message)
+        await recomputer.processMessage(message)
         expect.fail('should have thrown')
       } catch (error: any) {
         expect(error.cause).to.equal(originalError)
@@ -167,7 +167,7 @@ describe('Definition Upgrade Queue Processing', () => {
       it('skips compute when policy validates the definition', async () => {
         upgradePolicy.validate.resolves(definition) // truthy = valid → predicate returns false → skip
 
-        await upgrader.processMessage(message)
+        await recomputer.processMessage(message)
         expect(predicateResult).to.be.false
         expect(definitionService.getStored.calledOnceWith(EntityCoordinates.fromObject(definition.coordinates))).to.be
           .true
@@ -178,7 +178,7 @@ describe('Definition Upgrade Queue Processing', () => {
       it('proceeds with compute when policy returns falsy', async () => {
         upgradePolicy.validate.resolves(undefined) // falsy = stale → predicate returns true → compute
 
-        await upgrader.processMessage(message)
+        await recomputer.processMessage(message)
         expect(predicateResult).to.be.true
         expect(definitionService.getStored.calledOnceWith(EntityCoordinates.fromObject(definition.coordinates))).to.be
           .true
@@ -199,13 +199,13 @@ describe('Definition Upgrade Queue Processing', () => {
     let handler
     let definitionService
     beforeEach(() => {
-      let definitionUpgrader
-      ;({ definitionService, definitionUpgrader } = setupDefinitionUpgrader(logger))
+      let definitionRecomputer
+      ;({ definitionService, definitionRecomputer } = setupDefinitionRecomputer(logger))
       queue = {
         dequeueMultiple: sinon.stub().resolves([message]),
         delete: sinon.stub().resolves()
       }
-      handler = new QueueHandler(queue, logger, definitionUpgrader)
+      handler = new QueueHandler(queue, logger, definitionRecomputer)
     })
 
     it('handles exception and logs the error', async () => {
@@ -216,7 +216,7 @@ describe('Definition Upgrade Queue Processing', () => {
       expect(queue.delete.calledOnce).to.be.true
       expect(logger.error.calledOnce).to.be.true
       expect(logger.error.args[0][0].message).to.match(
-        /Error handling definition upgrade for pypi\/pypi\/-\/test\/revision/
+        /Error handling definition recompute for pypi\/pypi\/-\/test\/revision/
       )
     })
 
@@ -285,7 +285,7 @@ describe('Definition Upgrade Queue Processing', () => {
   })
 })
 
-function setupDefinitionUpgrader(logger) {
+function setupDefinitionRecomputer(logger) {
   const definitionService = {
     getStored: sinon.stub(),
     computeStoreAndCurateIf: sinon.stub()
@@ -293,6 +293,6 @@ function setupDefinitionUpgrader(logger) {
   const upgradePolicy = {
     validate: sinon.stub()
   }
-  const definitionUpgrader = new DefinitionUpgrader(definitionService as any, logger, upgradePolicy)
-  return { definitionService, upgradePolicy, definitionUpgrader }
+  const definitionRecomputer = new DefinitionRecomputer(definitionService as any, logger, upgradePolicy)
+  return { definitionService, upgradePolicy, definitionRecomputer }
 }
