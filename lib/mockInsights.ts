@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Contracts, TelemetryClient } from 'applicationinsights'
-import * as appInsights from 'applicationinsights'
+import appInsights from 'applicationinsights'
 
 /** Common interface for telemetry clients (real or mock). */
 export interface InsightsClient {
