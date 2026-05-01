@@ -115,7 +115,7 @@ function createApp(config: AppConfig): App {
   const harvestQueue = config.harvest.queue()
   initializers.push(async () => harvestQueue.initialize())
 
-  const recomputeHandler = config.upgrade.service({ queue: config.upgrade.queue })
+  const recomputeHandler = config.recompute.service({ queue: config.recompute.queue })
   initializers.push(async () => recomputeHandler.initialize())
 
   const definitionService = createDefinitionService(

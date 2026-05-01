@@ -8,8 +8,8 @@ chai.use(chaiAsPromised)
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import DefinitionQueueUpgrader from '../../../providers/upgrade/defUpgradeQueue.ts'
-import MemoryQueue from '../../../providers/upgrade/memoryQueueConfig.ts'
+import DefinitionQueueUpgrader from '../../../providers/recompute/defUpgradeQueue.ts'
+import MemoryQueue from '../../../providers/recompute/memoryQueueConfig.ts'
 
 describe('DefinitionQueueUpgrader', () => {
   let logger

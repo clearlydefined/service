@@ -106,7 +106,7 @@ function getPolicyName(policy: any): string {
 }
 
 /**
- * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=versionCheck.
+ * Factory for DEFINITION_RECOMPUTE_PROVIDER=onDemand (alias: versionCheck).
  * Only `logger` is used from options; any other properties (e.g. `queue`) are intentionally ignored.
  */
 function defaultFactory({ logger }: Pick<DefinitionVersionCheckerOptions, 'logger'> = {}): RecomputeHandler {
@@ -118,7 +118,7 @@ function defaultFactory({ logger }: Pick<DefinitionVersionCheckerOptions, 'logge
 }
 
 /**
- * Compatibility alias for DEFINITION_UPGRADE_PROVIDER=upgradeQueue.
+ * Factory for DEFINITION_RECOMPUTE_PROVIDER=delayed (alias: upgradeQueue).
  */
 function delayedFactory(options: DelayedFactoryOptions = {}): RecomputeHandler {
   const shared = {
@@ -141,3 +141,4 @@ function delayedFactory(options: DelayedFactoryOptions = {}): RecomputeHandler {
 }
 
 export { defaultFactory, delayedFactory, RecomputeHandler }
+export default { defaultFactory, delayedFactory }

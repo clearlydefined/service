@@ -470,13 +470,14 @@ export class DefinitionService {
    * Invalidate the definition for the identified component. This flushes any caches and pre-computed
    * results. The definition will be recomputed on or before the next use.
    */
-  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<void[]> {
+  invalidate(coordinates: EntityCoordinates | EntityCoordinates[]): Promise<undefined[]> {
     const coordinateList = Array.isArray(coordinates) ? coordinates : [coordinates]
     return Promise.all(
       coordinateList.map(
         throat(10, async (coordinates: EntityCoordinates) => {
           await this.definitionStore.delete(coordinates)
           await this.cache.delete(this._getCacheKey(coordinates))
+          return undefined
         })
       )
     )

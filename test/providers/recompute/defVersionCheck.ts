@@ -8,7 +8,7 @@ chai.use(chaiAsPromised)
 
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { DefinitionVersionChecker, factory } from '../../../providers/upgrade/defVersionCheck.ts'
+import { DefinitionVersionChecker, factory } from '../../../providers/recompute/defVersionCheck.ts'
 
 describe('DefinitionVersionChecker', () => {
   let logger

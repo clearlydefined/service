@@ -58,7 +58,7 @@ class QueueHandler {
   }
 }
 
-class DefinitionUpgrader implements MessageHandler {
+class DefinitionRecomputer implements MessageHandler {
   logger: Logger
   declare _definitionService: DefinitionService
   declare _upgradePolicy: UpgradeHandler
@@ -85,12 +85,12 @@ class DefinitionUpgrader implements MessageHandler {
         return needsCompute
       })
       if (result) {
-        this.logger.info('Handled definition upgrade', { coordinates: coordinates.toString() })
+        this.logger.info('Handled definition recompute', { coordinates: coordinates.toString() })
       } else {
-        this.logger.debug('Skipped definition upgrade', { coordinates: coordinates.toString() })
+        this.logger.debug('Skipped definition recompute', { coordinates: coordinates.toString() })
       }
     } catch (error) {
-      const context = `Error handling definition upgrade for ${coordinates.toString()}`
+      const context = `Error handling definition recompute for ${coordinates.toString()}`
       const originalError = error instanceof Error ? error : new Error(String(error))
       throw new Error(context, { cause: originalError })
     }
@@ -104,9 +104,9 @@ function setup(
   once: boolean = false,
   _upgradePolicy: UpgradeHandler = factory({ logger: _logger })
 ): Promise<void> {
-  const defUpgrader = new DefinitionUpgrader(_definitionService, _logger, _upgradePolicy)
-  const queueHandler = new QueueHandler(_queue, _logger, defUpgrader)
+  const defRecomputer = new DefinitionRecomputer(_definitionService, _logger, _upgradePolicy)
+  const queueHandler = new QueueHandler(_queue, _logger, defRecomputer)
   return queueHandler.work(once)
 }
 
-export { DefinitionUpgrader, QueueHandler, setup }
+export { DefinitionRecomputer, QueueHandler, setup }

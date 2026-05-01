@@ -86,7 +86,7 @@ export interface AppConfig {
   definition: {
     store: () => DefinitionStore & Initializable
   }
-  upgrade: {
+  recompute: {
     queue: RecomputeQueueFactories<IQueue & Initializable>
     service: (options: { queue: RecomputeQueueFactories<IQueue & Initializable> }) => RecomputeHandler & Initializable
   }
@@ -173,9 +173,15 @@ export default {
   definition: {
     store: loadFactory(config.get('DEFINITION_STORE_PROVIDER') || 'file', 'definition')
   },
-  upgrade: {
-    queue: loadFactory(config.get('DEFINITION_UPGRADE_QUEUE_PROVIDER') || 'memory', 'upgrade.queue'),
-    service: loadFactory(config.get('DEFINITION_UPGRADE_PROVIDER') || 'versionCheck', 'upgrade.service')
+  recompute: {
+    queue: loadFactory(
+      config.get('DEFINITION_RECOMPUTE_QUEUE_PROVIDER') || config.get('DEFINITION_UPGRADE_QUEUE_PROVIDER') || 'memory',
+      'recompute.queue'
+    ),
+    service: loadFactory(
+      config.get('DEFINITION_RECOMPUTE_PROVIDER') || config.get('DEFINITION_UPGRADE_PROVIDER') || 'onDemand',
+      'recompute.service'
+    )
   },
   attachment: {
     store: loadFactory(config.get('ATTACHMENT_STORE_PROVIDER') || 'file', 'attachment')

@@ -13,15 +13,15 @@ import crawlerConfig from '../providers/harvest/crawlerConfig.ts'
 import crawlerQueueConfig from '../providers/harvest/crawlerQueueConfig.ts'
 import winstonConfig from '../providers/logging/winstonConfig.ts'
 import memoryQueue from '../providers/queueing/memoryQueue.ts'
+import recomputeAzureQueueConfig from '../providers/recompute/azureQueueConfig.ts'
+import recomputeMemoryQueueConfig from '../providers/recompute/memoryQueueConfig.ts'
+import recomputeHandler from '../providers/recompute/recomputeHandler.ts'
 import azureSearchConfig from '../providers/search/azureConfig.ts'
 import memorySearch from '../providers/search/memory.ts'
 import azblobConfig from '../providers/stores/azblobConfig.ts'
 import dispatchConfig from '../providers/stores/dispatchConfig.ts'
 import fileConfig from '../providers/stores/fileConfig.ts'
 import mongoConfig from '../providers/stores/mongoConfig.ts'
-import upgradeAzureQueueConfig from '../providers/upgrade/azureQueueConfig.ts'
-import upgradeMemoryQueueConfig from '../providers/upgrade/memoryQueueConfig.ts'
-import * as recomputeHandler from '../providers/upgrade/recomputeHandler.ts'
 import type { ICache } from './caching/index.js'
 import listBasedFilterConfig from './harvest/throttling/listBasedFilterConfig.ts'
 import type { Logger } from './logging/index.js'
@@ -72,14 +72,14 @@ export interface RecomputeQueueFactories<T = any> {
   compute: ProviderFactory<T>
 }
 
-/** Provider configuration for upgrade queue */
-export interface UpgradeQueueProviders {
+/** Provider configuration for recompute queue */
+export interface RecomputeQueueProviders {
   azure: RecomputeQueueFactories
   memory: RecomputeQueueFactories
 }
 
-/** Provider configuration for upgrade service */
-export interface UpgradeServiceProviders {
+/** Provider configuration for recompute service */
+export interface RecomputeServiceProviders {
   onDemand: ProviderFactory
   /** @deprecated TODO: remove in favor of onDemand */
   versionCheck: ProviderFactory
@@ -88,10 +88,10 @@ export interface UpgradeServiceProviders {
   upgradeQueue: ProviderFactory
 }
 
-/** Provider configuration for upgrade */
-export interface UpgradeProviders {
-  queue: UpgradeQueueProviders
-  service: UpgradeServiceProviders
+/** Provider configuration for recompute */
+export interface RecomputeProviders {
+  queue: RecomputeQueueProviders
+  service: RecomputeServiceProviders
 }
 
 /** Provider configuration for curation queue */
@@ -152,7 +152,7 @@ export interface Providers {
   search: SearchProviders
   caching: CachingProviders
   auth: AuthProviders
-  upgrade: UpgradeProviders
+  recompute: RecomputeProviders
   curation: CurationProviders
   harvest: HarvestProviders
 }
@@ -183,10 +183,10 @@ const providers: Providers = {
   auth: {
     github: githubAuthConfig
   },
-  upgrade: {
+  recompute: {
     queue: {
-      azure: upgradeAzureQueueConfig,
-      memory: upgradeMemoryQueueConfig
+      azure: recomputeAzureQueueConfig,
+      memory: recomputeMemoryQueueConfig
     },
     service: {
       onDemand: recomputeHandler.defaultFactory,
