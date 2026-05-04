@@ -3,13 +3,13 @@
 
 import { Cache } from 'memory-cache'
 
-import type { BaseCacheOptions, ICache } from './index.js'
+import type { BaseCacheOptions, ICache, ISyncCache } from './index.js'
 
 /** Configuration options for MemoryCache */
 export interface MemoryCacheOptions extends BaseCacheOptions {}
 
 /** In-memory cache implementation using memory-cache library */
-class MemoryCache implements ICache {
+class MemoryCache implements ICache, ISyncCache<unknown> {
   private declare cache: any
   private declare defaultTtlSeconds: number | undefined
 
@@ -31,14 +31,16 @@ class MemoryCache implements ICache {
   }
 
   /** Stores an item in the cache */
-  set(item: string, value: any, ttlSeconds: number | null = null): void {
+  set(item: string, value: any, ttlSeconds: number | null = null): undefined {
     const expiration = ttlSeconds || this.defaultTtlSeconds
     this.cache.put(item, value, expiration ? expiration * 1000 : undefined)
+    return undefined
   }
 
   /** Removes an item from the cache */
-  delete(item: string): void {
+  delete(item: string): undefined {
     this.cache.del(item)
+    return undefined
   }
 }
 
