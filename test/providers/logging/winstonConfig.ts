@@ -442,4 +442,103 @@ describe('winstonFactory', () => {
     expect(exceptionTelemetry.exception.cause).to.equal(undefined)
     expect(exceptionTelemetry.exception.stack).to.include('no cause error')
   })
+
+  it('does not forward debug or verbose when logger level is info', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'info'
+    })
+
+    logger.debug('debug should not be sent')
+    logger.verbose('verbose should not be sent')
+    logger.info('info should be sent')
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.called).to.be.false
+    expect(aiClient.trackTrace.callCount).to.equal(1)
+    expect(aiClient.trackTrace.firstCall.args[0].message).to.include('info should be sent')
+    expect(aiClient.trackTrace.firstCall.args[0].severity).to.equal('Information')
+  })
+
+  it('routes errors with stack to trackException', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'error'
+    })
+
+    const error = new Error('something broke')
+    logger.error(error)
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.callCount).to.equal(1)
+    expect(aiClient.trackTrace.callCount).to.equal(0)
+    const telemetry = aiClient.trackException.firstCall.args[0]
+    expect(telemetry.exception.message).to.equal('something broke')
+    expect(telemetry.exception.stack).to.include('something broke')
+  })
+
+  it('routes errors without stack to trackTrace with Error severity', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'error'
+    })
+
+    logger.error('plain error message')
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.callCount).to.equal(0)
+    expect(aiClient.trackTrace.callCount).to.equal(1)
+    const telemetry = aiClient.trackTrace.firstCall.args[0]
+    expect(telemetry.message).to.include('plain error message')
+    expect(telemetry.severity).to.equal('Error')
+  })
+
+  it('maps warn level to Warning severity', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+
+    const logger = winstonFactory({
+      connectionString: 'mock',
+      echo: false,
+      level: 'warn'
+    })
+
+    logger.warn('a warning')
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackTrace.callCount).to.equal(1)
+    expect(aiClient.trackTrace.firstCall.args[0].severity).to.equal('Warning')
+  })
 })
