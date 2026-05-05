@@ -44,12 +44,26 @@ export interface Options {
   harvester: Harvester
   concurrencyLimit?: number
   cacheTTLInSeconds?: number
+  inflightTTLInSeconds?: number
+  lockRetryDelayMinMs?: number
+  lockRetryDelayMaxMs?: number
+  lockAcquireTimeoutMs?: number
 }
 
 /** Default cache TTL: 1 day in seconds */
 const cacheTTLInSeconds = 60 * 60 * 24
 /** Default concurrency limit for parallel operations */
 const concurrencyLimit = 10
+/** Default lock TTL: 5 minutes in seconds */
+const inflightTTLInSeconds = 60 * 5
+/** Default lock retry delay range in milliseconds */
+const lockRetryDelayMinMs = 50
+const lockRetryDelayMaxMs = 250
+/**
+ * Default maximum lock acquire wait in milliseconds.
+ * Keep this below upstream request timeouts so callers receive a structured error.
+ */
+const lockAcquireTimeoutMs = 30 * 1000
 
 /**
  * Cache-based harvester that tracks and filters harvest operations to avoid duplicates. This class provides efficient
@@ -62,6 +76,10 @@ export class CacheBasedHarvester {
   declare _harvester: Harvester
   declare concurrencyLimit: number
   declare cacheTTLInSeconds: number
+  declare inflightTTLInSeconds: number
+  declare lockRetryDelayMinMs: number
+  declare lockRetryDelayMaxMs: number
+  declare lockAcquireTimeoutMs: number
 
   constructor(options: Options) {
     this.logger = options.logger || logger()
@@ -69,19 +87,103 @@ export class CacheBasedHarvester {
     this._harvester = options.harvester
     this.concurrencyLimit = options.concurrencyLimit || concurrencyLimit
     this.cacheTTLInSeconds = options.cacheTTLInSeconds || cacheTTLInSeconds
+    this.inflightTTLInSeconds = options.inflightTTLInSeconds || inflightTTLInSeconds
+    this.lockRetryDelayMinMs = options.lockRetryDelayMinMs || lockRetryDelayMinMs
+    this.lockRetryDelayMaxMs = options.lockRetryDelayMaxMs || lockRetryDelayMaxMs
+    this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs || lockAcquireTimeoutMs
   }
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
     const entries = Array.isArray(spec) ? spec : [spec]
     const uniqueEntries = this._filterOutDuplicatedCoordinates(entries)
-    const harvests = await this._filterOutTracked(uniqueEntries)
-    if (!harvests.length) {
+    if (!uniqueEntries.length) {
       this.logger.debug('No new harvests to process.')
       return
     }
-    this.logger.debug(`Starting harvest for ${harvests.length} entries.`)
-    await this._harvester.harvest(harvests, turbo)
-    await this._trackHarvests(harvests)
+
+    await this._acquireAllInflightLocks(uniqueEntries)
+    try {
+      const harvests = await this._filterOutTracked(uniqueEntries)
+      if (!harvests.length) {
+        this.logger.debug('No new harvests to process.')
+        return
+      }
+      this.logger.debug(`Starting harvest for ${harvests.length} entries.`)
+      await this._harvester.harvest(harvests, turbo)
+      await this._trackHarvests(harvests)
+    } finally {
+      await this._releaseInflightLocks(uniqueEntries)
+    }
+  }
+
+  async _acquireAllInflightLocks(entries: HarvestEntry[]): Promise<void> {
+    const started = Date.now()
+    const sortedKeys = [
+      ...new Set(entries.map(entry => this._getInflightKey(entry.coordinates)).filter(Boolean))
+    ].sort()
+
+    while (true) {
+      const acquired = await this._acquireSortedInflightKeys(sortedKeys)
+      if (acquired.length === sortedKeys.length) {
+        return
+      }
+
+      await this._releaseInflightKeys(acquired)
+      if (Date.now() - started >= this.lockAcquireTimeoutMs) {
+        throw new Error(`Timed out acquiring harvest coordinate locks after ${this.lockAcquireTimeoutMs}ms`)
+      }
+      await this._sleep(this._getLockRetryDelayMs())
+    }
+  }
+
+  async _acquireSortedInflightKeys(sortedKeys: string[]): Promise<string[]> {
+    const acquired: string[] = []
+    try {
+      for (const key of sortedKeys) {
+        const lockAcquired = await this._cache.setIfAbsent(key, '1', this.inflightTTLInSeconds)
+        if (!lockAcquired) {
+          break
+        }
+        acquired.push(key)
+      }
+      return acquired
+    } catch (error) {
+      await this._releaseInflightKeys(acquired)
+      throw error
+    }
+  }
+
+  async _releaseInflightLocks(entries: HarvestEntry[]): Promise<void> {
+    const keys = entries.map(entry => this._getInflightKey(entry.coordinates))
+    await this._releaseInflightKeys(keys)
+  }
+
+  async _releaseInflightKeys(keys: string[]): Promise<void> {
+    await Promise.all(
+      keys.map(
+        throat(this.concurrencyLimit, async key => {
+          await this._cache.delete(key)
+        })
+      )
+    )
+  }
+
+  _getInflightKey(coordinates: EntityCoordinates | string): string {
+    if (!coordinates) {
+      return ''
+    }
+    return `hrv_inflight_${coordinates.toString().toLowerCase()}`
+  }
+
+  _getLockRetryDelayMs(): number {
+    if (this.lockRetryDelayMaxMs <= this.lockRetryDelayMinMs) {
+      return this.lockRetryDelayMinMs
+    }
+    return this.lockRetryDelayMinMs + Math.floor(Math.random() * (this.lockRetryDelayMaxMs - this.lockRetryDelayMinMs))
+  }
+
+  _sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   _filterOutDuplicatedCoordinates(entries: HarvestEntry[]): HarvestEntry[] {

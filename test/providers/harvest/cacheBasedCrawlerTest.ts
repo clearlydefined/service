@@ -5,16 +5,28 @@ import assert from 'node:assert'
 import sinon from 'sinon'
 import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.ts'
 
+const inflightKey = (coordinates: string): string => `hrv_inflight_${coordinates.toLowerCase()}`
+
 function createCacheMock() {
   return {
     store: {},
+    locks: new Set<string>(),
     async get(key) {
       return this.store[key] || []
     },
     async set(key, value) {
       this.store[key] = value
     },
+    async setIfAbsent(key, value) {
+      if (this.locks.has(key)) {
+        return false
+      }
+      this.locks.add(key)
+      this.store[key] = value
+      return true
+    },
     async delete(key) {
+      this.locks.delete(key)
       delete this.store[key]
     }
   }
@@ -49,7 +61,10 @@ describe('CacheBasedHarvester', () => {
     crawler = cacheBasedHarvester({
       cachingService: cacheMock,
       harvester: harvesterMock,
-      logger: loggerMock as any
+      logger: loggerMock as any,
+      lockRetryDelayMinMs: 1,
+      lockRetryDelayMaxMs: 2,
+      lockAcquireTimeoutMs: 100
     })
   })
 
@@ -113,6 +128,10 @@ describe('CacheBasedHarvester', () => {
       await assert.rejects(async () => {
         await crawler.harvest([foo], false)
       }, 'Expected harvest to throw the harvest errors')
+
+      const key = inflightKey(foo.coordinates)
+      assert.ok(cacheMock.delete.calledWith(key), 'Expected inflight lock to be released after failure')
+      assert.ok(!cacheMock.locks.has(key), 'Expected no inflight lock to remain after failure')
     })
 
     it('handles errors in cache gracefully', async () => {
@@ -120,6 +139,72 @@ describe('CacheBasedHarvester', () => {
       await assert.doesNotReject(async () => {
         await crawler.isTracked(foo.coordinates)
       }, 'Expected isTracked to handle cache errors gracefully')
+    })
+
+    it('serializes concurrent requests for same coordinate', async () => {
+      harvesterMock.harvest.callsFake(async () => {
+        await new Promise(resolve => setTimeout(resolve, 15))
+      })
+
+      await Promise.all([crawler.harvest([foo], false), crawler.harvest([foo], false)])
+
+      assert.strictEqual(harvesterMock.harvest.callCount, 1, 'Expected only one harvest call for same coordinate')
+    })
+
+    it('does not deadlock for opposite coordinate order requests', async () => {
+      harvesterMock.harvest.callsFake(async () => {
+        await new Promise(resolve => setTimeout(resolve, 15))
+      })
+
+      await Promise.all([crawler.harvest([foo, bar], false), crawler.harvest([bar, foo], false)])
+
+      assert.strictEqual(harvesterMock.harvest.callCount, 1, 'Expected one effective harvest due tracked dedup after lock')
+    })
+
+    it('releases partially acquired locks before retrying', async () => {
+      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
+
+      cacheMock.locks.add(secondKey)
+      setTimeout(() => {
+        cacheMock.locks.delete(secondKey)
+      }, 10)
+
+      await crawler.harvest([foo, bar], false)
+
+      assert.ok(cacheMock.delete.calledWith(firstKey), 'Expected first lock to be released after initial miss')
+      assert.ok(!cacheMock.locks.has(firstKey), 'Expected first lock to be released at end of harvest')
+      assert.ok(!cacheMock.locks.has(secondKey), 'Expected second lock to be released at end of harvest')
+    })
+
+    it('throws when lock acquisition exceeds timeout', async () => {
+      const keyFoo = inflightKey(foo.coordinates)
+      cacheMock.locks.add(keyFoo)
+
+      await assert.rejects(async () => {
+        await crawler.harvest([foo], false)
+      }, /Timed out acquiring harvest coordinate locks/)
+    })
+
+    it('releases partially acquired locks when setIfAbsent throws mid-acquire', async () => {
+      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
+
+      cacheMock.setIfAbsent = sinon.stub().callsFake(async key => {
+        if (key === firstKey) {
+          cacheMock.locks.add(key)
+          return true
+        }
+        if (key === secondKey) {
+          throw new Error('Redis unavailable')
+        }
+        return false
+      })
+
+      await assert.rejects(async () => {
+        await crawler.harvest([foo, bar], false)
+      }, /Redis unavailable/)
+
+      assert.ok(cacheMock.delete.calledWith(firstKey), 'Expected partially acquired lock to be released on error')
+      assert.ok(!cacheMock.locks.has(firstKey), 'Expected partially acquired lock to be cleared after error')
     })
   })
 

@@ -50,6 +50,16 @@ export interface ICache {
    * @param item - The key of the item to remove
    */
   delete(item: string): Promise<void> | void
+
+  /**
+   * Atomically sets an item only when the key is absent.
+   *
+   * @param item - The key to set
+   * @param value - The string value to store
+   * @param ttlSeconds - Time-to-live in seconds
+   * @returns true when set succeeds, false when key already exists
+   */
+  setIfAbsent(item: string, value: string, ttlSeconds: number): Promise<boolean> | boolean
 }
 
 /**

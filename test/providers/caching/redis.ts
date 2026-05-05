@@ -22,9 +22,13 @@ describe('Redis Cache', () => {
     beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
-        set: async (key, value) => {
+        set: sinon.stub().callsFake(async (key, value, options) => {
+          if (options?.condition === 'NX' && store[key] !== undefined && store[key] !== null) {
+            return null
+          }
           store[key] = value
-        },
+          return 'OK'
+        }),
         del: async key => {
           store[key] = null
         },
@@ -66,6 +70,16 @@ describe('Redis Cache', () => {
       await cache.delete('foo')
       const result = await cache.get('foo')
       assert.strictEqual(result, null)
+    })
+
+    it('sets only when absent with Redis condition NX', async () => {
+      await cache.initialize()
+      const first = await cache.setIfAbsent('lock_foo', '1', 120)
+      const second = await cache.setIfAbsent('lock_foo', '1', 120)
+
+      assert.strictEqual(first, true)
+      assert.strictEqual(second, false)
+      assert.ok(mockClient.set.calledWith('lock_foo', '1', { condition: 'NX', EX: 120 }))
     })
 
     it('throws error if redis connection fails', async () => {

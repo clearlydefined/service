@@ -136,6 +136,12 @@ class RedisCache implements ICache {
     }
   }
 
+  /** Atomically stores an item only when absent. Intended for distributed lock keys. */
+  async setIfAbsent(item: string, value: string, ttlSeconds: number): Promise<boolean> {
+    const result = await this._client!.set(item, value, { condition: 'NX', EX: ttlSeconds })
+    return result === 'OK'
+  }
+
   /** Removes an item from the Redis cache */
   async delete(item: string): Promise<void> {
     await this._client!.del(item)
