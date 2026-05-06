@@ -3,7 +3,7 @@
 
 import type { Definition, DefinitionService, RecomputeContext } from '../../business/definitionService.ts'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
-import type { ICache } from '../caching/index.js'
+import type { ISyncCache } from '../caching/index.js'
 import Cache from '../caching/memory.ts'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
@@ -15,7 +15,7 @@ import { SkipUpgradePolicy } from './skipUpgradePolicy.ts'
 
 export interface DelayedComputePolicyOptions extends DefinitionQueueUpgraderOptions {
   /** Injectable for testing; defaults to an in-memory cache with 20-minute TTL */
-  enqueueCache?: ICache
+  enqueueCache?: ISyncCache<boolean>
 }
 
 class DelayedComputePolicy implements MissingDefinitionComputePolicy {
@@ -24,7 +24,7 @@ class DelayedComputePolicy implements MissingDefinitionComputePolicy {
 
   options: DelayedComputePolicyOptions
   logger: Logger
-  declare _enqueueCache: ICache
+  declare _enqueueCache: ISyncCache<boolean>
   declare _compute: IQueue
 
   constructor(options: DelayedComputePolicyOptions) {
@@ -54,14 +54,20 @@ class DelayedComputePolicy implements MissingDefinitionComputePolicy {
       throw new Error('Compute queue is not set. DelayedComputePolicy.initialize() must be called before compute()')
     }
     const key = coordinates.toString()
-    const alreadyQueued = await this._enqueueCache.get(key)
-    if (alreadyQueued) {
+    const alreadyQueued = this._enqueueCache.get(key)
+    if (alreadyQueued === true) {
       this.logger.debug('Skipped duplicate enqueue for delayed definition compute', { coordinates: key })
       return
     }
-    const message = this._constructMessage(coordinates)
-    await this._compute.queue(message)
-    await this._enqueueCache.set(key, true, DelayedComputePolicy._enqueueCacheTtlSeconds)
+    this._enqueueCache.set(key, true, DelayedComputePolicy._enqueueCacheTtlSeconds)
+    try {
+      const message = this._constructMessage(coordinates)
+      await this._compute.queue(message)
+    } catch (error) {
+      // Roll back optimistic dedup marker so retries can enqueue after transient queue failures.
+      this._enqueueCache.delete(key)
+      throw error
+    }
     this.logger.info('Queued for delayed definition compute', {
       coordinates: key
     })

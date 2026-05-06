@@ -51,3 +51,18 @@ export interface ICache {
    */
   delete(item: string): Promise<void> | void
 }
+
+/**
+ * Synchronous cache interface for use cases where get/set must be atomic within
+ * a single event loop turn (e.g. dedup checks before an async operation).
+ */
+export interface ISyncCache<ValueType> {
+  /** Retrieves an item synchronously. Returns null if not found or expired. */
+  get(item: string): ValueType | null
+
+  /** Stores an item synchronously with an optional TTL in seconds. */
+  set(item: string, value: ValueType, ttlSeconds?: number): undefined
+
+  /** Removes an item synchronously. */
+  delete(item: string): undefined
+}

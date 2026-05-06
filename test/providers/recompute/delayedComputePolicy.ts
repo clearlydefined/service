@@ -10,7 +10,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import type { Definition, DefinitionService, RecomputeContext } from '../../../business/definitionService.ts'
 import EntityCoordinates from '../../../lib/entityCoordinates.ts'
-import type { ICache } from '../../../providers/caching/index.js'
+import type { ISyncCache } from '../../../providers/caching/index.js'
 import type { IQueue } from '../../../providers/queueing/index.js'
 import { DelayedComputePolicy } from '../../../providers/recompute/delayedComputePolicy.ts'
 import { createMockLogger } from '../../helpers/mockLogger.ts'
@@ -30,19 +30,25 @@ describe('DelayedComputePolicy', () => {
   })
 
   describe('compute()', () => {
+    let definitionService: RecomputeContext
+
+    beforeEach(() => {
+      definitionService = createDefinitionService()
+    })
+
     it('throws if called before initialize()', async () => {
       const uninitializedPolicy = new DelayedComputePolicy({
         logger: createMockLogger(),
         queue: () => queue
       })
 
-      await expect(uninitializedPolicy.compute(definitionService(), coordinates)).to.be.rejectedWith(
+      await expect(uninitializedPolicy.compute(definitionService, coordinates)).to.be.rejectedWith(
         'DelayedComputePolicy.initialize() must be called before compute()'
       )
     })
 
     it('enqueues coordinates and returns placeholder definition', async () => {
-      const result = await policy.compute(definitionService(), coordinates)
+      const result = await policy.compute(definitionService, coordinates)
       validateEmptyDefinition(result, coordinates)
       validateQueuedCoordinates(queue, coordinates)
     })
@@ -51,11 +57,11 @@ describe('DelayedComputePolicy', () => {
       const enqueueError = new Error('compute queue unavailable')
       queue.queue.rejects(enqueueError)
 
-      await expect(policy.compute(definitionService(), coordinates)).to.be.rejectedWith(enqueueError)
+      await expect(policy.compute(definitionService, coordinates)).to.be.rejectedWith(enqueueError)
     })
 
     describe('with enqueueCache', () => {
-      let enqueueCache: { [K in keyof ICache]: sinon.SinonStub }
+      let enqueueCache: { [K in keyof ISyncCache<boolean>]: sinon.SinonStub }
       let dedupPolicy: DelayedComputePolicy
 
       beforeEach(async () => {
@@ -65,27 +71,108 @@ describe('DelayedComputePolicy', () => {
       })
 
       it('skips enqueue for duplicate coordinates within cache TTL', async () => {
-        await dedupPolicy.compute(definitionService(), coordinates)
-        await dedupPolicy.compute(definitionService(), coordinates)
+        await dedupPolicy.compute(definitionService, coordinates)
+        await dedupPolicy.compute(definitionService, coordinates)
 
         expect(queue.queue.calledOnce).to.be.true
       })
 
-      it('enqueues again after cache entry expires', async () => {
-        await dedupPolicy.compute(definitionService(), coordinates)
-        enqueueCache.delete.callsFake((key: string) => enqueueCache.get.withArgs(key).returns(null))
+      it('passes the correct TTL to the cache set', async () => {
+        await dedupPolicy.compute(definitionService, coordinates)
+
+        const [, , ttl] = enqueueCache.set.getCall(0).args
+        expect(ttl).to.equal(DelayedComputePolicy._enqueueCacheTtlSeconds)
+      })
+
+      it('enqueues again when cache returns null (stub-simulated expiry)', async () => {
+        await dedupPolicy.compute(definitionService, coordinates)
         enqueueCache.get.returns(null)
 
-        await dedupPolicy.compute(definitionService(), coordinates)
+        await dedupPolicy.compute(definitionService, coordinates)
 
+        expect(queue.queue.calledTwice).to.be.true
+      })
+
+      it('enqueues only once when two requests arrive concurrently', async () => {
+        await Promise.all([
+          dedupPolicy.compute(definitionService, coordinates),
+          dedupPolicy.compute(definitionService, coordinates)
+        ])
+
+        expect(queue.queue.calledOnce).to.be.true
+      })
+
+      it('clears dedup marker when enqueue fails so retries can enqueue', async () => {
+        const enqueueError = new Error('transient queue failure')
+        queue.queue.onFirstCall().rejects(enqueueError)
+        queue.queue.onSecondCall().resolves()
+
+        await expect(dedupPolicy.compute(definitionService, coordinates)).to.be.rejectedWith(enqueueError)
+        await dedupPolicy.compute(definitionService, coordinates)
+
+        expect(enqueueCache.delete.calledOnceWith(coordinates.toString())).to.be.true
         expect(queue.queue.calledTwice).to.be.true
       })
 
       it('enqueues independently for different coordinates', async () => {
         const other = EntityCoordinates.fromString('npm/npmjs/-/debug/4.3.4')
 
-        await dedupPolicy.compute(definitionService(), coordinates)
-        await dedupPolicy.compute(definitionService(), other)
+        await dedupPolicy.compute(definitionService, coordinates)
+        await dedupPolicy.compute(definitionService, other)
+
+        expect(queue.queue.calledTwice).to.be.true
+      })
+    })
+
+    describe('with real cache and fake timers', () => {
+      let clock: sinon.SinonFakeTimers
+      let realCachePolicy: DelayedComputePolicy
+
+      beforeEach(async () => {
+        clock = sinon.useFakeTimers()
+        realCachePolicy = new DelayedComputePolicy({ logger: createMockLogger(), queue: () => queue })
+        await realCachePolicy.initialize()
+      })
+
+      afterEach(() => {
+        clock.restore()
+      })
+
+      it('enqueues again after cache TTL expires', async () => {
+        await realCachePolicy.compute(definitionService, coordinates)
+        expect(queue.queue.calledOnce).to.be.true
+
+        clock.tick(DelayedComputePolicy._enqueueCacheTtlSeconds * 1000 + 1)
+
+        await realCachePolicy.compute(definitionService, coordinates)
+        expect(queue.queue.calledTwice).to.be.true
+      })
+
+      it('does not enqueue again before cache TTL expires', async () => {
+        await realCachePolicy.compute(definitionService, coordinates)
+
+        clock.tick(DelayedComputePolicy._enqueueCacheTtlSeconds * 1000 - 1)
+
+        await realCachePolicy.compute(definitionService, coordinates)
+        expect(queue.queue.calledOnce).to.be.true
+      })
+
+      it('enqueues only once when two requests arrive concurrently', async () => {
+        await Promise.all([
+          realCachePolicy.compute(definitionService, coordinates),
+          realCachePolicy.compute(definitionService, coordinates)
+        ])
+
+        expect(queue.queue.calledOnce).to.be.true
+      })
+
+      it('clears dedup marker when enqueue fails so retries can enqueue', async () => {
+        const enqueueError = new Error('transient queue failure')
+        queue.queue.onFirstCall().rejects(enqueueError)
+        queue.queue.onSecondCall().resolves()
+
+        await expect(realCachePolicy.compute(definitionService, coordinates)).to.be.rejectedWith(enqueueError)
+        await realCachePolicy.compute(definitionService, coordinates)
 
         expect(queue.queue.calledTwice).to.be.true
       })
@@ -145,7 +232,7 @@ const createQueue = (): { [K in keyof IQueue]: sinon.SinonStub } => ({
   delete: sinon.stub().resolves()
 })
 
-const definitionService = (): RecomputeContext =>
+const createDefinitionService = (): RecomputeContext =>
   ({
     currentSchema: '1.7.0',
     buildEmptyDefinition: (coordinates: unknown) => ({
@@ -170,13 +257,17 @@ function validateQueuedCoordinates(queue: { [K in keyof IQueue]: sinon.SinonStub
   expect(queued._meta).to.be.undefined
 }
 
-const createEnqueueCache = (): { [K in keyof ICache]: sinon.SinonStub } => {
-  const store = new Map<string, unknown>()
+const createEnqueueCache = (): { [K in keyof ISyncCache<boolean>]: sinon.SinonStub } => {
+  const store = new Map<string, boolean>()
   return {
-    initialize: sinon.stub().resolves(),
-    get: sinon.stub().callsFake((key: string) => store.get(key) ?? null),
-    set: sinon.stub().callsFake((key: string, value: unknown) => store.set(key, value)),
-    delete: sinon.stub().callsFake((key: string) => store.delete(key)),
-    done: sinon.stub().resolves()
+    get: sinon.stub().callsFake((key: string) => {
+      return store.get(key) ?? null
+    }),
+    set: sinon.stub().callsFake((key: string, value: boolean) => {
+      store.set(key, value)
+    }),
+    delete: sinon.stub().callsFake((key: string) => {
+      store.delete(key)
+    })
   }
 }
