@@ -115,18 +115,32 @@ export class CacheBasedHarvester {
     const sortedKeys = [
       ...new Set(entries.map(entry => this._getInflightKey(entry.coordinates)).filter(Boolean))
     ].sort()
+    let attempts = 0
 
     while (true) {
+      attempts += 1
       const acquired = await this._acquireSortedInflightKeys(sortedKeys)
       if (acquired.length === sortedKeys.length) {
+        this.logger.debug(
+          `Acquired ${acquired.length}/${sortedKeys.length} inflight locks after ${attempts} attempt(s) in ${Date.now() - started}ms.`
+        )
         return
       }
 
+      const missedKey = sortedKeys[acquired.length] || 'unknown'
+      this.logger.debug(
+        `Inflight lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
+      )
       await this._releaseInflightKeys(acquired)
+
       if (Date.now() - started >= this.lockAcquireTimeoutMs) {
         throw new Error(`Timed out acquiring harvest coordinate locks after ${this.lockAcquireTimeoutMs}ms`)
       }
-      await this._sleep(this._getLockRetryDelayMs())
+      const retryDelayMs = this._getLockRetryDelayMs()
+      this.logger.debug(
+        `Retrying inflight lock acquisition in ${retryDelayMs}ms (attempt ${attempts + 1}, elapsed ${Date.now() - started}ms).`
+      )
+      await this._sleep(retryDelayMs)
     }
   }
 
