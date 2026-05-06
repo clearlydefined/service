@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
-import throat from 'throat'
 import type EntityCoordinates from '../../lib/entityCoordinates.ts'
 import type { ICache } from '../caching/index.js'
 import type { Logger } from '../logging/index.js'
@@ -42,7 +41,6 @@ export interface Options {
   logger?: Logger
   cachingService: ICache
   harvester: Harvester
-  concurrencyLimit?: number
   cacheTTLInSeconds?: number
   inflightTTLInSeconds?: number
   lockRetryDelayMinMs?: number
@@ -52,8 +50,6 @@ export interface Options {
 
 /** Default cache TTL: 1 day in seconds */
 const cacheTTLInSeconds = 60 * 60 * 24
-/** Default concurrency limit for parallel operations */
-const concurrencyLimit = 10
 /** Default lock TTL: 5 minutes in seconds */
 const inflightTTLInSeconds = 60 * 5
 /** Default lock retry delay range in milliseconds */
@@ -74,7 +70,6 @@ export class CacheBasedHarvester {
   declare logger: Logger
   declare _cache: ICache
   declare _harvester: Harvester
-  declare concurrencyLimit: number
   declare cacheTTLInSeconds: number
   declare inflightTTLInSeconds: number
   declare lockRetryDelayMinMs: number
@@ -85,7 +80,6 @@ export class CacheBasedHarvester {
     this.logger = options.logger || logger()
     this._cache = options.cachingService
     this._harvester = options.harvester
-    this.concurrencyLimit = options.concurrencyLimit || concurrencyLimit
     this.cacheTTLInSeconds = options.cacheTTLInSeconds || cacheTTLInSeconds
     this.inflightTTLInSeconds = options.inflightTTLInSeconds || inflightTTLInSeconds
     this.lockRetryDelayMinMs = options.lockRetryDelayMinMs || lockRetryDelayMinMs
@@ -159,13 +153,7 @@ export class CacheBasedHarvester {
   }
 
   async _releaseInflightKeys(keys: string[]): Promise<void> {
-    await Promise.all(
-      keys.map(
-        throat(this.concurrencyLimit, async key => {
-          await this._cache.delete(key)
-        })
-      )
-    )
+    await Promise.all(keys.map(key => this._cache.delete(key)))
   }
 
   _getInflightKey(coordinates: EntityCoordinates | string): string {
@@ -193,11 +181,7 @@ export class CacheBasedHarvester {
 
   async _filterOutTracked(entries: HarvestEntry[]): Promise<HarvestEntry[]> {
     const filteredEntries = await Promise.all(
-      entries.map(
-        throat(this.concurrencyLimit, async (entry: HarvestEntry) =>
-          (await this._isTrackedHarvest(entry)) ? null : entry
-        )
-      )
+      entries.map(async (entry: HarvestEntry) => ((await this._isTrackedHarvest(entry)) ? null : entry))
     )
     return filteredEntries.filter((entry): entry is HarvestEntry => entry !== null)
   }
@@ -225,11 +209,9 @@ export class CacheBasedHarvester {
 
   async _trackHarvests(harvestEntries: HarvestEntry[]): Promise<void> {
     const results = await Promise.allSettled(
-      harvestEntries.map(
-        throat(this.concurrencyLimit, async (entry: HarvestEntry) => {
-          await this._track(entry)
-        })
-      )
+      harvestEntries.map(async (entry: HarvestEntry) => {
+        await this._track(entry)
+      })
     )
     for (const result of results) {
       if (result.status === 'rejected') {
