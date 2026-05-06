@@ -50,11 +50,11 @@ export interface Options {
 
 /** Default cache TTL: 1 day in seconds */
 const cacheTTLInSeconds = 60 * 60 * 24
-/** Default lock TTL: 5 minutes in seconds */
-const inflightTTLInSeconds = 60 * 5
-/** Default lock retry delay range in milliseconds */
-const lockRetryDelayMinMs = 50
-const lockRetryDelayMaxMs = 250
+/** Default lock TTL: 1 minute in seconds */
+const inflightTTLInSeconds = 60
+/** Default lock retry jitter range in milliseconds */
+const lockRetryDelayMinMs = 300
+const lockRetryDelayMaxMs = 500
 /**
  * Default maximum lock acquire wait in milliseconds.
  * Keep this below upstream request timeouts so callers receive a structured error.
