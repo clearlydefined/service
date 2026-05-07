@@ -89,6 +89,7 @@ export class CacheBasedHarvester {
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
     const entries = Array.isArray(spec) ? spec : [spec]
+    // _filterOutDuplicatedCoordinates removes falsy coordinates and deduplicates keys.
     const uniqueEntries = this._filterOutDuplicatedCoordinates(entries)
     if (!uniqueEntries.length) {
       this.logger.debug('No new harvests to process.')
@@ -112,9 +113,7 @@ export class CacheBasedHarvester {
 
   async _acquireAllInflightLocks(entries: HarvestEntry[]): Promise<void> {
     const started = Date.now()
-    const sortedKeys = [
-      ...new Set(entries.map(entry => this._getInflightKey(entry.coordinates)).filter(Boolean))
-    ].sort()
+    const sortedKeys = entries.map(entry => this._getInflightKey(entry.coordinates)).sort()
     let attempts = 0
 
     while (true) {
@@ -131,7 +130,7 @@ export class CacheBasedHarvester {
       this.logger.debug(
         `Inflight lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
       )
-      await this._releaseInflightKeys(acquired)
+      await this._releaseInflightKeys(acquired, { throwOnFailure: true })
 
       if (Date.now() - started >= this.lockAcquireTimeoutMs) {
         throw new Error(`Timed out acquiring harvest coordinate locks after ${this.lockAcquireTimeoutMs}ms`)
@@ -166,8 +165,19 @@ export class CacheBasedHarvester {
     await this._releaseInflightKeys(keys)
   }
 
-  async _releaseInflightKeys(keys: string[]): Promise<void> {
-    await Promise.all(keys.map(key => this._cache.delete(key)))
+  async _releaseInflightKeys(keys: string[], options: { throwOnFailure?: boolean } = {}): Promise<void> {
+    const { throwOnFailure = false } = options
+    const results = await Promise.allSettled(keys.map(key => this._cache.delete(key)))
+    const reasons: unknown[] = []
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        reasons.push(result.reason)
+        this.logger.error('Error releasing inflight lock', result.reason)
+      }
+    }
+    if (throwOnFailure && reasons.length) {
+      throw new AggregateError(reasons, `Failed to release ${reasons.length} inflight lock(s)`)
+    }
   }
 
   _getInflightKey(coordinates: EntityCoordinates | string): string {
@@ -222,11 +232,7 @@ export class CacheBasedHarvester {
   }
 
   async _trackHarvests(harvestEntries: HarvestEntry[]): Promise<void> {
-    const results = await Promise.allSettled(
-      harvestEntries.map(async (entry: HarvestEntry) => {
-        await this._track(entry)
-      })
-    )
+    const results = await Promise.allSettled(harvestEntries.map(entry => this._track(entry)))
     for (const result of results) {
       if (result.status === 'rejected') {
         this.logger.error(result.reason)

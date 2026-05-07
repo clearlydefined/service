@@ -40,7 +40,7 @@ class MemoryCache implements ICache, ISyncCache<unknown> {
   /** Atomically stores an item only when absent within this process. */
   setIfAbsent(item: string, value: string, ttlSeconds: number): boolean {
     const existing = this.cache.get(item)
-    if (existing !== null && existing !== undefined) {
+    if (existing !== null) {
       return false
     }
     this.cache.put(item, value, ttlSeconds * 1000)
