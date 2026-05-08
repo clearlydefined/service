@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import lodash from 'lodash'
+import throat from 'throat'
 import type EntityCoordinates from '../../lib/entityCoordinates.ts'
 import type { ICache } from '../caching/index.js'
 import type { Logger } from '../logging/index.js'
@@ -47,6 +48,7 @@ export interface Options {
   lockRetryDelayMaxMs?: number
   lockAcquireTimeoutMs?: number
   localLockRetryDelayMs?: number
+  concurrencyLimit?: number
 }
 
 /** Default cache TTL: 1 day in seconds */
@@ -58,6 +60,8 @@ const lockRetryDelayMinMs = 300
 const lockRetryDelayMaxMs = 500
 /** Default local lock retry delay in milliseconds — short since contention is in-process */
 const localLockRetryDelayMs = 5
+/** Default max concurrent cache reads during pre-filter. */
+const concurrencyLimit = 10
 /**
  * Default maximum lock acquire wait in milliseconds.
  * Keep this below upstream request timeouts so callers receive a structured error.
@@ -80,6 +84,7 @@ export class CacheBasedHarvester {
   declare lockRetryDelayMaxMs: number
   declare lockAcquireTimeoutMs: number
   declare localLockRetryDelayMs: number
+  declare concurrencyLimit: number
 
   constructor(options: Options) {
     this.logger = options.logger || logger()
@@ -92,6 +97,7 @@ export class CacheBasedHarvester {
     this.lockRetryDelayMaxMs = options.lockRetryDelayMaxMs || lockRetryDelayMaxMs
     this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs || lockAcquireTimeoutMs
     this.localLockRetryDelayMs = options.localLockRetryDelayMs || localLockRetryDelayMs
+    this.concurrencyLimit = options.concurrencyLimit || concurrencyLimit
   }
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
@@ -103,13 +109,24 @@ export class CacheBasedHarvester {
       return
     }
 
-    const sortedInflightKeys = uniqueEntries.map(entry => this._getInflightKey(entry.coordinates)).sort()
+    // Pre-filter: read tracking cache without holding any locks.
+    // Best-effort optimisation — the recheck under the lock is the authoritative
+    // guard against the TOCTOU window between here and lock acquisition.
+    const candidateEntries = await this._filterOutTracked(uniqueEntries, this.concurrencyLimit)
+    if (!candidateEntries.length) {
+      this.logger.debug('No new harvests to process.')
+      return
+    }
+
+    // Compute keys only for candidates so the lock batch is as small as possible.
+    const sortedInflightKeys = candidateEntries.map(entry => this._getInflightKey(entry.coordinates)).sort()
 
     await this._acquireLocalInflightKeys(sortedInflightKeys)
     try {
       await this._acquireAllInflightLocks(sortedInflightKeys)
       try {
-        const harvests = await this._filterOutTracked(uniqueEntries)
+        // Recheck under lock: guards the TOCTOU window between pre-filter and lock acquisition.
+        const harvests = await this._filterOutTracked(candidateEntries)
         if (!harvests.length) {
           this.logger.debug('No new harvests to process.')
           return
@@ -118,7 +135,7 @@ export class CacheBasedHarvester {
         await this._harvester.harvest(harvests, turbo)
         await this._trackHarvests(harvests)
       } finally {
-        await this._releaseInflightLocks(uniqueEntries)
+        await this._releaseInflightKeys(sortedInflightKeys)
       }
     } finally {
       this._releaseLocalInflightKeys(sortedInflightKeys)
@@ -217,11 +234,6 @@ export class CacheBasedHarvester {
     }
   }
 
-  async _releaseInflightLocks(entries: HarvestEntry[]): Promise<void> {
-    const keys = entries.map(entry => this._getInflightKey(entry.coordinates))
-    await this._releaseInflightKeys(keys)
-  }
-
   async _releaseInflightKeys(keys: string[]): Promise<void> {
     const results = await Promise.allSettled(keys.map(key => this._cache.delete(key)))
     for (const result of results) {
@@ -254,10 +266,12 @@ export class CacheBasedHarvester {
     return uniqBy(validEntries, entry => this._getCacheKey(entry.coordinates))
   }
 
-  async _filterOutTracked(entries: HarvestEntry[]): Promise<HarvestEntry[]> {
-    const filteredEntries = await Promise.all(
-      entries.map(async (entry: HarvestEntry) => ((await this._isTrackedHarvest(entry)) ? null : entry))
-    )
+  async _filterOutTracked(entries: HarvestEntry[], concurrency?: number): Promise<HarvestEntry[]> {
+    // Skip throat when entries are already at/below the limit to avoid unnecessary wrapping.
+    const isConcurrencyValid = concurrency !== undefined && concurrency > 0 && concurrency < entries.length
+    const mapper = async (entry: HarvestEntry) => ((await this._isTrackedHarvest(entry)) ? null : entry)
+    const filteredEntries = await Promise.all(entries.map(isConcurrencyValid ? throat(concurrency!, mapper) : mapper))
+
     return filteredEntries.filter((entry): entry is HarvestEntry => entry !== null)
   }
 

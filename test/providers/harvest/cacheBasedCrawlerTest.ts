@@ -143,14 +143,80 @@ describe('CacheBasedHarvester', () => {
       cacheMock.store[cacheKeyBar] = [bar]
       await crawler.harvest(spec, false)
       assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
-      assert.ok(
-        cacheMock.delete.calledWith(inflightKey(foo.coordinates)),
-        'Expected inflight lock for foo to be released'
+      // Pre-filter returns early before any lock is acquired — no inflight delete expected.
+    })
+
+    it('skips lock acquisition entirely when pre-filter removes all entries', async () => {
+      const setIfAbsentBatchSpy = sinon.spy(cacheMock, 'setIfAbsentBatch')
+      cacheMock.store[cacheKeyFoo] = [foo]
+      cacheMock.store[cacheKeyBar] = [bar]
+      await crawler.harvest(spec, false)
+      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
+      assert.ok(setIfAbsentBatchSpy.notCalled, 'Expected no Redis lock acquisition when pre-filter removes all entries')
+      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to remain empty')
+    })
+
+    it('acquires locks only for untracked entries after pre-filter', async () => {
+      const setIfAbsentBatchSpy = sinon.spy(cacheMock, 'setIfAbsentBatch')
+      const localAcquireSpy = sinon.spy(crawler, '_acquireSortedLocalInflightKeys')
+      cacheMock.store[cacheKeyFoo] = [foo]
+      await crawler.harvest(spec, false)
+      const expectedKey = inflightKey(bar.coordinates)
+      assert.strictEqual(setIfAbsentBatchSpy.callCount, 1, 'setIfAbsentBatch should be called once (for bar only)')
+      assert.deepStrictEqual(
+        setIfAbsentBatchSpy.getCall(0).args[0],
+        [expectedKey],
+        'Expected Redis lock batch to contain only the untracked entry key'
       )
-      assert.ok(
-        cacheMock.delete.calledWith(inflightKey(bar.coordinates)),
-        'Expected inflight lock for bar to be released'
+      assert.deepStrictEqual(
+        localAcquireSpy.getCall(0).args[0],
+        [expectedKey],
+        'Expected local lock acquisition to contain only the untracked entry key'
       )
+      assert.deepStrictEqual(
+        harvesterMock.harvest.args[0][0],
+        [bar],
+        'Expected harvester to be called with only the untracked entry'
+      )
+    })
+
+    it('uses configured concurrency for outer pre-filter and leaves in-lock recheck unthrottled', async () => {
+      crawler = createCrawler({ concurrencyLimit: 7 })
+      const filterSpy = sinon.spy(crawler, '_filterOutTracked')
+      cacheMock.store[cacheKeyFoo] = [foo]
+
+      await crawler.harvest(spec, false)
+
+      // Fixture expectation: foo is pre-tracked, so pre-filter returns [bar] and in-lock recheck still runs.
+      assert.strictEqual(filterSpy.callCount, 2, 'Expected pre-filter and in-lock recheck calls')
+      assert.deepStrictEqual(filterSpy.getCall(0).args[0], spec, 'Expected outer pre-filter call with original spec')
+      assert.deepStrictEqual(
+        filterSpy.getCall(1).args[0],
+        [bar],
+        'Expected in-lock recheck call with candidate entries'
+      )
+      assert.strictEqual(filterSpy.getCall(0).args[1], 7, 'Expected outer pre-filter to use configured concurrency')
+      assert.strictEqual(filterSpy.getCall(1).args[1], undefined, 'Expected in-lock recheck to remain unthrottled')
+    })
+
+    it('releases inflight locks only for candidate entries after pre-filter', async () => {
+      const deleteSpy = cacheMock.delete
+      cacheMock.store[cacheKeyFoo] = [foo]
+
+      await crawler.harvest(spec, false)
+
+      assert.ok(deleteSpy.calledWith(inflightKey(bar.coordinates)), 'Expected inflight lock release for untracked bar')
+      assert.ok(
+        deleteSpy.neverCalledWith(inflightKey(foo.coordinates)),
+        'Expected no inflight lock release for pre-filtered foo'
+      )
+      assert.strictEqual(deleteSpy.callCount, 1, 'Expected exactly one inflight lock release')
+    })
+
+    it('proceeds through pre-filter and dispatches harvest when cache.get throws', async () => {
+      cacheMock.get = sinon.stub().rejects(new Error('Cache read error'))
+      await assert.doesNotReject(() => crawler.harvest([foo], false))
+      assert.ok(harvesterMock.harvest.calledOnce, 'Expected harvest to proceed when pre-filter cache reads fail')
     })
 
     it('does not call harvester if no entries are provided', async () => {
@@ -385,12 +451,12 @@ describe('CacheBasedHarvester', () => {
       const releaseOrder: string[] = []
       cacheMock.set = sinon.stub().rejects(new Error('Cache write error'))
 
-      const originalReleaseInflightLocks = crawler._releaseInflightLocks.bind(crawler)
+      const originalReleaseInflightKeys = crawler._releaseInflightKeys.bind(crawler)
       const originalReleaseLocalInflightKeys = crawler._releaseLocalInflightKeys.bind(crawler)
 
-      sinon.stub(crawler, '_releaseInflightLocks').callsFake(async entries => {
+      sinon.stub(crawler, '_releaseInflightKeys').callsFake(async keys => {
         releaseOrder.push('redis')
-        await originalReleaseInflightLocks(entries)
+        await originalReleaseInflightKeys(keys)
       })
 
       sinon.stub(crawler, '_releaseLocalInflightKeys').callsFake(keys => {
@@ -474,6 +540,46 @@ describe('CacheBasedHarvester', () => {
       const result = await crawler.isTracked('')
       assert.strictEqual(result, false)
       assert.ok(cacheMock.get.notCalled, 'Expected cache get not to be called')
+    })
+  })
+
+  describe('_filterOutTracked', () => {
+    it('caps parallel tracking checks when concurrency is provided', async () => {
+      const entries = Array.from({ length: 6 }, (_, index) => ({ coordinates: `pkg/npm/item/${index}` }))
+      let inFlight = 0
+      let maxInFlight = 0
+
+      sinon.stub(crawler, '_isTrackedHarvest').callsFake(async () => {
+        inFlight += 1
+        maxInFlight = Math.max(maxInFlight, inFlight)
+        await new Promise(resolve => setTimeout(resolve, 5))
+        inFlight -= 1
+        return false
+      })
+
+      const result = await crawler._filterOutTracked(entries, 2)
+
+      assert.strictEqual(result.length, entries.length, 'Expected all entries to pass through when none are tracked')
+      assert.ok(maxInFlight <= 2, `Expected max concurrent checks <= 2, got ${maxInFlight}`)
+    })
+
+    it('bypasses throat when concurrency is greater than or equal to entry count', async () => {
+      const entries = Array.from({ length: 6 }, (_, index) => ({ coordinates: `pkg/npm/item/${index}` }))
+      let inFlight = 0
+      let maxInFlight = 0
+
+      sinon.stub(crawler, '_isTrackedHarvest').callsFake(async () => {
+        inFlight += 1
+        maxInFlight = Math.max(maxInFlight, inFlight)
+        await new Promise(resolve => setTimeout(resolve, 5))
+        inFlight -= 1
+        return false
+      })
+
+      const result = await crawler._filterOutTracked(entries, 10)
+
+      assert.strictEqual(result.length, entries.length, 'Expected all entries to pass through when none are tracked')
+      assert.strictEqual(maxInFlight, entries.length, `Expected unthrottled execution when limit >= entries, got ${maxInFlight}`)
     })
   })
 
