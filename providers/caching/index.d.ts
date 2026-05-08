@@ -60,6 +60,17 @@ export interface ICache {
    * @returns true when set succeeds, false when key already exists
    */
   setIfAbsent(item: string, value: string, ttlSeconds: number): Promise<boolean> | boolean
+
+  /**
+   * Atomically acquires all keys in a single operation. If any key is already held,
+   * all previously acquired keys in this call are released before returning false.
+   *
+   * @param keys - The keys to acquire
+   * @param value - The string value to store for each key
+   * @param ttlSeconds - Time-to-live in seconds for each key
+   * @returns true when all keys were acquired, false when any key was already held
+   */
+  setIfAbsentBatch(keys: string[], value: string, ttlSeconds: number): Promise<boolean> | boolean
 }
 
 /**

@@ -19,6 +19,7 @@ describe('Redis Cache', () => {
     const store = {}
     let mockClient
     let cache
+
     beforeEach(() => {
       mockClient = {
         get: async key => Promise.resolve(store[key]),
@@ -34,7 +35,23 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: sinon.stub().resolves(),
+        scriptLoad: sinon.stub().resolves('fakeSha'),
+        evalSha: sinon.stub().callsFake(async (_sha, { keys, arguments: args }) => {
+          const value = args[1]
+          const acquired: string[] = []
+          for (const key of keys) {
+            if (store[key] !== undefined && store[key] !== null) {
+              acquired.forEach(k => {
+                store[k] = null
+              })
+              return 0
+            }
+            store[key] = value
+            acquired.push(key)
+          }
+          return 1
+        })
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger } as any)
@@ -42,6 +59,9 @@ describe('Redis Cache', () => {
 
     afterEach(() => {
       sandbox.restore()
+      for (const key of Object.keys(store)) {
+        delete store[key]
+      }
     })
 
     it('works well for a specific tool version', async () => {
@@ -80,6 +100,50 @@ describe('Redis Cache', () => {
       assert.strictEqual(first, true)
       assert.strictEqual(second, false)
       assert.ok(mockClient.set.calledWith('lock_foo', '1', { condition: 'NX', EX: 120 }))
+    })
+
+    it('setIfAbsentBatch acquires all keys and returns true when all absent', async () => {
+      await cache.initialize()
+      const result = await cache.setIfAbsentBatch(['key1', 'key2', 'key3'], '1', 60)
+      assert.strictEqual(result, true)
+      assert.strictEqual(store['key1'], '1')
+      assert.strictEqual(store['key2'], '1')
+      assert.strictEqual(store['key3'], '1')
+    })
+
+    it('setIfAbsentBatch returns false and sets nothing when first key already held', async () => {
+      await cache.initialize()
+      store['key1'] = 'held'
+      const result = await cache.setIfAbsentBatch(['key1', 'key2'], '1', 60)
+      assert.strictEqual(result, false)
+      assert.strictEqual(store['key2'], undefined)
+    })
+
+    it('setIfAbsentBatch returns false and releases partial keys when middle key already held', async () => {
+      await cache.initialize()
+      store['key2'] = 'held'
+      const result = await cache.setIfAbsentBatch(['key1', 'key2', 'key3'], '1', 60)
+      assert.strictEqual(result, false)
+      assert.strictEqual(store['key1'], null, 'key1 should be released (set to null by mock)')
+      assert.strictEqual(store['key3'], undefined, 'key3 should never have been set')
+    })
+
+    it('setIfAbsentBatch loads script once during initialize', async () => {
+      await cache.initialize()
+      assert.ok(mockClient.scriptLoad.calledOnce, 'scriptLoad should be called once on initialize')
+    })
+
+    it('setIfAbsentBatch re-loads script and retries on NOSCRIPT error', async () => {
+      await cache.initialize()
+      mockClient.evalSha
+        .onFirstCall()
+        .rejects(Object.assign(new Error('NOSCRIPT No matching script'), { message: 'NOSCRIPT No matching script' }))
+        .onSecondCall()
+        .resolves(1)
+
+      const result = await cache.setIfAbsentBatch(['key1'], '1', 60)
+      assert.strictEqual(result, true)
+      assert.ok(mockClient.scriptLoad.calledTwice, 'scriptLoad should be called again after NOSCRIPT')
     })
 
     it('throws error if redis connection fails', async () => {
@@ -137,7 +201,9 @@ describe('Redis Cache', () => {
         },
         connect: async () => Promise.resolve(mockClient),
         on: () => {},
-        quit: sinon.stub().resolves()
+        quit: sinon.stub().resolves(),
+        scriptLoad: sinon.stub().resolves('fakeSha'),
+        evalSha: sinon.stub().resolves(1)
       }
       sandbox.stub(RedisCache, 'buildRedisClient').returns(mockClient)
       cache = redisCache({ logger } as any)
@@ -145,7 +211,6 @@ describe('Redis Cache', () => {
 
     afterEach(() => {
       sandbox.restore()
-      // Clear store
       for (const key of Object.keys(store)) {
         delete store[key]
       }
@@ -153,8 +218,8 @@ describe('Redis Cache', () => {
 
     describe('Format Detection', () => {
       it('should detect old binary string format correctly', () => {
-        const oldData = 'xÚ+JMÉ,V°ª5´³0²ä\u0002\u0000\u0011î\u0003ê'
-        const isBase64 = /^[A-Za-z0-9+/]+=*$/.test(oldData)
+        const oldFormatData = '\x78\xDA\x2B\x4A\x4D\xC9\x2C\x56\xB0\xAA\x35\xB4\xB3\x30\xB2\xE4\x02\x00\x11\xEE\x03\xEA'
+        const isBase64 = /^[A-Za-z0-9+/]+=*$/.test(oldFormatData)
         assert.strictEqual(isBase64, false)
       })
 
@@ -312,6 +377,7 @@ describe('Redis Cache', () => {
       })
     })
   })
+
   xdescribe('Integration Test', () => {
     let container
     let redisConfig

@@ -161,7 +161,7 @@ export class CacheBasedHarvester {
     await this._acquireLocksWithRetry(
       sortedKeys,
       keys => this._acquireSortedInflightKeys(keys),
-      keys => this._releaseInflightKeys(keys, { throwOnFailure: true }),
+      keys => this._releaseInflightKeys(keys),
       () => this._getLockRetryDelayMs(),
       'inflight'
     )
@@ -187,7 +187,7 @@ export class CacheBasedHarvester {
         return
       }
 
-      const missedKey = sortedKeys[acquired.length] || 'unknown'
+      const missedKey = acquired.length > 0 ? sortedKeys[acquired.length] : 'unknown'
       this.logger.debug(
         `${label} lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
       )
@@ -207,18 +207,12 @@ export class CacheBasedHarvester {
   }
 
   async _acquireSortedInflightKeys(sortedKeys: string[]): Promise<string[]> {
-    const acquired: string[] = []
     try {
-      for (const key of sortedKeys) {
-        const lockAcquired = await this._cache.setIfAbsent(key, '1', this.inflightTTLInSeconds)
-        if (!lockAcquired) {
-          break
-        }
-        acquired.push(key)
-      }
-      return acquired
+      const allAcquired = await this._cache.setIfAbsentBatch(sortedKeys, '1', this.inflightTTLInSeconds)
+      return allAcquired ? sortedKeys : []
     } catch (error) {
-      await this._releaseInflightKeys(acquired)
+      // Lua may have acquired some keys before throwing — release all to be safe (DEL is idempotent).
+      await this._releaseInflightKeys(sortedKeys)
       throw error
     }
   }
@@ -228,18 +222,12 @@ export class CacheBasedHarvester {
     await this._releaseInflightKeys(keys)
   }
 
-  async _releaseInflightKeys(keys: string[], options: { throwOnFailure?: boolean } = {}): Promise<void> {
-    const { throwOnFailure = false } = options
+  async _releaseInflightKeys(keys: string[]): Promise<void> {
     const results = await Promise.allSettled(keys.map(key => this._cache.delete(key)))
-    const reasons: unknown[] = []
     for (const result of results) {
       if (result.status === 'rejected') {
-        reasons.push(result.reason)
         this.logger.error('Error releasing inflight lock', result.reason)
       }
-    }
-    if (throwOnFailure && reasons.length) {
-      throw new AggregateError(reasons, `Failed to release ${reasons.length} inflight lock(s)`)
     }
   }
 

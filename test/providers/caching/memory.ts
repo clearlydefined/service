@@ -70,4 +70,49 @@ describe('MemoryCache', () => {
       }
     })
   })
+
+  describe('setIfAbsentBatch', () => {
+    let cache: ReturnType<typeof memoryCacheFactory>
+
+    beforeEach(() => {
+      cache = memoryCacheFactory()
+    })
+
+    it('returns true and sets all keys when all absent', () => {
+      const result = cache.setIfAbsentBatch(['k1', 'k2', 'k3'], '1', 60)
+      assert.strictEqual(result, true)
+      assert.strictEqual(cache.get('k1'), '1')
+      assert.strictEqual(cache.get('k2'), '1')
+      assert.strictEqual(cache.get('k3'), '1')
+    })
+
+    it('returns false and sets nothing when first key already held', () => {
+      cache.setIfAbsent('k1', 'held', 60)
+      const result = cache.setIfAbsentBatch(['k1', 'k2'], '1', 60)
+      assert.strictEqual(result, false)
+      assert.strictEqual(cache.get('k2'), null)
+    })
+
+    it('returns false and releases partial keys when middle key already held', () => {
+      cache.setIfAbsent('k2', 'held', 60)
+      const result = cache.setIfAbsentBatch(['k1', 'k2', 'k3'], '1', 60)
+      assert.strictEqual(result, false)
+      assert.strictEqual(cache.get('k1'), null, 'k1 should be released')
+      assert.strictEqual(cache.get('k3'), null, 'k3 should never have been set')
+    })
+
+    it('returns false and releases all preceding keys when last key is already held', () => {
+      cache.setIfAbsent('k3', 'held', 60)
+      const result = cache.setIfAbsentBatch(['k1', 'k2', 'k3'], '1', 60)
+      assert.strictEqual(result, false)
+      assert.strictEqual(cache.get('k1'), null, 'k1 should be released')
+      assert.strictEqual(cache.get('k2'), null, 'k2 should be released')
+      assert.strictEqual(cache.get('k3'), 'held', 'held key should be untouched')
+    })
+
+    it('returns true for empty key list', () => {
+      const result = cache.setIfAbsentBatch([], '1', 60)
+      assert.strictEqual(result, true)
+    })
+  })
 })

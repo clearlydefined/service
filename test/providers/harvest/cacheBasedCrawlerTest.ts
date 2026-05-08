@@ -25,6 +25,22 @@ function createCacheMock() {
       this.store[key] = value
       return true
     },
+    async setIfAbsentBatch(keys: string[], value: string) {
+      const acquired: string[] = []
+      for (const key of keys) {
+        if (this.locks.has(key)) {
+          for (const k of acquired) {
+            this.locks.delete(k)
+            delete this.store[k]
+          }
+          return false
+        }
+        this.locks.add(key)
+        this.store[key] = value
+        acquired.push(key)
+      }
+      return true
+    },
     async delete(key) {
       this.locks.delete(key)
       delete this.store[key]
@@ -183,26 +199,25 @@ describe('CacheBasedHarvester', () => {
     })
 
     it('acquires inflight locks in sorted key order through harvest', async () => {
-      sinon.spy(cacheMock, 'setIfAbsent')
+      sinon.spy(cacheMock, 'setIfAbsentBatch')
 
       await crawler.harvest([bar, foo], false)
 
-      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
-      assert.strictEqual(cacheMock.setIfAbsent.getCall(0).args[0], firstKey, 'First call should use first sorted key')
-      assert.strictEqual(
-        cacheMock.setIfAbsent.getCall(1).args[0],
-        secondKey,
-        'Second call should use second sorted key'
+      const sortedKeys = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
+      assert.deepStrictEqual(
+        cacheMock.setIfAbsentBatch.getCall(0).args[0],
+        sortedKeys,
+        'setIfAbsentBatch should be called with keys in sorted order'
       )
     })
 
     it('normalizes inflight key casing through harvest', async () => {
       const mixedCase = { coordinates: 'NPM/npmjs/-/LODASH/4.0.0' }
-      sinon.spy(cacheMock, 'setIfAbsent')
+      sinon.spy(cacheMock, 'setIfAbsentBatch')
 
       await crawler.harvest([mixedCase], false)
 
-      assert.strictEqual(cacheMock.setIfAbsent.getCall(0).args[0], 'hrv_inflight_npm/npmjs/-/lodash/4.0.0')
+      assert.deepStrictEqual(cacheMock.setIfAbsentBatch.getCall(0).args[0], ['hrv_inflight_npm/npmjs/-/lodash/4.0.0'])
     })
 
     it('releases partially acquired locks before retrying', async () => {
@@ -220,20 +235,14 @@ describe('CacheBasedHarvester', () => {
       assert.ok(!cacheMock.locks.has(secondKey), 'Expected second lock to be released at end of harvest')
     })
 
-    it('throws aggregate release error when partial-lock release fails in retry path', async () => {
-      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
+    it('times out and cleans up local locks when second key is permanently held', async () => {
+      const [, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
 
       cacheMock.locks.add(secondKey)
-      cacheMock.delete = sinon.stub().callsFake(async key => {
-        if (key === firstKey) {
-          throw new Error('Release failed')
-        }
-        cacheMock.locks.delete(key)
-      })
 
       await assert.rejects(async () => {
         await crawler.harvest([foo, bar], false)
-      }, /Failed to release 1 inflight lock\(s\)/)
+      }, /Timed out acquiring inflight harvest coordinate locks/)
 
       assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to be fully released')
     })
@@ -254,7 +263,7 @@ describe('CacheBasedHarvester', () => {
       )
     })
 
-    it('releases partially acquired redis locks when timeout occurs mid-multi-key acquisition', async () => {
+    it('times out cleanly when one key is held throughout, leaving no leaked locks', async () => {
       const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
       cacheMock.locks.add(secondKey)
 
@@ -262,7 +271,7 @@ describe('CacheBasedHarvester', () => {
         await crawler.harvest([foo, bar], false)
       }, /Timed out acquiring inflight harvest coordinate locks/)
 
-      assert.ok(!cacheMock.locks.has(firstKey), 'Partially acquired first key should be released after timeout')
+      assert.ok(!cacheMock.locks.has(firstKey), 'No lock should remain for first key after timeout')
       assert.ok(cacheMock.locks.has(secondKey), 'Seeded second key should remain (held by another requester)')
       assert.strictEqual(crawler._localInflightKeys.size, 0, 'Local locks should be fully released after timeout')
     })
@@ -278,7 +287,7 @@ describe('CacheBasedHarvester', () => {
         lockAcquireTimeoutMs: 40
       })
 
-      sinon.spy(cacheMock, 'setIfAbsent')
+      sinon.spy(cacheMock, 'setIfAbsentBatch')
       const clock = sinon.useFakeTimers()
       try {
         const pending = crawlerWithFixedDelay.harvest([foo], false)
@@ -287,7 +296,7 @@ describe('CacheBasedHarvester', () => {
         await rejection
 
         assert.ok(
-          cacheMock.setIfAbsent.callCount >= 2,
+          cacheMock.setIfAbsentBatch.callCount >= 2,
           'Expected multiple lock attempts while retrying with fixed delay before timing out'
         )
       } finally {
@@ -295,57 +304,49 @@ describe('CacheBasedHarvester', () => {
       }
     })
 
-    it('releases partially acquired locks when setIfAbsent throws mid-acquire', async () => {
+    it('releases all keys when setIfAbsentBatch throws', async () => {
       const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
 
-      cacheMock.setIfAbsent = sinon.stub().callsFake(async key => {
-        if (key === firstKey) {
-          cacheMock.locks.add(key)
-          return true
-        }
-        if (key === secondKey) {
-          throw new Error('Redis unavailable')
-        }
-        return false
+      cacheMock.setIfAbsentBatch = sinon.stub().callsFake(async (_keys: string[]) => {
+        // Simulate: script acquired some keys server-side before throwing
+        cacheMock.locks.add(firstKey)
+        throw new Error('Redis unavailable')
       })
 
       await assert.rejects(async () => {
         await crawler.harvest([foo, bar], false)
       }, /Redis unavailable/)
 
-      assert.ok(cacheMock.delete.calledWith(firstKey), 'Expected partially acquired lock to be released on error')
-      assert.ok(!cacheMock.locks.has(firstKey), 'Expected partially acquired lock to be cleared after error')
+      assert.ok(cacheMock.delete.calledWith(firstKey), 'Expected all keys to be released on error')
+      assert.ok(cacheMock.delete.calledWith(secondKey), 'Expected all keys to be released on error')
     })
 
-    it('does not attempt lock release when setIfAbsent throws on first key', async () => {
+    it('releases all keys as safety net when setIfAbsentBatch throws without acquiring any', async () => {
+      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
+
+      cacheMock.setIfAbsentBatch = sinon.stub().callsFake(async () => {
+        throw new Error('Redis unavailable')
+      })
+
+      await assert.rejects(async () => {
+        await crawler.harvest([foo, bar], false)
+      }, /Redis unavailable/)
+
+      assert.ok(
+        cacheMock.delete.calledWith(firstKey),
+        'Expected safety release of first key even with no keys acquired'
+      )
+      assert.ok(
+        cacheMock.delete.calledWith(secondKey),
+        'Expected safety release of second key even with no keys acquired'
+      )
+    })
+
+    it('rethrows setIfAbsentBatch error even when safety release also fails', async () => {
       const [firstKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
 
-      cacheMock.setIfAbsent = sinon.stub().callsFake(async key => {
-        if (key === firstKey) {
-          throw new Error('Redis unavailable')
-        }
-        return false
-      })
-
-      await assert.rejects(async () => {
-        await crawler.harvest([foo, bar], false)
-      }, /Redis unavailable/)
-
-      assert.ok(cacheMock.delete.notCalled, 'Expected no delete calls when no lock was acquired')
-    })
-
-    it('rethrows original setIfAbsent error when partial lock release also fails', async () => {
-      const [firstKey, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
-
-      cacheMock.setIfAbsent = sinon.stub().callsFake(async key => {
-        if (key === firstKey) {
-          cacheMock.locks.add(key)
-          return true
-        }
-        if (key === secondKey) {
-          throw new Error('Redis unavailable')
-        }
-        return false
+      cacheMock.setIfAbsentBatch = sinon.stub().callsFake(async () => {
+        throw new Error('Redis unavailable')
       })
 
       cacheMock.delete = sinon.stub().callsFake(async key => {
@@ -405,14 +406,17 @@ describe('CacheBasedHarvester', () => {
     it('throws when local lock acquisition exceeds timeout', async () => {
       const keyFoo = inflightKey(foo.coordinates)
       crawler._localInflightKeys.add(keyFoo)
-      sinon.spy(cacheMock, 'setIfAbsent')
+      sinon.spy(cacheMock, 'setIfAbsentBatch')
 
       await assert.rejects(
         () => crawler.harvest([foo], false),
         /Timed out acquiring local inflight harvest coordinate locks/
       )
 
-      assert.ok(cacheMock.setIfAbsent.notCalled, 'Redis setIfAbsent should not be called when local times out')
+      assert.ok(
+        cacheMock.setIfAbsentBatch.notCalled,
+        'Redis setIfAbsentBatch should not be called when local times out'
+      )
       assert.strictEqual(
         crawler._localInflightKeys.size,
         1,
@@ -422,15 +426,15 @@ describe('CacheBasedHarvester', () => {
 
     it('local gate prevents simultaneous Redis acquire attempts for same-instance concurrent requests', async () => {
       addHarvesterDelay(15)
-      sinon.spy(cacheMock, 'setIfAbsent')
+      sinon.spy(cacheMock, 'setIfAbsentBatch')
 
       await Promise.all([crawler.harvest([foo], false), crawler.harvest([foo], false)])
 
       assert.strictEqual(harvesterMock.harvest.callCount, 1, 'Only one harvest dispatched')
-      // With local gate: each request acquires Redis lock exactly once, no retry contention.
-      // Without local gate: requests race at Redis and setIfAbsent is called many more times.
+      // With local gate: each request calls setIfAbsentBatch exactly once, no retry contention.
+      // Without local gate: requests race at Redis and setIfAbsentBatch is called many more times.
       assert.strictEqual(
-        cacheMock.setIfAbsent.callCount,
+        cacheMock.setIfAbsentBatch.callCount,
         2,
         'Each request hits Redis exactly once — local gate prevents simultaneous Redis contention'
       )
@@ -504,6 +508,13 @@ describe('CacheBasedHarvester', () => {
       assert.ok(cacheMock.delete.calledOnce, 'Expected cache delete to be called')
       isBarTracked = await crawler.isTracked(bar.coordinates)
       assert.ok(!isBarTracked, 'Expected cache to not be set for bar')
+    })
+
+    it('resolves and logs when cache.delete throws', async () => {
+      cacheMock.delete = sinon.stub().rejects(new Error('Cache error'))
+
+      await assert.doesNotReject(() => crawler.done(foo.coordinates))
+      assert.ok(loggerMock.error.called, 'Expected error to be logged')
     })
   })
 
