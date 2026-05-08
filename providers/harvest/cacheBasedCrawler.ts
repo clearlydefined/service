@@ -48,6 +48,7 @@ export interface Options {
   lockRetryDelayMaxMs?: number
   lockAcquireTimeoutMs?: number
   localLockRetryDelayMs?: number
+  localLockTimeoutBufferMs?: number
   concurrencyLimit?: number
 }
 
@@ -63,10 +64,15 @@ const localLockRetryDelayMs = 5
 /** Default max concurrent cache reads during pre-filter. */
 const concurrencyLimit = 10
 /**
- * Default maximum lock acquire wait in milliseconds.
- * Keep this below upstream request timeouts so callers receive a structured error.
+ * Default maximum lock acquire wait in milliseconds for the Redis layer.
+ * The local layer uses lockAcquireTimeoutMs + localLockTimeoutBufferMs to cover
+ * a full Redis acquisition cycle plus work inside the lock.
+ * Worst-case total blocking per harvest call: 2 × lockAcquireTimeoutMs + localLockTimeoutBufferMs.
+ * Keep lockAcquireTimeoutMs below upstream request timeouts so callers receive a structured error.
  */
 const lockAcquireTimeoutMs = 30 * 1000
+/** Extra buffer added to the local lock timeout to cover work inside the Redis lock. */
+const localLockTimeoutBufferMs = 10 * 1000
 
 /**
  * Cache-based harvester that tracks and filters harvest operations to avoid duplicates. This class provides efficient
@@ -84,6 +90,7 @@ export class CacheBasedHarvester {
   declare lockRetryDelayMaxMs: number
   declare lockAcquireTimeoutMs: number
   declare localLockRetryDelayMs: number
+  declare localLockTimeoutBufferMs: number
   declare concurrencyLimit: number
 
   constructor(options: Options) {
@@ -91,13 +98,14 @@ export class CacheBasedHarvester {
     this._cache = options.cachingService
     this._harvester = options.harvester
     this._localInflightKeys = new Set()
-    this.cacheTTLInSeconds = options.cacheTTLInSeconds || cacheTTLInSeconds
-    this.inflightTTLInSeconds = options.inflightTTLInSeconds || inflightTTLInSeconds
-    this.lockRetryDelayMinMs = options.lockRetryDelayMinMs || lockRetryDelayMinMs
-    this.lockRetryDelayMaxMs = options.lockRetryDelayMaxMs || lockRetryDelayMaxMs
-    this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs || lockAcquireTimeoutMs
-    this.localLockRetryDelayMs = options.localLockRetryDelayMs || localLockRetryDelayMs
-    this.concurrencyLimit = options.concurrencyLimit || concurrencyLimit
+    this.cacheTTLInSeconds = options.cacheTTLInSeconds ?? cacheTTLInSeconds
+    this.inflightTTLInSeconds = options.inflightTTLInSeconds ?? inflightTTLInSeconds
+    this.lockRetryDelayMinMs = options.lockRetryDelayMinMs ?? lockRetryDelayMinMs
+    this.lockRetryDelayMaxMs = options.lockRetryDelayMaxMs ?? lockRetryDelayMaxMs
+    this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs ?? lockAcquireTimeoutMs
+    this.localLockRetryDelayMs = options.localLockRetryDelayMs ?? localLockRetryDelayMs
+    this.localLockTimeoutBufferMs = options.localLockTimeoutBufferMs ?? localLockTimeoutBufferMs
+    this.concurrencyLimit = options.concurrencyLimit ?? concurrencyLimit
   }
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
@@ -151,7 +159,8 @@ export class CacheBasedHarvester {
       sortedKeys,
       keys => this._acquireSortedLocalInflightKeys(keys),
       keys => this._releaseLocalInflightKeys(keys),
-      this.localLockRetryDelayMs,
+      () => this.localLockRetryDelayMs,
+      this.lockAcquireTimeoutMs + this.localLockTimeoutBufferMs,
       'local inflight'
     )
   }
@@ -180,6 +189,7 @@ export class CacheBasedHarvester {
       keys => this._acquireSortedInflightKeys(keys),
       keys => this._releaseInflightKeys(keys),
       () => this._getLockRetryDelayMs(),
+      this.lockAcquireTimeoutMs,
       'inflight'
     )
   }
@@ -188,7 +198,8 @@ export class CacheBasedHarvester {
     sortedKeys: string[],
     tryAcquire: (keys: string[]) => Promise<string[]> | string[],
     release: (keys: string[]) => Promise<void> | void,
-    retryDelayMs: number | (() => number),
+    retryDelayMs: () => number,
+    timeoutMs: number,
     label: string
   ): Promise<void> {
     const started = Date.now()
@@ -204,18 +215,18 @@ export class CacheBasedHarvester {
         return
       }
 
-      const missedKey = acquired.length > 0 ? sortedKeys[acquired.length] : 'unknown'
+      const missedKey = sortedKeys[acquired.length] ?? 'unknown'
       this.logger.debug(
         `${label} lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
       )
       await release(acquired)
 
-      if (Date.now() - started >= this.lockAcquireTimeoutMs) {
+      if (Date.now() - started >= timeoutMs) {
         throw new Error(
           `Timed out acquiring ${label} harvest coordinate locks after ${attempts} attempt(s) in ${Date.now() - started}ms`
         )
       }
-      const delay = typeof retryDelayMs === 'function' ? retryDelayMs() : retryDelayMs
+      const delay = retryDelayMs()
       this.logger.debug(
         `Retrying ${label} lock acquisition in ${delay}ms (attempt ${attempts + 1}, elapsed ${Date.now() - started}ms).`
       )

@@ -146,6 +146,15 @@ describe('Redis Cache', () => {
       assert.ok(mockClient.scriptLoad.calledTwice, 'scriptLoad should be called again after NOSCRIPT')
     })
 
+    it('setIfAbsentBatch returns true for empty key list', async () => {
+      await cache.initialize()
+
+      const result = await cache.setIfAbsentBatch([], '1', 60)
+
+      assert.strictEqual(result, true)
+      assert.strictEqual(Object.keys(store).length, 0, 'No keys should be modified for empty batch')
+    })
+
     it('throws error if redis connection fails', async () => {
       mockClient.connect = () => Promise.reject(new Error('Connection failed'))
       try {

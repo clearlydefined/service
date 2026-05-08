@@ -72,6 +72,7 @@ describe('CacheBasedHarvester', () => {
       lockRetryDelayMaxMs: 2,
       lockAcquireTimeoutMs: 100,
       localLockRetryDelayMs: 1,
+      localLockTimeoutBufferMs: 0,
       ...overrides
     })
 
@@ -579,7 +580,70 @@ describe('CacheBasedHarvester', () => {
       const result = await crawler._filterOutTracked(entries, 10)
 
       assert.strictEqual(result.length, entries.length, 'Expected all entries to pass through when none are tracked')
-      assert.strictEqual(maxInFlight, entries.length, `Expected unthrottled execution when limit >= entries, got ${maxInFlight}`)
+      assert.strictEqual(
+        maxInFlight,
+        entries.length,
+        `Expected unthrottled execution when limit >= entries, got ${maxInFlight}`
+      )
+    })
+  })
+
+  describe('_trackHarvests', () => {
+    it('runs tracking writes unthrottled', async () => {
+      const entries = Array.from({ length: 6 }, (_, index) => ({ coordinates: `pkg/npm/item/${index}` }))
+      let inFlight = 0
+      let maxInFlight = 0
+
+      sinon.stub(crawler, '_track').callsFake(async () => {
+        inFlight += 1
+        maxInFlight = Math.max(maxInFlight, inFlight)
+        await new Promise(resolve => setTimeout(resolve, 5))
+        inFlight -= 1
+      })
+
+      await assert.doesNotReject(() => crawler._trackHarvests(entries))
+
+      assert.strictEqual(
+        maxInFlight,
+        entries.length,
+        `Expected unthrottled tracking writes, got max concurrency ${maxInFlight}`
+      )
+    })
+
+    it('logs individual tracking failures and resolves', async () => {
+      const entries = [foo, bar]
+      const trackError = new Error('Track write failed')
+
+      loggerMock.error.resetHistory()
+      sinon.stub(crawler, '_track').callsFake(async (entry: any) => {
+        if (entry.coordinates === foo.coordinates) {
+          throw trackError
+        }
+      })
+
+      await assert.doesNotReject(() => crawler._trackHarvests(entries))
+      assert.ok(loggerMock.error.calledWith(trackError), 'Expected rejected track operation to be logged')
+    })
+  })
+
+  describe('_releaseInflightKeys', () => {
+    it('logs delete failures and does not throw', async () => {
+      const deleteError = new Error('Delete failed')
+      const keyFoo = inflightKey(foo.coordinates)
+      const keyBar = inflightKey(bar.coordinates)
+
+      loggerMock.error.resetHistory()
+      cacheMock.delete = sinon.stub().callsFake(async key => {
+        if (key === keyFoo) {
+          throw deleteError
+        }
+      })
+
+      await assert.doesNotReject(() => crawler._releaseInflightKeys([keyFoo, keyBar]))
+      assert.ok(
+        loggerMock.error.calledWith('Error releasing inflight lock', deleteError),
+        'Expected release failure to be logged'
+      )
     })
   })
 
