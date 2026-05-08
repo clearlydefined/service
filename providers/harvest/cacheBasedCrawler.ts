@@ -46,6 +46,7 @@ export interface Options {
   lockRetryDelayMinMs?: number
   lockRetryDelayMaxMs?: number
   lockAcquireTimeoutMs?: number
+  localLockRetryDelayMs?: number
 }
 
 /** Default cache TTL: 1 day in seconds */
@@ -55,6 +56,8 @@ const inflightTTLInSeconds = 60
 /** Default lock retry jitter range in milliseconds */
 const lockRetryDelayMinMs = 300
 const lockRetryDelayMaxMs = 500
+/** Default local lock retry delay in milliseconds — short since contention is in-process */
+const localLockRetryDelayMs = 5
 /**
  * Default maximum lock acquire wait in milliseconds.
  * Keep this below upstream request timeouts so callers receive a structured error.
@@ -70,21 +73,25 @@ export class CacheBasedHarvester {
   declare logger: Logger
   declare _cache: ICache
   declare _harvester: Harvester
+  declare _localInflightKeys: Set<string>
   declare cacheTTLInSeconds: number
   declare inflightTTLInSeconds: number
   declare lockRetryDelayMinMs: number
   declare lockRetryDelayMaxMs: number
   declare lockAcquireTimeoutMs: number
+  declare localLockRetryDelayMs: number
 
   constructor(options: Options) {
     this.logger = options.logger || logger()
     this._cache = options.cachingService
     this._harvester = options.harvester
+    this._localInflightKeys = new Set()
     this.cacheTTLInSeconds = options.cacheTTLInSeconds || cacheTTLInSeconds
     this.inflightTTLInSeconds = options.inflightTTLInSeconds || inflightTTLInSeconds
     this.lockRetryDelayMinMs = options.lockRetryDelayMinMs || lockRetryDelayMinMs
     this.lockRetryDelayMaxMs = options.lockRetryDelayMaxMs || lockRetryDelayMaxMs
     this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs || lockAcquireTimeoutMs
+    this.localLockRetryDelayMs = options.localLockRetryDelayMs || localLockRetryDelayMs
   }
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
@@ -96,50 +103,106 @@ export class CacheBasedHarvester {
       return
     }
 
-    await this._acquireAllInflightLocks(uniqueEntries)
+    const sortedInflightKeys = uniqueEntries.map(entry => this._getInflightKey(entry.coordinates)).sort()
+
+    await this._acquireLocalInflightKeys(sortedInflightKeys)
     try {
-      const harvests = await this._filterOutTracked(uniqueEntries)
-      if (!harvests.length) {
-        this.logger.debug('No new harvests to process.')
-        return
+      await this._acquireAllInflightLocks(sortedInflightKeys)
+      try {
+        const harvests = await this._filterOutTracked(uniqueEntries)
+        if (!harvests.length) {
+          this.logger.debug('No new harvests to process.')
+          return
+        }
+        this.logger.debug(`Starting harvest for ${harvests.length} entries.`)
+        await this._harvester.harvest(harvests, turbo)
+        await this._trackHarvests(harvests)
+      } finally {
+        await this._releaseInflightLocks(uniqueEntries)
       }
-      this.logger.debug(`Starting harvest for ${harvests.length} entries.`)
-      await this._harvester.harvest(harvests, turbo)
-      await this._trackHarvests(harvests)
     } finally {
-      await this._releaseInflightLocks(uniqueEntries)
+      this._releaseLocalInflightKeys(sortedInflightKeys)
     }
   }
 
-  async _acquireAllInflightLocks(entries: HarvestEntry[]): Promise<void> {
+  async _acquireLocalInflightKeys(sortedKeys: string[]): Promise<void> {
+    // Uses the same competitive retry pattern as the Redis path rather than a waiter queue.
+    // Fairness and wake-up latency do not matter here: the Redis lock + tracking filter is
+    // the ultimate arbiter of which request dispatches a harvest, so local acquisition order
+    // has no observable effect on correctness.
+    await this._acquireLocksWithRetry(
+      sortedKeys,
+      keys => this._acquireSortedLocalInflightKeys(keys),
+      keys => this._releaseLocalInflightKeys(keys),
+      this.localLockRetryDelayMs,
+      'local inflight'
+    )
+  }
+
+  _acquireSortedLocalInflightKeys(sortedKeys: string[]): string[] {
+    const acquired: string[] = []
+    for (const key of sortedKeys) {
+      if (this._localInflightKeys.has(key)) {
+        break
+      }
+      this._localInflightKeys.add(key)
+      acquired.push(key)
+    }
+    return acquired
+  }
+
+  _releaseLocalInflightKeys(keys: string[]): void {
+    for (const key of keys) {
+      this._localInflightKeys.delete(key)
+    }
+  }
+
+  async _acquireAllInflightLocks(sortedKeys: string[]): Promise<void> {
+    await this._acquireLocksWithRetry(
+      sortedKeys,
+      keys => this._acquireSortedInflightKeys(keys),
+      keys => this._releaseInflightKeys(keys, { throwOnFailure: true }),
+      () => this._getLockRetryDelayMs(),
+      'inflight'
+    )
+  }
+
+  async _acquireLocksWithRetry(
+    sortedKeys: string[],
+    tryAcquire: (keys: string[]) => Promise<string[]> | string[],
+    release: (keys: string[]) => Promise<void> | void,
+    retryDelayMs: number | (() => number),
+    label: string
+  ): Promise<void> {
     const started = Date.now()
-    const sortedKeys = entries.map(entry => this._getInflightKey(entry.coordinates)).sort()
     let attempts = 0
 
     while (true) {
       attempts += 1
-      const acquired = await this._acquireSortedInflightKeys(sortedKeys)
+      const acquired = await tryAcquire(sortedKeys)
       if (acquired.length === sortedKeys.length) {
         this.logger.debug(
-          `Acquired ${acquired.length}/${sortedKeys.length} inflight locks after ${attempts} attempt(s) in ${Date.now() - started}ms.`
+          `Acquired ${acquired.length}/${sortedKeys.length} ${label} lock(s) after ${attempts} attempt(s) in ${Date.now() - started}ms.`
         )
         return
       }
 
       const missedKey = sortedKeys[acquired.length] || 'unknown'
       this.logger.debug(
-        `Inflight lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
+        `${label} lock miss on attempt ${attempts}: acquired ${acquired.length}/${sortedKeys.length}; first missed key ${missedKey}; releasing partial locks.`
       )
-      await this._releaseInflightKeys(acquired, { throwOnFailure: true })
+      await release(acquired)
 
       if (Date.now() - started >= this.lockAcquireTimeoutMs) {
-        throw new Error(`Timed out acquiring harvest coordinate locks after ${this.lockAcquireTimeoutMs}ms`)
+        throw new Error(
+          `Timed out acquiring ${label} harvest coordinate locks after ${attempts} attempt(s) in ${Date.now() - started}ms`
+        )
       }
-      const retryDelayMs = this._getLockRetryDelayMs()
+      const delay = typeof retryDelayMs === 'function' ? retryDelayMs() : retryDelayMs
       this.logger.debug(
-        `Retrying inflight lock acquisition in ${retryDelayMs}ms (attempt ${attempts + 1}, elapsed ${Date.now() - started}ms).`
+        `Retrying ${label} lock acquisition in ${delay}ms (attempt ${attempts + 1}, elapsed ${Date.now() - started}ms).`
       )
-      await this._sleep(retryDelayMs)
+      await this._sleep(delay)
     }
   }
 
