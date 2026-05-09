@@ -17,14 +17,6 @@ function createCacheMock() {
     async set(key, value) {
       this.store[key] = value
     },
-    async setIfAbsent(key, value) {
-      if (this.locks.has(key)) {
-        return false
-      }
-      this.locks.add(key)
-      this.store[key] = value
-      return true
-    },
     async setIfAbsentBatch(keys: string[], value: string) {
       const acquired: string[] = []
       for (const key of keys) {

@@ -161,12 +161,6 @@ class RedisCache implements ICache {
     }
   }
 
-  /** Atomically stores an item only when absent. Intended for distributed lock keys. */
-  async setIfAbsent(item: string, value: string, ttlSeconds: number): Promise<boolean> {
-    const result = await this._client!.set(item, value, { condition: 'NX', EX: ttlSeconds })
-    return result === 'OK'
-  }
-
   /**
    * Atomically acquires all keys in one round-trip via Lua and rolls back partial keys on miss.
    * Note: keys are unlocked via DEL semantics; strict owner-token unlock is a future hardening step.

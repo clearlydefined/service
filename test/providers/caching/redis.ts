@@ -92,16 +92,6 @@ describe('Redis Cache', () => {
       assert.strictEqual(result, null)
     })
 
-    it('sets only when absent with Redis condition NX', async () => {
-      await cache.initialize()
-      const first = await cache.setIfAbsent('lock_foo', '1', 120)
-      const second = await cache.setIfAbsent('lock_foo', '1', 120)
-
-      assert.strictEqual(first, true)
-      assert.strictEqual(second, false)
-      assert.ok(mockClient.set.calledWith('lock_foo', '1', { condition: 'NX', EX: 120 }))
-    })
-
     it('setIfAbsentBatch acquires all keys and returns true when all absent', async () => {
       await cache.initialize()
       const result = await cache.setIfAbsentBatch(['key1', 'key2', 'key3'], '1', 60)
