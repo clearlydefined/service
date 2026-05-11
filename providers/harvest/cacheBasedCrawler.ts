@@ -66,12 +66,13 @@ const concurrencyLimit = 10
 /**
  * Default maximum lock acquire wait in milliseconds for the Redis layer.
  * The local layer uses lockAcquireTimeoutMs + localLockTimeoutBufferMs to cover
- * a full Redis acquisition cycle plus work inside the lock.
+ * the full time a holder can spend inside the local lock: up to lockAcquireTimeoutMs
+ * waiting for Redis, plus localLockTimeoutBufferMs for work inside the Redis lock.
  * Worst-case total blocking per harvest call: 2 × lockAcquireTimeoutMs + localLockTimeoutBufferMs.
  * Keep lockAcquireTimeoutMs below upstream request timeouts so callers receive a structured error.
  */
-const lockAcquireTimeoutMs = 30 * 1000
-/** Extra buffer added to the local lock timeout to cover work inside the Redis lock. */
+const lockAcquireTimeoutMs = 25 * 1000
+/** Buffer added to the local lock waiter timeout to cover dispatch work done inside the Redis lock. */
 const localLockTimeoutBufferMs = 10 * 1000
 
 /**
@@ -151,10 +152,6 @@ export class CacheBasedHarvester {
   }
 
   async _acquireLocalInflightKeys(sortedKeys: string[]): Promise<void> {
-    // Uses the same competitive retry pattern as the Redis path rather than a waiter queue.
-    // Fairness and wake-up latency do not matter here: the Redis lock + tracking filter is
-    // the ultimate arbiter of which request dispatches a harvest, so local acquisition order
-    // has no observable effect on correctness.
     await this._acquireLocksWithRetry(
       sortedKeys,
       keys => this._acquireSortedLocalInflightKeys(keys),
@@ -222,9 +219,9 @@ export class CacheBasedHarvester {
       await release(acquired)
 
       if (Date.now() - started >= timeoutMs) {
-        throw new Error(
-          `Timed out acquiring ${label} harvest coordinate locks after ${attempts} attempt(s) in ${Date.now() - started}ms`
-        )
+        const msg = `Timed out acquiring ${label} harvest coordinate locks after ${attempts} attempt(s) in ${Date.now() - started}ms (timeout: ${timeoutMs}ms)`
+        this.logger.warn(msg)
+        throw new Error(msg)
       }
       const delay = retryDelayMs()
       this.logger.debug(

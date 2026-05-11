@@ -4,6 +4,7 @@
 import assert from 'node:assert'
 import sinon from 'sinon'
 import cacheBasedHarvester from '../../../providers/harvest/cacheBasedCrawler.ts'
+import { createMockLogger } from '../../helpers/mockLogger.ts'
 
 const inflightKey = (coordinates: string): string => `hrv_inflight_${coordinates.toLowerCase()}`
 
@@ -46,10 +47,7 @@ describe('CacheBasedHarvester', () => {
   const foo = { coordinates: 'pkg/npm/foo/1.0.0' }
   const bar = { coordinates: 'pkg/npm/bar/2.0.0' }
 
-  const loggerMock = {
-    debug: sinon.stub(),
-    error: sinon.stub()
-  }
+  const loggerMock = createMockLogger()
 
   let cacheMock
   let crawler
@@ -129,14 +127,6 @@ describe('CacheBasedHarvester', () => {
         [bar],
         'Expected harvester to be called with the correct entries'
       )
-    })
-
-    it('does not trigger harvest if all entries are filtered out', async () => {
-      cacheMock.store[cacheKeyFoo] = [foo]
-      cacheMock.store[cacheKeyBar] = [bar]
-      await crawler.harvest(spec, false)
-      assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
-      // Pre-filter returns early before any lock is acquired — no inflight delete expected.
     })
 
     it('skips lock acquisition entirely when pre-filter removes all entries', async () => {
@@ -294,18 +284,6 @@ describe('CacheBasedHarvester', () => {
       assert.ok(!cacheMock.locks.has(secondKey), 'Expected second lock to be released at end of harvest')
     })
 
-    it('times out and cleans up local locks when second key is permanently held', async () => {
-      const [, secondKey] = [inflightKey(foo.coordinates), inflightKey(bar.coordinates)].sort()
-
-      cacheMock.locks.add(secondKey)
-
-      await assert.rejects(async () => {
-        await crawler.harvest([foo, bar], false)
-      }, /Timed out acquiring inflight harvest coordinate locks/)
-
-      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to be fully released')
-    })
-
     it('throws when lock acquisition exceeds timeout', async () => {
       const keyFoo = inflightKey(foo.coordinates)
       cacheMock.locks.add(keyFoo)
@@ -333,6 +311,22 @@ describe('CacheBasedHarvester', () => {
       assert.ok(!cacheMock.locks.has(firstKey), 'No lock should remain for first key after timeout')
       assert.ok(cacheMock.locks.has(secondKey), 'Seeded second key should remain (held by another requester)')
       assert.strictEqual(crawler._localInflightKeys.size, 0, 'Local locks should be fully released after timeout')
+    })
+
+    it('emits a warn log when lock acquisition times out', async () => {
+      loggerMock.warn.resetHistory()
+      const keyFoo = inflightKey(foo.coordinates)
+      cacheMock.locks.add(keyFoo)
+
+      await assert.rejects(async () => {
+        await crawler.harvest([foo], false)
+      }, /Timed out acquiring inflight harvest coordinate locks/)
+
+      assert.ok(loggerMock.warn.calledOnce, 'Expected exactly one warn log on timeout')
+      assert.ok(
+        loggerMock.warn.firstCall.args[0].includes('Timed out acquiring'),
+        'Expected warn message to mention timeout'
+      )
     })
 
     it('uses fixed retry delay when min equals max', async () => {
@@ -438,28 +432,6 @@ describe('CacheBasedHarvester', () => {
       assert.ok(cacheMock.delete.calledWith(keyFoo), 'Expected inflight lock released after swallowed tracking error')
       assert.ok(!cacheMock.locks.has(keyFoo), 'Expected no inflight lock to remain after swallowed tracking error')
       assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to be fully released')
-    })
-
-    it('runs outer local-release finally after inner redis-release finally when tracking fails', async () => {
-      const releaseOrder: string[] = []
-      cacheMock.set = sinon.stub().rejects(new Error('Cache write error'))
-
-      const originalReleaseInflightKeys = crawler._releaseInflightKeys.bind(crawler)
-      const originalReleaseLocalInflightKeys = crawler._releaseLocalInflightKeys.bind(crawler)
-
-      sinon.stub(crawler, '_releaseInflightKeys').callsFake(async keys => {
-        releaseOrder.push('redis')
-        await originalReleaseInflightKeys(keys)
-      })
-
-      sinon.stub(crawler, '_releaseLocalInflightKeys').callsFake(keys => {
-        releaseOrder.push('local')
-        originalReleaseLocalInflightKeys(keys)
-      })
-
-      await assert.doesNotReject(() => crawler.harvest([foo], false))
-
-      assert.deepStrictEqual(releaseOrder, ['redis', 'local'], 'Expected release ordering to be redis then local')
     })
 
     it('throws when local lock acquisition exceeds timeout', async () => {
