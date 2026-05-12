@@ -57,15 +57,21 @@ describe('redisConfig.serviceFactory', () => {
     const configGet = mappingGet({
       CACHING_REDIS_SERVICE: 'redis://example',
       CACHING_REDIS_API_KEY: 'secret-key',
-      CACHING_REDIS_PORT: '6380'
+      CACHING_REDIS_PORT: '6380',
+      CACHING_REDIS_TLS: 'true'
     })
 
     const serviceFactory = await loadServiceFactory(configGet)
     const result = serviceFactory()
 
-    expectConfigGetCalled(configGet, ['CACHING_REDIS_SERVICE', 'CACHING_REDIS_API_KEY', 'CACHING_REDIS_PORT'])
+    expectConfigGetCalled(configGet, [
+      'CACHING_REDIS_SERVICE',
+      'CACHING_REDIS_API_KEY',
+      'CACHING_REDIS_PORT',
+      'CACHING_REDIS_TLS'
+    ])
 
-    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6380 }
+    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6380, tls: true }
     expectRedisCalledWith(expectedOptions, result)
   })
 
@@ -78,9 +84,59 @@ describe('redisConfig.serviceFactory', () => {
     const serviceFactory = await loadServiceFactory(configGet)
     const result = serviceFactory()
 
-    expectConfigGetCalled(configGet, ['CACHING_REDIS_SERVICE', 'CACHING_REDIS_API_KEY', 'CACHING_REDIS_PORT'])
+    expectConfigGetCalled(configGet, [
+      'CACHING_REDIS_SERVICE',
+      'CACHING_REDIS_API_KEY',
+      'CACHING_REDIS_PORT',
+      'CACHING_REDIS_TLS'
+    ])
 
-    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6380 }
+    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6380, tls: true }
+    expectRedisCalledWith(expectedOptions, result)
+  })
+
+  it('disables TLS when CACHING_REDIS_TLS is false', async () => {
+    const configGet = mappingGet({
+      CACHING_REDIS_SERVICE: 'redis://example',
+      CACHING_REDIS_API_KEY: 'secret-key',
+      CACHING_REDIS_PORT: '6379',
+      CACHING_REDIS_TLS: 'false'
+    })
+
+    const serviceFactory = await loadServiceFactory(configGet)
+    const result = serviceFactory()
+
+    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6379, tls: false }
+    expectRedisCalledWith(expectedOptions, result)
+  })
+
+  it('disables TLS when CACHING_REDIS_TLS is False (case-insensitive)', async () => {
+    const configGet = mappingGet({
+      CACHING_REDIS_SERVICE: 'redis://example',
+      CACHING_REDIS_API_KEY: 'secret-key',
+      CACHING_REDIS_PORT: '6379',
+      CACHING_REDIS_TLS: 'False'
+    })
+
+    const serviceFactory = await loadServiceFactory(configGet)
+    const result = serviceFactory()
+
+    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6379, tls: false }
+    expectRedisCalledWith(expectedOptions, result)
+  })
+
+  it('disables TLS when CACHING_REDIS_TLS is boolean false', async () => {
+    const configGet = mappingGet({
+      CACHING_REDIS_SERVICE: 'redis://example',
+      CACHING_REDIS_API_KEY: 'secret-key',
+      CACHING_REDIS_PORT: '6379',
+      CACHING_REDIS_TLS: false
+    })
+
+    const serviceFactory = await loadServiceFactory(configGet)
+    const result = serviceFactory()
+
+    const expectedOptions = { service: 'redis://example', apiKey: 'secret-key', port: 6379, tls: false }
     expectRedisCalledWith(expectedOptions, result)
   })
 })
