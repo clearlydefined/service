@@ -4,7 +4,8 @@
 import lodash from 'lodash'
 import throat from 'throat'
 import type EntityCoordinates from '../../lib/entityCoordinates.ts'
-import type { ICache } from '../caching/index.js'
+import type { ICache, ISyncCache } from '../caching/index.js'
+import memoryCache from '../caching/memory.ts'
 import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 
@@ -41,6 +42,7 @@ export interface Harvester {
 export interface Options {
   logger?: Logger
   cachingService: ICache
+  localLockCache?: ISyncCache<string>
   harvester: Harvester
   cacheTTLInSeconds?: number
   inflightTTLInSeconds?: number
@@ -84,7 +86,7 @@ export class CacheBasedHarvester {
   declare logger: Logger
   declare _cache: ICache
   declare _harvester: Harvester
-  declare _localInflightKeys: Set<string>
+  declare _localInflightKeys: ISyncCache<string>
   declare cacheTTLInSeconds: number
   declare inflightTTLInSeconds: number
   declare lockRetryDelayMinMs: number
@@ -92,13 +94,13 @@ export class CacheBasedHarvester {
   declare lockAcquireTimeoutMs: number
   declare localLockRetryDelayMs: number
   declare localLockTimeoutBufferMs: number
+  declare localLockTTLSeconds: number
   declare concurrencyLimit: number
 
   constructor(options: Options) {
     this.logger = options.logger || logger()
     this._cache = options.cachingService
     this._harvester = options.harvester
-    this._localInflightKeys = new Set()
     this.cacheTTLInSeconds = options.cacheTTLInSeconds ?? cacheTTLInSeconds
     this.inflightTTLInSeconds = options.inflightTTLInSeconds ?? inflightTTLInSeconds
     this.lockRetryDelayMinMs = options.lockRetryDelayMinMs ?? lockRetryDelayMinMs
@@ -106,7 +108,9 @@ export class CacheBasedHarvester {
     this.lockAcquireTimeoutMs = options.lockAcquireTimeoutMs ?? lockAcquireTimeoutMs
     this.localLockRetryDelayMs = options.localLockRetryDelayMs ?? localLockRetryDelayMs
     this.localLockTimeoutBufferMs = options.localLockTimeoutBufferMs ?? localLockTimeoutBufferMs
+    this.localLockTTLSeconds = Math.ceil((this.lockAcquireTimeoutMs + this.localLockTimeoutBufferMs) / 1000)
     this.concurrencyLimit = options.concurrencyLimit ?? concurrencyLimit
+    this._localInflightKeys = options.localLockCache ?? memoryCache({ defaultTtlSeconds: this.localLockTTLSeconds })
   }
 
   async harvest(spec: HarvestEntry | HarvestEntry[], turbo?: boolean): Promise<void> {
@@ -165,10 +169,10 @@ export class CacheBasedHarvester {
   _acquireSortedLocalInflightKeys(sortedKeys: string[]): string[] {
     const acquired: string[] = []
     for (const key of sortedKeys) {
-      if (this._localInflightKeys.has(key)) {
+      if (this._localInflightKeys.get(key) !== null) {
         break
       }
-      this._localInflightKeys.add(key)
+      this._localInflightKeys.set(key, '1', this.localLockTTLSeconds)
       acquired.push(key)
     }
     return acquired

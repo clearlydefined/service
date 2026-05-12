@@ -136,7 +136,16 @@ describe('CacheBasedHarvester', () => {
       await crawler.harvest(spec, false)
       assert.ok(harvesterMock.harvest.notCalled, 'Expected harvester not to be called')
       assert.ok(setIfAbsentBatchSpy.notCalled, 'Expected no Redis lock acquisition when pre-filter removes all entries')
-      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to remain empty')
+      assert.strictEqual(
+        crawler._localInflightKeys.get(inflightKey(foo.coordinates)),
+        null,
+        'Expected local inflight table to remain empty'
+      )
+      assert.strictEqual(
+        crawler._localInflightKeys.get(inflightKey(bar.coordinates)),
+        null,
+        'Expected local inflight table to remain empty'
+      )
     })
 
     it('acquires locks only for untracked entries after pre-filter', async () => {
@@ -292,7 +301,11 @@ describe('CacheBasedHarvester', () => {
         await crawler.harvest([foo], false)
       }, /Timed out acquiring inflight harvest coordinate locks/)
 
-      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to be fully released')
+      assert.strictEqual(
+        crawler._localInflightKeys.get(keyFoo),
+        null,
+        'Expected local inflight table to be fully released'
+      )
       assert.strictEqual(
         cacheMock.locks.size,
         1,
@@ -310,7 +323,16 @@ describe('CacheBasedHarvester', () => {
 
       assert.ok(!cacheMock.locks.has(firstKey), 'No lock should remain for first key after timeout')
       assert.ok(cacheMock.locks.has(secondKey), 'Seeded second key should remain (held by another requester)')
-      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Local locks should be fully released after timeout')
+      assert.strictEqual(
+        crawler._localInflightKeys.get(firstKey),
+        null,
+        'Local locks should be fully released after timeout'
+      )
+      assert.strictEqual(
+        crawler._localInflightKeys.get(secondKey),
+        null,
+        'Local locks should be fully released after timeout'
+      )
     })
 
     it('emits a warn log when lock acquisition times out', async () => {
@@ -431,12 +453,16 @@ describe('CacheBasedHarvester', () => {
       const keyFoo = inflightKey(foo.coordinates)
       assert.ok(cacheMock.delete.calledWith(keyFoo), 'Expected inflight lock released after swallowed tracking error')
       assert.ok(!cacheMock.locks.has(keyFoo), 'Expected no inflight lock to remain after swallowed tracking error')
-      assert.strictEqual(crawler._localInflightKeys.size, 0, 'Expected local inflight table to be fully released')
+      assert.strictEqual(
+        crawler._localInflightKeys.get(keyFoo),
+        null,
+        'Expected local inflight table to be fully released'
+      )
     })
 
     it('throws when local lock acquisition exceeds timeout', async () => {
       const keyFoo = inflightKey(foo.coordinates)
-      crawler._localInflightKeys.add(keyFoo)
+      crawler._localInflightKeys.set(keyFoo, '1', 35)
       sinon.spy(cacheMock, 'setIfAbsentBatch')
 
       await assert.rejects(
@@ -449,8 +475,8 @@ describe('CacheBasedHarvester', () => {
         'Redis setIfAbsentBatch should not be called when local times out'
       )
       assert.strictEqual(
-        crawler._localInflightKeys.size,
-        1,
+        crawler._localInflightKeys.get(keyFoo),
+        '1',
         'Only the pre-seeded key should remain — no extra local keys leaked by harvest'
       )
     })
