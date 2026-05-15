@@ -26,6 +26,28 @@ export interface RedisCacheOptions extends BaseCacheOptions {
 const objectPrefix = '*!~%'
 
 /**
+ * Lua script that acquires all KEYS atomically with SET NX EX.
+ * On the first key that is already held, releases all previously acquired keys and returns 0.
+ * The acquire+rollback sequence runs atomically inside one script invocation.
+ * Returns 1 when all keys were acquired.
+ * ARGV[1] = ttl in seconds, ARGV[2] = value to store.
+ */
+const SET_IF_ABSENT_BATCH_SCRIPT = `
+local ttl = tonumber(ARGV[1])
+local value = ARGV[2]
+for i = 1, #KEYS do
+  local ok = redis.call('SET', KEYS[i], value, 'NX', 'EX', ttl)
+  if not ok then
+    for j = 1, i - 1 do
+      redis.call('DEL', KEYS[j])
+    end
+    return 0
+  end
+end
+return 1
+`
+
+/**
  * Redis-based cache implementation with compression support
  *
  * This class provides a caching interface using Redis as the backing store. All cached values are compressed using pako
@@ -36,11 +58,13 @@ class RedisCache implements ICache {
   private declare logger: Logger
   private declare _client: RedisClientType | null
   private declare _clientReady: Promise<void> | null
+  private declare _setIfAbsentBatchSha: string | null
 
   /** Creates a new RedisCache instance */
   constructor(options: RedisCacheOptions) {
     this.options = options
     this.logger = options.logger || logger()
+    this._setIfAbsentBatchSha = null
   }
 
   /**
@@ -55,8 +79,9 @@ class RedisCache implements ICache {
     }
     if (!this._clientReady) {
       this._clientReady = RedisCache.initializeClient(this.options, this.logger)
-        .then(client => {
+        .then(async client => {
           this._client = client
+          this._setIfAbsentBatchSha = await client.scriptLoad(SET_IF_ABSENT_BATCH_SCRIPT)
         })
         .catch(error => {
           this._clientReady = null
@@ -133,6 +158,25 @@ class RedisCache implements ICache {
       await this._client!.set(item, data, { EX: ttlSeconds })
     } else {
       await this._client!.set(item, data)
+    }
+  }
+
+  /**
+   * Atomically acquires all keys in one round-trip via Lua and rolls back partial keys on miss.
+   * Note: keys are unlocked via DEL semantics; strict owner-token unlock is a future hardening step.
+   */
+  async setIfAbsentBatch(keys: string[], value: string, ttlSeconds: number): Promise<boolean> {
+    const args = { keys, arguments: [String(ttlSeconds), value] }
+    try {
+      const result = await this._client!.evalSha(this._setIfAbsentBatchSha!, args)
+      return result === 1
+    } catch (err: any) {
+      if (err?.message?.includes('NOSCRIPT')) {
+        this._setIfAbsentBatchSha = await this._client!.scriptLoad(SET_IF_ABSENT_BATCH_SCRIPT)
+        const result = await this._client!.evalSha(this._setIfAbsentBatchSha, args)
+        return result === 1
+      }
+      throw err
     }
   }
 
