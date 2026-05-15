@@ -74,7 +74,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.11",
+    "@biomejs/biome": "2.4.15",
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
@@ -95,7 +95,7 @@
     "@types/memory-cache": "0.2.6",
     "@types/mocha": "10.0.10",
     "@types/morgan": "1.9.10",
-    "@types/node": "24.12.2",
+    "@types/node": "24.12.4",
     "@types/pako": "2.0.4",
     "@types/passport": "1.0.17",
     "@types/passport-github": "1.1.13",
@@ -111,17 +111,17 @@
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "deep-equal-in-any-order": "2.2.0",
-    "esmock": "2.7.3",
+    "esmock": "2.7.5",
     "mocha": "11.7.5",
-    "mockttp": "4.3.0",
-    "mongodb-memory-server": "11.0.1",
+    "mockttp": "4.4.1",
+    "mongodb-memory-server": "11.1.0",
     "node-mocks-http": "1.17.2",
     "nodemon": "3.1.14",
     "nyc": "18.0.0",
     "pako-1": "npm:pako@^1.0.8",
-    "sinon": "21.1.2",
+    "sinon": "22.0.0",
     "supertest": "7.2.2",
     "testcontainers": "11.14.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   }
 }
