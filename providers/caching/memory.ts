@@ -37,6 +37,29 @@ class MemoryCache implements ICache, ISyncCache<unknown> {
     return undefined
   }
 
+  /** Atomically stores an item only when absent within this process. */
+  setIfAbsent(item: string, value: string, ttlSeconds: number): boolean {
+    const existing = this.cache.get(item) ?? null
+    if (existing !== null) {
+      return false
+    }
+    this.cache.put(item, value, ttlSeconds * 1000)
+    return true
+  }
+
+  /** Acquires all keys in one synchronous pass. Releases partial keys and returns false on first miss. */
+  setIfAbsentBatch(keys: string[], value: string, ttlSeconds: number): boolean {
+    const acquired: string[] = []
+    for (const key of keys) {
+      if (!this.setIfAbsent(key, value, ttlSeconds)) {
+        acquired.forEach(k => this.delete(k))
+        return false
+      }
+      acquired.push(key)
+    }
+    return true
+  }
+
   /** Removes an item from the cache */
   delete(item: string): undefined {
     this.cache.del(item)
