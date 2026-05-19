@@ -121,28 +121,30 @@ class ApplicationInsightsTransport extends Transport {
       return
     }
 
-    const properties = buildProperties(info)
-    if (info.level === 'error') {
-      if (info.stack) {
-        const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
-        exception.stack = info.stack
-        this.aiClient.trackException({ exception, properties })
+    try {
+      const properties = buildProperties(info)
+      if (info.level === 'error') {
+        if (info.stack) {
+          const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
+          exception.stack = info.stack
+          this.aiClient.trackException({ exception, properties })
+        } else {
+          this.aiClient.trackTrace({
+            message: info.message,
+            severity: appInsights.KnownSeverityLevel.Error,
+            properties
+          })
+        }
       } else {
         this.aiClient.trackTrace({
           message: info.message,
-          severity: appInsights.KnownSeverityLevel.Error,
+          severity: mapLevel(info.level),
           properties
         })
       }
-    } else {
-      this.aiClient.trackTrace({
-        message: info.message,
-        severity: mapLevel(info.level),
-        properties
-      })
+    } finally {
+      callback()
     }
-
-    callback()
   }
 }
 
