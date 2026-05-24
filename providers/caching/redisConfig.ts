@@ -14,7 +14,8 @@ function serviceFactory(options?: RedisCacheOptions): RedisCache {
   const realOptions = options || {
     service: config.get('CACHING_REDIS_SERVICE'),
     apiKey: config.get('CACHING_REDIS_API_KEY'),
-    port: Number(config.get('CACHING_REDIS_PORT')) || 6380
+    port: Number(config.get('CACHING_REDIS_PORT')) || 6380,
+    tls: String(config.get('CACHING_REDIS_TLS')).toLowerCase() !== 'false'
   }
   return redis(realOptions)
 }
