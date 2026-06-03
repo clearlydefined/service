@@ -541,4 +541,40 @@ describe('winstonFactory', () => {
     expect(aiClient.trackTrace.callCount).to.equal(1)
     expect(aiClient.trackTrace.firstCall.args[0].severity).to.equal('Warning')
   })
+
+  it('still calls callback if trackTrace throws', async () => {
+    const aiClient = {
+      trackException: sinon.stub(),
+      trackTrace: sinon.stub().throws(new Error('AI unavailable'))
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+    const consoleError = sinon.stub(console, 'error')
+
+    const logger = winstonFactory({ connectionString: 'mock', echo: false, level: 'info' })
+    logger.info('test message')
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackTrace.callCount).to.equal(1)
+    consoleError.restore()
+  })
+
+  it('still calls callback if trackException throws', async () => {
+    const aiClient = {
+      trackException: sinon.stub().throws(new Error('AI unavailable')),
+      trackTrace: sinon.stub()
+    }
+    sinon.stub(MockInsights, 'setup')
+    sinon.stub(MockInsights, 'getClient').returns(aiClient as any)
+    const consoleError = sinon.stub(console, 'error')
+
+    const logger = winstonFactory({ connectionString: 'mock', echo: false, level: 'error' })
+    logger.error(new Error('boom'))
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    expect(aiClient.trackException.callCount).to.equal(1)
+    consoleError.restore()
+  })
 })
