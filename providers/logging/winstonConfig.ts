@@ -4,6 +4,8 @@
 import appInsights from 'applicationinsights'
 import config from 'painless-config'
 import winston from 'winston'
+import Transport from 'winston-transport'
+import type { InsightsClient } from '../../lib/mockInsights.ts'
 import { MockInsights } from '../../lib/mockInsights.ts'
 
 const SENSITIVE_HEADERS = ['x-api-key', 'authorization', 'proxy-authorization', 'cookie']
@@ -103,6 +105,51 @@ function buildProperties(info: Record<string, any>): Record<string, any> {
   )
 }
 
+class ApplicationInsightsTransport extends Transport {
+  private aiClient: InsightsClient | null
+
+  constructor(opts: { aiClient: InsightsClient | null; level?: string }) {
+    super({ level: opts.level })
+    this.aiClient = opts.aiClient
+  }
+
+  override log(info: any, callback: () => void): void {
+    setImmediate(() => this.emit('logged', info))
+
+    if (!this.aiClient || !info) {
+      callback()
+      return
+    }
+
+    try {
+      const properties = buildProperties(info)
+      if (info.level === 'error') {
+        if (info.stack) {
+          const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
+          exception.stack = info.stack
+          this.aiClient.trackException({ exception, properties })
+        } else {
+          this.aiClient.trackTrace({
+            message: info.message,
+            severity: appInsights.KnownSeverityLevel.Error,
+            properties
+          })
+        }
+      } else {
+        this.aiClient.trackTrace({
+          message: info.message,
+          severity: mapLevel(info.level),
+          properties
+        })
+      }
+    } catch (err) {
+      console.error('ApplicationInsights telemetry failed', err)
+    } finally {
+      callback()
+    }
+  }
+}
+
 /**
  * Factory function to create a Winston logger instance.
  */
@@ -115,20 +162,12 @@ function factory(options?: WinstonLoggerOptions): winston.Logger {
   }
 
   MockInsights.setup(realOptions.connectionString || 'mock', realOptions.echo)
+  const aiClient = MockInsights.getClient()
 
-  const logFormat = winston.format.combine(
-    sanitizeMeta(),
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true, cause: true }),
-    winston.format.printf(({ timestamp, level, message, ...meta }) => {
-      const metaKeys = Object.keys(meta)
-      const metaString = metaKeys.length ? `\n${JSON.stringify(meta, null, 2)}` : ''
-      return `${timestamp} [${level}]: ${message}${metaString}`
-    })
-  )
+  const logFormat = winston.format.combine(sanitizeMeta(), winston.format.errors({ stack: true, cause: true }))
 
   const consoleFormat = winston.format.combine(
-    sanitizeMeta(),
+    winston.format.timestamp(),
     winston.format.colorize(),
     winston.format.printf(({ timestamp, level, message, ...meta }) => {
       const metaKeys = Object.keys(meta)
@@ -144,30 +183,11 @@ function factory(options?: WinstonLoggerOptions): winston.Logger {
       new winston.transports.Console({
         format: consoleFormat,
         silent: !realOptions.echo
+      }),
+      new ApplicationInsightsTransport({
+        aiClient
       })
     ]
-  })
-
-  const aiClient = MockInsights.getClient()
-
-  // Pipe Winston logs to Application Insights
-  logger.on('data', info => {
-    const properties = buildProperties(info)
-    if (info.level === 'error') {
-      if (info.stack) {
-        const exception = info.cause ? new Error(info.message, { cause: info.cause }) : new Error(info.message)
-        exception.stack = info.stack
-        aiClient.trackException({ exception, properties })
-      } else {
-        aiClient.trackTrace({
-          message: info.message,
-          severity: appInsights.KnownSeverityLevel.Error,
-          properties
-        })
-      }
-    } else {
-      aiClient.trackTrace({ message: info.message, severity: mapLevel(info.level), properties })
-    }
   })
 
   return logger
