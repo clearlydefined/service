@@ -21,17 +21,17 @@ jobs:
       security-events: write
 
     steps:
-    - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v5.0.1
+    - uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22 # v5.0.1
       with:
           fetch-depth: 0
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4.35.5
+      uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
       with:
         languages: 'javascript'
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4.35.5
+      uses: github/codeql-action/autobuild@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4.35.5
+      uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
