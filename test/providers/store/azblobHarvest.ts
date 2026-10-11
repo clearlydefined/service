@@ -125,6 +125,67 @@ describe('azblob Harvest store', () => {
     })
   })
 
+  describe('list options', () => {
+    const page = (revision, continuationToken?) => ({
+      entries: [
+        {
+          name: `npm/npmjs/-/co/revision/${revision}/tool/clearlydefined/1.json`,
+          metadata: { urn: `urn:npm:npmjs:-:co:revision:${revision}:tool:clearlydefined:1` }
+        },
+        {
+          name: `npm/npmjs/-/co/revision/${revision}/tool/scancode/2.json`,
+          metadata: { urn: `urn:npm:npmjs:-:co:revision:${revision}:tool:scancode:2` }
+        }
+      ],
+      continuationToken
+    })
+    const createPagedStore = () => {
+      const store = createAzBlobStore([], true)
+      store.blobService.listBlobsSegmentedWithPrefix = sinon
+        .stub()
+        .onFirstCall()
+        .callsArgWith(4, null, page('1.0.0', 'next'))
+        .onSecondCall()
+        .callsArgWith(4, null, page('2.0.0', 'more'))
+        .onThirdCall()
+        .callsArgWith(4, null, page('3.0.0'))
+      return store
+    }
+
+    it('lists all pages', async () => {
+      const store = createPagedStore()
+
+      const result = await store.list({ type: 'npm' })
+
+      expect(result).to.have.lengthOf(6)
+      expect(store.blobService.listBlobsSegmentedWithPrefix.callCount).to.eq(3)
+    })
+
+    it('stops listing once there are more results than the limit', async () => {
+      const store = createPagedStore()
+
+      const result = await store.list({ type: 'npm' }, { limit: 3 })
+
+      expect(result).to.have.lengthOf(4)
+      expect(store.blobService.listBlobsSegmentedWithPrefix.callCount).to.eq(2)
+    })
+
+    it('stops listing when aborted', async () => {
+      const store = createPagedStore()
+      const controller = new AbortController()
+      store.blobService.listBlobsSegmentedWithPrefix.onSecondCall().callsFake((_c, _p, _t, _o, callback) => {
+        controller.abort()
+        callback(null, page('2.0.0', 'more'))
+      })
+
+      let error
+      await store.list({ type: 'npm' }, { signal: controller.signal }).catch(e => (error = e))
+
+      expect(error?.name).to.eq('AbortError')
+      expect(store.blobService.listBlobsSegmentedWithPrefix.callCount).to.eq(2)
+    })
+  })
+
   describe('getAll', () => {
     it('handles tool output', async () => {
       const azblobStore = createAzBlobStore(
