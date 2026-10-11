@@ -62,8 +62,8 @@ class AbstractAzBlobStore {
   async list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]> {
     const list: any[] = []
     let continuation = null
+    const name = this._toListPrefix(coordinates)
     do {
-      const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
       const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
         this.containerName,
         name,
@@ -108,6 +108,13 @@ class AbstractAzBlobStore {
    */
   async find(): Promise<null> {
     return null
+  }
+
+  /**
+   * The blob name prefix used to list the blobs associated with the given coordinates.
+   */
+  _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }
 
   _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string {

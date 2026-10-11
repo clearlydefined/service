@@ -103,6 +103,26 @@ describe('azblob Harvest store', () => {
       ]
       expect(result).to.deep.equalInAnyOrder(expected)
     })
+
+    it('lists with a prefix ending at a path segment', async () => {
+      const store = createAzBlobStore([], true)
+      const listPrefix = async coordinates => {
+        await store.list(coordinates)
+        return store.blobService.listBlobsSegmentedWithPrefix.lastCall.args[1]
+      }
+      const name = { type: 'nuget', provider: 'nuget', namespace: null, name: 'Foo.Bar' }
+
+      expect(await listPrefix({})).to.eq('')
+      expect(await listPrefix({ type: 'nuget' })).to.eq('nuget/')
+      expect(await listPrefix(name)).to.eq('nuget/nuget/-/foo.bar/')
+      expect(await listPrefix({ ...name, revision: '1.0.0' })).to.eq('nuget/nuget/-/foo.bar/revision/1.0.0/')
+      expect(await listPrefix({ ...name, revision: '1.0.0', tool: 'scancode' })).to.eq(
+        'nuget/nuget/-/foo.bar/revision/1.0.0/tool/scancode/'
+      )
+      expect(await listPrefix({ ...name, revision: '1.0.0', tool: 'scancode', toolVersion: '32.3.0' })).to.eq(
+        'nuget/nuget/-/foo.bar/revision/1.0.0/tool/scancode/32.3.0'
+      )
+    })
   })
 
   describe('getAll', () => {

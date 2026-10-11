@@ -53,6 +53,16 @@ export class AzHarvestBlobStore extends AbstractAzBlobStore {
   }
 
   /**
+   * End the prefix at a path segment so partial coordinates only match whole segments. Otherwise
+   * `foo` also lists `foo.bar` (and every other name starting with `foo`) and `1.0` also lists `1.0-beta`.
+   */
+  override _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    const name = super._toListPrefix(coordinates)
+    // a tool version is the blob itself (`<toolVersion>.json`) rather than a folder
+    return !name || (coordinates as ResultCoordinates).toolVersion ? name : `${name}/`
+  }
+
+  /**
    * Stream the content identified by the coordinates onto the given stream and close the stream.
    */
   stream(coordinates: ResultCoordinates, stream: Writable): Promise<any> {
