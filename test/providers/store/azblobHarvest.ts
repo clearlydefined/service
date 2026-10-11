@@ -114,7 +114,6 @@ describe('azblob Harvest store', () => {
 
       expect(await listPrefix({})).to.eq('')
       expect(await listPrefix({ type: 'nuget' })).to.eq('nuget/')
-      expect(await listPrefix(name)).to.eq('nuget/nuget/-/foo.bar/')
       expect(await listPrefix({ ...name, revision: '1.0.0' })).to.eq('nuget/nuget/-/foo.bar/revision/1.0.0/')
       expect(await listPrefix({ ...name, revision: '1.0.0', tool: 'scancode' })).to.eq(
         'nuget/nuget/-/foo.bar/revision/1.0.0/tool/scancode/'
@@ -122,6 +121,65 @@ describe('azblob Harvest store', () => {
       expect(await listPrefix({ ...name, revision: '1.0.0', tool: 'scancode', toolVersion: '32.3.0' })).to.eq(
         'nuget/nuget/-/foo.bar/revision/1.0.0/tool/scancode/32.3.0'
       )
+    })
+  })
+
+  describe('list of all revisions', () => {
+    const blob = (name, revision, tool) => ({
+      name: `nuget/nuget/-/${name.toLowerCase()}/revision/${revision}/tool/${tool}/1.json`,
+      metadata: { urn: `urn:nuget:nuget:-:${name}:revision:${revision}:tool:${tool}:1` }
+    })
+    const data = [
+      blob('Foo', '1.0.0', 'clearlydefined'),
+      blob('Foo', '1.0.0', 'scancode'),
+      blob('Foo', '1.0.0-beta', 'clearlydefined'),
+      blob('Foo', '2.0.0', 'clearlydefined'),
+      blob('Foo.Bar', '1.0.0', 'clearlydefined')
+    ]
+    const coordinates = { type: 'nuget', provider: 'nuget', namespace: null, name: 'Foo' }
+
+    it('lists each revision of the component', async () => {
+      const store = createAzBlobStore(data, true)
+
+      const result = await store.list(coordinates)
+
+      expect(result).to.deep.equal([
+        'nuget/nuget/-/Foo/1.0.0-beta/clearlydefined/1',
+        'nuget/nuget/-/Foo/1.0.0/clearlydefined/1',
+        'nuget/nuget/-/Foo/1.0.0/scancode/1',
+        'nuget/nuget/-/Foo/2.0.0/clearlydefined/1'
+      ])
+      expect(store.blobService.listBlobDirectoriesSegmentedWithPrefix.lastCall.args[1]).to.eq(
+        'nuget/nuget/-/foo/revision/'
+      )
+      const listed = store.blobService.listBlobsSegmentedWithPrefix.args.map(args => args[1])
+      expect(listed).to.deep.equalInAnyOrder([
+        'nuget/nuget/-/foo/revision/1.0.0-beta/',
+        'nuget/nuget/-/foo/revision/1.0.0/',
+        'nuget/nuget/-/foo/revision/2.0.0/'
+      ])
+    })
+
+    it('lists nothing for a component without results', async () => {
+      const store = createAzBlobStore(data, true)
+
+      expect(await store.list({ ...coordinates, name: 'Fo' })).to.deep.equal([])
+      expect(store.blobService.listBlobsSegmentedWithPrefix.called).to.be.false
+    })
+
+    it('stops when aborted', async () => {
+      const store = createAzBlobStore(data, true)
+      const controller = new AbortController()
+      store.blobService.listBlobDirectoriesSegmentedWithPrefix.callsFake((_container, _prefix, _token, callback) => {
+        controller.abort()
+        callback(null, { entries: [{ name: 'nuget/nuget/-/foo/revision/1.0.0/' }] })
+      })
+
+      let error
+      await store.list(coordinates, { signal: controller.signal }).catch(e => (error = e))
+
+      expect(error?.name).to.eq('AbortError')
+      expect(store.blobService.listBlobsSegmentedWithPrefix.called).to.be.false
     })
   })
 
@@ -354,7 +412,19 @@ function createEntries(names) {
 
 function createAzBlobStore(entries, withMetadata?) {
   const blobServiceStub: Record<string, any> = {
-    listBlobsSegmentedWithPrefix: sinon.stub().callsArgWith(withMetadata ? 4 : 3, null, { entries }),
+    listBlobsSegmentedWithPrefix: withMetadata
+      ? sinon
+          .stub()
+          .callsFake((_container, prefix, _token, _options, callback) =>
+            callback(null, { entries: entries.filter(entry => entry.name.startsWith(prefix)) })
+          )
+      : sinon.stub().callsArgWith(3, null, { entries }),
+    listBlobDirectoriesSegmentedWithPrefix: sinon.stub().callsFake((_container, prefix, _token, callback) => {
+      const names = entries
+        .filter(entry => entry.name.startsWith(prefix))
+        .map(entry => `${prefix}${entry.name.slice(prefix.length).split('/')[0]}/`)
+      callback(null, { entries: [...new Set(names)].sort().map(name => ({ name })) })
+    }),
     getBlobToText: sinon.stub().callsArgWith(2, null, '{}'),
     createContainerIfNotExists: sinon.stub().callsArgWith(1, null)
   }
