@@ -3,10 +3,11 @@
 
 import type { Writable } from 'node:stream'
 import lodash from 'lodash'
+import throat from 'throat'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
 import ResultCoordinatesClass from '../../lib/resultCoordinates.ts'
-import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type { AzBlobStoreOptions, BlobStoreVisitor, ListOptions } from './abstractAzblobStore.ts'
 import AbstractAzBlobStore from './abstractAzblobStore.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
@@ -25,6 +26,9 @@ export interface BlobFileEntry {
   name: string
 }
 
+// Number of revisions listed at the same time when listing all of the results of a component
+const listConcurrency = 20
+
 const resultOrError = (resolve: (value: any) => void, reject: (reason?: any) => void) => (error: any, result: any) =>
   error ? reject(error) : resolve(result)
 const responseOrError =
@@ -40,16 +44,74 @@ export class AzHarvestBlobStore extends AbstractAzBlobStore {
    * List all of the results for the given coordinates.
    */
   // @ts-expect-error - Simplified list signature (visitor is handled internally)
-  override async list(coordinates: EntityCoordinates | ResultCoordinates): Promise<string[]> {
-    const list = await super.list(coordinates, (entry: any) => {
+  override async list(
+    coordinates: EntityCoordinates | ResultCoordinates,
+    options: ListOptions = {}
+  ): Promise<string[]> {
+    const visitor = (entry: any) => {
       const urn = entry.metadata.urn
       if (!urn) {
         return null
       }
       const entryCoordinates = ResultCoordinatesClass.fromUrn(urn)
       return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
-    })
+    }
+    const list =
+      coordinates.name && !coordinates.revision
+        ? await this._listByRevision(coordinates, visitor, options)
+        : await super.list(coordinates, visitor, options)
     return sortedUniq(list.filter((x: any) => x))
+  }
+
+  /**
+   * List the results of all the revisions of a component. Listing gets slower with every blob there is, so
+   * rather than walking all of the blobs in one go, find the revisions and list several of them at a time.
+   */
+  async _listByRevision<T>(
+    coordinates: EntityCoordinates | ResultCoordinates,
+    visitor: BlobStoreVisitor<T>,
+    options: ListOptions
+  ): Promise<T[]> {
+    const revisions = await this._listDirectories(`${this._toListPrefix(coordinates)}revision/`, options)
+    const progress = { count: 0 }
+    const lists = await Promise.all(
+      revisions.map(
+        throat(listConcurrency, (revision: string) => this._listWithPrefix(revision, visitor, options, progress))
+      )
+    )
+    return lists.flat()
+  }
+
+  /**
+   * List the names of the folders directly below the given prefix. The names end with a `/`.
+   */
+  async _listDirectories(prefix: string, { signal }: ListOptions = {}): Promise<string[]> {
+    const list: string[] = []
+    let continuation = null
+    do {
+      signal?.throwIfAborted()
+      const result: any = await new Promise((resolve, reject) =>
+        this.blobService.listBlobDirectoriesSegmentedWithPrefix(
+          this.containerName,
+          prefix,
+          continuation,
+          resultOrError(resolve, reject)
+        )
+      )
+      continuation = result.continuationToken
+      list.push(...result.entries.map((entry: BlobFileEntry) => entry.name))
+    } while (continuation)
+    return list
+  }
+
+  /**
+   * End the prefix at a path segment so partial coordinates only match whole segments. Otherwise
+   * `foo` also lists `foo.bar` (and every other name starting with `foo`) and `1.0` also lists `1.0-beta`.
+   */
+  override _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    const name = super._toListPrefix(coordinates)
+    // a tool version is the blob itself (`<toolVersion>.json`) rather than a folder
+    return !name || (coordinates as ResultCoordinates).toolVersion ? name : `${name}/`
   }
 
   /**

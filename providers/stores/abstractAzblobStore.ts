@@ -27,6 +27,14 @@ export interface BlobEntry {
   metadata: Record<string, string>
 }
 
+/** Options for list operations */
+export interface ListOptions {
+  /** Stop listing when aborted, e.g. because nobody is waiting for the result anymore */
+  signal?: AbortSignal
+  /** Stop listing once there are more results than this. The list returned is then incomplete and longer than the limit. */
+  limit?: number
+}
+
 /** Visitor function type for list operations */
 export type BlobStoreVisitor<T> = (entry: BlobEntry) => T | null
 
@@ -59,11 +67,31 @@ class AbstractAzBlobStore {
   /**
    * Visit all of the blobs associated with the given coordinates.
    */
-  async list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]> {
+  async list<T>(
+    coordinates: EntityCoordinates | ResultCoordinates,
+    visitor: BlobStoreVisitor<T>,
+    options: ListOptions = {}
+  ): Promise<T[]> {
+    return this._listWithPrefix(this._toListPrefix(coordinates), visitor, options)
+  }
+
+  /**
+   * Visit all of the blobs whose name starts with the given prefix. `progress` counts the results
+   * across the calls that share it so that the limit applies to all of them together.
+   */
+  async _listWithPrefix<T>(
+    name: string,
+    visitor: BlobStoreVisitor<T>,
+    { signal, limit }: ListOptions = {},
+    progress: { count: number } = { count: 0 }
+  ): Promise<T[]> {
     const list: any[] = []
     let continuation = null
     do {
-      const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
+      signal?.throwIfAborted()
+      if (limit && progress.count > limit) {
+        break
+      }
       const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
         this.containerName,
         name,
@@ -77,6 +105,7 @@ class AbstractAzBlobStore {
         const visitResult = visitor(entry)
         if (visitResult !== null) {
           list.push(visitResult)
+          progress.count++
         }
       }
     } while (continuation)
@@ -108,6 +137,13 @@ class AbstractAzBlobStore {
    */
   async find(): Promise<null> {
     return null
+  }
+
+  /**
+   * The blob name prefix used to list the blobs associated with the given coordinates.
+   */
+  _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }
 
   _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string {
