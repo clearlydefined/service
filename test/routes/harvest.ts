@@ -1,6 +1,7 @@
 // Copyright (c) The Linux Foundation and others. Licensed under the MIT license.
 // SPDX-License-Identifier: MIT
 
+import { EventEmitter } from 'node:events'
 import { expect } from 'chai'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
@@ -108,6 +109,51 @@ describe('Harvest route', () => {
     const router = createRoutes(harvester, harvestStore, summarizer)
     await router._get(request, response)
     expect(response.statusCode).to.be.eq(200)
+  })
+
+  it('lists harvested data', async () => {
+    const request = createGetRequest({ type: 'npm', provider: 'npmjs', namespace: '-', name: 'co', revision: '1.0.0' })
+    request.query = { form: 'list' }
+    const response = httpMocks.createResponse()
+    const harvestStore = { list: sinon.stub().resolves(['npm/npmjs/-/co/1.0.0/scancode/2']) }
+    const router = createRoutes(undefined, harvestStore)
+    await router._getAll(request, response)
+    expect(response.statusCode).to.be.eq(200)
+    expect(response._getData()).to.deep.equal(['npm/npmjs/-/co/1.0.0/scancode/2'])
+    const options = harvestStore.list.firstCall.args[1]
+    expect(options.limit).to.be.a('number')
+    expect(options.signal.aborted).to.be.false
+  })
+
+  it('rejects listing too much harvested data', async () => {
+    const request = createGetRequest({ type: 'npm', provider: 'npmjs', namespace: '-', name: 'co', revision: '1.0.0' })
+    request.query = { form: 'list' }
+    const response = httpMocks.createResponse()
+    const harvestStore = { list: sinon.stub().callsFake(async (_coordinates, { limit }) => Array(limit + 1).fill('x')) }
+    const router = createRoutes(undefined, harvestStore)
+    await router._getAll(request, response)
+    expect(response.statusCode).to.be.eq(400)
+    expect(response._getData().error).to.match(/use more specific coordinates/)
+  })
+
+  it('stops listing harvested data when the client is gone', async () => {
+    const request = createGetRequest({ type: 'npm', provider: 'npmjs', namespace: '-', name: 'co', revision: '1.0.0' })
+    request.query = { form: 'list' }
+    const response = httpMocks.createResponse({ eventEmitter: EventEmitter })
+    const harvestStore = {
+      list: sinon
+        .stub()
+        .callsFake(
+          (_coordinates, { signal }) =>
+            new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(signal.reason)))
+        )
+    }
+    const router = createRoutes(undefined, harvestStore)
+    const result = router._getAll(request, response)
+    await new Promise(resolve => setImmediate(resolve))
+    response.emit('close')
+    expect(await result).to.be.null
+    expect(response._isEndCalled()).to.be.false
   })
 
   it('throttles via ListBasedFilter (422)', async () => {

@@ -10,6 +10,7 @@ const router = express.Router()
 
 import bodyParser from 'body-parser'
 import EntityCoordinates from '../lib/entityCoordinates.ts'
+import type { ResultCoordinates } from '../lib/resultCoordinates.ts'
 import * as utils from '../lib/utils.ts'
 import validator from '../schemas/validator.ts'
 
@@ -36,10 +37,8 @@ async function get(request: Request, response: Response) {
       const result = resultFromTool[coordinates.tool!]?.[coordinates.toolVersion!]
       return response.status(200).send(result)
     }
-    case 'list': {
-      const result = await harvestStore.list(coordinates)
-      return response.status(200).send(result)
-    }
+    case 'list':
+      return list(coordinates, response)
     default:
       throw new Error(`Invalid request form: ${request.query.form}`)
   }
@@ -61,21 +60,40 @@ async function getAll(request: Request, response: Response) {
       const summarized = await summarizeService.summarizeAll(coordinates, raw)
       return response.status(200).send(summarized)
     }
-    case 'list': {
-      const list = await harvestStore.list(coordinates)
-      return response.status(200).send(list)
-    }
+    case 'list':
+      return list(coordinates, response)
     default:
       throw new Error(`Invalid request form: ${request.query.form}`)
   }
 }
 
 // Get a list of the harvested data that we have that matches the url as a prefix
-router.get('{/:type}{/:provider}{/:namespace}{/:name}{/:revision}{/:tool}', asyncMiddleware(list))
+router.get('{/:type}{/:provider}{/:namespace}{/:name}{/:revision}{/:tool}', asyncMiddleware(listAll))
 
-async function list(request: Request, response: Response) {
+async function listAll(request: Request, response: Response) {
   const coordinates = await utils.toResultCoordinatesFromRequest(request)
-  const result = await harvestStore.list(coordinates)
+  return list(coordinates, response)
+}
+
+// Listing takes longer the more results there are. Stop when the client has gone away (e.g. timed out)
+// and refuse to list more than can reasonably be returned in one response.
+const maxListResults = 100000
+
+async function list(coordinates: EntityCoordinates | ResultCoordinates, response: Response) {
+  const controller = new AbortController()
+  response.on('close', () => controller.abort())
+  let result
+  try {
+    result = await harvestStore.list(coordinates, { signal: controller.signal, limit: maxListResults })
+  } catch (error) {
+    if (controller.signal.aborted) {
+      return null
+    }
+    throw error
+  }
+  if (result.length > maxListResults) {
+    return response.status(400).send({ error: `More than ${maxListResults} results, use more specific coordinates` })
+  }
   return response.status(200).send(result)
 }
 
@@ -142,6 +160,7 @@ function setup(
     const _router = router as any
     _router._queue = queue
     _router._get = get
+    _router._getAll = getAll
     _router._normalizeCoordinates = normalizeFilterCoordinates
   }
   return router

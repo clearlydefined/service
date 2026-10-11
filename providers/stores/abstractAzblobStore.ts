@@ -27,6 +27,14 @@ export interface BlobEntry {
   metadata: Record<string, string>
 }
 
+/** Options for list operations */
+export interface ListOptions {
+  /** Stop listing when aborted, e.g. because nobody is waiting for the result anymore */
+  signal?: AbortSignal
+  /** Stop listing once there are more results than this. The list returned is then incomplete and longer than the limit. */
+  limit?: number
+}
+
 /** Visitor function type for list operations */
 export type BlobStoreVisitor<T> = (entry: BlobEntry) => T | null
 
@@ -59,11 +67,19 @@ class AbstractAzBlobStore {
   /**
    * Visit all of the blobs associated with the given coordinates.
    */
-  async list<T>(coordinates: EntityCoordinates | ResultCoordinates, visitor: BlobStoreVisitor<T>): Promise<T[]> {
+  async list<T>(
+    coordinates: EntityCoordinates | ResultCoordinates,
+    visitor: BlobStoreVisitor<T>,
+    { signal, limit }: ListOptions = {}
+  ): Promise<T[]> {
     const list: any[] = []
     let continuation = null
+    const name = this._toListPrefix(coordinates)
     do {
-      const name = AbstractFileStore.toStoragePathFromCoordinates(coordinates)
+      signal?.throwIfAborted()
+      if (limit && list.length > limit) {
+        break
+      }
       const result = await promisify(this.blobService.listBlobsSegmentedWithPrefix).bind(this.blobService)(
         this.containerName,
         name,
@@ -108,6 +124,13 @@ class AbstractAzBlobStore {
    */
   async find(): Promise<null> {
     return null
+  }
+
+  /**
+   * The blob name prefix used to list the blobs associated with the given coordinates.
+   */
+  _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    return AbstractFileStore.toStoragePathFromCoordinates(coordinates)
   }
 
   _toStoragePathFromCoordinates(coordinates: EntityCoordinates | ResultCoordinates): string {

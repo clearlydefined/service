@@ -6,7 +6,7 @@ import lodash from 'lodash'
 import type { EntityCoordinates } from '../../lib/entityCoordinates.ts'
 import type { ResultCoordinates } from '../../lib/resultCoordinates.ts'
 import ResultCoordinatesClass from '../../lib/resultCoordinates.ts'
-import type { AzBlobStoreOptions } from './abstractAzblobStore.ts'
+import type { AzBlobStoreOptions, ListOptions } from './abstractAzblobStore.ts'
 import AbstractAzBlobStore from './abstractAzblobStore.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
@@ -40,16 +40,33 @@ export class AzHarvestBlobStore extends AbstractAzBlobStore {
    * List all of the results for the given coordinates.
    */
   // @ts-expect-error - Simplified list signature (visitor is handled internally)
-  override async list(coordinates: EntityCoordinates | ResultCoordinates): Promise<string[]> {
-    const list = await super.list(coordinates, (entry: any) => {
-      const urn = entry.metadata.urn
-      if (!urn) {
-        return null
-      }
-      const entryCoordinates = ResultCoordinatesClass.fromUrn(urn)
-      return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
-    })
+  override async list(
+    coordinates: EntityCoordinates | ResultCoordinates,
+    options: ListOptions = {}
+  ): Promise<string[]> {
+    const list = await super.list(
+      coordinates,
+      (entry: any) => {
+        const urn = entry.metadata.urn
+        if (!urn) {
+          return null
+        }
+        const entryCoordinates = ResultCoordinatesClass.fromUrn(urn)
+        return AbstractFileStore.isInterestingCoordinates(entryCoordinates) ? entryCoordinates.toString() : null
+      },
+      options
+    )
     return sortedUniq(list.filter((x: any) => x))
+  }
+
+  /**
+   * End the prefix at a path segment so partial coordinates only match whole segments. Otherwise
+   * `foo` also lists `foo.bar` (and every other name starting with `foo`) and `1.0` also lists `1.0-beta`.
+   */
+  override _toListPrefix(coordinates: EntityCoordinates | ResultCoordinates): string {
+    const name = super._toListPrefix(coordinates)
+    // a tool version is the blob itself (`<toolVersion>.json`) rather than a folder
+    return !name || (coordinates as ResultCoordinates).toolVersion ? name : `${name}/`
   }
 
   /**
