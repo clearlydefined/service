@@ -9,6 +9,10 @@ import type { Logger } from '../logging/index.js'
 import logger from '../logging/logger.ts'
 import AbstractFileStore from './abstractFileStore.ts'
 
+// The SDK default is to wait 30 seconds between retries, which is longer than a request can wait for.
+const retryCount = 3
+const retryIntervalMs = 2000
+
 /** Options for configuring an AbstractAzBlobStore */
 export interface AzBlobStoreOptions {
   /** Azure Storage connection string */
@@ -52,7 +56,7 @@ class AbstractAzBlobStore {
   async initialize(): Promise<void> {
     this.blobService = azure
       .createBlobService(this.options.connectionString)
-      .withFilter(new azure.LinearRetryPolicyFilter())
+      .withFilter(new azure.LinearRetryPolicyFilter(retryCount, retryIntervalMs))
     return promisify(this.blobService.createContainerIfNotExists).bind(this.blobService)(this.containerName)
   }
 
