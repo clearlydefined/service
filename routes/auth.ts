@@ -136,6 +136,20 @@ router.get('/github/finalize', passportOrPat(), async (req, res) => {
     </script>`)
 })
 
+// GitHub rejecting the code exchange (e.g. `bad_verification_code` for an expired or already used code,
+// `incorrect_client_credentials` for a misconfigured OAuth app) reaches here as an error. Say what GitHub
+// reported rather than leaving the login popup on a generic 500.
+router.use((error: Error & { code?: string }, _req: Request, res: Response, next: NextFunction) => {
+  if (error?.name !== 'TokenError') {
+    return next(error)
+  }
+  console.error(`GitHub login failed: ${error.code}: ${error.message}`)
+  res
+    .status(error.code === 'bad_verification_code' ? 401 : 502)
+    .type('text/plain')
+    .send(`GitHub login failed (${error.code}). Close this window and try logging in again.`)
+})
+
 /**
  * Fetch user details including public emails and ClearlyDefined permissions
  * based on GitHub team membership in the identified org.
